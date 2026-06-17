@@ -3,7 +3,7 @@ const chapters = window.NEDERURDU_CHAPTERS || [
   {
     id: "a0",
     title: "Chapter A0",
-    subtitle: "Letters, words, tiny grammar, and first sentences",
+    subtitle: "حروف، الفاظ، چھوٹی grammar، اور پہلے Dutch جملے",
     lessons: window.NEDERURDU_LESSONS || []
   }
 ];
@@ -59,11 +59,11 @@ const visualLibrary = {
   },
   services: {
     src: "assets/visuals/daily-services.svg",
-    alt: "Appointments, forms, work, school, and shopping"
+    alt: "ملاقات کے وقت، فارم، کام، school، اور خریداری"
   },
   sentence: {
     src: "assets/visuals/sentence-practice.svg",
-    alt: "Dutch sentence-building practice"
+    alt: "Dutch جملہ بنانے کی مشق"
   }
 };
 
@@ -82,81 +82,81 @@ const wordVisualEntries = (window.NEDERURDU_WORD_VISUALS || []).map((entry) => (
 const wordHelpGlossary = {
   aan: "پر / شروع",
   aanbieden: "پیش کرنا",
-  aanbieding: "offer / رعایت",
-  afspraak: "appointment",
+  aanbieding: "رعایت / aanbieding",
+  afspraak: "ملاقات کا وقت",
   adres: "پتہ",
-  apotheek: "pharmacy",
+  apotheek: "دواخانہ",
   appel: "سیب",
   aanvragen: "درخواست دینا",
   als: "اگر",
   alstublieft: "برائے مہربانی",
   achter: "پیچھے",
-  badkamer: "bathroom",
-  baan: "job",
+  badkamer: "غسل خانہ",
+  baan: "نوکری",
   bellen: "فون کرنا",
   ben: "ہوں",
   bent: "ہو / ہیں",
-  betalen: "pay کرنا",
+  betalen: "پیسے دینا",
   begrijp: "سمجھتا / سمجھتی ہوں",
   boek: "کتاب",
-  bsn: "Dutch citizen number",
+  bsn: "Dutch شہری نمبر",
   cadeau: "تحفہ",
-  collega: "colleague",
-  contract: "contract",
+  collega: "کام کا ساتھی",
+  contract: "معاہدہ",
   dank: "شکریہ",
   dat: "کہ",
-  de: "the",
+  de: "noun سے پہلے آنے والا لفظ",
   deur: "دروازہ",
   deze: "یہ",
   dit: "یہ",
-  dokter: "doctor",
-  docent: "teacher",
+  dokter: "ڈاکٹر",
+  docent: "استاد",
   doet: "کرتا / کرتی ہے",
   een: "ایک / a",
   eten: "کھانا",
   fiets: "سائیکل",
-  formulier: "form",
+  formulier: "فارم",
   ga: "جاتا / جاتی ہوں",
   gaan: "جانا",
   gegaan: "گیا / گئی",
   gaat: "جاتا / جاتی ہے",
-  gemeente: "municipality",
-  gisteren: "کل / yesterday",
+  gemeente: "بلدیہ / gemeente دفتر",
+  gisteren: "گزرا ہوا کل",
   goed: "اچھا",
-  goedemiddag: "good afternoon",
-  goedemorgen: "good morning",
-  goedenavond: "good evening",
-  garantie: "guarantee",
+  goedemiddag: "دوپہر کا سلام",
+  goedemorgen: "صبح کا سلام",
+  goedenavond: "شام کا سلام",
+  garantie: "گارنٹی",
   gekocht: "خریدا",
-  gehad: "تھا / had",
+  gehad: "تھا / پاس تھا",
   gewerkt: "کام کیا",
   gekookt: "کھانا پکایا",
   gekomen: "آیا / آئی",
   gebleven: "رہا / رہی",
   gezegd: "کہا",
-  graag: "خوشی سے / please",
-  groet: "سلام / greeting",
+  graag: "مہربانی سے / خوشی سے",
+  groet: "سلام",
   had: "تھا / تھی",
-  haar: "اس کا عورت / her",
-  heb: "ہے / have",
+  haar: "اس عورت کا",
+  heb: "میرے پاس ہے",
   hebt: "تمہارے پاس ہے",
-  hebben: "رکھنا / have",
-  heeft: "ہے / has",
+  hebben: "پاس ہونا / رکھنا",
+  heeft: "اس کے پاس ہے",
   helpen: "مدد کرنا",
-  herhalen: "repeat کرنا",
-  het: "the / یہ",
+  herhalen: "دہرانا",
+  het: "noun سے پہلے آنے والا لفظ / یہ",
   hij: "وہ مرد",
-  hoi: "hi",
-  huisarts: "family doctor",
+  hoi: "سلام",
+  huisarts: "گھر کا ڈاکٹر",
   huis: "گھر",
-  huiswerk: "homework",
-  huur: "rent",
+  huiswerk: "گھر کا کام",
+  huur: "کرایہ",
   ik: "میں",
   in: "میں",
-  inschrijven: "register کرنا",
+  inschrijven: "نام لکھوانا",
   is: "ہے",
   ja: "ہاں",
-  jij: "تم informal",
+  jij: "تم غیر رسمی",
   jongen: "لڑکا",
   jouw: "تمہارا",
   kan: "کر سکتا / سکتی ہے",
@@ -168,72 +168,72 @@ const wordHelpGlossary = {
   komt: "آتا / آتی ہے",
   kunt: "کر سکتے ہیں",
   lamp: "بتی",
-  land: "country",
+  land: "ملک",
   langzaam: "آہستہ",
   leren: "سیکھنا",
-  lekkage: "leakage",
+  lekkage: "پانی کا رساؤ",
   maken: "بنانا / کرنا",
   man: "آدمی",
   mag: "اجازت ہے",
   meisje: "لڑکی",
   met: "ساتھ",
   mijn: "میرا",
-  morgen: "tomorrow / صبح",
+  morgen: "آنے والا کل / صبح",
   moet: "ضروری ہے",
   moeten: "ضروری ہونا",
   mogen: "اجازت ہونا",
   naar: "کی طرف / کو",
   naam: "نام",
-  naast: "ساتھ / next to",
+  naast: "ساتھ / برابر میں",
   nee: "نہیں",
   nemen: "لینا",
-  niet: "نہیں / not",
+  niet: "نہیں",
   oog: "آنکھ",
   ochtend: "صبح",
   omdat: "کیونکہ",
   onder: "نیچے",
-  op: "پر / up",
+  op: "پر / اوپر",
   opbellen: "فون کرنا",
   opstaan: "اٹھنا",
-  overstappen: "change کرنا",
-  ov: "public transport",
-  paspoort: "passport",
+  overstappen: "بدلنا / دوسری سواری لینا",
+  ov: "عام سفر کی سواری",
+  paspoort: "پاسپورٹ",
   pen: "قلم",
   pijn: "درد",
-  reparatie: "repair",
+  reparatie: "مرمت",
   rijst: "چاول",
   rust: "آرام",
-  ruilen: "exchange کرنا",
-  salaris: "salary",
+  ruilen: "بدلنا / واپس کرنا",
+  salaris: "تنخواہ",
   schoonmaken: "صفائی کرنا",
-  school: "school",
-  sollicitatie: "job application",
+  school: "اسکول",
+  sollicitatie: "نوکری کی درخواست",
   sta: "اٹھتا / کھڑا ہوتا ہوں",
   stad: "شہر",
-  station: "station",
+  station: "اسٹیشن",
   stoel: "کرسی",
-  supermarkt: "supermarket",
+  supermarkt: "سپر مارکیٹ",
   tafel: "میز",
-  taxi: "taxi",
+  taxi: "ٹیکسی",
   telefoon: "فون",
-  telefoonnummer: "phone number",
-  tot: "تک / until",
-  trein: "train",
+  telefoonnummer: "فون نمبر",
+  tot: "تک",
+  trein: "ٹرین",
   terugkomen: "واپس آنا",
-  u: "آپ formal",
-  uit: "سے / out of",
-  uur: "گھنٹہ / time",
-  vertraging: "delay",
-  verzekering: "insurance",
-  verwarming: "heating",
+  u: "آپ رسمی",
+  uit: "سے / باہر",
+  uur: "گھنٹہ / وقت",
+  vertraging: "دیر",
+  verzekering: "انشورنس",
+  verwarming: "ہیٹنگ",
   vandaag: "آج",
-  voor: "سامنے / before",
-  vriendelijke: "محترمانہ / friendly",
+  voor: "سامنے / پہلے",
+  vriendelijke: "محترمانہ / دوستانہ",
   vrouw: "عورت",
   water: "پانی",
   weg: "ختم / away",
   wel: "زور دینے والا لفظ",
-  werk: "work",
+  werk: "کام",
   werken: "کام کرنا",
   wij: "ہم",
   wil: "چاہتا / چاہتی ہوں",
@@ -243,10 +243,10 @@ const wordHelpGlossary = {
   wonen: "رہنا",
   yoga: "yoga",
   ziek: "بیمار",
-  ziekenhuis: "hospital",
+  ziekenhuis: "ہسپتال",
   zijn: "اس کا / ہونا",
   zij: "وہ عورت / وہ لوگ",
-  ziens: "دیکھنا / see",
+  ziens: "دیکھنا",
   zus: "بہن"
 };
 
@@ -436,12 +436,6 @@ function renderHome() {
       </button>
     </section>
     <section class="section">
-      <h2>Chapter progress</h2>
-      <div class="chapter-progress-list">
-        ${chapters.map(renderChapterProgressRow).join("")}
-      </div>
-    </section>
-    <section class="section">
       <h2>${chapter.title} goals</h2>
       ${renderSubchapters(chapter)}
     </section>
@@ -456,23 +450,6 @@ function renderChapterButton(chapter) {
       <span class="chapter-name">${chapter.title}</span>
       <span class="chapter-subtitle">${chapter.subtitle}</span>
       <span class="chapter-count">${completed}/${chapter.lessons.length}</span>
-    </button>
-  `;
-}
-
-function renderChapterProgressRow(chapter) {
-  const completed = chapterCompletedCount(chapter);
-  const percent = Math.round((completed / chapter.lessons.length) * 100);
-  return `
-    <button class="chapter-progress-row" data-action="chapter" data-chapter="${chapter.id}">
-      <span>
-        <strong>${chapter.title}</strong>
-        <small>${chapter.subtitle}</small>
-      </span>
-      <span class="chapter-progress-meter">
-        <span class="progress-track"><span class="progress-fill" style="width: ${percent}%"></span></span>
-        <b class="latin">${completed}/${chapter.lessons.length}</b>
-      </span>
     </button>
   `;
 }

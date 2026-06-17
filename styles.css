@@ -379,7 +379,6 @@ h3 {
 }
 
 .quick-action:hover,
-.chapter-progress-row:hover,
 .unit-row:not(.locked):hover,
 .letter-card:hover {
   transform: translateY(-2px);
@@ -407,53 +406,6 @@ h3 {
   color: var(--muted);
   font-size: 0.7rem;
   font-weight: 850;
-}
-
-.chapter-progress-list {
-  display: grid;
-  gap: 10px;
-}
-
-.chapter-progress-row {
-  display: grid;
-  grid-template-columns: 1fr minmax(110px, 38%);
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  border: 2px solid var(--faint);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--ink);
-  text-align: left;
-  box-shadow: inset 0 -4px 0 rgba(36, 49, 58, 0.06);
-  cursor: pointer;
-  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
-}
-
-.chapter-progress-row strong {
-  display: block;
-  font-weight: 950;
-}
-
-.chapter-progress-row small {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 800;
-  line-height: 1.35;
-}
-
-.chapter-progress-meter {
-  display: grid;
-  gap: 6px;
-}
-
-.chapter-progress-meter b {
-  color: var(--blue);
-  font-size: 0.78rem;
-  text-align: right;
 }
 
 .primary-button,
@@ -1678,10 +1630,6 @@ h3 {
   }
 
   .summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chapter-progress-row {
     grid-template-columns: 1fr;
   }
 

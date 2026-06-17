@@ -564,10 +564,10 @@ const a1Lessons = [
       meaning("winkel", ["دکان", "اسٹیشن", "ڈاکٹر"], "دکان", "winkel = shop۔"),
       meaning("supermarkt", ["سپر مارکیٹ", "بس", "فارم"], "سپر مارکیٹ", "supermarkt = supermarket۔"),
       meaning("prijs", ["قیمت", "رسید", "پیسہ"], "قیمت", "prijs = price۔"),
-      meaning("kassa", ["کاؤنٹر / cashier", "بس اسٹاپ", "رسید"], "کاؤنٹر / cashier", "kassa = checkout۔"),
-      meaning("bon", ["رسید", "قیمت", "نقد"], "رسید", "bon = receipt۔"),
+      meaning("kassa", ["کاؤنٹر / kassa", "بس اسٹاپ", "رسید"], "کاؤنٹر / kassa", "kassa = ادائیگی والا کاؤنٹر۔"),
+      meaning("bon", ["رسید", "قیمت", "نقد"], "رسید", "bon = رسید۔"),
       meaning("pinpas", ["بینک کارڈ", "رسید", "ٹکٹ"], "بینک کارڈ", "pinpas = debit card۔"),
-      meaning("contant", ["نقد", "مہنگا", "سستا"], "نقد", "contant = cash۔"),
+      meaning("contant", ["نقد", "مہنگا", "سستا"], "نقد", "contant = نقد۔"),
       meaning("goedkoop", ["سستا", "مہنگا", "نیا"], "سستا", "goedkoop = cheap۔"),
       meaning("duur", ["مہنگا", "سستا", "اچھا"], "مہنگا", "duur = expensive۔"),
       meaning("station", ["اسٹیشن", "دکان", "رسید"], "اسٹیشن", "station = station۔"),
@@ -582,23 +582,23 @@ const a1Lessons = [
     id: "a1-health-appointments",
     unit: "A1: صحت اور afspraak",
     title: "سبق 10: Ik heb een afspraak",
-    description: "Doctor, pain, sick, appointment, short message۔",
+    description: "ڈاکٹر، درد، بیماری، ملاقات کا وقت، چھوٹا پیغام۔",
     xp: 80,
     questions: [
       meaning("dokter", ["ڈاکٹر", "دندان ساز", "فارمیسی"], "ڈاکٹر", "dokter = doctor۔"),
       meaning("tandarts", ["دندان ساز", "ڈاکٹر", "اسکول"], "دندان ساز", "tandarts = dentist۔"),
-      meaning("ziek", ["بیمار", "ٹھیک", "مہنگا"], "بیمار", "ziek = sick۔"),
-      meaning("pijn", ["درد", "دوا", "وقت"], "درد", "pijn = pain۔"),
+      meaning("ziek", ["بیمار", "ٹھیک", "مہنگا"], "بیمار", "ziek = بیمار۔"),
+      meaning("pijn", ["درد", "دوا", "وقت"], "درد", "pijn = درد۔"),
       meaning("hoofdpijn", ["سر درد", "پیٹ درد", "دوا"], "سر درد", "hoofdpijn = headache۔"),
-      meaning("buikpijn", ["پیٹ درد", "سر درد", "دندان ساز"], "پیٹ درد", "buikpijn = stomach pain۔"),
+      meaning("buikpijn", ["پیٹ درد", "سر درد", "دندان ساز"], "پیٹ درد", "buikpijn = پیٹ درد۔"),
       meaning("medicijn", ["دوا", "ڈاکٹر", "رسید"], "دوا", "medicijn = medicine۔"),
-      meaning("afspraak", ["appointment / ملاقات کا وقت", "درد", "خط"], "appointment / ملاقات کا وقت", "afspraak = appointment۔"),
+      meaning("afspraak", ["ملاقات کا وقت", "درد", "خط"], "ملاقات کا وقت", "afspraak = ملاقات کا وقت۔"),
       meaning("ik ben ziek", ["میں بیمار ہوں", "میں ڈاکٹر ہوں", "میرے پاس دوا ہے"], "میں بیمار ہوں", "health sentence۔"),
-      meaning("ik heb pijn", ["مجھے درد ہے", "میں درد ہوں", "میرے پاس وقت ہے"], "مجھے درد ہے", "ik heb pijn = I have pain۔"),
-      meaning("ik heb een afspraak bij de dokter", ["میری doctor کے پاس appointment ہے", "میں doctor ہوں", "مجھے doctor چاہیے"], "میری doctor کے پاس appointment ہے", "A1 speaking example۔"),
+      meaning("ik heb pijn", ["مجھے درد ہے", "میں درد ہوں", "میرے پاس وقت ہے"], "مجھے درد ہے", "ik heb pijn = مجھے درد ہے۔"),
+      meaning("ik heb een afspraak bij de dokter", ["میری doctor کے پاس ملاقات کا وقت ہے", "میں doctor ہوں", "مجھے doctor چاہیے"], "میری doctor کے پاس ملاقات کا وقت ہے", "A1 بولنے کی مثال۔"),
       reverse("میں کل نہیں آ سکتا/سکتی", ["ik kan morgen niet komen", "ik ben morgen niet komen", "ik heb morgen geen komen"], "ik kan morgen niet komen", "short message۔"),
       reverse("میں بیمار ہوں", ["ik ben ziek", "ik heb ziek", "ik wil ziek"], "ik ben ziek", "zijn verb۔"),
-      reverse("مجھے appointment چاہیے", ["ik wil een afspraak", "ik heb geen afspraak", "ik ben een afspraak"], "ik wil een afspraak", "wil = چاہیے۔"),
+      reverse("مجھے ملاقات کا وقت چاہیے", ["ik wil een afspraak", "ik heb geen afspraak", "ik ben een afspraak"], "ik wil een afspraak", "wil = چاہیے۔"),
       meaning("beste meneer", ["محترم جناب", "خدا حافظ", "میرا نام"], "محترم جناب", "formal short message opening۔")
     ]
   }
@@ -609,190 +609,190 @@ const a2Lessons = [
     id: "a2-perfect-tense",
     unit: "A2: verleden tijd",
     title: "A2 les 1: Ik heb gewerkt",
-    description: "A2 grammar: perfect tense with hebben/zijn + past participle.",
+    description: "A2 grammar: گزرے ہوئے کام کے لیے hebben/zijn + فعل کی تیسری شکل۔",
     xp: 85,
     questions: [
-      meaning("ik heb gewerkt", ["میں نے کام کیا ہے", "میں کام کرتا ہوں", "میں کام کرنے جا رہا ہوں"], "میں نے کام کیا ہے", "Perfect tense: hebben + past participle۔"),
-      meaning("zij heeft gekookt", ["اس نے کھانا پکایا ہے", "وہ کھانا پکاتی ہے", "وہ کھانا پکانے جا رہی ہے"], "اس نے کھانا پکایا ہے", "heeft + gekookt past action ہے۔"),
-      meaning("wij zijn naar de supermarkt gegaan", ["ہم supermarket گئے ہیں", "ہم supermarket میں ہیں", "ہم supermarket جائیں گے"], "ہم supermarket گئے ہیں", "movement verbs often use zijn۔"),
-      meaning("hij is thuis gebleven", ["وہ گھر پر رہا ہے", "وہ گھر پر ہے", "وہ گھر جائے گا"], "وہ گھر پر رہا ہے", "blijven with zijn in perfect tense۔"),
-      reverse("میں doctor کے پاس گیا/گئی ہوں", ["ik ben naar de dokter gegaan", "ik heb naar de dokter gewerkt", "ik ga naar de dokter"], "ik ben naar de dokter gegaan", "movement: zijn + gegaan۔"),
-      reverse("اس نے کھانا پکایا ہے", ["zij heeft gekookt", "zij is gekookt", "zij gaat koken"], "zij heeft gekookt", "cooking uses hebben۔"),
-      meaning("gewerkt", ["کام کیا", "گیا", "رہا"], "کام کیا", "past participle of werken۔"),
-      meaning("gegaan", ["گیا", "کام کیا", "رہا"], "گیا", "past participle of gaan۔"),
-      meaning("gebleven", ["رہا", "پکایا", "کام کیا"], "رہا", "past participle of blijven۔"),
-      meaning("ik heb gisteren gebeld", ["میں نے کل فون کیا", "میں کل فون کروں گا", "میں فون کر رہا ہوں"], "میں نے کل فون کیا", "gisteren + perfect tense۔")
+      meaning("ik heb gewerkt", ["میں نے کام کیا ہے", "میں کام کرتا ہوں", "میں کام کرنے جا رہا ہوں"], "میں نے کام کیا ہے", "گزرے ہوئے کام کا زمانہ: hebben + فعل کی تیسری شکل۔"),
+      meaning("zij heeft gekookt", ["اس نے کھانا پکایا ہے", "وہ کھانا پکاتی ہے", "وہ کھانا پکانے جا رہی ہے"], "اس نے کھانا پکایا ہے", "heeft + gekookt گزرا ہوا کام ہے۔"),
+      meaning("wij zijn naar de supermarkt gegaan", ["ہم سپر مارکیٹ گئے ہیں", "ہم سپر مارکیٹ میں ہیں", "ہم سپر مارکیٹ جائیں گے"], "ہم سپر مارکیٹ گئے ہیں", "حرکت والے فعل اکثر zijn لیتے ہیں۔"),
+      meaning("hij is thuis gebleven", ["وہ گھر پر رہا ہے", "وہ گھر پر ہے", "وہ گھر جائے گا"], "وہ گھر پر رہا ہے", "blijven کے ساتھ گزرے ہوئے زمانے میں zijn آتا ہے۔"),
+      reverse("میں doctor کے پاس گیا/گئی ہوں", ["ik ben naar de dokter gegaan", "ik heb naar de dokter gewerkt", "ik ga naar de dokter"], "ik ben naar de dokter gegaan", "حرکت: zijn + gegaan۔"),
+      reverse("اس نے کھانا پکایا ہے", ["zij heeft gekookt", "zij is gekookt", "zij gaat koken"], "zij heeft gekookt", "کھانا پکانے کے ساتھ hebben آتا ہے۔"),
+      meaning("gewerkt", ["کام کیا", "گیا", "رہا"], "کام کیا", "werken کی تیسری فعل شکل۔"),
+      meaning("gegaan", ["گیا", "کام کیا", "رہا"], "گیا", "gaan کی تیسری فعل شکل۔"),
+      meaning("gebleven", ["رہا", "پکایا", "کام کیا"], "رہا", "blijven کی تیسری فعل شکل۔"),
+      meaning("ik heb gisteren gebeld", ["میں نے کل فون کیا", "میں کل فون کروں گا", "میں فون کر رہا ہوں"], "میں نے کل فون کیا", "gisteren + گزرے ہوئے کام کا زمانہ۔")
     ]
   },
   {
     id: "a2-future-modal-verbs",
-    unit: "A2: gaan اور modal verbs",
+    unit: "A2: gaan اور modal فعل",
     title: "A2 les 2: Ik ga werken",
-    description: "Future with gaan and useful modal verbs: kunnen, moeten, mogen.",
+    description: "آنے والے کام کے لیے gaan، اور کام آنے والے modal فعل: kunnen، moeten، mogen۔",
     xp: 85,
     questions: [
-      meaning("ik ga morgen werken", ["میں کل کام کرنے جا رہا/رہی ہوں", "میں نے کل کام کیا", "میں آج کام کرتا ہوں"], "میں کل کام کرنے جا رہا/رہی ہوں", "Future with gaan۔"),
+      meaning("ik ga morgen werken", ["میں کل کام کرنے جا رہا/رہی ہوں", "میں نے کل کام کیا", "میں آج کام کرتا ہوں"], "میں کل کام کرنے جا رہا/رہی ہوں", "آنے والے کام کے لیے gaan۔"),
       meaning("wij gaan Nederlands leren", ["ہم Dutch سیکھنے جا رہے ہیں", "ہم Dutch سیکھ چکے ہیں", "ہم Dutch ہیں"], "ہم Dutch سیکھنے جا رہے ہیں", "gaan + infinitive۔"),
-      meaning("ik moet naar de gemeente", ["مجھے gemeente جانا ہے", "میں gemeente گیا ہوں", "میں gemeente ہوں"], "مجھے gemeente جانا ہے", "moeten = must/have to۔"),
-      meaning("kunt u mij helpen?", ["کیا آپ میری مدد کر سکتے ہیں؟", "کیا آپ مجھے جانتے ہیں؟", "کیا آپ appointment ہیں؟"], "کیا آپ میری مدد کر سکتے ہیں؟", "formal useful question۔"),
-      meaning("mag ik hier parkeren?", ["کیا میں یہاں park کر سکتا ہوں؟", "کیا مجھے یہاں کام کرنا ہے؟", "کیا میں یہاں رہتا ہوں؟"], "کیا میں یہاں park کر سکتا ہوں؟", "mogen = may/allowed۔"),
+      meaning("ik moet naar de gemeente", ["مجھے gemeente جانا ہے", "میں gemeente گیا ہوں", "میں gemeente ہوں"], "مجھے gemeente جانا ہے", "moeten = ضروری ہونا۔"),
+      meaning("kunt u mij helpen?", ["کیا آپ میری مدد کر سکتے ہیں؟", "کیا آپ مجھے جانتے ہیں؟", "کیا آپ ملاقات کا وقت ہیں؟"], "کیا آپ میری مدد کر سکتے ہیں؟", "ادب والا کام آنے والا سوال۔"),
+      meaning("mag ik hier parkeren?", ["کیا میں یہاں park کر سکتا ہوں؟", "کیا مجھے یہاں کام کرنا ہے؟", "کیا میں یہاں رہتا ہوں؟"], "کیا میں یہاں park کر سکتا ہوں؟", "mogen = اجازت ہونا۔"),
       reverse("مجھے doctor کو فون کرنا ہے", ["ik moet de dokter bellen", "ik mag de dokter bellen", "ik ben de dokter bellen"], "ik moet de dokter bellen", "moet + infinitive۔"),
       reverse("کیا آپ میری مدد کر سکتے ہیں؟", ["kunt u mij helpen?", "moet u mij helpen?", "gaat u mij helpen?"], "kunt u mij helpen?", "kunnen = can۔"),
-      meaning("kunnen", ["کر سکنا", "ضروری ہونا", "اجازت ہونا"], "کر سکنا", "kunnen = can۔"),
-      meaning("moeten", ["ضروری ہونا", "کر سکنا", "چاہنا"], "ضروری ہونا", "moeten = must۔"),
-      meaning("mogen", ["اجازت ہونا", "ضروری ہونا", "رہنا"], "اجازت ہونا", "mogen = may/allowed۔")
+      meaning("kunnen", ["کر سکنا", "ضروری ہونا", "اجازت ہونا"], "کر سکنا", "kunnen = کر سکنا۔"),
+      meaning("moeten", ["ضروری ہونا", "کر سکنا", "چاہنا"], "ضروری ہونا", "moeten = ضروری ہونا۔"),
+      meaning("mogen", ["اجازت ہونا", "ضروری ہونا", "رہنا"], "اجازت ہونا", "mogen = اجازت ہونا۔")
     ]
   },
   {
     id: "a2-separable-verbs-routine",
-    unit: "A2: separable verbs",
+    unit: "A2: splitsbare werkwoorden",
     title: "A2 les 3: Ik sta om zeven uur op",
-    description: "Daily routine and separable verbs: opstaan, invullen, opbellen.",
+    description: "روزمرہ معمول اور الگ ہونے والے فعل: opstaan، invullen، opbellen۔",
     xp: 85,
     questions: [
-      meaning("ik sta om zeven uur op", ["میں سات بجے اٹھتا/اٹھتی ہوں", "میں سات بجے کام کرتا ہوں", "میں سات بجے فون کرتا ہوں"], "میں سات بجے اٹھتا/اٹھتی ہوں", "opstaan separates: sta ... op۔"),
-      meaning("vul het formulier in", ["form بھر دیں", "doctor کو فون کریں", "گھر صاف کریں"], "form بھر دیں", "invullen separates: vul ... in۔"),
-      meaning("ik bel de dokter op", ["میں doctor کو فون کرتا/کرتی ہوں", "میں doctor کے پاس جاتا ہوں", "میں doctor سے appointment رکھتا ہوں"], "میں doctor کو فون کرتا/کرتی ہوں", "opbellen separates: bel ... op۔"),
-      meaning("wij maken het huis schoon", ["ہم گھر صاف کرتے ہیں", "ہم گھر جاتے ہیں", "ہم گھر کرائے پر لیتے ہیں"], "ہم گھر صاف کرتے ہیں", "schoonmaken separates۔"),
-      reverse("میں سات بجے اٹھتا ہوں", ["ik sta om zeven uur op", "ik opsta om zeven uur", "ik bel om zeven uur op"], "ik sta om zeven uur op", "separable part goes to end۔"),
-      reverse("form بھر دیں", ["vul het formulier in", "bel het formulier op", "maak het formulier schoon"], "vul het formulier in", "invullen = form بھرنا۔"),
-      meaning("opstaan", ["اٹھنا", "فون کرنا", "صاف کرنا"], "اٹھنا", "opstaan = get up۔"),
-      meaning("invullen", ["بھرنا", "رہنا", "خریدنا"], "بھرنا", "invullen = fill in۔"),
-      meaning("opbellen", ["فون کرنا", "اٹھنا", "صاف کرنا"], "فون کرنا", "opbellen = call۔"),
-      meaning("schoonmaken", ["صاف کرنا", "فون کرنا", "رکنا"], "صاف کرنا", "schoonmaken = clean۔")
+      meaning("ik sta om zeven uur op", ["میں سات بجے اٹھتا/اٹھتی ہوں", "میں سات بجے کام کرتا ہوں", "میں سات بجے فون کرتا ہوں"], "میں سات بجے اٹھتا/اٹھتی ہوں", "opstaan الگ ہوتا ہے: sta ... op۔"),
+      meaning("vul het formulier in", ["فارم بھر دیں", "doctor کو فون کریں", "گھر صاف کریں"], "فارم بھر دیں", "invullen الگ ہوتا ہے: vul ... in۔"),
+      meaning("ik bel de dokter op", ["میں doctor کو فون کرتا/کرتی ہوں", "میں doctor کے پاس جاتا ہوں", "میں doctor سے ملاقات کا وقت رکھتا ہوں"], "میں doctor کو فون کرتا/کرتی ہوں", "opbellen الگ ہوتا ہے: bel ... op۔"),
+      meaning("wij maken het huis schoon", ["ہم گھر صاف کرتے ہیں", "ہم گھر جاتے ہیں", "ہم گھر کرائے پر لیتے ہیں"], "ہم گھر صاف کرتے ہیں", "schoonmaken الگ ہوتا ہے۔"),
+      reverse("میں سات بجے اٹھتا ہوں", ["ik sta om zeven uur op", "ik opsta om zeven uur", "ik bel om zeven uur op"], "ik sta om zeven uur op", "الگ ہونے والا حصہ آخر میں جاتا ہے۔"),
+      reverse("فارم بھر دیں", ["vul het formulier in", "bel het formulier op", "maak het formulier schoon"], "vul het formulier in", "invullen = فارم بھرنا۔"),
+      meaning("opstaan", ["اٹھنا", "فون کرنا", "صاف کرنا"], "اٹھنا", "opstaan = اٹھنا۔"),
+      meaning("invullen", ["بھرنا", "رہنا", "خریدنا"], "بھرنا", "invullen = بھرنا۔"),
+      meaning("opbellen", ["فون کرنا", "اٹھنا", "صاف کرنا"], "فون کرنا", "opbellen = فون کرنا۔"),
+      meaning("schoonmaken", ["صاف کرنا", "فون کرنا", "رکنا"], "صاف کرنا", "schoonmaken = صاف کرنا۔")
     ]
   },
   {
     id: "a2-word-order-connectors",
     unit: "A2: word order",
     title: "A2 les 4: Omdat ik ziek ben",
-    description: "Time-first order and connectors: omdat, dat, als.",
+    description: "وقت پہلے آئے تو word order، اور جوڑنے والے الفاظ: omdat، dat، als۔",
     xp: 90,
     questions: [
-      meaning("vandaag werk ik niet", ["آج میں کام نہیں کرتا", "میں آج کام کرتا ہوں", "کل میں کام کروں گا"], "آج میں کام نہیں کرتا", "Time first changes order: vandaag werk ik۔"),
-      meaning("ik ga morgen met de bus naar Amsterdam", ["میں کل بس سے Amsterdam جا رہا ہوں", "میں آج bus میں کام کرتا ہوں", "میں Amsterdam سے bus لیتا ہوں"], "میں کل بس سے Amsterdam جا رہا ہوں", "time + manner + place۔"),
-      meaning("ik kom niet, omdat ik ziek ben", ["میں نہیں آتا کیونکہ میں بیمار ہوں", "میں آتا ہوں کیونکہ میں ٹھیک ہوں", "میں بیمار نہیں ہوں"], "میں نہیں آتا کیونکہ میں بیمار ہوں", "omdat sends verb to end۔"),
-      meaning("ik denk dat hij thuis is", ["میرا خیال ہے وہ گھر پر ہے", "وہ سوچتا ہے میں گھر پر ہوں", "میں گھر جا رہا ہوں"], "میرا خیال ہے وہ گھر پر ہے", "dat clause: verb at end۔"),
-      meaning("als het regent, blijf ik thuis", ["اگر بارش ہو تو میں گھر رہتا ہوں", "میں بارش میں کام کرتا ہوں", "اگر گھر ہے تو بارش ہے"], "اگر بارش ہو تو میں گھر رہتا ہوں", "als = if۔"),
-      reverse("کیونکہ میں بیمار ہوں", ["omdat ik ziek ben", "omdat ik ben ziek", "want ik ziek ben"], "omdat ik ziek ben", "with omdat, verb at end۔"),
-      reverse("آج میں کام نہیں کرتا", ["vandaag werk ik niet", "vandaag ik werk niet", "ik vandaag niet werk"], "vandaag werk ik niet", "time first: verb second۔"),
-      meaning("omdat", ["کیونکہ", "اگر", "لیکن"], "کیونکہ", "omdat = because۔"),
-      meaning("dat", ["کہ", "اگر", "اس لیے"], "کہ", "dat = that۔"),
-      meaning("als", ["اگر", "کیونکہ", "اور"], "اگر", "als = if۔")
+      meaning("vandaag werk ik niet", ["آج میں کام نہیں کرتا", "میں آج کام کرتا ہوں", "کل میں کام کروں گا"], "آج میں کام نہیں کرتا", "وقت پہلے آئے تو ترتیب بدلتی ہے: vandaag werk ik۔"),
+      meaning("ik ga morgen met de bus naar Amsterdam", ["میں کل بس سے Amsterdam جا رہا ہوں", "میں آج bus میں کام کرتا ہوں", "میں Amsterdam سے bus لیتا ہوں"], "میں کل بس سے Amsterdam جا رہا ہوں", "وقت + طریقہ + جگہ۔"),
+      meaning("ik kom niet, omdat ik ziek ben", ["میں نہیں آتا کیونکہ میں بیمار ہوں", "میں آتا ہوں کیونکہ میں ٹھیک ہوں", "میں بیمار نہیں ہوں"], "میں نہیں آتا کیونکہ میں بیمار ہوں", "omdat فعل کو آخر میں بھیجتا ہے۔"),
+      meaning("ik denk dat hij thuis is", ["میرا خیال ہے وہ گھر پر ہے", "وہ سوچتا ہے میں گھر پر ہوں", "میں گھر جا رہا ہوں"], "میرا خیال ہے وہ گھر پر ہے", "dat والے حصے میں فعل آخر میں آتا ہے۔"),
+      meaning("als het regent, blijf ik thuis", ["اگر بارش ہو تو میں گھر رہتا ہوں", "میں بارش میں کام کرتا ہوں", "اگر گھر ہے تو بارش ہے"], "اگر بارش ہو تو میں گھر رہتا ہوں", "als = اگر۔"),
+      reverse("کیونکہ میں بیمار ہوں", ["omdat ik ziek ben", "omdat ik ben ziek", "want ik ziek ben"], "omdat ik ziek ben", "omdat کے ساتھ فعل آخر میں آتا ہے۔"),
+      reverse("آج میں کام نہیں کرتا", ["vandaag werk ik niet", "vandaag ik werk niet", "ik vandaag niet werk"], "vandaag werk ik niet", "وقت پہلے: فعل دوسرے نمبر پر۔"),
+      meaning("omdat", ["کیونکہ", "اگر", "لیکن"], "کیونکہ", "omdat = کیونکہ۔"),
+      meaning("dat", ["کہ", "اگر", "اس لیے"], "کہ", "dat = کہ۔"),
+      meaning("als", ["اگر", "کیونکہ", "اور"], "اگر", "als = اگر۔")
     ]
   },
   {
     id: "a2-gemeente-official",
     unit: "A2: gemeente",
     title: "A2 les 5: Kunt u mij helpen?",
-    description: "Official life: gemeente, forms, BSN, passport, documents.",
+    description: "سرکاری کام: gemeente، فارم، BSN، پاسپورٹ، کاغذات۔",
     xp: 90,
     questions: [
-      meaning("gemeente", ["municipality / بلدیہ", "hospital", "school"], "municipality / بلدیہ", "gemeente official life میں important ہے۔"),
-      meaning("afspraak", ["appointment", "document", "signature"], "appointment", "gemeente میں afspraak بنانی پڑ سکتی ہے۔"),
-      meaning("formulier", ["form", "passport", "counter"], "form", "formulier = form۔"),
-      meaning("paspoort", ["passport", "document", "BSN"], "passport", "paspoort = passport۔"),
-      meaning("BSN", ["Dutch citizen service number", "bank card", "rent"], "Dutch citizen service number", "BSN official number ہے۔"),
-      meaning("handtekening", ["signature", "letter", "counter"], "signature", "handtekening = signature۔"),
-      meaning("loket", ["counter/window", "document", "appointment"], "counter/window", "loket = service counter۔"),
-      meaning("kunt u mij helpen met dit formulier?", ["کیا آپ اس form میں میری مدد کر سکتے ہیں؟", "کیا آپ passport دے سکتے ہیں؟", "کیا آپ مجھے کام دے سکتے ہیں؟"], "کیا آپ اس form میں میری مدد کر سکتے ہیں؟", "A2 practical question۔"),
-      reverse("مجھے appointment بنانی ہے", ["ik wil een afspraak maken", "ik heb een formulier maken", "ik ben een afspraak"], "ik wil een afspraak maken", "afspraak maken = appointment بنانا۔"),
-      reverse("کیا آپ میری مدد کر سکتے ہیں؟", ["kunt u mij helpen?", "mag u mij helpen?", "moet ik helpen?"], "kunt u mij helpen?", "formal question۔")
+      meaning("gemeente", ["بلدیہ / gemeente دفتر", "ہسپتال", "اسکول"], "بلدیہ / gemeente دفتر", "gemeente سرکاری کاموں میں ضروری لفظ ہے۔"),
+      meaning("afspraak", ["ملاقات کا وقت", "کاغذ", "دستخط"], "ملاقات کا وقت", "gemeente میں afspraak بنانی پڑ سکتی ہے۔"),
+      meaning("formulier", ["فارم", "پاسپورٹ", "کاؤنٹر"], "فارم", "formulier = فارم۔"),
+      meaning("paspoort", ["پاسپورٹ", "کاغذ", "BSN"], "پاسپورٹ", "paspoort = پاسپورٹ۔"),
+      meaning("BSN", ["Dutch شہری نمبر", "بینک کارڈ", "کرایہ"], "Dutch شہری نمبر", "BSN سرکاری نمبر ہے۔"),
+      meaning("handtekening", ["دستخط", "حرف / خط", "کاؤنٹر"], "دستخط", "handtekening = دستخط۔"),
+      meaning("loket", ["کاؤنٹر / loket", "کاغذ", "ملاقات کا وقت"], "کاؤنٹر / loket", "loket = مدد والا کاؤنٹر۔"),
+      meaning("kunt u mij helpen met dit formulier?", ["کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟", "کیا آپ پاسپورٹ دے سکتے ہیں؟", "کیا آپ مجھے کام دے سکتے ہیں؟"], "کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟", "A2 روزمرہ کام کا سوال۔"),
+      reverse("مجھے ملاقات کا وقت بنانی ہے", ["ik wil een afspraak maken", "ik heb een formulier maken", "ik ben een afspraak"], "ik wil een afspraak maken", "afspraak maken = ملاقات کا وقت بنانا۔"),
+      reverse("کیا آپ میری مدد کر سکتے ہیں؟", ["kunt u mij helpen?", "mag u mij helpen?", "moet ik helpen?"], "kunt u mij helpen?", "ادب والا سوال۔")
     ]
   },
   {
     id: "a2-work-school",
-    unit: "A2: work and school",
+    unit: "A2: werk en school",
     title: "A2 les 6: Werk, school, afspraak",
-    description: "Work, school, schedule, teacher, colleague, short messages.",
+    description: "کام، school، وقتوں کی فہرست، استاد، کام کا ساتھی، چھوٹے پیغام۔",
     xp: 90,
     questions: [
-      meaning("werk", ["کام", "school", "doctor"], "کام", "werk = work۔"),
-      meaning("baan", ["job", "lesson", "rent"], "job", "baan = job۔"),
-      meaning("collega", ["colleague", "teacher", "child"], "colleague", "collega = work colleague۔"),
-      meaning("salaris", ["salary", "contract", "pause"], "salary", "salaris = salary۔"),
-      meaning("contract", ["contract", "report", "appointment"], "contract", "contract = contract۔"),
-      meaning("rooster", ["schedule", "salary", "lesson"], "schedule", "rooster = schedule۔"),
-      meaning("docent", ["teacher", "student", "colleague"], "teacher", "docent = teacher۔"),
-      meaning("huiswerk", ["homework", "meeting", "salary"], "homework", "huiswerk = homework۔"),
-      meaning("mijn zoon kan vandaag niet naar school komen", ["میرا بیٹا آج school نہیں آ سکتا", "میرا بیٹا آج کام کرے گا", "میرا بیٹا teacher ہے"], "میرا بیٹا آج school نہیں آ سکتا", "A2 school message۔"),
-      reverse("میرا schedule بدل گیا ہے", ["mijn rooster is veranderd", "mijn salaris is ziek", "mijn school is gewerkt"], "mijn rooster is veranderd", "work/school practical sentence۔")
+      meaning("werk", ["کام", "school", "doctor"], "کام", "werk = کام۔"),
+      meaning("baan", ["نوکری", "سبق", "کرایہ"], "نوکری", "baan = نوکری۔"),
+      meaning("collega", ["کام کا ساتھی", "استاد", "بچہ"], "کام کا ساتھی", "collega = کام کا ساتھی۔"),
+      meaning("salaris", ["تنخواہ", "معاہدہ", "وقفہ"], "تنخواہ", "salaris = تنخواہ۔"),
+      meaning("contract", ["معاہدہ", "رپورٹ", "ملاقات کا وقت"], "معاہدہ", "contract = معاہدہ۔"),
+      meaning("rooster", ["وقتوں کی فہرست / rooster", "تنخواہ", "سبق"], "وقتوں کی فہرست / rooster", "rooster = کام یا school کا وقت۔"),
+      meaning("docent", ["استاد", "طالب علم", "کام کا ساتھی"], "استاد", "docent = استاد۔"),
+      meaning("huiswerk", ["گھر کا کام", "ملاقات", "تنخواہ"], "گھر کا کام", "huiswerk = گھر کا کام۔"),
+      meaning("mijn zoon kan vandaag niet naar school komen", ["میرا بیٹا آج school نہیں آ سکتا", "میرا بیٹا آج کام کرے گا", "میرا بیٹا استاد ہے"], "میرا بیٹا آج school نہیں آ سکتا", "A2 school کا پیغام۔"),
+      reverse("میرا rooster بدل گیا ہے", ["mijn rooster is veranderd", "mijn salaris is ziek", "mijn school is gewerkt"], "mijn rooster is veranderd", "کام / school کا روزمرہ جملہ۔")
     ]
   },
   {
     id: "a2-health-housing",
-    unit: "A2: health and housing",
+    unit: "A2: gezondheid en woning",
     title: "A2 les 7: Mijn verwarming doet het niet",
-    description: "Doctor, pharmacy, insurance, repair, heating, leakage.",
+    description: "huisarts، apotheek، verzekering، reparatie، verwarming، lekkage۔",
     xp: 95,
     questions: [
-      meaning("huisarts", ["family doctor / GP", "dentist", "pharmacy"], "family doctor / GP", "huisarts is common in NL۔"),
-      meaning("apotheek", ["pharmacy", "hospital", "insurance"], "pharmacy", "apotheek = pharmacy۔"),
-      meaning("verzekering", ["insurance", "medicine", "appointment"], "insurance", "verzekering = insurance۔"),
-      meaning("koorts", ["fever", "cough", "pain"], "fever", "koorts = fever۔"),
-      meaning("hoesten", ["coughing", "fever", "repair"], "coughing", "hoesten = coughing۔"),
-      meaning("reparatie", ["repair", "rent", "heating"], "repair", "reparatie = repair۔"),
-      meaning("verwarming", ["heating", "leakage", "electricity"], "heating", "verwarming = heating۔"),
-      meaning("lekkage", ["leakage", "bill", "neighbor"], "leakage", "lekkage = leakage۔"),
-      meaning("mijn verwarming doet het niet", ["میری heating کام نہیں کر رہی", "میری heating نئی ہے", "میرے پاس heating نہیں ہے"], "میری heating کام نہیں کر رہی", "A2 problem explanation۔"),
-      reverse("کیا آپ کسی کو بھیج سکتے ہیں؟", ["kunt u iemand sturen?", "mag ik iemand sturen?", "moet iemand bellen?"], "kunt u iemand sturen?", "housing/repair question۔")
+      meaning("huisarts", ["گھر کا ڈاکٹر / huisarts", "دندان ساز", "دواخانہ"], "گھر کا ڈاکٹر / huisarts", "huisarts NL میں بہت عام لفظ ہے۔"),
+      meaning("apotheek", ["دواخانہ", "ہسپتال", "انشورنس"], "دواخانہ", "apotheek = دواخانہ۔"),
+      meaning("verzekering", ["انشورنس", "دوا", "ملاقات کا وقت"], "انشورنس", "verzekering = انشورنس۔"),
+      meaning("koorts", ["بخار", "کھانسی", "درد"], "بخار", "koorts = بخار۔"),
+      meaning("hoesten", ["کھانسی", "بخار", "مرمت"], "کھانسی", "hoesten = کھانسی۔"),
+      meaning("reparatie", ["مرمت", "کرایہ", "ہیٹنگ"], "مرمت", "reparatie = مرمت۔"),
+      meaning("verwarming", ["ہیٹنگ", "پانی کا رساؤ", "بجلی"], "ہیٹنگ", "verwarming = ہیٹنگ۔"),
+      meaning("lekkage", ["پانی کا رساؤ", "بل", "پڑوسی"], "پانی کا رساؤ", "lekkage = پانی کا رساؤ۔"),
+      meaning("mijn verwarming doet het niet", ["میری ہیٹنگ کام نہیں کر رہی", "میری ہیٹنگ نئی ہے", "میرے پاس ہیٹنگ نہیں ہے"], "میری ہیٹنگ کام نہیں کر رہی", "A2 مسئلہ بتانے والا جملہ۔"),
+      reverse("کیا آپ کسی کو بھیج سکتے ہیں؟", ["kunt u iemand sturen?", "mag ik iemand sturen?", "moet iemand bellen?"], "kunt u iemand sturen?", "گھر / مرمت کا سوال۔")
     ]
   },
   {
     id: "a2-shopping-services",
-    unit: "A2: services",
+    unit: "A2: winkel en service",
     title: "A2 les 8: Ik wil hem ruilen",
-    description: "Shopping services: klacht, garantie, ruilen, aanbieding.",
+    description: "دکان کے کام: klacht، garantie، ruilen، aanbieding۔",
     xp: 90,
     questions: [
-      meaning("klacht", ["complaint", "discount", "receipt"], "complaint", "klacht = complaint۔"),
-      meaning("garantie", ["warranty", "size", "cash"], "warranty", "garantie = warranty۔"),
-      meaning("ruilen", ["exchange", "pay", "park"], "exchange", "ruilen = exchange/return۔"),
-      meaning("aanbieding", ["offer/discount", "complaint", "size"], "offer/discount", "aanbieding = offer۔"),
-      meaning("maat", ["size", "market", "receipt"], "size", "maat = size۔"),
-      meaning("ik heb gisteren deze jas gekocht", ["میں نے کل یہ jacket خریدی", "میں آج jacket خریدتا ہوں", "میں jacket واپس کروں گا"], "میں نے کل یہ jacket خریدی", "perfect tense with gekocht۔"),
-      meaning("maar hij is kapot", ["لیکن یہ خراب ہے", "لیکن یہ سستا ہے", "لیکن یہ نیا ہے"], "لیکن یہ خراب ہے", "kapot = broken۔"),
-      meaning("ik wil hem graag ruilen", ["میں اسے exchange کرنا چاہتا ہوں", "میں اسے خریدنا چاہتا ہوں", "میں اسے پہننا چاہتا ہوں"], "میں اسے exchange کرنا چاہتا ہوں", "A2 complaint/request۔"),
-      reverse("یہ خراب ہے", ["hij is kapot", "hij is goedkoop", "hij is goed"], "hij is kapot", "kapot = broken۔"),
-      reverse("میں اسے exchange کرنا چاہتا ہوں", ["ik wil hem ruilen", "ik heb hem gekocht", "ik moet hem betalen"], "ik wil hem ruilen", "ruilen = exchange۔")
+      meaning("klacht", ["شکایت", "رعایت", "رسید"], "شکایت", "klacht = شکایت۔"),
+      meaning("garantie", ["گارنٹی", "سائز / maat", "نقد پیسے"], "گارنٹی", "garantie = گارنٹی۔"),
+      meaning("ruilen", ["بدلنا / واپس کرنا", "پیسے دینا", "park کرنا"], "بدلنا / واپس کرنا", "ruilen = بدلنا یا واپس کرنا۔"),
+      meaning("aanbieding", ["رعایت / aanbieding", "شکایت", "سائز / maat"], "رعایت / aanbieding", "aanbieding = رعایت۔"),
+      meaning("maat", ["سائز / maat", "بازار", "رسید"], "سائز / maat", "maat = سائز۔"),
+      meaning("ik heb gisteren deze jas gekocht", ["میں نے کل یہ jacket خریدی", "میں آج jacket خریدتا ہوں", "میں jacket واپس کروں گا"], "میں نے کل یہ jacket خریدی", "گزرے ہوئے کام کا زمانہ: gekocht۔"),
+      meaning("maar hij is kapot", ["لیکن یہ خراب ہے", "لیکن یہ سستا ہے", "لیکن یہ نیا ہے"], "لیکن یہ خراب ہے", "kapot = خراب۔"),
+      meaning("ik wil hem graag ruilen", ["میں اسے بدلنا چاہتا ہوں", "میں اسے خریدنا چاہتا ہوں", "میں اسے پہننا چاہتا ہوں"], "میں اسے بدلنا چاہتا ہوں", "A2 شکایت / درخواست۔"),
+      reverse("یہ خراب ہے", ["hij is kapot", "hij is goedkoop", "hij is goed"], "hij is kapot", "kapot = خراب۔"),
+      reverse("میں اسے بدلنا چاہتا ہوں", ["ik wil hem ruilen", "ik heb hem gekocht", "ik moet hem betalen"], "ik wil hem ruilen", "ruilen = بدلنا۔")
     ]
   },
   {
     id: "a2-writing-messages",
-    unit: "A2: writing",
+    unit: "A2: berichten",
     title: "A2 les 9: Korte berichten",
-    description: "Short emails, invitations, complaints, and polite endings.",
+    description: "چھوٹے پیغام، دعوت، شکایت، ادب والا اختتام۔",
     xp: 95,
     questions: [
-      meaning("beste dokter", ["محترم doctor", "خدا حافظ doctor", "میرا doctor"], "محترم doctor", "formal email opening۔"),
-      meaning("met vriendelijke groet", ["احترام کے ساتھ", "فوراً آئیں", "شکریہ نہیں"], "احترام کے ساتھ", "formal email ending۔"),
-      meaning("ik wil graag een afspraak maken", ["میں appointment بنانا چاہتا ہوں", "میں appointment cancel کرنا چاہتا ہوں", "میں appointment رکھتا ہوں"], "میں appointment بنانا چاہتا ہوں", "A2 writing/speaking phrase۔"),
-      meaning("mijn zoon kan vandaag niet komen", ["میرا بیٹا آج نہیں آ سکتا", "میرا بیٹا آج آئے گا", "میرا بیٹا آج کام کرے گا"], "میرا بیٹا آج نہیں آ سکتا", "school message۔"),
-      meaning("ik geef zaterdag een feest", ["میں Saturday party دے رہا ہوں", "میں Saturday کام کرتا ہوں", "میں Saturday بیمار ہوں"], "میں Saturday party دے رہا ہوں", "invitation phrase۔"),
-      meaning("kom je ook?", ["کیا تم بھی آؤ گے؟", "تم کہاں ہو؟", "کیا تم بیمار ہو؟"], "کیا تم بھی آؤ گے؟", "invitation question۔"),
-      reverse("احترام کے ساتھ", ["met vriendelijke groet", "beste meneer", "hoi Ahmed"], "met vriendelijke groet", "formal ending۔"),
-      reverse("میں appointment بنانا چاہتا ہوں", ["ik wil graag een afspraak maken", "ik heb een afspraak gehad", "ik ben een afspraak"], "ik wil graag een afspraak maken", "graag makes it polite۔"),
-      reverse("کیا تم بھی آؤ گے؟", ["kom je ook?", "waar woon je?", "heb je ook?"], "kom je ook?", "invitation question۔"),
-      meaning("hoi Ahmed", ["Hi Ahmed", "محترم Ahmed", "خدا حافظ Ahmed"], "Hi Ahmed", "informal message opening۔")
+      meaning("beste dokter", ["محترم doctor", "خدا حافظ doctor", "میرا doctor"], "محترم doctor", "رسمی پیغام کا آغاز۔"),
+      meaning("met vriendelijke groet", ["احترام کے ساتھ", "فوراً آئیں", "شکریہ نہیں"], "احترام کے ساتھ", "رسمی پیغام کا اختتام۔"),
+      meaning("ik wil graag een afspraak maken", ["میں ملاقات کا وقت بنانا چاہتا ہوں", "میں ملاقات کا وقت cancel کرنا چاہتا ہوں", "میں ملاقات کا وقت رکھتا ہوں"], "میں ملاقات کا وقت بنانا چاہتا ہوں", "A2 لکھنے / بولنے کا فقرہ۔"),
+      meaning("mijn zoon kan vandaag niet komen", ["میرا بیٹا آج نہیں آ سکتا", "میرا بیٹا آج آئے گا", "میرا بیٹا آج کام کرے گا"], "میرا بیٹا آج نہیں آ سکتا", "school کا پیغام۔"),
+      meaning("ik geef zaterdag een feest", ["میں ہفتے کو دعوت دے رہا ہوں", "میں ہفتے کو کام کرتا ہوں", "میں ہفتے کو بیمار ہوں"], "میں ہفتے کو دعوت دے رہا ہوں", "دعوت والا فقرہ۔"),
+      meaning("kom je ook?", ["کیا تم بھی آؤ گے؟", "تم کہاں ہو؟", "کیا تم بیمار ہو؟"], "کیا تم بھی آؤ گے؟", "دعوت والا سوال۔"),
+      reverse("احترام کے ساتھ", ["met vriendelijke groet", "beste meneer", "hoi Ahmed"], "met vriendelijke groet", "رسمی اختتام۔"),
+      reverse("میں ملاقات کا وقت بنانا چاہتا ہوں", ["ik wil graag een afspraak maken", "ik heb een afspraak gehad", "ik ben een afspraak"], "ik wil graag een afspraak maken", "graag جملے کو ادب والا بناتا ہے۔"),
+      reverse("کیا تم بھی آؤ گے؟", ["kom je ook?", "waar woon je?", "heb je ook?"], "kom je ook?", "دعوت والا سوال۔"),
+      meaning("hoi Ahmed", ["سلام Ahmed", "محترم Ahmed", "خدا حافظ Ahmed"], "سلام Ahmed", "بے تکلف پیغام کا آغاز۔")
     ]
   },
   {
     id: "a2-strong-combined",
     unit: "A2: combined practice",
     title: "A2 les 10: Omdat ik pijn had",
-    description: "A stronger A2-style health story with past tense, omdat, dat, and modal verbs.",
+    description: "A2 انداز کی صحت والی مضبوط کہانی: گزرا ہوا زمانہ، omdat، dat، اور modal فعل۔",
     xp: 100,
     questions: [
-      meaning("ik ben gisteren naar de huisarts gegaan", ["میں کل huisarts کے پاس گیا/گئی", "میں کل huisarts ہوں", "میں کل huisarts کو فون کروں گا"], "میں کل huisarts کے پاس گیا/گئی", "perfect tense with zijn + gegaan۔"),
-      meaning("omdat ik pijn had in mijn rug", ["کیونکہ میری کمر میں درد تھا", "کیونکہ میں doctor تھا", "کیونکہ میرے پاس وقت ہے"], "کیونکہ میری کمر میں درد تھا", "omdat + verb at end۔"),
-      meaning("de dokter heeft gezegd", ["doctor نے کہا ہے", "doctor کہے گا", "doctor بیمار ہے"], "doctor نے کہا ہے", "heeft gezegd = has said۔"),
-      meaning("dat ik rust moet nemen", ["کہ مجھے آرام کرنا چاہیے", "کہ مجھے کام کرنا چاہیے", "کہ مجھے جانا ہے"], "کہ مجھے آرام کرنا چاہیے", "dat clause + modal verb۔"),
+      meaning("ik ben gisteren naar de huisarts gegaan", ["میں کل huisarts کے پاس گیا/گئی", "میں کل huisarts ہوں", "میں کل huisarts کو فون کروں گا"], "میں کل huisarts کے پاس گیا/گئی", "گزرے ہوئے کام کا زمانہ: zijn + gegaan۔"),
+      meaning("omdat ik pijn had in mijn rug", ["کیونکہ میری کمر میں درد تھا", "کیونکہ میں doctor تھا", "کیونکہ میرے پاس وقت ہے"], "کیونکہ میری کمر میں درد تھا", "omdat + فعل آخر میں۔"),
+      meaning("de dokter heeft gezegd", ["doctor نے کہا ہے", "doctor کہے گا", "doctor بیمار ہے"], "doctor نے کہا ہے", "heeft gezegd = کہا ہے۔"),
+      meaning("dat ik rust moet nemen", ["کہ مجھے آرام کرنا چاہیے", "کہ مجھے کام کرنا چاہیے", "کہ مجھے جانا ہے"], "کہ مجھے آرام کرنا چاہیے", "dat والے حصے میں modal فعل۔"),
       meaning("ik moet volgende week terugkomen", ["مجھے اگلے ہفتے واپس آنا ہے", "میں اگلے ہفتے کام کروں گا", "میں آج واپس آیا"], "مجھے اگلے ہفتے واپس آنا ہے", "moet + infinitive۔"),
-      meaning("als de pijn niet weg is", ["اگر درد ختم نہیں ہوا", "اگر درد اچھا ہے", "اگر doctor نہیں ہے"], "اگر درد ختم نہیں ہوا", "als = if۔"),
-      reverse("doctor نے کہا ہے", ["de dokter heeft gezegd", "de dokter gaat zeggen", "de dokter is gezegd"], "de dokter heeft gezegd", "perfect tense۔"),
-      reverse("مجھے آرام کرنا چاہیے", ["ik moet rust nemen", "ik mag rust nemen", "ik heb rust genomen"], "ik moet rust nemen", "moeten = must/should۔"),
-      reverse("اگر درد ختم نہیں ہوا", ["als de pijn niet weg is", "omdat de pijn weg is", "dat de pijn niet"], "als de pijn niet weg is", "A2 subordinate clause۔"),
-      meaning("terugkomen", ["واپس آنا", "فون کرنا", "form بھرنا"], "واپس آنا", "terugkomen = come back۔")
+      meaning("als de pijn niet weg is", ["اگر درد ختم نہیں ہوا", "اگر درد اچھا ہے", "اگر doctor نہیں ہے"], "اگر درد ختم نہیں ہوا", "als = اگر۔"),
+      reverse("doctor نے کہا ہے", ["de dokter heeft gezegd", "de dokter gaat zeggen", "de dokter is gezegd"], "de dokter heeft gezegd", "گزرے ہوئے کام کا زمانہ۔"),
+      reverse("مجھے آرام کرنا چاہیے", ["ik moet rust nemen", "ik mag rust nemen", "ik heb rust genomen"], "ik moet rust nemen", "moeten = ضروری / چاہیے۔"),
+      reverse("اگر درد ختم نہیں ہوا", ["als de pijn niet weg is", "omdat de pijn weg is", "dat de pijn niet"], "als de pijn niet weg is", "A2 دوسرے جملے کا حصہ۔"),
+      meaning("terugkomen", ["واپس آنا", "فون کرنا", "فارم بھرنا"], "واپس آنا", "terugkomen = واپس آنا۔")
     ]
   }
 ];
@@ -834,74 +834,74 @@ a1Lessons.find((lesson) => lesson.id === "a1-shopping-transport").questions.push
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-health-appointments").questions.push(
-  build("میں appointment بنانا چاہتا/چاہتی ہوں", ["ik", "wil", "een", "afspraak", "maken"], "ik wil een afspraak maken", "modal verb `wil` کے بعد اصل verb آخر میں آتا ہے: maken۔")
+  build("میں ملاقات کا وقت بنانا چاہتا/چاہتی ہوں", ["ik", "wil", "een", "afspraak", "maken"], "ik wil een afspraak maken", "modal فعل `wil` کے بعد اصل فعل آخر میں آتا ہے: maken۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-perfect-tense").questions.push(
-  build("میں نے کام کیا ہے", ["ik", "heb", "gewerkt"], "ik heb gewerkt", "perfect tense میں vaak: subject + heb/heeft + voltooid deelwoord۔")
+  build("میں نے کام کیا ہے", ["ik", "heb", "gewerkt"], "ik heb gewerkt", "گزرے ہوئے کام کے زمانے میں اکثر: شخص + heb/heeft + فعل کی تیسری شکل۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-future-modal-verbs").questions.push(
-  build("کل میں کام کرنے جا رہا/رہی ہوں", ["morgen", "ga", "ik", "werken"], "morgen ga ik werken", "time word پہلے آئے تو verb second position میں رہتا ہے: morgen + ga + ik۔")
+  build("کل میں کام کرنے جا رہا/رہی ہوں", ["morgen", "ga", "ik", "werken"], "morgen ga ik werken", "وقت والا لفظ پہلے آئے تو فعل دوسرے نمبر پر رہتا ہے: morgen + ga + ik۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-separable-verbs-routine").questions.push(
-  build("میں صبح اٹھتا/اٹھتی ہوں", ["ik", "sta", "op", "in", "de", "ochtend"], "ik sta op in de ochtend", "separable verb `opstaan`: sentence میں `sta ... op` بن سکتا ہے۔")
+  build("میں صبح اٹھتا/اٹھتی ہوں", ["ik", "sta", "op", "in", "de", "ochtend"], "ik sta op in de ochtend", "الگ ہونے والا فعل `opstaan`: جملے میں `sta ... op` بن سکتا ہے۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-word-order-connectors").questions.push(
-  build("میں نہیں آتا/آتی کیونکہ میں بیمار ہوں", ["ik", "kom", "niet", "omdat", "ik", "ziek", "ben"], "ik kom niet omdat ik ziek ben", "`omdat` کے بعد verb آخر میں جاتا ہے: ik ziek ben۔")
+  build("میں نہیں آتا/آتی کیونکہ میں بیمار ہوں", ["ik", "kom", "niet", "omdat", "ik", "ziek", "ben"], "ik kom niet omdat ik ziek ben", "`omdat` کے بعد فعل آخر میں جاتا ہے: ik ziek ben۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-gemeente-official").questions.push(
-  build("میں gemeente میں appointment چاہتا/چاہتی ہوں", ["ik", "wil", "een", "afspraak", "bij", "de", "gemeente"], "ik wil een afspraak bij de gemeente", "request sentence: ik wil + thing + place۔")
+  build("میں gemeente میں ملاقات کا وقت چاہتا/چاہتی ہوں", ["ik", "wil", "een", "afspraak", "bij", "de", "gemeente"], "ik wil een afspraak bij de gemeente", "درخواست والا جملہ: ik wil + چیز + جگہ۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-work-school").questions.push(
-  build("میرا بیٹا آج نہیں آ سکتا", ["mijn", "zoon", "kan", "vandaag", "niet", "komen"], "mijn zoon kan vandaag niet komen", "modal verb `kan` کے ساتھ main verb `komen` آخر میں آتا ہے۔")
+  build("میرا بیٹا آج نہیں آ سکتا", ["mijn", "zoon", "kan", "vandaag", "niet", "komen"], "mijn zoon kan vandaag niet komen", "modal فعل `kan` کے ساتھ اصل فعل `komen` آخر میں آتا ہے۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-health-housing").questions.push(
-  build("میری heating کام نہیں کر رہی", ["mijn", "verwarming", "doet", "het", "niet"], "mijn verwarming doet het niet", "problem phrase: doet het niet = کام نہیں کر رہا۔")
+  build("میری ہیٹنگ کام نہیں کر رہی", ["mijn", "verwarming", "doet", "het", "niet"], "mijn verwarming doet het niet", "مسئلہ بتانے والا فقرہ: doet het niet = کام نہیں کر رہا۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-shopping-services").questions.push(
-  build("میں اسے exchange کرنا چاہتا/چاہتی ہوں", ["ik", "wil", "hem", "ruilen"], "ik wil hem ruilen", "`wil` کے بعد action verb آتا ہے: ruilen۔")
+  build("میں اسے بدلنا چاہتا/چاہتی ہوں", ["ik", "wil", "hem", "ruilen"], "ik wil hem ruilen", "`wil` کے بعد کام والا فعل آتا ہے: ruilen۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-writing-messages").questions.push(
-  build("احترام کے ساتھ", ["met", "vriendelijke", "groet"], "met vriendelijke groet", "formal message کا ending fixed phrase ہے۔")
+  build("احترام کے ساتھ", ["met", "vriendelijke", "groet"], "met vriendelijke groet", "رسمی پیغام کا اختتام طے شدہ فقرہ ہے۔")
 );
 
 a2Lessons.find((lesson) => lesson.id === "a2-strong-combined").questions.push(
-  build("مجھے آرام کرنا چاہیے", ["ik", "moet", "rust", "nemen"], "ik moet rust nemen", "`moet` کے بعد action phrase آتا ہے: rust nemen۔")
+  build("مجھے آرام کرنا چاہیے", ["ik", "moet", "rust", "nemen"], "ik moet rust nemen", "`moet` کے بعد کام والا فقرہ آتا ہے: rust nemen۔")
 );
 
 const a0Subchapters = [
   {
     id: "a0-letters-sounds",
-    title: "Letters and Sounds",
+    title: "حروف اور آوازیں",
     goal: "Dutch letters پہچاننا، آواز سننا، اور آسان words پڑھنا۔",
     practice: "letters سنیں، پہچانیں، اور example word سے match کریں۔",
     lessonIds: ["a0-letters-1", "a0-letters-2", "a0-letters-3"]
   },
   {
     id: "a0-first-words",
-    title: "First Words",
+    title: "پہلے الفاظ",
     goal: "سب سے بنیادی words: میں، تم، آپ، ہاں، نہیں، اچھا۔",
     practice: "چھوٹے words کو بار بار recognise کریں۔",
     lessonIds: ["a0-ik-jij-u", "a0-ja-nee-goed-niet"]
   },
   {
     id: "a0-people-things",
-    title: "People and Things",
+    title: "لوگ اور چیزیں",
     goal: "person اور چیز کے naamwoorden سمجھنا۔",
     practice: "man, vrouw, kind, boek, pen, huis جیسے words sentence میں دیکھیں۔",
     lessonIds: ["a0-people-nouns", "a0-things-nouns"]
   },
   {
     id: "a0-tiny-grammar",
-    title: "Tiny Grammar",
+    title: "چھوٹی Grammar",
     goal: "een, de, het اور ben/bent/is کو بہت آہستہ سمجھنا۔",
     practice: "دو یا تین words ملا کر mini sentences بنائیں۔",
     lessonIds: ["a0-een-de-het", "a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij"]
@@ -915,7 +915,7 @@ const a0Subchapters = [
   },
   {
     id: "a0-my-first-sentences",
-    title: "My First Sentences",
+    title: "میرے پہلے جملے",
     goal: "اپنے بارے میں سب سے پہلی Dutch باتیں کہنا۔",
     practice: "ik ben, ik heb, ik woon, ik begrijp het niet جیسے sentences۔",
     lessonIds: ["a0-hebben-1", "a0-geen", "a0-possessive", "a0-name-land-city", "a0-checkpoint"]
@@ -932,7 +932,7 @@ const a1Subchapters = [
   },
   {
     id: "a1-family-people",
-    title: "Family and People",
+    title: "خاندان اور لوگ",
     goal: "family, people اور basic description کے words استعمال کرنا۔",
     practice: "dit is mijn..., ik heb..., hij/zij is... جیسے sentences۔",
     lessonIds: ["a1-people-family-articles", "a1-hebben-family"]
@@ -946,7 +946,7 @@ const a1Subchapters = [
   },
   {
     id: "a1-questions-help",
-    title: "Questions and Help",
+    title: "سوال اور مدد",
     goal: "simple questions پوچھنا اور help/repetition مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور yes/no questions۔",
     lessonIds: ["a1-questions"]
@@ -960,7 +960,7 @@ const a1Subchapters = [
   },
   {
     id: "a1-food-shopping",
-    title: "Food and Shopping",
+    title: "کھانا اور خریداری",
     goal: "basic food, prices, buying and asking how much۔",
     practice: "ik wil..., hoeveel kost...? جیسے daily phrases۔",
     lessonIds: ["a1-shopping-transport"]
@@ -975,7 +975,7 @@ const a1Subchapters = [
   {
     id: "a1-body-health",
     title: "Body and Health",
-    goal: "body/health words، pain، sick، doctor appointment۔",
+    goal: "جسم/صحت کے الفاظ، درد، بیماری، doctor سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
     lessonIds: ["a1-health-appointments"]
   }
@@ -986,55 +986,55 @@ const a2Subchapters = [
     id: "a2-past-plans",
     title: "Past and Plans",
     goal: "کیا ہوا، کیا ہونے والا ہے، and simple planning۔",
-    practice: "perfect tense، gaan future، modal verbs۔",
+    practice: "گزرے ہوئے کام کا زمانہ، gaan سے آنے والا کام، modal فعل۔",
     lessonIds: ["a2-perfect-tense", "a2-future-modal-verbs"]
   },
   {
     id: "a2-routine-word-order",
-    title: "Routine and Word Order",
-    goal: "daily actions، separable verbs، because/if clauses۔",
+    title: "معمول اور لفظوں کی ترتیب",
+    goal: "روزمرہ کام، الگ ہونے والے فعل، omdat/als والے جملے۔",
     practice: "opstaan, invullen, omdat, dat, als۔",
     lessonIds: ["a2-separable-verbs-routine", "a2-word-order-connectors"]
   },
   {
     id: "a2-gemeente-forms",
-    title: "Gemeente and Forms",
-    goal: "gemeente, BSN, afspraak, formulier, documents سمجھنا۔",
-    practice: "information ask کرنا، form language، official appointment۔",
+    title: "Gemeente اور فارم",
+    goal: "gemeente، BSN، afspraak، formulier، کاغذات سمجھنا۔",
+    practice: "معلومات پوچھنا، فارم کی زبان، سرکاری ملاقات کا وقت۔",
     lessonIds: ["a2-gemeente-official"]
   },
   {
     id: "a2-work-school",
-    title: "Work and School",
-    goal: "work/school messages، absence، colleague/docent، schedule۔",
+    title: "کام اور School",
+    goal: "کام/school کے پیغام، غیر حاضری، collega/docent، وقتوں کی فہرست۔",
     practice: "mijn zoon kan vandaag niet komen جیسے messages۔",
     lessonIds: ["a2-work-school"]
   },
   {
     id: "a2-health-doctor",
-    title: "Health and Doctor",
-    goal: "complaint explain کرنا، doctor advice سمجھنا۔",
+    title: "صحت اور Doctor",
+    goal: "شکایت سمجھانا، doctor کا مشورہ سمجھنا۔",
     practice: "ik heb pijn..., de dokter heeft gezegd...۔",
     lessonIds: ["a2-health-housing", "a2-strong-combined"]
   },
   {
     id: "a2-housing-problems",
     title: "Housing Problems",
-    goal: "rent, heating, leakage, repair, landlord problems۔",
+    goal: "کرایہ، ہیٹنگ، پانی کا رساؤ، مرمت، مالک مکان کے مسئلے۔",
     practice: "mijn verwarming doet het niet، kunt u iemand sturen؟",
     lessonIds: ["a2-health-housing"]
   },
   {
     id: "a2-shopping-complaints",
-    title: "Shopping and Complaints",
+    title: "خریداری اور شکایت",
     goal: "ruilen، garantie، kapot، klacht، aanbieding۔",
     practice: "ik wil hem ruilen، hij is kapot۔",
     lessonIds: ["a2-shopping-services"]
   },
   {
     id: "a2-messages-emails",
-    title: "Short Messages and Emails",
-    goal: "formal/informal messages، invitation، complaint، polite ending۔",
+    title: "چھوٹے پیغام اور Email",
+    goal: "ادب والے/بے تکلف پیغام، دعوت، شکایت، ادب والا اختتام۔",
     practice: "beste..., met vriendelijke groet, kom je ook؟",
     lessonIds: ["a2-writing-messages"]
   }
@@ -1044,21 +1044,21 @@ window.NEDERURDU_CHAPTERS = [
   {
     id: "a0",
     title: "Chapter A0",
-    subtitle: "Letters, words, tiny grammar, and first sentences",
+    subtitle: "حروف، الفاظ، چھوٹی grammar، اور پہلے Dutch جملے",
     lessons: a0Lessons,
     subchapters: a0Subchapters
   },
   {
     id: "a1",
     title: "Chapter A1",
-    subtitle: "Simple communication in daily situations",
+    subtitle: "روزمرہ حالات میں آسان بات چیت",
     lessons: a1Lessons,
     subchapters: a1Subchapters
   },
   {
     id: "a2",
     title: "Chapter A2",
-    subtitle: "Practical daily Dutch and inburgering situations",
+    subtitle: "روزمرہ Dutch اور inburgering کے عملی حالات",
     lessons: a2Lessons,
     subchapters: a2Subchapters
   }
