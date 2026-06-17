@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Supermarket</title>
+  <desc id="desc">A simple learning visual for supermarket.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#58cc02" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="86" y="86" width="188" height="98" rx="18" fill="#fff" stroke="#58cc02" stroke-width="8"/><path d="M118 184l-18 28M242 184l18 28" stroke="#24313a" stroke-width="10" stroke-linecap="round"/><circle cx="133" cy="212" r="12" fill="#24313a"/><circle cx="226" cy="212" r="12" fill="#24313a"/><path d="M115 116h130M125 146h110" stroke="#c8e3ef" stroke-width="10" stroke-linecap="round"/>
+</svg>

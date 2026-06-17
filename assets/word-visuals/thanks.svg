@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Thanks</title>
+  <desc id="desc">A simple learning visual for thanks.</desc>
+  <rect width="360" height="240" fill="#f4fbff"/>
+  <circle cx="306" cy="44" r="54" fill="#ff7b63" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <path d="M180 190s-78-44-78-98c0-28 22-47 48-47 15 0 25 7 30 18 5-11 15-18 30-18 26 0 48 19 48 47 0 54-78 98-78 98z" fill="#ff7b63"/><path d="M118 202h124" stroke="#24313a" stroke-width="10" stroke-linecap="round" opacity=".45"/>
+</svg>

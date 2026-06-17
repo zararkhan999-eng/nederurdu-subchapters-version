@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Because connector</title>
+  <desc id="desc">A simple learning visual for because connector.</desc>
+  <rect width="360" height="240" fill="#f4fbff"/>
+  <circle cx="306" cy="44" r="54" fill="#8b5cf6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="78" y="92" width="86" height="68" rx="16" fill="#fff" stroke="#8b5cf6" stroke-width="8"/><rect x="196" y="92" width="86" height="68" rx="16" fill="#fff" stroke="#8b5cf6" stroke-width="8"/><path d="M164 126h32" stroke="#24313a" stroke-width="12" stroke-linecap="round"/><circle cx="180" cy="126" r="12" fill="#8b5cf6"/>
+</svg>

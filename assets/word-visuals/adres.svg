@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Address</title>
+  <desc id="desc">A simple learning visual for address.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <path d="M180 43c43 0 78 35 78 78 0 58-78 116-78 116s-78-58-78-116c0-43 35-78 78-78z" fill="#1cb0f6"/><circle cx="180" cy="121" r="28" fill="#fff"/><path d="M78 196h204" stroke="#d9e8ee" stroke-width="14" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "name": "NederUrdu",
+  "short_name": "NederUrdu",
+  "description": "Dutch learning for Urdu-speaking beginners.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f8f4",
+  "theme_color": "#58cc02",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

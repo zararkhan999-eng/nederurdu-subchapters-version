@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Transport and routine</title>
+  <desc id="desc">Dutch street with bike, bus stop, and train platform.</desc>
+  <rect width="960" height="540" fill="#e8f8ff"/>
+  <path d="M0 351h960v189H0z" fill="#eff4f0"/>
+  <path d="M0 420h960v82H0z" fill="#4c5b63"/>
+  <path d="M80 459h132M302 459h132M524 459h132M746 459h132" stroke="#fff9cf" stroke-width="12" stroke-linecap="round"/>
+  <rect x="562" y="144" width="258" height="134" rx="20" fill="#ffffff" stroke="#c8e3ef" stroke-width="8"/>
+  <rect x="585" y="171" width="74" height="52" rx="8" fill="#1cb0f6"/>
+  <rect x="676" y="171" width="74" height="52" rx="8" fill="#1cb0f6"/>
+  <circle cx="620" cy="280" r="20" fill="#24313a"/>
+  <circle cx="764" cy="280" r="20" fill="#24313a"/>
+  <rect x="132" y="130" width="160" height="176" rx="18" fill="#58cc02"/>
+  <rect x="158" y="160" width="108" height="70" rx="10" fill="#dff4ff"/>
+  <circle cx="174" cy="306" r="19" fill="#24313a"/>
+  <circle cx="250" cy="306" r="19" fill="#24313a"/>
+  <path d="M377 321h98l49 73H401z" fill="#ffdf63"/>
+  <circle cx="378" cy="400" r="48" fill="none" stroke="#24313a" stroke-width="13"/>
+  <circle cx="563" cy="400" r="48" fill="none" stroke="#24313a" stroke-width="13"/>
+  <path d="M378 400l66-96 119 96M444 304l23 96M442 304h74" fill="none" stroke="#24313a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M442 304l-22-34h-37" stroke="#24313a" stroke-width="12" stroke-linecap="round"/>
+  <path d="M742 371c31-25 68-24 100 0" stroke="#58cc02" stroke-width="16" stroke-linecap="round"/>
+  <path d="M836 343l34 28-34 28" fill="none" stroke="#58cc02" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

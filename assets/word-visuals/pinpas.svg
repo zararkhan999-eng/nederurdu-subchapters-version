@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Bank card</title>
+  <desc id="desc">A simple learning visual for bank card.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="78" y="82" width="204" height="118" rx="18" fill="#1cb0f6"/><rect x="102" y="115" width="52" height="35" rx="8" fill="#ffc800"/><path d="M104 174h66M190 174h48" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+</svg>

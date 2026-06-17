@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Body and health</title>
+  <desc id="desc">A calm health lesson visual with body parts and appointment items.</desc>
+  <rect width="960" height="540" fill="#f0fbff"/>
+  <rect x="86" y="74" width="342" height="382" rx="24" fill="#ffffff" stroke="#c8e3ef" stroke-width="8"/>
+  <circle cx="257" cy="162" r="48" fill="#d08a5b"/>
+  <rect x="232" y="210" width="50" height="92" rx="25" fill="#d08a5b"/>
+  <path d="M179 305c14-71 39-105 78-105s65 34 79 105v82H179z" fill="#1cb0f6"/>
+  <path d="M188 309l-45 69M326 309l45 69" stroke="#d08a5b" stroke-width="24" stroke-linecap="round"/>
+  <path d="M224 386l-29 78M290 386l29 78" stroke="#24313a" stroke-width="25" stroke-linecap="round"/>
+  <g stroke="#58cc02" stroke-width="8" stroke-linecap="round">
+    <path d="M318 154h58"/>
+    <path d="M335 248h62"/>
+    <path d="M139 380H92"/>
+    <path d="M321 458h58"/>
+  </g>
+  <g transform="translate(524 110)">
+    <circle cx="82" cy="76" r="47" fill="#c98254"/>
+    <path d="M43 64c20-43 78-45 104-7-19 14-70 22-104 7z" fill="#24313a"/>
+    <path d="M0 292c10-95 43-151 129-151s119 56 129 151z" fill="#58cc02"/>
+    <rect x="158" y="83" width="120" height="154" rx="18" fill="#ffffff" stroke="#c8e3ef" stroke-width="8"/>
+    <path d="M183 125h70M183 163h70M183 201h42" stroke="#c8e3ef" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <rect x="584" y="385" width="166" height="50" rx="25" fill="#ffc800"/>
+  <circle cx="794" cy="410" r="28" fill="#ff5c5c"/>
+  <rect x="784" y="390" width="20" height="40" rx="4" fill="#ffffff"/>
+  <rect x="774" y="400" width="40" height="20" rx="4" fill="#ffffff"/>
+</svg>

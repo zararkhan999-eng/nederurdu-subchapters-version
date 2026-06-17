@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Drink</title>
+  <desc id="desc">A simple learning visual for drink.</desc>
+  <rect width="360" height="240" fill="#f4fbff"/>
+  <circle cx="306" cy="44" r="54" fill="#8b5cf6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <path d="M122 82h108v84c0 31-24 52-54 52s-54-21-54-52z" fill="#fff" stroke="#8b5cf6" stroke-width="8"/><path d="M230 107h22c30 0 30 44 0 44h-22" fill="none" stroke="#8b5cf6" stroke-width="10"/><path d="M142 116h68" stroke="#9ed7ee" stroke-width="12" stroke-linecap="round"/>
+</svg>

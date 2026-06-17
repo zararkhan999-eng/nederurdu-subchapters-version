@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Name badge</title>
+  <desc id="desc">A simple learning visual for name badge.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#8b5cf6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="90" y="76" width="180" height="108" rx="18" fill="#fff" stroke="#8b5cf6" stroke-width="8"/><circle cx="134" cy="130" r="25" fill="#8b5cf6"/><path d="M184 112h56M184 143h72" stroke="#c8e3ef" stroke-width="10" stroke-linecap="round"/>
+</svg>

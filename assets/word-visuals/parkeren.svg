@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Parking</title>
+  <desc id="desc">A simple learning visual for parking.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="104" y="60" width="152" height="152" rx="24" fill="#1cb0f6"/><path d="M150 180V94h42c30 0 48 16 48 42s-18 42-48 42h-42" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

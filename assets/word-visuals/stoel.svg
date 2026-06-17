@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Chair</title>
+  <desc id="desc">A simple learning visual for chair.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="124" y="74" width="112" height="80" rx="18" fill="#1cb0f6"/><rect x="106" y="143" width="148" height="30" rx="15" fill="#64ceff"/><path d="M128 171v42M232 171v42" stroke="#24313a" stroke-width="12" stroke-linecap="round"/>
+</svg>

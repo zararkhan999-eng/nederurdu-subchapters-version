@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Pronoun u</title>
+  <desc id="desc">A simple learning visual for pronoun u.</desc>
+  <rect width="360" height="240" fill="#f4fbff"/>
+  <circle cx="306" cy="44" r="54" fill="#8b5cf6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <g transform="translate(180 137) scale(1)"><circle cx="0" cy="-35" r="24" fill="#c98254"/><path d="M-28 -40c10-30 48-31 61-5-20 10-42 10-61 5z" fill="#24313a"/><path d="M-48 58c5-62 22-93 48-93s43 31 48 93z" fill="#8b5cf6"/></g><path d="M105 58c38-38 112-38 150 0" stroke="#8b5cf6" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M236 37l28 28-38 14" fill="none" stroke="#8b5cf6" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

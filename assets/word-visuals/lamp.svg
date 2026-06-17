@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Lamp</title>
+  <desc id="desc">A simple learning visual for lamp.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#ffc800" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="170" y="100" width="20" height="84" rx="10" fill="#24313a"/><ellipse cx="180" cy="91" rx="64" ry="24" fill="#fff1af"/><path d="M124 91c15-70 96-70 112 0z" fill="#ffc800"/><ellipse cx="180" cy="190" rx="55" ry="12" fill="#d9e8ee"/>
+</svg>

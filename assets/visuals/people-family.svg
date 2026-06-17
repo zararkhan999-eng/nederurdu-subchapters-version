@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">People and family</title>
+  <desc id="desc">Friendly family and people learning scene.</desc>
+  <rect width="960" height="540" fill="#fff8e8"/>
+  <circle cx="764" cy="130" r="82" fill="#ffdf63"/>
+  <path d="M0 388c152-51 270-12 402-28 151-18 276-67 558-5v185H0z" fill="#dff4ff"/>
+  <g transform="translate(145 154)">
+    <circle cx="92" cy="74" r="50" fill="#8b5cf6"/>
+    <circle cx="92" cy="91" r="42" fill="#c98254"/>
+    <path d="M41 248c8-79 35-121 91-121s84 42 92 121z" fill="#1cb0f6"/>
+    <path d="M63 67c35-45 87-42 116 0-24 14-84 15-116 0z" fill="#25313a"/>
+  </g>
+  <g transform="translate(386 126)">
+    <circle cx="96" cy="96" r="50" fill="#f0b27c"/>
+    <path d="M48 66c21-54 91-65 125-18 19 27 9 67-10 88-18-28-46-37-89-40-14-1-22-10-26-30z" fill="#24313a"/>
+    <path d="M33 292c12-96 42-148 118-148s106 52 118 148z" fill="#58cc02"/>
+  </g>
+  <g transform="translate(650 200)">
+    <circle cx="78" cy="64" r="42" fill="#d08a5b"/>
+    <path d="M29 231c6-71 34-113 99-113s93 42 99 113z" fill="#ffc800"/>
+    <path d="M43 54c23-46 81-47 109-8-24 18-74 24-109 8z" fill="#3a2b25"/>
+  </g>
+  <rect x="334" y="389" width="292" height="40" rx="20" fill="#ffffff" opacity=".82"/>
+  <circle cx="480" cy="437" r="24" fill="#58cc02"/>
+</svg>

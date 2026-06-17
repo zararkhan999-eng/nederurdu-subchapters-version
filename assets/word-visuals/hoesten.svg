@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Cough</title>
+  <desc id="desc">A simple learning visual for cough.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <g transform="translate(139 137) scale(1)">
+    <circle cx="0" cy="-38" r="25" fill="#c98254"/>
+    <path d="M-28 -44c8-31 48-34 62-6-17 10-43 12-62 6z" fill="#24313a"/>
+    <path d="M-50 54c5-62 22-91 50-91s45 29 50 91z" fill="#1cb0f6"/>
+  </g><circle cx="232" cy="104" r="10" fill="#c8e3ef"/><circle cx="264" cy="92" r="8" fill="#c8e3ef"/><path d="M177 105c21 0 32 7 42 20" stroke="#1cb0f6" stroke-width="9" stroke-linecap="round"/>
+</svg>

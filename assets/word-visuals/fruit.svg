@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Fruit</title>
+  <desc id="desc">A simple learning visual for fruit.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#ff5c5c" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <circle cx="177" cy="117" r="50" fill="#ff5c5c"/><path d="M181 65c15-24 39-22 54-4-23 1-39 10-54 4z" fill="#58cc02"/><path d="M174 68c3-18 13-28 30-36" stroke="#24313a" stroke-width="8" stroke-linecap="round"/><circle cx="236" cy="166" r="28" fill="#ffc800"/>
+</svg>

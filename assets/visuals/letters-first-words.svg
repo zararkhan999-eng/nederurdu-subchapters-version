@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Dutch letters and first words</title>
+  <desc id="desc">Alphabet cards with simple beginner vocabulary objects.</desc>
+  <rect width="960" height="540" fill="#e9f7ff"/>
+  <path d="M0 376c125-34 210 13 331 0 149-16 219-83 365-58 103 17 167 62 264 36v186H0z" fill="#fff7db"/>
+  <rect x="83" y="80" width="164" height="208" rx="20" fill="#fff" stroke="#c9e3ef" stroke-width="8"/>
+  <rect x="276" y="58" width="164" height="230" rx="20" fill="#fff" stroke="#c9e3ef" stroke-width="8"/>
+  <rect x="469" y="80" width="164" height="208" rx="20" fill="#fff" stroke="#c9e3ef" stroke-width="8"/>
+  <text x="165" y="215" text-anchor="middle" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="126" font-weight="900" fill="#1cb0f6">a</text>
+  <text x="358" y="205" text-anchor="middle" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="126" font-weight="900" fill="#58cc02">b</text>
+  <text x="551" y="215" text-anchor="middle" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="126" font-weight="900" fill="#ffc800">c</text>
+  <circle cx="754" cy="174" r="58" fill="#ff5c5c"/>
+  <path d="M758 106c18-28 47-25 65-3-27 2-47 12-65 3z" fill="#58cc02"/>
+  <rect x="693" y="272" width="134" height="96" rx="13" fill="#1cb0f6"/>
+  <rect x="711" y="250" width="134" height="96" rx="13" fill="#64ceff"/>
+  <path d="M760 262v76M724 293h108" stroke="#e8f8ff" stroke-width="9" stroke-linecap="round"/>
+  <rect x="160" y="337" width="102" height="88" rx="13" fill="#ffda54"/>
+  <path d="M184 337h79v88h-79z" fill="#fff0a8"/>
+  <path d="M312 343h102v82H312z" fill="#ffffff" stroke="#c9e3ef" stroke-width="8"/>
+  <path d="M363 343v82" stroke="#c9e3ef" stroke-width="8"/>
+  <path d="M526 328h135v97H526z" fill="#fff" stroke="#c9e3ef" stroke-width="8"/>
+  <path d="M509 330l84-72 84 72z" fill="#58cc02"/>
+  <rect x="575" y="372" width="37" height="53" rx="6" fill="#8b5cf6"/>
+  <ellipse cx="477" cy="441" rx="382" ry="22" fill="#d9e8ee"/>
+</svg>

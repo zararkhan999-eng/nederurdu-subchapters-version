@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Phone</title>
+  <desc id="desc">A simple learning visual for phone.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#58cc02" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="132" y="47" width="96" height="154" rx="22" fill="#24313a"/><rect x="146" y="68" width="68" height="100" rx="10" fill="#dff4ff"/><circle cx="180" cy="184" r="7" fill="#fff"/><path d="M238 82c25 20 34 53 15 84M267 58c45 39 58 93 26 145" fill="none" stroke="#58cc02" stroke-width="10" stroke-linecap="round"/>
+</svg>

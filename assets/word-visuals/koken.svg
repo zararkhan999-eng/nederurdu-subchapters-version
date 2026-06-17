@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Cooking</title>
+  <desc id="desc">A simple learning visual for cooking.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#ffb84d" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <rect x="108" y="126" width="144" height="62" rx="22" fill="#ffb84d"/><path d="M132 126c-18-46 28-45 10-86M180 126c-18-46 28-45 10-86M228 126c-18-46 28-45 10-86" stroke="#c8e3ef" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M92 145h38M230 145h38" stroke="#24313a" stroke-width="10" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Verb hebben</title>
+  <desc id="desc">A simple learning visual for verb hebben.</desc>
+  <rect width="360" height="240" fill="#f4fbff"/>
+  <circle cx="306" cy="44" r="54" fill="#1cb0f6" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <path d="M97 147c34-17 48-17 82 0l40 20c28 14 49-25 20-42l-45-27" fill="none" stroke="#24313a" stroke-width="20" stroke-linecap="round"/><rect x="169" y="66" width="86" height="70" rx="14" fill="#1cb0f6"/><path d="M190 101h44" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+</svg>

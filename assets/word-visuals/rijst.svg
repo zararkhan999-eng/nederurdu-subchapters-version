@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
+  <title id="title">Rice</title>
+  <desc id="desc">A simple learning visual for rice.</desc>
+  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
+  <circle cx="304" cy="42" r="54" fill="#f0c36b" opacity="0.18"/>
+  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
+  <ellipse cx="180" cy="155" rx="92" ry="42" fill="#1cb0f6"/><path d="M100 145c35-54 126-70 164 0" fill="#fff"/><g fill="#f7e6b5"><ellipse cx="145" cy="118" rx="9" ry="18" transform="rotate(50 145 118)"/><ellipse cx="178" cy="106" rx="9" ry="18" transform="rotate(72 178 106)"/><ellipse cx="211" cy="120" rx="9" ry="18" transform="rotate(35 211 120)"/></g>
+</svg>
