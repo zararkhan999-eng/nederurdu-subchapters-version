@@ -39,23 +39,23 @@ const dutchLetters = [
 const visualLibrary = {
   letters: {
     src: "assets/visuals/letters-first-words.svg",
-    alt: "Dutch letters and first vocabulary objects"
+    alt: "Dutch حروف اور پہلے الفاظ"
   },
   people: {
     src: "assets/visuals/people-family.svg",
-    alt: "People and family vocabulary"
+    alt: "لوگ اور خاندان کے الفاظ"
   },
   home: {
     src: "assets/visuals/home-place.svg",
-    alt: "Home objects and place words"
+    alt: "گھر کی چیزیں اور جگہ والے الفاظ"
   },
   transport: {
     src: "assets/visuals/transport-routine.svg",
-    alt: "Daily transport and going out"
+    alt: "روزمرہ سفر اور باہر جانا"
   },
   health: {
     src: "assets/visuals/body-health.svg",
-    alt: "Body parts and health vocabulary"
+    alt: "جسم اور صحت کے الفاظ"
   },
   services: {
     src: "assets/visuals/daily-services.svg",

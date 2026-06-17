@@ -1,8 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title desc">
-  <title id="title">Water</title>
-  <desc id="desc">A simple learning visual for water.</desc>
-  <rect width="360" height="240" rx="0" fill="#f4fbff"/>
-  <circle cx="304" cy="42" r="54" fill="#1cb0f6" opacity="0.18"/>
-  <path d="M0 174c46-18 92-8 138-16 72-13 106-44 181-19 25 8 41 12 41 12v89H0z" fill="#fff8e7"/>
-  <path d="M180 50c45 58 68 91 68 123 0 38-30 62-68 62s-68-24-68-62c0-32 23-65 68-123z" fill="#1cb0f6"/><path d="M145 162c6 24 24 36 50 34" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".75"/>
+  <title id="title">water</title>
+  <desc id="desc">A polished learning visual for water.</desc>
+  <defs>
+    <linearGradient id="w-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#effaff"/>
+      <stop offset="1" stop-color="#fff8e8"/>
+    </linearGradient>
+    <linearGradient id="w-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6bd3ff"/>
+      <stop offset="1" stop-color="#1cb0f6"/>
+    </linearGradient>
+    <linearGradient id="w-green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a7ea4e"/>
+      <stop offset="1" stop-color="#58cc02"/>
+    </linearGradient>
+    <linearGradient id="w-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe37a"/>
+      <stop offset="1" stop-color="#ffc800"/>
+    </linearGradient>
+    <filter id="w-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#24313a" flood-opacity="0.16"/>
+    </filter>
+    <filter id="w-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#24313a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <rect width="360" height="240" fill="url(#w-bg)"/>
+  <circle cx="300" cy="48" r="54" fill="#ffc800" opacity="0.13"/>
+  <circle cx="54" cy="206" r="68" fill="#58cc02" opacity="0.10"/>
+  <rect x="26" y="24" width="308" height="192" rx="30" fill="#fff" stroke="#d7edf5" stroke-width="5" filter="url(#w-soft)"/>
+  <ellipse cx="180" cy="184" rx="104" ry="18" fill="#24313a" opacity="0.08"/>
+  <g transform="translate(180 126)" filter="url(#w-soft)"><path d="M0-84C42-24 70 12 70 48c0 40-31 70-70 70s-70-30-70-70c0-36 28-72 70-132z" fill="url(#w-blue)"/><path d="M-28 42c10 26 32 38 64 30" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".65"/></g>
 </svg>
