@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "android:debug": "gradle :app:assembleDebug",
+    "android:bundle": "gradle :app:bundleRelease",
+    "android:sync-web": "node scripts/sync-android-web.js"
   },
   "dependencies": {}
 }

@@ -1,0 +1,17 @@
+.DS_Store
+
+# Android build output
+.gradle/
+android/.gradle/
+android/app/build/
+build/
+
+# Local IDE files
+.idea/
+*.iml
+local.properties
+
+# Signing files should stay private
+*.jks
+*.keystore
+key.properties

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Letters and first words</title>
+  <desc id="desc">A polished Dutch letters and first words visual.</desc>
+  <defs>
+    <linearGradient id="h-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#effaff"/>
+      <stop offset="1" stop-color="#fff8e8"/>
+    </linearGradient>
+    <linearGradient id="h-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6bd3ff"/>
+      <stop offset="1" stop-color="#1cb0f6"/>
+    </linearGradient>
+    <linearGradient id="h-green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a7ea4e"/>
+      <stop offset="1" stop-color="#58cc02"/>
+    </linearGradient>
+    <linearGradient id="h-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe37a"/>
+      <stop offset="1" stop-color="#ffc800"/>
+    </linearGradient>
+    <filter id="h-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#24313a" flood-opacity="0.16"/>
+    </filter>
+    <filter id="h-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#24313a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <rect width="960" height="540" rx="0" fill="url(#h-bg)"/>
+  <circle cx="790" cy="92" r="118" fill="#1cb0f6" opacity="0.10"/>
+  <circle cx="104" cy="454" r="144" fill="#58cc02" opacity="0.10"/>
+  <path d="M0 420c110-38 182-4 298-26 138-26 224-82 392-42 114 27 194 22 270-5v193H0z" fill="#ffffff" opacity="0.72"/>
+  
+  <g filter="url(#h-shadow)">
+    <rect x="88" y="118" width="784" height="314" rx="36" fill="#fff" stroke="#d7edf5" stroke-width="7"/>
+    <g transform="translate(145 164)">
+      <g transform="translate(0 0)"><rect width="92" height="104" rx="22" fill="#1cb0f6" filter="url(#h-soft)"/><text x="46" y="69" text-anchor="middle" font-size="56" font-weight="900" fill="#fff" font-family="Avenir Next,Arial">A</text></g><g transform="translate(124 24)"><rect width="92" height="104" rx="22" fill="#58cc02" filter="url(#h-soft)"/><text x="46" y="69" text-anchor="middle" font-size="56" font-weight="900" fill="#fff" font-family="Avenir Next,Arial">B</text></g><g transform="translate(248 0)"><rect width="92" height="104" rx="22" fill="#ffc800" filter="url(#h-soft)"/><text x="46" y="69" text-anchor="middle" font-size="56" font-weight="900" fill="#fff" font-family="Avenir Next,Arial">C</text></g><g transform="translate(372 24)"><rect width="92" height="104" rx="22" fill="#8b5cf6" filter="url(#h-soft)"/><text x="46" y="69" text-anchor="middle" font-size="56" font-weight="900" fill="#fff" font-family="Avenir Next,Arial">D</text></g>
+      <g transform="translate(70 188) scale(1.25)"><ellipse cx="0" cy="22" rx="38" ry="34" fill="#ff5c5c"/><ellipse cx="18" cy="22" rx="28" ry="33" fill="#ff7777" opacity=".55"/><path d="M-4-5c6-24 23-32 42-25" stroke="#7a4b2b" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M24-28c20-7 37 2 45 15-19 9-36 7-45-15z" fill="#58cc02"/></g><g transform="translate(218 190) scale(1.15)"><path d="M-64-30h98c16 0 28 12 28 28v74H-42c-12 0-22-10-22-22z" fill="url(#h-blue)"/><path d="M-42-30h118c13 0 24 11 24 24v78H-42z" fill="#fff" stroke="#c8e3ef" stroke-width="5"/><path d="M-42-30v102" stroke="#1cb0f6" stroke-width="7"/><path d="M-12-2h72M-12 22h54M-12 46h66" stroke="#c8e3ef" stroke-width="8" stroke-linecap="round"/></g><g transform="translate(360 178) scale(1.1)"><rect x="-44" y="-80" width="88" height="148" rx="12" fill="url(#h-gold)"/><rect x="-30" y="-64" width="60" height="118" rx="8" fill="#ffe899" opacity=".55"/><circle cx="22" cy="0" r="6" fill="#24313a"/></g><g transform="translate(518 204) rotate(-20) scale(1.0)"><rect x="-82" y="-12" width="150" height="24" rx="12" fill="url(#h-blue)"/><path d="M68-12l34 12-34 12z" fill="#24313a"/><rect x="-54" y="-12" width="26" height="24" fill="#ffc800"/></g>
+      <g transform="translate(602 162) scale(1.2)"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="-48" cy="38" r="30" stroke="#24313a" stroke-width="8"/><circle cx="60" cy="38" r="30" stroke="#24313a" stroke-width="8"/><path d="M-48 38l42-64 34 64h-76l48-1 24-40h36" stroke="#1cb0f6" stroke-width="10"/><path d="M13-45h40M25-3l-20-34" stroke="#24313a" stroke-width="8"/></g></g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title desc">
+  <title id="title">NederUrdu feature graphic</title>
+  <desc id="desc">Feature graphic for the NederUrdu Google Play listing.</desc>
+  <rect width="1024" height="500" fill="#f7f8f4"/>
+  <rect x="72" y="64" width="252" height="252" rx="42" fill="#177d6b"/>
+  <path d="M126 132c0-18 14-32 32-32h58c31 0 56 25 56 56v196c0 7-8 11-14 7-16-11-35-17-56-17h-44c-18 0-32-14-32-32V132Z" fill="#ffffff" opacity=".95" transform="translate(0 12) scale(.7)"/>
+  <path d="M286 156c0-31 25-56 56-56h14c18 0 32 14 32 32v178c0 18-14 32-32 32h-44c-21 0-40 6-56 17-6 4-14 0-14-7V156Z" fill="#dceee9" transform="translate(0 12) scale(.7)"/>
+  <path d="M165 156h63M165 200h63M165 244h63M315 156h57M315 200h57M315 244h57" stroke="#177d6b" stroke-width="18" stroke-linecap="round" opacity=".65" fill="none" transform="translate(0 12) scale(.7)"/>
+  <text x="382" y="182" fill="#173f37" font-family="Arial, sans-serif" font-size="74" font-weight="700">NederUrdu</text>
+  <text x="386" y="254" fill="#245c51" font-family="Arial, sans-serif" font-size="34" font-weight="700">Learn practical Dutch with Urdu support</text>
+  <text x="386" y="317" fill="#177d6b" font-family="Arial, sans-serif" font-size="32" font-weight="700">A0 - A2 lessons • Practice • Offline progress</text>
+</svg>

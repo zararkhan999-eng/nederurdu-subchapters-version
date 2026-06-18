@@ -14,6 +14,18 @@ Then open:
 http://127.0.0.1:4173
 ```
 
+## Android App
+
+NederUrdu includes an Android wrapper that packages the web app locally, so the Play Store app does not need a website URL to open.
+
+After changing web files, sync them into the Android app:
+
+```bash
+node scripts/sync-android-web.js
+```
+
+Then open this folder in Android Studio and build the `app` module. See `docs/mobile-build.md` and `docs/store-listing/release-checklist.md` for release steps.
+
 ## Version 1 Scope
 
 - Subchapter course map for A0, A1, and A2 with daily-life goals, practice examples, and lesson groups
