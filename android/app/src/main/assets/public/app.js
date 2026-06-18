@@ -1,4 +1,11 @@
 const STORAGE_KEY = "nederurdu-progress-v3";
+const launchScreen = document.querySelector(".launch-screen");
+
+window.setTimeout(() => {
+  document.body.classList.remove("launching");
+  launchScreen?.remove();
+}, 4200);
+
 const chapters = window.NEDERURDU_CHAPTERS || [
   {
     id: "a0",
