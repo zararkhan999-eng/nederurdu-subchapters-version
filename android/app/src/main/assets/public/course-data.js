@@ -32,7 +32,7 @@ const a0Lessons = [
     description: "اردو سے Nederlands حروف تک: پہلے چند حروف اور آسان مثال والے الفاظ۔",
     xp: 35,
     questions: [
-      meaning("a", ["حرف ایک", "حرف b", "حرف d"], "حرف ایک", "یہ Nederlands حروف تہجی کا حرف ایک ہے۔"),
+      meaning("a", ["حرف a", "حرف b", "حرف d"], "حرف a", "یہ Nederlands حروف تہجی کا حرف a ہے۔"),
       meaning("b", ["حرف b", "حرف e", "حرف g"], "حرف b", "یہ Nederlands حروف تہجی کا حرف b ہے۔"),
       meaning("appel", ["سیب", "کتاب", "دروازہ"], "سیب", "appel = سیب۔"),
       meaning("boek", ["کتاب", "سیب", "گھر"], "کتاب", "boek = کتاب۔"),

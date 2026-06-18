@@ -2,6 +2,8 @@ package com.nederurdu.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
@@ -25,6 +27,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         webView = new WebView(this);
         webView.setWebViewClient(new WebViewClient());
@@ -62,6 +65,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         }
 
         int languageResult = textToSpeech.setLanguage(new Locale("nl", "NL"));
+        textToSpeech.setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build());
         textToSpeechReady = languageResult != TextToSpeech.LANG_MISSING_DATA
                 && languageResult != TextToSpeech.LANG_NOT_SUPPORTED;
         if (!textToSpeechReady) {
@@ -96,7 +103,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
 
             textToSpeech.stop();
-            int result = textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "nederurdu-tts");
+            Bundle params = new Bundle();
+            params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f);
+            params.putFloat(TextToSpeech.Engine.KEY_PARAM_PAN, 0.0f);
+            int result = textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, params, "nederurdu-tts");
             Log.i("NederUrduTts", "Speak request for: " + text + " result=" + result);
             return result == TextToSpeech.SUCCESS;
         }
