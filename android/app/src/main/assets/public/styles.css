@@ -1505,13 +1505,13 @@ h3 {
 
 .letters-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 
 .letter-card {
   display: grid;
-  grid-template-columns: 64px 1fr 36px;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   min-height: 106px;
@@ -1556,11 +1556,13 @@ h3 {
   font-size: 0.9rem;
   font-weight: 900;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .letter-card .speak-button {
   width: 34px;
   height: 34px;
+  align-self: center;
   border-color: #eadfce;
   border-radius: 12px;
 }
