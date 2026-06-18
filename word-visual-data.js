@@ -1,7 +1,7 @@
 window.NEDERURDU_WORD_VISUALS = [
   {
     "src": "assets/word-visuals/appel.svg",
-    "alt": "Apple visual",
+    "alt": "تصویر: سیب",
     "terms": [
       "appel",
       "apple",
@@ -10,7 +10,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/boek.svg",
-    "alt": "Book visual",
+    "alt": "تصویر: کتاب",
     "terms": [
       "boek",
       "boeken",
@@ -24,7 +24,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/deur.svg",
-    "alt": "Door visual",
+    "alt": "تصویر: دروازہ",
     "terms": [
       "deur",
       "de deur",
@@ -34,7 +34,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/fiets.svg",
-    "alt": "Bicycle visual",
+    "alt": "تصویر: سائیکل",
     "terms": [
       "fiets",
       "bicycle",
@@ -43,7 +43,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/huis.svg",
-    "alt": "House visual",
+    "alt": "تصویر: گھر",
     "terms": [
       "huis",
       "het huis",
@@ -58,7 +58,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/lamp.svg",
-    "alt": "Lamp visual",
+    "alt": "تصویر: بتی",
     "terms": [
       "lamp",
       "بتی"
@@ -66,7 +66,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kat.svg",
-    "alt": "Cat visual",
+    "alt": "تصویر: بلی",
     "terms": [
       "kat",
       "cat",
@@ -75,7 +75,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/oog.svg",
-    "alt": "Eye visual",
+    "alt": "تصویر: آنکھ",
     "terms": [
       "oog",
       "eye",
@@ -84,7 +84,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pen.svg",
-    "alt": "Pen visual",
+    "alt": "تصویر: قلم",
     "terms": [
       "pen",
       "mijn pen",
@@ -95,7 +95,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/rijst.svg",
-    "alt": "Rice visual",
+    "alt": "تصویر: چاول",
     "terms": [
       "rijst",
       "rice",
@@ -104,7 +104,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/stoel.svg",
-    "alt": "Chair visual",
+    "alt": "تصویر: کرسی",
     "terms": [
       "stoel",
       "chair",
@@ -113,7 +113,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/tafel.svg",
-    "alt": "Table visual",
+    "alt": "تصویر: میز",
     "terms": [
       "tafel",
       "op tafel",
@@ -125,7 +125,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/water.svg",
-    "alt": "Water visual",
+    "alt": "تصویر: پانی",
     "terms": [
       "water",
       "پانی"
@@ -133,14 +133,14 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/yoga.svg",
-    "alt": "Yoga visual",
+    "alt": "تصویر: yoga",
     "terms": [
       "yoga"
     ]
   },
   {
     "src": "assets/word-visuals/man.svg",
-    "alt": "Man visual",
+    "alt": "تصویر: آدمی",
     "terms": [
       "man",
       "een man",
@@ -151,7 +151,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/vrouw.svg",
-    "alt": "Woman visual",
+    "alt": "تصویر: عورت",
     "terms": [
       "vrouw",
       "een vrouw",
@@ -162,7 +162,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kind.svg",
-    "alt": "Child visual",
+    "alt": "تصویر: بچہ",
     "terms": [
       "kind",
       "kinderen",
@@ -174,7 +174,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/jongen.svg",
-    "alt": "Boy visual",
+    "alt": "تصویر: بیٹا",
     "terms": [
       "jongen",
       "zoon",
@@ -185,7 +185,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/meisje.svg",
-    "alt": "Girl visual",
+    "alt": "تصویر: بیٹی",
     "terms": [
       "meisje",
       "dochter",
@@ -196,7 +196,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/familie.svg",
-    "alt": "Family visual",
+    "alt": "تصویر: خاندان",
     "terms": [
       "familie",
       "family",
@@ -206,7 +206,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/vader.svg",
-    "alt": "Father visual",
+    "alt": "تصویر: والد",
     "terms": [
       "vader",
       "father",
@@ -215,7 +215,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/moeder.svg",
-    "alt": "Mother visual",
+    "alt": "تصویر: والدہ",
     "terms": [
       "moeder",
       "mother",
@@ -224,7 +224,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/broer.svg",
-    "alt": "Brother visual",
+    "alt": "تصویر: بھائی",
     "terms": [
       "broer",
       "brother",
@@ -233,7 +233,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/zus.svg",
-    "alt": "Sister visual",
+    "alt": "تصویر: بہن",
     "terms": [
       "zus",
       "sister",
@@ -242,7 +242,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/telefoon.svg",
-    "alt": "Phone visual",
+    "alt": "تصویر: فون",
     "terms": [
       "telefoon",
       "telefoonnummer",
@@ -252,7 +252,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/naam.svg",
-    "alt": "Name badge visual",
+    "alt": "تصویر: نام",
     "terms": [
       "naam",
       "mijn naam",
@@ -263,7 +263,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/adres.svg",
-    "alt": "Address visual",
+    "alt": "تصویر: پتہ",
     "terms": [
       "adres",
       "address",
@@ -272,7 +272,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/paspoort.svg",
-    "alt": "Passport visual",
+    "alt": "تصویر: paspoort",
     "terms": [
       "paspoort",
       "passport"
@@ -280,7 +280,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/afspraak.svg",
-    "alt": "Appointment visual",
+    "alt": "تصویر: ملاقات",
     "terms": [
       "afspraak",
       "appointment",
@@ -289,7 +289,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/dokter.svg",
-    "alt": "Doctor visual",
+    "alt": "تصویر: ڈاکٹر",
     "terms": [
       "dokter",
       "doctor",
@@ -300,7 +300,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/huisarts.svg",
-    "alt": "Family doctor visual",
+    "alt": "تصویر: huisarts",
     "terms": [
       "huisarts",
       "family doctor",
@@ -309,7 +309,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/tandarts.svg",
-    "alt": "Dentist visual",
+    "alt": "تصویر: tandarts",
     "terms": [
       "tandarts",
       "dentist"
@@ -317,7 +317,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/apotheek.svg",
-    "alt": "Pharmacy visual",
+    "alt": "تصویر: apotheek",
     "terms": [
       "apotheek",
       "pharmacy"
@@ -325,7 +325,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/ziekenhuis.svg",
-    "alt": "Hospital visual",
+    "alt": "تصویر: ziekenhuis",
     "terms": [
       "ziekenhuis",
       "hospital"
@@ -333,7 +333,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/medicijn.svg",
-    "alt": "Medicine visual",
+    "alt": "تصویر: medicijn",
     "terms": [
       "medicijn",
       "medicine",
@@ -342,7 +342,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pijn.svg",
-    "alt": "Pain visual",
+    "alt": "تصویر: درد",
     "terms": [
       "pijn",
       "pain",
@@ -352,7 +352,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/hoofdpijn.svg",
-    "alt": "Headache visual",
+    "alt": "تصویر: hoofdpijn",
     "terms": [
       "hoofdpijn",
       "headache"
@@ -360,7 +360,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/buikpijn.svg",
-    "alt": "Stomach pain visual",
+    "alt": "تصویر: buikpijn",
     "terms": [
       "buikpijn",
       "stomach pain"
@@ -368,7 +368,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/hoesten.svg",
-    "alt": "Cough visual",
+    "alt": "تصویر: hoesten",
     "terms": [
       "hoesten",
       "cough",
@@ -377,7 +377,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/koorts.svg",
-    "alt": "Fever visual",
+    "alt": "تصویر: koorts",
     "terms": [
       "koorts",
       "fever"
@@ -385,7 +385,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/ziek.svg",
-    "alt": "Sick visual",
+    "alt": "تصویر: بیمار",
     "terms": [
       "ziek",
       "ik ben ziek",
@@ -395,7 +395,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/rust.svg",
-    "alt": "Rest visual",
+    "alt": "تصویر: آرام",
     "terms": [
       "rust",
       "rust nemen",
@@ -405,7 +405,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/badkamer.svg",
-    "alt": "Bathroom visual",
+    "alt": "تصویر: badkamer",
     "terms": [
       "badkamer",
       "bathroom"
@@ -413,7 +413,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/keuken.svg",
-    "alt": "Kitchen visual",
+    "alt": "تصویر: keuken",
     "terms": [
       "keuken",
       "kitchen"
@@ -421,7 +421,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kamer.svg",
-    "alt": "Room visual",
+    "alt": "تصویر: kamer",
     "terms": [
       "kamer",
       "room"
@@ -429,7 +429,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verwarming.svg",
-    "alt": "Heating visual",
+    "alt": "تصویر: verwarming",
     "terms": [
       "verwarming",
       "heating",
@@ -438,7 +438,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/lekkage.svg",
-    "alt": "Leakage visual",
+    "alt": "تصویر: lekkage",
     "terms": [
       "lekkage",
       "leakage",
@@ -447,7 +447,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/reparatie.svg",
-    "alt": "Repair visual",
+    "alt": "تصویر: reparatie",
     "terms": [
       "reparatie",
       "repair",
@@ -456,7 +456,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/schoonmaken.svg",
-    "alt": "Cleaning visual",
+    "alt": "تصویر: schoonmaken",
     "terms": [
       "schoonmaken",
       "wij maken het huis schoon",
@@ -466,7 +466,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/formulier.svg",
-    "alt": "Form visual",
+    "alt": "تصویر: form بھرنا",
     "terms": [
       "formulier",
       "form",
@@ -477,7 +477,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/handtekening.svg",
-    "alt": "Signature visual",
+    "alt": "تصویر: handtekening",
     "terms": [
       "handtekening",
       "signature"
@@ -485,7 +485,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/bsn.svg",
-    "alt": "Citizen service number visual",
+    "alt": "تصویر: bsn",
     "terms": [
       "bsn",
       "citizen service number"
@@ -493,7 +493,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/gemeente.svg",
-    "alt": "Municipality visual",
+    "alt": "تصویر: بلدیہ",
     "terms": [
       "gemeente",
       "municipality",
@@ -502,7 +502,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/loket.svg",
-    "alt": "Counter visual",
+    "alt": "تصویر: کاؤنٹر",
     "terms": [
       "loket",
       "counter",
@@ -511,7 +511,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/document.svg",
-    "alt": "Document visual",
+    "alt": "تصویر: document",
     "terms": [
       "document",
       "documents"
@@ -519,7 +519,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verzekering.svg",
-    "alt": "Insurance visual",
+    "alt": "تصویر: verzekering",
     "terms": [
       "verzekering",
       "insurance"
@@ -527,14 +527,14 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/contract.svg",
-    "alt": "Contract visual",
+    "alt": "تصویر: contract",
     "terms": [
       "contract"
     ]
   },
   {
     "src": "assets/word-visuals/baan.svg",
-    "alt": "Job visual",
+    "alt": "تصویر: baan",
     "terms": [
       "baan",
       "job",
@@ -543,7 +543,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/werk.svg",
-    "alt": "Work visual",
+    "alt": "تصویر: کام",
     "terms": [
       "werk",
       "werken",
@@ -555,7 +555,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/salaris.svg",
-    "alt": "Salary visual",
+    "alt": "تصویر: salaris",
     "terms": [
       "salaris",
       "salary"
@@ -563,7 +563,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/school.svg",
-    "alt": "School visual",
+    "alt": "تصویر: school",
     "terms": [
       "school",
       "naar school",
@@ -572,7 +572,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/docent.svg",
-    "alt": "Teacher visual",
+    "alt": "تصویر: docent",
     "terms": [
       "docent",
       "teacher"
@@ -580,7 +580,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/huiswerk.svg",
-    "alt": "Homework visual",
+    "alt": "تصویر: huiswerk",
     "terms": [
       "huiswerk",
       "homework"
@@ -588,7 +588,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/rooster.svg",
-    "alt": "Schedule visual",
+    "alt": "تصویر: rooster",
     "terms": [
       "rooster",
       "schedule",
@@ -597,7 +597,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/collega.svg",
-    "alt": "Colleague visual",
+    "alt": "تصویر: collega",
     "terms": [
       "collega",
       "colleague"
@@ -605,7 +605,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/sollicitatie.svg",
-    "alt": "Job application visual",
+    "alt": "تصویر: sollicitatie",
     "terms": [
       "sollicitatie",
       "job application"
@@ -613,7 +613,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/supermarkt.svg",
-    "alt": "Supermarket visual",
+    "alt": "تصویر: supermarkt",
     "terms": [
       "supermarkt",
       "market",
@@ -622,7 +622,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/winkel.svg",
-    "alt": "Shop visual",
+    "alt": "تصویر: winkel",
     "terms": [
       "winkel",
       "shop"
@@ -630,7 +630,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kassa.svg",
-    "alt": "Cashier visual",
+    "alt": "تصویر: kassa",
     "terms": [
       "kassa",
       "cashier"
@@ -638,7 +638,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/bon.svg",
-    "alt": "Receipt visual",
+    "alt": "تصویر: bon",
     "terms": [
       "bon",
       "receipt",
@@ -647,7 +647,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/prijs.svg",
-    "alt": "Price visual",
+    "alt": "تصویر: prijs",
     "terms": [
       "prijs",
       "price",
@@ -657,7 +657,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/aanbieding.svg",
-    "alt": "Discount offer visual",
+    "alt": "تصویر: aanbieding",
     "terms": [
       "aanbieding",
       "offer",
@@ -666,7 +666,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pinpas.svg",
-    "alt": "Bank card visual",
+    "alt": "تصویر: pinpas",
     "terms": [
       "pinpas",
       "bank card",
@@ -675,7 +675,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/contant.svg",
-    "alt": "Cash visual",
+    "alt": "تصویر: contant",
     "terms": [
       "contant",
       "cash"
@@ -683,7 +683,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/brood.svg",
-    "alt": "Bread visual",
+    "alt": "تصویر: brood",
     "terms": [
       "brood",
       "bread"
@@ -691,7 +691,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kaas.svg",
-    "alt": "Cheese visual",
+    "alt": "تصویر: kaas",
     "terms": [
       "kaas",
       "cheese"
@@ -699,14 +699,14 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/fruit.svg",
-    "alt": "Fruit visual",
+    "alt": "تصویر: fruit",
     "terms": [
       "fruit"
     ]
   },
   {
     "src": "assets/word-visuals/groente.svg",
-    "alt": "Vegetables visual",
+    "alt": "تصویر: groente",
     "terms": [
       "groente",
       "vegetables"
@@ -714,7 +714,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/tas.svg",
-    "alt": "Bag visual",
+    "alt": "تصویر: بیگ",
     "terms": [
       "tas",
       "tassen",
@@ -725,7 +725,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/jas.svg",
-    "alt": "Jacket visual",
+    "alt": "تصویر: jas",
     "terms": [
       "jas",
       "jacket",
@@ -734,7 +734,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/maat.svg",
-    "alt": "Size visual",
+    "alt": "تصویر: maat",
     "terms": [
       "maat",
       "size"
@@ -742,7 +742,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/garantie.svg",
-    "alt": "Warranty visual",
+    "alt": "تصویر: garantie",
     "terms": [
       "garantie",
       "warranty"
@@ -750,7 +750,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/klacht.svg",
-    "alt": "Complaint visual",
+    "alt": "تصویر: klacht",
     "terms": [
       "klacht",
       "complaint"
@@ -758,7 +758,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/ruilen.svg",
-    "alt": "Exchange visual",
+    "alt": "تصویر: ruilen",
     "terms": [
       "ruilen",
       "exchange",
@@ -767,7 +767,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/station.svg",
-    "alt": "Station visual",
+    "alt": "تصویر: station",
     "terms": [
       "station",
       "waar is het station",
@@ -776,7 +776,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/halte.svg",
-    "alt": "Bus stop visual",
+    "alt": "تصویر: halte",
     "terms": [
       "halte",
       "bus stop"
@@ -784,7 +784,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/bus.svg",
-    "alt": "Bus visual",
+    "alt": "تصویر: bus",
     "terms": [
       "bus",
       "met de bus"
@@ -792,7 +792,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/trein.svg",
-    "alt": "Train visual",
+    "alt": "تصویر: trein",
     "terms": [
       "trein",
       "train"
@@ -800,7 +800,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kaartje.svg",
-    "alt": "Ticket visual",
+    "alt": "تصویر: kaartje",
     "terms": [
       "kaartje",
       "ticket"
@@ -808,7 +808,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/stad.svg",
-    "alt": "City visual",
+    "alt": "تصویر: stad",
     "terms": [
       "stad",
       "city"
@@ -816,7 +816,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/land.svg",
-    "alt": "Country visual",
+    "alt": "تصویر: land",
     "terms": [
       "land",
       "country"
@@ -824,7 +824,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/parkeren.svg",
-    "alt": "Parking visual",
+    "alt": "تصویر: parkeren",
     "terms": [
       "parkeren",
       "parking",
@@ -833,7 +833,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kopen.svg",
-    "alt": "Buying visual",
+    "alt": "تصویر: gekocht",
     "terms": [
       "gekocht",
       "kopen",
@@ -844,7 +844,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/koken.svg",
-    "alt": "Cooking visual",
+    "alt": "تصویر: koken",
     "terms": [
       "koken",
       "gekookt",
@@ -855,7 +855,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/leren.svg",
-    "alt": "Learning visual",
+    "alt": "تصویر: leren",
     "terms": [
       "leren",
       "leer",
@@ -867,7 +867,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/bellen.svg",
-    "alt": "Calling visual",
+    "alt": "تصویر: bellen",
     "terms": [
       "bellen",
       "opbellen",
@@ -878,7 +878,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/helpen.svg",
-    "alt": "Help visual",
+    "alt": "تصویر: helpen",
     "terms": [
       "helpen",
       "kunt u mij helpen",
@@ -887,7 +887,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/herhalen.svg",
-    "alt": "Repeat visual",
+    "alt": "تصویر: herhalen",
     "terms": [
       "herhalen",
       "repeat",
@@ -896,7 +896,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/betalen.svg",
-    "alt": "Paying visual",
+    "alt": "تصویر: betalen",
     "terms": [
       "betalen",
       "pay",
@@ -905,7 +905,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/terugkomen.svg",
-    "alt": "Return visual",
+    "alt": "تصویر: terugkomen",
     "terms": [
       "terugkomen",
       "return",
@@ -914,7 +914,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/opstaan.svg",
-    "alt": "Getting up visual",
+    "alt": "تصویر: opstaan",
     "terms": [
       "opstaan",
       "sta op",
@@ -923,7 +923,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/bericht.svg",
-    "alt": "Message visual",
+    "alt": "تصویر: bericht",
     "terms": [
       "bericht",
       "message",
@@ -934,7 +934,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/feest.svg",
-    "alt": "Party visual",
+    "alt": "تصویر: feest",
     "terms": [
       "feest",
       "party",
@@ -943,7 +943,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/uur.svg",
-    "alt": "Clock visual",
+    "alt": "تصویر: uur",
     "terms": [
       "uur",
       "om zeven uur",
@@ -953,7 +953,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/vandaag.svg",
-    "alt": "Today visual",
+    "alt": "تصویر: vandaag",
     "terms": [
       "vandaag",
       "today"
@@ -961,7 +961,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/morgen.svg",
-    "alt": "Tomorrow visual",
+    "alt": "تصویر: morgen",
     "terms": [
       "morgen",
       "tomorrow"
@@ -969,7 +969,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/gisteren.svg",
-    "alt": "Yesterday visual",
+    "alt": "تصویر: gisteren",
     "terms": [
       "gisteren",
       "yesterday"
@@ -977,7 +977,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/ochtend.svg",
-    "alt": "Morning visual",
+    "alt": "تصویر: ochtend",
     "terms": [
       "ochtend",
       "goedemorgen",
@@ -986,7 +986,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/ja.svg",
-    "alt": "Yes visual",
+    "alt": "تصویر: ہاں",
     "terms": [
       "ja",
       "yes",
@@ -995,7 +995,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/nee.svg",
-    "alt": "No visual",
+    "alt": "تصویر: نہیں",
     "terms": [
       "nee",
       "no",
@@ -1004,7 +1004,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/goed.svg",
-    "alt": "Good visual",
+    "alt": "تصویر: اچھا",
     "terms": [
       "goed",
       "niet goed",
@@ -1014,7 +1014,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/niet.svg",
-    "alt": "Not visual",
+    "alt": "تصویر: niet",
     "terms": [
       "niet",
       "geen",
@@ -1024,7 +1024,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/in.svg",
-    "alt": "Inside visual",
+    "alt": "تصویر: میں / inside",
     "terms": [
       "in",
       "in het huis",
@@ -1034,7 +1034,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/op.svg",
-    "alt": "On top visual",
+    "alt": "تصویر: op",
     "terms": [
       "op",
       "op de tafel",
@@ -1043,7 +1043,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/onder.svg",
-    "alt": "Under visual",
+    "alt": "تصویر: onder",
     "terms": [
       "onder",
       "onder de tafel",
@@ -1052,7 +1052,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/naast.svg",
-    "alt": "Next to visual",
+    "alt": "تصویر: naast",
     "terms": [
       "naast",
       "naast de tafel",
@@ -1061,7 +1061,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/voor.svg",
-    "alt": "In front visual",
+    "alt": "تصویر: voor",
     "terms": [
       "voor",
       "voor het huis",
@@ -1070,7 +1070,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/achter.svg",
-    "alt": "Behind visual",
+    "alt": "تصویر: achter",
     "terms": [
       "achter",
       "achter het huis",
@@ -1079,7 +1079,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/vraag.svg",
-    "alt": "Question words visual",
+    "alt": "تصویر: waar",
     "terms": [
       "waar",
       "wat",
@@ -1093,7 +1093,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/langzaam.svg",
-    "alt": "Slowly visual",
+    "alt": "تصویر: langzaam",
     "terms": [
       "langzaam",
       "langzaam alstublieft",
@@ -1102,7 +1102,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/letter-a.svg",
-    "alt": "Letter a visual",
+    "alt": "تصویر: حرف a",
     "terms": [
       "a",
       "حرف a"
@@ -1110,7 +1110,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/letter-b.svg",
-    "alt": "Letter b visual",
+    "alt": "تصویر: حرف b",
     "terms": [
       "b",
       "حرف b"
@@ -1118,7 +1118,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/letter-h.svg",
-    "alt": "Letter h visual",
+    "alt": "تصویر: حرف h",
     "terms": [
       "h",
       "حرف h"
@@ -1126,7 +1126,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/letter-i.svg",
-    "alt": "Letter i visual",
+    "alt": "تصویر: حرف i",
     "terms": [
       "i",
       "حرف i"
@@ -1134,7 +1134,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pronoun-ik.svg",
-    "alt": "Pronoun ik visual",
+    "alt": "تصویر: میں",
     "terms": [
       "ik",
       "ik ben",
@@ -1147,7 +1147,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pronoun-jij.svg",
-    "alt": "Pronoun jij visual",
+    "alt": "تصویر: تم informal",
     "terms": [
       "jij",
       "jij bent",
@@ -1158,7 +1158,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pronoun-u.svg",
-    "alt": "Pronoun u visual",
+    "alt": "تصویر: آپ formal",
     "terms": [
       "u bent",
       "dank u wel",
@@ -1169,7 +1169,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pronoun-hij-zij.svg",
-    "alt": "Pronouns hij and zij visual",
+    "alt": "تصویر: وہ مرد",
     "terms": [
       "hij",
       "zij",
@@ -1183,7 +1183,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/pronoun-wij.svg",
-    "alt": "Pronoun wij visual",
+    "alt": "تصویر: ہم",
     "terms": [
       "wij",
       "wij zijn",
@@ -1194,7 +1194,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/possessive.svg",
-    "alt": "Possessive words visual",
+    "alt": "تصویر: میرا",
     "terms": [
       "mijn",
       "jouw",
@@ -1206,7 +1206,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/article-een.svg",
-    "alt": "Article een visual",
+    "alt": "تصویر: ایک / a",
     "terms": [
       "een",
       "een man",
@@ -1217,7 +1217,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/article-de-het.svg",
-    "alt": "Articles de and het visual",
+    "alt": "تصویر: de",
     "terms": [
       "de",
       "het",
@@ -1228,7 +1228,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verb-zijn.svg",
-    "alt": "Verb zijn visual",
+    "alt": "تصویر: ہوں",
     "terms": [
       "ben",
       "bent",
@@ -1245,7 +1245,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verb-hebben.svg",
-    "alt": "Verb hebben visual",
+    "alt": "تصویر: heb",
     "terms": [
       "heb",
       "hebt",
@@ -1259,7 +1259,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verb-gaan.svg",
-    "alt": "Verb gaan visual",
+    "alt": "تصویر: ga",
     "terms": [
       "ga",
       "gaat",
@@ -1270,7 +1270,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verb-komen.svg",
-    "alt": "Verb komen visual",
+    "alt": "تصویر: kom",
     "terms": [
       "kom",
       "komt",
@@ -1281,7 +1281,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/word-naar.svg",
-    "alt": "Word naar visual",
+    "alt": "تصویر: کی طرف",
     "terms": [
       "naar",
       "naar huis",
@@ -1291,7 +1291,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/word-met.svg",
-    "alt": "Word met visual",
+    "alt": "تصویر: ساتھ",
     "terms": [
       "met",
       "met mijn kind",
@@ -1300,7 +1300,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/word-bij.svg",
-    "alt": "Word bij visual",
+    "alt": "تصویر: کے پاس",
     "terms": [
       "bij",
       "کے پاس"
@@ -1308,7 +1308,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/verb-wonen.svg",
-    "alt": "Verb wonen visual",
+    "alt": "تصویر: woon",
     "terms": [
       "woon",
       "wonen",
@@ -1320,7 +1320,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/greeting.svg",
-    "alt": "Greeting visual",
+    "alt": "تصویر: سلام",
     "terms": [
       "hallo",
       "hoi",
@@ -1331,7 +1331,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/thanks.svg",
-    "alt": "Thanks visual",
+    "alt": "تصویر: شکریہ",
     "terms": [
       "dank u wel",
       "thanks",
@@ -1340,7 +1340,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/drink.svg",
-    "alt": "Drink visual",
+    "alt": "تصویر: drink",
     "terms": [
       "drink",
       "ik drink koffie",
@@ -1349,7 +1349,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/goedkoop.svg",
-    "alt": "Cheap visual",
+    "alt": "تصویر: سستا",
     "terms": [
       "goedkoop",
       "cheap",
@@ -1358,7 +1358,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/duur.svg",
-    "alt": "Expensive visual",
+    "alt": "تصویر: مہنگا",
     "terms": [
       "duur",
       "expensive",
@@ -1367,7 +1367,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/kapot.svg",
-    "alt": "Broken visual",
+    "alt": "تصویر: خراب",
     "terms": [
       "kapot",
       "maar hij is kapot",
@@ -1378,7 +1378,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/modal-kunnen.svg",
-    "alt": "Can visual",
+    "alt": "تصویر: کر سکنا",
     "terms": [
       "kunnen",
       "kan",
@@ -1389,7 +1389,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/modal-moeten.svg",
-    "alt": "Must visual",
+    "alt": "تصویر: ضروری",
     "terms": [
       "moeten",
       "moet",
@@ -1399,7 +1399,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/modal-mogen.svg",
-    "alt": "May visual",
+    "alt": "تصویر: اجازت",
     "terms": [
       "mogen",
       "mag",
@@ -1410,7 +1410,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/connector-omdat.svg",
-    "alt": "Because connector visual",
+    "alt": "تصویر: کہ",
     "terms": [
       "omdat",
       "dat",
@@ -1424,7 +1424,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/past-gegaan.svg",
-    "alt": "Past action visual",
+    "alt": "تصویر: گیا",
     "terms": [
       "gegaan",
       "gebleven",
@@ -1436,7 +1436,7 @@ window.NEDERURDU_WORD_VISUALS = [
   },
   {
     "src": "assets/word-visuals/now.svg",
-    "alt": "Now visual",
+    "alt": "تصویر: ابھی",
     "terms": [
       "nu",
       "now",

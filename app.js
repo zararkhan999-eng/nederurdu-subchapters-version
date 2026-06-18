@@ -2,8 +2,8 @@ const STORAGE_KEY = "nederurdu-progress-v3";
 const chapters = window.NEDERURDU_CHAPTERS || [
   {
     id: "a0",
-    title: "Chapter A0",
-    subtitle: "حروف، الفاظ، چھوٹی grammar، اور پہلے Dutch جملے",
+    title: "باب A0",
+    subtitle: "حروف، الفاظ، چھوٹی گرامر، اور پہلے Nederlands جملے",
     lessons: window.NEDERURDU_LESSONS || []
   }
 ];
@@ -39,7 +39,7 @@ const dutchLetters = [
 const visualLibrary = {
   letters: {
     src: "assets/visuals/letters-first-words.svg",
-    alt: "Dutch حروف اور پہلے الفاظ"
+    alt: "Nederlands حروف اور پہلے الفاظ"
   },
   people: {
     src: "assets/visuals/people-family.svg",
@@ -59,11 +59,11 @@ const visualLibrary = {
   },
   services: {
     src: "assets/visuals/daily-services.svg",
-    alt: "ملاقات کے وقت، فارم، کام، school، اور خریداری"
+    alt: "ملاقات کے وقت، فارم، کام، اسکول، اور خریداری"
   },
   sentence: {
     src: "assets/visuals/sentence-practice.svg",
-    alt: "Dutch جملہ بنانے کی مشق"
+    alt: "Nederlands جملہ بنانے کی مشق"
   }
 };
 
@@ -99,20 +99,20 @@ const wordHelpGlossary = {
   betalen: "پیسے دینا",
   begrijp: "سمجھتا / سمجھتی ہوں",
   boek: "کتاب",
-  bsn: "Dutch شہری نمبر",
+  bsn: "Nederlands شہری نمبر",
   cadeau: "تحفہ",
   collega: "کام کا ساتھی",
   contract: "معاہدہ",
   dank: "شکریہ",
   dat: "کہ",
-  de: "noun سے پہلے آنے والا لفظ",
+  de: "اسم سے پہلے آنے والا لفظ",
   deur: "دروازہ",
   deze: "یہ",
   dit: "یہ",
   dokter: "ڈاکٹر",
   docent: "استاد",
   doet: "کرتا / کرتی ہے",
-  een: "ایک / a",
+  een: "ایک",
   eten: "کھانا",
   fiets: "سائیکل",
   formulier: "فارم",
@@ -144,7 +144,7 @@ const wordHelpGlossary = {
   heeft: "اس کے پاس ہے",
   helpen: "مدد کرنا",
   herhalen: "دہرانا",
-  het: "noun سے پہلے آنے والا لفظ / یہ",
+  het: "اسم سے پہلے آنے والا لفظ / یہ",
   hij: "وہ مرد",
   hoi: "سلام",
   huisarts: "گھر کا ڈاکٹر",
@@ -231,7 +231,7 @@ const wordHelpGlossary = {
   vriendelijke: "محترمانہ / دوستانہ",
   vrouw: "عورت",
   water: "پانی",
-  weg: "ختم / away",
+  weg: "ختم / دور",
   wel: "زور دینے والا لفظ",
   werk: "کام",
   werken: "کام کرنا",
@@ -376,7 +376,7 @@ function renderTopbar() {
         <div class="brand-mark"><span>NU</span></div>
         <div>
           <p class="brand-title">NederUrdu</p>
-          <p class="brand-subtitle">Dutch سیکھیں، Urdu میں</p>
+          <p class="brand-subtitle">Nederlands سیکھیں، اردو میں</p>
         </div>
       </div>
     </header>
@@ -393,15 +393,15 @@ function renderHome() {
 
   return `
     ${renderTopbar()}
-    <section class="chapter-strip" aria-label="Course chapters">
+    <section class="chapter-strip" aria-label="باب">
       ${chapters.map(renderChapterButton).join("")}
     </section>
     <section class="hero-panel">
       ${renderVisual(heroVisual, "hero-visual")}
       <div class="hero-copy">
-        <p class="eyeline">${chapter.title} · ${percent}% complete</p>
+        <p class="eyeline">${chapter.title} · ${percent}% مکمل</p>
         <h1>${nextLesson.title}</h1>
-        <p class="lead">${nextLesson.description} ہر جواب کے بعد چھوٹی Urdu وضاحت ملے گی۔</p>
+        <p class="lead">${nextLesson.description} ہر جواب کے بعد چھوٹی اردو وضاحت ملے گی۔</p>
       </div>
       <div class="dashboard-progress">
         <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
@@ -418,25 +418,25 @@ function renderHome() {
         </div>
         <div class="summary-item">
           <span class="summary-value">${progress.practiceDays.length}</span>
-          <span class="summary-label">Practice دن</span>
+          <span class="summary-label">مشق کے دن</span>
         </div>
       </div>
       <button class="primary-button" data-action="preview" data-lesson="${nextLesson.id}">سبق دیکھیں</button>
     </section>
-    <section class="quick-actions" aria-label="App actions">
+    <section class="quick-actions" aria-label="ایپ کے کام">
       <button class="quick-action" data-action="letters">
         <span class="quick-icon">Aa</span>
-        <strong>Letters</strong>
-        <small>alphabet</small>
+        <strong>حروف</strong>
+        <small>حروف تہجی</small>
       </button>
       <button class="quick-action" data-action="settings">
-        <span class="quick-icon">Set</span>
-        <strong>Settings</strong>
-        <small>sound</small>
+        <span class="quick-icon">آواز</span>
+        <strong>ترتیبات</strong>
+        <small>آواز</small>
       </button>
     </section>
     <section class="section">
-      <h2>${chapter.title} goals</h2>
+      <h2>${chapter.title} کے مقصد</h2>
       ${renderSubchapters(chapter)}
     </section>
   `;
@@ -473,7 +473,7 @@ function renderSubchapterCard(subchapter, index) {
   const firstUnlockedLesson = lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || lessons[0];
   const visual = getVisualForSubchapter(subchapter, firstUnlockedLesson);
   const openButton = firstUnlockedLesson
-    ? `<button class="secondary-button" data-action="preview" data-lesson="${firstUnlockedLesson.id}">Learn more</button>`
+    ? `<button class="secondary-button" data-action="preview" data-lesson="${firstUnlockedLesson.id}">مزید دیکھیں</button>`
     : "";
 
   return `
@@ -509,7 +509,7 @@ function renderUnitRow(lesson, index) {
       <span class="unit-number">${icon}</span>
       <span>
         <strong class="unit-title">${lesson.unit}</strong>
-        <p class="unit-meta">${lesson.questions.length} سوالات · ${lesson.xp} points</p>
+        <p class="unit-meta">${lesson.questions.length} سوالات · ${lesson.xp} پوائنٹس</p>
       </span>
       <span class="status-dot ${done ? "done" : ""}"></span>
     </button>
@@ -535,7 +535,7 @@ function renderLessonPreview() {
       ${renderVisual(visual, "preview-visual")}
       <div class="preview-hero">
         <span class="unit-number">${done ? "✓" : lessonIndex + 1}</span>
-        <p class="eyeline">${chapter.title} · lesson ${lessonIndex + 1}</p>
+        <p class="eyeline">${chapter.title} · سبق ${lessonIndex + 1}</p>
         <h1>${lesson.title}</h1>
         <p class="lead">${lesson.description}</p>
       </div>
@@ -546,17 +546,17 @@ function renderLessonPreview() {
         </div>
         <div class="summary-item">
           <span class="summary-value">${lesson.xp}</span>
-          <span class="summary-label">points</span>
+          <span class="summary-label">پوائنٹس</span>
         </div>
         <div class="summary-item">
           <span class="summary-value">${score}</span>
-          <span class="summary-label">best score</span>
+          <span class="summary-label">بہترین نتیجہ</span>
         </div>
       </div>
       <div class="preview-words">
-        ${sampleWords.length ? sampleWords.map((word) => `<span>${renderTextWithWordHelp(word, `preview-${lesson.id}`)}</span>`).join("") : "<span>Urdu practice</span>"}
+        ${sampleWords.length ? sampleWords.map((word) => `<span>${renderTextWithWordHelp(word, `preview-${lesson.id}`)}</span>`).join("") : "<span>اردو مشق</span>"}
       </div>
-      <button class="primary-button" data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ practice کریں" : "سبق شروع کریں"}</button>
+      <button class="primary-button" data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ مشق کریں" : "سبق شروع کریں"}</button>
     </section>
   `;
 }
@@ -614,14 +614,14 @@ function renderLesson() {
 
 function renderHintButton() {
   return `
-    <button class="hint-button ${hintOpen ? "active" : ""}" data-action="hint" title="Hint" aria-label="Hint">؟</button>
+    <button class="hint-button ${hintOpen ? "active" : ""}" data-action="hint" title="مدد" aria-label="مدد">؟</button>
   `;
 }
 
 function renderHintPopover(question) {
   return `
     <div class="hint-popover">
-      ${escapeHtml(question.hint || "Dutch words کو صحیح ترتیب میں tap کریں۔")}
+      ${escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔")}
     </div>
   `;
 }
@@ -668,7 +668,7 @@ function renderBuildExercise(question) {
           <button class="word-tile selected-tile" data-action="build-remove" data-build-index="${index}">
             ${renderTextWithWordHelp(tile.word, `build-answer-${activeQuestionIndex}-${index}`)}
           </button>
-        `).join("") : `<span class="build-placeholder">Dutch words یہاں بنائیں</span>`}
+        `).join("") : `<span class="build-placeholder">Nederlands الفاظ یہاں بنائیں</span>`}
         ${checked && currentAnswer === question.answer ? renderChoiceConfetti() : ""}
       </div>
       <div class="build-bank">
@@ -811,8 +811,8 @@ function renderSpeakButton(text, variant) {
       tabindex="0"
       data-action="speak"
       data-speak="${escapeAttr(text)}"
-      title="Dutch pronunciation"
-      aria-label="Dutch pronunciation"
+      title="Nederlands تلفظ"
+      aria-label="Nederlands تلفظ"
     >▶</span>
   `;
 }
@@ -828,8 +828,8 @@ function renderComplete() {
       </div>
       <h1>سبق مکمل ہو گیا</h1>
       <div class="result-score">${percent}%</div>
-      <p class="lead">آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ ${result.xp} points محفوظ ہو گئے۔</p>
-      <button class="primary-button" data-action="home">Home پر جائیں</button>
+      <p class="lead">آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ ${result.xp} پوائنٹس محفوظ ہو گئے۔</p>
+      <button class="primary-button" data-action="home">گھر جائیں</button>
     </section>
   `;
 }
@@ -839,10 +839,10 @@ function renderLetters() {
     ${renderTopbar()}
     <section class="letters-panel">
       <div class="letters-heading">
-        <button class="circle-action" data-action="home" title="Home">←</button>
+        <button class="circle-action" data-action="home" title="گھر">←</button>
         <div>
-          <h1>Dutch حروف اور تلفظ</h1>
-          <p class="lead">ہر حرف کے ساتھ ایک آسان مثال دی گئی ہے۔ speaker دبانے سے صرف حرف کا Dutch نام سنائی دے گا۔</p>
+          <h1>Nederlands حروف اور تلفظ</h1>
+          <p class="lead">ہر حرف کے ساتھ ایک آسان مثال دی گئی ہے۔ آواز کا بٹن دبانے سے صرف حرف کا Nederlands نام سنائی دے گا۔</p>
         </div>
       </div>
       <h2>حروف تہجی</h2>
@@ -871,25 +871,25 @@ function renderProgress() {
   return `
     ${renderTopbar()}
     <section class="progress-panel">
-      <h1>آپ کی Progress</h1>
+      <h1>آپ کی پیش رفت</h1>
       <div class="summary-grid">
         <div class="summary-item">
           <span class="summary-value">${completedCount()}</span>
-          <span class="summary-label">مکمل lessons</span>
+          <span class="summary-label">مکمل سبق</span>
         </div>
         <div class="summary-item">
           <span class="summary-value">${progress.totalXp}</span>
-          <span class="summary-label">points</span>
+          <span class="summary-label">پوائنٹس</span>
         </div>
         <div class="summary-item">
           <span class="summary-value">${progress.mistakes.length}</span>
-          <span class="summary-label">mistakes</span>
+          <span class="summary-label">غلطیاں</span>
         </div>
       </div>
       <div class="unit-list">
         ${lessons.map(renderUnitRow).join("")}
       </div>
-      <button class="secondary-button" data-action="reset">Progress reset کریں</button>
+      <button class="secondary-button" data-action="reset">پیش رفت دوبارہ شروع کریں</button>
     </section>
   `;
 }
@@ -898,13 +898,13 @@ function renderSettings() {
   return `
     ${renderTopbar()}
     <section class="settings-panel">
-      <h1>Settings</h1>
-      <p class="lead">یہ settings اسی browser میں محفوظ رہتی ہیں۔ ابھی accounts نہیں ہیں۔</p>
+      <h1>ترتیبات</h1>
+      <p class="lead">یہ ترتیبات اسی براؤزر میں محفوظ رہتی ہیں۔ ابھی اکاؤنٹ نہیں ہیں۔</p>
       <div class="settings-list">
-        ${renderToggleRow("soundEffects", "Correct/wrong sound effects", "جواب چیک کرتے وقت چھوٹی آوازیں")}
-        ${renderToggleRow("pronunciation", "Dutch pronunciation buttons", "speaker buttons اور word pronunciation")}
+        ${renderToggleRow("soundEffects", "درست/غلط کی آوازیں", "جواب چیک کرتے وقت چھوٹی آوازیں")}
+        ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}
       </div>
-      <button class="secondary-button danger-button" data-action="reset">Progress reset کریں</button>
+      <button class="secondary-button danger-button" data-action="reset">پیش رفت دوبارہ شروع کریں</button>
     </section>
   `;
 }
@@ -924,10 +924,10 @@ function renderToggleRow(key, title, subtitle) {
 
 function renderBottomNav() {
   return `
-    <nav class="bottom-nav" aria-label="Main navigation">
-      <button class="nav-button ${screen === "home" ? "active" : ""}" data-action="home">Home</button>
-      <button class="nav-button ${screen === "letters" ? "active" : ""}" data-action="letters">Letters</button>
-      <button class="nav-button ${screen === "settings" ? "active" : ""}" data-action="settings">Settings</button>
+    <nav class="bottom-nav" aria-label="اصل راستے">
+      <button class="nav-button ${screen === "home" ? "active" : ""}" data-action="home">گھر</button>
+      <button class="nav-button ${screen === "letters" ? "active" : ""}" data-action="letters">حروف</button>
+      <button class="nav-button ${screen === "settings" ? "active" : ""}" data-action="settings">ترتیبات</button>
     </nav>
   `;
 }
@@ -1159,7 +1159,7 @@ function completeLesson(lesson) {
 }
 
 function resetProgress() {
-  const confirmed = window.confirm("کیا آپ واقعی progress reset کرنا چاہتے ہیں؟");
+  const confirmed = window.confirm("کیا آپ واقعی پیش رفت دوبارہ شروع کرنا چاہتے ہیں؟");
   if (!confirmed) return;
   saveProgress({ ...defaultProgress });
   activeWordHelp = null;

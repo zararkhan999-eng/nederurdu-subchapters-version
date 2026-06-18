@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v26-polished-visuals";
+const CACHE_NAME = "nederurdu-v27-urdu-interface";
 const APP_SHELL = [
   "./",
   "./index.html",
