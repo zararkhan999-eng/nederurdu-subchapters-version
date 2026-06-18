@@ -505,53 +505,79 @@ function renderHome() {
 
   return `
     ${renderTopbar()}
-    <section class="chapter-strip" aria-label="باب">
-      ${chapters.map(renderChapterButton).join("")}
-    </section>
-    <section class="hero-panel">
-      ${renderVisual(heroVisual, "hero-visual")}
-      <div class="hero-copy">
-        <p class="eyeline">${chapter.title} · ${percent}% مکمل</p>
-        <h1>${nextLesson.title}</h1>
-        <p class="lead">${nextLesson.description} ہر جواب کے بعد چھوٹی اردو وضاحت ملے گی۔</p>
+    <section class="home-world">
+      <div class="world-sky" aria-hidden="true">
+        <span class="cloud cloud-one"></span>
+        <span class="cloud cloud-two"></span>
+        <span class="hill hill-one"></span>
+        <span class="hill hill-two"></span>
       </div>
-      <div class="dashboard-progress">
-        <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
-        <span class="latin">${completedCount()}/${lessons.length}</span>
+      <section class="chapter-strip" aria-label="باب">
+        ${chapters.map(renderChapterButton).join("")}
+      </section>
+      <div class="path-stage">
+        ${renderJourneyPath(lessons, nextLesson)}
+        <article class="next-lesson-island">
+          ${renderVisual(heroVisual, "hero-visual")}
+          <div class="hero-copy">
+            <p class="eyeline">${chapter.title} · ${percent}% مکمل</p>
+            <h1>${nextLesson.title}</h1>
+            <p class="lead">${nextLesson.description}</p>
+          </div>
+          <div class="dashboard-progress">
+            <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
+            <span class="latin">${completedCount()}/${lessons.length}</span>
+          </div>
+          <button class="primary-button" data-action="preview" data-lesson="${nextLesson.id}">سبق شروع کریں</button>
+        </article>
       </div>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <span class="summary-value">${completedCount()}/${lessons.length}</span>
-          <span class="summary-label">سبق مکمل</span>
+      <section class="learning-dock" aria-label="آج کی حالت">
+        <div class="dock-stat">
+          <strong class="latin">${completedCount()}/${lessons.length}</strong>
+          <span>سبق مکمل</span>
         </div>
-        <div class="summary-item">
-          <span class="summary-value">${progress.totalXp}</span>
-          <span class="summary-label">پوائنٹس</span>
+        <div class="dock-stat">
+          <strong class="latin">${progress.totalXp}</strong>
+          <span>پوائنٹس</span>
         </div>
-        <div class="summary-item">
-          <span class="summary-value">${progress.practiceDays.length}</span>
-          <span class="summary-label">مشق کے دن</span>
-        </div>
-      </div>
-      <button class="primary-button" data-action="preview" data-lesson="${nextLesson.id}">سبق دیکھیں</button>
+        <button class="dock-action" data-action="letters">
+          <span class="quick-icon">Aa</span>
+          <b>حروف</b>
+        </button>
+      </section>
     </section>
     ${renderReviewLite()}
-    <section class="quick-actions" aria-label="ایپ کے کام">
-      <button class="quick-action" data-action="letters">
-        <span class="quick-icon">Aa</span>
-        <strong>حروف</strong>
-        <small>حروف تہجی</small>
-      </button>
-      <button class="quick-action" data-action="settings">
-        <span class="quick-icon">آواز</span>
-        <strong>ترتیبات</strong>
-        <small>آواز</small>
-      </button>
-    </section>
-    <section class="section">
-      <h2>${chapter.title} کے مقصد</h2>
+    <section class="section journey-section">
+      <h2>${chapter.title} کا راستہ</h2>
       ${renderSubchapters(chapter)}
     </section>
+  `;
+}
+
+function renderJourneyPath(lessons, nextLesson) {
+  const visibleLessons = lessons.slice(0, 4);
+  const nextIndex = visibleLessons.findIndex((lesson) => lesson.id === nextLesson.id);
+
+  return `
+    <div class="journey-path" aria-label="سبق کا راستہ">
+      <span class="path-thread" aria-hidden="true"></span>
+      ${visibleLessons.map((lesson, index) => {
+        const done = progress.completedLessons.includes(lesson.id);
+        const current = lesson.id === nextLesson.id || (nextIndex === -1 && index === 0);
+        const locked = !isLessonUnlocked(index);
+        const nodeLeft = [86, 54, 72, 38, 64, 30, 50][index] || 50;
+        const nodeTop = [0, 42, 84, 126, 168, 210, 252][index] || 0;
+        return `
+          <button class="path-node ${index % 2 ? "side-left" : "side-right"} ${done ? "done" : ""} ${current ? "current" : ""} ${locked ? "locked" : ""}"
+            data-action="preview"
+            data-lesson="${lesson.id}"
+            style="--node-left: ${nodeLeft}%; --node-top: ${nodeTop}px">
+            <span class="node-core">${done ? "✓" : index + 1}</span>
+            <span class="node-label">${lesson.unit}</span>
+          </button>
+        `;
+      }).join("")}
+    </div>
   `;
 }
 
