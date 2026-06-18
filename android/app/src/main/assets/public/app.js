@@ -1478,7 +1478,13 @@ function isDutchText(value) {
 }
 
 function speakDutch(text) {
-  if (!progress.settings.pronunciation || !("speechSynthesis" in window) || !text) return;
+  if (!progress.settings.pronunciation || !text) return;
+
+  if (window.NederUrduTts?.speak?.(text)) {
+    return;
+  }
+
+  if (!("speechSynthesis" in window)) return;
 
   const utterance = new SpeechSynthesisUtterance(text);
   const voices = window.speechSynthesis.getVoices();
