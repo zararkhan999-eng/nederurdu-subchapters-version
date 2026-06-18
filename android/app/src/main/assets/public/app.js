@@ -555,24 +555,36 @@ function renderHome() {
 }
 
 function renderJourneyPath(lessons, nextLesson) {
-  const visibleLessons = lessons.slice(0, 4);
-  const nextIndex = visibleLessons.findIndex((lesson) => lesson.id === nextLesson.id);
+  const nextLessonIndex = Math.max(0, lessons.findIndex((lesson) => lesson.id === nextLesson.id));
+  const startIndex = Math.max(0, nextLessonIndex - 1);
+  const visibleLessons = lessons.slice(startIndex, startIndex + 5);
+  const nodePositions = [
+    { left: 78, top: 18 },
+    { left: 42, top: 94 },
+    { left: 68, top: 178 },
+    { left: 34, top: 270 },
+    { left: 56, top: 354 }
+  ];
 
   return `
     <div class="journey-path" aria-label="سبق کا راستہ">
-      <span class="path-thread" aria-hidden="true"></span>
+      <svg class="path-road" viewBox="0 0 360 440" preserveAspectRatio="none" aria-hidden="true">
+        <path class="path-road-shadow" d="M284 20 C210 58 126 70 118 122 C107 196 282 174 268 248 C252 338 86 274 80 360 C76 415 164 424 236 392" />
+        <path class="path-road-base" d="M284 20 C210 58 126 70 118 122 C107 196 282 174 268 248 C252 338 86 274 80 360 C76 415 164 424 236 392" />
+        <path class="path-road-center" d="M284 20 C210 58 126 70 118 122 C107 196 282 174 268 248 C252 338 86 274 80 360 C76 415 164 424 236 392" />
+      </svg>
       ${visibleLessons.map((lesson, index) => {
+        const lessonIndex = startIndex + index;
         const done = progress.completedLessons.includes(lesson.id);
-        const current = lesson.id === nextLesson.id || (nextIndex === -1 && index === 0);
-        const locked = !isLessonUnlocked(index);
-        const nodeLeft = [86, 54, 72, 38, 64, 30, 50][index] || 50;
-        const nodeTop = [0, 42, 84, 126, 168, 210, 252][index] || 0;
+        const current = lesson.id === nextLesson.id;
+        const locked = !isLessonUnlocked(lessonIndex);
+        const node = nodePositions[index] || nodePositions[nodePositions.length - 1];
         return `
-          <button class="path-node ${index % 2 ? "side-left" : "side-right"} ${done ? "done" : ""} ${current ? "current" : ""} ${locked ? "locked" : ""}"
+          <button class="path-node ${done ? "done" : ""} ${current ? "current" : ""} ${locked ? "locked" : ""}"
             data-action="preview"
             data-lesson="${lesson.id}"
-            style="--node-left: ${nodeLeft}%; --node-top: ${nodeTop}px">
-            <span class="node-core">${done ? "✓" : index + 1}</span>
+            style="--node-left: ${node.left}%; --node-top: ${node.top}px">
+            <span class="node-core">${done ? "✓" : lessonIndex + 1}</span>
             <span class="node-label">${lesson.unit}</span>
           </button>
         `;
@@ -1295,7 +1307,27 @@ function chooseAnswer(answer) {
   activeWordHelp = null;
   hintOpen = false;
   selectedAnswer = answer;
-  render();
+  updateChoiceSelection();
+}
+
+function updateChoiceSelection() {
+  const question = getActiveQuestion();
+  if (!question || question.type === "build") {
+    render();
+    return;
+  }
+
+  document.querySelectorAll("[data-action='choose']").forEach((button) => {
+    const selected = button.dataset.answer === selectedAnswer;
+    button.classList.toggle("selected", selected);
+  });
+
+  const checkButton = document.querySelector("[data-action='check']");
+  if (checkButton) {
+    checkButton.disabled = !canCheckQuestion(question);
+  }
+
+  document.querySelectorAll(".hint-popover, .word-help-popover").forEach((element) => element.remove());
 }
 
 function selectBuildTile(tileId) {

@@ -26,6 +26,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -1934,31 +1935,85 @@ body {
 
 .path-stage {
   position: relative;
-  min-height: 0;
+  min-height: 610px;
+  margin-top: 4px;
   padding: 0 2px 8px;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(211, 244, 255, 0.18), rgba(185, 237, 169, 0.26)),
+    radial-gradient(circle at 82% 17%, rgba(255, 255, 255, 0.62) 0 46px, transparent 48px),
+    radial-gradient(circle at 18% 70%, rgba(122, 213, 93, 0.28) 0 84px, transparent 86px);
 }
 
-.journey-path {
-  position: relative;
-  z-index: 3;
-  height: 118px;
-  margin: 2px 0 12px;
+.path-stage::before,
+.path-stage::after {
+  content: "";
+  position: absolute;
   pointer-events: none;
 }
 
-.path-thread {
-  position: absolute;
-  left: 12%;
-  right: 10%;
-  top: 56px;
-  width: auto;
-  height: 10px;
-  border-radius: 999px;
+.path-stage::before {
+  left: -18%;
+  right: -18%;
+  bottom: -70px;
+  height: 210px;
+  border-radius: 50% 50% 0 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.18)),
-    linear-gradient(90deg, rgba(28, 176, 246, 0.36), rgba(88, 204, 2, 0.34));
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.28), 0 16px 28px rgba(28, 176, 246, 0.12);
-  transform: rotate(-7deg);
+    radial-gradient(circle at 72% 30%, rgba(255, 221, 84, 0.75) 0 16px, transparent 17px),
+    linear-gradient(180deg, rgba(143, 220, 82, 0.72), rgba(71, 171, 64, 0.44));
+}
+
+.path-stage::after {
+  right: 18px;
+  bottom: 82px;
+  width: 62px;
+  height: 92px;
+  border-radius: 34px 34px 10px 10px;
+  background:
+    linear-gradient(90deg, transparent 45%, rgba(101, 82, 45, 0.48) 47% 53%, transparent 55%),
+    radial-gradient(circle at 50% 24%, rgba(88, 204, 2, 0.56) 0 30px, transparent 31px);
+  opacity: 0.9;
+}
+
+.journey-path {
+  position: absolute;
+  z-index: 3;
+  inset: 22px 0 auto;
+  height: 458px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.path-road {
+  position: absolute;
+  inset: 0 4px;
+  width: calc(100% - 8px);
+  height: 100%;
+  overflow: visible;
+}
+
+.path-road path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.path-road-shadow {
+  stroke: rgba(36, 49, 58, 0.12);
+  stroke-width: 54;
+  transform: translateY(10px);
+}
+
+.path-road-base {
+  stroke: #fff4cf;
+  stroke-width: 46;
+}
+
+.path-road-center {
+  stroke: rgba(117, 190, 102, 0.34);
+  stroke-width: 12;
+  stroke-dasharray: 44 26;
 }
 
 .path-node {
@@ -1976,12 +2031,6 @@ body {
   pointer-events: auto;
   cursor: pointer;
   transform: translateX(-50%);
-}
-
-.path-node.side-right {
-}
-
-.path-node.side-left {
 }
 
 .node-core {
@@ -2031,10 +2080,12 @@ body {
 }
 
 .next-lesson-island {
-  position: relative;
-  z-index: 4;
-  margin-top: 0;
-  padding: 14px;
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 172px;
+  width: min(88%, 370px);
+  padding: 18px 16px 16px;
   border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 26px;
   background:
@@ -2045,6 +2096,7 @@ body {
     0 20px 44px rgba(36, 49, 58, 0.13);
   backdrop-filter: blur(12px);
   animation: island-rise 360ms ease-out both;
+  transform: translateX(-50%);
 }
 
 .next-lesson-island::before {
@@ -2063,6 +2115,10 @@ body {
   border-radius: 22px;
   background:
     linear-gradient(180deg, rgba(242, 252, 255, 0.96), rgba(255, 255, 255, 0.72));
+}
+
+.next-lesson-island .hero-visual {
+  display: none;
 }
 
 .hero-visual img {
@@ -2282,18 +2338,6 @@ body {
   z-index: 2;
 }
 
-.choice-wrap {
-  animation: answer-rise 220ms ease-out both;
-}
-
-.choice-wrap:nth-child(2) {
-  animation-delay: 35ms;
-}
-
-.choice-wrap:nth-child(3) {
-  animation-delay: 70ms;
-}
-
 .choice-button {
   min-height: 60px;
   border-color: rgba(222, 234, 241, 0.96);
@@ -2360,11 +2404,11 @@ body {
 @keyframes island-rise {
   from {
     opacity: 0;
-    transform: translateY(16px) scale(0.98);
+    transform: translateX(-50%) translateY(16px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
 
