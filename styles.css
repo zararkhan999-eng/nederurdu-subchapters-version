@@ -19,6 +19,9 @@
   --button-shadow: inset 0 -4px 0 rgba(36, 49, 58, 0.16);
   --radius: 8px;
   --control-radius: 16px;
+  --font-ui: ui-rounded, "Avenir Next", "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  --font-urdu: "Noto Naskh Arabic", "Geeza Pro", "Arial Unicode MS", "Segoe UI", Arial, sans-serif;
+  --font-urdu-display: "Noto Nastaliq Urdu", "Noto Naskh Arabic", "Geeza Pro", "Arial Unicode MS", "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -32,16 +35,11 @@ body {
     linear-gradient(180deg, #dff4ff 0, #f7fcff 42%, #fff9ed 100%),
     var(--bg);
   color: var(--ink);
-  font-family:
-    ui-rounded,
-    "Avenir Next",
-    "Trebuchet MS",
-    "Noto Naskh Arabic",
-    "Geeza Pro",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+  font-family: var(--font-urdu);
+  font-weight: 700;
   letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 button {
@@ -78,7 +76,7 @@ button {
   border-radius: 14px;
   background: linear-gradient(145deg, var(--accent), #89e219);
   color: white;
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-weight: 950;
   letter-spacing: 0;
   box-shadow: var(--button-shadow), 0 10px 20px rgba(88, 204, 2, 0.22);
@@ -90,7 +88,7 @@ button {
 
 .brand-title {
   margin: 0;
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 1.34rem;
   font-weight: 950;
   line-height: 1;
@@ -148,7 +146,7 @@ button {
 }
 
 .chapter-name {
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 1.08rem;
   font-weight: 950;
   direction: ltr;
@@ -168,7 +166,7 @@ button {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent-dark);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.74rem;
   font-weight: 950;
   direction: ltr;
@@ -330,7 +328,7 @@ h3 {
 .summary-value {
   display: block;
   color: var(--blue);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 1.1rem;
   font-weight: 950;
   direction: ltr;
@@ -392,7 +390,7 @@ h3 {
   border-radius: 12px;
   background: var(--blue-soft);
   color: var(--blue);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.86rem;
   font-weight: 950;
 }
@@ -412,9 +410,11 @@ h3 {
 .secondary-button,
 .choice-button {
   min-height: 54px;
+  padding: 8px 14px 12px;
   border-radius: var(--control-radius);
   cursor: pointer;
   font-weight: 950;
+  line-height: 1.35;
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, color 140ms ease;
 }
 
@@ -605,7 +605,7 @@ h3 {
   border-radius: 16px;
   background: linear-gradient(145deg, var(--yellow), #ffdc54);
   color: #6f4d00;
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-weight: 950;
   direction: ltr;
   box-shadow: inset 0 -4px 0 rgba(111, 77, 0, 0.16);
@@ -679,7 +679,7 @@ h3 {
   border-radius: 999px;
   background: #ffffff;
   color: var(--ink);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   font-weight: 850;
   box-shadow: inset 0 -3px 0 rgba(36, 49, 58, 0.06);
@@ -710,7 +710,7 @@ h3 {
 
 .lesson-header-main span {
   color: var(--muted);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.78rem;
   font-weight: 950;
   direction: ltr;
@@ -832,7 +832,7 @@ h3 {
   border-radius: 50%;
   background: #ffffff;
   color: var(--blue);
-  font-family: "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-urdu);
   font-size: 1.05rem;
   font-weight: 950;
   box-shadow: inset 0 -3px 0 rgba(36, 49, 58, 0.08);
@@ -853,7 +853,7 @@ h3 {
   border-radius: 14px;
   background: #ffffff;
   color: var(--ink);
-  font-family: "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-urdu);
   font-size: 0.9rem;
   font-weight: 850;
   line-height: 1.65;
@@ -865,7 +865,7 @@ h3 {
 .prompt-main {
   margin-bottom: 6px;
   color: #172630;
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: clamp(1.9rem, 9vw, 2.7rem);
   font-weight: 950;
   direction: ltr;
@@ -882,7 +882,7 @@ h3 {
   border-radius: 12px;
   background: #ffffff;
   color: var(--blue);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.8rem;
   font-weight: 950;
   line-height: 1;
@@ -904,7 +904,7 @@ h3 {
 }
 
 .prompt-main:not(.latin) {
-  font-family: "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-urdu);
   direction: rtl;
   font-size: clamp(1.45rem, 7vw, 2.05rem);
   line-height: 1.6;
@@ -941,7 +941,7 @@ h3 {
   border-radius: 12px;
   background: #172630;
   color: #ffffff;
-  font-family: "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-urdu);
   font-size: 0.82rem;
   font-weight: 850;
   line-height: 1.45;
@@ -1034,7 +1034,7 @@ h3 {
   border-radius: 14px;
   background: #ffffff;
   color: var(--ink);
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.98rem;
   font-weight: 950;
   line-height: 1.25;
@@ -1219,7 +1219,7 @@ h3 {
   border-radius: 50%;
   background: linear-gradient(145deg, var(--yellow), #ffe066);
   color: #7a5500;
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 1.55rem;
   font-weight: 950;
   direction: ltr;
@@ -1485,9 +1485,82 @@ h3 {
   animation: nav-pop 180ms ease-out both;
 }
 
+body :where(
+  h1,
+  h2,
+  h3,
+  .brand-subtitle,
+  .chapter-subtitle,
+  .eyeline,
+  .lead,
+  .summary-label,
+  .dashboard-progress span,
+  .quick-action strong,
+  .quick-action small,
+  .primary-button,
+  .secondary-button,
+  .subchapter-card p,
+  .subchapter-practice,
+  .unit-title,
+  .unit-meta,
+  .lesson-header-main strong,
+  .prompt-label,
+  .hint-button,
+  .hint-popover,
+  .prompt-main:not(.latin),
+  .word-help-popover,
+  .prompt-note,
+  .build-placeholder,
+  .choice-button:not(.latin),
+  .feedback,
+  .empty-state,
+  .setting-row strong,
+  .setting-row small,
+  .letter-info span,
+  .nav-button
+) {
+  font-family: var(--font-urdu);
+  font-synthesis-weight: auto;
+}
+
+body :where(
+  h1,
+  h2,
+  h3,
+  .primary-button,
+  .secondary-button,
+  .choice-button:not(.latin),
+  .unit-title,
+  .prompt-main:not(.latin),
+  .nav-button
+) {
+  font-weight: 900;
+}
+
+body :where(
+  .lead,
+  .chapter-subtitle,
+  .subchapter-card p,
+  .subchapter-practice,
+  .unit-meta,
+  .prompt-note,
+  .feedback,
+  .setting-row small,
+  .letter-info span
+) {
+  font-weight: 800;
+}
+
+body :where(.prompt-main:not(.latin), h1, h2, h3) {
+  font-family: var(--font-urdu-display);
+  text-shadow: 0 0.35px 0 rgba(36, 49, 58, 0.18);
+}
+
 .latin {
-  font-family: ui-rounded, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-ui);
+  font-weight: 900;
   direction: ltr;
+  text-shadow: none;
 }
 
 @keyframes panel-enter {

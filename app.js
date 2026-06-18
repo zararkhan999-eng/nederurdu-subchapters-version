@@ -639,15 +639,16 @@ function renderChoice(option, question, index) {
   if (selectedAnswer === option) state = "selected";
   if (checked && option === question.answer) state = "correct";
   if (checked && selectedAnswer === option && option !== question.answer) state = "wrong";
-  const choiceText = isDutchText(option) ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : option;
+  const dutchChoice = isDutchText(option);
+  const choiceText = dutchChoice ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : option;
 
   return `
-    <div class="choice-wrap ${isDutchText(option) ? "has-sound" : ""}">
-      <button class="choice-button ${state}" data-action="choose" data-answer="${escapeAttr(option)}">
+    <div class="choice-wrap ${dutchChoice ? "has-sound" : ""}">
+      <button class="choice-button ${state} ${dutchChoice ? "latin" : ""}" data-action="choose" data-answer="${escapeAttr(option)}">
         <span class="choice-text">${choiceText}</span>
         ${checked && selectedAnswer === question.answer && option === question.answer ? renderChoiceConfetti() : ""}
       </button>
-      ${isDutchText(option) ? renderSpeakButton(option, "choice") : ""}
+      ${dutchChoice ? renderSpeakButton(option, "choice") : ""}
     </div>
   `;
 }
@@ -665,7 +666,7 @@ function renderBuildExercise(question) {
     <div class="build-exercise">
       <div class="build-answer ${answerState}">
         ${selectedTiles.length ? selectedTiles.map((tile, index) => `
-          <button class="word-tile selected-tile" data-action="build-remove" data-build-index="${index}">
+          <button class="word-tile selected-tile latin" data-action="build-remove" data-build-index="${index}">
             ${renderTextWithWordHelp(tile.word, `build-answer-${activeQuestionIndex}-${index}`)}
           </button>
         `).join("") : `<span class="build-placeholder">Nederlands الفاظ یہاں بنائیں</span>`}
@@ -673,7 +674,7 @@ function renderBuildExercise(question) {
       </div>
       <div class="build-bank">
         ${remainingTiles.map((tile) => `
-          <button class="word-tile" data-action="build-select" data-tile-id="${escapeAttr(tile.id)}">
+          <button class="word-tile latin" data-action="build-select" data-tile-id="${escapeAttr(tile.id)}">
             ${renderTextWithWordHelp(tile.word, `build-bank-${activeQuestionIndex}-${tile.id}`)}
           </button>
         `).join("")}
