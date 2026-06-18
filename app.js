@@ -250,6 +250,8 @@ const wordHelpGlossary = {
   zus: "بہن"
 };
 
+const REVIEW_QUESTION_LIMIT = 8;
+
 const defaultProgress = {
   completedLessons: [],
   scores: {},
@@ -280,6 +282,7 @@ let activeWordHelp = null;
 let buildAnswerIds = [];
 let hintOpen = false;
 let audioContext = null;
+let activeReview = null;
 
 function loadProgress() {
   try {
@@ -346,12 +349,106 @@ function subchapterCompletedCount(subchapter) {
   return subchapterLessons(subchapter).filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
 }
 
+function completedLessonsInOrder() {
+  return progress.completedLessons.map((id) => getLesson(id)).filter(Boolean);
+}
+
 function getNextLessonForChapter(chapter = getSelectedChapter()) {
   return chapter.lessons.find((lesson) => !progress.completedLessons.includes(lesson.id)) || chapter.lessons[0];
 }
 
 function getLessonIndexInChapter(lessonId, chapter = getSelectedChapter()) {
   return chapter.lessons.findIndex((lesson) => lesson.id === lessonId);
+}
+
+function getReviewConfig(kind) {
+  if (kind === "mistakes") {
+    const questions = getMistakeReviewQuestions();
+    return {
+      title: "غلطیوں کی مشق",
+      unit: "دہرائی",
+      description: "جن سوالات میں پہلے غلطی ہوئی تھی، وہ دوبارہ آئیں گے۔",
+      empty: "ابھی غلطی نہیں",
+      questions
+    };
+  }
+
+  if (kind === "old") {
+    const questions = getOldLessonReviewQuestions();
+    return {
+      title: "پرانا سبق",
+      unit: "دہرائی",
+      description: "پہلے مکمل کیے ہوئے سبق سے چند سوالات دوبارہ کریں۔",
+      empty: "پہلے سبق مکمل کریں",
+      questions
+    };
+  }
+
+  const questions = getTodayReviewQuestions();
+  return {
+    title: "آج کی مشق",
+    unit: "دہرائی",
+    description: "آج کے لیے چھوٹی سی ملی جلی دہرائی۔",
+    empty: "سبق شروع کریں",
+    questions
+  };
+}
+
+function getTodayReviewQuestions() {
+  const completed = completedLessonsInOrder();
+  const sourceLessons = completed.length
+    ? completed.slice(-3).reverse()
+    : [getLesson(progress.lastLessonId || getNextLessonForChapter().id)];
+  return pickReviewQuestions(sourceLessons);
+}
+
+function getOldLessonReviewQuestions() {
+  const completed = completedLessonsInOrder();
+  const olderLessons = completed.filter((lesson) => lesson.id !== progress.lastLessonId);
+  return pickReviewQuestions(olderLessons.length ? olderLessons : completed);
+}
+
+function getMistakeReviewQuestions() {
+  const seen = new Set();
+  const questions = [];
+  for (const mistake of [...progress.mistakes].reverse()) {
+    const key = mistakeKey(mistake);
+    if (seen.has(key)) continue;
+    const question = findQuestionForMistake(mistake);
+    if (!question) continue;
+    seen.add(key);
+    questions.push(cloneQuestion(question));
+    if (questions.length >= REVIEW_QUESTION_LIMIT) break;
+  }
+  return questions;
+}
+
+function pickReviewQuestions(lessons) {
+  const questions = lessons.flatMap((lesson) => lesson.questions.map(cloneQuestion));
+  return shuffleArray(questions).slice(0, REVIEW_QUESTION_LIMIT);
+}
+
+function cloneQuestion(question) {
+  return {
+    ...question,
+    options: question.options ? [...question.options] : undefined,
+    tiles: question.tiles ? [...question.tiles] : undefined
+  };
+}
+
+function findQuestionForMistake(mistake) {
+  const lesson = getLesson(mistake.lessonId);
+  return lesson.questions.find((question) => (
+    question.prompt === mistake.prompt && question.answer === mistake.answer
+  ));
+}
+
+function mistakeKey(item) {
+  return `${item.lessonId || ""}|${item.prompt}|${item.answer}`;
+}
+
+function getActiveLesson() {
+  return activeReview || getLesson(activeLessonId);
 }
 
 function render() {
@@ -423,6 +520,7 @@ function renderHome() {
       </div>
       <button class="primary-button" data-action="preview" data-lesson="${nextLesson.id}">سبق دیکھیں</button>
     </section>
+    ${renderReviewLite()}
     <section class="quick-actions" aria-label="ایپ کے کام">
       <button class="quick-action" data-action="letters">
         <span class="quick-icon">Aa</span>
@@ -439,6 +537,36 @@ function renderHome() {
       <h2>${chapter.title} کے مقصد</h2>
       ${renderSubchapters(chapter)}
     </section>
+  `;
+}
+
+function renderReviewLite() {
+  const today = getReviewConfig("today");
+  const mistakes = getReviewConfig("mistakes");
+  const old = getReviewConfig("old");
+
+  return `
+    <section class="review-panel" aria-label="دہرائی">
+      <div class="review-heading">
+        <h2>آج کی دہرائی</h2>
+        <span>${today.questions.length || 0} سوالات</span>
+      </div>
+      <div class="review-grid">
+        ${renderReviewCard("today", today)}
+        ${renderReviewCard("mistakes", mistakes)}
+        ${renderReviewCard("old", old)}
+      </div>
+    </section>
+  `;
+}
+
+function renderReviewCard(kind, config) {
+  const disabled = !config.questions.length;
+  return `
+    <button class="review-card ${disabled ? "disabled" : ""}" data-action="review" data-review-kind="${kind}" ${disabled ? "disabled" : ""}>
+      <strong>${config.title}</strong>
+      <span>${disabled ? config.empty : `${config.questions.length} سوالات`}</span>
+    </button>
   `;
 }
 
@@ -562,7 +690,7 @@ function renderLessonPreview() {
 }
 
 function renderLesson() {
-  const lesson = getLesson(activeLessonId);
+  const lesson = getActiveLesson();
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
   const question = questions[activeQuestionIndex];
   const visual = getExerciseVisual(question, lesson);
@@ -821,15 +949,19 @@ function renderSpeakButton(text, variant) {
 function renderComplete() {
   const result = lessonResult || { correct: 0, total: 1, xp: 0 };
   const percent = Math.round((result.correct / result.total) * 100);
+  const isReview = Boolean(result.reviewKind);
   return `
     ${renderTopbar()}
     <section class="result-panel">
       <div class="celebration-dots" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
-      <h1>سبق مکمل ہو گیا</h1>
+      <h1>${isReview ? "دہرائی مکمل ہو گئی" : "سبق مکمل ہو گیا"}</h1>
       <div class="result-score">${percent}%</div>
-      <p class="lead">آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ ${result.xp} پوائنٹس محفوظ ہو گئے۔</p>
+      <p class="lead">${isReview
+        ? `آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ آج کی مشق محفوظ ہو گئی۔`
+        : `آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ ${result.xp} پوائنٹس محفوظ ہو گئے۔`
+      }</p>
       <button class="primary-button" data-action="home">گھر جائیں</button>
     </section>
   `;
@@ -954,6 +1086,7 @@ function bindEvents() {
       if (action === "chapter") selectChapter(element.dataset.chapter);
       if (action === "preview") showLessonPreview(element.dataset.lesson);
       if (action === "start") startLesson(element.dataset.lesson);
+      if (action === "review") startReview(element.dataset.reviewKind);
       if (action === "choose") chooseAnswer(element.dataset.answer);
       if (action === "build-select") selectBuildTile(element.dataset.tileId);
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
@@ -986,24 +1119,28 @@ function bindEvents() {
 
 function goHome() {
   activeWordHelp = null;
+  activeReview = null;
   screen = "home";
   render();
 }
 
 function goProgress() {
   activeWordHelp = null;
+  activeReview = null;
   screen = "progress";
   render();
 }
 
 function goLetters() {
   activeWordHelp = null;
+  activeReview = null;
   screen = "letters";
   render();
 }
 
 function goSettings() {
   activeWordHelp = null;
+  activeReview = null;
   screen = "settings";
   render();
 }
@@ -1014,6 +1151,7 @@ function showLessonPreview(id) {
   selectedChapterId = chapter.id;
   previewLessonId = lesson.id;
   activeWordHelp = null;
+  activeReview = null;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "preview";
   render();
@@ -1026,6 +1164,7 @@ function selectChapter(id) {
   const nextLesson = getNextLessonForChapter(chapter);
   activeLessonId = nextLesson.id;
   previewLessonId = nextLesson.id;
+  activeReview = null;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: activeLessonId });
   screen = "home";
   render();
@@ -1035,6 +1174,7 @@ function startLesson(id) {
   const chapter = getChapterForLesson(id);
   selectedChapterId = chapter.id;
   activeLessonId = id;
+  activeReview = null;
   activeQuestionIndex = 0;
   selectedAnswer = "";
   checked = false;
@@ -1045,6 +1185,32 @@ function startLesson(id) {
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(getLesson(id));
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: id });
+  screen = "lesson";
+  render();
+}
+
+function startReview(kind) {
+  const config = getReviewConfig(kind);
+  if (!config.questions.length) return;
+  activeReview = {
+    id: `review-${kind}`,
+    title: config.title,
+    unit: config.unit,
+    description: config.description,
+    questions: config.questions,
+    xp: 0,
+    reviewKind: kind
+  };
+  activeLessonId = activeReview.id;
+  activeQuestionIndex = 0;
+  selectedAnswer = "";
+  checked = false;
+  lessonProgressSteps = 0;
+  activeWordHelp = null;
+  buildAnswerIds = [];
+  hintOpen = false;
+  sessionAnswers = [];
+  sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
   render();
 }
@@ -1101,7 +1267,7 @@ function checkAnswer() {
 }
 
 function nextQuestion() {
-  const lesson = getLesson(activeLessonId);
+  const lesson = getActiveLesson();
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
   if (activeQuestionIndex < questions.length - 1) {
     activeQuestionIndex += 1;
@@ -1121,40 +1287,53 @@ function completeLesson(lesson) {
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
   lessonProgressSteps = questions.length;
   const correct = sessionAnswers.filter((answer) => answer.correct).length;
+  const isReview = Boolean(lesson.reviewKind);
   const alreadyCompleted = progress.completedLessons.includes(lesson.id);
-  const earnedXp = alreadyCompleted ? 0 : lesson.xp;
+  const earnedXp = isReview || alreadyCompleted ? 0 : lesson.xp;
   const practiceDays = progress.practiceDays.includes(todayKey())
     ? progress.practiceDays
     : [...progress.practiceDays, todayKey()];
+  const correctedMistakes = lesson.reviewKind === "mistakes"
+    ? new Set(sessionAnswers.filter((answer) => answer.correct).map((answer) => mistakeKey({
+      lessonId: findLessonIdForQuestion(answer.prompt, answer.answer),
+      prompt: answer.prompt,
+      answer: answer.answer
+    })))
+    : new Set();
   const newMistakes = sessionAnswers
     .filter((answer) => !answer.correct)
     .map((answer) => ({
-      lessonId: lesson.id,
+      lessonId: isReview ? findLessonIdForQuestion(answer.prompt, answer.answer) : lesson.id,
       prompt: answer.prompt,
       answer: answer.answer,
       selected: answer.selected,
       date: todayKey()
     }));
+  const keptMistakes = lesson.reviewKind === "mistakes"
+    ? progress.mistakes.filter((mistake) => !correctedMistakes.has(mistakeKey(mistake)))
+    : progress.mistakes;
 
   lessonResult = {
     correct,
     total: questions.length,
-    xp: earnedXp
+    xp: earnedXp,
+    reviewKind: lesson.reviewKind || ""
   };
 
   saveProgress({
     ...progress,
-    completedLessons: alreadyCompleted ? progress.completedLessons : [...progress.completedLessons, lesson.id],
-    scores: {
+    completedLessons: isReview || alreadyCompleted ? progress.completedLessons : [...progress.completedLessons, lesson.id],
+    scores: isReview ? progress.scores : {
       ...progress.scores,
       [lesson.id]: Math.max(progress.scores[lesson.id] || 0, correct)
     },
     totalXp: progress.totalXp + earnedXp,
     practiceDays,
-    mistakes: [...progress.mistakes, ...newMistakes],
-    lastLessonId: lesson.id
+    mistakes: [...keptMistakes, ...newMistakes],
+    lastLessonId: isReview ? progress.lastLessonId : lesson.id
   });
 
+  activeReview = null;
   screen = "complete";
   render();
 }
@@ -1164,6 +1343,7 @@ function resetProgress() {
   if (!confirmed) return;
   saveProgress({ ...defaultProgress });
   activeWordHelp = null;
+  activeReview = null;
   buildAnswerIds = [];
   hintOpen = false;
   screen = "home";
@@ -1208,9 +1388,16 @@ function buildSessionQuestions(lesson) {
 }
 
 function getActiveQuestion() {
-  const lesson = getLesson(activeLessonId);
+  const lesson = getActiveLesson();
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
   return questions[activeQuestionIndex];
+}
+
+function findLessonIdForQuestion(prompt, answer) {
+  const lesson = getAllLessons().find((item) => item.questions.some((question) => (
+    question.prompt === prompt && question.answer === answer
+  )));
+  return lesson?.id || activeLessonId;
 }
 
 function getBuildAnswerText(question) {

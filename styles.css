@@ -406,6 +406,94 @@ h3 {
   font-weight: 850;
 }
 
+.review-panel {
+  margin: 16px 0;
+  padding: 15px;
+  border: 2px solid rgba(88, 204, 2, 0.18);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(233, 255, 217, 0.62));
+  box-shadow: inset 0 -4px 0 rgba(36, 49, 58, 0.05), 0 12px 24px rgba(88, 204, 2, 0.08);
+}
+
+.review-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.review-heading h2 {
+  margin: 0;
+  font-size: 1.18rem;
+}
+
+.review-heading span {
+  flex: 0 0 auto;
+  color: var(--accent-dark);
+  font-family: var(--font-urdu);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.review-card {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-height: 82px;
+  padding: 10px 8px 12px;
+  border: 2px solid rgba(88, 204, 2, 0.24);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--ink);
+  text-align: center;
+  box-shadow: inset 0 -4px 0 rgba(36, 49, 58, 0.07);
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.review-card:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.review-card strong {
+  font-family: var(--font-urdu);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.review-card span {
+  color: var(--muted);
+  font-family: var(--font-urdu);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.review-card:disabled {
+  border-color: var(--faint);
+  background: #f6fafc;
+  color: #94a2ad;
+  cursor: not-allowed;
+  box-shadow: inset 0 -3px 0 rgba(36, 49, 58, 0.04);
+}
+
+@media (max-width: 390px) {
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .primary-button,
 .secondary-button,
 .choice-button {
@@ -1397,11 +1485,11 @@ h3 {
 
 .letter-card {
   display: grid;
-  grid-template-columns: 54px 1fr 34px;
+  grid-template-columns: 64px 1fr 36px;
   align-items: center;
-  gap: 8px;
-  min-height: 92px;
-  padding: 10px;
+  gap: 10px;
+  min-height: 106px;
+  padding: 12px;
   border: 2px solid #eadfce;
   border-radius: 18px;
   background: #ffffff;
@@ -1412,12 +1500,12 @@ h3 {
 .letter-dot {
   display: grid;
   place-items: center;
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   border-radius: 18px;
   background: #ff791a;
   color: #ffffff;
-  font-size: 1.7rem;
+  font-size: 2rem;
   font-weight: 950;
   box-shadow: inset 0 -4px 0 rgba(119, 49, 0, 0.16);
 }
@@ -1430,16 +1518,18 @@ h3 {
 
 .letter-info strong {
   color: #24140c;
-  font-size: 1.22rem;
+  font-family: var(--font-urdu-display);
+  font-size: 1.58rem;
   font-weight: 950;
-  line-height: 1.45;
+  line-height: 1.65;
+  text-shadow: 0 0.35px 0 rgba(36, 49, 58, 0.18);
 }
 
 .letter-info span {
   color: #756b61;
-  font-size: 0.82rem;
-  font-weight: 850;
-  line-height: 1.45;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.55;
 }
 
 .letter-card .speak-button {
