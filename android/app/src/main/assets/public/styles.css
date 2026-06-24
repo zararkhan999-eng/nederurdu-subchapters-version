@@ -1202,9 +1202,28 @@ h3 {
   gap: 11px;
 }
 
-.build-exercise {
+.build-exercise,
+.uitleg-card {
   display: grid;
   gap: 14px;
+}
+
+.uitleg-card {
+  padding: 16px;
+  border: 2px solid rgba(28, 176, 246, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 -4px 0 rgba(36, 49, 58, 0.05);
+}
+
+.uitleg-point {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--blue-soft);
+  color: var(--ink);
+  font-size: 1.04rem;
+  font-weight: 850;
+  line-height: 1.8;
 }
 
 .build-answer,
@@ -1312,6 +1331,7 @@ h3 {
 .choice-text {
   min-width: 0;
   overflow: visible;
+  overflow-wrap: anywhere;
 }
 
 .choice-button .word-help-token {

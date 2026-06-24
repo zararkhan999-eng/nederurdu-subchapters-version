@@ -31,7 +31,7 @@ const dutchLetters = [
   { letter: "n", speak: "n", sound: "این", word: "nee", meaning: "نہیں" },
   { letter: "o", speak: "o", sound: "او", word: "oog", meaning: "آنکھ" },
   { letter: "p", speak: "p", sound: "پے", word: "pen", meaning: "قلم" },
-  { letter: "q", speak: "q", sound: "کو", word: "quiz", meaning: "quiz" },
+  { letter: "q", speak: "q", sound: "کو", word: "quiz", meaning: "کوئز" },
   { letter: "r", speak: "r", sound: "ایر", word: "rijst", meaning: "چاول" },
   { letter: "s", speak: "s", sound: "ایس", word: "stoel", meaning: "کرسی" },
   { letter: "t", speak: "t", sound: "تے", word: "tafel", meaning: "میز" },
@@ -431,7 +431,7 @@ function getMistakeReviewQuestions() {
 }
 
 function pickReviewQuestions(lessons) {
-  const questions = lessons.flatMap((lesson) => lesson.questions.map(cloneQuestion));
+  const questions = lessons.flatMap((lesson) => lesson.questions.filter((question) => !isInfoQuestion(question)).map(cloneQuestion));
   return shuffleArray(questions).slice(0, REVIEW_QUESTION_LIMIT);
 }
 
@@ -697,7 +697,7 @@ function renderUnitRow(lesson, index) {
       <span class="unit-number">${icon}</span>
       <span>
         <strong class="unit-title">${lesson.unit}</strong>
-        <p class="unit-meta">${lesson.questions.length} سوالات · ${lesson.xp} پوائنٹس</p>
+        <p class="unit-meta">${getLessonRunCount(lesson)} سوالات · ${lesson.xp} پوائنٹس</p>
       </span>
       <span class="status-dot ${done ? "done" : ""}"></span>
     </button>
@@ -730,7 +730,7 @@ function renderLessonPreview() {
       </div>
       <div class="summary-grid">
         <div class="summary-item">
-          <span class="summary-value">${lesson.questions.length}</span>
+          <span class="summary-value">${getLessonRunCount(lesson)}</span>
           <span class="summary-label">سوالات</span>
         </div>
         <div class="summary-item">
@@ -759,8 +759,9 @@ function renderLesson() {
   const percentage = Math.round((lessonProgressSteps / questions.length) * 100);
   const correctCount = sessionAnswers.filter((answer) => answer.correct).length;
   const wrongCount = sessionAnswers.filter((answer) => !answer.correct).length;
-  const canSpeakPrompt = isDutchText(question.prompt);
+  const speechText = getQuestionSpeechText(question);
   const canCheck = canCheckQuestion(question);
+  const infoStep = isInfoQuestion(question);
 
   return `
     <section class="lesson-panel">
@@ -785,18 +786,18 @@ function renderLesson() {
           ${question.type === "build" ? renderHintButton() : ""}
         </div>
         <div class="prompt-row">
-          ${canSpeakPrompt ? renderSpeakButton(question.prompt, "prompt") : ""}
-          <div class="prompt-main ${question.type === "reverse" || question.type === "build" ? "" : "latin"}">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+          ${speechText ? renderSpeakButton(speechText, "prompt") : ""}
+          <div class="prompt-main ${isPromptLatin(question) ? "latin" : ""}">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
         </div>
         ${question.type === "build" && hintOpen ? renderHintPopover(question) : ""}
         ${question.note ? `<div class="prompt-note">${question.note}</div>` : ""}
       </div>
-      ${question.type === "build" ? renderBuildExercise(question) : renderChoices(question)}
-      <p class="feedback ${checked ? (selectedAnswer === question.answer ? "good" : "bad") : ""}">
-        ${checked ? (selectedAnswer === question.answer ? `درست۔ ${question.explain}` : `یہ جواب درست نہیں۔ صحیح جواب: ${question.answer}۔ ${question.explain}`) : ""}
+      ${infoStep ? renderUitlegExercise(question) : (question.type === "build" ? renderBuildExercise(question) : renderChoices(question))}
+      <p class="feedback ${!infoStep && checked ? (selectedAnswer === question.answer ? "good" : "bad") : ""}">
+        ${!infoStep && checked ? (selectedAnswer === question.answer ? `درست۔ ${question.explain}` : `یہ جواب درست نہیں۔ صحیح جواب: ${question.answer}۔ ${question.explain}`) : ""}
       </p>
-      <button class="primary-button" data-action="${checked ? "next" : "check"}" ${canCheck ? "" : "disabled"}>
-        ${checked ? "اگلا سوال" : "جواب چیک کریں"}
+      <button class="primary-button" data-action="${infoStep ? "continue-info" : (checked ? "next" : "check")}" ${canCheck ? "" : "disabled"}>
+        ${infoStep ? "آگے بڑھیں" : (checked ? "اگلا سوال" : "جواب چیک کریں")}
       </button>
     </section>
   `;
@@ -823,6 +824,14 @@ function renderHintPopover(question) {
   return `
     <div class="hint-popover">
       ${escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔")}
+    </div>
+  `;
+}
+
+function renderUitlegExercise(question) {
+  return `
+    <div class="uitleg-card">
+      ${(question.points || []).map((point) => `<div class="uitleg-point">${renderTextWithWordHelp(point, `uitleg-${activeQuestionIndex}`)}</div>`).join("")}
     </div>
   `;
 }
@@ -911,12 +920,15 @@ function getVisualForLesson(lesson) {
 }
 
 function getVisualForQuestion(question, lesson) {
-  if (question?.type === "build") return visualLibrary.sentence;
+  if (question?.visual) return findWordVisual(question.visual) || getVisualByTopic(question.visual) || visualLibrary.sentence;
+  if (["build", "fill-gap", "situation"].includes(question?.type)) return visualLibrary.sentence;
   return getVisualForLesson(lesson);
 }
 
 function getExerciseVisual(question, lesson) {
   const candidates = [
+    question?.visual,
+    question?.speak,
     question?.prompt,
     question?.answer,
     question?.explain,
@@ -1165,6 +1177,7 @@ function bindEvents() {
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
       if (action === "hint") toggleHint();
       if (action === "check") checkAnswer();
+      if (action === "continue-info") continueInfoStep();
       if (action === "next") nextQuestion();
       if (action === "reset") resetProgress();
       if (action === "toggle-setting") toggleSetting(element.dataset.setting);
@@ -1359,6 +1372,11 @@ function toggleHint() {
   render();
 }
 
+function continueInfoStep() {
+  lessonProgressSteps = Math.max(lessonProgressSteps, activeQuestionIndex + 1);
+  nextQuestion();
+}
+
 function checkAnswer() {
   const question = getActiveQuestion();
   if (!canCheckQuestion(question)) return;
@@ -1399,6 +1417,7 @@ function nextQuestion() {
 
 function completeLesson(lesson) {
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
+  const scoredQuestions = questions.filter((question) => !isInfoQuestion(question));
   lessonProgressSteps = questions.length;
   const correct = sessionAnswers.filter((answer) => answer.correct).length;
   const isReview = Boolean(lesson.reviewKind);
@@ -1429,7 +1448,7 @@ function completeLesson(lesson) {
 
   lessonResult = {
     correct,
-    total: questions.length,
+    total: scoredQuestions.length,
     xp: earnedXp,
     reviewKind: lesson.reviewKind || ""
   };
@@ -1496,11 +1515,33 @@ function normalizeWord(value) {
 }
 
 function buildSessionQuestions(lesson) {
-  return (lesson?.questions || []).map((question) => ({
+  const sourceQuestions = lesson?.reviewKind
+    ? lesson.questions
+    : sampleLessonQuestions(lesson?.questions || []);
+  return sourceQuestions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
     tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : []
   }));
+}
+
+function sampleLessonQuestions(questions) {
+  const infoQuestions = questions.filter(isInfoQuestion);
+  const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
+  if (questions.length <= 10) return [...infoQuestions, ...usableQuestions].slice(0, 10);
+  const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 1);
+  const beginnerQuestions = usableQuestions.filter((question) => (
+    ["image-choice", "listen-choice", "match-pairs", "fill-gap", "situation"].includes(question.type)
+  ));
+  const baseQuestions = usableQuestions.filter((question) => !buildQuestions.includes(question) && !beginnerQuestions.includes(question));
+  const selected = [...infoQuestions, ...shuffleArray(beginnerQuestions).slice(0, 5), ...buildQuestions];
+  const remaining = shuffleArray(baseQuestions).slice(0, Math.max(0, 10 - selected.length));
+  const practice = shuffleArray([...selected.filter((question) => !isInfoQuestion(question)), ...remaining]).slice(0, Math.max(0, 10 - infoQuestions.length));
+  return [...infoQuestions, ...practice].slice(0, 10);
+}
+
+function getLessonRunCount(lesson) {
+  return Math.min(10, lesson.questions.length);
 }
 
 function getActiveQuestion() {
@@ -1523,10 +1564,24 @@ function getBuildAnswerText(question) {
     .join(" ");
 }
 
+function isInfoQuestion(question) {
+  return question?.type === "uitleg";
+}
+
 function canCheckQuestion(question) {
+  if (isInfoQuestion(question)) return true;
   if (checked) return true;
   if (question.type === "build") return buildAnswerIds.length === question.tiles.length;
   return Boolean(selectedAnswer);
+}
+
+function getQuestionSpeechText(question) {
+  if (question.speak) return question.speak;
+  return isDutchText(question.prompt) ? question.prompt : "";
+}
+
+function isPromptLatin(question) {
+  return isDutchText(question.prompt);
 }
 
 function shuffleArray(items) {

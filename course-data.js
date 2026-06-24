@@ -114,7 +114,7 @@ const a0Lessons = [
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "اچھا"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "میں"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نہیں / نہیں", "ہاں", "اچھا"], "نہیں / نہیں", "niet کسی بات کو نفی بناتا ہے۔"),
+      meaning("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet کسی بات کو نفی بناتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "ہاں اچھا"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("ہاں", ["ja", "nee", "niet"], "ja", "ہاں = ja۔"),
       reverse("نہیں", ["nee", "ja", "goed"], "nee", "نہیں = nee۔"),
@@ -189,6 +189,11 @@ const a0Lessons = [
     description: "پہلا فعل: ہونا۔ ik ben, jij bent, hij is۔",
     xp: 50,
     questions: [
+      uitleg("ben، bent، is کا پہلا اصول", [
+        "Nederlands میں شخص بدلنے سے فعل بھی بدل سکتا ہے۔",
+        "ik کے ساتھ ben آتا ہے: ik ben = میں ہوں۔",
+        "jij/u کے ساتھ bent، اور hij/zij کے ساتھ is آتا ہے۔"
+      ], "اب ہر جملے میں پہلے شخص دیکھیں، پھر فعل چنیں۔"),
       meaning("ben", ["ہوں", "ہو", "ہے"], "ہوں", "ik کے ساتھ ben آتا ہے۔"),
       meaning("bent", ["ہو / ہیں", "ہوں", "ہے"], "ہو / ہیں", "jij/u کے ساتھ bent آتا ہے۔"),
       meaning("is", ["ہے", "ہوں", "ہو"], "ہے", "hij/zij/het کے ساتھ is آتا ہے۔"),
@@ -257,6 +262,11 @@ const a0Lessons = [
     description: "جب چیز نہیں ہے: geen boek, geen pen۔",
     xp: 50,
     questions: [
+      uitleg("niet اور geen کا فرق", [
+        "niet عام نفی کے لیے آتا ہے: niet goed = اچھا نہیں۔",
+        "geen اسم کے ساتھ آتا ہے: geen boek = کوئی کتاب نہیں۔",
+        "اگر بات چیز یا شخص کی ہو تو اکثر geen استعمال ہوگا۔"
+      ], "پہلے صرف اتنا یاد رکھیں: niet + صفت/فعل، geen + اسم۔"),
       meaning("geen", ["کوئی بھی نہیں", "اچھا", "ایک"], "کوئی بھی نہیں", "geen اسم کے ساتھ آتا ہے۔"),
       meaning("ik heb geen boek", ["میرے پاس کتاب نہیں ہے", "میرے پاس کتاب ہے", "میں کتاب نہیں ہوں"], "میرے پاس کتاب نہیں ہے", "geen + اسم۔"),
       meaning("zij heeft geen pen", ["اس کے پاس قلم نہیں ہے", "اس کے پاس قلم ہے", "وہ قلم ہے"], "اس کے پاس قلم نہیں ہے", "zij heeft geen pen۔"),
@@ -342,10 +352,15 @@ const a0Lessons = [
     description: "میرا، تمہارا، اس کا: ملکیت والے الفاظ۔",
     xp: 50,
     questions: [
+      uitleg("mijn، jouw، zijn، haar", [
+        "یہ ملکیت والے الفاظ ہیں۔ ان سے بتایا جاتا ہے کہ چیز کس کی ہے۔",
+        "mijn = میرا، jouw = تمہارا۔",
+        "zijn عام طور پر مرد کے لیے اس کا، haar عورت کے لیے اس کا۔"
+      ], "پہلے معنی صاف رکھیں، پھر لفظ کو جملے میں دیکھیں۔"),
       meaning("mijn", ["میرا", "تمہارا", "اس کا"], "میرا", "mijn = میرا۔"),
       meaning("jouw", ["تمہارا", "میرا", "اس کا"], "تمہارا", "jouw = تمہارا۔"),
-      meaning("zijn", ["اس کا مرد", "میرا", "تمہارا"], "اس کا مرد", "zijn = اس کا۔"),
-      meaning("haar", ["اس کا عورت", "میرا", "ہماری"], "اس کا عورت", "haar = اس عورت کا۔"),
+      meaning("zijn", ["اس مرد کا / اس کا", "میرا", "تمہارا"], "اس مرد کا / اس کا", "zijn = اس مرد کا یا اس کا۔"),
+      meaning("haar", ["اس عورت کا / اس کا", "میرا", "ہماری"], "اس عورت کا / اس کا", "haar = اس عورت کا یا اس کا۔"),
       meaning("mijn naam", ["میرا نام", "تمہارا نام", "اس کا نام"], "میرا نام", "mijn naam = میرا نام۔"),
       meaning("zijn boek", ["اس کی کتاب", "میری کتاب", "تمہاری کتاب"], "اس کی کتاب", "zijn boek = اس کی کتاب۔"),
       reverse("میرا گھر", ["mijn huis", "jouw huis", "zijn huis"], "mijn huis", "میرا = mijn۔"),
@@ -371,7 +386,7 @@ const a0Lessons = [
   },
   {
     id: "a0-checkpoint",
-    unit: "A0: checkpoint",
+    unit: "A0: دہرائی",
     title: "A0 les 20: klaar voor A1",
     description: "A0 کی مشق: کیا طالب علم چھوٹے الفاظ اور جملے سمجھتا ہے؟",
     xp: 70,
@@ -402,7 +417,7 @@ const a1Lessons = [
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "میں"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "تم"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نہیں / نہیں", "ہاں", "اچھا"], "نہیں / نہیں", "niet کسی بات کو نفی بناتا ہے۔"),
+      meaning("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet کسی بات کو نفی بناتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "میں اچھا ہوں"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("میں", ["ik", "jij", "ja"], "ik", "میں = ik۔"),
       reverse("تم / آپ بے تکلف", ["jij", "u", "ik"], "jij", "jij بے تکلف تم ہے۔"),
@@ -495,7 +510,7 @@ const a1Lessons = [
     questions: [
       meaning("hebben", ["ہونا / رکھنا", "جانا", "سیکھنا"], "ہونا / رکھنا", "hebben = پاس ہونا۔"),
       meaning("ik heb", ["میرے پاس ہے", "میں ہوں", "میں جاتا ہوں"], "میرے پاس ہے", "ik heb = میرے پاس ہے۔"),
-      meaning("jij hebt", ["تمہارے پاس ہے", "تم ہو", "تم آتے ہو"], "تمہارے پاس ہے", "jij hebt = تم پاس ہونا۔"),
+      meaning("jij hebt", ["تمہارے پاس ہے", "تم ہو", "تم آتے ہو"], "تمہارے پاس ہے", "jij hebt = تمہارے پاس ہے۔"),
       meaning("hij heeft", ["اس کے پاس ہے", "وہ ہے", "وہ جاتا ہے"], "اس کے پاس ہے", "hij heeft = اس کے پاس ہے۔"),
       meaning("zoon", ["بیٹا", "بیٹی", "بھائی"], "بیٹا", "zoon = بیٹا۔"),
       meaning("dochter", ["بیٹی", "بیٹا", "بہن"], "بیٹی", "dochter = بیٹی۔"),
@@ -505,7 +520,7 @@ const a1Lessons = [
       meaning("ik heb geen kinderen", ["میرے بچے نہیں ہیں", "میرے بچے ہیں", "میں بچہ نہیں ہوں"], "میرے بچے نہیں ہیں", "geen اسم سے پہلے آتا ہے۔"),
       reverse("میرے پاس ایک بھائی ہے", ["ik heb een broer", "ik ben een broer", "hij heeft een broer"], "ik heb een broer", "ik heb = میرے پاس ہے۔"),
       reverse("اس کے بچے ہیں", ["hij heeft kinderen", "ik heb kinderen", "wij zijn kinderen"], "hij heeft kinderen", "hij heeft = اس کے پاس ہے۔"),
-      meaning("geen", ["کوئی نہیں / نہیں", "اچھا", "ابھی"], "کوئی نہیں / نہیں", "geen اسم کے ساتھ نفی بناتا ہے۔"),
+      meaning("geen", ["کوئی نہیں", "اچھا", "ابھی"], "کوئی نہیں", "geen اسم کے ساتھ نفی بناتا ہے۔"),
       reverse("میرے پاس کتاب نہیں ہے", ["ik heb geen boek", "ik kom niet boek", "dat is geen boek"], "ik heb geen boek", "geen + اسم۔")
     ]
   },
@@ -539,6 +554,11 @@ const a1Lessons = [
     description: "سوال الفاظ اور ہاں/نہیں سوالات، آہستہ آہستہ۔",
     xp: 70,
     questions: [
+      uitleg("Nederlands سوال کیسے بنتا ہے؟", [
+        "سوال والے لفظ پہلے آتے ہیں: wie، wat، waar۔",
+        "پھر فعل آتا ہے: waar woon je؟",
+        "ہاں/نہیں سوال میں بھی فعل پہلے آ سکتا ہے: heb je kinderen؟"
+      ], "سوال میں لفظوں کی جگہ اردو جیسی نہیں ہوتی، اس لیے ترتیب کو الگ یاد کریں۔"),
       meaning("wie", ["کون", "کیا", "کہاں"], "کون", "wie = کون۔"),
       meaning("wat", ["کیا", "کب", "کیوں"], "کیا", "wat = کیا۔"),
       meaning("waar", ["کہاں", "کون", "کتنا"], "کہاں", "waar = کہاں۔"),
@@ -571,11 +591,11 @@ const a1Lessons = [
       meaning("brood", ["روٹی / بریڈ", "پنیر", "گوشت"], "روٹی / بریڈ", "brood = روٹی۔"),
       meaning("kaas", ["پنیر", "پانی", "چاول"], "پنیر", "kaas = پنیر۔"),
       meaning("groente", ["سبزی", "پھل", "گوشت"], "سبزی", "groente = سبزی۔"),
-      meaning("fruit", ["پھل", "سبزی", "دودھ"], "پھل", "پھل = پھل۔"),
+      meaning("fruit", ["پھل", "سبزی", "دودھ"], "پھل", "fruit = پھل۔"),
       meaning("boek", ["کتاب", "بیگ", "میز"], "کتاب", "boek = کتاب۔"),
       meaning("boeken", ["کتابیں", "بیگ", "میزیں"], "کتابیں", "جمع: boek -> boeken۔"),
       meaning("tas", ["بیگ", "کتاب", "دروازہ"], "بیگ", "tas = بیگ۔"),
-      meaning("tassen", ["بیگ / بیگ", "کتابیں", "بچے"], "بیگ / بیگ", "جمع: tas -> tassen۔"),
+      meaning("tassen", ["کئی بیگ", "کتابیں", "بچے"], "کئی بیگ", "جمع: tas -> tassen۔"),
       reverse("گھر", ["het huis", "de huis", "een man"], "het huis", "گھر = het huis۔"),
       reverse("کتابیں", ["boeken", "boek", "tassen"], "boeken", "کتابیں = boeken۔")
     ]
@@ -638,6 +658,11 @@ const a2Lessons = [
     description: "A2 گرامر: گزرے ہوئے کام کے لیے hebben/zijn + فعل کی تیسری شکل۔",
     xp: 85,
     questions: [
+      uitleg("گزرے ہوئے کام کا آسان نقشہ", [
+        "A2 میں گزرے ہوئے کام کے لیے اکثر heb/heeft یا ben/zijn آتا ہے۔",
+        "آخر میں فعل کی بدلی ہوئی شکل آتی ہے: gewerkt، gegaan، gebeld۔",
+        "حرکت والے جملوں میں اکثر ben/zijn آتا ہے: ik ben gegaan۔"
+      ], "اس سبق میں پہلے مکمل جملہ پہچانیں، پھر چھوٹے حصے یاد کریں۔"),
       meaning("ik heb gewerkt", ["میں نے کام کیا ہے", "میں کام کرتا ہوں", "میں کام کرنے جا رہا ہوں"], "میں نے کام کیا ہے", "گزرے ہوئے کام کا زمانہ: hebben + فعل کی تیسری شکل۔"),
       meaning("zij heeft gekookt", ["اس نے کھانا پکایا ہے", "وہ کھانا پکاتی ہے", "وہ کھانا پکانے جا رہی ہے"], "اس نے کھانا پکایا ہے", "heeft + gekookt گزرا ہوا کام ہے۔"),
       meaning("wij zijn naar de supermarkt gegaan", ["ہم سپر مارکیٹ گئے ہیں", "ہم سپر مارکیٹ میں ہیں", "ہم سپر مارکیٹ جائیں گے"], "ہم سپر مارکیٹ گئے ہیں", "حرکت والے فعل اکثر zijn لیتے ہیں۔"),
@@ -676,6 +701,11 @@ const a2Lessons = [
     description: "روزمرہ معمول اور الگ ہونے والے فعل: opstaan، invullen، opbellen۔",
     xp: 85,
     questions: [
+      uitleg("الگ ہونے والے فعل", [
+        "کچھ Nederlands فعل دو حصوں میں ٹوٹ جاتے ہیں۔",
+        "opstaan جملے میں sta ... op بن سکتا ہے۔",
+        "invullen جملے میں vul ... in بن سکتا ہے۔"
+      ], "دونوں حصوں کو ایک ہی فعل سمجھیں، بس جملے میں جگہ بدل سکتی ہے۔"),
       meaning("ik sta om zeven uur op", ["میں سات بجے اٹھتا/اٹھتی ہوں", "میں سات بجے کام کرتا ہوں", "میں سات بجے فون کرتا ہوں"], "میں سات بجے اٹھتا/اٹھتی ہوں", "opstaan الگ ہوتا ہے: sta ... op۔"),
       meaning("vul het formulier in", ["فارم بھر دیں", "ڈاکٹر کو فون کریں", "گھر صاف کریں"], "فارم بھر دیں", "invullen الگ ہوتا ہے: vul ... in۔"),
       meaning("ik bel de dokter op", ["میں ڈاکٹر کو فون کرتا/کرتی ہوں", "میں ڈاکٹر کے پاس جاتا ہوں", "میں ڈاکٹر سے ملاقات کا وقت رکھتا ہوں"], "میں ڈاکٹر کو فون کرتا/کرتی ہوں", "opbellen الگ ہوتا ہے: bel ... op۔"),
@@ -695,6 +725,11 @@ const a2Lessons = [
     description: "وقت پہلے آئے تو لفظوں کی ترتیب، اور جوڑنے والے الفاظ: omdat، dat، als۔",
     xp: 90,
     questions: [
+      uitleg("لفظوں کی ترتیب بدل سکتی ہے", [
+        "اگر وقت پہلے آئے تو فعل دوسرے نمبر پر رہتا ہے: vandaag werk ik۔",
+        "omdat کے بعد فعل آخر میں جاتا ہے: omdat ik ziek ben۔",
+        "یہ اردو سے مختلف ہے، اس لیے چھوٹے نمونے بار بار دیکھیں۔"
+      ], "اس سبق کا مقصد معنی کے ساتھ ترتیب کو بھی پہچاننا ہے۔"),
       meaning("vandaag werk ik niet", ["آج میں کام نہیں کرتا", "میں آج کام کرتا ہوں", "کل میں کام کروں گا"], "آج میں کام نہیں کرتا", "وقت پہلے آئے تو ترتیب بدلتی ہے: vandaag werk ik۔"),
       meaning("ik ga morgen met de bus naar Amsterdam", ["میں کل بس سے Amsterdam جا رہا ہوں", "میں آج bus میں کام کرتا ہوں", "میں Amsterdam سے bus لیتا ہوں"], "میں کل بس سے Amsterdam جا رہا ہوں", "وقت + طریقہ + جگہ۔"),
       meaning("ik kom niet, omdat ik ziek ben", ["میں نہیں آتا کیونکہ میں بیمار ہوں", "میں آتا ہوں کیونکہ میں ٹھیک ہوں", "میں بیمار نہیں ہوں"], "میں نہیں آتا کیونکہ میں بیمار ہوں", "omdat فعل کو آخر میں بھیجتا ہے۔"),
@@ -714,6 +749,11 @@ const a2Lessons = [
     description: "سرکاری کام: gemeente، فارم، BSN، پاسپورٹ، کاغذات۔",
     xp: 90,
     questions: [
+      uitleg("gemeente والے سرکاری الفاظ", [
+        "gemeente وہ جگہ ہے جہاں بہت سے سرکاری کام ہوتے ہیں۔",
+        "afspraak = ملاقات کا وقت، formulier = فارم، loket = کاؤنٹر۔",
+        "پہلے الفاظ پہچانیں، پھر جملہ بنائیں: ik wil een afspraak maken۔"
+      ], "یہ الفاظ زندگی میں بہت کام آئیں گے، اس لیے یہاں زیادہ دہرائی رکھی گئی ہے۔"),
       meaning("gemeente", ["بلدیہ / gemeente دفتر", "ہسپتال", "اسکول"], "بلدیہ / gemeente دفتر", "gemeente سرکاری کاموں میں ضروری لفظ ہے۔"),
       meaning("afspraak", ["ملاقات کا وقت", "کاغذ", "دستخط"], "ملاقات کا وقت", "gemeente میں afspraak بنانی پڑ سکتی ہے۔"),
       meaning("formulier", ["فارم", "پاسپورٹ", "کاؤنٹر"], "فارم", "formulier = فارم۔"),
@@ -1102,6 +1142,288 @@ function addRevisionExpansion(lessons, total) {
 addRevisionExpansion(a0Lessons, 35);
 addRevisionExpansion(a1Lessons, 45);
 addRevisionExpansion(a2Lessons, 45);
+
+function addBeginnerAuditExpansion() {
+  a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet").questions.push(
+    listenChoice("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet بات کو منفی بناتا ہے۔"),
+    matchPairs(["ja — ہاں", "nee — نہیں", "goed — اچھا"], "ja — ہاں", "ja کا مطلب ہاں ہے۔"),
+    fillGap("ik ben ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-geen").questions.push(
+    meaning("geen pen", ["کوئی قلم نہیں", "اچھا قلم", "ایک قلم"], "کوئی قلم نہیں", "geen + pen = کوئی قلم نہیں۔"),
+    meaning("geen huis", ["کوئی گھر نہیں", "گھر میں", "اچھا گھر"], "کوئی گھر نہیں", "geen + huis = کوئی گھر نہیں۔"),
+    reverse("کوئی قلم نہیں", ["geen pen", "niet pen", "nee pen"], "geen pen", "اسم کے ساتھ geen آتا ہے۔"),
+    reverse("میں اچھا نہیں ہوں", ["ik ben niet goed", "ik ben geen goed", "ik nee goed"], "ik ben niet goed", "اچھا نہیں کے لیے niet۔"),
+    fillGap("ik heb ___ boek", ["geen", "niet", "nee"], "geen", "کتاب اسم ہے، اس لیے geen۔"),
+    matchPairs(["niet goed — اچھا نہیں", "geen boek — کوئی کتاب نہیں", "nee — نہیں"], "geen boek — کوئی کتاب نہیں", "geen boek کا مطلب کوئی کتاب نہیں ہے۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-possessive").questions.push(
+    meaning("haar boek", ["اس عورت کی کتاب", "میری کتاب", "تمہاری کتاب"], "اس عورت کی کتاب", "haar یہاں اس عورت کی چیز بتاتا ہے۔"),
+    meaning("zijn huis", ["اس مرد کا گھر", "میرا گھر", "تمہارا گھر"], "اس مرد کا گھر", "zijn یہاں اس مرد کی چیز بتاتا ہے۔"),
+    reverse("تمہارا نام", ["jouw naam", "mijn naam", "haar naam"], "jouw naam", "jouw = تمہارا۔"),
+    reverse("اس عورت کا قلم", ["haar pen", "zijn pen", "mijn pen"], "haar pen", "haar = اس عورت کا۔"),
+    matchPairs(["mijn — میرا", "jouw — تمہارا", "haar — اس عورت کا"], "haar — اس عورت کا", "haar ملکیت دکھاتا ہے۔"),
+    fillGap("___ naam is Ali", ["mijn", "huis", "niet"], "mijn", "میرا نام = mijn naam۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-zijn-first-sentences").questions.push(
+    fillGap("ik ___ goed", ["ben", "bent", "is"], "ben", "ik کے ساتھ ben آتا ہے۔"),
+    fillGap("jij ___ goed", ["bent", "ben", "is"], "bent", "jij کے ساتھ bent آتا ہے۔"),
+    fillGap("zij ___ goed", ["is", "ben", "bent"], "is", "zij کے ساتھ is آتا ہے۔"),
+    matchPairs(["ik ben — میں ہوں", "jij bent — تم ہو", "zij is — وہ عورت ہے"], "jij bent — تم ہو", "jij bent = تم ہو۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-questions").questions.push(
+    fillGap("waar ___ je?", ["woon", "wie", "niet"], "woon", "waar woon je؟ = تم کہاں رہتے ہو؟"),
+    fillGap("heb ___ kinderen?", ["je", "ik", "waar"], "je", "heb je...? سوال کی شکل ہے۔"),
+    reverse("آپ کا نام کیا ہے؟", ["wat is uw naam?", "waar is uw naam?", "wie woon je?"], "wat is uw naam?", "wat = کیا۔"),
+    reverse("آپ کہاں رہتے ہیں؟", ["waar woont u?", "wie woont u?", "wat woont u?"], "waar woont u?", "waar = کہاں۔"),
+    situation("حال: کسی سے ادب سے نام پوچھنا ہے۔", ["wat is uw naam?", "ik heb kinderen", "waar is het station?"], "wat is uw naam?", "نام پوچھنے کے لیے: wat is uw naam؟")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-house-food-plurals").questions.push(
+    meaning("de tas", ["بیگ", "کتاب", "کمرہ"], "بیگ", "tas = بیگ۔"),
+    meaning("de tassen", ["کئی بیگ", "ایک بیگ", "کئی کتابیں"], "کئی بیگ", "tassen جمع ہے۔"),
+    fillGap("ik heb twee ___", ["boeken", "boek", "huis"], "boeken", "دو کتابیں = twee boeken۔"),
+    matchPairs(["boek — کتاب", "boeken — کتابیں", "tas — بیگ"], "boeken — کتابیں", "boeken جمع ہے۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-perfect-tense").questions.push(
+    fillGap("ik heb gisteren ___", ["gewerkt", "werk", "werken"], "gewerkt", "گزرے ہوئے کام میں gewerkt آتا ہے۔"),
+    fillGap("ik ben naar huis ___", ["gegaan", "gewerkt", "gaan"], "gegaan", "حرکت والے جملے میں gegaan۔"),
+    matchPairs(["gewerkt — کام کیا", "gegaan — گیا", "gebeld — فون کیا"], "gebeld — فون کیا", "bellen کی بدلی ہوئی شکل gebeld ہے۔"),
+    reverse("میں نے فون کیا ہے", ["ik heb gebeld", "ik ben gebeld", "ik ga bellen"], "ik heb gebeld", "فون کیا ہے = heb gebeld۔"),
+    situation("حال: کل ڈاکٹر کو فون کیا تھا۔", ["ik heb gisteren de dokter gebeld", "ik bel morgen de dokter", "ik ben de dokter"], "ik heb gisteren de dokter gebeld", "گزرے ہوئے کام کے لیے heb gebeld۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-word-order-connectors").questions.push(
+    fillGap("omdat ik ziek ___", ["ben", "is", "ziek"], "ben", "omdat کے بعد فعل آخر میں آتا ہے۔"),
+    fillGap("vandaag ___ ik niet", ["werk", "ik", "niet"], "werk", "وقت پہلے ہو تو فعل دوسرے نمبر پر۔"),
+    reverse("کیونکہ میرے پاس وقت نہیں ہے", ["omdat ik geen tijd heb", "omdat ik heb geen tijd", "ik omdat geen tijd heb"], "omdat ik geen tijd heb", "omdat کے بعد فعل آخر میں۔"),
+    reverse("کل میں gemeente جاؤں گا", ["morgen ga ik naar de gemeente", "morgen ik ga naar de gemeente", "ik morgen ga gemeente"], "morgen ga ik naar de gemeente", "morgen پہلے، پھر ga۔"),
+    matchPairs(["omdat — کیونکہ", "als — اگر", "dat — کہ"], "omdat — کیونکہ", "omdat کا مطلب کیونکہ ہے۔"),
+    situation("حال: آپ بتاتے ہیں کہ آپ بیمار ہیں، اس لیے نہیں آتے۔", ["ik kom niet omdat ik ziek ben", "ik kom omdat ik goed ben", "ik ben niet omdat kom"], "ik kom niet omdat ik ziek ben", "صحیح ترتیب: omdat ik ziek ben۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-gemeente-official").questions.push(
+    meaning("inschrijven", ["رجسٹر کرنا", "دستخط کرنا", "ادا کرنا"], "رجسٹر کرنا", "gemeente میں inschrijven بہت عام کام ہے۔"),
+    meaning("uittreksel", ["سرکاری کاغذ", "بینک کارڈ", "دوا"], "سرکاری کاغذ", "uittreksel ایک سرکاری کاغذ ہو سکتا ہے۔"),
+    meaning("identiteitsbewijs", ["شناختی کاغذ", "فارم", "رسید"], "شناختی کاغذ", "شناخت دکھانے والا کاغذ۔"),
+    reverse("مجھے فارم بھرنا ہے", ["ik moet het formulier invullen", "ik ben het formulier", "ik heb geen invullen"], "ik moet het formulier invullen", "formulier invullen = فارم بھرنا۔"),
+    reverse("مجھے رجسٹر کرنا ہے", ["ik moet mij inschrijven", "ik moet betalen", "ik ben ingeschreven"], "ik moet mij inschrijven", "inschrijven = رجسٹر کرنا۔"),
+    situation("حال: gemeente میں مدد چاہیے۔", ["kunt u mij helpen?", "ik ben het loket", "waar is mijn kaas?"], "kunt u mij helpen?", "ادب سے مدد مانگنا: kunt u mij helpen؟")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-work-school").questions.push(
+    meaning("afmelden", ["نہ آنے کی اطلاع دینا", "تنخواہ لینا", "کام شروع کرنا"], "نہ آنے کی اطلاع دینا", "اسکول یا کام میں afmelden کام آتا ہے۔"),
+    reverse("میرا بیٹا بیمار ہے", ["mijn zoon is ziek", "mijn zoon heeft school", "mijn zoon werkt rooster"], "mijn zoon is ziek", "اسکول پیغام کے لیے آسان جملہ۔"),
+    reverse("میں آج نہیں آ سکتا", ["ik kan vandaag niet komen", "ik ben vandaag komen", "ik heb vandaag niet"], "ik kan vandaag niet komen", "نہ آ سکنے کے لیے kan niet komen۔"),
+    fillGap("mijn rooster is ___", ["veranderd", "ziek", "komen"], "veranderd", "rooster بدل گیا = rooster is veranderd۔"),
+    situation("حال: استاد کو بتانا ہے کہ بچہ آج نہیں آ سکتا۔", ["mijn zoon kan vandaag niet komen", "mijn zoon heeft salaris", "ik koop een kaartje"], "mijn zoon kan vandaag niet komen", "یہ اسکول کے لیے صاف پیغام ہے۔")
+  );
+}
+
+addBeginnerAuditExpansion();
+
+function addBeginnerAuditExpansion2() {
+  a0Lessons.find((lesson) => lesson.id === "a0-ik-jij-u").questions.push(
+    uitleg("jij اور u کا فرق", [
+      "jij عام بے تکلف تم ہے، دوست یا برابر عمر والے کے لیے۔",
+      "u ادب والا آپ ہے، بڑے، اجنبی، ڈاکٹر، استاد، یا دفتر میں۔",
+      "شروع میں محفوظ جواب u ہے، خاص طور پر سرکاری جگہ یا ڈاکٹر کے پاس۔"
+    ], "بات کرتے وقت پہلے سوچیں: بے تکلف یا ادب والا؟"),
+    situation("حال: ڈاکٹر سے بات کرنی ہے۔", ["u", "jij", "ik"], "u", "ڈاکٹر یا دفتر میں u زیادہ محفوظ ہے۔"),
+    matchPairs(["ik — میں", "jij — تم", "u — آپ"], "u — آپ", "u ادب والا آپ ہے۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-gaan-komen").questions.push(
+    uitleg("gaan اور komen", [
+      "gaan کا مطلب جانا ہے۔",
+      "komen کا مطلب آنا ہے۔",
+      "ik ga = میں جاتا/جاتی ہوں، ik kom = میں آتا/آتی ہوں۔"
+    ], "حرکت کی سمت بدلنے سے لفظ بدل جاتا ہے۔"),
+    fillGap("ik ___ naar huis", ["ga", "kom", "ben"], "ga", "naar huis کے ساتھ جانا = ga۔"),
+    fillGap("hij ___ naar school", ["gaat", "komt", "is"], "gaat", "hij کے ساتھ gaat۔"),
+    reverse("میں گھر آتا ہوں", ["ik kom naar huis", "ik ga naar huis", "ik ben huis"], "ik kom naar huis", "آنا = komen۔"),
+    matchPairs(["ga — جاتا ہوں", "kom — آتا ہوں", "gaat — جاتا ہے"], "kom — آتا ہوں", "kom = آتا ہوں۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-naar-met").questions.push(
+    uitleg("naar اور met", [
+      "naar سمت کے لیے ہے: naar huis = گھر کی طرف۔",
+      "met ساتھ کے لیے ہے: met mijn kind = میرے بچے کے ساتھ۔",
+      "یہ دونوں چھوٹے لفظ جملے کا مطلب بدل دیتے ہیں۔"
+    ], "سمت ہو تو naar، ساتھ ہو تو met۔"),
+    fillGap("ik ga ___ huis", ["naar", "met", "in"], "naar", "گھر کی طرف = naar huis۔"),
+    fillGap("ik ben ___ mijn kind", ["met", "naar", "op"], "met", "ساتھ = met۔"),
+    situation("حال: آپ بچے کے ساتھ ہیں۔", ["ik ben met mijn kind", "ik ga naar mijn kind", "ik heb geen kind"], "ik ben met mijn kind", "ساتھ کے لیے met۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-name-land-city").questions.push(
+    uitleg("اپنا تعارف", [
+      "mijn naam is... سے نام بتایا جاتا ہے۔",
+      "ik woon in... سے رہنے کی جگہ بتائی جاتی ہے۔",
+      "ik kom uit... سے اصل ملک بتایا جاتا ہے۔"
+    ], "یہ تین جملے نئے learner کے لیے سب سے ضروری ہیں۔"),
+    fillGap("mijn ___ is Ali", ["naam", "land", "woon"], "naam", "میرا نام = mijn naam۔"),
+    fillGap("ik woon ___ Nederland", ["in", "uit", "naar"], "in", "رہنا: woon in۔"),
+    reverse("میں پاکستان سے ہوں", ["ik kom uit Pakistan", "ik woon Pakistan", "ik ga Pakistan"], "ik kom uit Pakistan", "اصل ملک کے لیے kom uit۔")
+  );
+
+  a0Lessons.find((lesson) => lesson.id === "a0-checkpoint").questions.push(
+    uitleg("مدد مانگنے والے جملے", [
+      "اگر سمجھ نہ آئے تو ik begrijp het niet کہیں۔",
+      "اگر کوئی تیز بولے تو langzaam alstublieft کہیں۔",
+      "اگر دوبارہ سننا ہو تو kunt u herhalen? کہیں۔"
+    ], "A1 سے پہلے یہ تین جملے بہت ضروری ہیں۔"),
+    listenChoice("ik begrijp het niet", ["مجھے سمجھ نہیں آیا", "میں اچھا ہوں", "میرے پاس وقت ہے"], "مجھے سمجھ نہیں آیا", "یہ مدد مانگنے والا جملہ ہے۔"),
+    situation("حال: کوئی بہت تیز بول رہا ہے۔", ["langzaam alstublieft", "ik heb een boek", "waar woon je?"], "langzaam alstublieft", "آہستہ بولنے کے لیے یہ کہیں۔"),
+    reverse("کیا آپ دہرا سکتے ہیں؟", ["kunt u herhalen?", "kunt u betalen?", "waar woont u?"], "kunt u herhalen?", "دہرانا = herhalen۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-zero-tiny-words").questions.push(
+    uitleg("A1 شروع کرنے سے پہلے", [
+      "ہر Nederlands لفظ کو پہلے آواز اور معنی سے پہچانیں۔",
+      "غلطی ہونا مسئلہ نہیں؛ غلط لفظ دوبارہ مشق میں آئے گا۔",
+      "شروع میں چھوٹے لفظ: ik، jij، u، ja، nee، niet سب سے ضروری ہیں۔"
+    ], "یہ سبق بنیاد مضبوط کرنے کے لیے ہے۔"),
+    listenChoice("jij", ["تم بے تکلف", "میں", "آپ ادب والا"], "تم بے تکلف", "jij = تم۔"),
+    listenChoice("u", ["آپ ادب والا", "ہم", "وہ"], "آپ ادب والا", "u = آپ۔"),
+    fillGap("___ ben goed", ["ik", "jij", "nee"], "ik", "ik ben = میں ہوں۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-zijn-first-sentences").questions.push(
+    uitleg("zijn فعل بہت عام ہے", [
+      "zijn کا مطلب ہونا ہے۔",
+      "ik ben، jij bent، hij is، zij is الگ الگ شکلیں ہیں۔",
+      "اردو میں فعل کم بدلتا ہے، مگر Nederlands میں شخص کے ساتھ بدلتا ہے۔"
+    ], "اس سبق میں شخص اور فعل کو جوڑ کر یاد کریں۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-greetings-personal-info").questions.push(
+    uitleg("سلام اور معلومات", [
+      "hallo عام سلام ہے۔",
+      "mijn naam is... سے نام بتایا جاتا ہے۔",
+      "adres، telefoonnummer، land فارم میں بار بار آتے ہیں۔"
+    ], "یہ الفاظ فارم اور تعارف دونوں میں کام آتے ہیں۔"),
+    situation("حال: کسی کو اپنا نام بتانا ہے۔", ["mijn naam is Ali", "waar is Ali?", "ik heb Ali"], "mijn naam is Ali", "نام بتانے کے لیے mijn naam is۔"),
+    fillGap("mijn naam ___ Sara", ["is", "ben", "heb"], "is", "نام والے جملے میں is۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-hebben-family").questions.push(
+    uitleg("hebben کا آسان مطلب", [
+      "hebben کا مطلب پاس ہونا یا رکھنا ہے۔",
+      "ik heb = میرے پاس ہے۔",
+      "hij heeft = اس کے پاس ہے۔"
+    ], "خاندان، چیزیں، اور کاغذات کے لیے hebben بہت کام آتا ہے۔"),
+    fillGap("ik ___ een broer", ["heb", "ben", "is"], "heb", "میرے پاس = ik heb۔"),
+    fillGap("hij ___ kinderen", ["heeft", "heb", "bent"], "heeft", "hij کے ساتھ heeft۔"),
+    matchPairs(["ik heb — میرے پاس ہے", "jij hebt — تمہارے پاس ہے", "hij heeft — اس کے پاس ہے"], "hij heeft — اس کے پاس ہے", "hij heeft = اس کے پاس ہے۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-present-time").questions.push(
+    uitleg("آج، کل، ابھی", [
+      "vandaag = آج۔",
+      "morgen = آنے والا کل۔",
+      "gisteren = گزرا ہوا کل۔"
+    ], "وقت کا لفظ معنی بھی بدلتا ہے اور کبھی ترتیب بھی بدلتا ہے۔"),
+    fillGap("ik werk ___", ["vandaag", "gisteren", "nee"], "vandaag", "آج = vandaag۔"),
+    reverse("میں ابھی Nederlands سیکھتا ہوں", ["ik leer nu Nederlands", "ik woon nu Nederlands", "ik drink nu Nederlands"], "ik leer nu Nederlands", "سیکھنا = leren۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-house-food-plurals").questions.push(
+    uitleg("ایک چیز اور کئی چیزیں", [
+      "boek = کتاب، boeken = کتابیں۔",
+      "tas = بیگ، tassen = کئی بیگ۔",
+      "جمع کی شکل ہمیشہ ایک جیسی نہیں بنتی، اس لیے لفظ کے ساتھ یاد کریں۔"
+    ], "پہلے معنی پہچانیں، پھر واحد/جمع دیکھیں۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-shopping-transport").questions.push(
+    uitleg("دکان اور سفر کے ضروری جملے", [
+      "hoeveel kost dit? = یہ کتنے کا ہے؟",
+      "waar is het station? = اسٹیشن کہاں ہے؟",
+      "ik wil een kaartje = مجھے ٹکٹ چاہیے۔"
+    ], "یہ جملے باہر روزمرہ میں فوراً کام آتے ہیں۔"),
+    fillGap("hoeveel ___ dit?", ["kost", "woon", "heb"], "kost", "قیمت پوچھنے کے لیے kost۔"),
+    situation("حال: ٹکٹ چاہیے۔", ["ik wil een kaartje", "ik heb een bon", "waar woon je?"], "ik wil een kaartje", "ٹکٹ کے لیے kaartje۔")
+  );
+
+  a1Lessons.find((lesson) => lesson.id === "a1-health-appointments").questions.push(
+    uitleg("صحت کے جملے", [
+      "ik ben ziek = میں بیمار ہوں۔",
+      "ik heb pijn = مجھے درد ہے۔",
+      "ik wil een afspraak = مجھے ملاقات کا وقت چاہیے۔"
+    ], "ڈاکٹر کے لیے یہ تین جملے پہلے یاد کریں۔"),
+    fillGap("ik heb ___", ["pijn", "ziek", "dokter"], "pijn", "مجھے درد ہے = ik heb pijn۔"),
+    situation("حال: ڈاکٹر سے ملاقات کا وقت چاہیے۔", ["ik wil een afspraak", "ik ben een afspraak", "ik heb geen pijn"], "ik wil een afspraak", "ملاقات کا وقت = afspraak۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-future-modal-verbs").questions.push(
+    uitleg("gaan، kunnen، moeten، mogen", [
+      "gaan آنے والے کام کے لیے آتا ہے: ik ga werken۔",
+      "kunnen = کر سکنا، moeten = ضروری ہونا، mogen = اجازت ہونا۔",
+      "ان کے بعد اصل کام والا فعل اکثر آخر میں آتا ہے۔"
+    ], "معنی پہلے سمجھیں، پھر جملے کی ترتیب دیکھیں۔"),
+    fillGap("ik ___ morgen werken", ["ga", "heb", "ben"], "ga", "آنے والے کام کے لیے ga۔"),
+    fillGap("ik ___ de dokter bellen", ["moet", "ben", "heb"], "moet", "ضروری کام کے لیے moet۔"),
+    situation("حال: اجازت پوچھنی ہے۔", ["mag ik hier parkeren?", "moet ik hier parkeren", "ik ga hier ziek"], "mag ik hier parkeren?", "اجازت کے لیے mag ik۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-work-school").questions.push(
+    uitleg("کام اور اسکول کا پیغام", [
+      "اگر بچہ نہیں آ سکتا: mijn zoon kan vandaag niet komen۔",
+      "rooster کام یا اسکول کے وقتوں کی فہرست ہے۔",
+      "afmelden کا مطلب نہ آنے کی اطلاع دینا ہے۔"
+    ], "A2 میں چھوٹے صاف پیغام سب سے اہم ہیں۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-health-housing").questions.push(
+    uitleg("صحت اور گھر کی خرابی", [
+      "huisarts گھر کا ڈاکٹر ہے۔",
+      "verwarming ہیٹنگ ہے، lekkage پانی کا رساؤ ہے۔",
+      "mijn verwarming doet het niet = میری ہیٹنگ کام نہیں کر رہی۔"
+    ], "مسئلہ صاف، چھوٹے جملے میں بتائیں۔"),
+    fillGap("mijn verwarming doet het ___", ["niet", "geen", "nee"], "niet", "doet het niet = کام نہیں کر رہی۔"),
+    reverse("میرے گھر میں پانی کا رساؤ ہے", ["ik heb lekkage in mijn huis", "ik ben lekkage", "ik ga lekkage"], "ik heb lekkage in mijn huis", "lekkage = پانی کا رساؤ۔"),
+    situation("حال: ہیٹنگ خراب ہے۔", ["mijn verwarming doet het niet", "ik heb een afspraak", "waar is de kassa?"], "mijn verwarming doet het niet", "خرابی بتانے والا جملہ۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-shopping-services").questions.push(
+    uitleg("شکایت اور چیز بدلنا", [
+      "klacht = شکایت۔",
+      "garantie = گارنٹی۔",
+      "ik wil hem ruilen = میں اسے بدلنا چاہتا ہوں۔"
+    ], "رسید، گارنٹی، اور مسئلہ ساتھ بتانا مفید ہے۔"),
+    fillGap("ik wil hem ___", ["ruilen", "betalen", "parkeren"], "ruilen", "بدلنا = ruilen۔"),
+    reverse("میرے پاس رسید ہے", ["ik heb de bon", "ik ben de bon", "ik wil de bon"], "ik heb de bon", "bon = رسید۔"),
+    situation("حال: جیکٹ خراب ہے اور بدلنی ہے۔", ["ik wil hem ruilen", "ik wil hem leren", "ik ben kapot"], "ik wil hem ruilen", "بدلنے کے لیے ruilen۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-writing-messages").questions.push(
+    uitleg("چھوٹا پیغام لکھنا", [
+      "رسمی پیغام beste meneer یا beste dokter سے شروع ہو سکتا ہے۔",
+      "آخر میں met vriendelijke groet لکھا جا سکتا ہے۔",
+      "درمیان میں اصل بات ایک صاف جملے میں لکھیں۔"
+    ], "لمبا پیغام ضروری نہیں؛ صاف اور ادب والا پیغام کافی ہے۔"),
+    fillGap("met vriendelijke ___", ["groet", "dokter", "afspraak"], "groet", "رسمی اختتام: met vriendelijke groet۔"),
+    situation("حال: رسمی پیغام ختم کرنا ہے۔", ["met vriendelijke groet", "hoi Ahmed", "kom je ook?"], "met vriendelijke groet", "رسمی اختتام یہی ہے۔")
+  );
+
+  a2Lessons.find((lesson) => lesson.id === "a2-strong-combined").questions.push(
+    uitleg("A2 مشترک جملے", [
+      "اس سبق میں کئی اصول ایک ساتھ آتے ہیں۔",
+      "پہلے معنی پہچانیں، پھر فعل کی جگہ دیکھیں۔",
+      "اگر جملہ لمبا لگے تو اسے دو حصوں میں پڑھیں۔"
+    ], "یہ آخری مضبوط دہرائی ہے، نئی چیز نہیں۔"),
+    fillGap("ik moet rust ___", ["nemen", "komen", "zeggen"], "nemen", "آرام کرنا = rust nemen۔"),
+    reverse("کیونکہ مجھے درد تھا", ["omdat ik pijn had", "omdat ik had pijn", "dat ik pijn"], "omdat ik pijn had", "omdat کے بعد فعل آخر میں۔")
+  );
+}
+
+addBeginnerAuditExpansion2();
 
 const a0Subchapters = [
   {

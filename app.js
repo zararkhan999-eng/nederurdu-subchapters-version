@@ -31,7 +31,7 @@ const dutchLetters = [
   { letter: "n", speak: "n", sound: "این", word: "nee", meaning: "نہیں" },
   { letter: "o", speak: "o", sound: "او", word: "oog", meaning: "آنکھ" },
   { letter: "p", speak: "p", sound: "پے", word: "pen", meaning: "قلم" },
-  { letter: "q", speak: "q", sound: "کو", word: "quiz", meaning: "quiz" },
+  { letter: "q", speak: "q", sound: "کو", word: "quiz", meaning: "کوئز" },
   { letter: "r", speak: "r", sound: "ایر", word: "rijst", meaning: "چاول" },
   { letter: "s", speak: "s", sound: "ایس", word: "stoel", meaning: "کرسی" },
   { letter: "t", speak: "t", sound: "تے", word: "tafel", meaning: "میز" },
@@ -1526,9 +1526,9 @@ function buildSessionQuestions(lesson) {
 }
 
 function sampleLessonQuestions(questions) {
-  if (questions.length <= 10) return questions;
   const infoQuestions = questions.filter(isInfoQuestion);
   const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
+  if (questions.length <= 10) return [...infoQuestions, ...usableQuestions].slice(0, 10);
   const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 1);
   const beginnerQuestions = usableQuestions.filter((question) => (
     ["image-choice", "listen-choice", "match-pairs", "fill-gap", "situation"].includes(question.type)
