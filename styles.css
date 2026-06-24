@@ -1312,6 +1312,7 @@ h3 {
 .choice-text {
   min-width: 0;
   overflow: visible;
+  overflow-wrap: anywhere;
 }
 
 .choice-button .word-help-token {

@@ -697,7 +697,7 @@ function renderUnitRow(lesson, index) {
       <span class="unit-number">${icon}</span>
       <span>
         <strong class="unit-title">${lesson.unit}</strong>
-        <p class="unit-meta">${lesson.questions.length} سوالات · ${lesson.xp} پوائنٹس</p>
+        <p class="unit-meta">${getLessonRunCount(lesson)} سوالات · ${lesson.xp} پوائنٹس</p>
       </span>
       <span class="status-dot ${done ? "done" : ""}"></span>
     </button>
@@ -730,7 +730,7 @@ function renderLessonPreview() {
       </div>
       <div class="summary-grid">
         <div class="summary-item">
-          <span class="summary-value">${lesson.questions.length}</span>
+          <span class="summary-value">${getLessonRunCount(lesson)}</span>
           <span class="summary-label">سوالات</span>
         </div>
         <div class="summary-item">
@@ -759,7 +759,7 @@ function renderLesson() {
   const percentage = Math.round((lessonProgressSteps / questions.length) * 100);
   const correctCount = sessionAnswers.filter((answer) => answer.correct).length;
   const wrongCount = sessionAnswers.filter((answer) => !answer.correct).length;
-  const canSpeakPrompt = isDutchText(question.prompt);
+  const speechText = getQuestionSpeechText(question);
   const canCheck = canCheckQuestion(question);
 
   return `
@@ -785,8 +785,8 @@ function renderLesson() {
           ${question.type === "build" ? renderHintButton() : ""}
         </div>
         <div class="prompt-row">
-          ${canSpeakPrompt ? renderSpeakButton(question.prompt, "prompt") : ""}
-          <div class="prompt-main ${question.type === "reverse" || question.type === "build" ? "" : "latin"}">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+          ${speechText ? renderSpeakButton(speechText, "prompt") : ""}
+          <div class="prompt-main ${isPromptLatin(question) ? "latin" : ""}">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
         </div>
         ${question.type === "build" && hintOpen ? renderHintPopover(question) : ""}
         ${question.note ? `<div class="prompt-note">${question.note}</div>` : ""}
@@ -911,12 +911,15 @@ function getVisualForLesson(lesson) {
 }
 
 function getVisualForQuestion(question, lesson) {
-  if (question?.type === "build") return visualLibrary.sentence;
+  if (question?.visual) return findWordVisual(question.visual) || getVisualByTopic(question.visual) || visualLibrary.sentence;
+  if (["build", "fill-gap", "situation"].includes(question?.type)) return visualLibrary.sentence;
   return getVisualForLesson(lesson);
 }
 
 function getExerciseVisual(question, lesson) {
   const candidates = [
+    question?.visual,
+    question?.speak,
     question?.prompt,
     question?.answer,
     question?.explain,
@@ -1496,11 +1499,30 @@ function normalizeWord(value) {
 }
 
 function buildSessionQuestions(lesson) {
-  return (lesson?.questions || []).map((question) => ({
+  const sourceQuestions = lesson?.reviewKind
+    ? lesson.questions
+    : sampleLessonQuestions(lesson?.questions || []);
+  return sourceQuestions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
     tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : []
   }));
+}
+
+function sampleLessonQuestions(questions) {
+  if (questions.length <= 10) return questions;
+  const buildQuestions = questions.filter((question) => question.type === "build").slice(0, 1);
+  const beginnerQuestions = questions.filter((question) => (
+    ["image-choice", "listen-choice", "match-pairs", "fill-gap", "situation"].includes(question.type)
+  ));
+  const baseQuestions = questions.filter((question) => !buildQuestions.includes(question) && !beginnerQuestions.includes(question));
+  const selected = [...shuffleArray(beginnerQuestions).slice(0, 5), ...buildQuestions];
+  const remaining = shuffleArray(baseQuestions).slice(0, Math.max(0, 10 - selected.length));
+  return shuffleArray([...selected, ...remaining]).slice(0, 10);
+}
+
+function getLessonRunCount(lesson) {
+  return Math.min(10, lesson.questions.length);
 }
 
 function getActiveQuestion() {
@@ -1527,6 +1549,15 @@ function canCheckQuestion(question) {
   if (checked) return true;
   if (question.type === "build") return buildAnswerIds.length === question.tiles.length;
   return Boolean(selectedAnswer);
+}
+
+function getQuestionSpeechText(question) {
+  if (question.speak) return question.speak;
+  return isDutchText(question.prompt) ? question.prompt : "";
+}
+
+function isPromptLatin(question) {
+  return isDutchText(question.prompt);
 }
 
 function shuffleArray(items) {

@@ -95,7 +95,7 @@ const a0Lessons = [
   },
   {
     id: "a0-ja-nee-goed-niet",
-    unit: "A0: reactions",
+    unit: "A0: reacties",
     title: "A0 les 5: ja, nee, goed, niet",
     description: "ہاں، نہیں، اچھا، نہیں: سب سے چھوٹے جواب۔",
     xp: 40,
@@ -151,9 +151,9 @@ const a0Lessons = [
     description: "Nederlands میں اسم سے پہلے چھوٹے الفاظ آتے ہیں: een, de, het۔",
     xp: 45,
     questions: [
-      meaning("een", ["ایک", "the", "نہیں"], "ایک", "een = ایک یا ایک۔"),
-      meaning("de", ["the", "ایک", "میں"], "the", "de کو ابھی اشارہ والا لفظ سمجھیں۔"),
-      meaning("het", ["the", "ایک", "ہاں"], "the", "het بھی اشارہ والا لفظ کی طرح ہے۔"),
+      meaning("een", ["ایک", "اشارہ والا لفظ", "نہیں"], "ایک", "een = ایک۔"),
+      meaning("de", ["اشارہ والا لفظ", "ایک", "میں"], "اشارہ والا لفظ", "de کو ابھی اشارہ والا لفظ سمجھیں۔"),
+      meaning("het", ["اشارہ والا لفظ", "ایک", "ہاں"], "اشارہ والا لفظ", "het بھی اشارہ والا لفظ کی طرح ہے۔"),
       meaning("een man", ["ایک آدمی", "اشارہ والا لفظ آدمی", "آدمی نہیں"], "ایک آدمی", "een + اسم = ایک چیز/شخص۔"),
       meaning("een boek", ["ایک کتاب", "اشارہ والا لفظ کتاب", "کتاب نہیں"], "ایک کتاب", "een boek = ایک کتاب۔"),
       meaning("het huis", ["اشارہ والا لفظ گھر", "ایک گھر", "گھر نہیں"], "اشارہ والا لفظ گھر", "het huis = اشارہ والا لفظ گھر۔"),
@@ -202,8 +202,8 @@ const a0Lessons = [
     description: "وہ مرد، وہ عورت، ہم۔",
     xp: 45,
     questions: [
-      meaning("hij", ["وہ مرد", "وہ عورت", "ہم"], "وہ مرد", "hij = he۔"),
-      meaning("zij", ["وہ عورت / وہ لوگ", "وہ مرد", "میں"], "وہ عورت / وہ لوگ", "zij = she یا اشارہ والا لفظy، بات کے حساب سے سے پتہ چلتا ہے۔"),
+      meaning("hij", ["وہ مرد", "وہ عورت", "ہم"], "وہ مرد", "hij = وہ مرد۔"),
+      meaning("zij", ["وہ عورت / وہ لوگ", "وہ مرد", "میں"], "وہ عورت / وہ لوگ", "zij = وہ عورت یا وہ لوگ، بات کے حساب سے پتہ چلتا ہے۔"),
       meaning("wij", ["ہم", "تم", "آپ"], "ہم", "wij = ہم۔"),
       meaning("hij is", ["وہ مرد ہے", "میں ہوں", "ہم ہیں"], "وہ مرد ہے", "hij + is۔"),
       meaning("zij is", ["وہ عورت ہے", "وہ مرد ہے", "ہم ہیں"], "وہ عورت ہے", "zij + is۔"),
@@ -231,7 +231,7 @@ const a0Lessons = [
   },
   {
     id: "a0-geen",
-    unit: "A0: negative 1",
+    unit: "A0: geen 1",
     title: "A0 les 13: geen",
     description: "جب چیز نہیں ہے: geen boek, geen pen۔",
     xp: 50,
@@ -876,6 +876,206 @@ a2Lessons.find((lesson) => lesson.id === "a2-writing-messages").questions.push(
 a2Lessons.find((lesson) => lesson.id === "a2-strong-combined").questions.push(
   build("مجھے آرام کرنا چاہیے", ["ik", "moet", "rust", "nemen"], "ik moet rust nemen", "`moet` کے بعد کام والا فقرہ آتا ہے: rust nemen۔")
 );
+
+
+const imageChoice = (visual, options, answer, explain) => ({
+  type: "image-choice",
+  label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
+  prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔",
+  visual,
+  options,
+  answer,
+  explain
+});
+
+const listenChoice = (speak, options, answer, explain) => ({
+  type: "listen-choice",
+  label: "آواز سن کر صحیح معنی منتخب کریں",
+  prompt: "آواز سنیں، پھر صحیح مطلب چنیں۔",
+  speak,
+  options,
+  answer,
+  explain,
+  note: "آواز کا بٹن دبائیں۔"
+});
+
+const matchPairs = (options, answer, explain) => ({
+  type: "match-pairs",
+  label: "صحیح جوڑا منتخب کریں",
+  prompt: "Nederlands لفظ اور اردو مطلب کا صحیح جوڑا چنیں۔",
+  options,
+  answer,
+  explain
+});
+
+const fillGap = (sentence, options, answer, explain) => ({
+  type: "fill-gap",
+  label: "خالی جگہ کے لیے صحیح لفظ منتخب کریں",
+  prompt: sentence,
+  options,
+  answer,
+  explain
+});
+
+const situation = (prompt, options, answer, explain) => ({
+  type: "situation",
+  label: "حال کے لیے صحیح Nederlands جملہ منتخب کریں",
+  prompt,
+  options,
+  answer,
+  explain
+});
+
+function isUrduText(value) {
+  return /[\u0600-\u06ff]/.test(String(value || ""));
+}
+
+function isDutchOnlyText(value) {
+  const text = String(value || "");
+  return /[A-Za-zÀ-ÿ]/.test(text) && !isUrduText(text);
+}
+
+function uniq(items) {
+  return [...new Set(items.filter(Boolean))];
+}
+
+function takeOptions(items, answer, count = 3) {
+  const clean = uniq([answer, ...items]).filter(Boolean);
+  return clean.slice(0, count);
+}
+
+function meaningSources(lesson) {
+  return lesson.questions.filter((question) => (
+    isDutchOnlyText(question.prompt) && isUrduText(question.answer) && question.options?.length
+  ));
+}
+
+function reverseSources(lesson) {
+  return lesson.questions.filter((question) => (
+    isUrduText(question.prompt) && isDutchOnlyText(question.answer) && question.options?.length
+  ));
+}
+
+function isGeneratedDutchOption(value) {
+  if (!isDutchOnlyText(value)) return false;
+  return !["the"].includes(String(value).toLowerCase());
+}
+
+function allDutchOptions(lesson) {
+  return uniq(lesson.questions.flatMap((question) => [
+    question.prompt,
+    question.answer,
+    ...(question.options || []),
+    ...(question.tiles || [])
+  ]).filter(isGeneratedDutchOption));
+}
+
+function allUrduOptions(lesson) {
+  return uniq(lesson.questions.flatMap((question) => [
+    question.prompt,
+    question.answer,
+    ...(question.options || [])
+  ]).filter(isUrduText));
+}
+
+function cleanDutchWord(word) {
+  return String(word || "").replace(/^[^A-Za-zÀ-ÿ]+|[^A-Za-zÀ-ÿ]+$/g, "");
+}
+
+function missingWordSentence(sentence) {
+  const words = String(sentence || "").split(/\s+/).filter(Boolean);
+  if (words.length < 2) return null;
+  const entries = words.map((word, index) => ({ word, clean: cleanDutchWord(word), index }));
+  const entry = [...entries].reverse().find((item) => /[A-Za-zÀ-ÿ]/.test(item.clean) && item.clean.length > 1);
+  if (!entry) return null;
+  const promptWords = [...words];
+  promptWords[entry.index] = "___";
+  return {
+    prompt: promptWords.join(" "),
+    missing: entry.clean
+  };
+}
+
+function makeImageRevision(lesson, index) {
+  const sources = meaningSources(lesson);
+  const source = sources[index % sources.length];
+  if (!source) return null;
+  const options = takeOptions(sources.map((item) => item.prompt), source.prompt);
+  if (options.length < 3) return null;
+  return imageChoice(source.prompt, options, source.prompt, `${source.prompt} = ${source.answer}۔`);
+}
+
+function makeListenRevision(lesson, index) {
+  const sources = meaningSources(lesson);
+  const source = sources[index % sources.length];
+  if (!source) return null;
+  const options = takeOptions([...(source.options || []), ...allUrduOptions(lesson)], source.answer);
+  if (options.length < 3) return null;
+  return listenChoice(source.prompt, options, source.answer, `${source.prompt} = ${source.answer}۔`);
+}
+
+function makeMatchRevision(lesson, index) {
+  const sources = meaningSources(lesson);
+  const source = sources[index % sources.length];
+  if (!source) return null;
+  const pairOptions = takeOptions(sources.map((item) => `${item.prompt} — ${item.answer}`), `${source.prompt} — ${source.answer}`);
+  if (pairOptions.length < 3) return null;
+  return matchPairs(pairOptions, `${source.prompt} — ${source.answer}`, `${source.prompt} کا مطلب ${source.answer} ہے۔`);
+}
+
+function makeFillRevision(lesson, index) {
+  const sources = [...reverseSources(lesson), ...meaningSources(lesson)].filter((question) => (
+    missingWordSentence(question.answer)?.prompt || missingWordSentence(question.prompt)?.prompt
+  ));
+  const source = sources[index % sources.length];
+  if (!source) return null;
+  const sentence = isDutchOnlyText(source.answer) ? source.answer : source.prompt;
+  const gap = missingWordSentence(sentence);
+  if (!gap) return null;
+  const options = takeOptions(allDutchOptions(lesson).flatMap((text) => (
+    String(text).split(/\s+/).map(cleanDutchWord).filter((word) => word.length > 1)
+  )), gap.missing);
+  if (options.length < 3) return null;
+  return fillGap(gap.prompt, options, gap.missing, `خالی جگہ میں ${gap.missing} آئے گا۔`);
+}
+
+function makeSituationRevision(lesson, index) {
+  const sources = reverseSources(lesson);
+  const source = sources[index % sources.length];
+  if (!source) return null;
+  const options = takeOptions([...(source.options || []), ...allDutchOptions(lesson)], source.answer);
+  if (options.length < 3) return null;
+  return situation(`حال: ${source.prompt}`, options, source.answer, `اس حال میں صحیح جملہ: ${source.answer}۔`);
+}
+
+function makeRevisionQuestion(lesson, index) {
+  const makers = [makeImageRevision, makeListenRevision, makeMatchRevision, makeFillRevision, makeSituationRevision];
+  for (let attempt = 0; attempt < makers.length; attempt += 1) {
+    const maker = makers[(index + attempt) % makers.length];
+    const question = maker(lesson, index + attempt);
+    if (question) return question;
+  }
+  return null;
+}
+
+function addRevisionExpansion(lessons, total) {
+  let added = 0;
+  let round = 0;
+  while (added < total && round < 20) {
+    for (const lesson of lessons) {
+      if (added >= total) break;
+      const question = makeRevisionQuestion(lesson, added + round);
+      if (!question) continue;
+      lesson.questions.push(question);
+      added += 1;
+    }
+    round += 1;
+  }
+}
+
+addRevisionExpansion(a0Lessons, 35);
+addRevisionExpansion(a1Lessons, 45);
+addRevisionExpansion(a2Lessons, 45);
 
 const a0Subchapters = [
   {
