@@ -1532,7 +1532,7 @@ function sampleLessonQuestions(questions) {
   if (questions.length <= LESSON_QUESTION_LIMIT) return [...infoQuestions, ...usableQuestions].slice(0, LESSON_QUESTION_LIMIT);
   const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 2);
   const beginnerQuestions = usableQuestions.filter((question) => (
-    ["image-choice", "listen-choice", "match-pairs", "fill-gap", "situation"].includes(question.type)
+    ["image-choice", "listen-choice", "fill-gap", "situation"].includes(question.type)
   ));
   const baseQuestions = usableQuestions.filter((question) => !buildQuestions.includes(question) && !beginnerQuestions.includes(question));
   const selected = [...infoQuestions, ...shuffleArray(beginnerQuestions).slice(0, 10), ...buildQuestions];

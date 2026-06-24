@@ -965,14 +965,6 @@ const listenChoice = (speak, options, answer, explain) => ({
   note: "آواز کا بٹن دبائیں۔"
 });
 
-const matchPairs = (options, answer, explain) => ({
-  type: "match-pairs",
-  label: "صحیح جوڑا منتخب کریں",
-  prompt: "Nederlands لفظ اور اردو مطلب کا صحیح جوڑا چنیں۔",
-  options,
-  answer,
-  explain
-});
 
 const fillGap = (sentence, options, answer, explain) => ({
   type: "fill-gap",
@@ -1080,14 +1072,6 @@ function makeListenRevision(lesson, index) {
   return listenChoice(source.prompt, options, source.answer, `${source.prompt} = ${source.answer}۔`);
 }
 
-function makeMatchRevision(lesson, index) {
-  const sources = meaningSources(lesson);
-  const source = sources[index % sources.length];
-  if (!source) return null;
-  const pairOptions = takeOptions(sources.map((item) => `${item.prompt} — ${item.answer}`), `${source.prompt} — ${source.answer}`);
-  if (pairOptions.length < 3) return null;
-  return matchPairs(pairOptions, `${source.prompt} — ${source.answer}`, `${source.prompt} کا مطلب ${source.answer} ہے۔`);
-}
 
 function makeFillRevision(lesson, index) {
   const sources = [...reverseSources(lesson), ...meaningSources(lesson)].filter((question) => (
@@ -1115,7 +1099,7 @@ function makeSituationRevision(lesson, index) {
 }
 
 function makeRevisionQuestion(lesson, index) {
-  const makers = [makeImageRevision, makeListenRevision, makeMatchRevision, makeFillRevision, makeSituationRevision];
+  const makers = [makeImageRevision, makeListenRevision, makeFillRevision, makeSituationRevision];
   for (let attempt = 0; attempt < makers.length; attempt += 1) {
     const maker = makers[(index + attempt) % makers.length];
     const question = maker(lesson, index + attempt);
@@ -1146,7 +1130,6 @@ addRevisionExpansion(a2Lessons, 45);
 function addBeginnerAuditExpansion() {
   a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet").questions.push(
     listenChoice("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet بات کو منفی بناتا ہے۔"),
-    matchPairs(["ja — ہاں", "nee — نہیں", "goed — اچھا"], "ja — ہاں", "ja کا مطلب ہاں ہے۔"),
     fillGap("ik ben ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
   );
 
@@ -1156,7 +1139,6 @@ function addBeginnerAuditExpansion() {
     reverse("کوئی قلم نہیں", ["geen pen", "niet pen", "nee pen"], "geen pen", "اسم کے ساتھ geen آتا ہے۔"),
     reverse("میں اچھا نہیں ہوں", ["ik ben niet goed", "ik ben geen goed", "ik nee goed"], "ik ben niet goed", "اچھا نہیں کے لیے niet۔"),
     fillGap("ik heb ___ boek", ["geen", "niet", "nee"], "geen", "کتاب اسم ہے، اس لیے geen۔"),
-    matchPairs(["niet goed — اچھا نہیں", "geen boek — کوئی کتاب نہیں", "nee — نہیں"], "geen boek — کوئی کتاب نہیں", "geen boek کا مطلب کوئی کتاب نہیں ہے۔")
   );
 
   a0Lessons.find((lesson) => lesson.id === "a0-possessive").questions.push(
@@ -1164,7 +1146,6 @@ function addBeginnerAuditExpansion() {
     meaning("zijn huis", ["اس مرد کا گھر", "میرا گھر", "تمہارا گھر"], "اس مرد کا گھر", "zijn یہاں اس مرد کی چیز بتاتا ہے۔"),
     reverse("تمہارا نام", ["jouw naam", "mijn naam", "haar naam"], "jouw naam", "jouw = تمہارا۔"),
     reverse("اس عورت کا قلم", ["haar pen", "zijn pen", "mijn pen"], "haar pen", "haar = اس عورت کا۔"),
-    matchPairs(["mijn — میرا", "jouw — تمہارا", "haar — اس عورت کا"], "haar — اس عورت کا", "haar ملکیت دکھاتا ہے۔"),
     fillGap("___ naam is Ali", ["mijn", "huis", "niet"], "mijn", "میرا نام = mijn naam۔")
   );
 
@@ -1172,7 +1153,6 @@ function addBeginnerAuditExpansion() {
     fillGap("ik ___ goed", ["ben", "bent", "is"], "ben", "ik کے ساتھ ben آتا ہے۔"),
     fillGap("jij ___ goed", ["bent", "ben", "is"], "bent", "jij کے ساتھ bent آتا ہے۔"),
     fillGap("zij ___ goed", ["is", "ben", "bent"], "is", "zij کے ساتھ is آتا ہے۔"),
-    matchPairs(["ik ben — میں ہوں", "jij bent — تم ہو", "zij is — وہ عورت ہے"], "jij bent — تم ہو", "jij bent = تم ہو۔")
   );
 
   a1Lessons.find((lesson) => lesson.id === "a1-questions").questions.push(
@@ -1187,13 +1167,11 @@ function addBeginnerAuditExpansion() {
     meaning("de tas", ["بیگ", "کتاب", "کمرہ"], "بیگ", "tas = بیگ۔"),
     meaning("de tassen", ["کئی بیگ", "ایک بیگ", "کئی کتابیں"], "کئی بیگ", "tassen جمع ہے۔"),
     fillGap("ik heb twee ___", ["boeken", "boek", "huis"], "boeken", "دو کتابیں = twee boeken۔"),
-    matchPairs(["boek — کتاب", "boeken — کتابیں", "tas — بیگ"], "boeken — کتابیں", "boeken جمع ہے۔")
   );
 
   a2Lessons.find((lesson) => lesson.id === "a2-perfect-tense").questions.push(
     fillGap("ik heb gisteren ___", ["gewerkt", "werk", "werken"], "gewerkt", "گزرے ہوئے کام میں gewerkt آتا ہے۔"),
     fillGap("ik ben naar huis ___", ["gegaan", "gewerkt", "gaan"], "gegaan", "حرکت والے جملے میں gegaan۔"),
-    matchPairs(["gewerkt — کام کیا", "gegaan — گیا", "gebeld — فون کیا"], "gebeld — فون کیا", "bellen کی بدلی ہوئی شکل gebeld ہے۔"),
     reverse("میں نے فون کیا ہے", ["ik heb gebeld", "ik ben gebeld", "ik ga bellen"], "ik heb gebeld", "فون کیا ہے = heb gebeld۔"),
     situation("حال: کل ڈاکٹر کو فون کیا تھا۔", ["ik heb gisteren de dokter gebeld", "ik bel morgen de dokter", "ik ben de dokter"], "ik heb gisteren de dokter gebeld", "گزرے ہوئے کام کے لیے heb gebeld۔")
   );
@@ -1203,7 +1181,6 @@ function addBeginnerAuditExpansion() {
     fillGap("vandaag ___ ik niet", ["werk", "ik", "niet"], "werk", "وقت پہلے ہو تو فعل دوسرے نمبر پر۔"),
     reverse("کیونکہ میرے پاس وقت نہیں ہے", ["omdat ik geen tijd heb", "omdat ik heb geen tijd", "ik omdat geen tijd heb"], "omdat ik geen tijd heb", "omdat کے بعد فعل آخر میں۔"),
     reverse("کل میں gemeente جاؤں گا", ["morgen ga ik naar de gemeente", "morgen ik ga naar de gemeente", "ik morgen ga gemeente"], "morgen ga ik naar de gemeente", "morgen پہلے، پھر ga۔"),
-    matchPairs(["omdat — کیونکہ", "als — اگر", "dat — کہ"], "omdat — کیونکہ", "omdat کا مطلب کیونکہ ہے۔"),
     situation("حال: آپ بتاتے ہیں کہ آپ بیمار ہیں، اس لیے نہیں آتے۔", ["ik kom niet omdat ik ziek ben", "ik kom omdat ik goed ben", "ik ben niet omdat kom"], "ik kom niet omdat ik ziek ben", "صحیح ترتیب: omdat ik ziek ben۔")
   );
 
@@ -1235,7 +1212,6 @@ function addBeginnerAuditExpansion2() {
       "شروع میں محفوظ جواب u ہے، خاص طور پر سرکاری جگہ یا ڈاکٹر کے پاس۔"
     ], "بات کرتے وقت پہلے سوچیں: بے تکلف یا ادب والا؟"),
     situation("حال: ڈاکٹر سے بات کرنی ہے۔", ["u", "jij", "ik"], "u", "ڈاکٹر یا دفتر میں u زیادہ محفوظ ہے۔"),
-    matchPairs(["ik — میں", "jij — تم", "u — آپ"], "u — آپ", "u ادب والا آپ ہے۔")
   );
 
   a0Lessons.find((lesson) => lesson.id === "a0-gaan-komen").questions.push(
@@ -1247,7 +1223,6 @@ function addBeginnerAuditExpansion2() {
     fillGap("ik ___ naar huis", ["ga", "kom", "ben"], "ga", "naar huis کے ساتھ جانا = ga۔"),
     fillGap("hij ___ naar school", ["gaat", "komt", "is"], "gaat", "hij کے ساتھ gaat۔"),
     reverse("میں گھر آتا ہوں", ["ik kom naar huis", "ik ga naar huis", "ik ben huis"], "ik kom naar huis", "آنا = komen۔"),
-    matchPairs(["ga — جاتا ہوں", "kom — آتا ہوں", "gaat — جاتا ہے"], "kom — آتا ہوں", "kom = آتا ہوں۔")
   );
 
   a0Lessons.find((lesson) => lesson.id === "a0-naar-met").questions.push(
@@ -1320,7 +1295,6 @@ function addBeginnerAuditExpansion2() {
     ], "خاندان، چیزیں، اور کاغذات کے لیے hebben بہت کام آتا ہے۔"),
     fillGap("ik ___ een broer", ["heb", "ben", "is"], "heb", "میرے پاس = ik heb۔"),
     fillGap("hij ___ kinderen", ["heeft", "heb", "bent"], "heeft", "hij کے ساتھ heeft۔"),
-    matchPairs(["ik heb — میرے پاس ہے", "jij hebt — تمہارے پاس ہے", "hij heeft — اس کے پاس ہے"], "hij heeft — اس کے پاس ہے", "hij heeft = اس کے پاس ہے۔")
   );
 
   a1Lessons.find((lesson) => lesson.id === "a1-present-time").questions.push(
