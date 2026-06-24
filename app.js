@@ -257,7 +257,8 @@ const wordHelpGlossary = {
   zus: "بہن"
 };
 
-const REVIEW_QUESTION_LIMIT = 8;
+const LESSON_QUESTION_LIMIT = 20;
+const REVIEW_QUESTION_LIMIT = 20;
 
 const defaultProgress = {
   completedLessons: [],
@@ -1528,20 +1529,20 @@ function buildSessionQuestions(lesson) {
 function sampleLessonQuestions(questions) {
   const infoQuestions = questions.filter(isInfoQuestion);
   const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
-  if (questions.length <= 10) return [...infoQuestions, ...usableQuestions].slice(0, 10);
-  const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 1);
+  if (questions.length <= LESSON_QUESTION_LIMIT) return [...infoQuestions, ...usableQuestions].slice(0, LESSON_QUESTION_LIMIT);
+  const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 2);
   const beginnerQuestions = usableQuestions.filter((question) => (
     ["image-choice", "listen-choice", "match-pairs", "fill-gap", "situation"].includes(question.type)
   ));
   const baseQuestions = usableQuestions.filter((question) => !buildQuestions.includes(question) && !beginnerQuestions.includes(question));
-  const selected = [...infoQuestions, ...shuffleArray(beginnerQuestions).slice(0, 5), ...buildQuestions];
-  const remaining = shuffleArray(baseQuestions).slice(0, Math.max(0, 10 - selected.length));
-  const practice = shuffleArray([...selected.filter((question) => !isInfoQuestion(question)), ...remaining]).slice(0, Math.max(0, 10 - infoQuestions.length));
-  return [...infoQuestions, ...practice].slice(0, 10);
+  const selected = [...infoQuestions, ...shuffleArray(beginnerQuestions).slice(0, 10), ...buildQuestions];
+  const remaining = shuffleArray(baseQuestions).slice(0, Math.max(0, LESSON_QUESTION_LIMIT - selected.length));
+  const practice = shuffleArray([...selected.filter((question) => !isInfoQuestion(question)), ...remaining]).slice(0, Math.max(0, LESSON_QUESTION_LIMIT - infoQuestions.length));
+  return [...infoQuestions, ...practice].slice(0, LESSON_QUESTION_LIMIT);
 }
 
 function getLessonRunCount(lesson) {
-  return Math.min(10, lesson.questions.length);
+  return Math.min(LESSON_QUESTION_LIMIT, lesson.questions.length);
 }
 
 function getActiveQuestion() {

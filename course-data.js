@@ -1425,6 +1425,21 @@ function addBeginnerAuditExpansion2() {
 
 addBeginnerAuditExpansion2();
 
+function topUpLessonsToTwenty(lessons) {
+  for (const lesson of lessons) {
+    let guard = 0;
+    while (lesson.questions.length < 20 && guard < 80) {
+      const question = makeRevisionQuestion(lesson, lesson.questions.length + guard);
+      if (question) lesson.questions.push(question);
+      guard += 1;
+    }
+  }
+}
+
+topUpLessonsToTwenty(a0Lessons);
+topUpLessonsToTwenty(a1Lessons);
+topUpLessonsToTwenty(a2Lessons);
+
 const a0Subchapters = [
   {
     id: "a0-letters-sounds",

@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v34-beginner-audit-final";
+const CACHE_NAME = "nederurdu-v35-twenty-question-lessons";
 const APP_SHELL = [
   "./",
   "./index.html",
