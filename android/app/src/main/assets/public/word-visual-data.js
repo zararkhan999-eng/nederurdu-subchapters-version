@@ -1444,3 +1444,109 @@ window.NEDERURDU_WORD_VISUALS = [
     ]
   }
 ];
+
+const legacyWordVisuals = window.NEDERURDU_WORD_VISUALS;
+const claimedVisualTerms = new Set();
+const pendingGeneratedVisualIds = new Set([
+  "achter", "baan", "bellen", "bsn", "jongen", "kaartje", "letter-i", "meisje", "prijs", "rooster", "voor",
+  "ziekenhuis", "hoofdpijn", "rust", "badkamer", "keuken", "kamer", "verwarming", "lekkage",
+  "reparatie", "schoonmaken", "gisteren", "vraag", "langzaam", "letter-a", "letter-b", "letter-h",
+  "pronoun-u", "pronoun-hij-zij", "pronoun-wij", "possessive", "article-een", "article-de-het",
+  "verb-zijn", "verb-hebben", "verb-gaan", "verb-komen", "word-naar", "word-met", "word-bij",
+  "verb-wonen", "greeting", "thanks", "drink", "goedkoop", "duur", "kapot", "modal-kunnen",
+  "modal-moeten", "modal-mogen", "connector-omdat", "past-gegaan", "now"
+]);
+window.NEDERURDU_PENDING_VISUAL_IDS = [...pendingGeneratedVisualIds];
+
+function visualIdFromSource(src) {
+  return String(src || "").split("/").pop().replace(/\.[^.]+$/, "");
+}
+
+function normalizeVisualTerm(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function visualKind(id) {
+  const people = ["man", "vrouw", "kind", "jongen", "meisje", "familie", "vader", "moeder", "broer", "zus", "collega", "docent"];
+  const body = ["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "rust"];
+  const actionHints = ["bellen", "betalen", "helpen", "herhalen", "koken", "kopen", "leren", "opstaan", "parkeren", "ruilen", "schoonmaken", "terugkomen", "verb-"];
+  const situationHints = ["gemeente", "huisarts", "ziekenhuis", "apotheek", "tandarts", "sollicitatie", "verzekering", "lekkage", "verwarming", "loket", "klacht"];
+  if (people.some((term) => id === term)) return "person";
+  if (body.some((term) => id === term)) return "body";
+  if (actionHints.some((term) => id.includes(term))) return "action";
+  if (situationHints.some((term) => id.includes(term))) return "situation";
+  if (id.startsWith("letter-") || id.startsWith("pronoun-") || id.startsWith("article-") || id.startsWith("modal-") || id.startsWith("connector-") || id.startsWith("word-") || id === "possessive") return "foundation";
+  return "object";
+}
+
+window.NEDERURDU_WORD_VISUALS = legacyWordVisuals.map((entry) => {
+  const id = visualIdFromSource(entry.src);
+  const latinTerms = (entry.terms || [])
+    .filter((term) => /[A-Za-zÀ-ÿ]/.test(term) && !/[\u0600-\u06ff]/.test(term))
+    .map((term) => String(term).trim())
+    .filter(Boolean);
+  const canonicalTerm = latinTerms[0] || id.replaceAll("-", " ");
+  const dutchTerms = [];
+  for (const term of [canonicalTerm, ...latinTerms]) {
+    const normalized = normalizeVisualTerm(term);
+    if (!normalized || claimedVisualTerms.has(normalized)) continue;
+    claimedVisualTerms.add(normalized);
+    dutchTerms.push(term);
+  }
+  return {
+    id,
+    src: `assets/word-visuals/${id}.${pendingGeneratedVisualIds.has(id) ? "svg" : "webp"}`,
+    altUrdu: entry.alt,
+    canonicalTerm,
+    dutchTerms,
+    concept: String(entry.alt || "").replace(/^تصویر:\s*/, ""),
+    kind: visualKind(id)
+  };
+});
+
+const visualTermIndex = new Map();
+for (const visual of window.NEDERURDU_WORD_VISUALS) {
+  visualTermIndex.set(normalizeVisualTerm(visual.id.replaceAll("-", " ")), visual.id);
+  visualTermIndex.set(normalizeVisualTerm(visual.canonicalTerm), visual.id);
+  for (const term of visual.dutchTerms) visualTermIndex.set(normalizeVisualTerm(term), visual.id);
+}
+
+function resolveExplicitVisualId(value) {
+  const normalized = normalizeVisualTerm(value);
+  if (!normalized) return "";
+  if (normalized === "u") return "pronoun-u";
+  if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
+  const withoutArticle = normalized.replace(/^(de|het|een)\s+/, "");
+  if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
+  const padded = ` ${normalized} `;
+  const candidates = [...visualTermIndex.entries()]
+    .filter(([term]) => term && padded.includes(` ${term} `))
+    .map(([term, id]) => ({ term, id, kind: window.NEDERURDU_WORD_VISUALS.find((visual) => visual.id === id)?.kind || "foundation" }))
+    .sort((a, b) => {
+      const kindWeight = { person: 6, body: 5, object: 4, situation: 3, action: 2, foundation: 1 };
+      return b.term.length - a.term.length || kindWeight[b.kind] - kindWeight[a.kind];
+    });
+  return candidates[0]?.id || "";
+}
+
+for (const chapter of window.NEDERURDU_CHAPTERS || []) {
+  for (const lesson of chapter.lessons || []) {
+    for (const question of lesson.questions || []) {
+      const visualSource = question.type === "meaning"
+        ? question.prompt
+        : ["reverse", "situation", "build"].includes(question.type)
+          ? question.answer
+          : question.type === "fill-gap"
+            ? question.prompt.replace("___", "")
+            : question.visual || "";
+      question.visualId = resolveExplicitVisualId(visualSource) || undefined;
+      delete question.visual;
+    }
+  }
+}

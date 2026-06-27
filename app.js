@@ -74,17 +74,8 @@ const visualLibrary = {
   }
 };
 
-const wordVisualEntries = (window.NEDERURDU_WORD_VISUALS || []).map((entry) => ({
-  ...entry,
-  normalizedTerms: (entry.terms || [])
-    .map((term) => normalizeVisualText(term))
-    .filter(Boolean)
-    .sort((a, b) => b.length - a.length)
-})).sort((a, b) => {
-  const longestA = a.normalizedTerms[0]?.length || 0;
-  const longestB = b.normalizedTerms[0]?.length || 0;
-  return longestB - longestA;
-});
+const wordVisualEntries = window.NEDERURDU_WORD_VISUALS || [];
+const wordVisualById = new Map(wordVisualEntries.map((entry) => [entry.id, entry]));
 
 const wordHelpGlossary = {
   aan: "پر / شروع",
@@ -292,7 +283,6 @@ let hintOpen = false;
 let audioContext = null;
 let activeReview = null;
 let pathCardLessonId = "";
-let lessonHearts = 5;
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -452,12 +442,17 @@ function cloneQuestion(question) {
 
 function findQuestionForMistake(mistake) {
   const lesson = getLesson(mistake.lessonId);
+  if (mistake.questionId) {
+    const exactQuestion = lesson.questions.find((question) => question.id === mistake.questionId);
+    if (exactQuestion) return exactQuestion;
+  }
   return lesson.questions.find((question) => (
     question.prompt === mistake.prompt && question.answer === mistake.answer
   ));
 }
 
 function mistakeKey(item) {
+  if (item.questionId) return `${item.lessonId || ""}|${item.questionId}`;
   return `${item.lessonId || ""}|${item.prompt}|${item.answer}`;
 }
 
@@ -476,8 +471,7 @@ function render() {
       ${screen === "practice" ? renderPracticeScreen() : ""}
       ${screen === "letters" ? renderLetters() : ""}
       ${screen === "progress" ? renderProgress() : ""}
-      ${screen === "rewards" ? renderRewards() : ""}
-      ${screen === "settings" || screen === "profile" ? renderSettings() : ""}
+      ${screen === "settings" ? renderSettings() : ""}
       ${renderBottomNav()}
     `;
   } catch (error) {
@@ -504,11 +498,7 @@ function renderTopbar() {
 function renderIcon(name, className = "") {
   const paths = {
     book: '<path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H12v17H7.5A3.5 3.5 0 0 0 4 22V5.5Z"/><path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H12v17h4.5A3.5 3.5 0 0 1 20 22V5.5Z"/>',
-    flame: '<path d="M12 22c4.4 0 8-3.3 8-8.1 0-3.1-1.7-6.2-5.1-9.3.2 2.8-1.1 4.5-2.4 5.3.2-3.8-1.7-6.4-4.2-7.9.2 3-1.5 5.2-2.7 6.8C4.5 10.2 4 11.8 4 13.9 4 18.7 7.6 22 12 22Z"/>',
-    trophy: '<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/>',
     chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-    user: '<circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/>',
-    heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>',
     lock: '<rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
     check: '<path d="m5 12 4 4L19 6"/>',
     play: '<path d="m9 6 9 6-9 6V6Z"/>',
@@ -516,25 +506,23 @@ function renderIcon(name, className = "") {
     dumbbell: '<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     speaker: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/>',
-    gift: '<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18M7.5 9C5 9 4 7.8 4 6.5S5 4 6.5 4C9 4 12 9 12 9s3-5 5.5-5C19 4 20 5.2 20 6.5S19 9 16.5 9"/>',
-    alphabet: '<path d="M4 20 9 4l5 16M6 14h6M15 8h5M17.5 5.5v5"/>'
+    alphabet: '<path d="M4 20 9 4l5 16M6 14h6M15 8h5M17.5 5.5v5"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>',
+    mistake: '<path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v4M12 17h.01"/>'
   };
   return `<svg class="ui-icon ${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
 }
 
 function renderProgressHeader() {
   return `
-    <header class="progress-header" aria-label="موجودہ پیش رفت">
+    <header class="progress-header" aria-label="زبان">
       <div class="language-pair">
         <span class="language-dot">NL</span>
         <strong>Nederlands</strong>
         <span aria-hidden="true">→</span>
         <strong>اردو</strong>
       </div>
-      <div class="header-stats">
-        <span class="header-stat streak">${renderIcon("flame")}<b class="latin">${progress.practiceDays.length}</b></span>
-        <span class="header-stat xp">${renderIcon("trophy")}<b class="latin">${progress.totalXp}</b></span>
-      </div>
+      <img class="header-logo" src="icon.svg" alt="" />
     </header>
   `;
 }
@@ -620,7 +608,7 @@ function renderLessonStartCard(lesson, index) {
     <article class="lesson-start-card">
       <span class="lesson-card-pointer" aria-hidden="true"></span>
       <strong>${getShortLessonTitle(lesson)}</strong>
-      <small>سبق ${index + 1} از ${getCurrentLessons().length} · ${lesson.xp} پوائنٹس</small>
+      <small>سبق ${index + 1} از ${getCurrentLessons().length}</small>
       <button data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ کریں" : "شروع کریں"}</button>
     </article>
   `;
@@ -799,7 +787,7 @@ function renderQuizTopBar(percentage, current, total) {
     <header class="quiz-topbar">
       <button class="quiz-close" data-action="home" aria-label="سبق بند کریں">${renderIcon("close")}</button>
       <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"></span></div>
-      <div class="quiz-hearts">${renderIcon("heart")}<b class="latin">${lessonHearts}</b></div>
+      <span class="quiz-count latin">${current}/${total}</span>
     </header>
   `;
 }
@@ -845,8 +833,8 @@ function renderListeningQuestion(question) {
 
 function renderMultipleChoiceQuestion(question, visual) {
   return `
-    <div class="multiple-choice-question">
-      <div class="prompt-scene">
+    <div class="multiple-choice-question ${question.type === "image-choice" ? "image-prompt" : ""}">
+      <div class="prompt-scene ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
         <div class="speech-bubble ${isPromptLatin(question) ? "latin" : ""}">
           ${getQuestionSpeechText(question) ? renderSpeakButton(getQuestionSpeechText(question), "prompt") : ""}
@@ -861,7 +849,7 @@ function renderMultipleChoiceQuestion(question, visual) {
 function renderWordBankQuestion(question, visual) {
   return `
     <div class="word-bank-question">
-      <div class="prompt-scene compact">
+      <div class="prompt-scene compact ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
         <div class="speech-bubble">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
       </div>
@@ -901,7 +889,7 @@ function renderMatchPairButton(id, side, text) {
   return `
     <button class="match-pair-card ${matched ? "matched" : ""} ${selected ? "selected" : ""} ${wrong ? "wrong" : ""} ${isDutchText(text) ? "latin" : ""}"
       data-action="match-pair" data-match-id="${escapeAttr(id)}" data-match-side="${side}" ${matched ? "disabled" : ""}>
-      ${renderTextWithWordHelp(text, `match-${activeQuestionIndex}-${side}-${id}`)}
+      ${escapeHtml(text)}
     </button>
   `;
 }
@@ -1034,7 +1022,7 @@ function renderVisual(visual, className) {
   if (!visual) return "";
   return `
     <figure class="learning-visual ${className}">
-      <img src="${escapeAttr(visual.src)}" alt="${escapeAttr(visual.alt)}" loading="lazy" />
+      <img src="${escapeAttr(visual.src)}" alt="${escapeAttr(visual.altUrdu || visual.alt || "")}" loading="lazy" />
     </figure>
   `;
 }
@@ -1049,46 +1037,16 @@ function getVisualForLesson(lesson) {
 }
 
 function getVisualForQuestion(question, lesson) {
-  if (question?.visual) return findWordVisual(question.visual) || getVisualByTopic(question.visual) || visualLibrary.sentence;
-  if (["build", "fill-gap", "situation"].includes(question?.type)) return visualLibrary.sentence;
-  return getVisualForLesson(lesson);
-}
-
-function getExerciseVisual(question, lesson) {
-  const candidates = [
-    question?.visual,
-    question?.speak,
-    question?.prompt,
-    question?.answer,
-    question?.explain,
-    question?.note
-  ].filter(Boolean);
-  const wordVisual = findWordVisual(candidates.join(" "));
-  return wordVisual || getVisualForQuestion(question, lesson);
-}
-
-function findWordVisual(value) {
-  if (!value || !wordVisualEntries.length) return null;
-  const normalized = normalizeVisualText(value);
-  if (!normalized) return null;
-
-  for (const entry of wordVisualEntries) {
-    if (entry.normalizedTerms.some((term) => visualTermMatches(normalized, term))) {
-      return {
-        src: entry.src,
-        alt: entry.alt
-      };
-    }
-  }
-
+  if (question?.visualId) return getWordVisualById(question.visualId);
   return null;
 }
 
-function visualTermMatches(value, term) {
-  if (!term) return false;
-  if (term.includes(" ")) return value.includes(term);
-  if (term.length <= 1) return value === term;
-  return new RegExp(`(^|[^a-z0-9])${escapeRegex(term)}([^a-z0-9]|$)`).test(value);
+function getExerciseVisual(question, lesson) {
+  return question?.visualId ? getWordVisualById(question.visualId) : getVisualForQuestion(question, lesson);
+}
+
+function getWordVisualById(id) {
+  return wordVisualById.get(id) || null;
 }
 
 function normalizeVisualText(value) {
@@ -1166,41 +1124,25 @@ function renderComplete() {
   const isReview = Boolean(result.reviewKind);
   return `
     <main class="complete-screen">
-      <div class="reward-burst" aria-hidden="true">${renderIcon("trophy")}</div>
+      <div class="complete-mark" aria-hidden="true">${renderIcon("check")}</div>
       <h1>${isReview ? "دہرائی مکمل!" : "سبق مکمل!"}</h1>
-      <p>${percent}% درست</p>
-      <div class="reward-stats">
-        <div><strong class="latin">+${result.xp}</strong><span>XP</span></div>
-        <div><strong class="latin">${result.correct}/${result.total}</strong><span>درست</span></div>
-        <div><strong class="latin">${progress.practiceDays.length}</strong><span>دن</span></div>
-      </div>
+      <p class="complete-score"><strong class="latin">${result.correct}/${result.total}</strong><span>درست جواب</span></p>
+      <div class="complete-meter"><span style="width:${percent}%"></span></div>
       <button class="quiz-action enabled" data-action="home">جاری رکھیں</button>
     </main>
   `;
 }
 
 function renderPracticeScreen() {
+  const mistakes = getReviewConfig("mistakes");
   return `
-    <main class="utility-screen practice-screen">
+    <main class="utility-screen practice-screen mistake-screen">
       ${renderProgressHeader()}
-      <div class="utility-heading"><span>${renderIcon("dumbbell")}</span><div><h1>مشق</h1><p>آج ایک مختصر دہرائی کریں</p></div></div>
-      ${renderReviewLite()}
-      <button class="utility-action" data-action="letters"><span>${renderIcon("alphabet")}</span><div><strong>Nederlands حروف</strong><small>حروف سنیں اور دہرائیں</small></div><b>‹</b></button>
-    </main>
-  `;
-}
-
-function renderRewards() {
-  const completed = getAllLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
-  return `
-    <main class="utility-screen rewards-screen">
-      ${renderProgressHeader()}
-      <div class="utility-heading"><span>${renderIcon("gift")}</span><div><h1>انعامات</h1><p>آپ کی محنت یہاں جمع ہے</p></div></div>
-      <div class="reward-total"><span>${renderIcon("trophy")}</span><strong class="latin">${progress.totalXp}</strong><small>کل XP</small></div>
-      <div class="reward-list">
-        <article><span>${renderIcon("check")}</span><div><strong class="latin">${completed}</strong><small>مکمل سبق</small></div></article>
-        <article><span>${renderIcon("flame")}</span><div><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></div></article>
-      </div>
+      <div class="utility-heading"><span>${renderIcon("mistake")}</span><div><h1>غلطیوں کی مشق</h1><p>صرف وہ سوالات جو پہلے مشکل لگے</p></div></div>
+      ${mistakes.questions.length ? `
+        <div class="mistake-ready"><strong class="latin">${mistakes.questions.length}</strong><span>سوال دوبارہ تیار ہیں</span></div>
+        <button class="primary-button" data-action="review" data-review-kind="mistakes">مشق شروع کریں</button>
+      ` : `<div class="empty-state"><span>${renderIcon("check")}</span><h2>ابھی کوئی غلطی نہیں</h2><p>نیا سبق کریں، غلط سوال خود یہاں جمع ہو جائے گا۔</p></div>`}
     </main>
   `;
 }
@@ -1249,10 +1191,6 @@ function renderProgress() {
           <span class="summary-label">مکمل سبق</span>
         </div>
         <div class="summary-item">
-          <span class="summary-value">${progress.totalXp}</span>
-          <span class="summary-label">پوائنٹس</span>
-        </div>
-        <div class="summary-item">
           <span class="summary-value">${progress.mistakes.length}</span>
           <span class="summary-label">غلطیاں</span>
         </div>
@@ -1270,7 +1208,12 @@ function renderSettings() {
     ${renderTopbar()}
     <section class="settings-panel">
       <h1>ترتیبات</h1>
-      <p class="lead">یہ ترتیبات اسی براؤزر میں محفوظ رہتی ہیں۔ ابھی اکاؤنٹ نہیں ہیں۔</p>
+      <div class="settings-links">
+        ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "ملے جلے 20 سوال", "today")}
+        ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
+        ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
+        ${renderSettingsLink("progress", "chart", "تفصیلی پیش رفت", "مکمل سبق اور غلطیاں دیکھیں")}
+      </div>
       <div class="settings-list">
         ${renderToggleRow("soundEffects", "درست/غلط کی آوازیں", "جواب چیک کرتے وقت چھوٹی آوازیں")}
         ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}
@@ -1278,6 +1221,10 @@ function renderSettings() {
       <button class="secondary-button danger-button" data-action="reset">پیش رفت دوبارہ شروع کریں</button>
     </section>
   `;
+}
+
+function renderSettingsLink(action, icon, title, subtitle, reviewKind = "") {
+  return `<button class="utility-action" data-action="${action}" ${reviewKind ? `data-review-kind="${reviewKind}"` : ""}><span>${renderIcon(icon)}</span><div><strong>${title}</strong><small>${subtitle}</small></div><b>‹</b></button>`;
 }
 
 function renderToggleRow(key, title, subtitle) {
@@ -1297,11 +1244,9 @@ function renderBottomNav() {
   if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
-      ${renderNavButton("home", "book", "سیکھیں", screen === "home" || screen === "preview")}
-      ${renderNavButton("practice", "dumbbell", "مشق", screen === "practice" || screen === "letters")}
-      ${renderNavButton("progress", "chart", "پیش رفت", screen === "progress")}
-      ${renderNavButton("rewards", "gift", "انعام", screen === "rewards")}
-      ${renderNavButton("profile", "user", "پروفائل", screen === "profile" || screen === "settings")}
+      ${renderNavButton("home", "book", "گھر", screen === "home" || screen === "preview")}
+      ${renderNavButton("practice", "mistake", "غلطیاں", screen === "practice")}
+      ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters", "progress"].includes(screen))}
     </nav>
   `;
 }
@@ -1327,8 +1272,6 @@ function bindEvents() {
       if (action === "home") goHome();
       if (action === "practice") goPractice();
       if (action === "progress") goProgress();
-      if (action === "rewards") goRewards();
-      if (action === "profile") goProfile();
       if (action === "letters") goLetters();
       if (action === "settings") goSettings();
       if (action === "chapter") selectChapter(element.dataset.chapter);
@@ -1400,22 +1343,6 @@ function goProgress() {
   scrollToTop();
 }
 
-function goRewards() {
-  activeWordHelp = null;
-  activeReview = null;
-  screen = "rewards";
-  render();
-  scrollToTop();
-}
-
-function goProfile() {
-  activeWordHelp = null;
-  activeReview = null;
-  screen = "profile";
-  render();
-  scrollToTop();
-}
-
 function goLetters() {
   activeWordHelp = null;
   activeReview = null;
@@ -1482,7 +1409,6 @@ function startLesson(id) {
   buildAnswerIds = [];
   hintOpen = false;
   audioSkipped = false;
-  lessonHearts = 5;
   matchSelection = null;
   matchedPairIds = [];
   matchPairError = "";
@@ -1515,7 +1441,6 @@ function startReview(kind) {
   buildAnswerIds = [];
   hintOpen = false;
   audioSkipped = false;
-  lessonHearts = 5;
   matchSelection = null;
   matchedPairIds = [];
   matchPairError = "";
@@ -1614,11 +1539,11 @@ function checkAnswer() {
   hintOpen = false;
   if (question.type === "build") selectedAnswer = getBuildAnswerText(question);
   const correct = selectedAnswer === question.answer;
-  if (!correct) lessonHearts = Math.max(0, lessonHearts - 1);
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
   sessionAnswers.push({
+    questionId: question.id,
     prompt: question.prompt,
     answer: question.answer,
     selected: selectedAnswer,
@@ -1663,7 +1588,8 @@ function completeLesson(lesson) {
     : [...progress.practiceDays, todayKey()];
   const correctedMistakes = lesson.reviewKind === "mistakes"
     ? new Set(sessionAnswers.filter((answer) => answer.correct).map((answer) => mistakeKey({
-      lessonId: findLessonIdForQuestion(answer.prompt, answer.answer),
+      lessonId: findLessonIdForQuestion(answer.prompt, answer.answer, answer.questionId),
+      questionId: answer.questionId,
       prompt: answer.prompt,
       answer: answer.answer
     })))
@@ -1671,7 +1597,8 @@ function completeLesson(lesson) {
   const newMistakes = sessionAnswers
     .filter((answer) => !answer.correct)
     .map((answer) => ({
-      lessonId: isReview ? findLessonIdForQuestion(answer.prompt, answer.answer) : lesson.id,
+      lessonId: isReview ? findLessonIdForQuestion(answer.prompt, answer.answer, answer.questionId) : lesson.id,
+      questionId: answer.questionId,
       prompt: answer.prompt,
       answer: answer.answer,
       selected: answer.selected,
@@ -1752,7 +1679,7 @@ function normalizeWord(value) {
 function buildSessionQuestions(lesson) {
   const sourceQuestions = lesson?.reviewKind
     ? lesson.questions
-    : sampleLessonQuestions(lesson?.questions || []);
+    : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
   return sourceQuestions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
@@ -1760,19 +1687,47 @@ function buildSessionQuestions(lesson) {
   }));
 }
 
-function sampleLessonQuestions(questions) {
+function sampleLessonQuestions(questions, lessonId) {
   const infoQuestions = questions.filter(isInfoQuestion);
   const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
   if (questions.length <= LESSON_QUESTION_LIMIT) return [...infoQuestions, ...usableQuestions].slice(0, LESSON_QUESTION_LIMIT);
-  const buildQuestions = usableQuestions.filter((question) => question.type === "build").slice(0, 2);
-  const beginnerQuestions = usableQuestions.filter((question) => (
-    ["image-choice", "listen-choice", "fill-gap", "situation"].includes(question.type)
-  ));
-  const baseQuestions = usableQuestions.filter((question) => !buildQuestions.includes(question) && !beginnerQuestions.includes(question));
-  const selected = [...infoQuestions, ...shuffleArray(beginnerQuestions).slice(0, 10), ...buildQuestions];
-  const remaining = shuffleArray(baseQuestions).slice(0, Math.max(0, LESSON_QUESTION_LIMIT - selected.length));
-  const practice = shuffleArray([...selected.filter((question) => !isInfoQuestion(question)), ...remaining]).slice(0, Math.max(0, LESSON_QUESTION_LIMIT - infoQuestions.length));
-  return [...infoQuestions, ...practice].slice(0, LESSON_QUESTION_LIMIT);
+  const explanationCount = Math.min(2, infoQuestions.length);
+  const seed = hashText(`${lessonId}:${progress.scores[lessonId] || 0}`);
+  const types = ["meaning", "reverse", "image-choice", "listen-choice", "fill-gap", "situation", "build"];
+  const groups = new Map(types.map((type, index) => [
+    type,
+    seededShuffle(usableQuestions.filter((question) => question.type === type), seed + index)
+  ]));
+  const practice = [];
+  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount) {
+    let added = false;
+    for (const type of types) {
+      const question = groups.get(type)?.shift();
+      if (!question) continue;
+      practice.push(question);
+      added = true;
+      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) break;
+    }
+    if (!added) break;
+  }
+  return [...infoQuestions.slice(0, explanationCount), ...seededShuffle(practice, seed + 97)].slice(0, LESSON_QUESTION_LIMIT);
+}
+
+function hashText(value) {
+  let hash = 2166136261;
+  for (const char of String(value)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  return hash >>> 0;
+}
+
+function seededShuffle(items, seed) {
+  const shuffled = [...items];
+  let state = seed || 1;
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    const swapIndex = state % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function getLessonRunCount(lesson) {
@@ -1785,9 +1740,9 @@ function getActiveQuestion() {
   return questions[activeQuestionIndex];
 }
 
-function findLessonIdForQuestion(prompt, answer) {
+function findLessonIdForQuestion(prompt, answer, questionId = "") {
   const lesson = getAllLessons().find((item) => item.questions.some((question) => (
-    question.prompt === prompt && question.answer === answer
+    (questionId && question.id === questionId) || (question.prompt === prompt && question.answer === answer)
   )));
   return lesson?.id || activeLessonId;
 }

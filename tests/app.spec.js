@@ -34,8 +34,9 @@ test("home loads and every chapter remains available", async ({ page }) => {
   await expect(page.locator("#app")).toBeVisible();
   await expect(page.locator("body")).not.toContainText(/(?:uncaught|syntaxerror|referenceerror|application error)/i);
   await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
-  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(5);
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
   await expect(page.locator('[data-action="preview"]:visible').first()).toBeEnabled();
+  await expect(page.locator("body")).not.toContainText(/(?:XP|streak|heart|trophy|انعام)/i);
   await expect(page.locator("body")).not.toContainText(/\b(?:practice|lesson|chapter|progress|settings|home|today|mistake|review|next|continue|check)\b/i);
   expect(runtimeErrors).toEqual([]);
 });
@@ -58,7 +59,7 @@ test("today review starts with 20 mixed questions", async ({ page }) => {
     lastLessonId: "a0-letters-1"
   });
 
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('[data-action="settings"]').click();
   await page.locator('[data-action="review"][data-review-kind="today"]').click();
   await expect(page.locator(".quiz-screen")).toBeVisible();
   await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
@@ -79,13 +80,35 @@ test("mistake review opens a saved mistake", async ({ page }) => {
   await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 1");
 });
 
+test("a correct stable-ID mistake review clears the saved mistake", async ({ page }) => {
+  await openCleanApp(page, {
+    completedLessons: ["a0-letters-1"],
+    lastLessonId: "a0-letters-1",
+    mistakes: [{
+      lessonId: "a0-letters-1",
+      questionId: "a0-letters-1-meaning-01",
+      prompt: "a",
+      answer: "حرف a"
+    }]
+  });
+
+  await page.locator('[data-action="practice"]').click();
+  await page.locator('[data-action="review"][data-review-kind="mistakes"]').click();
+  await page.locator('[data-action="choose"][data-answer="حرف a"]').click();
+  await page.locator('[data-action="check"]').click();
+  await page.locator('[data-action="next"]').click();
+
+  const mistakes = await page.evaluate(() => JSON.parse(localStorage.getItem("nederurdu-progress-v3")).mistakes);
+  expect(mistakes).toEqual([]);
+});
+
 test("old lesson review starts from completed work", async ({ page }) => {
   await openCleanApp(page, {
     completedLessons: ["a0-letters-1", "a0-letters-2"],
     lastLessonId: "a0-letters-2"
   });
 
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('[data-action="settings"]').click();
   await page.locator('[data-action="review"][data-review-kind="old"]').click();
   await expect(page.locator(".quiz-screen")).toBeVisible();
   await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
@@ -98,6 +121,8 @@ test("main screens do not overflow horizontally", async ({ page }) => {
   expect(hasOverflow).toBe(false);
 
   await page.locator('[data-action="preview"][data-lesson="a0-letters-1"]').first().click();
+  const cardHasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+  expect(cardHasOverflow).toBe(false);
   await page.locator('.lesson-start-card [data-action="start"]').click();
   const lessonHasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   expect(lessonHasOverflow).toBe(false);
@@ -132,17 +157,17 @@ test("quiz check button enables and feedback appears", async ({ page }) => {
   await expect(page.locator('[data-action="next"]')).toBeEnabled();
 });
 
-test("all five bottom navigation destinations open", async ({ page }) => {
+test("the three bottom navigation destinations open", async ({ page }) => {
   await openCleanApp(page);
 
   await page.locator('[data-action="practice"]').click();
   await expect(page.locator(".practice-screen")).toBeVisible();
-  await page.locator('.bottom-nav [data-action="progress"]').click();
-  await expect(page.locator(".progress-panel")).toBeVisible();
-  await page.locator('[data-action="rewards"]').click();
-  await expect(page.locator(".rewards-screen")).toBeVisible();
-  await page.locator('[data-action="profile"]').click();
+  await page.locator('.bottom-nav [data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
+  await expect(page.locator('.settings-panel [data-action="letters"]')).toBeVisible();
+  await expect(page.locator('.settings-panel [data-action="progress"]')).toBeVisible();
+  await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="today"]')).toBeVisible();
+  await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="old"]')).toBeVisible();
   await page.locator('[data-action="home"]').click();
   await expect(page.locator(".learn-screen")).toBeVisible();
 });
@@ -195,7 +220,7 @@ test("matching pairs enable Check after every pair is matched", async ({ page })
   await expect(checkButton).toBeEnabled();
 });
 
-test("course bank has valid IDs, answers, and exercise types", async ({ page }) => {
+test("course bank has exact sizes, stable IDs, valid answers, and visual mappings", async ({ page }) => {
   await openCleanApp(page);
   const audit = await page.evaluate(() => {
     const lessons = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons);
@@ -206,7 +231,9 @@ test("course bank has valid IDs, answers, and exercise types", async ({ page }) 
     const ids = lessons.map((lesson) => lesson.id);
     const invalidAnswers = [];
     const invalidTypes = [];
-    const shortLessons = [];
+    const wrongSizedLessons = [];
+    const duplicateQuestionIds = [];
+    const missingVisualIds = [];
     const forbiddenWording = [
       "نفی والا لفظ",
       "de/het والا چھوٹا لفظ",
@@ -218,29 +245,52 @@ test("course bank has valid IDs, answers, and exercise types", async ({ page }) 
     const courseText = JSON.stringify(window.NEDERURDU_CHAPTERS);
 
     for (const lesson of lessons) {
-      if (lesson.questions.length < 20) shortLessons.push(lesson.id);
+      if (lesson.questions.length !== 60) wrongSizedLessons.push(`${lesson.id}:${lesson.questions.length}`);
+      const questionIds = lesson.questions.map((question) => question.id);
+      if (new Set(questionIds).size !== 60) duplicateQuestionIds.push(lesson.id);
       for (const question of lesson.questions) {
         if (!allowedTypes.has(question.type)) invalidTypes.push(`${lesson.id}:${question.type}`);
         if (question.options && !question.options.includes(question.answer)) {
           invalidAnswers.push(`${lesson.id}:${question.prompt}`);
         }
+        if (question.type === "image-choice" && !question.visualId) missingVisualIds.push(question.id);
       }
     }
 
+    const visuals = window.NEDERURDU_WORD_VISUALS;
+    const visualIds = visuals.map((visual) => visual.id);
+    const allTerms = visuals.flatMap((visual) => visual.dutchTerms.map((term) => term.toLowerCase()));
+
     return {
+      lessonCount: lessons.length,
+      questionCount: lessons.reduce((total, lesson) => total + lesson.questions.length, 0),
       duplicateIds: ids.filter((id, index) => ids.indexOf(id) !== index),
+      duplicateQuestionIds,
       invalidAnswers,
       invalidTypes,
-      shortLessons,
+      wrongSizedLessons,
+      visualCount: visuals.length,
+      duplicateVisualIds: visualIds.filter((id, index) => visualIds.indexOf(id) !== index),
+      duplicateVisualTerms: allTerms.filter((term, index) => allTerms.indexOf(term) !== index),
+      missingVisualIds,
+      invalidVisualRecords: visuals.filter((visual) => !visual.id || !visual.src || !visual.altUrdu || !visual.canonicalTerm || !visual.concept || !visual.kind).map((visual) => visual.id),
       forbiddenWording: forbiddenWording.filter((phrase) => courseText.includes(phrase))
     };
   });
 
   expect(audit).toEqual({
+    lessonCount: 40,
+    questionCount: 2400,
     duplicateIds: [],
+    duplicateQuestionIds: [],
     invalidAnswers: [],
     invalidTypes: [],
-    shortLessons: [],
+    wrongSizedLessons: [],
+    visualCount: 152,
+    duplicateVisualIds: [],
+    duplicateVisualTerms: [],
+    missingVisualIds: [],
+    invalidVisualRecords: [],
     forbiddenWording: []
   });
 });

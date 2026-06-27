@@ -1405,20 +1405,146 @@ function addBeginnerAuditExpansion2() {
 
 addBeginnerAuditExpansion2();
 
-function topUpLessonsToTwenty(lessons) {
-  for (const lesson of lessons) {
-    let guard = 0;
-    while (lesson.questions.length < 20 && guard < 80) {
-      const question = makeRevisionQuestion(lesson, lesson.questions.length + guard);
-      if (question) lesson.questions.push(question);
-      guard += 1;
-    }
-  }
+const bankBlueprints = {
+  a0: { meaning: 10, reverse: 8, "image-choice": 10, "listen-choice": 10, "fill-gap": 8, situation: 8, build: 4 },
+  a1: { meaning: 8, reverse: 6, "image-choice": 8, "listen-choice": 8, "fill-gap": 10, situation: 12, build: 6 },
+  a2: { meaning: 6, reverse: 5, "image-choice": 6, "listen-choice": 7, "fill-gap": 12, situation: 14, build: 8 }
+};
+
+function questionSignature(question) {
+  return [
+    question.type,
+    question.prompt,
+    question.answer,
+    ...(question.options || []),
+    ...(question.tiles || [])
+  ].join("|");
 }
 
-topUpLessonsToTwenty(a0Lessons);
-topUpLessonsToTwenty(a1Lessons);
-topUpLessonsToTwenty(a2Lessons);
+function lessonConcepts(questions) {
+  const concepts = [];
+  const seen = new Set();
+  const add = (dutch, urdu) => {
+    if (!isDutchOnlyText(dutch) || !isUrduText(urdu)) return;
+    const key = `${dutch}|${urdu}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    concepts.push({ dutch: String(dutch), urdu: String(urdu) });
+  };
+  for (const question of questions) {
+    add(question.prompt, question.answer);
+    add(question.answer, question.prompt);
+    if (question.type === "listen-choice") add(question.speak, question.answer);
+  }
+  return concepts;
+}
+
+function rotate(items, offset) {
+  if (!items.length) return [];
+  const step = ((offset % items.length) + items.length) % items.length;
+  return [...items.slice(step), ...items.slice(0, step)];
+}
+
+function conceptOptions(concepts, index, key) {
+  const concept = concepts[index % concepts.length];
+  const values = uniq(concepts.map((item) => item[key]));
+  const answer = concept[key];
+  const distractors = rotate(values.filter((value) => value !== answer), index + 1).slice(0, 2);
+  return { concept, options: [answer, ...distractors] };
+}
+
+function buildGeneratedQuestion(type, concepts, index) {
+  if (!concepts.length) return null;
+  const dutchSet = conceptOptions(concepts, index, "dutch");
+  const urduSet = conceptOptions(concepts, index, "urdu");
+  const concept = concepts[index % concepts.length];
+
+  if (type === "meaning") {
+    return meaning(concept.dutch, urduSet.options, concept.urdu, `${concept.dutch} = ${concept.urdu}۔`);
+  }
+  if (type === "reverse") {
+    return reverse(concept.urdu, dutchSet.options, concept.dutch, `${concept.urdu} = ${concept.dutch}۔`);
+  }
+  if (type === "image-choice") {
+    return imageChoice(concept.dutch, dutchSet.options, concept.dutch, `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔`);
+  }
+  if (type === "listen-choice") {
+    return listenChoice(concept.dutch, urduSet.options, concept.urdu, `${concept.dutch} = ${concept.urdu}۔`);
+  }
+  if (type === "fill-gap") {
+    const gap = missingWordSentence(concept.dutch);
+    if (gap) {
+      const words = uniq(concepts.flatMap((item) => item.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+      const options = [gap.missing, ...rotate(words.filter((word) => word !== gap.missing), index).slice(0, 2)];
+      return fillGap(gap.prompt, options, gap.missing, `خالی جگہ میں ${gap.missing} آئے گا۔`);
+    }
+    return fillGap("___", dutchSet.options, concept.dutch, `صحیح لفظ ${concept.dutch} ہے۔`);
+  }
+  if (type === "situation") {
+    return situation(`حال: آپ کو کہنا ہے: ${concept.urdu}`, dutchSet.options, concept.dutch, `صحیح Nederlands: ${concept.dutch}۔`);
+  }
+  if (type === "build") {
+    const tiles = concept.dutch.split(/\s+/).filter(Boolean);
+    return build(`یہ بنائیں: ${concept.urdu}`, tiles, concept.dutch, `صحیح ترتیب: ${concept.dutch}۔`);
+  }
+  return null;
+}
+
+function takeQuestionsForType(seedQuestions, type, target, concepts) {
+  const selected = [];
+  const signatures = new Set();
+  const add = (question) => {
+    if (!question || selected.length >= target) return;
+    const signature = questionSignature(question);
+    if (signatures.has(signature)) return;
+    signatures.add(signature);
+    selected.push(question);
+  };
+
+  seedQuestions.filter((question) => question.type === type).forEach(add);
+  let attempt = 0;
+  while (selected.length < target && attempt < target * 12) {
+    const generated = buildGeneratedQuestion(type, concepts, attempt);
+    if (generated) {
+      if (signatures.has(questionSignature(generated))) {
+        generated.note = `دہرائی ${attempt + 1}`;
+        generated.options = rotate(generated.options || [], attempt + 1);
+      }
+      add(generated);
+    }
+    attempt += 1;
+  }
+  return selected;
+}
+
+function buildLessonBank(lesson, level) {
+  const seedQuestions = lesson.questions.map((question) => ({ ...question }));
+  const concepts = lessonConcepts(seedQuestions);
+  const explanations = [];
+  const explanationSignatures = new Set();
+  for (const question of seedQuestions.filter((item) => item.type === "uitleg")) {
+    const signature = questionSignature(question);
+    if (explanationSignatures.has(signature) || explanations.length >= 2) continue;
+    explanationSignatures.add(signature);
+    explanations.push(question);
+  }
+
+  const blueprint = { ...bankBlueprints[level] };
+  blueprint.situation += 2 - explanations.length;
+  const bank = [...explanations];
+  for (const [type, target] of Object.entries(blueprint)) {
+    bank.push(...takeQuestionsForType(seedQuestions, type, target, concepts));
+  }
+
+  lesson.questions = bank.slice(0, 60).map((question, index) => ({
+    ...question,
+    id: `${lesson.id}-${question.type}-${String(index + 1).padStart(2, "0")}`
+  }));
+}
+
+a0Lessons.forEach((lesson) => buildLessonBank(lesson, "a0"));
+a1Lessons.forEach((lesson) => buildLessonBank(lesson, "a1"));
+a2Lessons.forEach((lesson) => buildLessonBank(lesson, "a2"));
 
 const a0Subchapters = [
   {
