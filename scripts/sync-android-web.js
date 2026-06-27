@@ -6,6 +6,7 @@ const target = path.join(root, "android", "app", "src", "main", "assets", "publi
 const files = [
   "index.html",
   "styles.css",
+  "duo.css",
   "app.js",
   "course-data.js",
   "word-visual-data.js",

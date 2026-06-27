@@ -1,8 +1,9 @@
-const CACHE_NAME = "nederurdu-v36-no-match-pairs";
+const CACHE_NAME = "nederurdu-v38-dark-path";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
+  "./duo.css",
   "./course-data.js",
   "./word-visual-data.js",
   "./app.js",

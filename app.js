@@ -291,6 +291,12 @@ let buildAnswerIds = [];
 let hintOpen = false;
 let audioContext = null;
 let activeReview = null;
+let pathCardLessonId = "";
+let lessonHearts = 5;
+let audioSkipped = false;
+let matchSelection = null;
+let matchedPairIds = [];
+let matchPairError = "";
 
 function loadProgress() {
   try {
@@ -467,9 +473,11 @@ function render() {
       ${screen === "preview" ? renderLessonPreview() : ""}
       ${screen === "lesson" ? renderLesson() : ""}
       ${screen === "complete" ? renderComplete() : ""}
+      ${screen === "practice" ? renderPracticeScreen() : ""}
       ${screen === "letters" ? renderLetters() : ""}
       ${screen === "progress" ? renderProgress() : ""}
-      ${screen === "settings" ? renderSettings() : ""}
+      ${screen === "rewards" ? renderRewards() : ""}
+      ${screen === "settings" || screen === "profile" ? renderSettings() : ""}
       ${renderBottomNav()}
     `;
   } catch (error) {
@@ -490,14 +498,42 @@ function render() {
 }
 
 function renderTopbar() {
+  return renderProgressHeader();
+}
+
+function renderIcon(name, className = "") {
+  const paths = {
+    book: '<path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H12v17H7.5A3.5 3.5 0 0 0 4 22V5.5Z"/><path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H12v17h4.5A3.5 3.5 0 0 1 20 22V5.5Z"/>',
+    flame: '<path d="M12 22c4.4 0 8-3.3 8-8.1 0-3.1-1.7-6.2-5.1-9.3.2 2.8-1.1 4.5-2.4 5.3.2-3.8-1.7-6.4-4.2-7.9.2 3-1.5 5.2-2.7 6.8C4.5 10.2 4 11.8 4 13.9 4 18.7 7.6 22 12 22Z"/>',
+    trophy: '<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/>',
+    heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>',
+    lock: '<rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+    check: '<path d="m5 12 4 4L19 6"/>',
+    play: '<path d="m9 6 9 6-9 6V6Z"/>',
+    notebook: '<path d="M6 3h12a2 2 0 0 1 2 2v16H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M8 3v18M11 8h6M11 12h6M11 16h4"/>',
+    dumbbell: '<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>',
+    close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    speaker: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/>',
+    gift: '<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18M7.5 9C5 9 4 7.8 4 6.5S5 4 6.5 4C9 4 12 9 12 9s3-5 5.5-5C19 4 20 5.2 20 6.5S19 9 16.5 9"/>',
+    alphabet: '<path d="M4 20 9 4l5 16M6 14h6M15 8h5M17.5 5.5v5"/>'
+  };
+  return `<svg class="ui-icon ${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
+}
+
+function renderProgressHeader() {
   return `
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark"><span>NU</span></div>
-        <div>
-          <p class="brand-title">NederUrdu</p>
-          <p class="brand-subtitle">Nederlands سیکھیں، اردو میں</p>
-        </div>
+    <header class="progress-header" aria-label="موجودہ پیش رفت">
+      <div class="language-pair">
+        <span class="language-dot">NL</span>
+        <strong>Nederlands</strong>
+        <span aria-hidden="true">→</span>
+        <strong>اردو</strong>
+      </div>
+      <div class="header-stats">
+        <span class="header-stat streak">${renderIcon("flame")}<b class="latin">${progress.practiceDays.length}</b></span>
+        <span class="header-stat xp">${renderIcon("trophy")}<b class="latin">${progress.totalXp}</b></span>
       </div>
     </header>
   `;
@@ -505,60 +541,88 @@ function renderTopbar() {
 
 function renderHome() {
   const chapter = getSelectedChapter();
-  const lessons = getCurrentLessons();
   const nextLesson = getNextLessonForChapter(chapter);
-  const percent = Math.round((completedCount() / lessons.length) * 100);
-  const heroVisual = getVisualForLesson(nextLesson);
   activeLessonId = nextLesson.id;
 
   return `
-    ${renderTopbar()}
-    <section class="home-world">
-      <div class="world-sky" aria-hidden="true">
-        <span class="cloud cloud-one"></span>
-        <span class="cloud cloud-two"></span>
-        <span class="hill hill-one"></span>
-        <span class="hill hill-two"></span>
-      </div>
-      <section class="chapter-strip" aria-label="باب">
-        ${chapters.map(renderChapterButton).join("")}
-      </section>
-      <div class="path-stage">
-        ${renderJourneyPath(lessons, nextLesson)}
-        <article class="next-lesson-island">
-          ${renderVisual(heroVisual, "hero-visual")}
-          <div class="hero-copy">
-            <p class="eyeline">${chapter.title} · ${percent}% مکمل</p>
-            <h1>${nextLesson.title}</h1>
-            <p class="lead">${nextLesson.description}</p>
-          </div>
-          <div class="dashboard-progress">
-            <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
-            <span class="latin">${completedCount()}/${lessons.length}</span>
-          </div>
-          <button class="primary-button" data-action="preview" data-lesson="${nextLesson.id}">سبق شروع کریں</button>
-        </article>
-      </div>
-      <section class="learning-dock" aria-label="آج کی حالت">
-        <div class="dock-stat">
-          <strong class="latin">${completedCount()}/${lessons.length}</strong>
-          <span>سبق مکمل</span>
-        </div>
-        <div class="dock-stat">
-          <strong class="latin">${progress.totalXp}</strong>
-          <span>پوائنٹس</span>
-        </div>
-        <button class="dock-action" data-action="letters">
-          <span class="quick-icon">Aa</span>
-          <b>حروف</b>
-        </button>
-      </section>
-    </section>
-    ${renderReviewLite()}
-    <section class="section journey-section">
-      <h2>${chapter.title} کا راستہ</h2>
-      ${renderSubchapters(chapter)}
-    </section>
+    <main class="learn-screen">
+      ${renderProgressHeader()}
+      ${renderChapterSwitcher()}
+      ${renderUnitCard(chapter, nextLesson)}
+      ${renderLessonPath(chapter, nextLesson)}
+    </main>
+  `;
+}
+
+function renderChapterSwitcher() {
+  return `<div class="chapter-switcher" aria-label="باب منتخب کریں">${chapters.map((chapter) => `
+    <button class="chapter-chip ${chapter.id === selectedChapterId ? "active" : ""}" data-action="chapter" data-chapter="${chapter.id}">${chapter.id.toUpperCase()}</button>
+  `).join("")}</div>`;
+}
+
+function getSubchapterForLesson(chapter, lessonId) {
+  return chapter.subchapters?.find((item) => item.lessonIds.includes(lessonId)) || chapter.subchapters?.[0];
+}
+
+function renderUnitCard(chapter, nextLesson) {
+  const section = getSubchapterForLesson(chapter, nextLesson.id);
+  return `
+    <button class="unit-card" data-action="preview" data-lesson="${nextLesson.id}">
+      <span class="unit-card-icon">${renderIcon("notebook")}</span>
+      <span class="unit-card-copy"><small>${chapter.title}</small><strong>${section?.title || nextLesson.unit}</strong><span>${section?.goal || nextLesson.description}</span></span>
+      <span class="unit-card-arrow" aria-hidden="true">‹</span>
+    </button>
+  `;
+}
+
+function renderLessonPath(chapter, nextLesson) {
+  const groups = chapter.subchapters?.length
+    ? chapter.subchapters.map((section) => ({ section, lessons: subchapterLessons(section) }))
+    : [{ section: { title: chapter.title }, lessons: chapter.lessons }];
+  let pathIndex = 0;
+  return `<section class="lesson-path" aria-label="سبق کا راستہ">${groups.map(({ section, lessons }) => `
+    ${renderLessonSectionDivider(section.title)}
+    <div class="path-group">${lessons.map((lesson) => {
+      const lessonIndex = chapter.lessons.findIndex((item) => item.id === lesson.id);
+      const position = ["left", "center", "right", "center"][pathIndex % 4];
+      pathIndex += 1;
+      return renderLessonNode(lesson, lessonIndex, position, lesson.id === nextLesson.id);
+    }).join("")}</div>
+  `).join("")}</section>`;
+}
+
+function renderLessonSectionDivider(title) {
+  return `<div class="section-divider"><span></span><strong>${title}</strong><span></span></div>`;
+}
+
+function renderLessonNode(lesson, index, position, current) {
+  const completed = progress.completedLessons.includes(lesson.id);
+  const locked = !isLessonUnlocked(index);
+  const state = completed ? "completed" : current ? "current" : locked ? "locked" : "available";
+  const selected = pathCardLessonId === lesson.id;
+  const icon = completed ? "check" : locked ? "lock" : current ? "play" : "book";
+  return `
+    <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}">
+      <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}">${renderIcon(icon)}</button>
+      <div class="node-copy"><strong>${getShortLessonTitle(lesson)}</strong><span>${completed ? "مکمل" : current ? "اگلا سبق" : locked ? "بند" : "دستیاب"}</span></div>
+      ${selected ? renderLessonStartCard(lesson, index) : ""}
+    </div>
+  `;
+}
+
+function getShortLessonTitle(lesson) {
+  return lesson.title.replace(/^A\d\s+les\s+\d+:\s*/i, "").replace(/^سبق\s+\d+:\s*/, "").replace(/^A\d\s*/, "").trim();
+}
+
+function renderLessonStartCard(lesson, index) {
+  const done = progress.completedLessons.includes(lesson.id);
+  return `
+    <article class="lesson-start-card">
+      <span class="lesson-card-pointer" aria-hidden="true"></span>
+      <strong>${getShortLessonTitle(lesson)}</strong>
+      <small>سبق ${index + 1} از ${getCurrentLessons().length} · ${lesson.xp} پوائنٹس</small>
+      <button data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ کریں" : "شروع کریں"}</button>
+    </article>
   `;
 }
 
@@ -706,49 +770,7 @@ function renderUnitRow(lesson, index) {
 }
 
 function renderLessonPreview() {
-  const lesson = getLesson(previewLessonId);
-  if (!lesson) return renderMissingLesson();
-  const chapter = getChapterForLesson(lesson.id);
-  const lessonIndex = getLessonIndexInChapter(lesson.id, chapter);
-  const done = progress.completedLessons.includes(lesson.id);
-  const score = progress.scores[lesson.id] || 0;
-  const visual = getVisualForLesson(lesson);
-  const sampleWords = lesson.questions
-    .filter((question) => isDutchText(question.prompt))
-    .slice(0, 5)
-    .map((question) => question.prompt);
-
-  return `
-    ${renderTopbar()}
-    <section class="preview-panel">
-      <button class="back-button" data-action="home">واپس</button>
-      ${renderVisual(visual, "preview-visual")}
-      <div class="preview-hero">
-        <span class="unit-number">${done ? "✓" : lessonIndex + 1}</span>
-        <p class="eyeline">${chapter.title} · سبق ${lessonIndex + 1}</p>
-        <h1>${lesson.title}</h1>
-        <p class="lead">${lesson.description}</p>
-      </div>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <span class="summary-value">${getLessonRunCount(lesson)}</span>
-          <span class="summary-label">سوالات</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-value">${lesson.xp}</span>
-          <span class="summary-label">پوائنٹس</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-value">${score}</span>
-          <span class="summary-label">بہترین نتیجہ</span>
-        </div>
-      </div>
-      <div class="preview-words">
-        ${sampleWords.length ? sampleWords.map((word) => `<span>${renderTextWithWordHelp(word, `preview-${lesson.id}`)}</span>`).join("") : "<span>اردو مشق</span>"}
-      </div>
-      <button class="primary-button" data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ مشق کریں" : "سبق شروع کریں"}</button>
-    </section>
-  `;
+  return renderHome();
 }
 
 function renderLesson() {
@@ -757,50 +779,154 @@ function renderLesson() {
   const question = questions[activeQuestionIndex];
   if (!lesson || !question) return renderMissingLesson();
   const visual = getExerciseVisual(question, lesson);
-  const percentage = Math.round((lessonProgressSteps / questions.length) * 100);
-  const correctCount = sessionAnswers.filter((answer) => answer.correct).length;
-  const wrongCount = sessionAnswers.filter((answer) => !answer.correct).length;
-  const speechText = getQuestionSpeechText(question);
-  const canCheck = canCheckQuestion(question);
+  const percentage = Math.round(((activeQuestionIndex + (checked ? 1 : 0)) / questions.length) * 100);
   const infoStep = isInfoQuestion(question);
 
   return `
-    <section class="lesson-panel">
-      <div class="lesson-header">
-        <button class="back-button" data-action="home">واپس</button>
-        <div class="lesson-header-main">
-          <strong>${lesson.unit}</strong>
-          <span>${activeQuestionIndex + 1}/${questions.length}</span>
+    <main class="quiz-screen">
+      ${renderQuizTopBar(percentage, activeQuestionIndex + 1, questions.length)}
+      <section class="quiz-content">
+        <h1 class="question-title">${getQuestionTitle(question)}</h1>
+        ${renderQuestionCard(question, visual)}
+      </section>
+      ${renderQuizFooter(question, infoStep)}
+    </main>
+  `;
+}
+
+function renderQuizTopBar(percentage, current, total) {
+  return `
+    <header class="quiz-topbar">
+      <button class="quiz-close" data-action="home" aria-label="سبق بند کریں">${renderIcon("close")}</button>
+      <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"></span></div>
+      <div class="quiz-hearts">${renderIcon("heart")}<b class="latin">${lessonHearts}</b></div>
+    </header>
+  `;
+}
+
+function getQuestionTitle(question) {
+  if (isInfoQuestion(question)) return "پہلے یہ سمجھیں";
+  if (question.type === "listen-choice") return "آپ نے کیا سنا؟";
+  if (question.type === "build") return "جملہ بنائیں";
+  if (question.type === "fill-gap") return "خالی جگہ پُر کریں";
+  if (question.type === "match-pairs") return "صحیح جوڑے ملائیں";
+  if (question.type === "image-choice") return "صحیح لفظ منتخب کریں";
+  if (question.type === "situation") return "صحیح جملہ منتخب کریں";
+  if (question.type === "reverse") return "صحیح Nederlands منتخب کریں";
+  return "صحیح ترجمہ منتخب کریں";
+}
+
+function renderQuestionCard(question, visual) {
+  if (isInfoQuestion(question)) {
+    return `
+      <div class="teaching-card">
+        ${renderVisual(visual, "quiz-visual teaching-visual")}
+        <h2>${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</h2>
+        ${renderUitlegExercise(question)}
+      </div>
+    `;
+  }
+  if (question.type === "listen-choice") return renderListeningQuestion(question);
+  if (question.type === "build") return renderWordBankQuestion(question, visual);
+  if (question.type === "match-pairs") return renderMatchPairsQuestion(question);
+  return renderMultipleChoiceQuestion(question, visual);
+}
+
+function renderListeningQuestion(question) {
+  const speechText = getQuestionSpeechText(question);
+  return `
+    <div class="listening-question">
+      <button class="listening-button" data-action="speak" data-speak="${escapeAttr(speechText)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}</button>
+      ${audioSkipped ? `<p class="audio-fallback latin">${escapeHtml(speechText)}</p>` : ""}
+      ${renderChoices(question)}
+    </div>
+  `;
+}
+
+function renderMultipleChoiceQuestion(question, visual) {
+  return `
+    <div class="multiple-choice-question">
+      <div class="prompt-scene">
+        ${renderVisual(visual, "quiz-visual")}
+        <div class="speech-bubble ${isPromptLatin(question) ? "latin" : ""}">
+          ${getQuestionSpeechText(question) ? renderSpeakButton(getQuestionSpeechText(question), "prompt") : ""}
+          <span>${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
         </div>
       </div>
-      <div class="lesson-status">
-        <div class="progress-track"><div class="progress-fill" style="width: ${percentage}%"></div></div>
-        <div class="lesson-counters latin">
-          <span class="counter-good">${correctCount}</span>
-          <span class="counter-bad">${wrongCount}</span>
-        </div>
+      ${renderChoices(question)}
+    </div>
+  `;
+}
+
+function renderWordBankQuestion(question, visual) {
+  return `
+    <div class="word-bank-question">
+      <div class="prompt-scene compact">
+        ${renderVisual(visual, "quiz-visual")}
+        <div class="speech-bubble">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
       </div>
-      ${renderVisual(visual, "lesson-visual exercise-visual")}
-      <div class="prompt-card">
-        <div class="prompt-label-row">
-          <div class="prompt-label">${question.label}</div>
-          ${question.type === "build" ? renderHintButton() : ""}
-        </div>
-        <div class="prompt-row">
-          ${speechText ? renderSpeakButton(speechText, "prompt") : ""}
-          <div class="prompt-main ${isPromptLatin(question) ? "latin" : ""}">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
-        </div>
-        ${question.type === "build" && hintOpen ? renderHintPopover(question) : ""}
-        ${question.note ? `<div class="prompt-note">${question.note}</div>` : ""}
+      ${renderBuildExercise(question)}
+      ${renderHintButton()}
+      ${hintOpen ? renderHintPopover(question) : ""}
+    </div>
+  `;
+}
+
+function getMatchPairs(question) {
+  return (question.pairs || []).map((pair, index) => ({
+    id: String(pair.id ?? index),
+    left: pair.left ?? pair.dutch ?? "",
+    right: pair.right ?? pair.urdu ?? ""
+  }));
+}
+
+function renderMatchPairsQuestion(question) {
+  const pairs = getMatchPairs(question);
+  return `
+    <div class="match-pairs-question ${matchPairError ? "has-error" : ""}">
+      <div class="match-column">
+        ${pairs.map((pair) => renderMatchPairButton(pair.id, "left", pair.left)).join("")}
       </div>
-      ${infoStep ? renderUitlegExercise(question) : (question.type === "build" ? renderBuildExercise(question) : renderChoices(question))}
-      <p class="feedback ${!infoStep && checked ? (selectedAnswer === question.answer ? "good" : "bad") : ""}">
-        ${!infoStep && checked ? (selectedAnswer === question.answer ? `درست۔ ${question.explain}` : `یہ جواب درست نہیں۔ صحیح جواب: ${question.answer}۔ ${question.explain}`) : ""}
-      </p>
-      <button class="primary-button" data-action="${infoStep ? "continue-info" : (checked ? "next" : "check")}" ${canCheck ? "" : "disabled"}>
-        ${infoStep ? "آگے بڑھیں" : (checked ? "اگلا سوال" : "جواب چیک کریں")}
-      </button>
-    </section>
+      <div class="match-column">
+        ${pairs.map((pair) => renderMatchPairButton(pair.id, "right", pair.right)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderMatchPairButton(id, side, text) {
+  const matched = matchedPairIds.includes(id);
+  const selected = matchSelection?.id === id && matchSelection?.side === side;
+  const wrong = matchPairError === id;
+  return `
+    <button class="match-pair-card ${matched ? "matched" : ""} ${selected ? "selected" : ""} ${wrong ? "wrong" : ""} ${isDutchText(text) ? "latin" : ""}"
+      data-action="match-pair" data-match-id="${escapeAttr(id)}" data-match-side="${side}" ${matched ? "disabled" : ""}>
+      ${renderTextWithWordHelp(text, `match-${activeQuestionIndex}-${side}-${id}`)}
+    </button>
+  `;
+}
+
+function renderQuizFooter(question, infoStep) {
+  const correct = checked && selectedAnswer === question.answer;
+  if (infoStep) {
+    return `<footer class="quiz-action-bar"><button class="quiz-action enabled" data-action="continue-info">آگے بڑھیں</button></footer>`;
+  }
+  if (checked) {
+    return `
+      <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
+        <div class="feedback-copy">
+          <span class="feedback-icon">${renderIcon(correct ? "check" : "close")}</span>
+          <div><strong>${correct ? "بہت خوب!" : "درست نہیں"}</strong>${correct ? "" : `<small>صحیح جواب: ${escapeHtml(question.answer)}</small>`}</div>
+        </div>
+        <button class="quiz-action enabled" data-action="next">${correct ? "جاری رکھیں" : "سمجھ گیا"}</button>
+      </footer>
+    `;
+  }
+  return `
+    <footer class="quiz-action-bar">
+      ${question.type === "listen-choice" ? `<button class="cant-listen" data-action="skip-audio">ابھی آواز نہیں سن سکتا</button>` : ""}
+      <button class="quiz-action" data-action="check" ${canCheckQuestion(question) ? "" : "disabled"}>جواب چیک کریں</button>
+    </footer>
   `;
 }
 
@@ -832,14 +958,15 @@ function renderHintPopover(question) {
 function renderUitlegExercise(question) {
   return `
     <div class="uitleg-card">
-      ${(question.points || []).map((point) => `<div class="uitleg-point">${renderTextWithWordHelp(point, `uitleg-${activeQuestionIndex}`)}</div>`).join("")}
+      ${(question.points || []).map((point) => `<div class="uitleg-point"><span></span>${renderTextWithWordHelp(point, `uitleg-${activeQuestionIndex}`)}</div>`).join("")}
     </div>
   `;
 }
 
 function renderChoices(question) {
+  const compact = question.options.length === 4 && question.options.every((option) => String(option).length < 22);
   return `
-    <div class="choices">
+    <div class="choices ${compact ? "choice-grid" : ""}">
       ${question.options.map((option, index) => renderChoice(option, question, index)).join("")}
     </div>
   `;
@@ -857,9 +984,10 @@ function renderChoice(option, question, index) {
     <div class="choice-wrap ${dutchChoice ? "has-sound" : ""}">
       <button class="choice-button ${state} ${dutchChoice ? "latin" : ""}" data-action="choose" data-answer="${escapeAttr(option)}">
         <span class="choice-text">${choiceText}</span>
+        <span class="choice-state">${state === "correct" ? renderIcon("check") : state === "wrong" ? renderIcon("close") : ""}</span>
         ${checked && selectedAnswer === question.answer && option === question.answer ? renderChoiceConfetti() : ""}
       </button>
-      ${dutchChoice ? renderSpeakButton(option, "choice") : ""}
+      ${dutchChoice && progress.settings.pronunciation ? `<button class="choice-audio" data-action="speak" data-speak="${escapeAttr(option)}" aria-label="Nederlands تلفظ">${renderIcon("speaker")}</button>` : ""}
     </div>
   `;
 }
@@ -1028,7 +1156,7 @@ function renderSpeakButton(text, variant) {
       data-speak="${escapeAttr(text)}"
       title="Nederlands تلفظ"
       aria-label="Nederlands تلفظ"
-    >▶</span>
+    >${renderIcon("speaker")}</span>
   `;
 }
 
@@ -1037,19 +1165,43 @@ function renderComplete() {
   const percent = Math.round((result.correct / result.total) * 100);
   const isReview = Boolean(result.reviewKind);
   return `
-    ${renderTopbar()}
-    <section class="result-panel">
-      <div class="celebration-dots" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
+    <main class="complete-screen">
+      <div class="reward-burst" aria-hidden="true">${renderIcon("trophy")}</div>
+      <h1>${isReview ? "دہرائی مکمل!" : "سبق مکمل!"}</h1>
+      <p>${percent}% درست</p>
+      <div class="reward-stats">
+        <div><strong class="latin">+${result.xp}</strong><span>XP</span></div>
+        <div><strong class="latin">${result.correct}/${result.total}</strong><span>درست</span></div>
+        <div><strong class="latin">${progress.practiceDays.length}</strong><span>دن</span></div>
       </div>
-      <h1>${isReview ? "دہرائی مکمل ہو گئی" : "سبق مکمل ہو گیا"}</h1>
-      <div class="result-score">${percent}%</div>
-      <p class="lead">${isReview
-        ? `آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ آج کی مشق محفوظ ہو گئی۔`
-        : `آپ نے ${result.correct} میں سے ${result.total} جواب درست دیے۔ ${result.xp} پوائنٹس محفوظ ہو گئے۔`
-      }</p>
-      <button class="primary-button" data-action="home">گھر جائیں</button>
-    </section>
+      <button class="quiz-action enabled" data-action="home">جاری رکھیں</button>
+    </main>
+  `;
+}
+
+function renderPracticeScreen() {
+  return `
+    <main class="utility-screen practice-screen">
+      ${renderProgressHeader()}
+      <div class="utility-heading"><span>${renderIcon("dumbbell")}</span><div><h1>مشق</h1><p>آج ایک مختصر دہرائی کریں</p></div></div>
+      ${renderReviewLite()}
+      <button class="utility-action" data-action="letters"><span>${renderIcon("alphabet")}</span><div><strong>Nederlands حروف</strong><small>حروف سنیں اور دہرائیں</small></div><b>‹</b></button>
+    </main>
+  `;
+}
+
+function renderRewards() {
+  const completed = getAllLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
+  return `
+    <main class="utility-screen rewards-screen">
+      ${renderProgressHeader()}
+      <div class="utility-heading"><span>${renderIcon("gift")}</span><div><h1>انعامات</h1><p>آپ کی محنت یہاں جمع ہے</p></div></div>
+      <div class="reward-total"><span>${renderIcon("trophy")}</span><strong class="latin">${progress.totalXp}</strong><small>کل XP</small></div>
+      <div class="reward-list">
+        <article><span>${renderIcon("check")}</span><div><strong class="latin">${completed}</strong><small>مکمل سبق</small></div></article>
+        <article><span>${renderIcon("flame")}</span><div><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></div></article>
+      </div>
+    </main>
   `;
 }
 
@@ -1142,13 +1294,20 @@ function renderToggleRow(key, title, subtitle) {
 }
 
 function renderBottomNav() {
+  if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
-      <button class="nav-button ${screen === "home" ? "active" : ""}" data-action="home">گھر</button>
-      <button class="nav-button ${screen === "letters" ? "active" : ""}" data-action="letters">حروف</button>
-      <button class="nav-button ${screen === "settings" ? "active" : ""}" data-action="settings">ترتیبات</button>
+      ${renderNavButton("home", "book", "سیکھیں", screen === "home" || screen === "preview")}
+      ${renderNavButton("practice", "dumbbell", "مشق", screen === "practice" || screen === "letters")}
+      ${renderNavButton("progress", "chart", "پیش رفت", screen === "progress")}
+      ${renderNavButton("rewards", "gift", "انعام", screen === "rewards")}
+      ${renderNavButton("profile", "user", "پروفائل", screen === "profile" || screen === "settings")}
     </nav>
   `;
+}
+
+function renderNavButton(action, icon, label, active) {
+  return `<button class="nav-button ${active ? "active" : ""}" data-action="${action}">${renderIcon(icon)}<span>${label}</span></button>`;
 }
 
 function bindEvents() {
@@ -1166,7 +1325,10 @@ function bindEvents() {
         speakDutch(element.dataset.speak);
       }
       if (action === "home") goHome();
+      if (action === "practice") goPractice();
       if (action === "progress") goProgress();
+      if (action === "rewards") goRewards();
+      if (action === "profile") goProfile();
       if (action === "letters") goLetters();
       if (action === "settings") goSettings();
       if (action === "chapter") selectChapter(element.dataset.chapter);
@@ -1176,12 +1338,14 @@ function bindEvents() {
       if (action === "choose") chooseAnswer(element.dataset.answer);
       if (action === "build-select") selectBuildTile(element.dataset.tileId);
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
+      if (action === "match-pair") selectMatchPair(element.dataset.matchId, element.dataset.matchSide);
       if (action === "hint") toggleHint();
       if (action === "check") checkAnswer();
       if (action === "continue-info") continueInfoStep();
       if (action === "next") nextQuestion();
       if (action === "reset") resetProgress();
       if (action === "toggle-setting") toggleSetting(element.dataset.setting);
+      if (action === "skip-audio") skipAudioQuestion();
     });
   });
 
@@ -1214,7 +1378,16 @@ function scrollToTop() {
 function goHome() {
   activeWordHelp = null;
   activeReview = null;
+  pathCardLessonId = "";
   screen = "home";
+  render();
+  scrollToTop();
+}
+
+function goPractice() {
+  activeWordHelp = null;
+  activeReview = null;
+  screen = "practice";
   render();
   scrollToTop();
 }
@@ -1223,6 +1396,22 @@ function goProgress() {
   activeWordHelp = null;
   activeReview = null;
   screen = "progress";
+  render();
+  scrollToTop();
+}
+
+function goRewards() {
+  activeWordHelp = null;
+  activeReview = null;
+  screen = "rewards";
+  render();
+  scrollToTop();
+}
+
+function goProfile() {
+  activeWordHelp = null;
+  activeReview = null;
+  screen = "profile";
   render();
   scrollToTop();
 }
@@ -1250,10 +1439,13 @@ function showLessonPreview(id) {
   previewLessonId = lesson.id;
   activeWordHelp = null;
   activeReview = null;
+  pathCardLessonId = lesson.id;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
-  screen = "preview";
+  screen = "home";
   render();
-  scrollToTop();
+  requestAnimationFrame(() => {
+    document.querySelector(`[data-path-lesson="${lesson.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 }
 
 function selectChapter(id) {
@@ -1264,6 +1456,7 @@ function selectChapter(id) {
   activeLessonId = nextLesson.id;
   previewLessonId = nextLesson.id;
   activeReview = null;
+  pathCardLessonId = "";
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: activeLessonId });
   screen = "home";
   render();
@@ -1288,6 +1481,11 @@ function startLesson(id) {
   activeWordHelp = null;
   buildAnswerIds = [];
   hintOpen = false;
+  audioSkipped = false;
+  lessonHearts = 5;
+  matchSelection = null;
+  matchedPairIds = [];
+  matchPairError = "";
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
@@ -1316,6 +1514,11 @@ function startReview(kind) {
   activeWordHelp = null;
   buildAnswerIds = [];
   hintOpen = false;
+  audioSkipped = false;
+  lessonHearts = 5;
+  matchSelection = null;
+  matchedPairIds = [];
+  matchPairError = "";
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
@@ -1373,6 +1576,32 @@ function toggleHint() {
   render();
 }
 
+function skipAudioQuestion() {
+  audioSkipped = true;
+  render();
+}
+
+function selectMatchPair(id, side) {
+  if (checked || !id || !side || matchedPairIds.includes(id)) return;
+  matchPairError = "";
+  if (!matchSelection || matchSelection.side === side) {
+    matchSelection = { id, side };
+    render();
+    return;
+  }
+  if (matchSelection.id === id) {
+    matchedPairIds = [...matchedPairIds, id];
+    matchSelection = null;
+    const question = getActiveQuestion();
+    if (matchedPairIds.length === getMatchPairs(question).length) selectedAnswer = question.answer;
+    render();
+    return;
+  }
+  matchPairError = id;
+  matchSelection = null;
+  render();
+}
+
 function continueInfoStep() {
   lessonProgressSteps = Math.max(lessonProgressSteps, activeQuestionIndex + 1);
   nextQuestion();
@@ -1385,6 +1614,7 @@ function checkAnswer() {
   hintOpen = false;
   if (question.type === "build") selectedAnswer = getBuildAnswerText(question);
   const correct = selectedAnswer === question.answer;
+  if (!correct) lessonHearts = Math.max(0, lessonHearts - 1);
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -1409,6 +1639,10 @@ function nextQuestion() {
     activeWordHelp = null;
     buildAnswerIds = [];
     hintOpen = false;
+    audioSkipped = false;
+    matchSelection = null;
+    matchedPairIds = [];
+    matchPairError = "";
     render();
     return;
   }
@@ -1573,6 +1807,7 @@ function canCheckQuestion(question) {
   if (isInfoQuestion(question)) return true;
   if (checked) return true;
   if (question.type === "build") return buildAnswerIds.length === question.tiles.length;
+  if (question.type === "match-pairs") return getMatchPairs(question).length > 0 && matchedPairIds.length === getMatchPairs(question).length;
   return Boolean(selectedAnswer);
 }
 
