@@ -14,7 +14,7 @@ const meaning = (prompt, options, answer, explain, note = "") =>
 const reverse = (prompt, options, answer, explain, note = "") =>
   q("reverse", "اردو معنی کے لیے صحیح Nederlands منتخب کریں", prompt, options, answer, explain, note);
 
-const build = (prompt, tiles, answer, explain, hint = "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔ پہلے شخص/فاعل، پھر فعل، پھر باقی جملہ آتا ہے۔") => ({
+const build = (prompt, tiles, answer, explain, hint = "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔ پہلے دیکھیں کام کون کر رہا ہے، پھر کام والا لفظ، پھر باقی جملہ رکھیں۔") => ({
   type: "build",
   label: "Nederlands جملہ صحیح ترتیب میں بنائیں",
   prompt,
@@ -94,14 +94,19 @@ const a0Lessons = [
     description: "سب سے پہلے: میں، تم، آپ۔",
     xp: 40,
     questions: [
+      uitleg("jij اور u کا فرق", [
+        "jij کا مطلب تم ہے۔ اسے دوست، گھر والے، یا جان پہچان کے شخص سے کہتے ہیں۔",
+        "u کا مطلب آپ ہے۔ اسے بڑے، اجنبی، ڈاکٹر، استاد، یا دفتر میں کہتے ہیں۔",
+        "اگر سمجھ نہ آئے کہ کون سا لفظ کہنا ہے تو u کہنا زیادہ محفوظ ہے۔"
+      ], "بس معنی یاد رکھیں: jij = تم، u = آپ۔"),
       meaning("ik", ["میں", "تم", "آپ"], "میں", "ik = میں۔"),
-      meaning("jij", ["تم بے تکلف", "میں", "آپ ادب والا"], "تم بے تکلف", "jij عام غیر رسمی تم ہے۔"),
-      meaning("u", ["آپ ادب والا", "تم بے تکلف", "ہم"], "آپ ادب والا", "u ادب والا آپ ہے۔"),
+      meaning("jij", ["تم", "میں", "آپ"], "تم", "jij = تم۔"),
+      meaning("u", ["آپ", "تم", "ہم"], "آپ", "u = آپ۔"),
       reverse("میں", ["ik", "jij", "u"], "ik", "میں = ik۔"),
-      reverse("تم بے تکلف", ["jij", "u", "ik"], "jij", "jij بے تکلف ہے۔"),
-      reverse("آپ ادب والا", ["u", "jij", "ik"], "u", "u ادب والا ہے۔"),
-      meaning("ik, jij, u", ["میں، تم، آپ", "ہاں، نہیں، اچھا", "مرد، عورت، بچہ"], "میں، تم، آپ", "یہ تین شخص الفاظ ہیں۔"),
-      meaning("u", ["ادب والا آپ", "دوست والا تم", "میں"], "ادب والا آپ", "بڑے/اجنبی سے u بہتر ہے۔")
+      reverse("تم", ["jij", "u", "ik"], "jij", "تم = jij۔"),
+      reverse("آپ", ["u", "jij", "ik"], "u", "آپ = u۔"),
+      meaning("ik, jij, u", ["میں، تم، آپ", "ہاں، نہیں، اچھا", "مرد، عورت، بچہ"], "میں، تم، آپ", "یہ الفاظ بتاتے ہیں کہ بات کس کے بارے میں ہو رہی ہے۔"),
+      q("situation", "حال کے لیے صحیح Nederlands لفظ منتخب کریں", "آپ ڈاکٹر سے بات کر رہے ہیں۔", ["u", "jij", "ik"], "u", "ڈاکٹر سے بات کرتے وقت u کہیں۔")
     ]
   },
   {
@@ -111,10 +116,15 @@ const a0Lessons = [
     description: "ہاں، نہیں، اچھا، نہیں: سب سے چھوٹے جواب۔",
     xp: 40,
     questions: [
+      uitleg("nee اور niet کا فرق", [
+        "nee اکیلا جواب ہے: nee = نہیں۔",
+        "niet جملے کے اندر آتا ہے: niet goed = اچھا نہیں۔",
+        "دونوں کا اردو مطلب نہیں ہو سکتا ہے، مگر Nederlands میں ان کی جگہ الگ ہے۔"
+      ], "اکیلا جواب ہو تو nee، جملے کے اندر ہو تو niet۔"),
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "اچھا"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "میں"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet کسی بات کو نفی بناتا ہے۔"),
+      meaning("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "ہاں اچھا"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("ہاں", ["ja", "nee", "niet"], "ja", "ہاں = ja۔"),
       reverse("نہیں", ["nee", "ja", "goed"], "nee", "نہیں = nee۔"),
@@ -125,7 +135,7 @@ const a0Lessons = [
     id: "a0-people-nouns",
     unit: "A0: naamwoorden 1",
     title: "A0 les 6: man, vrouw, kind",
-    description: "شخص اسم: آدمی، عورت، بچہ، لڑکا، لڑکی۔",
+    description: "لوگوں کے نام: آدمی، عورت، بچہ، لڑکا، لڑکی۔",
     xp: 45,
     questions: [
       meaning("man", ["آدمی", "عورت", "بچہ"], "آدمی", "man = آدمی۔"),
@@ -134,8 +144,8 @@ const a0Lessons = [
       meaning("jongen", ["لڑکا", "عورت", "بچہ"], "لڑکا", "jongen = لڑکا۔"),
       meaning("meisje", ["لڑکی", "لڑکا", "آدمی"], "لڑکی", "meisje = لڑکی۔"),
       uitleg("de اور het کیوں آتے ہیں؟", [
-        "Nederlands میں اکثر اسم سے پہلے ایک چھوٹا لفظ آتا ہے: de یا het۔",
-        "اردو میں اس کا سیدھا الگ لفظ نہیں ہوتا، اس لیے معنی میں صرف اصل اسم یاد کریں۔",
+        "Nederlands میں اکثر کسی شخص، چیز، یا جگہ کے نام سے پہلے de یا het آتا ہے۔",
+        "اردو میں اس کا الگ لفظ نہیں ہوتا، اس لیے معنی میں صرف اصل نام یاد کریں۔",
         "de man کا مطلب آدمی ہے۔ de کو ساتھ یاد رکھیں، مگر اردو جواب صرف آدمی ہوگا۔"
       ], "اب جب de man آئے تو جواب آدمی چنیں۔ de کو Nederlands لفظ کا حصہ سمجھ کر یاد کریں۔"),
       meaning("de man", ["آدمی", "عورت", "گھر"], "آدمی", "de man = آدمی۔ de کو لفظ کے ساتھ یاد رکھیں۔"),
@@ -164,18 +174,19 @@ const a0Lessons = [
     id: "a0-een-de-het",
     unit: "A0: kleine woorden",
     title: "A0 les 8: een, de, het",
-    description: "Nederlands میں اسم سے پہلے چھوٹے الفاظ آتے ہیں: een, de, het۔",
+    description: "Nederlands میں شخص، چیز، یا جگہ کے نام سے پہلے een، de، یا het آ سکتا ہے۔",
     xp: 45,
     questions: [
       uitleg("een، de، het کا آسان اصول", [
         "een کا مطلب ایک ہوتا ہے: een man = ایک آدمی۔",
-        "de اور het دونوں اسم کے ساتھ آتے ہیں۔ اردو میں ان کا الگ ترجمہ نہ کریں۔",
-        "ہر Nederlands اسم کو اس کے چھوٹے لفظ کے ساتھ یاد کریں: de man، het huis، de deur۔"
-      ], "مشق میں اردو جواب اصل معنی ہوگا۔ de man = آدمی، het huis = گھر۔"),
-      meaning("een", ["ایک", "de/het والا چھوٹا لفظ", "نہیں"], "ایک", "een = ایک۔"),
-      meaning("de", ["de/het والا چھوٹا لفظ", "ایک", "میں"], "de/het والا چھوٹا لفظ", "de اسم سے پہلے آتا ہے۔ اردو میں اسے الگ ترجمہ نہیں کرتے۔"),
-      meaning("het", ["de/het والا چھوٹا لفظ", "ایک", "ہاں"], "de/het والا چھوٹا لفظ", "het بھی اسم سے پہلے آتا ہے۔ اسے اسم کے ساتھ یاد کریں۔"),
-      meaning("een man", ["ایک آدمی", "آدمی", "آدمی نہیں"], "ایک آدمی", "een + اسم = ایک چیز/شخص۔"),
+        "de اور het کسی شخص، چیز، یا جگہ کے نام کے ساتھ آتے ہیں، مگر اردو میں ان کا الگ ترجمہ نہیں ہوتا۔",
+        "ہر لفظ کو de یا het کے ساتھ یاد کریں: de man، het huis، de deur۔",
+        "اگر de man لکھا ہو تو اردو جواب صرف آدمی ہوگا۔ اگر het huis لکھا ہو تو جواب گھر ہوگا۔"
+      ], "de اور het کا الگ اردو معنی نہ بنائیں؛ اصل چیز کا معنی چنیں۔"),
+      meaning("een", ["ایک", "نہیں", "میں"], "ایک", "een = ایک۔"),
+      meaning("de man", ["آدمی", "عورت", "گھر"], "آدمی", "de man = آدمی۔"),
+      meaning("het boek", ["کتاب", "قلم", "دروازہ"], "کتاب", "het boek = کتاب۔"),
+      meaning("een man", ["ایک آدمی", "آدمی", "آدمی نہیں"], "ایک آدمی", "een کسی ایک شخص یا چیز کے لیے آتا ہے۔"),
       meaning("een boek", ["ایک کتاب", "کتاب", "کتاب نہیں"], "ایک کتاب", "een boek = ایک کتاب۔"),
       meaning("het huis", ["گھر", "ایک گھر", "گھر نہیں"], "گھر", "het huis = گھر۔ het کو huis کے ساتھ یاد رکھیں۔"),
       reverse("ایک عورت", ["een vrouw", "de vrouw", "het vrouw"], "een vrouw", "ایک = een۔"),
@@ -199,7 +210,7 @@ const a0Lessons = [
       meaning("is", ["ہے", "ہوں", "ہو"], "ہے", "hij/zij/het کے ساتھ is آتا ہے۔"),
       meaning("ik ben", ["میں ہوں", "تم ہو", "وہ ہے"], "میں ہوں", "ik + ben۔"),
       meaning("jij bent", ["تم ہو", "میں ہوں", "وہ ہے"], "تم ہو", "jij + bent۔"),
-      meaning("u bent", ["آپ ہیں", "تم بے تکلف ہو", "میں ہوں"], "آپ ہیں", "u + bent۔"),
+      meaning("u bent", ["آپ ہیں", "تم ہو", "میں ہوں"], "آپ ہیں", "u + bent۔"),
       reverse("میں ہوں", ["ik ben", "jij bent", "hij is"], "ik ben", "میں ہوں = ik ben۔"),
       reverse("وہ ہے", ["hij is", "ik ben", "u bent"], "hij is", "hij is = وہ مرد ہے۔")
     ]
@@ -211,13 +222,13 @@ const a0Lessons = [
     description: "اب چھوٹے حصے کو ایک جملے میں جوڑتے ہیں۔",
     xp: 55,
     questions: [
-      meaning("ik ben een man", ["میں ایک آدمی ہوں", "میں ایک عورت ہوں", "تم ایک آدمی ہو"], "میں ایک آدمی ہوں", "شخص + فعل + اسم۔"),
+      meaning("ik ben een man", ["میں ایک آدمی ہوں", "میں ایک عورت ہوں", "تم ایک آدمی ہو"], "میں ایک آدمی ہوں", "پہلے ik، پھر ben، پھر باقی بات آتی ہے۔"),
       meaning("ik ben een vrouw", ["میں ایک عورت ہوں", "میں ایک آدمی ہوں", "وہ عورت ہے"], "میں ایک عورت ہوں", "ik ben = میں ہوں۔"),
       meaning("jij bent goed", ["تم اچھے ہو", "میں اچھا ہوں", "وہ اچھا ہے"], "تم اچھے ہو", "jij bent = تم ہو۔"),
-      meaning("u bent goed", ["آپ اچھے ہیں", "تم اچھے ہو", "میں اچھا ہوں"], "آپ اچھے ہیں", "u ادب والا ہے۔"),
+      meaning("u bent goed", ["آپ اچھے ہیں", "تم اچھے ہو", "میں اچھا ہوں"], "آپ اچھے ہیں", "u کے ساتھ bent آتا ہے۔"),
       meaning("hij is een kind", ["وہ ایک بچہ ہے", "میں بچہ ہوں", "وہ عورت ہے"], "وہ ایک بچہ ہے", "hij is = وہ مرد/لڑکا ہے۔"),
       reverse("میں ایک آدمی ہوں", ["ik ben een man", "jij bent een man", "hij is een man"], "ik ben een man", "میں = ik۔"),
-      reverse("آپ اچھے ہیں", ["u bent goed", "jij bent goed", "ik ben goed"], "u bent goed", "آپ ادب والا = u۔"),
+      reverse("آپ اچھے ہیں", ["u bent goed", "jij bent goed", "ik ben goed"], "u bent goed", "آپ = u۔"),
       reverse("وہ ایک بچہ ہے", ["hij is een kind", "ik ben een kind", "jij bent een kind"], "hij is een kind", "وہ مرد/لڑکا = hij۔")
     ]
   },
@@ -242,7 +253,7 @@ const a0Lessons = [
     id: "a0-hebben-1",
     unit: "A0: werkwoord 2",
     title: "A0 les 12: ik heb",
-    description: "میرے پاس ہے: bezit کی پہلی Nederlands شکل۔",
+    description: "کسی چیز کے پاس ہونے کی پہلی Nederlands شکل۔",
     xp: 50,
     questions: [
       meaning("heb", ["میرے پاس ہے / پاس ہونا", "ہوں", "جاتا ہوں"], "میرے پاس ہے / پاس ہونا", "ik کے ساتھ heb آتا ہے۔"),
@@ -263,16 +274,16 @@ const a0Lessons = [
     xp: 50,
     questions: [
       uitleg("niet اور geen کا فرق", [
-        "niet عام نفی کے لیے آتا ہے: niet goed = اچھا نہیں۔",
-        "geen اسم کے ساتھ آتا ہے: geen boek = کوئی کتاب نہیں۔",
-        "اگر بات چیز یا شخص کی ہو تو اکثر geen استعمال ہوگا۔"
-      ], "پہلے صرف اتنا یاد رکھیں: niet + صفت/فعل، geen + اسم۔"),
-      meaning("geen", ["کوئی بھی نہیں", "اچھا", "ایک"], "کوئی بھی نہیں", "geen اسم کے ساتھ آتا ہے۔"),
-      meaning("ik heb geen boek", ["میرے پاس کتاب نہیں ہے", "میرے پاس کتاب ہے", "میں کتاب نہیں ہوں"], "میرے پاس کتاب نہیں ہے", "geen + اسم۔"),
+        "niet کسی بات کو نہیں بناتا ہے: niet goed = اچھا نہیں۔",
+        "geen کسی شخص یا چیز کے نام سے پہلے آتا ہے: geen boek = کوئی کتاب نہیں۔",
+        "اگر کہنا ہو کہ کوئی چیز موجود نہیں تو اکثر geen استعمال ہوگا۔"
+      ], "اچھا نہیں کے لیے niet، اور کوئی کتاب نہیں کے لیے geen یاد رکھیں۔"),
+      meaning("geen boek", ["کوئی کتاب نہیں", "ایک کتاب", "اچھی کتاب"], "کوئی کتاب نہیں", "geen boek = کوئی کتاب نہیں۔"),
+      meaning("ik heb geen boek", ["میرے پاس کتاب نہیں ہے", "میرے پاس کتاب ہے", "میں کتاب نہیں ہوں"], "میرے پاس کتاب نہیں ہے", "کتاب موجود نہ ہو تو geen boek کہتے ہیں۔"),
       meaning("zij heeft geen pen", ["اس کے پاس قلم نہیں ہے", "اس کے پاس قلم ہے", "وہ قلم ہے"], "اس کے پاس قلم نہیں ہے", "zij heeft geen pen۔"),
       meaning("wij hebben geen huis", ["ہمارے پاس گھر نہیں ہے", "ہمارا گھر اچھا ہے", "ہم گھر میں ہیں"], "ہمارے پاس گھر نہیں ہے", "wij hebben = ہمارے پاس ہے۔"),
-      meaning("niet goed", ["اچھا نہیں", "کوئی کتاب نہیں", "ایک گھر"], "اچھا نہیں", "niet صفت/فعل کے ساتھ آتا ہے۔"),
-      meaning("geen boek", ["کوئی کتاب نہیں", "اچھی کتاب نہیں", "اشارہ والا لفظ کتاب"], "کوئی کتاب نہیں", "geen اسم کے ساتھ۔"),
+      meaning("niet goed", ["اچھا نہیں", "کوئی کتاب نہیں", "ایک گھر"], "اچھا نہیں", "niet goed = اچھا نہیں۔"),
+      meaning("geen pen", ["کوئی قلم نہیں", "ایک قلم", "اچھا قلم"], "کوئی قلم نہیں", "geen pen = کوئی قلم نہیں۔"),
       reverse("میرے پاس کتاب نہیں ہے", ["ik heb geen boek", "ik ben niet boek", "ik heb niet goed"], "ik heb geen boek", "چیز نہ ہو تو geen۔"),
       reverse("اچھا نہیں", ["niet goed", "geen goed", "nee goed"], "niet goed", "خاصیت کے لیے niet۔")
     ]
@@ -412,16 +423,16 @@ const a1Lessons = [
     xp: 45,
     questions: [
       meaning("ik", ["میں", "تم", "ہاں"], "میں", "ik کا مطلب میں ہے۔"),
-      meaning("jij", ["تم / آپ بے تکلف", "میں", "نہیں"], "تم / آپ بے تکلف", "jij عام بے تکلف تم ہے۔"),
-      meaning("u", ["آپ ادب والا", "ہم", "وہ"], "آپ ادب والا", "u ادب والا/ادب والا تم ہے۔"),
+      meaning("jij", ["تم", "میں", "آپ"], "تم", "jij = تم۔"),
+      meaning("u", ["آپ", "ہم", "وہ"], "آپ", "u = آپ۔"),
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "میں"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "تم"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet کسی بات کو نفی بناتا ہے۔"),
+      meaning("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "میں اچھا ہوں"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("میں", ["ik", "jij", "ja"], "ik", "میں = ik۔"),
-      reverse("تم / آپ بے تکلف", ["jij", "u", "ik"], "jij", "jij بے تکلف تم ہے۔"),
-      reverse("آپ ادب والا", ["u", "jij", "wij"], "u", "ادب والا تم = u۔"),
+      reverse("تم", ["jij", "u", "ik"], "jij", "تم = jij۔"),
+      reverse("آپ", ["u", "jij", "wij"], "u", "آپ = u۔"),
       reverse("ہاں", ["ja", "nee", "goed"], "ja", "ہاں = ja۔"),
       reverse("نہیں", ["nee", "ja", "niet"], "nee", "نہیں = nee۔"),
       reverse("اچھا نہیں", ["niet goed", "ja goed", "nee goed"], "niet goed", "اچھا نہیں = niet goed۔")
@@ -439,13 +450,13 @@ const a1Lessons = [
       meaning("is", ["ہے", "ہوں", "ہو"], "ہے", "hij/zij/het کے ساتھ is آتا ہے۔"),
       meaning("ik ben", ["میں ہوں", "تم ہو", "وہ ہے"], "میں ہوں", "ik ben = میں ہوں۔"),
       meaning("jij bent", ["تم ہو", "میں ہوں", "وہ ہے"], "تم ہو", "jij bent = تم ہو۔"),
-      meaning("u bent", ["آپ ہیں", "تم بے تکلف ہو", "میں ہوں"], "آپ ہیں", "ادب والا جملہ: u bent۔"),
+      meaning("u bent", ["آپ ہیں", "تم ہو", "میں ہوں"], "آپ ہیں", "u bent = آپ ہیں۔"),
       meaning("hij is", ["وہ مرد ہے", "وہ عورت ہے", "ہم ہیں"], "وہ مرد ہے", "hij is = وہ ہے۔"),
       meaning("zij is", ["وہ عورت ہے", "وہ مرد ہے", "ہم ہیں"], "وہ عورت ہے", "zij is = وہ عورت ہے۔"),
       meaning("ik ben goed", ["میں اچھا ہوں", "تم اچھے ہو", "وہ اچھا ہے"], "میں اچھا ہوں", "A1 ترتیب: شخص + فعل + باقی حصہ۔"),
-      meaning("ik ben niet goed", ["میں اچھا نہیں ہوں", "میں اچھا ہوں", "تم اچھے نہیں ہو"], "میں اچھا نہیں ہوں", "niet good نہیں، صحیح شکل niet goed ہے۔"),
+      meaning("ik ben niet goed", ["میں اچھا نہیں ہوں", "میں اچھا ہوں", "تم اچھے نہیں ہو"], "میں اچھا نہیں ہوں", "صحیح ترتیب niet goed ہے۔"),
       reverse("میں ہوں", ["ik ben", "jij bent", "hij is"], "ik ben", "میں ہوں = ik ben۔"),
-      reverse("آپ ہیں", ["u bent", "jij bent", "ik ben"], "u bent", "ادب والا تم = u bent۔"),
+      reverse("آپ ہیں", ["u bent", "jij bent", "ik ben"], "u bent", "آپ ہیں = u bent۔"),
       reverse("وہ عورت ہے", ["zij is", "hij is", "ik ben"], "zij is", "zij is = وہ عورت ہے۔"),
       reverse("میں اچھا نہیں ہوں", ["ik ben niet goed", "ik ben goed", "jij bent niet goed"], "ik ben niet goed", "نفی جملہ ساتھ niet۔")
     ]
@@ -610,7 +621,7 @@ const a1Lessons = [
       meaning("winkel", ["دکان", "اسٹیشن", "ڈاکٹر"], "دکان", "winkel = دکان۔"),
       meaning("supermarkt", ["سپر مارکیٹ", "بس", "فارم"], "سپر مارکیٹ", "supermarkt = سپر مارکیٹ۔"),
       meaning("prijs", ["قیمت", "رسید", "پیسہ"], "قیمت", "prijs = قیمت۔"),
-      meaning("kassa", ["کاؤنٹر / kassa", "بس اسٹاپ", "رسید"], "کاؤنٹر / kassa", "kassa = ادائیگی والا کاؤنٹر۔"),
+      meaning("kassa", ["ادائیگی کا کاؤنٹر", "بس اسٹاپ", "رسید"], "ادائیگی کا کاؤنٹر", "kassa = ادائیگی کا کاؤنٹر۔"),
       meaning("bon", ["رسید", "قیمت", "نقد"], "رسید", "bon = رسید۔"),
       meaning("pinpas", ["بینک کارڈ", "رسید", "ٹکٹ"], "بینک کارڈ", "pinpas = بینک کارڈ۔"),
       meaning("contant", ["نقد", "مہنگا", "سستا"], "نقد", "contant = نقد۔"),
@@ -754,13 +765,13 @@ const a2Lessons = [
         "afspraak = ملاقات کا وقت، formulier = فارم، loket = کاؤنٹر۔",
         "پہلے الفاظ پہچانیں، پھر جملہ بنائیں: ik wil een afspraak maken۔"
       ], "یہ الفاظ زندگی میں بہت کام آئیں گے، اس لیے یہاں زیادہ دہرائی رکھی گئی ہے۔"),
-      meaning("gemeente", ["بلدیہ / gemeente دفتر", "ہسپتال", "اسکول"], "بلدیہ / gemeente دفتر", "gemeente سرکاری کاموں میں ضروری لفظ ہے۔"),
+      meaning("gemeente", ["شہری سرکاری دفتر", "ہسپتال", "اسکول"], "شہری سرکاری دفتر", "gemeente شہری سرکاری دفتر ہے۔"),
       meaning("afspraak", ["ملاقات کا وقت", "کاغذ", "دستخط"], "ملاقات کا وقت", "gemeente میں afspraak بنانی پڑ سکتی ہے۔"),
       meaning("formulier", ["فارم", "پاسپورٹ", "کاؤنٹر"], "فارم", "formulier = فارم۔"),
       meaning("paspoort", ["پاسپورٹ", "کاغذ", "BSN"], "پاسپورٹ", "paspoort = پاسپورٹ۔"),
-      meaning("BSN", ["Nederlands شہری نمبر", "بینک کارڈ", "کرایہ"], "Nederlands شہری نمبر", "BSN سرکاری نمبر ہے۔"),
+      meaning("BSN", ["شہری شناختی نمبر", "بینک کارڈ", "کرایہ"], "شہری شناختی نمبر", "BSN سرکاری شناختی نمبر ہے۔"),
       meaning("handtekening", ["دستخط", "حرف / خط", "کاؤنٹر"], "دستخط", "handtekening = دستخط۔"),
-      meaning("loket", ["کاؤنٹر / loket", "کاغذ", "ملاقات کا وقت"], "کاؤنٹر / loket", "loket = مدد والا کاؤنٹر۔"),
+      meaning("loket", ["کاؤنٹر", "کاغذ", "ملاقات کا وقت"], "کاؤنٹر", "loket = کاؤنٹر۔"),
       meaning("kunt u mij helpen met dit formulier?", ["کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟", "کیا آپ پاسپورٹ دے سکتے ہیں؟", "کیا آپ مجھے کام دے سکتے ہیں؟"], "کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟", "A2 روزمرہ کام کا سوال۔"),
       reverse("مجھے ملاقات کا وقت بنانی ہے", ["ik wil een afspraak maken", "ik heb een formulier maken", "ik ben een afspraak"], "ik wil een afspraak maken", "afspraak maken = ملاقات کا وقت بنانا۔"),
       reverse("کیا آپ میری مدد کر سکتے ہیں؟", ["kunt u mij helpen?", "mag u mij helpen?", "moet ik helpen?"], "kunt u mij helpen?", "ادب والا سوال۔")
@@ -778,11 +789,11 @@ const a2Lessons = [
       meaning("collega", ["کام کا ساتھی", "استاد", "بچہ"], "کام کا ساتھی", "collega = کام کا ساتھی۔"),
       meaning("salaris", ["تنخواہ", "معاہدہ", "وقفہ"], "تنخواہ", "salaris = تنخواہ۔"),
       meaning("contract", ["معاہدہ", "رپورٹ", "ملاقات کا وقت"], "معاہدہ", "contract = معاہدہ۔"),
-      meaning("rooster", ["وقتوں کی فہرست / rooster", "تنخواہ", "سبق"], "وقتوں کی فہرست / rooster", "rooster = کام یا اسکول کا وقت۔"),
+      meaning("rooster", ["کام یا اسکول کے اوقات", "تنخواہ", "سبق"], "کام یا اسکول کے اوقات", "rooster = کام یا اسکول کے اوقات۔"),
       meaning("docent", ["استاد", "طالب علم", "کام کا ساتھی"], "استاد", "docent = استاد۔"),
       meaning("huiswerk", ["گھر کا کام", "ملاقات", "تنخواہ"], "گھر کا کام", "huiswerk = گھر کا کام۔"),
       meaning("mijn zoon kan vandaag niet naar school komen", ["میرا بیٹا آج اسکول نہیں آ سکتا", "میرا بیٹا آج کام کرے گا", "میرا بیٹا استاد ہے"], "میرا بیٹا آج اسکول نہیں آ سکتا", "A2 اسکول کا پیغام۔"),
-      reverse("میرا rooster بدل گیا ہے", ["mijn rooster is veranderd", "mijn salaris is ziek", "mijn school is gewerkt"], "mijn rooster is veranderd", "کام / اسکول کا روزمرہ جملہ۔")
+      reverse("میرے کام کے اوقات بدل گئے ہیں", ["mijn rooster is veranderd", "mijn salaris is ziek", "mijn school is gewerkt"], "mijn rooster is veranderd", "کام یا اسکول کا روزمرہ جملہ۔")
     ]
   },
   {
@@ -792,7 +803,7 @@ const a2Lessons = [
     description: "huisarts، apotheek، verzekering، reparatie، verwarming، lekkage۔",
     xp: 95,
     questions: [
-      meaning("huisarts", ["گھر کا ڈاکٹر / huisarts", "دندان ساز", "دواخانہ"], "گھر کا ڈاکٹر / huisarts", "huisarts Nederland میں بہت عام لفظ ہے۔"),
+      meaning("huisarts", ["عام ڈاکٹر", "دندان ساز", "دواخانہ"], "عام ڈاکٹر", "huisarts Nederland میں عام ڈاکٹر ہوتا ہے۔"),
       meaning("apotheek", ["دواخانہ", "ہسپتال", "انشورنس"], "دواخانہ", "apotheek = دواخانہ۔"),
       meaning("verzekering", ["انشورنس", "دوا", "ملاقات کا وقت"], "انشورنس", "verzekering = انشورنس۔"),
       meaning("koorts", ["بخار", "کھانسی", "درد"], "بخار", "koorts = بخار۔"),
@@ -812,10 +823,10 @@ const a2Lessons = [
     xp: 90,
     questions: [
       meaning("klacht", ["شکایت", "رعایت", "رسید"], "شکایت", "klacht = شکایت۔"),
-      meaning("garantie", ["گارنٹی", "سائز / maat", "نقد پیسے"], "گارنٹی", "garantie = گارنٹی۔"),
-      meaning("ruilen", ["بدلنا / واپس کرنا", "پیسے دینا", "پارک کرنا"], "بدلنا / واپس کرنا", "ruilen = بدلنا یا واپس کرنا۔"),
-      meaning("aanbieding", ["رعایت / aanbieding", "شکایت", "سائز / maat"], "رعایت / aanbieding", "aanbieding = رعایت۔"),
-      meaning("maat", ["سائز / maat", "بازار", "رسید"], "سائز / maat", "maat = سائز۔"),
+      meaning("garantie", ["ضمانت", "سائز", "نقد پیسے"], "ضمانت", "garantie = ضمانت۔"),
+      meaning("ruilen", ["بدلنا", "پیسے دینا", "پارک کرنا"], "بدلنا", "ruilen = چیز بدلنا۔"),
+      meaning("aanbieding", ["خصوصی رعایت", "شکایت", "سائز"], "خصوصی رعایت", "aanbieding = خصوصی رعایت۔"),
+      meaning("maat", ["سائز", "بازار", "رسید"], "سائز", "maat = سائز۔"),
       meaning("ik heb gisteren deze jas gekocht", ["میں نے کل یہ جیکٹ خریدی", "میں آج جیکٹ خریدتا ہوں", "میں جیکٹ واپس کروں گا"], "میں نے کل یہ جیکٹ خریدی", "گزرے ہوئے کام کا زمانہ: gekocht۔"),
       meaning("maar hij is kapot", ["لیکن یہ خراب ہے", "لیکن یہ سستا ہے", "لیکن یہ نیا ہے"], "لیکن یہ خراب ہے", "kapot = خراب۔"),
       meaning("ik wil hem graag ruilen", ["میں اسے بدلنا چاہتا ہوں", "میں اسے خریدنا چاہتا ہوں", "میں اسے پہننا چاہتا ہوں"], "میں اسے بدلنا چاہتا ہوں", "A2 شکایت / درخواست۔"),
@@ -849,7 +860,7 @@ const a2Lessons = [
     description: "A2 انداز کی صحت والی مضبوط کہانی: گزرا ہوا زمانہ، omdat، dat، اور معاون فعل۔",
     xp: 100,
     questions: [
-      meaning("ik ben gisteren naar de huisarts gegaan", ["میں کل huisarts کے پاس گیا/گئی", "میں کل huisarts ہوں", "میں کل huisarts کو فون کروں گا"], "میں کل huisarts کے پاس گیا/گئی", "گزرے ہوئے کام کا زمانہ: zijn + gegaan۔"),
+      meaning("ik ben gisteren naar de huisarts gegaan", ["میں کل ڈاکٹر کے پاس گیا/گئی", "میں کل ڈاکٹر تھا/تھی", "میں کل ڈاکٹر کو فون کروں گا"], "میں کل ڈاکٹر کے پاس گیا/گئی", "گزرے ہوئے کام کا زمانہ: zijn + gegaan۔"),
       meaning("omdat ik pijn had in mijn rug", ["کیونکہ میری کمر میں درد تھا", "کیونکہ میں ڈاکٹر تھا", "کیونکہ میرے پاس وقت ہے"], "کیونکہ میری کمر میں درد تھا", "omdat + فعل آخر میں۔"),
       meaning("de dokter heeft gezegd", ["ڈاکٹر نے کہا ہے", "ڈاکٹر کہے گا", "ڈاکٹر بیمار ہے"], "ڈاکٹر نے کہا ہے", "heeft gezegd = کہا ہے۔"),
       meaning("dat ik rust moet nemen", ["کہ مجھے آرام کرنا چاہیے", "کہ مجھے کام کرنا چاہیے", "کہ مجھے جانا ہے"], "کہ مجھے آرام کرنا چاہیے", "dat والے حصے میں معاون فعل۔"),
@@ -864,7 +875,7 @@ const a2Lessons = [
 ];
 
 a1Lessons.find((lesson) => lesson.id === "a1-zero-tiny-words").questions.push(
-  build("اچھا نہیں", ["niet", "goed"], "niet goed", "Nederlands میں نفی والا لفظ `niet` عام طور پر اس لفظ سے پہلے آتا ہے جسے نفی بنانا ہو۔")
+  build("اچھا نہیں", ["niet", "goed"], "niet goed", "Nederlands میں niet عام طور پر اس لفظ سے پہلے آتا ہے جسے نہیں کہنا ہو۔")
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-zijn-first-sentences").questions.push(
@@ -1129,7 +1140,7 @@ addRevisionExpansion(a2Lessons, 45);
 
 function addBeginnerAuditExpansion() {
   a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet").questions.push(
-    listenChoice("niet", ["نفی والا لفظ", "ہاں", "اچھا"], "نفی والا لفظ", "niet بات کو منفی بناتا ہے۔"),
+    listenChoice("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
     fillGap("ik ben ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
   );
 
@@ -1206,11 +1217,6 @@ addBeginnerAuditExpansion();
 
 function addBeginnerAuditExpansion2() {
   a0Lessons.find((lesson) => lesson.id === "a0-ik-jij-u").questions.push(
-    uitleg("jij اور u کا فرق", [
-      "jij عام بے تکلف تم ہے، دوست یا برابر عمر والے کے لیے۔",
-      "u ادب والا آپ ہے، بڑے، اجنبی، ڈاکٹر، استاد، یا دفتر میں۔",
-      "شروع میں محفوظ جواب u ہے، خاص طور پر سرکاری جگہ یا ڈاکٹر کے پاس۔"
-    ], "بات کرتے وقت پہلے سوچیں: بے تکلف یا ادب والا؟"),
     situation("حال: ڈاکٹر سے بات کرنی ہے۔", ["u", "jij", "ik"], "u", "ڈاکٹر یا دفتر میں u زیادہ محفوظ ہے۔"),
   );
 
@@ -1241,7 +1247,7 @@ function addBeginnerAuditExpansion2() {
       "mijn naam is... سے نام بتایا جاتا ہے۔",
       "ik woon in... سے رہنے کی جگہ بتائی جاتی ہے۔",
       "ik kom uit... سے اصل ملک بتایا جاتا ہے۔"
-    ], "یہ تین جملے نئے learner کے لیے سب سے ضروری ہیں۔"),
+    ], "یہ تین جملے نئے سیکھنے والے کے لیے سب سے ضروری ہیں۔"),
     fillGap("mijn ___ is Ali", ["naam", "land", "woon"], "naam", "میرا نام = mijn naam۔"),
     fillGap("ik woon ___ Nederland", ["in", "uit", "naar"], "in", "رہنا: woon in۔"),
     reverse("میں پاکستان سے ہوں", ["ik kom uit Pakistan", "ik woon Pakistan", "ik ga Pakistan"], "ik kom uit Pakistan", "اصل ملک کے لیے kom uit۔")
@@ -1264,8 +1270,8 @@ function addBeginnerAuditExpansion2() {
       "غلطی ہونا مسئلہ نہیں؛ غلط لفظ دوبارہ مشق میں آئے گا۔",
       "شروع میں چھوٹے لفظ: ik، jij، u، ja، nee، niet سب سے ضروری ہیں۔"
     ], "یہ سبق بنیاد مضبوط کرنے کے لیے ہے۔"),
-    listenChoice("jij", ["تم بے تکلف", "میں", "آپ ادب والا"], "تم بے تکلف", "jij = تم۔"),
-    listenChoice("u", ["آپ ادب والا", "ہم", "وہ"], "آپ ادب والا", "u = آپ۔"),
+    listenChoice("jij", ["تم", "میں", "آپ"], "تم", "jij = تم۔"),
+    listenChoice("u", ["آپ", "ہم", "وہ"], "آپ", "u = آپ۔"),
     fillGap("___ ben goed", ["ik", "jij", "nee"], "ik", "ik ben = میں ہوں۔")
   );
 

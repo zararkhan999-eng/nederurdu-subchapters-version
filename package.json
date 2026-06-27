@@ -1,9 +1,13 @@
 {
   "scripts": {
     "start": "node server.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
     "android:debug": "gradle :app:assembleDebug",
     "android:bundle": "gradle :app:bundleRelease",
     "android:sync-web": "node scripts/sync-android-web.js"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
 }
