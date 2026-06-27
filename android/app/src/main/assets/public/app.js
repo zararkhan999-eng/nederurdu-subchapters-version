@@ -570,11 +570,11 @@ function renderLessonPath(chapter, nextLesson) {
   let pathIndex = 0;
   return `<section class="lesson-path" aria-label="سبق کا راستہ">${groups.map(({ section, lessons }) => `
     ${renderLessonSectionDivider(section.title)}
-    <div class="path-group">${lessons.map((lesson) => {
+    <div class="path-group">${lessons.map((lesson, groupLessonIndex) => {
       const lessonIndex = chapter.lessons.findIndex((item) => item.id === lesson.id);
       const position = ["left", "center", "right", "center"][pathIndex % 4];
       pathIndex += 1;
-      return renderLessonNode(lesson, lessonIndex, position, lesson.id === nextLesson.id);
+      return renderLessonNode(lesson, lessonIndex, position, lesson.id === nextLesson.id, groupLessonIndex + 1);
     }).join("")}</div>
   `).join("")}</section>`;
 }
@@ -583,14 +583,14 @@ function renderLessonSectionDivider(title) {
   return `<div class="section-divider"><span></span><strong>${title}</strong><span></span></div>`;
 }
 
-function renderLessonNode(lesson, index, position, current) {
+function renderLessonNode(lesson, index, position, current, pathRow) {
   const completed = progress.completedLessons.includes(lesson.id);
   const locked = !isLessonUnlocked(index);
   const state = completed ? "completed" : current ? "current" : locked ? "locked" : "available";
   const selected = pathCardLessonId === lesson.id;
   const icon = completed ? "check" : locked ? "lock" : current ? "play" : "book";
   return `
-    <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}">
+    <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}" style="--path-row:${pathRow}">
       <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}">${renderIcon(icon)}</button>
       <div class="node-copy"><strong>${getShortLessonTitle(lesson)}</strong><span>${completed ? "مکمل" : current ? "اگلا سبق" : locked ? "بند" : "دستیاب"}</span></div>
       ${selected ? renderLessonStartCard(lesson, index) : ""}
@@ -1244,9 +1244,9 @@ function renderBottomNav() {
   if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
-      ${renderNavButton("home", "book", "گھر", screen === "home" || screen === "preview")}
-      ${renderNavButton("practice", "mistake", "غلطیاں", screen === "practice")}
       ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters", "progress"].includes(screen))}
+      ${renderNavButton("practice", "mistake", "غلطیاں", screen === "practice")}
+      ${renderNavButton("home", "book", "گھر", screen === "home" || screen === "preview")}
     </nav>
   `;
 }

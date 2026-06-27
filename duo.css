@@ -47,7 +47,8 @@ button {
   margin: 0 auto;
   padding: 0 18px calc(104px + env(safe-area-inset-bottom));
   background: var(--page);
-  animation: app-reveal 4000ms ease-out both;
+  animation: none;
+  transform: none;
 }
 
 .ui-icon {
@@ -154,6 +155,7 @@ button {
   text-align: right;
   box-shadow: inset 0 -4px 0 rgba(48, 116, 0, 0.28), 0 8px 22px rgba(88, 204, 2, 0.17);
   cursor: pointer;
+  direction: rtl;
 }
 
 .unit-card:active,
@@ -233,22 +235,30 @@ button {
 .path-group {
   position: relative;
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 42px;
+  column-gap: 0;
   min-height: 120px;
   padding: 12px 0;
+  direction: ltr;
 }
 
 .path-step {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column: 2;
+  grid-row: var(--path-row);
   justify-items: center;
-  width: 132px;
+  width: 100%;
+  max-width: 132px;
   z-index: 1;
+  direction: rtl;
 }
 
-.path-step.left { justify-self: start; margin-left: 18px; }
-.path-step.center { justify-self: center; }
-.path-step.right { justify-self: end; margin-right: 18px; }
+.path-step.left { grid-column: 1; justify-self: start; margin: 0; }
+.path-step.center { grid-column: 2; justify-self: center; }
+.path-step.right { grid-column: 3; justify-self: end; margin: 0; }
 
 .path-step::after {
   content: "";
@@ -300,7 +310,8 @@ button {
 .node-copy {
   display: grid;
   gap: 0;
-  width: 150px;
+  width: 100%;
+  max-width: 132px;
   margin-top: 10px;
   text-align: center;
 }
@@ -322,7 +333,7 @@ button {
   z-index: 10;
   display: grid;
   gap: 6px;
-  width: min(310px, calc(100vw - 40px));
+  width: min(300px, calc(100vw - 32px));
   padding: 16px;
   border: 1px solid #46ad00;
   border-radius: 8px;
@@ -345,27 +356,27 @@ button {
 }
 
 .path-step.left .lesson-start-card {
-  right: 0;
-  left: auto;
-  transform: none;
-  animation: edge-card-pop 180ms ease-out;
-}
-
-.path-step.left .lesson-card-pointer {
-  right: 34px;
-  left: auto;
-}
-
-.path-step.right .lesson-start-card {
   right: auto;
   left: 0;
   transform: none;
   animation: edge-card-pop 180ms ease-out;
 }
 
-.path-step.right .lesson-card-pointer {
+.path-step.left .lesson-card-pointer {
   right: auto;
-  left: 34px;
+  left: clamp(40px, calc((100vw - 28px) / 6 - 9px), 57px);
+}
+
+.path-step.right .lesson-start-card {
+  right: 0;
+  left: auto;
+  transform: none;
+  animation: edge-card-pop 180ms ease-out;
+}
+
+.path-step.right .lesson-card-pointer {
+  right: clamp(40px, calc((100vw - 28px) / 6 - 9px), 57px);
+  left: auto;
 }
 
 .lesson-start-card strong { position: relative; font-size: 1.2rem; }
@@ -383,28 +394,30 @@ button {
   cursor: pointer;
 }
 
-.path-step.selected { margin-bottom: 126px; }
+.path-step.selected { z-index: 20; margin-bottom: 148px; }
 
 .bottom-nav {
   position: fixed;
-  right: 0;
+  right: auto;
   bottom: 0;
-  left: 0;
+  left: 50%;
   z-index: 50;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   width: min(100%, 520px);
   min-height: calc(72px + env(safe-area-inset-bottom));
-  margin: 0 auto;
+  margin: 0;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px);
-  direction: rtl;
+  direction: ltr;
+  transform: translateX(-50%);
 }
 
 .nav-button {
   display: grid;
+  grid-template-rows: 28px 20px;
   place-items: center;
   gap: 2px;
   min-height: 56px;
@@ -414,6 +427,8 @@ button {
   color: #89949a;
   font-size: 0.72rem;
   cursor: pointer;
+  direction: rtl;
+  min-width: 0;
 }
 
 .nav-button .ui-icon { width: 25px; height: 25px; }
@@ -437,6 +452,7 @@ button {
   min-height: 70px;
   padding-top: max(10px, env(safe-area-inset-top));
   background: rgba(255, 255, 255, 0.97);
+  direction: ltr;
 }
 
 .quiz-close {
@@ -477,6 +493,7 @@ button {
   align-items: center;
   gap: 14px;
   margin-bottom: 22px;
+  direction: ltr;
 }
 
 .prompt-scene.compact { grid-template-columns: 100px minmax(0, 1fr); }
@@ -485,10 +502,6 @@ button {
 .image-prompt .prompt-scene {
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
-}
-
-.image-prompt .learning-visual {
-  width: min(280px, 78vw);
 }
 
 .image-prompt .speech-bubble {
@@ -516,6 +529,7 @@ button {
 }
 
 .learning-visual.quiz-visual { width: 100%; }
+.image-prompt .learning-visual.quiz-visual { width: min(270px, 72vw); }
 
 .speech-bubble {
   position: relative;
@@ -529,6 +543,8 @@ button {
   background: #fff;
   font-size: 1.1rem;
   line-height: 1.55;
+  direction: rtl;
+  text-align: right;
 }
 
 .speech-bubble::before {
@@ -680,17 +696,18 @@ button {
 .quiz-action-bar,
 .quiz-feedback-panel {
   position: fixed;
-  right: 0;
+  right: auto;
   bottom: 0;
-  left: 0;
+  left: 50%;
   z-index: 45;
   display: grid;
   gap: 10px;
   width: min(100%, 520px);
-  margin: 0 auto;
+  margin: 0;
   padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.98);
+  transform: translateX(-50%);
 }
 
 .quiz-feedback-panel { animation: feedback-up 180ms ease-out; }
@@ -812,6 +829,7 @@ button {
   background: #fff;
   text-align: right;
   cursor: pointer;
+  direction: rtl;
 }
 .utility-action > span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 8px; background: var(--blue-soft); color: var(--blue-dark); }
 .utility-action div,
@@ -878,7 +896,7 @@ button {
 }
 @keyframes card-pop { from { opacity: 0; transform: translateX(-50%) scale(0.94); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
 @keyframes edge-card-pop { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
-@keyframes feedback-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes feedback-up { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
 @keyframes answer-bounce { 50% { transform: scale(1.015); } }
 @keyframes answer-shake { 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-2px); } }
 
@@ -891,8 +909,7 @@ button {
   body { font-size: 17px; }
   .app-shell { padding-inline: 14px; }
   .unit-card-copy span { -webkit-line-clamp: 1; }
-  .path-step.left { margin-left: 4px; }
-  .path-step.right { margin-right: 4px; }
+  .path-group { row-gap: 38px; }
   .prompt-scene { grid-template-columns: 92px minmax(0, 1fr); gap: 10px; }
   .choices.choice-grid { grid-template-columns: 1fr; }
   .letters-grid { grid-template-columns: 1fr; }
@@ -904,4 +921,7 @@ button {
   .quiz-feedback-panel,
   .choice-button.correct,
   .choice-button.wrong { animation: none; }
+
+  .path-step.left .lesson-start-card,
+  .path-step.right .lesson-start-card { animation: none; }
 }

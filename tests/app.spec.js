@@ -128,6 +128,38 @@ test("main screens do not overflow horizontally", async ({ page }) => {
   expect(lessonHasOverflow).toBe(false);
 });
 
+test("fixed controls and settings rows stay inside the viewport", async ({ page }) => {
+  await openCleanApp(page);
+
+  const homeBounds = await page.evaluate(() => {
+    const nav = document.querySelector(".bottom-nav").getBoundingClientRect();
+    return { left: nav.left, right: nav.right, bottom: nav.bottom, width: innerWidth, height: innerHeight };
+  });
+  expect(homeBounds.left).toBeGreaterThanOrEqual(-1);
+  expect(homeBounds.right).toBeLessThanOrEqual(homeBounds.width + 1);
+  expect(Math.abs(homeBounds.bottom - homeBounds.height)).toBeLessThanOrEqual(1);
+
+  await page.locator('[data-action="settings"]').click();
+  const settingsInside = await page.evaluate(() => [...document.querySelectorAll(".utility-action,.setting-row")].every((row) => {
+    const bounds = row.getBoundingClientRect();
+    return bounds.left >= -1 && bounds.right <= innerWidth + 1;
+  }));
+  expect(settingsInside).toBe(true);
+
+  await page.locator('[data-action="home"]').click();
+  await page.locator('[data-action="preview"][data-lesson="a0-letters-1"]').first().click();
+  await page.locator('.lesson-start-card [data-action="start"]').click();
+  const quizBounds = await page.evaluate(() => {
+    const close = document.querySelector(".quiz-close").getBoundingClientRect();
+    const footer = document.querySelector(".quiz-action-bar").getBoundingClientRect();
+    return { closeLeft: close.left, footerLeft: footer.left, footerRight: footer.right, footerBottom: footer.bottom, width: innerWidth, height: innerHeight };
+  });
+  expect(quizBounds.closeLeft).toBeLessThan(quizBounds.width / 2);
+  expect(quizBounds.footerLeft).toBeGreaterThanOrEqual(-1);
+  expect(quizBounds.footerRight).toBeLessThanOrEqual(quizBounds.width + 1);
+  expect(Math.abs(quizBounds.footerBottom - quizBounds.height)).toBeLessThanOrEqual(1);
+});
+
 test("every lesson produces a valid 20-step session", async ({ page }) => {
   await openCleanApp(page);
   const lessonIds = await page.evaluate(() => (
