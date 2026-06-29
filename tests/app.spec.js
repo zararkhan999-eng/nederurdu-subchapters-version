@@ -326,3 +326,35 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     forbiddenWording: []
   });
 });
+
+test("every approved visual loads as a 1024px WebP without fallbacks", async ({ page }) => {
+  await openCleanApp(page);
+
+  const audit = await page.evaluate(async () => {
+    const visuals = window.NEDERURDU_WORD_VISUALS;
+    const results = await Promise.all(visuals.map((visual) => new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve({
+        id: visual.id,
+        src: visual.src,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+        loaded: true
+      });
+      image.onerror = () => resolve({ id: visual.id, src: visual.src, loaded: false });
+      image.src = visual.src;
+    })));
+
+    return {
+      pending: window.NEDERURDU_PENDING_VISUAL_IDS,
+      invalid: results.filter((visual) => (
+        !visual.loaded
+        || !visual.src.endsWith(".webp")
+        || visual.width !== 1024
+        || visual.height !== 1024
+      ))
+    };
+  });
+
+  expect(audit).toEqual({ pending: [], invalid: [] });
+});

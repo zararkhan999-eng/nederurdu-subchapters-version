@@ -1447,15 +1447,7 @@ window.NEDERURDU_WORD_VISUALS = [
 
 const legacyWordVisuals = window.NEDERURDU_WORD_VISUALS;
 const claimedVisualTerms = new Set();
-const pendingGeneratedVisualIds = new Set([
-  "achter", "baan", "bellen", "bsn", "jongen", "kaartje", "letter-i", "meisje", "prijs", "rooster", "voor",
-  "ziekenhuis", "hoofdpijn", "rust", "badkamer", "keuken", "kamer", "verwarming", "lekkage",
-  "reparatie", "schoonmaken", "gisteren", "vraag", "langzaam", "letter-a", "letter-b", "letter-h",
-  "pronoun-u", "pronoun-hij-zij", "pronoun-wij", "possessive", "article-een", "article-de-het",
-  "verb-zijn", "verb-hebben", "verb-gaan", "verb-komen", "word-naar", "word-met", "word-bij",
-  "verb-wonen", "greeting", "thanks", "drink", "goedkoop", "duur", "kapot", "modal-kunnen",
-  "modal-moeten", "modal-mogen", "connector-omdat", "past-gegaan", "now"
-]);
+const pendingGeneratedVisualIds = new Set([]);
 window.NEDERURDU_PENDING_VISUAL_IDS = [...pendingGeneratedVisualIds];
 
 function visualIdFromSource(src) {

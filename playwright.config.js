@@ -1,5 +1,7 @@
 const { defineConfig, devices } = require("@playwright/test");
 
+const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+
 module.exports = defineConfig({
   testDir: "./tests",
   timeout: 30_000,
@@ -9,7 +11,8 @@ module.exports = defineConfig({
   use: {
     baseURL: "http://127.0.0.1:4173",
     trace: "retain-on-failure",
-    screenshot: "only-on-failure"
+    screenshot: "only-on-failure",
+    launchOptions: chromiumExecutablePath ? { executablePath: chromiumExecutablePath } : {}
   },
   webServer: {
     command: "node server.js",
