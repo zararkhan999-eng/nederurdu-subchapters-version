@@ -255,6 +255,8 @@ const defaultProgress = {
   completedLessons: [],
   scores: {},
   seenQuestionIds: [],
+  missionVariantRuns: {},
+  skillAttempts: {},
   totalXp: 0,
   practiceDays: [],
   mistakes: [],
@@ -288,6 +290,8 @@ let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
 let matchPairError = "";
+let typedAnswer = "";
+let typedFallback = false;
 
 function loadProgress() {
   try {
@@ -422,7 +426,7 @@ function getMistakeReviewQuestions() {
     const question = findQuestionForMistake(mistake);
     if (!question) continue;
     seen.add(key);
-    questions.push(cloneQuestion(question));
+    questions.push({ ...cloneQuestion(question), mistakeOrigin: { ...mistake } });
     if (questions.length >= REVIEW_QUESTION_LIMIT) break;
   }
   return questions;
@@ -443,6 +447,12 @@ function cloneQuestion(question) {
 
 function findQuestionForMistake(mistake) {
   const lesson = getLesson(mistake.lessonId);
+  if (mistake.skillId) {
+    const alternate = getAllLessons()
+      .flatMap((item) => item.questions)
+      .find((question) => question.skillId === mistake.skillId && question.id !== mistake.questionId && !isInfoQuestion(question));
+    if (alternate) return alternate;
+  }
   if (mistake.questionId) {
     const exactQuestion = lesson.questions.find((question) => question.id === mistake.questionId);
     if (exactQuestion) return exactQuestion;
@@ -798,6 +808,10 @@ function getQuestionTitle(question) {
   if (question.mode === "listen-reply") return "سنیں اور جواب منتخب کریں";
   if (question.mode === "dialogue") return "گفتگو مکمل کریں";
   if (question.mode === "guided-recall") return "صحیح Nederlands منتخب کریں";
+  if (question.type === "document-choice") return "معلومات دیکھ کر جواب دیں";
+  if (question.type === "sequence") return "صحیح ترتیب بنائیں";
+  if (question.type === "short-input") return "چھوٹا جواب لکھیں";
+  if (question.type === "speak-repeat") return "سنیں اور دہرائیں";
   if (question.type === "listen-choice") return "آپ نے کیا سنا؟";
   if (question.type === "build") return "جملہ بنائیں";
   if (question.type === "fill-gap") return "خالی جگہ پُر کریں";
@@ -809,6 +823,7 @@ function getQuestionTitle(question) {
 }
 
 function renderQuestionCard(question, visual) {
+  if (question.type === "speak-repeat") return renderSpeakRepeatQuestion(question);
   if (isInfoQuestion(question)) {
     return `
       <div class="teaching-card">
@@ -819,9 +834,56 @@ function renderQuestionCard(question, visual) {
     `;
   }
   if (question.type === "listen-choice") return renderListeningQuestion(question);
+  if (question.type === "document-choice") return renderDocumentQuestion(question);
+  if (question.type === "short-input") return renderShortInputQuestion(question);
+  if (question.type === "sequence") return renderSequenceQuestion(question);
   if (question.type === "build") return renderWordBankQuestion(question, visual);
   if (question.type === "match-pairs") return renderMatchPairsQuestion(question);
   return renderMultipleChoiceQuestion(question, visual);
+}
+
+function renderDocumentQuestion(question) {
+  const document = question.document || {};
+  return `
+    <div class="document-question">
+      <article class="practice-document latin" aria-label="${escapeAttr(document.title || "Nederlands document")}">
+        <strong>${escapeHtml(document.title || "")}</strong>
+        ${(document.rows || []).map((row) => `<div><span>${escapeHtml(row.label)}</span><b>${escapeHtml(row.value)}</b></div>`).join("")}
+      </article>
+      <p class="document-prompt">${escapeHtml(question.prompt)}</p>
+      ${renderChoices(question)}
+    </div>
+  `;
+}
+
+function renderShortInputQuestion(question) {
+  if (typedFallback) return `
+    <div class="short-input-question">
+      <p>${escapeHtml(question.prompt)}</p>
+      ${renderBuildExercise(question)}
+    </div>
+  `;
+  return `
+    <div class="short-input-question">
+      <p>${escapeHtml(question.prompt)}</p>
+      <input class="short-answer-input latin" data-short-answer value="${escapeAttr(typedAnswer)}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Nederlands جواب" />
+      <button class="input-fallback" data-action="input-fallback">الفاظ سے بنائیں</button>
+    </div>
+  `;
+}
+
+function renderSpeakRepeatQuestion(question) {
+  return `
+    <div class="speak-repeat-question">
+      <button class="listening-button" data-action="speak" data-speak="${escapeAttr(question.speak || question.answer)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}</button>
+      <strong class="latin">${escapeHtml(question.answer)}</strong>
+      <p>${escapeHtml(question.prompt)}</p>
+    </div>
+  `;
+}
+
+function renderSequenceQuestion(question) {
+  return `<div class="sequence-question"><p>${escapeHtml(question.prompt)}</p>${renderBuildExercise(question)}</div>`;
 }
 
 function renderListeningQuestion(question) {
@@ -899,9 +961,9 @@ function renderMatchPairButton(id, side, text) {
 }
 
 function renderQuizFooter(question, infoStep) {
-  const correct = checked && selectedAnswer === question.answer;
+  const correct = checked && isCurrentAnswerCorrect(question);
   if (infoStep) {
-    return `<footer class="quiz-action-bar"><button class="quiz-action enabled" data-action="continue-info">آگے بڑھیں</button></footer>`;
+    return `<footer class="quiz-action-bar"><button class="quiz-action enabled" data-action="continue-info">${question.type === "speak-repeat" ? "میں نے کہا" : "آگے بڑھیں"}</button></footer>`;
   }
   if (checked) {
     return `
@@ -985,11 +1047,12 @@ function renderChoice(option, question, index) {
 }
 
 function renderBuildExercise(question) {
+  const answerTiles = getAnswerTiles(question);
   const selectedIds = new Set(buildAnswerIds);
   const selectedTiles = buildAnswerIds
-    .map((id) => question.tiles.find((tile) => tile.id === id))
+    .map((id) => answerTiles.find((tile) => tile.id === id))
     .filter(Boolean);
-  const remainingTiles = question.tiles.filter((tile) => !selectedIds.has(tile.id));
+  const remainingTiles = answerTiles.filter((tile) => !selectedIds.has(tile.id));
   const currentAnswer = getBuildAnswerText(question);
   const answerState = checked ? (currentAnswer === question.answer ? "correct" : "wrong") : "";
 
@@ -1012,6 +1075,11 @@ function renderBuildExercise(question) {
       </div>
     </div>
   `;
+}
+
+function isCurrentAnswerCorrect(question) {
+  if (question.type === "short-input" && !typedFallback) return getAcceptedAnswers(question).includes(normalizeTypedAnswer(selectedAnswer));
+  return selectedAnswer === question.answer;
 }
 
 function renderChoiceConfetti() {
@@ -1293,6 +1361,7 @@ function bindEvents() {
       if (action === "reset") resetProgress();
       if (action === "toggle-setting") toggleSetting(element.dataset.setting);
       if (action === "skip-audio") skipAudioQuestion();
+      if (action === "input-fallback") enableInputFallback();
     });
   });
 
@@ -1311,6 +1380,15 @@ function bindEvents() {
       event.preventDefault();
       event.stopPropagation();
       toggleWordHelp(element.dataset.helpId, element.dataset.term, element.dataset.meaning);
+    });
+  });
+
+  document.querySelectorAll("[data-short-answer]").forEach((element) => {
+    element.addEventListener("input", () => {
+      typedAnswer = element.value;
+      selectedAnswer = typedAnswer;
+      const checkButton = document.querySelector('[data-action="check"]');
+      if (checkButton) checkButton.disabled = !typedAnswer.trim();
     });
   });
 }
@@ -1416,6 +1494,8 @@ function startLesson(id) {
   matchSelection = null;
   matchedPairIds = [];
   matchPairError = "";
+  typedAnswer = "";
+  typedFallback = false;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
@@ -1448,6 +1528,8 @@ function startReview(kind) {
   matchSelection = null;
   matchedPairIds = [];
   matchPairError = "";
+  typedAnswer = "";
+  typedFallback = false;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
@@ -1510,6 +1592,15 @@ function skipAudioQuestion() {
   render();
 }
 
+function enableInputFallback() {
+  if (checked) return;
+  typedFallback = true;
+  typedAnswer = "";
+  selectedAnswer = "";
+  buildAnswerIds = [];
+  render();
+}
+
 function selectMatchPair(id, side) {
   if (checked || !id || !side || matchedPairIds.includes(id)) return;
   matchPairError = "";
@@ -1541,8 +1632,12 @@ function checkAnswer() {
   if (!canCheckQuestion(question)) return;
   activeWordHelp = null;
   hintOpen = false;
-  if (question.type === "build") selectedAnswer = getBuildAnswerText(question);
-  const correct = selectedAnswer === question.answer;
+  if (question.type === "build" || question.type === "sequence" || (question.type === "short-input" && typedFallback)) {
+    selectedAnswer = getBuildAnswerText(question);
+  }
+  const correct = question.type === "short-input" && !typedFallback
+    ? getAcceptedAnswers(question).includes(normalizeTypedAnswer(selectedAnswer))
+    : selectedAnswer === question.answer;
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -1551,7 +1646,9 @@ function checkAnswer() {
     prompt: question.prompt,
     answer: question.answer,
     selected: selectedAnswer,
-    correct
+    correct,
+    skillId: question.skillId || "",
+    mistakeOrigin: question.mistakeOrigin || null
   });
   playAnswerSound(correct ? "correct" : "wrong");
   checked = true;
@@ -1572,6 +1669,8 @@ function nextQuestion() {
     matchSelection = null;
     matchedPairIds = [];
     matchPairError = "";
+    typedAnswer = "";
+    typedFallback = false;
     render();
     return;
   }
@@ -1591,9 +1690,10 @@ function completeLesson(lesson) {
     ? progress.practiceDays
     : [...progress.practiceDays, todayKey()];
   const correctedMistakes = lesson.reviewKind === "mistakes"
-    ? new Set(sessionAnswers.filter((answer) => answer.correct).map((answer) => mistakeKey({
+    ? new Set(sessionAnswers.filter((answer) => answer.correct).map((answer) => mistakeKey(answer.mistakeOrigin || {
       lessonId: findLessonIdForQuestion(answer.prompt, answer.answer, answer.questionId),
       questionId: answer.questionId,
+      skillId: answer.skillId,
       prompt: answer.prompt,
       answer: answer.answer
     })))
@@ -1603,6 +1703,7 @@ function completeLesson(lesson) {
     .map((answer) => ({
       lessonId: isReview ? findLessonIdForQuestion(answer.prompt, answer.answer, answer.questionId) : lesson.id,
       questionId: answer.questionId,
+      skillId: answer.skillId,
       prompt: answer.prompt,
       answer: answer.answer,
       selected: answer.selected,
@@ -1630,6 +1731,16 @@ function completeLesson(lesson) {
       ...(progress.seenQuestionIds || []),
       ...questions.map((question) => question.id).filter(Boolean)
     ])],
+    missionVariantRuns: lesson.kind === "mission" && !isReview ? {
+      ...(progress.missionVariantRuns || {}),
+      [lesson.id]: (progress.missionVariantRuns?.[lesson.id] || 0) + 1
+    } : (progress.missionVariantRuns || {}),
+    skillAttempts: sessionAnswers.reduce((attempts, answer) => {
+      if (!answer.skillId) return attempts;
+      const previous = attempts[answer.skillId] || { correct: 0, total: 0 };
+      attempts[answer.skillId] = { correct: previous.correct + (answer.correct ? 1 : 0), total: previous.total + 1 };
+      return attempts;
+    }, { ...(progress.skillAttempts || {}) }),
     totalXp: progress.totalXp + earnedXp,
     practiceDays,
     mistakes: [...keptMistakes, ...newMistakes],
@@ -1687,11 +1798,14 @@ function normalizeWord(value) {
 function buildSessionQuestions(lesson) {
   const sourceQuestions = lesson?.reviewKind
     ? lesson.questions
-    : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
+    : lesson?.kind === "mission"
+      ? lesson.variants[(progress.missionVariantRuns?.[lesson.id] || 0) % lesson.variants.length].questions
+      : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
   return sourceQuestions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
-    tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : []
+    tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : [],
+    fallbackTiles: question.fallbackTiles ? shuffleArray(question.fallbackTiles.map((word, index) => ({ id: `fallback-${index}-${word}`, word }))) : []
   }));
 }
 
@@ -1703,7 +1817,7 @@ function sampleLessonQuestions(questions, lessonId) {
   const seenIds = new Set(progress.seenQuestionIds || []);
   const lessonSeenCount = usableQuestions.filter((question) => seenIds.has(question.id)).length;
   const seed = hashText(`${lessonId}:${lessonSeenCount}:${progress.scores[lessonId] || 0}`);
-  const types = ["meaning", "reverse", "image-choice", "listen-choice", "fill-gap", "situation", "build"];
+  const types = ["meaning", "reverse", "image-choice", "document-choice", "listen-choice", "fill-gap", "situation", "sequence", "build", "short-input"];
   const groups = new Map(types.map((type, index) => [
     type,
     [
@@ -1761,22 +1875,36 @@ function findLessonIdForQuestion(prompt, answer, questionId = "") {
 }
 
 function getBuildAnswerText(question) {
+  const tiles = getAnswerTiles(question);
   return buildAnswerIds
-    .map((id) => question.tiles.find((tile) => tile.id === id)?.word)
+    .map((id) => tiles.find((tile) => tile.id === id)?.word)
     .filter(Boolean)
-    .join(" ");
+    .join(question.type === "sequence" ? " | " : " ");
 }
 
 function isInfoQuestion(question) {
-  return question?.type === "uitleg";
+  return question?.type === "uitleg" || question?.type === "speak-repeat";
 }
 
 function canCheckQuestion(question) {
   if (isInfoQuestion(question)) return true;
   if (checked) return true;
-  if (question.type === "build") return buildAnswerIds.length === question.tiles.length;
+  if (question.type === "build" || question.type === "sequence") return buildAnswerIds.length === getAnswerTiles(question).length;
+  if (question.type === "short-input") return typedFallback ? buildAnswerIds.length === getAnswerTiles(question).length : Boolean(typedAnswer.trim());
   if (question.type === "match-pairs") return getMatchPairs(question).length > 0 && matchedPairIds.length === getMatchPairs(question).length;
   return Boolean(selectedAnswer);
+}
+
+function getAnswerTiles(question) {
+  return question.type === "short-input" && typedFallback ? (question.fallbackTiles || []) : (question.tiles || []);
+}
+
+function normalizeTypedAnswer(value) {
+  return String(value || "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[.!?]+$/g, "");
+}
+
+function getAcceptedAnswers(question) {
+  return [question.answer, ...(question.acceptedAnswers || [])].map(normalizeTypedAnswer);
 }
 
 function getQuestionSpeechText(question) {

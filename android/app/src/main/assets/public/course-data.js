@@ -3194,6 +3194,268 @@ for (const lesson of [...a0Lessons, ...a1Lessons, ...a2Lessons]) {
   }
 }
 
+const missionConcept = (id, dutch, urdu, visualId) => ({ id, dutch, urdu, visualId });
+const missionPhrase = (dutch, urdu) => ({ dutch, urdu });
+
+function missionOptions(items, index, key) {
+  const answer = items[index % items.length][key];
+  return [answer, ...rotate(items.map((item) => item[key]).filter((value) => value !== answer), index + 1).slice(0, 2)];
+}
+
+function makeMissionLesson(spec) {
+  const variants = [0, 1, 2].map((variantIndex) => {
+    const offset = variantIndex * 4;
+    const questions = [];
+    const add = (question, stage) => {
+      const index = questions.length + 1;
+      questions.push({ ...question, stage, id: `${spec.id}-v${variantIndex + 1}-${question.type}-${String(index).padStart(2, "0")}` });
+    };
+
+    add({
+      ...uitleg(`${spec.title}: ${spec.variantTitles[variantIndex]}`, spec.briefing, "اب اس کام کو قدم بہ قدم مکمل کریں۔"),
+      skillId: `${spec.id}-briefing`
+    }, "briefing");
+
+    for (let index = 0; index < 3; index += 1) {
+      const phraseIndex = (offset + index) % spec.phrases.length;
+      const phrase = spec.phrases[phraseIndex];
+      add({
+        type: "document-choice",
+        label: "دستاویز پڑھ کر صحیح مطلب منتخب کریں",
+        prompt: "دستاویز میں لکھی اہم بات کا مطلب کیا ہے؟",
+        document: {
+          title: spec.documentTitles[index],
+          rows: [
+            { label: "Datum", value: `${12 + variantIndex} juni` },
+            { label: "Informatie", value: phrase.dutch }
+          ]
+        },
+        options: missionOptions(spec.phrases, phraseIndex, "urdu"),
+        answer: phrase.urdu,
+        explain: `${phrase.dutch} = ${phrase.urdu}۔`,
+        skillId: `${spec.id}-phrase-${phraseIndex}`
+      }, "document");
+    }
+
+    for (let index = 0; index < 3; index += 1) {
+      const phraseIndex = index + 3;
+      const phrase = spec.phrases[phraseIndex];
+      add({
+        ...listenChoice(spec.cues[index], missionOptions(spec.phrases, phraseIndex, "dutch"), phrase.dutch, `مناسب جواب: ${phrase.dutch}۔`),
+        prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
+        mode: "listen-reply",
+        skillId: `${spec.id}-phrase-${phraseIndex}`
+      }, "listen-reply");
+    }
+
+    for (let index = 0; index < 3; index += 1) {
+      const phraseIndex = (offset + index + 6) % spec.phrases.length;
+      const phrase = spec.phrases[phraseIndex];
+      add({
+        ...situation(`حال: ${phrase.urdu}`, missionOptions(spec.phrases, phraseIndex, "dutch"), phrase.dutch, `اس حال میں کہیں: ${phrase.dutch}۔`),
+        skillId: `${spec.id}-phrase-${phraseIndex}`
+      }, "decision");
+    }
+
+    for (let index = 0; index < 2; index += 1) {
+      const start = (offset + index * 3) % spec.steps.length;
+      const ordered = [0, 1, 2].map((step) => spec.steps[(start + step) % spec.steps.length]);
+      add({
+        type: "sequence",
+        label: "کام کے قدم صحیح ترتیب میں رکھیں",
+        prompt: "ان قدموں کو صحیح ترتیب میں رکھیں۔",
+        tiles: ordered,
+        answer: ordered.join(" | "),
+        explain: `صحیح ترتیب: ${ordered.join("، پھر ")}۔`,
+        skillId: `${spec.id}-sequence-${index}`
+      }, "sequence");
+    }
+
+    for (let index = 0; index < 2; index += 1) {
+      const phraseIndex = (offset + index + 9) % spec.phrases.length;
+      const phrase = spec.phrases[phraseIndex];
+      add({ ...build(phrase.urdu, phrase.dutch.split(/\s+/), phrase.dutch, `صحیح جملہ: ${phrase.dutch}۔`), skillId: `${spec.id}-phrase-${phraseIndex}` }, "build");
+    }
+
+    for (let index = 0; index < 2; index += 1) {
+      if (spec.level === "a0") {
+        const conceptIndex = (offset + index) % spec.concepts.length;
+        const concept = spec.concepts[conceptIndex];
+        add({
+          type: "image-choice",
+          label: "تصویر دیکھ کر صحیح Nederlands منتخب کریں",
+          prompt: "تصویر کے لیے صحیح لفظ منتخب کریں۔",
+          visualId: concept.visualId,
+          options: missionOptions(spec.concepts, conceptIndex, "dutch"),
+          answer: concept.dutch,
+          explain: `${concept.dutch} = ${concept.urdu}۔`,
+          skillId: `${spec.id}-concept-${concept.id}`
+        }, "visual");
+      } else {
+        const phraseIndex = (offset + index + 1) % spec.phrases.length;
+        const phrase = spec.phrases[phraseIndex];
+        add({
+          type: "short-input",
+          label: "مختصر Nederlands جواب لکھیں",
+          prompt: phrase.urdu,
+          answer: phrase.dutch,
+          acceptedAnswers: [phrase.dutch.replace(/[.!?]+$/g, "")],
+          fallbackTiles: phrase.dutch.split(/\s+/),
+          optional: true,
+          explain: `صحیح جواب: ${phrase.dutch}۔`,
+          skillId: `${spec.id}-phrase-${phraseIndex}`
+        }, "write");
+      }
+    }
+
+    for (let index = 0; index < 2; index += 1) {
+      const phraseIndex = (offset + index + 4) % spec.phrases.length;
+      const phrase = spec.phrases[phraseIndex];
+      add({
+        type: "speak-repeat",
+        label: "سنیں اور دہرائیں",
+        prompt: "آواز سنیں، جملہ بلند آواز میں دہرائیں، پھر آگے بڑھیں۔",
+        speak: phrase.dutch,
+        answer: phrase.dutch,
+        skillId: `${spec.id}-phrase-${phraseIndex}`
+      }, "speak");
+    }
+
+    for (let index = 0; index < 2; index += 1) {
+      const phraseIndex = (offset + index + 10) % spec.phrases.length;
+      const phrase = spec.phrases[phraseIndex];
+      add({
+        ...situation(`آخری قدم: ${phrase.urdu}`, missionOptions(spec.phrases, phraseIndex, "dutch"), phrase.dutch, `کام مکمل کرنے کے لیے: ${phrase.dutch}۔`),
+        skillId: `${spec.id}-phrase-${phraseIndex}`
+      }, "outcome");
+    }
+
+    return { id: `${spec.id}-variant-${variantIndex + 1}`, title: spec.variantTitles[variantIndex], questions };
+  });
+
+  return {
+    id: spec.id,
+    kind: "mission",
+    unit: spec.unit,
+    title: spec.title,
+    description: spec.description,
+    xp: 0,
+    variants,
+    questions: variants.flatMap((variant) => variant.questions)
+  };
+}
+
+function insertLessonAfter(lessons, afterId, lesson) {
+  const index = lessons.findIndex((item) => item.id === afterId);
+  lessons.splice(index < 0 ? lessons.length : index + 1, 0, lesson);
+}
+
+const missionSpec = ({ level, id, unit, title, description, concepts, phrases, cues, variants, documents }) => ({
+  level, id, unit, title, description,
+  concepts: concepts.map((item) => missionConcept(...item)),
+  phrases: phrases.map((item) => missionPhrase(...item)),
+  cues,
+  variantTitles: variants,
+  documentTitles: documents,
+  briefing: [
+    `${title} میں آپ ایک حقیقی روزمرہ کام قدم بہ قدم مکمل کریں گے۔`,
+    "پہلے اہم معلومات دیکھیں یا سنیں، پھر مناسب Nederlands جواب منتخب کریں۔",
+    "غلطی ہو تو مختصر وضاحت پڑھیں اور اگلے قدم میں وہی بات دوبارہ استعمال کریں۔"
+  ],
+  steps: phrases.slice(0, 6).map((phrase) => phrase[0])
+});
+
+const missionSpecs = [
+  missionSpec({
+    level: "a0", id: "a0-mission-home-start", unit: "A0: گھر سے نکلنا", title: "Thuis beginnen", description: "صبح تیار ہونا، ناشتہ، کپڑے، چابی، موسم، اور محفوظ طریقے سے گھر سے نکلنا۔",
+    concepts: [["lamp","lamp","بتی","lamp"],["coat","jas","جیکٹ","jas"],["bread","brood","روٹی","brood"],["water","water","پانی","water"],["door","deur","دروازہ","deur"],["home","huis","گھر","huis"]],
+    phrases: [["ik sta om zeven uur op","میں سات بجے اٹھتا / اٹھتی ہوں"],["ik eet brood en drink water","میں روٹی کھاتا / کھاتی اور پانی پیتا / پیتی ہوں"],["ik doe mijn jas aan","میں جیکٹ پہنتا / پہنتی ہوں"],["waar is mijn sleutel?","میری چابی کہاں ہے؟"],["de sleutel ligt op tafel","چابی میز پر ہے"],["het regent buiten","باہر بارش ہو رہی ہے"],["ik neem een paraplu mee","میں چھتری ساتھ لیتا / لیتی ہوں"],["doe de deur dicht","دروازہ بند کریں"],["het licht is uit","بتی بند ہے"],["ik ben klaar","میں تیار ہوں"],["ik ga nu naar buiten","میں اب باہر جاتا / جاتی ہوں"],["alles is veilig","سب کچھ محفوظ ہے"]],
+    cues: ["hoe laat staat u op?","waar is de sleutel?","wat voor weer is het?"], variants: ["صبح کا معمول","بارش والا دن","جلدی گھر سے نکلنا"], documents: ["Weerbericht","Ochtendlijst","Veilig thuis"]
+  }),
+  missionSpec({
+    level: "a0", id: "a0-mission-neighbourhood", unit: "A0: محلے میں", title: "In de buurt", description: "نقشہ دیکھنا، بس اسٹاپ، دکان، دواخانہ، اور راستہ پوچھنا۔",
+    concepts: [["bus","bus","بس","bus"],["stop","halte","بس اسٹاپ","halte"],["shop","supermarkt","سپر مارکیٹ","supermarkt"],["pharmacy","apotheek","دواخانہ","apotheek"],["station","station","اسٹیشن","station"],["left","links","بائیں","links"]],
+    phrases: [["ik ga naar de supermarkt","میں سپر مارکیٹ جاتا / جاتی ہوں"],["waar is de bushalte?","بس اسٹاپ کہاں ہے؟"],["ga rechtdoor","سیدھا جائیں"],["gaat deze bus naar het station?","کیا یہ بس اسٹیشن جاتی ہے؟"],["ja stap hier in","جی، یہاں سوار ہوں"],["de apotheek is naast de supermarkt","دواخانہ سپر مارکیٹ کے ساتھ ہے"],["sla links af","بائیں مڑیں"],["ik ben de weg kwijt","میں راستہ بھول گیا / گئی ہوں"],["kunt u mij helpen?","کیا آپ میری مدد کر سکتے ہیں؟"],["ik zoek de bibliotheek","میں لائبریری تلاش کر رہا / رہی ہوں"],["dank u wel voor de hulp","مدد کے لیے شکریہ"],["nu weet ik de weg","اب مجھے راستہ معلوم ہے"]],
+    cues: ["waar wilt u naartoe?","gaat deze bus naar het station?","waar is de apotheek?"], variants: ["دکان تک جانا","بس سے سفر","لائبریری تلاش کرنا"], documents: ["Buurtkaart","Dienstregeling","Openingstijden"]
+  }),
+  missionSpec({
+    level: "a0", id: "a0-mission-help", unit: "A0: فوری مدد", title: "Hulp nodig", description: "نام، پتہ، فون، 112، پولیس، ڈاکٹر، اور ایمبولینس کی بنیادی بات۔",
+    concepts: [["phone","telefoon","فون","telefoon"],["address","adres","پتہ","adres"],["doctor","dokter","ڈاکٹر","dokter"],["ambulance","ambulance","ایمبولینس","ambulance"],["medicine","medicijn","دوا","medicijn"],["pain","pijn","درد","pijn"]],
+    phrases: [["ik heb hulp nodig","مجھے مدد چاہیے"],["bel alstublieft 112","براہ مہربانی 112 پر فون کریں"],["mijn naam is Sara","میرا نام Sara ہے"],["wat is uw adres?","آپ کا پتہ کیا ہے؟"],["mijn adres is Marktstraat twaalf","میرا پتہ Marktstraat بارہ ہے"],["wat is er gebeurd?","کیا ہوا ہے؟"],["ik heb veel pijn","مجھے بہت درد ہے"],["er komt een ambulance","ایمبولینس آ رہی ہے"],["blijf hier wachten","یہاں انتظار کریں"],["ik heb een dokter nodig","مجھے ڈاکٹر چاہیے"],["de politie is onderweg","پولیس راستے میں ہے"],["de hulp is gekomen","مدد پہنچ گئی ہے"]],
+    cues: ["hoe heet u?","wat is uw adres?","wat is er gebeurd?"], variants: ["طبی مدد","گمشدہ چیز","سڑک پر مدد"], documents: ["Noodkaart","Adresgegevens","Hulpbericht"]
+  }),
+  missionSpec({
+    level: "a1", id: "a1-mission-phone-internet", unit: "A1: فون اور انٹرنیٹ", title: "Telefoon en internet", description: "Wi-Fi، فون کریڈٹ، وائس میل، غلط نمبر، پیغام، اور واپس فون کرنا۔",
+    concepts: [["phone","telefoon","فون","telefoon"],["message","bericht","پیغام","bericht"],["wifi","wifi","وائی فائی","telefoon"],["credit","beltegoed","فون کریڈٹ","pinpas"],["password","wachtwoord","پاس ورڈ","formulier"],["call","bellen","فون کرنا","telefoon"]],
+    phrases: [["wat is het wifi-wachtwoord?","وائی فائی کا پاس ورڈ کیا ہے؟"],["mijn internet werkt niet","میرا انٹرنیٹ کام نہیں کر رہا"],["ik wil beltegoed kopen","میں فون کریڈٹ خریدنا چاہتا / چاہتی ہوں"],["kan ik u later terugbellen?","کیا میں آپ کو بعد میں واپس فون کر سکتا / سکتی ہوں؟"],["ja belt u vanavond terug","جی، شام کو واپس فون کریں"],["u heeft het verkeerde nummer","آپ نے غلط نمبر ملایا ہے"],["spreek een bericht in na de toon","آواز کے بعد پیغام بولیں"],["ik stuur u een bericht","میں آپ کو پیغام بھیجتا / بھیجتی ہوں"],["heeft u mijn bericht ontvangen?","کیا آپ کو میرا پیغام ملا؟"],["mijn telefoon heeft geen bereik","میرے فون میں سگنل نہیں ہے"],["kunt u het nummer herhalen?","کیا آپ نمبر دوبارہ کہہ سکتے ہیں؟"],["nu werkt de verbinding weer","اب رابطہ دوبارہ کام کر رہا ہے"]],
+    cues: ["waarmee kan ik u helpen?","wanneer kunt u terugbellen?","is dit het nummer van Ali?"], variants: ["Wi-Fi کا مسئلہ","فون کریڈٹ","وائس میل اور پیغام"], documents: ["Wifi-kaart","Beltegoedbon","Voicemail"]
+  }),
+  missionSpec({
+    level: "a1", id: "a1-mission-school-day", unit: "A1: اسکول کا دن", title: "Mijn kind naar school", description: "اسکول ٹائم، غیر حاضری، بچے کو چھوڑنا اور لینا، استاد، اور نوٹس۔",
+    concepts: [["school","school","اسکول","school"],["teacher","docent","استاد","docent"],["child","kind","بچہ","kind"],["homework","huiswerk","گھر کا کام","huiswerk"],["schedule","rooster","اوقات","rooster"],["message","bericht","پیغام","bericht"]],
+    phrases: [["de school begint om half negen","اسکول ساڑھے آٹھ بجے شروع ہوتا ہے"],["mijn kind is vandaag ziek","میرا بچہ آج بیمار ہے"],["ik bel de school","میں اسکول فون کرتا / کرتی ہوں"],["waarom komt uw kind niet?","آپ کا بچہ کیوں نہیں آ رہا؟"],["hij heeft koorts","اسے بخار ہے"],["ik haal mijn kind om drie uur op","میں بچے کو تین بجے لینے آتا / آتی ہوں"],["ik wil de docent spreken","میں استاد سے بات کرنا چاہتا / چاہتی ہوں"],["het huiswerk staat in de app","گھر کا کام ایپ میں ہے"],["morgen is de school gesloten","کل اسکول بند ہے"],["kunt u mij een bericht sturen?","کیا آپ مجھے پیغام بھیج سکتے ہیں؟"],["ik heb het rooster gelezen","میں نے اوقات پڑھ لیے ہیں"],["alles is nu duidelijk","اب سب واضح ہے"]],
+    cues: ["hoe laat begint de school?","waarom komt uw kind niet?","hoe laat haalt u uw kind op?"], variants: ["بیماری کی اطلاع","اسکول کا وقت","استاد سے رابطہ"], documents: ["Schoolrooster","Afwezigheidsbericht","Schoolnieuws"]
+  }),
+  missionSpec({
+    level: "a1", id: "a1-mission-post-parcel", unit: "A1: ڈاک اور پارسل", title: "Post en pakket", description: "پتہ، ڈاک ٹکٹ، پارسل بھیجنا، شناخت، ڈلیوری نوٹس، اور گمشدہ پارسل۔",
+    concepts: [["parcel","pakket","پارسل","bericht"],["address","adres","پتہ","adres"],["passport","identiteitsbewijs","شناختی کاغذ","paspoort"],["counter","loket","کاؤنٹر","loket"],["receipt","bon","رسید","bon"],["message","bezorgbericht","ڈلیوری پیغام","bericht"]],
+    phrases: [["ik wil dit pakket versturen","میں یہ پارسل بھیجنا چاہتا / چاہتی ہوں"],["het adres staat op de doos","پتہ ڈبے پر لکھا ہے"],["hoeveel kost het versturen?","بھیجنے کی قیمت کتنی ہے؟"],["wilt u het pakket volgen?","کیا آپ پارسل ٹریک کرنا چاہتے ہیں؟"],["ja graag met track en trace","جی، ٹریک اینڈ ٹریس کے ساتھ"],["hier is mijn identiteitsbewijs","یہ میرا شناختی کاغذ ہے"],["uw pakket ligt bij het afhaalpunt","آپ کا پارسل وصولی کی جگہ پر ہے"],["ik heb een bezorgbericht gekregen","مجھے ڈلیوری پیغام ملا ہے"],["het pakket is nog niet aangekomen","پارسل ابھی نہیں پہنچا"],["kunt u het nummer controleren?","کیا آپ نمبر چیک کر سکتے ہیں؟"],["bewaar deze bon goed","یہ رسید سنبھال کر رکھیں"],["het pakket is gevonden","پارسل مل گیا ہے"]],
+    cues: ["wat wilt u versturen?","wilt u track en trace?","heeft u een identiteitsbewijs?"], variants: ["پارسل بھیجنا","پارسل لینا","گمشدہ پارسل"], documents: ["Adreslabel","Afhaalbericht","Track en trace"]
+  }),
+  missionSpec({
+    level: "a1", id: "a1-mission-house-search", unit: "A1: گھر تلاش کرنا", title: "Een huis zoeken", description: "کرایے کا اشتہار، قیمت، کمرے، گھر دیکھنے کا وقت، سوال، اور دلچسپی۔",
+    concepts: [["home","woning","گھر","huis"],["room","kamer","کمرہ","kamer"],["price","huur","کرایہ","prijs"],["viewing","bezichtiging","گھر دیکھنے کا وقت","afspraak"],["heating","verwarming","ہیٹنگ","verwarming"],["form","reactie","جواب / دلچسپی","formulier"]],
+    phrases: [["ik zoek een woning met twee kamers","میں دو کمروں والا گھر تلاش کر رہا / رہی ہوں"],["de huur is negenhonderd euro","کرایہ نو سو یورو ہے"],["de woning is vanaf juli beschikbaar","گھر جولائی سے دستیاب ہے"],["wanneer kan ik de woning bekijken?","میں گھر کب دیکھ سکتا / سکتی ہوں؟"],["u kunt zaterdag om tien uur komen","آپ ہفتہ دس بجے آ سکتے ہیں"],["is de verwarming inbegrepen?","کیا ہیٹنگ شامل ہے؟"],["hoe groot is de woonkamer?","بیٹھک کتنی بڑی ہے؟"],["mag ik hier met kinderen wonen?","کیا میں یہاں بچوں کے ساتھ رہ سکتا / سکتی ہوں؟"],["welke documenten heeft u nodig?","آپ کو کون سے کاغذات چاہیے؟"],["ik ben geïnteresseerd in de woning","مجھے اس گھر میں دلچسپی ہے"],["ik stuur vandaag mijn gegevens","میں آج اپنی معلومات بھیجوں گا / گی"],["ik wacht op uw reactie","میں آپ کے جواب کا انتظار کروں گا / گی"]],
+    cues: ["wat voor woning zoekt u?","wanneer wilt u komen kijken?","heeft u nog een vraag?"], variants: ["اشتہار پڑھنا","گھر دیکھنا","دلچسپی بھیجنا"], documents: ["Woningadvertentie","Bezichtiging","Reactieformulier"]
+  }),
+  missionSpec({
+    level: "a1", id: "a1-mission-doctor", unit: "A1: ڈاکٹر کے پاس", title: "Naar de huisarts", description: "ملاقات، علامات، ہدایات، دوا، مقدار، اور دوبارہ رابطہ۔",
+    concepts: [["doctor","huisarts","گھر کا ڈاکٹر","huisarts"],["pain","pijn","درد","pijn"],["medicine","medicijn","دوا","medicijn"],["pharmacy","apotheek","دواخانہ","apotheek"],["cough","hoesten","کھانسی","hoesten"],["rest","rust","آرام","rust"]],
+    phrases: [["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں"],["ik ben sinds gisteren ziek","میں کل سے بیمار ہوں"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے"],["waar doet het pijn?","کہاں درد ہے؟"],["hier in mijn buik","یہاں میرے پیٹ میں"],["u moet veel water drinken","آپ کو بہت پانی پینا چاہیے"],["neem dit medicijn twee keer per dag","یہ دوا دن میں دو بار لیں"],["voor of na het eten?","کھانے سے پہلے یا بعد؟"],["haal het medicijn bij de apotheek","دوا دواخانے سے لیں"],["wanneer moet ik terugkomen?","مجھے دوبارہ کب آنا ہے؟"],["bel als het erger wordt","اگر حالت بگڑے تو فون کریں"],["ik begrijp de instructies","مجھے ہدایات سمجھ آ گئی ہیں"]],
+    cues: ["hoe lang bent u al ziek?","waar doet het pijn?","hoe vaak moet u dit nemen?"], variants: ["ملاقات لینا","علامت بتانا","دوا اور فالو اپ"], documents: ["Afspraakkaart","Medicijnetiket","Advies huisarts"]
+  }),
+  missionSpec({
+    level: "a2", id: "a2-mission-social-help", unit: "A2: سماجی مدد", title: "Gemeente en sociale hulp", description: "ملاقات کا خط، کاغذات، مدد کی درخواست، نامکمل معلومات، اور پیروی۔",
+    concepts: [["office","gemeente","بلدیہ کا دفتر","gemeente"],["form","formulier","فارم","formulier"],["letter","brief","خط","bericht"],["passport","paspoort","پاسپورٹ","paspoort"],["signature","handtekening","دستخط","handtekening"],["desk","loket","کاؤنٹر","loket"]],
+    phrases: [["ik heb een brief van de gemeente ontvangen","مجھے gemeente کا خط ملا ہے"],["ik wil weten welke hulp mogelijk is","میں جاننا چاہتا / چاہتی ہوں کون سی مدد ممکن ہے"],["welke documenten moet ik meenemen?","مجھے کون سے کاغذات ساتھ لانے ہیں؟"],["waarvoor heeft u ondersteuning nodig?","آپ کو کس کام کے لیے مدد چاہیے؟"],["ik heb hulp nodig met mijn administratie","مجھے اپنے کاغذی کام میں مدد چاہیے"],["dit formulier is nog niet compleet","یہ فارم ابھی مکمل نہیں ہے"],["mijn inkomensgegevens ontbreken","میری آمدنی کی معلومات موجود نہیں ہیں"],["kunt u uitleggen wat ik moet invullen?","کیا آپ سمجھا سکتے ہیں مجھے کیا بھرنا ہے؟"],["ik lever de documenten morgen aan","میں کاغذات کل جمع کراؤں گا / گی"],["wanneer hoor ik of de aanvraag is goedgekeurd?","مجھے کب معلوم ہو گا درخواست منظور ہوئی؟"],["u krijgt binnen twee weken bericht","آپ کو دو ہفتوں میں پیغام ملے گا"],["ik wil graag een ontvangstbevestiging","میں وصولی کی تصدیق چاہتا / چاہتی ہوں"]],
+    cues: ["welke documenten heeft u bij u?","waarvoor heeft u hulp nodig?","wanneer kunt u de informatie opsturen?"], variants: ["خط سمجھنا","درخواست مکمل کرنا","جواب کی پیروی"], documents: ["Brief gemeente","Aanvraagformulier","Ontvangstbevestiging"]
+  }),
+  missionSpec({
+    level: "a2", id: "a2-mission-job-start", unit: "A2: نوکری", title: "Werk zoeken en beginnen", description: "آسامی، فون، انٹرویو، دستیابی، معاہدہ، پہلا دن، اور حفاظت۔",
+    concepts: [["job","baan","نوکری","baan"],["contract","contract","معاہدہ","contract"],["schedule","rooster","اوقات","rooster"],["salary","salaris","تنخواہ","salaris"],["colleague","collega","ساتھی","collega"],["work","werk","کام","werk"]],
+    phrases: [["ik reageer op de vacature voor magazijnmedewerker","میں گودام کی آسامی کے لیے درخواست دے رہا / رہی ہوں"],["ik heb twee jaar ervaring","میرے پاس دو سال کا تجربہ ہے"],["ik ben vanaf volgende week beschikbaar","میں اگلے ہفتے سے دستیاب ہوں"],["waarom wilt u hier werken?","آپ یہاں کیوں کام کرنا چاہتے ہیں؟"],["omdat ik graag praktisch werk doe","کیونکہ مجھے عملی کام پسند ہے"],["hoeveel uur kan ik per week werken?","میں ہفتے میں کتنے گھنٹے کام کر سکتا / سکتی ہوں؟"],["lees het contract rustig door","معاہدہ آرام سے پڑھیں"],["mijn eerste werkdag is maandag","میرا پہلا کام کا دن پیر ہے"],["waar kan ik werkkleding krijgen?","مجھے کام کے کپڑے کہاں ملیں گے؟"],["draag altijd veiligheidsschoenen","ہمیشہ حفاظتی جوتے پہنیں"],["bij vragen ga ik naar mijn leidinggevende","سوال پر میں اپنے ذمہ دار کے پاس جاتا / جاتی ہوں"],["ik heb mijn eerste dag goed afgerond","میں نے پہلا دن اچھی طرح مکمل کیا"]],
+    cues: ["wanneer kunt u beginnen?","waarom wilt u hier werken?","hoeveel uur bent u beschikbaar?"], variants: ["آسامی پر فون","انٹرویو","پہلا کام کا دن"], documents: ["Vacature","Arbeidscontract","Veiligheidsinstructie"]
+  }),
+  missionSpec({
+    level: "a2", id: "a2-mission-utilities", unit: "A2: گھر کی سہولتیں", title: "Gas, water en internet", description: "میٹر، بل، بندش، کمپنی کو فون، مرمت کا وقت، غلط رقم، اور تصدیق۔",
+    concepts: [["meter","meterstand","میٹر کی ریڈنگ","formulier"],["bill","rekening","بل","bon"],["heating","verwarming","ہیٹنگ","verwarming"],["water","water","پانی","water"],["internet","internet","انٹرنیٹ","telefoon"],["repair","monteur","مرمت کرنے والا","reparatie"]],
+    phrases: [["ik moet de meterstand doorgeven","مجھے میٹر کی ریڈنگ دینی ہے"],["het bedrag op de rekening klopt niet","بل کی رقم درست نہیں ہے"],["sinds vanochtend hebben we geen warm water","آج صبح سے گرم پانی نہیں ہے"],["wat is uw klantnummer?","آپ کا گاہک نمبر کیا ہے؟"],["mijn klantnummer staat op de rekening","میرا گاہک نمبر بل پر ہے"],["kunt u controleren of er een storing is?","کیا آپ چیک کر سکتے ہیں کوئی بندش ہے؟"],["de monteur komt tussen twaalf en vier","مرمت کرنے والا بارہ سے چار کے درمیان آئے گا"],["ik ben dan thuis","میں اس وقت گھر پر ہوں گا / گی"],["mijn internet valt steeds uit","میرا انٹرنیٹ بار بار بند ہوتا ہے"],["ik wil de rekening laten corrigeren","میں بل درست کروانا چاہتا / چاہتی ہوں"],["stuur de bevestiging per e-mail","تصدیق ای میل سے بھیجیں"],["het probleem is nu opgelost","مسئلہ اب حل ہو گیا ہے"]],
+    cues: ["wat is uw klantnummer?","wat is precies het probleem?","wanneer bent u thuis?"], variants: ["میٹر اور بل","پانی یا ہیٹنگ بند","انٹرنیٹ کا مسئلہ"], documents: ["Meterkaart","Energierekening","Monteursafspraak"]
+  }),
+  missionSpec({
+    level: "a2", id: "a2-mission-lost-stolen", unit: "A2: گمشدہ یا چوری", title: "Verloren of gestolen", description: "گمشدہ چیز، کارڈ بند کرنا، پولیس رپورٹ، چیز کی تفصیل، نمبر، اور انشورنس۔",
+    concepts: [["card","pinpas","بینک کارڈ","pinpas"],["phone","telefoon","فون","telefoon"],["passport","paspoort","پاسپورٹ","paspoort"],["bag","tas","بیگ","bericht"],["police","politie","پولیس","gemeente"],["insurance","verzekering","انشورنس","verzekering"]],
+    phrases: [["ik ben mijn tas verloren","میرا بیگ گم ہو گیا ہے"],["mijn telefoon en pinpas zaten erin","اس میں میرا فون اور کارڈ تھے"],["ik wil mijn pinpas direct blokkeren","میں اپنا کارڈ فوراً بند کرنا چاہتا / چاہتی ہوں"],["waar heeft u de tas voor het laatst gezien?","آپ نے بیگ آخری بار کہاں دیکھا؟"],["in de trein naar Amsterdam","Amsterdam جانے والی ٹرین میں"],["de tas is zwart met een rode band","بیگ کالا ہے اور اس پر سرخ پٹی ہے"],["ik wil aangifte doen bij de politie","میں پولیس رپورٹ درج کروانا چاہتا / چاہتی ہوں"],["wanneer is het gebeurd?","یہ کب ہوا؟"],["gisteren rond zes uur","کل تقریباً چھ بجے"],["dit is uw registratienummer","یہ آپ کا رجسٹریشن نمبر ہے"],["ik stuur het nummer naar de verzekering","میں نمبر انشورنس کو بھیجوں گا / گی"],["bel mij als de tas is gevonden","بیگ ملے تو مجھے فون کریں"]],
+    cues: ["wat bent u verloren?","waar heeft u het voor het laatst gezien?","wanneer is het gebeurd?"], variants: ["ٹرین میں بیگ گم","کارڈ اور فون چوری","پولیس اور انشورنس"], documents: ["Melding verloren voorwerp","Aangifte","Verzekeringsbericht"]
+  })
+];
+
+const missionLessons = missionSpecs.map(makeMissionLesson);
+const missionById = new Map(missionLessons.map((lesson) => [lesson.id, lesson]));
+
+insertLessonAfter(a0Lessons, "a0-home-needs", missionById.get("a0-mission-home-start"));
+insertLessonAfter(a0Lessons, "a0-transport-directions", missionById.get("a0-mission-neighbourhood"));
+insertLessonAfter(a0Lessons, "a0-health-emergency", missionById.get("a0-mission-help"));
+insertLessonAfter(a1Lessons, "a1-plans-invitations", missionById.get("a1-mission-phone-internet"));
+insertLessonAfter(a1Lessons, "a1-work-school-messages", missionById.get("a1-mission-school-day"));
+insertLessonAfter(a1Lessons, "a1-public-transport", missionById.get("a1-mission-post-parcel"));
+insertLessonAfter(a1Lessons, "a1-home-neighbours", missionById.get("a1-mission-house-search"));
+insertLessonAfter(a1Lessons, "a1-health-pharmacy", missionById.get("a1-mission-doctor"));
+insertLessonAfter(a2Lessons, "a2-gemeente-documents", missionById.get("a2-mission-social-help"));
+insertLessonAfter(a2Lessons, "a2-work-conditions", missionById.get("a2-mission-job-start"));
+insertLessonAfter(a2Lessons, "a2-bills-banking", missionById.get("a2-mission-utilities"));
+insertLessonAfter(a2Lessons, "a2-formal-digital-messages", missionById.get("a2-mission-lost-stolen"));
+
 const a0Subchapters = [
   {
     id: "a0-start-speaking",
@@ -3242,14 +3504,14 @@ const a0Subchapters = [
     title: "جگہ اور حرکت",
     goal: "کہاں؟ کہاں جانا؟ in, op, onder, naar, met استعمال کرنا۔",
     practice: "جگہ والے الفاظ اور حرکت والے فعل کو چھوٹے فقروں میں لگائیں۔",
-    lessonIds: ["a0-place-1", "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs"]
+    lessonIds: ["a0-place-1", "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs", "a0-mission-home-start"]
   },
   {
     id: "a0-daily-life",
     title: "روزمرہ Nederlands",
     goal: "روزانہ کے کام، کھانا، خریداری، سفر، راستہ، اور صحت کے ضروری جملے۔",
     practice: "حقیقی حالات میں مختصر اور فوراً استعمال ہونے والے فقرے منتخب کریں۔",
-    lessonIds: ["a0-daily-actions", "a0-food-drink", "a0-shopping-payment", "a0-transport-directions", "a0-health-emergency"]
+    lessonIds: ["a0-daily-actions", "a0-food-drink", "a0-shopping-payment", "a0-transport-directions", "a0-mission-neighbourhood", "a0-health-emergency", "a0-mission-help"]
   },
   {
     id: "a0-school-work-safety",
@@ -3294,14 +3556,14 @@ const a1Subchapters = [
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-plans-invitations"]
+    lessonIds: ["a1-questions", "a1-plans-invitations", "a1-mission-phone-internet"]
   },
   {
     id: "a1-home-objects",
     title: "گھر اور چیزیں",
     goal: "گھر، کمرہ، فرنیچر، اور چیز کہاں ہے بتانا۔",
     practice: "het boek is in huis جیسے جگہ جملے۔",
-    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours"]
+    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours", "a1-mission-house-search"]
   },
   {
     id: "a1-food-shopping",
@@ -3315,21 +3577,21 @@ const a1Subchapters = [
     title: "باہر جانا اور سفر",
     goal: "station، bus، trein، ٹکٹ، کہیں جانا۔",
     practice: "ik ga naar het station جیسے حرکت جملے۔",
-    lessonIds: ["a1-shopping-transport", "a1-public-transport"]
+    lessonIds: ["a1-shopping-transport", "a1-public-transport", "a1-mission-post-parcel"]
   },
   {
     id: "a1-body-health",
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments", "a1-health-pharmacy"]
+    lessonIds: ["a1-health-appointments", "a1-health-pharmacy", "a1-mission-doctor"]
   },
   {
     id: "a1-work-school-messages",
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-work-school-messages"]
+    lessonIds: ["a1-work-school-messages", "a1-mission-school-day"]
   }
 ];
 
@@ -3353,14 +3615,14 @@ const a2Subchapters = [
     title: "Gemeente اور فارم",
     goal: "gemeente، BSN، afspraak، formulier، کاغذات سمجھنا۔",
     practice: "معلومات پوچھنا، فارم کی زبان، سرکاری ملاقات کا وقت۔",
-    lessonIds: ["a2-gemeente-official", "a2-gemeente-documents"]
+    lessonIds: ["a2-gemeente-official", "a2-gemeente-documents", "a2-mission-social-help"]
   },
   {
     id: "a2-work-school",
     title: "کام اور اسکول",
     goal: "کام/اسکول کے پیغام، غیر حاضری، collega/docent، وقتوں کی فہرست۔",
     practice: "mijn zoon kan vandaag niet komen جیسے پیغام۔",
-    lessonIds: ["a2-work-school", "a2-work-conditions", "a2-parent-school"]
+    lessonIds: ["a2-work-school", "a2-work-conditions", "a2-mission-job-start", "a2-parent-school"]
   },
   {
     id: "a2-health-doctor",
@@ -3388,14 +3650,14 @@ const a2Subchapters = [
     title: "بل اور بینک",
     goal: "غلط بل، ادائیگی کی تاریخ، قسط، خودکار ادائیگی، اور گمشدہ کارڈ سنبھالنا۔",
     practice: "رقم کی غلطی سمجھانا، قسط مانگنا، اور ادائیگی کا ثبوت دینا۔",
-    lessonIds: ["a2-bills-banking"]
+    lessonIds: ["a2-bills-banking", "a2-mission-utilities"]
   },
   {
     id: "a2-messages-emails",
     title: "چھوٹے پیغام",
     goal: "ادب والے/بے تکلف پیغام، دعوت، شکایت، ادب والا اختتام۔",
     practice: "beste..., met vriendelijke groet, kom je ook؟",
-    lessonIds: ["a2-writing-messages", "a2-formal-digital-messages"]
+    lessonIds: ["a2-writing-messages", "a2-formal-digital-messages", "a2-mission-lost-stolen"]
   }
 ];
 

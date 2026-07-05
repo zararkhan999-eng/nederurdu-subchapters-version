@@ -166,7 +166,7 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
     window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => lesson.id))
   ));
 
-  expect(lessonIds).toHaveLength(75);
+  expect(lessonIds).toHaveLength(87);
   for (const lessonId of lessonIds) {
     await page.evaluate((id) => window.startLesson(id), lessonId);
     await expect(page.locator(".quiz-screen"), lessonId).toBeVisible();
@@ -259,7 +259,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     const lessons = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons);
     const allowedTypes = new Set([
       "meaning", "reverse", "image-choice", "listen-choice",
-      "situation", "uitleg", "fill-gap", "build", "match-pairs"
+      "situation", "uitleg", "fill-gap", "build", "match-pairs",
+      "document-choice", "sequence", "short-input", "speak-repeat"
     ]);
     const ids = lessons.map((lesson) => lesson.id);
     const invalidAnswers = [];
@@ -312,8 +313,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
   });
 
   expect(audit).toEqual({
-    lessonCount: 75,
-    questionCount: 4500,
+    lessonCount: 87,
+    questionCount: 5220,
     duplicateIds: [],
     duplicateQuestionIds: [],
     invalidAnswers: [],
@@ -553,4 +554,136 @@ test("new A2 independent-living lessons have complete practical banks", async ({
     expect(lesson.missingVisualIds, lesson.id).toEqual([]);
     expect(lesson.missingAudio, lesson.id).toEqual([]);
   }
+});
+
+test("daily-life missions contain three ordered 20-step variants", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const missions = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).filter((lesson) => lesson.kind === "mission");
+    return missions.map((mission) => ({
+      id: mission.id,
+      variants: mission.variants.length,
+      lengths: mission.variants.map((variant) => variant.questions.length),
+      flatLength: mission.questions.length,
+      duplicateIds: mission.questions.length - new Set(mission.questions.map((question) => question.id)).size,
+      types: mission.variants.map((variant) => variant.questions.map((question) => question.type)),
+      missingSkills: mission.questions.filter((question) => !question.skillId).map((question) => question.id),
+      invalidTyped: mission.questions.filter((question) => question.type === "short-input" && (!question.optional || !question.fallbackTiles?.length || !question.acceptedAnswers?.length)).map((question) => question.id)
+    }));
+  });
+
+  expect(audit).toHaveLength(12);
+  for (const mission of audit) {
+    expect(mission.variants, mission.id).toBe(3);
+    expect(mission.lengths, mission.id).toEqual([20, 20, 20]);
+    expect(mission.flatLength, mission.id).toBe(60);
+    expect(mission.duplicateIds, mission.id).toBe(0);
+    expect(mission.missingSkills, mission.id).toEqual([]);
+    expect(mission.invalidTyped, mission.id).toEqual([]);
+    for (const types of mission.types) {
+      expect(types).toEqual([
+        "uitleg", "document-choice", "document-choice", "document-choice",
+        "listen-choice", "listen-choice", "listen-choice",
+        "situation", "situation", "situation",
+        "sequence", "sequence", "build", "build",
+        mission.id.startsWith("a0-") ? "image-choice" : "short-input",
+        mission.id.startsWith("a0-") ? "image-choice" : "short-input",
+        "speak-repeat", "speak-repeat", "situation", "situation"
+      ]);
+    }
+  }
+});
+
+test("mission replay rotates variants and typed normalization is forgiving", async ({ page }) => {
+  await openCleanApp(page);
+  const result = await page.evaluate(() => {
+    const mission = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).find((lesson) => lesson.id === "a1-mission-phone-internet");
+    const first = buildSessionQuestions(mission).map((question) => question.id);
+    saveProgress({ ...JSON.parse(localStorage.getItem("nederurdu-progress-v3") || "{}"), missionVariantRuns: { [mission.id]: 1 } });
+    const second = buildSessionQuestions(mission).map((question) => question.id);
+    return {
+      firstVariant: first.every((id) => id.includes("-v1-")),
+      secondVariant: second.every((id) => id.includes("-v2-")),
+      normalized: normalizeTypedAnswer("  IK   BEL U LATER!  "),
+      accepted: getAcceptedAnswers({ answer: "ik bel u later.", acceptedAnswers: ["ik bel u later"] })
+    };
+  });
+  expect(result.firstVariant).toBe(true);
+  expect(result.secondVariant).toBe(true);
+  expect(result.normalized).toBe("ik bel u later");
+  expect(result.accepted).toEqual(["ik bel u later", "ik bel u later"]);
+});
+
+test("mission starts with briefing then renders a readable document", async ({ page }) => {
+  await openCleanApp(page);
+  await page.evaluate(() => startLesson("a1-mission-phone-internet"));
+  await expect(page.locator(".teaching-card")).toBeVisible();
+  await page.locator('[data-action="continue-info"]').click();
+  await expect(page.locator(".practice-document")).toBeVisible();
+  await expect(page.locator(".practice-document")).toContainText("Datum");
+  await expect(page.locator('[data-action="check"]')).toBeDisabled();
+});
+
+test("optional mission typing converts to a working word bank", async ({ page }) => {
+  await openCleanApp(page);
+  await page.evaluate(() => {
+    startLesson("a1-mission-phone-internet");
+    while (getActiveQuestion().type !== "short-input") {
+      const question = getActiveQuestion();
+      if (isInfoQuestion(question)) {
+        continueInfoStep();
+      } else if (question.type === "build" || question.type === "sequence") {
+        const words = question.type === "sequence" ? question.answer.split(" | ") : question.answer.split(" ");
+        const used = new Set();
+        for (const word of words) {
+          const tile = getAnswerTiles(question).find((item) => item.word === word && !used.has(item.id));
+          used.add(tile.id);
+          selectBuildTile(tile.id);
+        }
+        checkAnswer();
+        nextQuestion();
+      } else {
+        chooseAnswer(question.answer);
+        checkAnswer();
+        nextQuestion();
+      }
+    }
+    enableInputFallback();
+  });
+  await expect(page.locator(".build-bank")).toBeVisible();
+  const result = await page.evaluate(() => {
+    const question = getActiveQuestion();
+    const used = new Set();
+    for (const word of question.answer.split(" ")) {
+      const tile = getAnswerTiles(question).find((item) => item.word === word && !used.has(item.id));
+      used.add(tile.id);
+      selectBuildTile(tile.id);
+    }
+    checkAnswer();
+    return document.querySelector(".quiz-feedback-panel")?.className || "";
+  });
+  expect(result).toContain("correct");
+});
+
+test("speaking self-check is unscored and alternate skill review changes the prompt", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const mission = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).find((lesson) => lesson.id === "a1-mission-doctor");
+    const speaking = mission.questions.find((question) => question.type === "speak-repeat");
+    const source = mission.questions.find((question) => question.skillId === speaking.skillId && !isInfoQuestion(question));
+    saveProgress({
+      ...JSON.parse(localStorage.getItem("nederurdu-progress-v3") || "{}"),
+      mistakes: [{ lessonId: mission.id, questionId: source.id, skillId: source.skillId, prompt: source.prompt, answer: source.answer }]
+    });
+    const replacement = getMistakeReviewQuestions()[0];
+    return {
+      speakingIsInfo: isInfoQuestion(speaking),
+      replacementId: replacement.id,
+      sourceId: source.id,
+      sameSkill: replacement.skillId === source.skillId
+    };
+  });
+  expect(audit.speakingIsInfo).toBe(true);
+  expect(audit.replacementId).not.toBe(audit.sourceId);
+  expect(audit.sameSkill).toBe(true);
 });

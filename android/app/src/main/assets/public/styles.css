@@ -164,6 +164,116 @@ button {
   }
 }
 
+.practice-document {
+  width: min(100%, 430px);
+  margin: 0 auto 18px;
+  padding: 18px;
+  direction: ltr;
+  color: #263238;
+  background: #fff;
+  border: 1px solid #d9e1e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(35, 54, 64, 0.1);
+  text-align: left;
+}
+
+.practice-document > strong {
+  display: block;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #58cc02;
+  font-size: 1.05rem;
+}
+
+.practice-document > div {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.35fr) 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf1f3;
+}
+
+.practice-document span {
+  color: #6b7c84;
+  font-size: 0.8rem;
+}
+
+.document-prompt,
+.short-input-question > p,
+.sequence-question > p,
+.speak-repeat-question > p {
+  margin: 0 0 18px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.short-answer-input {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  padding: 12px 16px;
+  color: #24333a;
+  background: #fff;
+  border: 2px solid #cbd6db;
+  border-radius: 8px;
+  outline: none;
+  font: 700 1.05rem/1.4 inherit;
+  text-align: left;
+}
+
+.short-answer-input:focus {
+  border-color: #1cb0f6;
+  box-shadow: 0 0 0 4px rgba(28, 176, 246, 0.14);
+}
+
+.input-fallback {
+  display: block;
+  margin: 14px auto 0;
+  padding: 10px 14px;
+  color: #1687b8;
+  background: transparent;
+  border: 0;
+  font: 800 0.95rem/1.4 inherit;
+}
+
+.speak-repeat-question {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.speak-repeat-question > strong {
+  display: block;
+  max-width: 520px;
+  font-size: clamp(1.45rem, 6vw, 2.2rem);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.sequence-question .build-answer {
+  min-height: 150px;
+  align-content: flex-start;
+}
+
+.sequence-question .word-tile {
+  width: 100%;
+  min-height: 48px;
+  white-space: normal;
+}
+
+@media (max-width: 360px) {
+  .practice-document {
+    padding: 14px;
+  }
+
+  .practice-document > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
 .topbar {
   display: flex;
   align-items: center;

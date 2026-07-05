@@ -29,6 +29,9 @@ Then open this folder in Android Studio and build the `app` module. See `docs/mo
 ## Version 1 Scope
 
 - Subchapter course map for A0, A1, and A2 with daily-life goals, practice examples, and lesson groups
+- Twelve daily-life mission lessons with three ordered 20-step variants each
+- Realistic document reading, step sequencing, optional short Dutch input, and listen-repeat self-checks
+- Mission replay rotation and skill-based alternate mistake practice
 - Urdu-first A0 chapter for letters, basic words, tiny grammar pieces, and first sentences
 - A1 chapter ordered into simple daily communication
 - A2 chapter with practical daily-life and inburgering-style lessons
