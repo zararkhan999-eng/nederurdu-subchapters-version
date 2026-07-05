@@ -166,7 +166,7 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
     window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => lesson.id))
   ));
 
-  expect(lessonIds).toHaveLength(67);
+  expect(lessonIds).toHaveLength(75);
   for (const lessonId of lessonIds) {
     await page.evaluate((id) => window.startLesson(id), lessonId);
     await expect(page.locator(".quiz-screen"), lessonId).toBeVisible();
@@ -312,8 +312,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
   });
 
   expect(audit).toEqual({
-    lessonCount: 67,
-    questionCount: 4020,
+    lessonCount: 75,
+    questionCount: 4500,
     duplicateIds: [],
     duplicateQuestionIds: [],
     invalidAnswers: [],
@@ -511,4 +511,46 @@ test("repeating a lesson prioritizes unseen questions", async ({ page }) => {
   }, lessonId);
   const repeatedPractice = secondRun.filter((id) => firstRun.includes(id) && !id.includes("-uitleg-"));
   expect(repeatedPractice).toEqual([]);
+});
+
+test("new A2 independent-living lessons have complete practical banks", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const a2 = window.NEDERURDU_CHAPTERS.find((chapter) => chapter.id === "a2");
+    const ids = [
+      "a2-gemeente-documents", "a2-work-conditions", "a2-parent-school", "a2-landlord-repairs",
+      "a2-doctor-advice", "a2-bills-banking", "a2-customer-complaints", "a2-formal-digital-messages"
+    ];
+    const pathIds = a2.subchapters.flatMap((subchapter) => subchapter.lessonIds);
+    return {
+      count: a2.lessons.length,
+      duplicatedPathLessons: pathIds.filter((id, index) => pathIds.indexOf(id) !== index),
+      lessons: ids.map((id) => {
+        const lesson = a2.lessons.find((item) => item.id === id);
+        const mix = lesson.questions.reduce((counts, question) => {
+          counts[question.type] = (counts[question.type] || 0) + 1;
+          return counts;
+        }, {});
+        return {
+          id,
+          mix,
+          replies: lesson.questions.filter((question) => question.mode === "listen-reply").length,
+          missingVisualIds: lesson.questions.filter((question) => question.type === "image-choice" && !question.visualId).map((question) => question.id),
+          missingAudio: lesson.questions.filter((question) => question.type === "listen-choice" && !question.speak).map((question) => question.id)
+        };
+      })
+    };
+  });
+
+  expect(audit.count).toBe(18);
+  expect(audit.duplicatedPathLessons).toEqual([]);
+  for (const lesson of audit.lessons) {
+    expect(lesson.mix, lesson.id).toEqual({
+      uitleg: 1, meaning: 6, reverse: 5, "image-choice": 6,
+      "listen-choice": 7, "fill-gap": 12, situation: 15, build: 8
+    });
+    expect(lesson.replies, lesson.id).toBe(3);
+    expect(lesson.missingVisualIds, lesson.id).toEqual([]);
+    expect(lesson.missingAudio, lesson.id).toEqual([]);
+  }
 });

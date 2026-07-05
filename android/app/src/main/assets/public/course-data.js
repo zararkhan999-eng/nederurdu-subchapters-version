@@ -2205,6 +2205,52 @@ const a1Phrase = (id, dutch, urdu, context, speak = "") => ({
   speak
 });
 
+function makeA2PracticalLesson({ id, unit, title, description, explanation, concepts, listenReplies, builds }) {
+  const visualConcepts = concepts.filter((concept) => concept.visualId && concept.role !== "phrase");
+  const phraseConcepts = concepts.filter((concept) => concept.role === "phrase");
+  const questions = [uitleg(explanation.title, explanation.points, explanation.note)];
+
+  for (let index = 0; index < 6; index += 1) {
+    const concept = concepts[index % concepts.length];
+    questions.push(meaning(concept.dutch, dailyOptions(concepts, index, "urdu"), concept.urdu, `${concept.dutch} = ${concept.urdu}۔`));
+  }
+  for (let index = 0; index < 5; index += 1) {
+    const concept = concepts[(index + 1) % concepts.length];
+    questions.push(reverse(concept.urdu, dailyOptions(concepts, index + 1, "dutch"), concept.dutch, `${concept.urdu} = ${concept.dutch}۔`));
+  }
+  for (let index = 0; index < 6; index += 1) {
+    const concept = visualConcepts[index % visualConcepts.length];
+    questions.push({ type: "image-choice", label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں", prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔", visualId: concept.visualId, options: dailyOptions(visualConcepts, index, "dutch"), answer: concept.dutch, explain: `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔` });
+  }
+  for (let index = 0; index < 7; index += 1) {
+    const concept = concepts[(index + 1) % concepts.length];
+    questions.push({ ...listenChoice(concept.audio, dailyOptions(concepts, index + 1, "urdu"), concept.urdu, `${concept.dutch} = ${concept.urdu}۔`), conceptId: concept.id });
+  }
+  const listeningIndexes = questions.map((question, index) => question.type === "listen-choice" ? index : -1).filter((index) => index >= 0);
+  listenReplies.slice(0, listeningIndexes.length).forEach((reply, index) => {
+    const [speak, options, answer, explain] = reply;
+    questions[listeningIndexes[index]] = { ...listenChoice(speak, options, answer, explain), prompt: "بات سنیں اور مناسب جواب منتخب کریں۔", mode: "listen-reply" };
+  });
+
+  const fillWords = uniq(phraseConcepts.flatMap((concept) => concept.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+  for (let index = 0; index < 12; index += 1) {
+    const concept = phraseConcepts[index % phraseConcepts.length];
+    const gap = missingWordSentence(concept.dutch);
+    questions.push(fillGap(gap.prompt, [gap.missing, ...rotate(fillWords.filter((word) => word !== gap.missing), index + 3).slice(0, 2)], gap.missing, `صحیح مکمل فقرہ: ${concept.dutch}۔`));
+  }
+  questions.push(...phraseConcepts.slice(0, 15).map((concept, index) => dailySituation([
+    concept.context || `حال: ${concept.urdu}`,
+    dailyOptions(phraseConcepts, index, "dutch"),
+    concept.dutch,
+    `اس حال میں کہیں: ${concept.dutch}۔`,
+    concept.speak ? { mode: "dialogue", speak: concept.speak } : {}
+  ])));
+  questions.push(...builds.map(dailyBuild));
+  return { id, unit, title, description, xp: 0, concepts, questions };
+}
+
+const a2Phrase = (id, dutch, urdu, context, speak = "") => ({ ...a1Phrase(id, dutch, urdu, context, speak) });
+
 a0DailyLessons.push(
   makeA0DailyLesson({
     id: "a0-spelling-personal-details",
@@ -2834,6 +2880,73 @@ a1Lessons.push(
   })
 );
 
+a2Lessons.push(
+  makeA2PracticalLesson({
+    id: "a2-gemeente-documents", unit: "A2: Gemeente اور کاغذات", title: "Bij de gemeente", description: "ملاقات، دستاویز، درخواست، تبدیلی، اور سرکاری وضاحت سمجھنا۔",
+    explanation: practicalExplanation("سرکاری کام میں مقصد اور مطلوبہ کاغذ صاف بتائیں", ["aanvragen درخواست دینا اور wijzigen معلومات بدلنا ہے۔", "اصل کاغذ اور kopie میں فرق سمجھیں۔", "اگر بات واضح نہ ہو تو پوچھیں کہ کون سا کاغذ اور کب چاہیے۔"]),
+    concepts: [dailyConcept("gov-office","gemeente","بلدیہ کا دفتر","gemeente"),dailyConcept("gov-form","formulier","فارم","formulier"),dailyConcept("gov-passport","paspoort","پاسپورٹ","paspoort"),dailyConcept("gov-signature","handtekening","دستخط","handtekening"),dailyConcept("gov-number","BSN","شہری نمبر","bsn"),dailyConcept("gov-desk","loket","دفتر کا کاؤنٹر","loket"),
+      a2Phrase("gov-p1","ik wil een afspraak maken","میں ملاقات کا وقت طے کرنا چاہتا / چاہتی ہوں","حال: gemeente میں ملاقات لینی ہے۔"),a2Phrase("gov-p2","ik wil mijn adres wijzigen","میں اپنا پتہ بدلنا چاہتا / چاہتی ہوں","حال: نئے پتے کی اطلاع دینی ہے۔"),a2Phrase("gov-p3","welke documenten heb ik nodig?","مجھے کون سے کاغذات چاہیے؟","حال: مطلوبہ کاغذات پوچھنے ہیں۔"),a2Phrase("gov-p4","u moet uw paspoort meenemen","آپ کو پاسپورٹ ساتھ لانا ہے","حال: دفتر کی ہدایت سمجھنی ہے۔"),a2Phrase("gov-p5","is een kopie voldoende?","کیا نقل کافی ہے؟","حال: اصل کے بجائے نقل کے بارے میں پوچھنا ہے۔"),a2Phrase("gov-p6","waar moet ik tekenen?","مجھے کہاں دستخط کرنے ہیں؟","حال: دستخط کی جگہ پوچھنی ہے۔"),a2Phrase("gov-p7","ik begrijp deze vraag niet","مجھے یہ سوال سمجھ نہیں آیا","حال: فارم کا سوال سمجھ نہ آنے کی بات بتانی ہے۔"),a2Phrase("gov-p8","kunt u dit uitleggen?","کیا آپ یہ سمجھا سکتے ہیں؟","حال: وضاحت مانگنی ہے۔"),a2Phrase("gov-p9","het formulier is nog niet compleet","فارم ابھی مکمل نہیں ہے","حال: نامکمل فارم کی اطلاع سمجھنی ہے۔"),a2Phrase("gov-p10","ik heb mijn BSN niet bij me","میرا BSN ابھی میرے پاس نہیں ہے","حال: شہری نمبر ساتھ نہ ہونے کی بات بتانی ہے۔"),a2Phrase("gov-p11","wanneer krijg ik antwoord?","مجھے جواب کب ملے گا؟","حال: فیصلے کا وقت پوچھنا ہے۔"),a2Phrase("gov-p12","u ontvangt een brief binnen twee weken","آپ کو دو ہفتوں کے اندر خط ملے گا","حال: جواب کی مدت سمجھنی ہے۔"),a2Phrase("gov-p13","kan ik de aanvraag online doen?","کیا میں درخواست آن لائن دے سکتا / سکتی ہوں؟","حال: آن لائن درخواست پوچھنی ہے۔"),a2Phrase("gov-p14","mijn gegevens zijn niet correct","میری معلومات درست نہیں ہیں","حال: معلومات میں غلطی بتانی ہے۔"),a2Phrase("gov-p15","ik wil deze fout laten herstellen","میں یہ غلطی درست کروانا چاہتا / چاہتی ہوں","حال: سرکاری غلطی درست کروانی ہے۔")],
+    listenReplies: [["waarvoor komt u?",["ik wil mijn adres wijzigen","ik heb twee weken","het loket is dicht"],"ik wil mijn adres wijzigen","اپنے آنے کا مقصد بتائیں۔"],["heeft u uw paspoort bij u?",["ja hier is mijn paspoort","ik wil online aanvragen","de brief komt later"],"ja hier is mijn paspoort","کاغذ پیش کریں۔"],["wanneer krijg ik antwoord?",["binnen twee weken","bij loket drie","met mijn BSN"],"binnen twee weken","مدت کا جواب دیں۔"]],
+    builds: [["میں اپنا پتہ بدلنا چاہتا / چاہتی ہوں",["ik","wil","mijn","adres","wijzigen"],"ik wil mijn adres wijzigen","پتے کی تبدیلی۔"],["مجھے کون سے کاغذات چاہیے؟",["welke","documenten","heb","ik","nodig"],"welke documenten heb ik nodig","کاغذات کا سوال۔"],["کیا نقل کافی ہے؟",["is","een","kopie","voldoende"],"is een kopie voldoende","نقل کا سوال۔"],["مجھے کہاں دستخط کرنے ہیں؟",["waar","moet","ik","tekenen"],"waar moet ik tekenen","دستخط کی جگہ۔"],["کیا آپ یہ سمجھا سکتے ہیں؟",["kunt","u","dit","uitleggen"],"kunt u dit uitleggen","وضاحت کی درخواست۔"],["فارم مکمل نہیں ہے",["het","formulier","is","niet","compleet"],"het formulier is niet compleet","فارم کی حالت۔"],["مجھے جواب کب ملے گا؟",["wanneer","krijg","ik","antwoord"],"wanneer krijg ik antwoord","جواب کا وقت۔"],["میری معلومات درست نہیں ہیں",["mijn","gegevens","zijn","niet","correct"],"mijn gegevens zijn niet correct","غلط معلومات۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-work-conditions", unit: "A2: کام کی شرطیں", title: "Op het werk", description: "معاہدہ، اوقات، تنخواہ، چھٹی، بیماری، اور ذمہ دار سے گفتگو۔",
+    explanation: practicalExplanation("کام کا مسئلہ مثال اور وقت کے ساتھ بتائیں", ["contract کام کی شرطیں لکھتا ہے۔", "loonstrook تنخواہ کی تفصیل ہے۔", "ziek melden بیماری کی باقاعدہ اطلاع دینا ہے۔"]),
+    concepts: [dailyConcept("job-work","werk","کام","werk"),dailyConcept("job-contract","contract","معاہدہ","contract"),dailyConcept("job-salary","salaris","تنخواہ","salaris"),dailyConcept("job-schedule","rooster","اوقات کی فہرست","rooster"),dailyConcept("job-colleague","collega","کام کا ساتھی","collega"),dailyConcept("job-vacancy","baan","نوکری","baan"),
+      a2Phrase("job-p1","mijn rooster is veranderd","میرے کام کے اوقات بدل گئے ہیں","حال: نئے اوقات کے بارے میں بات کرنی ہے۔"),a2Phrase("job-p2","ik kan op dinsdag niet werken","میں منگل کو کام نہیں کر سکتا / سکتی","حال: ایک دن دستیاب نہ ہونے کی بات بتانی ہے۔"),a2Phrase("job-p3","kan ik een vrije dag aanvragen?","کیا میں چھٹی کی درخواست دے سکتا / سکتی ہوں؟","حال: چھٹی مانگنی ہے۔"),a2Phrase("job-p4","ik wil mijn contract bespreken","میں اپنے معاہدے پر بات کرنا چاہتا / چاہتی ہوں","حال: معاہدے کی بات کرنی ہے۔"),a2Phrase("job-p5","hoeveel uur werk ik per week?","میں ہفتے میں کتنے گھنٹے کام کرتا / کرتی ہوں؟","حال: ہفتہ وار گھنٹے پوچھنے ہیں۔"),a2Phrase("job-p6","mijn salaris klopt niet","میری تنخواہ درست نہیں ہے","حال: تنخواہ میں غلطی بتانی ہے۔"),a2Phrase("job-p7","kunt u mijn loonstrook uitleggen?","کیا آپ میری تنخواہ کی پرچی سمجھا سکتے ہیں؟","حال: تنخواہ کی تفصیل سمجھنی ہے۔"),a2Phrase("job-p8","ik moet mij ziek melden","مجھے بیماری کی اطلاع دینی ہے","حال: بیماری کی باقاعدہ اطلاع دینی ہے۔"),a2Phrase("job-p9","ik verwacht morgen weer te werken","امید ہے میں کل دوبارہ کام کروں گا / گی","حال: واپسی کا اندازہ بتانا ہے۔"),a2Phrase("job-p10","wie neemt mijn dienst over?","میری ڈیوٹی کون کرے گا؟","حال: متبادل ساتھی پوچھنا ہے۔"),a2Phrase("job-p11","ik heb hulp nodig bij deze taak","مجھے اس کام میں مدد چاہیے","حال: کام میں مدد مانگنی ہے۔"),a2Phrase("job-p12","kunt u laten zien hoe dit werkt?","کیا آپ دکھا سکتے ہیں یہ کیسے کام کرتا ہے؟","حال: کام سمجھنے کے لیے نمونہ مانگنا ہے۔"),a2Phrase("job-p13","ik ben het niet eens met deze afspraak","میں اس بات سے متفق نہیں ہوں","حال: کام کی شرط پر اختلاف بتانا ہے۔"),a2Phrase("job-p14","kunnen we hierover praten?","کیا ہم اس بارے میں بات کر سکتے ہیں؟","حال: مسئلے پر گفتگو مانگنی ہے۔"),a2Phrase("job-p15","ik stuur de bevestiging per e-mail","میں تصدیق ای میل سے بھیجوں گا / گی","حال: تحریری تصدیق کا وعدہ کرنا ہے۔")],
+    listenReplies: [["wat is er mis met uw salaris?",["het bedrag klopt niet","ik werk op dinsdag","mijn collega helpt"],"het bedrag klopt niet","تنخواہ کا مسئلہ بتائیں۔"],["wanneer kunt u weer werken?",["waarschijnlijk morgen","twintig uur per week","met mijn collega"],"waarschijnlijk morgen","واپسی کا اندازہ دیں۔"],["wilt u dit per e-mail bevestigen?",["ja dat doe ik vandaag","nee mijn rooster klopt","ik heb vrije dag"],"ja dat doe ik vandaag","تحریری تصدیق قبول کریں۔"]],
+    builds: [["میرے اوقات بدل گئے ہیں",["mijn","rooster","is","veranderd"],"mijn rooster is veranderd","اوقات کی تبدیلی۔"],["میں منگل کو کام نہیں کر سکتا / سکتی",["ik","kan","op","dinsdag","niet","werken"],"ik kan op dinsdag niet werken","دستیابی۔"],["کیا میں چھٹی مانگ سکتا / سکتی ہوں؟",["kan","ik","een","vrije","dag","aanvragen"],"kan ik een vrije dag aanvragen","چھٹی کی درخواست۔"],["میری تنخواہ درست نہیں ہے",["mijn","salaris","klopt","niet"],"mijn salaris klopt niet","تنخواہ کا مسئلہ۔"],["مجھے اس کام میں مدد چاہیے",["ik","heb","hulp","nodig","bij","deze","taak"],"ik heb hulp nodig bij deze taak","مدد کی درخواست۔"],["میری ڈیوٹی کون کرے گا؟",["wie","neemt","mijn","dienst","over"],"wie neemt mijn dienst over","متبادل پوچھیں۔"],["کیا ہم اس پر بات کر سکتے ہیں؟",["kunnen","we","hierover","praten"],"kunnen we hierover praten","گفتگو کی درخواست۔"],["میں ای میل سے تصدیق بھیجوں گا / گی",["ik","stuur","de","bevestiging","per","e-mail"],"ik stuur de bevestiging per e-mail","تحریری تصدیق۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-parent-school", unit: "A2: والدین اور اسکول", title: "Gesprek op school", description: "استاد سے بچے کی پیش رفت، غیر حاضری، مدد، اور ملاقات پر بات کرنا۔",
+    explanation: practicalExplanation("بچے کے بارے میں مشاہدہ اور سوال دونوں دیں", ["rapport پیش رفت کی تحریری رپورٹ ہے۔", "moeite hebben met کسی چیز میں مشکل ہونا ہے۔", "extra hulp اضافی مدد ہے۔"]),
+    concepts: [dailyConcept("school-building","school","اسکول","school"),dailyConcept("school-teacher","docent","استاد","docent"),dailyConcept("school-homework","huiswerk","گھر کا کام","huiswerk"),dailyConcept("school-report","rapport","رپورٹ","bericht"),dailyConcept("school-schedule","rooster","اوقات کی فہرست","rooster"),dailyConcept("school-child","kind","بچہ","kind"),
+      a2Phrase("school2-p1","ik wil graag met de docent praten","میں استاد سے بات کرنا چاہتا / چاہتی ہوں","حال: استاد سے ملاقات مانگنی ہے۔"),a2Phrase("school2-p2","hoe gaat het met mijn kind in de klas?","میرا بچہ جماعت میں کیسا کر رہا ہے؟","حال: بچے کی پیش رفت پوچھنی ہے۔"),a2Phrase("school2-p3","mijn kind heeft moeite met lezen","میرے بچے کو پڑھنے میں مشکل ہے","حال: پڑھنے کی مشکل بتانی ہے۔"),a2Phrase("school2-p4","kan mijn kind extra hulp krijgen?","کیا میرے بچے کو اضافی مدد مل سکتی ہے؟","حال: اضافی مدد مانگنی ہے۔"),a2Phrase("school2-p5","wat kunnen we thuis oefenen?","ہم گھر پر کیا مشق کر سکتے ہیں؟","حال: گھر کی مشق پوچھنی ہے۔"),a2Phrase("school2-p6","het huiswerk is niet duidelijk","گھر کا کام واضح نہیں ہے","حال: گھر کا کام سمجھ نہ آنے کی بات بتانی ہے۔"),a2Phrase("school2-p7","mijn kind was gisteren afwezig","میرا بچہ کل غیر حاضر تھا","حال: پچھلی غیر حاضری بتانی ہے۔"),a2Phrase("school2-p8","hij had koorts en moest thuisblijven","اسے بخار تھا اور گھر رہنا پڑا","حال: غیر حاضری کی وجہ بتانی ہے۔"),a2Phrase("school2-p9","wanneer is het oudergesprek?","والدین کی ملاقات کب ہے؟","حال: والدین کی ملاقات کا وقت پوچھنا ہے۔"),a2Phrase("school2-p10","ik kan op dat tijdstip niet komen","میں اس وقت نہیں آ سکتا / سکتی","حال: تجویز کردہ وقت پر نہ آ سکنے کی بات بتانی ہے۔"),a2Phrase("school2-p11","is een ander tijdstip mogelijk?","کیا کوئی دوسرا وقت ممکن ہے؟","حال: دوسرا وقت مانگنا ہے۔"),a2Phrase("school2-p12","kunt u het rapport uitleggen?","کیا آپ رپورٹ سمجھا سکتے ہیں؟","حال: رپورٹ کی وضاحت مانگنی ہے۔"),a2Phrase("school2-p13","mijn kind voelt zich niet veilig","میرا بچہ خود کو محفوظ محسوس نہیں کرتا","حال: حفاظت کی تشویش بتانی ہے۔"),a2Phrase("school2-p14","met wie kan ik dit bespreken?","میں اس بارے میں کس سے بات کر سکتا / سکتی ہوں؟","حال: صحیح ذمہ دار پوچھنا ہے۔"),a2Phrase("school2-p15","we maken samen een plan","ہم مل کر منصوبہ بناتے ہیں","حال: مشترک اگلا قدم طے کرنا ہے۔")],
+    listenReplies: [["waar heeft uw kind moeite mee?",["met lezen","sinds gisteren","om drie uur"],"met lezen","مشکل کا شعبہ بتائیں۔"],["wat kunnen jullie thuis doen?",["elke dag samen lezen","een ander tijdstip","het rapport meenemen"],"elke dag samen lezen","گھر کی مشق بتائیں۔"],["kunt u dinsdag komen?",["nee is woensdag mogelijk","mijn kind leest thuis","het rapport is duidelijk"],"nee is woensdag mogelijk","دوسرا وقت مانگیں۔"]],
+    builds: [["میں استاد سے بات کرنا چاہتا / چاہتی ہوں",["ik","wil","graag","met","de","docent","praten"],"ik wil graag met de docent praten","ملاقات کی درخواست۔"],["میرے بچے کو پڑھنے میں مشکل ہے",["mijn","kind","heeft","moeite","met","lezen"],"mijn kind heeft moeite met lezen","مشکل بتائیں۔"],["کیا اضافی مدد مل سکتی ہے؟",["kan","mijn","kind","extra","hulp","krijgen"],"kan mijn kind extra hulp krijgen","مدد کی درخواست۔"],["ہم گھر پر کیا مشق کریں؟",["wat","kunnen","we","thuis","oefenen"],"wat kunnen we thuis oefenen","گھر کی مشق۔"],["میرا بچہ کل غیر حاضر تھا",["mijn","kind","was","gisteren","afwezig"],"mijn kind was gisteren afwezig","پچھلی غیر حاضری۔"],["کیا دوسرا وقت ممکن ہے؟",["is","een","ander","tijdstip","mogelijk"],"is een ander tijdstip mogelijk","وقت بدلیں۔"],["میرا بچہ محفوظ محسوس نہیں کرتا",["mijn","kind","voelt","zich","niet","veilig"],"mijn kind voelt zich niet veilig","تشویش بتائیں۔"],["ہم مل کر منصوبہ بناتے ہیں",["we","maken","samen","een","plan"],"we maken samen een plan","اگلا قدم۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-landlord-repairs", unit: "A2: گھر اور مالک مکان", title: "Reparatie melden", description: "رساؤ، ہیٹنگ، پھپھوندی، مرمت، مالک مکان، اور تحریری ثبوت۔",
+    explanation: practicalExplanation("گھر کی شکایت میں جگہ، مدت، اور اثر بتائیں", ["lekkage پانی کا رساؤ ہے۔", "schimmel پھپھوندی ہے اور صحت کے لیے مسئلہ ہو سکتی ہے۔", "تحریری پیغام اور تصویر شکایت کا ثبوت بن سکتے ہیں۔"]),
+    concepts: [dailyConcept("repair-home","huis","گھر","huis"),dailyConcept("repair-heating","verwarming","ہیٹنگ","verwarming"),dailyConcept("repair-leak","lekkage","پانی کا رساؤ","lekkage"),dailyConcept("repair-work","reparatie","مرمت","reparatie"),dailyConcept("repair-room","kamer","کمرہ","kamer"),dailyConcept("repair-message","bericht","پیغام","bericht"),
+      a2Phrase("repair-p1","er is een lekkage in de keuken","باورچی خانے میں پانی رس رہا ہے","حال: رساؤ کی جگہ بتانی ہے۔"),a2Phrase("repair-p2","de verwarming werkt al drie dagen niet","ہیٹنگ تین دن سے کام نہیں کر رہی","حال: خرابی کی مدت بتانی ہے۔"),a2Phrase("repair-p3","er zit schimmel op de muur","دیوار پر پھپھوندی ہے","حال: دیوار کا مسئلہ بتانا ہے۔"),a2Phrase("repair-p4","het probleem wordt steeds erger","مسئلہ مسلسل بڑھ رہا ہے","حال: مسئلہ سنگین ہونے کی بات بتانی ہے۔"),a2Phrase("repair-p5","ik heb dit vorige week gemeld","میں نے پچھلے ہفتے اطلاع دی تھی","حال: پچھلی شکایت یاد دلانی ہے۔"),a2Phrase("repair-p6","wanneer wordt het gerepareerd?","یہ کب مرمت ہو گا؟","حال: مرمت کا وقت پوچھنا ہے۔"),a2Phrase("repair-p7","kunt u vandaag iemand sturen?","کیا آپ آج کسی کو بھیج سکتے ہیں؟","حال: فوری مرمت مانگنی ہے۔"),a2Phrase("repair-p8","ik ben morgen tussen negen en twaalf thuis","میں کل نو سے بارہ بجے گھر پر ہوں","حال: مرمت کے لیے دستیابی بتانی ہے۔"),a2Phrase("repair-p9","de monteur is niet gekomen","مرمت کرنے والا نہیں آیا","حال: نہ آنے کی شکایت کرنی ہے۔"),a2Phrase("repair-p10","ik wil een nieuwe afspraak maken","میں نیا وقت طے کرنا چاہتا / چاہتی ہوں","حال: مرمت کا نیا وقت لینا ہے۔"),a2Phrase("repair-p11","kunt u dit schriftelijk bevestigen?","کیا آپ تحریری تصدیق کر سکتے ہیں؟","حال: تحریری ثبوت مانگنا ہے۔"),a2Phrase("repair-p12","ik stuur foto's van de schade","میں نقصان کی تصاویر بھیجتا / بھیجتی ہوں","حال: ثبوت بھیجنے کی بات بتانی ہے۔"),a2Phrase("repair-p13","door de lekkage kan ik de keuken niet gebruiken","رساؤ کی وجہ سے باورچی خانہ استعمال نہیں ہو سکتا","حال: مسئلے کا اثر بتانا ہے۔"),a2Phrase("repair-p14","wie betaalt de reparatie?","مرمت کے پیسے کون دے گا؟","حال: خرچ کی ذمہ داری پوچھنی ہے۔"),a2Phrase("repair-p15","ik wacht graag op uw reactie","میں آپ کے جواب کا انتظار کروں گا / گی","حال: رسمی شکایت ختم کرنی ہے۔")],
+    listenReplies: [["waar is de lekkage?",["in de keuken","al drie dagen","tussen negen en twaalf"],"in de keuken","جگہ بتائیں۔"],["wanneer bent u thuis?",["morgen tussen negen en twaalf","vorige week gemeld","door de lekkage"],"morgen tussen negen en twaalf","دستیابی دیں۔"],["heeft u foto's?",["ja ik stuur ze per e-mail","de monteur komt niet","ik wil reparatie"],"ja ik stuur ze per e-mail","ثبوت بھیجنے کا جواب۔"]],
+    builds: [["باورچی خانے میں رساؤ ہے",["er","is","een","lekkage","in","de","keuken"],"er is een lekkage in de keuken","جگہ اور مسئلہ۔"],["ہیٹنگ تین دن سے خراب ہے",["de","verwarming","werkt","al","drie","dagen","niet"],"de verwarming werkt al drie dagen niet","مدت۔"],["مسئلہ بڑھ رہا ہے",["het","probleem","wordt","steeds","erger"],"het probleem wordt steeds erger","سنگینی۔"],["یہ کب مرمت ہو گا؟",["wanneer","wordt","het","gerepareerd"],"wanneer wordt het gerepareerd","مرمت کا وقت۔"],["مرمت کرنے والا نہیں آیا",["de","monteur","is","niet","gekomen"],"de monteur is niet gekomen","شکایت۔"],["کیا آپ تحریری تصدیق کر سکتے ہیں؟",["kunt","u","dit","schriftelijk","bevestigen"],"kunt u dit schriftelijk bevestigen","ثبوت۔"],["میں نقصان کی تصاویر بھیجتا / بھیجتی ہوں",["ik","stuur","foto's","van","de","schade"],"ik stuur foto's van de schade","تصاویر۔"],["مرمت کے پیسے کون دے گا؟",["wie","betaalt","de","reparatie"],"wie betaalt de reparatie","ذمہ داری۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-doctor-advice", unit: "A2: ڈاکٹر اور مشورہ", title: "Bij de huisarts", description: "علامات، مدت، شدت، ڈاکٹر کی ہدایت، دوا، اور فالو اپ۔",
+    explanation: practicalExplanation("علامت کو جگہ، مدت، اور شدت کے ساتھ بیان کریں", ["sinds کب سے، erger بدتر، اور minder کم ہونے کو بتاتے ہیں۔", "ڈاکٹر کی ہدایت میں moet، mag، اور niet mogen اہم ہیں۔", "اگر حالت بہتر نہ ہو تو فالو اپ کا وقت پوچھیں۔"]),
+    concepts: [dailyConcept("doctor","huisarts","گھر کا ڈاکٹر","huisarts"),dailyConcept("doctor-pain","pijn","درد","pijn"),dailyConcept("doctor-medicine","medicijn","دوا","medicijn"),dailyConcept("doctor-cough","hoesten","کھانسی","hoesten"),dailyConcept("doctor-head","hoofdpijn","سر درد","hoofdpijn"),dailyConcept("doctor-rest","rust","آرام","rust"),
+      a2Phrase("doctor-p1","ik heb sinds drie dagen pijn","مجھے تین دن سے درد ہے","حال: درد کی مدت بتانی ہے۔"),a2Phrase("doctor-p2","de pijn wordt erger als ik loop","چلنے پر درد بڑھ جاتا ہے","حال: درد کب بڑھتا ہے، بتانا ہے۔"),a2Phrase("doctor-p3","ik heb ook koorts en moet hoesten","مجھے بخار بھی ہے اور کھانسی بھی","حال: ایک سے زیادہ علامات بتانی ہیں۔"),a2Phrase("doctor-p4","ik heb dit medicijn al gebruikt","میں یہ دوا پہلے استعمال کر چکا / چکی ہوں","حال: پہلے استعمال کی دوا بتانی ہے۔"),a2Phrase("doctor-p5","het heeft niet geholpen","اس سے فائدہ نہیں ہوا","حال: دوا بے اثر ہونے کی بات بتانی ہے۔"),a2Phrase("doctor-p6","bent u ergens allergisch voor?","کیا آپ کو کسی چیز سے حساسیت ہے؟","حال: حساسیت کا سوال سمجھنا ہے۔"),a2Phrase("doctor-p7","ik ben allergisch voor penicilline","مجھے penicilline سے حساسیت ہے","حال: دوا کی حساسیت بتانی ہے۔"),a2Phrase("doctor-p8","u moet een week rust nemen","آپ کو ایک ہفتہ آرام کرنا چاہیے","حال: ڈاکٹر کی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p9","u mag voorlopig niet werken","آپ فی الحال کام نہیں کر سکتے","حال: کام سے متعلق طبی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p10","hoe vaak moet ik dit medicijn nemen?","یہ دوا کتنی بار لینی ہے؟","حال: دوا کی مقدار پوچھنی ہے۔"),a2Phrase("doctor-p11","zijn er bijwerkingen?","کیا اس کے مضر اثرات ہیں؟","حال: دوا کے اثرات پوچھنے ہیں۔"),a2Phrase("doctor-p12","wanneer moet ik terugkomen?","مجھے دوبارہ کب آنا ہے؟","حال: فالو اپ کا وقت پوچھنا ہے۔"),a2Phrase("doctor-p13","bel direct als het erger wordt","اگر حالت بگڑے تو فوراً فون کریں","حال: فوری ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p14","ik heb een verklaring voor mijn werk nodig","مجھے کام کے لیے طبی کاغذ چاہیے","حال: کام کے لیے کاغذ مانگنا ہے۔"),a2Phrase("doctor-p15","kunt u dat in eenvoudige woorden uitleggen?","کیا آپ آسان الفاظ میں سمجھا سکتے ہیں؟","حال: طبی بات آسان کروانی ہے۔")],
+    listenReplies: [["hoe lang heeft u al pijn?",["sinds drie dagen","als ik loop","twee keer per dag"],"sinds drie dagen","مدت بتائیں۔"],["heeft het medicijn geholpen?",["nee het heeft niet geholpen","ik ben allergisch","ik moet rusten"],"nee het heeft niet geholpen","اثر بتائیں۔"],["wanneer wordt het erger?",["als ik loop","sinds maandag","na een week"],"als ik loop","حالت بتائیں۔"]],
+    builds: [["مجھے تین دن سے درد ہے",["ik","heb","sinds","drie","dagen","pijn"],"ik heb sinds drie dagen pijn","مدت۔"],["چلنے پر درد بڑھتا ہے",["de","pijn","wordt","erger","als","ik","loop"],"de pijn wordt erger als ik loop","شرط۔"],["دوا سے فائدہ نہیں ہوا",["het","medicijn","heeft","niet","geholpen"],"het medicijn heeft niet geholpen","نتیجہ۔"],["مجھے penicilline سے حساسیت ہے",["ik","ben","allergisch","voor","penicilline"],"ik ben allergisch voor penicilline","حساسیت۔"],["مجھے یہ کتنی بار لینی ہے؟",["hoe","vaak","moet","ik","dit","nemen"],"hoe vaak moet ik dit nemen","دوا کی مقدار۔"],["کیا مضر اثرات ہیں؟",["zijn","er","bijwerkingen"],"zijn er bijwerkingen","اثرات۔"],["مجھے دوبارہ کب آنا ہے؟",["wanneer","moet","ik","terugkomen"],"wanneer moet ik terugkomen","فالو اپ۔"],["آسان الفاظ میں سمجھائیں",["kunt","u","dat","in","eenvoudige","woorden","uitleggen"],"kunt u dat in eenvoudige woorden uitleggen","آسان وضاحت۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-bills-banking", unit: "A2: بل اور بینک", title: "Rekeningen betalen", description: "بل، آخری تاریخ، خودکار ادائیگی، غلط رقم، اور قسط کی درخواست۔",
+    explanation: practicalExplanation("رقم، تاریخ، اور حوالہ نمبر احتیاط سے دیکھیں", ["rekening بل یا اکاؤنٹ دونوں ہو سکتا ہے۔", "betaaldatum ادائیگی کی آخری تاریخ ہے۔", "betalingsregeling قسطوں کا انتظام ہے۔"]),
+    concepts: [dailyConcept("money-card","pinpas","بینک کارڈ","pinpas"),dailyConcept("money-bill","rekening","بل","bon"),dailyConcept("money-form","formulier","فارم","formulier"),dailyConcept("money-phone","telefoon","فون","telefoon"),dailyConcept("money-letter","brief","خط","bericht"),dailyConcept("money-sign","handtekening","دستخط","handtekening"),
+      a2Phrase("money-p1","ik heb deze rekening al betaald","میں یہ بل پہلے ادا کر چکا / چکی ہوں","حال: دوبارہ آئے بل کی بات بتانی ہے۔"),a2Phrase("money-p2","het bedrag klopt niet","رقم درست نہیں ہے","حال: بل کی رقم میں غلطی بتانی ہے۔"),a2Phrase("money-p3","kunt u de rekening controleren?","کیا آپ بل چیک کر سکتے ہیں؟","حال: بل کی جانچ مانگنی ہے۔"),a2Phrase("money-p4","wanneer moet ik betalen?","مجھے کب ادائیگی کرنی ہے؟","حال: آخری تاریخ پوچھنی ہے۔"),a2Phrase("money-p5","de betaaldatum is volgende week","ادائیگی کی تاریخ اگلے ہفتے ہے","حال: آخری تاریخ سمجھنی ہے۔"),a2Phrase("money-p6","ik kan het hele bedrag niet direct betalen","میں پوری رقم فوراً ادا نہیں کر سکتا / سکتی","حال: مالی مشکل بتانی ہے۔"),a2Phrase("money-p7","kan ik in termijnen betalen?","کیا میں قسطوں میں ادا کر سکتا / سکتی ہوں؟","حال: قسط کی درخواست کرنی ہے۔"),a2Phrase("money-p8","ik wil een betalingsregeling aanvragen","میں قسطوں کا انتظام مانگنا چاہتا / چاہتی ہوں","حال: باقاعدہ قسط کی درخواست دینی ہے۔"),a2Phrase("money-p9","de automatische betaling is mislukt","خودکار ادائیگی ناکام ہو گئی","حال: خودکار ادائیگی کا مسئلہ بتانا ہے۔"),a2Phrase("money-p10","mijn pinpas werkt niet","میرا بینک کارڈ کام نہیں کر رہا","حال: کارڈ کا مسئلہ بتانا ہے۔"),a2Phrase("money-p11","ik ben mijn pinpas kwijt","میرا بینک کارڈ گم ہو گیا ہے","حال: کارڈ گم ہونے کی اطلاع دینی ہے۔"),a2Phrase("money-p12","blokkeer mijn pas alstublieft","میرا کارڈ بند کر دیں، برائے مہربانی","حال: گمشدہ کارڈ بند کروانا ہے۔"),a2Phrase("money-p13","wat is het betalingskenmerk?","ادائیگی کا حوالہ نمبر کیا ہے؟","حال: حوالہ نمبر پوچھنا ہے۔"),a2Phrase("money-p14","ik stuur een bewijs van betaling","میں ادائیگی کا ثبوت بھیجتا / بھیجتی ہوں","حال: ادائیگی کا ثبوت بھیجنا ہے۔"),a2Phrase("money-p15","kunt u dit per e-mail bevestigen?","کیا آپ ای میل سے تصدیق کر سکتے ہیں؟","حال: تحریری تصدیق مانگنی ہے۔")],
+    listenReplies: [["wat klopt er niet?",["het bedrag is te hoog","ik betaal volgende week","mijn pas is nieuw"],"het bedrag is te hoog","رقم کا مسئلہ بتائیں۔"],["kunt u alles vandaag betalen?",["nee ik wil in termijnen betalen","de rekening is betaald","mijn pas werkt"],"nee ik wil in termijnen betalen","قسط مانگیں۔"],["heeft u een betalingsbewijs?",["ja ik stuur het per e-mail","de datum is volgende week","blokkeer mijn pas"],"ja ik stuur het per e-mail","ثبوت بھیجیں۔"]],
+    builds: [["میں یہ بل ادا کر چکا / چکی ہوں",["ik","heb","deze","rekening","al","betaald"],"ik heb deze rekening al betaald","گزری ادائیگی۔"],["رقم درست نہیں ہے",["het","bedrag","klopt","niet"],"het bedrag klopt niet","غلط رقم۔"],["مجھے کب ادائیگی کرنی ہے؟",["wanneer","moet","ik","betalen"],"wanneer moet ik betalen","تاریخ۔"],["کیا میں قسطوں میں ادا کر سکتا / سکتی ہوں؟",["kan","ik","in","termijnen","betalen"],"kan ik in termijnen betalen","قسط۔"],["خودکار ادائیگی ناکام ہوئی",["de","automatische","betaling","is","mislukt"],"de automatische betaling is mislukt","ادائیگی کا مسئلہ۔"],["میرا کارڈ گم ہو گیا ہے",["ik","ben","mijn","pinpas","kwijt"],"ik ben mijn pinpas kwijt","گمشدہ کارڈ۔"],["میرا کارڈ بند کر دیں",["blokkeer","mijn","pas","alstublieft"],"blokkeer mijn pas alstublieft","فوری درخواست۔"],["میں ادائیگی کا ثبوت بھیجوں گا / گی",["ik","stuur","een","bewijs","van","betaling"],"ik stuur een bewijs van betaling","ثبوت۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-customer-complaints", unit: "A2: گاہک اور شکایت", title: "Klantenservice", description: "غلط یا خراب چیز، ضمانت، واپسی، رقم واپس، اور مسئلے کی پیروی۔",
+    explanation: practicalExplanation("شکایت میں خریداری، مسئلہ، اور مطلوبہ حل بتائیں", ["bon اور aankoopdatum خریداری ثابت کرتے ہیں۔", "repareren، ruilen، یا geld terug تین مختلف حل ہیں۔", "شکایت نمبر سنبھال کر رکھیں تاکہ دوبارہ رابطہ ہو سکے۔"]),
+    concepts: [dailyConcept("service-shop","winkel","دکان","winkel"),dailyConcept("service-receipt","bon","رسید","bon"),dailyConcept("service-warranty","garantie","ضمانت","garantie"),dailyConcept("service-broken","kapot","خراب","kapot"),dailyConcept("service-complaint","klacht","شکایت","klacht"),dailyConcept("service-repair","reparatie","مرمت","reparatie"),
+      a2Phrase("service-p1","ik heb dit vorige week gekocht","میں نے یہ پچھلے ہفتے خریدا تھا","حال: خریداری کی تاریخ بتانی ہے۔"),a2Phrase("service-p2","het product werkt niet goed","چیز صحیح کام نہیں کرتی","حال: خرابی بتانی ہے۔"),a2Phrase("service-p3","hier is de bon","یہ رہی رسید","حال: خریداری کا ثبوت دینا ہے۔"),a2Phrase("service-p4","valt dit onder de garantie?","کیا یہ ضمانت میں آتا ہے؟","حال: ضمانت پوچھنی ہے۔"),a2Phrase("service-p5","ik wil het product laten repareren","میں چیز کی مرمت کروانا چاہتا / چاہتی ہوں","حال: مرمت کا حل مانگنا ہے۔"),a2Phrase("service-p6","ik wil het liever ruilen","میں اسے بدلنا زیادہ پسند کروں گا / گی","حال: تبدیلی مانگنی ہے۔"),a2Phrase("service-p7","kan ik mijn geld terugkrijgen?","کیا مجھے رقم واپس مل سکتی ہے؟","حال: رقم واپس مانگنی ہے۔"),a2Phrase("service-p8","de verkeerde maat is geleverd","غلط سائز پہنچایا گیا ہے","حال: ترسیل کی غلطی بتانی ہے۔"),a2Phrase("service-p9","een onderdeel ontbreekt","ایک حصہ موجود نہیں ہے","حال: چیز کا حصہ غائب ہونے کی بات بتانی ہے۔"),a2Phrase("service-p10","ik heb al twee keer gebeld","میں پہلے ہی دو بار فون کر چکا / چکی ہوں","حال: پچھلی کوششیں یاد دلانی ہیں۔"),a2Phrase("service-p11","wanneer krijg ik een oplossing?","مجھے حل کب ملے گا؟","حال: حل کی مدت پوچھنی ہے۔"),a2Phrase("service-p12","wat is mijn klachtnummer?","میرا شکایت نمبر کیا ہے؟","حال: شکایت نمبر پوچھنا ہے۔"),a2Phrase("service-p13","kunt u mij vandaag terugbellen?","کیا آپ آج مجھے واپس فون کر سکتے ہیں؟","حال: واپسی فون مانگنا ہے۔"),a2Phrase("service-p14","ik ben niet tevreden met deze oplossing","میں اس حل سے مطمئن نہیں ہوں","حال: پیش کردہ حل رد کرنا ہے۔"),a2Phrase("service-p15","ik wil graag met een leidinggevende spreken","میں ذمہ دار شخص سے بات کرنا چاہتا / چاہتی ہوں","حال: معاملہ اوپر لے جانا ہے۔")],
+    listenReplies: [["wanneer heeft u dit gekocht?",["vorige week","onder de garantie","twee keer gebeld"],"vorige week","خریداری کا وقت بتائیں۔"],["wat wilt u dat wij doen?",["ik wil het laten repareren","hier is de bon","het onderdeel ontbreekt"],"ik wil het laten repareren","حل بتائیں۔"],["bent u tevreden met deze oplossing?",["nee ik ben niet tevreden","ja dit is mijn bon","ik heb garantie"],"nee ik ben niet tevreden","عدم اطمینان بتائیں۔"]],
+    builds: [["میں نے یہ پچھلے ہفتے خریدا",["ik","heb","dit","vorige","week","gekocht"],"ik heb dit vorige week gekocht","خریداری۔"],["چیز صحیح کام نہیں کرتی",["het","product","werkt","niet","goed"],"het product werkt niet goed","خرابی۔"],["کیا یہ ضمانت میں ہے؟",["valt","dit","onder","de","garantie"],"valt dit onder de garantie","ضمانت۔"],["میں اسے بدلنا چاہتا / چاہتی ہوں",["ik","wil","het","liever","ruilen"],"ik wil het liever ruilen","حل۔"],["کیا رقم واپس مل سکتی ہے؟",["kan","ik","mijn","geld","terugkrijgen"],"kan ik mijn geld terugkrijgen","رقم واپسی۔"],["ایک حصہ غائب ہے",["een","onderdeel","ontbreekt"],"een onderdeel ontbreekt","نامکمل چیز۔"],["حل کب ملے گا؟",["wanneer","krijg","ik","een","oplossing"],"wanneer krijg ik een oplossing","مدت۔"],["میں ذمہ دار سے بات کرنا چاہتا / چاہتی ہوں",["ik","wil","graag","met","een","leidinggevende","spreken"],"ik wil graag met een leidinggevende spreken","معاملہ آگے بڑھائیں۔"]]
+  }),
+  makeA2PracticalLesson({
+    id: "a2-formal-digital-messages", unit: "A2: رسمی ڈیجیٹل پیغام", title: "E-mail en berichten", description: "موضوع، آغاز، مسئلہ، درخواست، منسلک کاغذ، جواب، اور رسمی اختتام۔",
+    explanation: practicalExplanation("رسمی پیغام مختصر مگر مکمل رکھیں", ["onderwerp میں پیغام کا مقصد لکھیں۔", "پہلے وجہ، پھر ضروری تفصیل، پھر واضح درخواست دیں۔", "bijlage منسلک فائل ہے اور met vriendelijke groet رسمی اختتام ہے۔"]),
+    concepts: [dailyConcept("mail-message","bericht","پیغام","bericht"),dailyConcept("mail-form","formulier","فارم","formulier"),dailyConcept("mail-sign","handtekening","دستخط","handtekening"),dailyConcept("mail-phone","telefoon","فون","telefoon"),dailyConcept("mail-schedule","rooster","اوقات","rooster"),dailyConcept("mail-document","paspoort","دستاویز","paspoort"),
+      a2Phrase("mail-p1","onderwerp: vraag over mijn afspraak","موضوع: میری ملاقات کے بارے میں سوال","حال: ای میل کا واضح موضوع لکھنا ہے۔"),a2Phrase("mail-p2","geachte meneer of mevrouw","محترم جناب یا محترمہ","حال: نامعلوم شخص کو رسمی آغاز کرنا ہے۔"),a2Phrase("mail-p3","ik schrijf omdat ik een vraag heb","میں لکھ رہا / رہی ہوں کیونکہ میرا ایک سوال ہے","حال: پیغام کی وجہ بتانی ہے۔"),a2Phrase("mail-p4","mijn afspraak staat op 12 mei","میری ملاقات 12 مئی کو ہے","حال: متعلقہ تاریخ دینی ہے۔"),a2Phrase("mail-p5","helaas kan ik op die dag niet komen","بدقسمتی سے میں اس دن نہیں آ سکتا / سکتی","حال: طے شدہ دن پر نہ آ سکنے کی بات بتانی ہے۔"),a2Phrase("mail-p6","ik wil graag een nieuwe datum afspreken","میں نئی تاریخ طے کرنا چاہتا / چاہتی ہوں","حال: نئی تاریخ مانگنی ہے۔"),a2Phrase("mail-p7","kunt u laten weten welke dag mogelijk is?","کیا آپ بتا سکتے ہیں کون سا دن ممکن ہے؟","حال: متبادل دن پوچھنا ہے۔"),a2Phrase("mail-p8","in de bijlage vindt u het formulier","منسلک فائل میں فارم موجود ہے","حال: منسلک فارم کا ذکر کرنا ہے۔"),a2Phrase("mail-p9","ik heb het formulier ingevuld en ondertekend","میں نے فارم بھر کر دستخط کر دیے ہیں","حال: فارم مکمل ہونے کی تصدیق کرنی ہے۔"),a2Phrase("mail-p10","ik heb nog geen antwoord ontvangen","مجھے ابھی تک جواب نہیں ملا","حال: جواب نہ آنے کی یاد دہانی دینی ہے۔"),a2Phrase("mail-p11","kunt u mijn bericht bevestigen?","کیا آپ میرے پیغام کی تصدیق کر سکتے ہیں؟","حال: وصولی کی تصدیق مانگنی ہے۔"),a2Phrase("mail-p12","u kunt mij telefonisch bereiken","آپ مجھ سے فون پر رابطہ کر سکتے ہیں","حال: رابطے کا طریقہ دینا ہے۔"),a2Phrase("mail-p13","alvast bedankt voor uw hulp","آپ کی مدد کا پیشگی شکریہ","حال: درخواست کے بعد شکریہ کہنا ہے۔"),a2Phrase("mail-p14","met vriendelijke groet","احترام کے ساتھ","حال: رسمی پیغام ختم کرنا ہے۔"),a2Phrase("mail-p15","ik stuur een kopie voor mijn administratie","میں اپنے ریکارڈ کے لیے نقل بھیجتا / بھیجتی ہوں","حال: نقل محفوظ رکھنے کی بات بتانی ہے۔")],
+    listenReplies: [["waar gaat uw bericht over?",["over mijn afspraak","op 12 mei","in de bijlage"],"over mijn afspraak","پیغام کا موضوع بتائیں۔"],["heeft u het formulier meegestuurd?",["ja het staat in de bijlage","ik wil een nieuwe datum","ik heb nog geen antwoord"],"ja het staat in de bijlage","منسلک فائل کی تصدیق کریں۔"],["hoe kunnen wij u bereiken?",["u kunt mij bellen","met vriendelijke groet","op die dag niet"],"u kunt mij bellen","رابطے کا طریقہ دیں۔"]],
+    builds: [["میں لکھ رہا ہوں کیونکہ میرا سوال ہے",["ik","schrijf","omdat","ik","een","vraag","heb"],"ik schrijf omdat ik een vraag heb","وجہ۔"],["میں اس دن نہیں آ سکتا / سکتی",["ik","kan","op","die","dag","niet","komen"],"ik kan op die dag niet komen","عدم دستیابی۔"],["میں نئی تاریخ چاہتا / چاہتی ہوں",["ik","wil","graag","een","nieuwe","datum","afspreken"],"ik wil graag een nieuwe datum afspreken","درخواست۔"],["فارم منسلک فائل میں ہے",["het","formulier","staat","in","de","bijlage"],"het formulier staat in de bijlage","منسلک فائل۔"],["میں نے فارم بھر دیا ہے",["ik","heb","het","formulier","ingevuld"],"ik heb het formulier ingevuld","مکمل کام۔"],["مجھے ابھی جواب نہیں ملا",["ik","heb","nog","geen","antwoord","ontvangen"],"ik heb nog geen antwoord ontvangen","یاد دہانی۔"],["کیا آپ پیغام کی تصدیق کر سکتے ہیں؟",["kunt","u","mijn","bericht","bevestigen"],"kunt u mijn bericht bevestigen","تصدیق۔"],["احترام کے ساتھ",["met","vriendelijke","groet"],"met vriendelijke groet","رسمی اختتام۔"]]
+  })
+);
+
 const a0DailyCheckpointConcepts = [
   dailyConcept("check-greeting", "goedemorgen", "صبح بخیر", "goedemorgen"),
   dailyConcept("check-thanks", "dank u wel", "آپ کا شکریہ", "thanks"),
@@ -2917,6 +3030,17 @@ const a1LessonOrder = [
 const a1OrderIndex = new Map(a1LessonOrder.map((id, index) => [id, index]));
 a1Lessons.sort((left, right) => a1OrderIndex.get(left.id) - a1OrderIndex.get(right.id));
 for (const lesson of a1Lessons) lesson.title = lesson.title.replace(/^سبق \d+:\s*/, "");
+
+const a2LessonOrder = [
+  "a2-perfect-tense", "a2-future-modal-verbs", "a2-separable-verbs-routine", "a2-word-order-connectors",
+  "a2-gemeente-official", "a2-gemeente-documents", "a2-work-school", "a2-work-conditions", "a2-parent-school",
+  "a2-health-housing", "a2-landlord-repairs", "a2-strong-combined", "a2-doctor-advice",
+  "a2-shopping-services", "a2-customer-complaints", "a2-bills-banking",
+  "a2-writing-messages", "a2-formal-digital-messages"
+];
+const a2OrderIndex = new Map(a2LessonOrder.map((id, index) => [id, index]));
+a2Lessons.sort((left, right) => a2OrderIndex.get(left.id) - a2OrderIndex.get(right.id));
+for (const lesson of a2Lessons) lesson.title = lesson.title.replace(/^A2 les \d+:\s*/, "");
 
 const bankBlueprints = {
   a0: { meaning: 10, reverse: 8, "image-choice": 10, "listen-choice": 10, "fill-gap": 8, situation: 8, build: 4 },
@@ -3059,7 +3183,7 @@ a0Lessons.forEach((lesson) => buildLessonBank(lesson, "a0"));
 a1Lessons.forEach((lesson) => buildLessonBank(lesson, "a1"));
 a2Lessons.forEach((lesson) => buildLessonBank(lesson, "a2"));
 
-for (const lesson of [...a0Lessons, ...a1Lessons]) {
+for (const lesson of [...a0Lessons, ...a1Lessons, ...a2Lessons]) {
   for (const question of lesson.questions) {
     const genericPrefix = "حال: آپ کو کہنا ہے: ";
     if (!String(question.prompt || "").startsWith(genericPrefix)) continue;
@@ -3229,42 +3353,49 @@ const a2Subchapters = [
     title: "Gemeente اور فارم",
     goal: "gemeente، BSN، afspraak، formulier، کاغذات سمجھنا۔",
     practice: "معلومات پوچھنا، فارم کی زبان، سرکاری ملاقات کا وقت۔",
-    lessonIds: ["a2-gemeente-official"]
+    lessonIds: ["a2-gemeente-official", "a2-gemeente-documents"]
   },
   {
     id: "a2-work-school",
     title: "کام اور اسکول",
     goal: "کام/اسکول کے پیغام، غیر حاضری، collega/docent، وقتوں کی فہرست۔",
     practice: "mijn zoon kan vandaag niet komen جیسے پیغام۔",
-    lessonIds: ["a2-work-school"]
+    lessonIds: ["a2-work-school", "a2-work-conditions", "a2-parent-school"]
   },
   {
     id: "a2-health-doctor",
     title: "صحت اور ڈاکٹر",
     goal: "شکایت سمجھانا، ڈاکٹر کا مشورہ سمجھنا۔",
     practice: "ik heb pijn..., de dokter heeft gezegd...۔",
-    lessonIds: ["a2-health-housing", "a2-strong-combined"]
+    lessonIds: ["a2-strong-combined", "a2-doctor-advice"]
   },
   {
     id: "a2-housing-problems",
     title: "گھر کے مسئلے",
     goal: "کرایہ، ہیٹنگ، پانی کا رساؤ، مرمت، مالک مکان کے مسئلے۔",
     practice: "mijn verwarming doet het niet، kunt u iemand sturen؟",
-    lessonIds: ["a2-health-housing"]
+    lessonIds: ["a2-health-housing", "a2-landlord-repairs"]
   },
   {
     id: "a2-shopping-complaints",
     title: "خریداری اور شکایت",
     goal: "ruilen، garantie، kapot، klacht، aanbieding۔",
     practice: "ik wil hem ruilen، hij is kapot۔",
-    lessonIds: ["a2-shopping-services"]
+    lessonIds: ["a2-shopping-services", "a2-customer-complaints"]
+  },
+  {
+    id: "a2-bills-banking",
+    title: "بل اور بینک",
+    goal: "غلط بل، ادائیگی کی تاریخ، قسط، خودکار ادائیگی، اور گمشدہ کارڈ سنبھالنا۔",
+    practice: "رقم کی غلطی سمجھانا، قسط مانگنا، اور ادائیگی کا ثبوت دینا۔",
+    lessonIds: ["a2-bills-banking"]
   },
   {
     id: "a2-messages-emails",
     title: "چھوٹے پیغام",
     goal: "ادب والے/بے تکلف پیغام، دعوت، شکایت، ادب والا اختتام۔",
     practice: "beste..., met vriendelijke groet, kom je ook؟",
-    lessonIds: ["a2-writing-messages"]
+    lessonIds: ["a2-writing-messages", "a2-formal-digital-messages"]
   }
 ];
 
