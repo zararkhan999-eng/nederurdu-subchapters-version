@@ -2136,6 +2136,75 @@ const practicalExplanation = (title, points) => ({
   note: "یہ جملے روزمرہ میں پورے فقروں کی طرح یاد کریں۔"
 });
 
+function makeA1PracticalLesson({ id, unit, title, description, explanation, concepts, listenReplies, situations = [], builds }) {
+  const visualConcepts = concepts.filter((concept) => concept.visualId && concept.role !== "phrase");
+  const phraseConcepts = concepts.filter((concept) => concept.role === "phrase");
+  const questions = [uitleg(explanation.title, explanation.points, explanation.note)];
+
+  for (let index = 0; index < 8; index += 1) {
+    const concept = concepts[index % concepts.length];
+    questions.push(meaning(concept.dutch, dailyOptions(concepts, index, "urdu"), concept.urdu, `${concept.dutch} = ${concept.urdu}۔`));
+  }
+  for (let index = 0; index < 6; index += 1) {
+    const concept = concepts[(index + 2) % concepts.length];
+    questions.push(reverse(concept.urdu, dailyOptions(concepts, index + 2, "dutch"), concept.dutch, `${concept.urdu} = ${concept.dutch}۔`));
+  }
+  for (let index = 0; index < 8; index += 1) {
+    const concept = visualConcepts[index % visualConcepts.length];
+    questions.push({
+      type: "image-choice",
+      label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
+      prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔",
+      visualId: concept.visualId,
+      options: dailyOptions(visualConcepts, index, "dutch"),
+      answer: concept.dutch,
+      explain: `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔`
+    });
+  }
+  for (let index = 0; index < 8; index += 1) {
+    const concept = concepts[(index + 1) % concepts.length];
+    questions.push({
+      ...listenChoice(concept.audio, dailyOptions(concepts, index + 1, "urdu"), concept.urdu, `${concept.dutch} = ${concept.urdu}۔`),
+      conceptId: concept.id
+    });
+  }
+
+  const listeningIndexes = questions.map((question, index) => question.type === "listen-choice" ? index : -1).filter((index) => index >= 0);
+  listenReplies.slice(0, listeningIndexes.length).forEach((reply, index) => {
+    const [speak, options, answer, explain] = reply;
+    questions[listeningIndexes[index]] = {
+      ...listenChoice(speak, options, answer, explain),
+      prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
+      mode: "listen-reply"
+    };
+  });
+
+  const fillWords = uniq(phraseConcepts.flatMap((concept) => concept.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+  for (let index = 0; index < 10; index += 1) {
+    const concept = phraseConcepts[index % phraseConcepts.length];
+    const gap = missingWordSentence(concept.dutch);
+    const options = [gap.missing, ...rotate(fillWords.filter((word) => word !== gap.missing), index + 2).slice(0, 2)];
+    questions.push(fillGap(gap.prompt, options, gap.missing, `صحیح مکمل فقرہ: ${concept.dutch}۔`));
+  }
+
+  const authoredSituations = situations.length ? situations : phraseConcepts.slice(0, 13).map((concept, index) => [
+    concept.context || `حال: ${concept.urdu}`,
+    dailyOptions(phraseConcepts, index, "dutch"),
+    concept.dutch,
+    `اس حال میں کہیں: ${concept.dutch}۔`,
+    concept.speak ? { mode: "dialogue", speak: concept.speak } : {}
+  ]);
+  questions.push(...authoredSituations.map(dailySituation));
+  questions.push(...builds.map(dailyBuild));
+  return { id, unit, title, description, xp: 0, concepts, questions };
+}
+
+const a1Phrase = (id, dutch, urdu, context, speak = "") => ({
+  ...dailyConcept(id, dutch, urdu, "", "phrase"),
+  context,
+  speak
+});
+
 a0DailyLessons.push(
   makeA0DailyLesson({
     id: "a0-spelling-personal-details",
@@ -2538,6 +2607,233 @@ a0DailyLessons.push(
   })
 );
 
+a1Lessons.push(
+  makeA1PracticalLesson({
+    id: "a1-daily-routine",
+    unit: "A1: روزمرہ معمول",
+    title: "Mijn dag",
+    description: "اٹھنے سے سونے تک اپنا روزمرہ معمول اور وقت بتانا۔",
+    explanation: practicalExplanation("اپنے دن کے کام وقت کے ساتھ بتائیں", ["روزمرہ کام کے ساتھ عموماً وقت بتایا جاتا ہے۔", "eerst، daarna، اور dan کاموں کی ترتیب واضح کرتے ہیں۔", "آسان A1 جملے مختصر رکھیں: فاعل، فعل، وقت یا جگہ۔"]),
+    concepts: [
+      dailyConcept("routine-morning", "ochtend", "صبح", "ochtend"), dailyConcept("routine-evening", "avond", "شام", "avond"),
+      dailyConcept("routine-work", "werk", "کام", "werk"), dailyConcept("routine-food", "ontbijt", "ناشتہ", "brood"),
+      dailyConcept("routine-sleep", "slapen", "سونا", "slapen"), dailyConcept("routine-bus", "bus", "بس", "bus"),
+      dailyConcept("routine-school", "school", "اسکول", "school"), dailyConcept("routine-wait", "wachten", "انتظار کرنا", "wachten"),
+      a1Phrase("routine-p1", "ik sta om zeven uur op", "میں سات بجے اٹھتا / اٹھتی ہوں", "حال: صبح اٹھنے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p2", "ik ontbijt om half acht", "میں ساڑھے سات بجے ناشتہ کرتا / کرتی ہوں", "حال: ناشتے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p3", "ik ga met de bus naar werk", "میں بس سے کام پر جاتا / جاتی ہوں", "حال: کام پر جانے کا طریقہ بتانا ہے۔"),
+      a1Phrase("routine-p4", "ik begin om negen uur", "میں نو بجے شروع کرتا / کرتی ہوں", "حال: کام شروع ہونے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p5", "ik heb om twaalf uur pauze", "میرا بارہ بجے وقفہ ہے", "حال: وقفے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p6", "ik stop om vijf uur", "میں پانچ بجے کام ختم کرتا / کرتی ہوں", "حال: کام ختم ہونے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p7", "daarna ga ik naar huis", "اس کے بعد میں گھر جاتا / جاتی ہوں", "حال: اگلا کام بتانا ہے۔"),
+      a1Phrase("routine-p8", "ik kook in de avond", "میں شام کو کھانا پکاتا / پکاتی ہوں", "حال: شام کا کام بتانا ہے۔"),
+      a1Phrase("routine-p9", "ik kijk na het eten televisie", "میں کھانے کے بعد ٹی وی دیکھتا / دیکھتی ہوں", "حال: کھانے کے بعد کا کام بتانا ہے۔"),
+      a1Phrase("routine-p10", "ik ga om elf uur slapen", "میں گیارہ بجے سونے جاتا / جاتی ہوں", "حال: سونے کا وقت بتانا ہے۔"),
+      a1Phrase("routine-p11", "eerst breng ik mijn kind naar school", "پہلے میں بچے کو اسکول چھوڑتا / چھوڑتی ہوں", "حال: دن کا پہلا کام بتانا ہے۔"),
+      a1Phrase("routine-p12", "dan ga ik naar mijn werk", "پھر میں اپنے کام پر جاتا / جاتی ہوں", "حال: ترتیب میں دوسرا کام بتانا ہے۔"),
+      a1Phrase("routine-p13", "vandaag werk ik niet", "آج میں کام نہیں کرتا / کرتی", "حال: آج چھٹی ہونے کی بات بتانا ہے۔")
+    ],
+    listenReplies: [["hoe laat staat u op?", ["om zeven uur", "met de bus", "in de avond"], "om zeven uur", "اٹھنے کا وقت بتائیں۔"], ["hoe gaat u naar werk?", ["met de bus", "om negen uur", "na het eten"], "met de bus", "سفر کا طریقہ بتائیں۔"], ["wat doet u daarna?", ["daarna ga ik naar huis", "ik begin om negen uur", "dit is mijn werk"], "daarna ga ik naar huis", "اگلا کام بتائیں۔"]],
+    builds: [["میں سات بجے اٹھتا / اٹھتی ہوں", ["ik", "sta", "om", "zeven", "uur", "op"], "ik sta om zeven uur op", "opstaan جملے میں الگ ہوتا ہے۔"], ["میں بس سے کام پر جاتا / جاتی ہوں", ["ik", "ga", "met", "de", "bus", "naar", "werk"], "ik ga met de bus naar werk", "سفر کا جملہ۔"], ["میرا بارہ بجے وقفہ ہے", ["ik", "heb", "om", "twaalf", "uur", "pauze"], "ik heb om twaalf uur pauze", "وقفے کا وقت۔"], ["پھر میں گھر جاتا / جاتی ہوں", ["daarna", "ga", "ik", "naar", "huis"], "daarna ga ik naar huis", "ترتیب والا جملہ۔"], ["میں شام کو کھانا پکاتا / پکاتی ہوں", ["ik", "kook", "in", "de", "avond"], "ik kook in de avond", "شام کا معمول۔"], ["میں گیارہ بجے سوتا / سوتی ہوں", ["ik", "ga", "om", "elf", "uur", "slapen"], "ik ga om elf uur slapen", "سونے کا وقت۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-plans-invitations",
+    unit: "A1: منصوبہ اور دعوت",
+    title: "Afspreken",
+    description: "دعوت دینا، وقت طے کرنا، ہاں یا ادب سے انکار کرنا۔",
+    explanation: practicalExplanation("چھوٹا منصوبہ مل کر طے کریں", ["wil je...? عام دعوت ہے۔", "ja, graag دعوت قبول کرنے کا آسان جواب ہے۔", "sorry, ik kan niet ادب سے انکار ہے؛ پھر دوسرا دن تجویز کیا جا سکتا ہے۔"]),
+    concepts: [
+      dailyConcept("plans-calendar", "agenda", "اوقات کی کتاب", "rooster"), dailyConcept("plans-coffee", "koffie", "کافی", "koffie"),
+      dailyConcept("plans-party", "feest", "تقریب", "feest"), dailyConcept("plans-today", "vandaag", "آج", "ochtend"),
+      dailyConcept("plans-tomorrow", "morgen", "آنے والا کل", "morgen"), dailyConcept("plans-evening", "avond", "شام", "avond"),
+      dailyConcept("plans-phone", "telefoon", "فون", "telefoon"), dailyConcept("plans-message", "bericht", "پیغام", "bericht"),
+      a1Phrase("plans-p1", "wil je koffie drinken?", "کیا تم کافی پینا چاہتے ہو؟", "حال: دوست کو کافی کی دعوت دینی ہے۔"),
+      a1Phrase("plans-p2", "ja graag", "جی ہاں، خوشی سے", "حال: دعوت قبول کرنی ہے۔", "wil je morgen komen?"),
+      a1Phrase("plans-p3", "sorry ik kan niet", "معاف کیجیے، میں نہیں آ سکتا / سکتی", "حال: ادب سے دعوت رد کرنی ہے۔", "kun je vanavond komen?"),
+      a1Phrase("plans-p4", "heb je morgen tijd?", "کیا تمہارے پاس کل وقت ہے؟", "حال: کل کا وقت پوچھنا ہے۔"),
+      a1Phrase("plans-p5", "zullen we om drie uur afspreken?", "کیا ہم تین بجے ملیں؟", "حال: ملنے کا وقت تجویز کرنا ہے۔"),
+      a1Phrase("plans-p6", "drie uur is goed", "تین بجے ٹھیک ہے", "حال: تجویز کردہ وقت ماننا ہے۔"),
+      a1Phrase("plans-p7", "kan het om vier uur?", "کیا چار بجے ہو سکتا ہے؟", "حال: دوسرا وقت مانگنا ہے۔"),
+      a1Phrase("plans-p8", "waar spreken we af?", "ہم کہاں ملیں گے؟", "حال: ملنے کی جگہ پوچھنی ہے۔"),
+      a1Phrase("plans-p9", "we spreken af bij het station", "ہم اسٹیشن کے پاس ملیں گے", "حال: ملنے کی جگہ بتانی ہے۔"),
+      a1Phrase("plans-p10", "ik bel je vanavond", "میں تمہیں شام کو فون کروں گا / گی", "حال: فون کرنے کا وقت بتانا ہے۔"),
+      a1Phrase("plans-p11", "stuur mij een bericht", "مجھے ایک پیغام بھیجیں", "حال: پیغام بھیجنے کو کہنا ہے۔"),
+      a1Phrase("plans-p12", "tot morgen", "کل ملیں گے", "حال: کل ملنے پر رخصت ہونا ہے۔"),
+      a1Phrase("plans-p13", "de afspraak is veranderd", "ملاقات کا وقت بدل گیا ہے", "حال: منصوبہ بدلنے کی اطلاع دینی ہے۔")
+    ],
+    listenReplies: [["wil je koffie drinken?", ["ja graag", "om drie uur", "bij het station"], "ja graag", "دعوت قبول کریں۔"], ["heb je morgen tijd?", ["nee sorry ik kan niet", "we spreken bij het station", "stuur een bericht"], "nee sorry ik kan niet", "وقت نہ ہونے کا جواب۔"], ["waar spreken we af?", ["bij het station", "om vier uur", "tot morgen"], "bij het station", "جگہ کا جواب دیں۔"]],
+    builds: [["کیا تم کافی پینا چاہتے ہو؟", ["wil", "je", "koffie", "drinken"], "wil je koffie drinken", "دعوت کا سوال۔"], ["معاف کیجیے، میں نہیں آ سکتا / سکتی", ["sorry", "ik", "kan", "niet"], "sorry ik kan niet", "ادب سے انکار۔"], ["کیا ہم تین بجے ملیں؟", ["zullen", "we", "om", "drie", "uur", "afspreken"], "zullen we om drie uur afspreken", "وقت تجویز کریں۔"], ["ہم کہاں ملیں گے؟", ["waar", "spreken", "we", "af"], "waar spreken we af", "جگہ کا سوال۔"], ["میں شام کو فون کروں گا / گی", ["ik", "bel", "je", "vanavond"], "ik bel je vanavond", "فون کا منصوبہ۔"], ["مجھے پیغام بھیجیں", ["stuur", "mij", "een", "bericht"], "stuur mij een bericht", "پیغام کی درخواست۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-cafe-ordering",
+    unit: "A1: کیفے اور کھانا",
+    title: "In een café",
+    description: "مینو سمجھنا، کھانا پینا منگوانا، اور بل مانگنا۔",
+    explanation: practicalExplanation("کیفے میں ادب سے مکمل آرڈر دیں", ["ik wil graag... ادب سے چیز مانگنے کا بنیادی طریقہ ہے۔", "voor mij... سے اپنا آرڈر بتایا جا سکتا ہے۔", "de rekening alstublieft سے بل مانگیں۔"]),
+    concepts: [
+      dailyConcept("cafe-menu", "menu", "کھانے کی فہرست", "eten"), dailyConcept("cafe-coffee", "koffie", "کافی", "koffie"),
+      dailyConcept("cafe-tea", "thee", "چائے", "thee"), dailyConcept("cafe-water", "water", "پانی", "water"),
+      dailyConcept("cafe-bread", "brood", "روٹی", "brood"), dailyConcept("cafe-rice", "rijst", "چاول", "rijst"),
+      dailyConcept("cafe-food", "eten", "کھانا", "eten"), dailyConcept("cafe-bill", "rekening", "بل", "bon"),
+      a1Phrase("cafe-p1", "mag ik de kaart alstublieft?", "کیا مجھے مینو مل سکتا ہے؟", "حال: مینو مانگنا ہے۔"),
+      a1Phrase("cafe-p2", "ik wil graag koffie", "مجھے کافی چاہیے", "حال: کافی منگوانی ہے۔"),
+      a1Phrase("cafe-p3", "voor mij een thee", "میرے لیے ایک چائے", "حال: اپنا مشروب بتانا ہے۔"),
+      a1Phrase("cafe-p4", "zonder suiker alstublieft", "چینی کے بغیر، برائے مہربانی", "حال: چینی کے بغیر مشروب مانگنا ہے۔"),
+      a1Phrase("cafe-p5", "heeft u iets zonder vlees?", "کیا آپ کے پاس گوشت کے بغیر کچھ ہے؟", "حال: گوشت کے بغیر کھانا پوچھنا ہے۔"),
+      a1Phrase("cafe-p6", "wat wilt u drinken?", "آپ کیا پینا چاہتے ہیں؟", "حال: مشروب پوچھنا ہے۔"),
+      a1Phrase("cafe-p7", "ik neem de soep", "میں سوپ لوں گا / گی", "حال: کھانے کا انتخاب بتانا ہے۔"),
+      a1Phrase("cafe-p8", "dit is niet mijn bestelling", "یہ میرا آرڈر نہیں ہے", "حال: غلط آرڈر کی اطلاع دینی ہے۔"),
+      a1Phrase("cafe-p9", "de rekening alstublieft", "بل، برائے مہربانی", "حال: بل مانگنا ہے۔"),
+      a1Phrase("cafe-p10", "kan ik met pin betalen?", "کیا میں کارڈ سے ادائیگی کر سکتا / سکتی ہوں؟", "حال: کارڈ سے ادائیگی پوچھنی ہے۔"),
+      a1Phrase("cafe-p11", "het eten is lekker", "کھانا مزیدار ہے", "حال: کھانے کی تعریف کرنی ہے۔"),
+      a1Phrase("cafe-p12", "ik heb nog niets gekregen", "مجھے ابھی تک کچھ نہیں ملا", "حال: آرڈر نہ ملنے کی اطلاع دینی ہے۔"),
+      a1Phrase("cafe-p13", "dank u wel", "آپ کا شکریہ", "حال: خدمت کے بعد شکریہ کہنا ہے۔")
+    ],
+    listenReplies: [["wat wilt u drinken?", ["voor mij een thee", "de rekening alstublieft", "het eten is lekker"], "voor mij een thee", "مشروب کا آرڈر دیں۔"], ["wilt u suiker?", ["nee zonder suiker alstublieft", "ik neem de soep", "kan ik pinnen"], "nee zonder suiker alstublieft", "چینی نہ لینے کا جواب۔"], ["was alles goed?", ["ja het eten is lekker", "voor mij water", "dit is de rekening"], "ja het eten is lekker", "کھانے کے بارے میں جواب دیں۔"]],
+    builds: [["کیا مجھے مینو مل سکتا ہے؟", ["mag", "ik", "de", "kaart", "alstublieft"], "mag ik de kaart alstublieft", "مینو کی درخواست۔"], ["مجھے کافی چاہیے", ["ik", "wil", "graag", "koffie"], "ik wil graag koffie", "ادب سے آرڈر۔"], ["گوشت کے بغیر", ["zonder", "vlees"], "zonder vlees", "کھانے کی ضرورت۔"], ["یہ میرا آرڈر نہیں ہے", ["dit", "is", "niet", "mijn", "bestelling"], "dit is niet mijn bestelling", "غلط آرڈر بتائیں۔"], ["بل، برائے مہربانی", ["de", "rekening", "alstublieft"], "de rekening alstublieft", "بل مانگیں۔"], ["کیا میں کارڈ سے ادائیگی کر سکتا / سکتی ہوں؟", ["kan", "ik", "met", "pin", "betalen"], "kan ik met pin betalen", "ادائیگی کا سوال۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-shopping-clothes",
+    unit: "A1: کپڑوں کی خریداری",
+    title: "Kleding kopen",
+    description: "سائز، رنگ، قیمت، پہن کر دیکھنا، اور آسان تبدیلی۔",
+    explanation: practicalExplanation("دکان میں چیز کے بارے میں واضح سوال کریں", ["maat سائز اور kleur رنگ ہے۔", "mag ik dit passen? سے پہن کر دیکھنے کی اجازت پوچھیں۔", "te groot اور te klein سے سائز کا مسئلہ بتائیں۔"]),
+    concepts: [
+      dailyConcept("clothes-coat", "jas", "جیکٹ", "jas"), dailyConcept("clothes-shop", "winkel", "دکان", "winkel"),
+      dailyConcept("clothes-size", "maat", "سائز", "maat"), dailyConcept("clothes-price", "prijs", "قیمت", "prijs"),
+      dailyConcept("clothes-cheap", "goedkoop", "سستا", "goedkoop"), dailyConcept("clothes-expensive", "duur", "مہنگا", "prijs"),
+      dailyConcept("clothes-cashier", "kassa", "رقم لینے کی جگہ", "kassa"), dailyConcept("clothes-receipt", "bon", "رسید", "bon"),
+      a1Phrase("clothes-p1", "hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟", "حال: جیکٹ کی قیمت پوچھنی ہے۔"),
+      a1Phrase("clothes-p2", "heeft u maat M?", "کیا آپ کے پاس سائز M ہے؟", "حال: اپنا سائز پوچھنا ہے۔"),
+      a1Phrase("clothes-p3", "mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا / سکتی ہوں؟", "حال: کپڑا پہن کر دیکھنا ہے۔"),
+      a1Phrase("clothes-p4", "waar is de paskamer?", "کپڑے پہن کر دیکھنے کا کمرہ کہاں ہے؟", "حال: آزمائشی کمرہ پوچھنا ہے۔"),
+      a1Phrase("clothes-p5", "deze jas is te groot", "یہ جیکٹ بہت بڑی ہے", "حال: جیکٹ بڑی ہونے کی بات بتانی ہے۔"),
+      a1Phrase("clothes-p6", "de schoenen zijn te klein", "جوتے بہت چھوٹے ہیں", "حال: جوتے چھوٹے ہونے کی بات بتانی ہے۔"),
+      a1Phrase("clothes-p7", "heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟", "حال: دوسرا رنگ پوچھنا ہے۔"),
+      a1Phrase("clothes-p8", "ik neem deze", "میں یہ لوں گا / گی", "حال: چیز خریدنے کا فیصلہ بتانا ہے۔"),
+      a1Phrase("clothes-p9", "kan ik met pin betalen?", "کیا میں کارڈ سے پیسے دے سکتا / سکتی ہوں؟", "حال: کارڈ سے ادائیگی پوچھنی ہے۔"),
+      a1Phrase("clothes-p10", "mag ik de bon?", "کیا مجھے رسید مل سکتی ہے؟", "حال: رسید مانگنی ہے۔"),
+      a1Phrase("clothes-p11", "ik wil dit ruilen", "میں اسے بدلنا چاہتا / چاہتی ہوں", "حال: چیز بدلنے کی درخواست کرنی ہے۔"),
+      a1Phrase("clothes-p12", "de jas is kapot", "جیکٹ خراب ہے", "حال: خرابی بتانی ہے۔"),
+      a1Phrase("clothes-p13", "waar is de kassa?", "رقم دینے کی جگہ کہاں ہے؟", "حال: کاؤنٹر پوچھنا ہے۔")
+    ],
+    listenReplies: [["welke maat heeft u?", ["maat M", "twintig euro", "de blauwe jas"], "maat M", "سائز بتائیں۔"], ["wilt u deze jas?", ["ja ik neem deze", "waar is de paskamer", "de schoenen zijn klein"], "ja ik neem deze", "خریدنے کا فیصلہ بتائیں۔"], ["wat is het probleem?", ["de jas is te groot", "ik betaal met pin", "de kassa is daar"], "de jas is te groot", "سائز کا مسئلہ بتائیں۔"]],
+    builds: [["یہ جیکٹ کتنے کی ہے؟", ["hoeveel", "kost", "deze", "jas"], "hoeveel kost deze jas", "قیمت کا سوال۔"], ["کیا میں اسے پہن کر دیکھ سکتا / سکتی ہوں؟", ["mag", "ik", "dit", "passen"], "mag ik dit passen", "اجازت کا سوال۔"], ["یہ جیکٹ بہت بڑی ہے", ["deze", "jas", "is", "te", "groot"], "deze jas is te groot", "سائز کا مسئلہ۔"], ["کیا آپ کے پاس دوسرا رنگ ہے؟", ["heeft", "u", "een", "andere", "kleur"], "heeft u een andere kleur", "رنگ کا سوال۔"], ["میں یہ لوں گا / گی", ["ik", "neem", "deze"], "ik neem deze", "خریدنے کا فیصلہ۔"], ["میں اسے بدلنا چاہتا / چاہتی ہوں", ["ik", "wil", "dit", "ruilen"], "ik wil dit ruilen", "تبدیلی کی درخواست۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-public-transport",
+    unit: "A1: عوامی سفر",
+    title: "Met bus en trein",
+    description: "راستہ، پلیٹ فارم، روانگی، تاخیر، اور گاڑی بدلنا۔",
+    explanation: practicalExplanation("سفر میں جگہ اور وقت دونوں پوچھیں", ["spoor ٹرین کا پلیٹ فارم اور halte بس کا اسٹاپ ہے۔", "vertrekken روانہ ہونا اور aankomen پہنچنا ہے۔", "overstappen کا مطلب دوسری بس یا ٹرین لینا ہے۔"]),
+    concepts: [
+      dailyConcept("travel-bus", "bus", "بس", "bus"), dailyConcept("travel-train", "trein", "ٹرین", "trein"),
+      dailyConcept("travel-station", "station", "اسٹیشن", "station"), dailyConcept("travel-stop", "halte", "بس اسٹاپ", "halte"),
+      dailyConcept("travel-ticket", "kaartje", "ٹکٹ", "kaartje"), dailyConcept("travel-left", "links", "بائیں", "links"),
+      dailyConcept("travel-right", "rechts", "دائیں", "rechts"), dailyConcept("travel-straight", "rechtdoor", "سیدھا", "rechtdoor"),
+      a1Phrase("travel-p1", "ik wil een kaartje naar Utrecht", "مجھے Utrecht کا ٹکٹ چاہیے", "حال: منزل کا ٹکٹ خریدنا ہے۔"),
+      a1Phrase("travel-p2", "hoe laat vertrekt de trein?", "ٹرین کتنے بجے روانہ ہوتی ہے؟", "حال: روانگی کا وقت پوچھنا ہے۔"),
+      a1Phrase("travel-p3", "van welk spoor vertrekt de trein?", "ٹرین کس پلیٹ فارم سے جاتی ہے؟", "حال: پلیٹ فارم پوچھنا ہے۔"),
+      a1Phrase("travel-p4", "de trein heeft vertraging", "ٹرین دیر سے ہے", "حال: تاخیر کی بات سمجھنی یا بتانی ہے۔"),
+      a1Phrase("travel-p5", "waar moet ik overstappen?", "مجھے کہاں گاڑی بدلنی ہے؟", "حال: گاڑی بدلنے کی جگہ پوچھنی ہے۔"),
+      a1Phrase("travel-p6", "moet ik hier uitstappen?", "کیا مجھے یہاں اترنا ہے؟", "حال: اترنے کی جگہ پکی کرنی ہے۔"),
+      a1Phrase("travel-p7", "de volgende halte is centrum", "اگلا اسٹاپ مرکز ہے", "حال: اگلا اسٹاپ بتانا ہے۔"),
+      a1Phrase("travel-p8", "gaat deze bus naar het station?", "کیا یہ بس اسٹیشن جاتی ہے؟", "حال: بس کی منزل پوچھنی ہے۔"),
+      a1Phrase("travel-p9", "u moet rechtdoor gaan", "آپ کو سیدھا جانا ہے", "حال: راستہ سیدھا بتانا ہے۔"),
+      a1Phrase("travel-p10", "sla links af", "بائیں مڑیں", "حال: بائیں مڑنے کی ہدایت دینی ہے۔"),
+      a1Phrase("travel-p11", "het station is aan de rechterkant", "اسٹیشن دائیں طرف ہے", "حال: اسٹیشن کی سمت بتانی ہے۔"),
+      a1Phrase("travel-p12", "ik ben mijn kaartje kwijt", "میرا ٹکٹ گم ہو گیا ہے", "حال: ٹکٹ گم ہونے کی اطلاع دینی ہے۔"),
+      a1Phrase("travel-p13", "wanneer komt de bus?", "بس کب آئے گی؟", "حال: بس آنے کا وقت پوچھنا ہے۔")
+    ],
+    listenReplies: [["waar wilt u naartoe?", ["naar Utrecht", "spoor vijf", "om tien uur"], "naar Utrecht", "منزل بتائیں۔"], ["van welk spoor?", ["van spoor vijf", "met de bus", "naar links"], "van spoor vijf", "پلیٹ فارم بتائیں۔"], ["moet ik hier uitstappen?", ["ja bij deze halte", "de trein is laat", "rechtdoor gaan"], "ja bij deze halte", "اترنے کی جگہ پکی کریں۔"]],
+    builds: [["مجھے Utrecht کا ٹکٹ چاہیے", ["ik", "wil", "een", "kaartje", "naar", "Utrecht"], "ik wil een kaartje naar Utrecht", "ٹکٹ کی درخواست۔"], ["ٹرین کتنے بجے جاتی ہے؟", ["hoe", "laat", "vertrekt", "de", "trein"], "hoe laat vertrekt de trein", "روانگی کا وقت۔"], ["مجھے کہاں گاڑی بدلنی ہے؟", ["waar", "moet", "ik", "overstappen"], "waar moet ik overstappen", "تبدیلی کا سوال۔"], ["کیا یہ بس اسٹیشن جاتی ہے؟", ["gaat", "deze", "bus", "naar", "het", "station"], "gaat deze bus naar het station", "بس کی منزل۔"], ["سیدھا جائیں", ["ga", "rechtdoor"], "ga rechtdoor", "راستے کی ہدایت۔"], ["میرا ٹکٹ گم ہو گیا ہے", ["ik", "ben", "mijn", "kaartje", "kwijt"], "ik ben mijn kaartje kwijt", "گمشدہ ٹکٹ۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-home-neighbours",
+    unit: "A1: گھر اور پڑوسی",
+    title: "Thuis en buren",
+    description: "گھر کے کام، شور، پڑوسی، خرابی، اور مرمت کی درخواست۔",
+    explanation: practicalExplanation("گھر کا مسئلہ اور مطلوبہ مدد الگ بتائیں", ["buurman اور buurvrouw پڑوسی مرد اور عورت ہیں۔", "last hebben van سے تکلیف یا پریشانی بتائی جاتی ہے۔", "kunt u iemand sturen? سے مرمت کے لیے کسی کو بلانے کی درخواست کریں۔"]),
+    concepts: [
+      dailyConcept("home-house", "huis", "گھر", "huis"), dailyConcept("home-room", "kamer", "کمرہ", "kamer"),
+      dailyConcept("home-door", "deur", "دروازہ", "deur"), dailyConcept("home-heating", "verwarming", "ہیٹنگ", "verwarming"),
+      dailyConcept("home-repair", "reparatie", "مرمت", "reparatie"), dailyConcept("home-neighbour", "buurman", "پڑوسی مرد", "man"),
+      dailyConcept("home-lamp", "lamp", "بتی", "lamp"), dailyConcept("home-key", "sleutel", "چابی", "deur"),
+      a1Phrase("home-p1", "mijn verwarming doet het niet", "میری ہیٹنگ کام نہیں کر رہی", "حال: ہیٹنگ کی خرابی بتانی ہے۔"),
+      a1Phrase("home-p2", "de lamp is kapot", "بتی خراب ہے", "حال: بتی کی خرابی بتانی ہے۔"),
+      a1Phrase("home-p3", "ik kan de deur niet openen", "میں دروازہ نہیں کھول سکتا / سکتی", "حال: دروازہ نہ کھلنے کی بات بتانی ہے۔"),
+      a1Phrase("home-p4", "ik ben mijn sleutel kwijt", "میری چابی گم ہو گئی ہے", "حال: چابی گم ہونے کی اطلاع دینی ہے۔"),
+      a1Phrase("home-p5", "kunt u iemand sturen?", "کیا آپ کسی کو بھیج سکتے ہیں؟", "حال: مرمت کے لیے کسی کو بھیجنے کو کہنا ہے۔"),
+      a1Phrase("home-p6", "wanneer komt de monteur?", "مرمت کرنے والا کب آئے گا؟", "حال: مرمت کا وقت پوچھنا ہے۔"),
+      a1Phrase("home-p7", "ik heb last van lawaai", "مجھے شور سے پریشانی ہے", "حال: شور کی شکایت کرنی ہے۔"),
+      a1Phrase("home-p8", "kunt u zachter zijn?", "کیا آپ آواز کم کر سکتے ہیں؟", "حال: پڑوسی کو آواز کم کرنے کو کہنا ہے۔"),
+      a1Phrase("home-p9", "sorry voor het lawaai", "شور کے لیے معاف کیجیے", "حال: اپنے شور پر معافی مانگنی ہے۔"),
+      a1Phrase("home-p10", "mag ik iets vragen?", "کیا میں کچھ پوچھ سکتا / سکتی ہوں؟", "حال: پڑوسی سے ادب سے بات شروع کرنی ہے۔"),
+      a1Phrase("home-p11", "de vuilnis wordt morgen opgehaald", "کچرا کل اٹھایا جائے گا", "حال: کچرا اٹھنے کا دن بتانا ہے۔"),
+      a1Phrase("home-p12", "waar moet de vuilnis staan?", "کچرا کہاں رکھنا ہے؟", "حال: کچرے کی جگہ پوچھنی ہے۔"),
+      a1Phrase("home-p13", "dank u voor uw hulp", "آپ کی مدد کا شکریہ", "حال: پڑوسی کی مدد پر شکریہ کہنا ہے۔")
+    ],
+    listenReplies: [["wat is er kapot?", ["de lamp is kapot", "morgen komt de vuilnis", "mijn buurman is thuis"], "de lamp is kapot", "خرابی بتائیں۔"], ["wanneer kan de monteur komen?", ["morgen in de ochtend", "de deur is dicht", "ik heb lawaai"], "morgen in de ochtend", "مرمت کا وقت بتائیں۔"], ["heb ik te veel lawaai gemaakt?", ["ja kunt u zachter zijn", "de lamp is kapot", "waar staat de vuilnis"], "ja kunt u zachter zijn", "شور کے بارے میں ادب سے جواب دیں۔"]],
+    builds: [["میری ہیٹنگ کام نہیں کر رہی", ["mijn", "verwarming", "doet", "het", "niet"], "mijn verwarming doet het niet", "خرابی کا جملہ۔"], ["میری چابی گم ہو گئی ہے", ["ik", "ben", "mijn", "sleutel", "kwijt"], "ik ben mijn sleutel kwijt", "گمشدہ چابی۔"], ["کیا آپ کسی کو بھیج سکتے ہیں؟", ["kunt", "u", "iemand", "sturen"], "kunt u iemand sturen", "مرمت کی درخواست۔"], ["مجھے شور سے پریشانی ہے", ["ik", "heb", "last", "van", "lawaai"], "ik heb last van lawaai", "شور کی شکایت۔"], ["کیا آپ آواز کم کر سکتے ہیں؟", ["kunt", "u", "zachter", "zijn"], "kunt u zachter zijn", "پڑوسی سے درخواست۔"], ["آپ کی مدد کا شکریہ", ["dank", "u", "voor", "uw", "hulp"], "dank u voor uw hulp", "شکریہ کا جملہ۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-health-pharmacy",
+    unit: "A1: صحت اور دوا",
+    title: "Bij de apotheek",
+    description: "علامت، دوا، مقدار، استعمال، اور ڈاکٹر کی ضرورت سمجھنا۔",
+    explanation: practicalExplanation("علامت اور مدت واضح بتائیں", ["ik heb... سے درد یا علامت بتائیں۔", "sinds gisteren سے بتائیں کہ مسئلہ کل سے ہے۔", "hoe vaak? دوا کتنی بار لینی ہے، یہ پوچھتا ہے۔"]),
+    concepts: [
+      dailyConcept("health-pharmacy", "apotheek", "دواخانہ", "apotheek"), dailyConcept("health-medicine", "medicijn", "دوا", "medicijn"),
+      dailyConcept("health-doctor", "huisarts", "گھر کا ڈاکٹر", "huisarts"), dailyConcept("health-pain", "pijn", "درد", "pijn"),
+      dailyConcept("health-head", "hoofdpijn", "سر درد", "hoofdpijn"), dailyConcept("health-cough", "hoesten", "کھانسی کرنا", "hoesten"),
+      dailyConcept("health-sick", "ziek", "بیمار", "ziek"), dailyConcept("health-rest", "rust", "آرام", "rust"),
+      a1Phrase("health-p1", "ik heb hoofdpijn", "میرے سر میں درد ہے", "حال: سر درد بتانا ہے۔"),
+      a1Phrase("health-p2", "ik moet veel hoesten", "مجھے بہت کھانسی آتی ہے", "حال: کھانسی کی علامت بتانی ہے۔"),
+      a1Phrase("health-p3", "ik ben sinds gisteren ziek", "میں کل سے بیمار ہوں", "حال: بیماری کب سے ہے، بتانا ہے۔"),
+      a1Phrase("health-p4", "heeft u iets tegen de pijn?", "کیا آپ کے پاس درد کی کوئی دوا ہے؟", "حال: درد کی دوا مانگنی ہے۔"),
+      a1Phrase("health-p5", "hoe vaak moet ik dit nemen?", "مجھے یہ کتنی بار لینا ہے؟", "حال: دوا کی تعداد پوچھنی ہے۔"),
+      a1Phrase("health-p6", "twee keer per dag", "دن میں دو بار", "حال: دوا کی مقدار سمجھنی ہے۔"),
+      a1Phrase("health-p7", "voor of na het eten?", "کھانے سے پہلے یا بعد؟", "حال: دوا کا وقت پوچھنا ہے۔"),
+      a1Phrase("health-p8", "u moet naar de huisarts", "آپ کو ڈاکٹر کے پاس جانا چاہیے", "حال: ڈاکٹر کے پاس جانے کا مشورہ سمجھنا ہے۔"),
+      a1Phrase("health-p9", "ik heb een afspraak nodig", "مجھے ملاقات کا وقت چاہیے", "حال: ڈاکٹر کا وقت مانگنا ہے۔"),
+      a1Phrase("health-p10", "ik kan vandaag niet werken", "میں آج کام نہیں کر سکتا / سکتی", "حال: بیماری کی وجہ سے کام نہ کرنے کی بات بتانی ہے۔"),
+      a1Phrase("health-p11", "ik ben allergisch voor penicilline", "مجھے penicilline سے حساسیت ہے", "حال: دوا کی حساسیت بتانی ہے۔"),
+      a1Phrase("health-p12", "waar doet het pijn?", "کہاں درد ہے؟", "حال: درد کی جگہ پوچھنی ہے۔"),
+      a1Phrase("health-p13", "het gaat al beter", "اب طبیعت بہتر ہے", "حال: بہتری کی اطلاع دینی ہے۔")
+    ],
+    listenReplies: [["waar doet het pijn?", ["in mijn hoofd", "sinds gisteren", "twee keer per dag"], "in mijn hoofd", "درد کی جگہ بتائیں۔"], ["hoe lang bent u al ziek?", ["sinds gisteren", "na het eten", "bij de apotheek"], "sinds gisteren", "مدت بتائیں۔"], ["hoe vaak moet u dit nemen?", ["twee keer per dag", "ik heb hoofdpijn", "naar de huisarts"], "twee keer per dag", "دوا کی تعداد بتائیں۔"]],
+    builds: [["میرے سر میں درد ہے", ["ik", "heb", "hoofdpijn"], "ik heb hoofdpijn", "علامت بتائیں۔"], ["میں کل سے بیمار ہوں", ["ik", "ben", "sinds", "gisteren", "ziek"], "ik ben sinds gisteren ziek", "مدت والا جملہ۔"], ["کیا آپ کے پاس درد کی دوا ہے؟", ["heeft", "u", "iets", "tegen", "de", "pijn"], "heeft u iets tegen de pijn", "دوا کی درخواست۔"], ["مجھے یہ کتنی بار لینا ہے؟", ["hoe", "vaak", "moet", "ik", "dit", "nemen"], "hoe vaak moet ik dit nemen", "دوا کا سوال۔"], ["دن میں دو بار", ["twee", "keer", "per", "dag"], "twee keer per dag", "مقدار۔"], ["مجھے ملاقات کا وقت چاہیے", ["ik", "heb", "een", "afspraak", "nodig"], "ik heb een afspraak nodig", "ڈاکٹر کا وقت۔"]]
+  }),
+  makeA1PracticalLesson({
+    id: "a1-work-school-messages",
+    unit: "A1: کام اور اسکول کے پیغام",
+    title: "Een kort bericht",
+    description: "غیر حاضری، دیر، وقت، ملاقات، اور مختصر فون یا تحریری پیغام۔",
+    explanation: practicalExplanation("پیغام میں تین باتیں کافی ہیں", ["پہلے اپنا نام بتائیں۔", "پھر صاف وجہ یا مسئلہ کہیں۔", "آخر میں بتائیں کب آئیں گے یا جواب مانگیں۔"]),
+    concepts: [
+      dailyConcept("message-work", "werk", "کام", "werk"), dailyConcept("message-school", "school", "اسکول", "school"),
+      dailyConcept("message-teacher", "docent", "استاد", "docent"), dailyConcept("message-colleague", "collega", "کام کا ساتھی", "collega"),
+      dailyConcept("message-phone", "telefoon", "فون", "telefoon"), dailyConcept("message-text", "bericht", "پیغام", "bericht"),
+      dailyConcept("message-sick", "ziek", "بیمار", "ziek"), dailyConcept("message-schedule", "rooster", "اوقات کی فہرست", "rooster"),
+      a1Phrase("message-p1", "goedemorgen u spreekt met Ali", "صبح بخیر، Ali بات کر رہا / رہی ہوں", "حال: فون پر اپنا تعارف کرانا ہے۔"),
+      a1Phrase("message-p2", "ik kan vandaag niet komen", "میں آج نہیں آ سکتا / سکتی", "حال: آج غیر حاضری بتانی ہے۔"),
+      a1Phrase("message-p3", "ik ben ziek", "میں بیمار ہوں", "حال: غیر حاضری کی وجہ بتانی ہے۔"),
+      a1Phrase("message-p4", "ik kom morgen weer", "میں کل دوبارہ آؤں گا / گی", "حال: واپسی کا دن بتانا ہے۔"),
+      a1Phrase("message-p5", "ik ben tien minuten later", "مجھے دس منٹ دیر ہو گی", "حال: تاخیر کی مقدار بتانی ہے۔"),
+      a1Phrase("message-p6", "de bus heeft vertraging", "بس دیر سے ہے", "حال: دیر کی وجہ بتانی ہے۔"),
+      a1Phrase("message-p7", "mijn kind komt vandaag niet naar school", "میرا بچہ آج اسکول نہیں آئے گا", "حال: اسکول کو غیر حاضری کا پیغام دینا ہے۔"),
+      a1Phrase("message-p8", "mijn kind heeft koorts", "میرے بچے کو بخار ہے", "حال: بچے کی بیماری بتانی ہے۔"),
+      a1Phrase("message-p9", "kunt u mij terugbellen?", "کیا آپ مجھے واپس فون کر سکتے ہیں؟", "حال: واپس فون کرنے کی درخواست کرنی ہے۔"),
+      a1Phrase("message-p10", "ik stuur een bericht", "میں ایک پیغام بھیجتا / بھیجتی ہوں", "حال: پیغام بھیجنے کی بات بتانی ہے۔"),
+      a1Phrase("message-p11", "hoe laat begint de les?", "سبق کتنے بجے شروع ہوتا ہے؟", "حال: سبق کا وقت پوچھنا ہے۔"),
+      a1Phrase("message-p12", "mijn rooster is veranderd", "میرے اوقات بدل گئے ہیں", "حال: اوقات بدلنے کی اطلاع دینی ہے۔"),
+      a1Phrase("message-p13", "dank u voor uw begrip", "سمجھنے کے لیے آپ کا شکریہ", "حال: پیغام ادب سے ختم کرنا ہے۔")
+    ],
+    listenReplies: [["waarom kunt u niet komen?", ["ik ben ziek", "ik kom morgen", "mijn rooster is hier"], "ik ben ziek", "وجہ بتائیں۔"], ["wanneer komt u weer?", ["morgen", "tien minuten", "met de bus"], "morgen", "واپسی کا دن بتائیں۔"], ["kan ik u terugbellen?", ["ja graag", "ik ben ziek", "de les begint"], "ja graag", "واپس فون کی درخواست قبول کریں۔"]],
+    builds: [["صبح بخیر، Ali بات کر رہا / رہی ہوں", ["goedemorgen", "u", "spreekt", "met", "Ali"], "goedemorgen u spreekt met Ali", "فون کا تعارف۔"], ["میں آج نہیں آ سکتا / سکتی", ["ik", "kan", "vandaag", "niet", "komen"], "ik kan vandaag niet komen", "غیر حاضری۔"], ["مجھے دس منٹ دیر ہو گی", ["ik", "ben", "tien", "minuten", "later"], "ik ben tien minuten later", "تاخیر کا پیغام۔"], ["میرا بچہ آج اسکول نہیں آئے گا", ["mijn", "kind", "komt", "vandaag", "niet", "naar", "school"], "mijn kind komt vandaag niet naar school", "اسکول کا پیغام۔"], ["کیا آپ مجھے واپس فون کر سکتے ہیں؟", ["kunt", "u", "mij", "terugbellen"], "kunt u mij terugbellen", "واپس فون کی درخواست۔"], ["سمجھنے کے لیے شکریہ", ["dank", "u", "voor", "uw", "begrip"], "dank u voor uw begrip", "ادب والا اختتام۔"]]
+  })
+);
+
 const a0DailyCheckpointConcepts = [
   dailyConcept("check-greeting", "goedemorgen", "صبح بخیر", "goedemorgen"),
   dailyConcept("check-thanks", "dank u wel", "آپ کا شکریہ", "thanks"),
@@ -2610,6 +2906,17 @@ a0Lessons.sort((left, right) => a0OrderIndex.get(left.id) - a0OrderIndex.get(rig
 for (const lesson of a0Lessons) {
   lesson.title = lesson.title.replace(/^A0 les \d+:\s*/, "");
 }
+
+const a1LessonOrder = [
+  "a1-zero-tiny-words", "a1-zijn-first-sentences", "a1-greetings-personal-info",
+  "a1-people-family-articles", "a1-hebben-family", "a1-present-time", "a1-daily-routine",
+  "a1-questions", "a1-plans-invitations", "a1-house-food-plurals", "a1-home-neighbours",
+  "a1-cafe-ordering", "a1-shopping-clothes", "a1-shopping-transport", "a1-public-transport",
+  "a1-health-appointments", "a1-health-pharmacy", "a1-work-school-messages"
+];
+const a1OrderIndex = new Map(a1LessonOrder.map((id, index) => [id, index]));
+a1Lessons.sort((left, right) => a1OrderIndex.get(left.id) - a1OrderIndex.get(right.id));
+for (const lesson of a1Lessons) lesson.title = lesson.title.replace(/^سبق \d+:\s*/, "");
 
 const bankBlueprints = {
   a0: { meaning: 10, reverse: 8, "image-choice": 10, "listen-choice": 10, "fill-gap": 8, situation: 8, build: 4 },
@@ -2752,7 +3059,7 @@ a0Lessons.forEach((lesson) => buildLessonBank(lesson, "a0"));
 a1Lessons.forEach((lesson) => buildLessonBank(lesson, "a1"));
 a2Lessons.forEach((lesson) => buildLessonBank(lesson, "a2"));
 
-for (const lesson of a0Lessons) {
+for (const lesson of [...a0Lessons, ...a1Lessons]) {
   for (const question of lesson.questions) {
     const genericPrefix = "حال: آپ کو کہنا ہے: ";
     if (!String(question.prompt || "").startsWith(genericPrefix)) continue;
@@ -2856,42 +3163,49 @@ const a1Subchapters = [
     title: "روزمرہ معمول",
     goal: "آج، کل، وقت، کام، اسکول اور آسان معمول بتانا۔",
     practice: "فاعل + فعل + باقی حصہ اور وقت والے الفاظ کے ساتھ جملہ بنانا۔",
-    lessonIds: ["a1-present-time"]
+    lessonIds: ["a1-present-time", "a1-daily-routine"]
   },
   {
     id: "a1-questions-help",
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions"]
+    lessonIds: ["a1-questions", "a1-plans-invitations"]
   },
   {
     id: "a1-home-objects",
     title: "گھر اور چیزیں",
     goal: "گھر، کمرہ، فرنیچر، اور چیز کہاں ہے بتانا۔",
     practice: "het boek is in huis جیسے جگہ جملے۔",
-    lessonIds: ["a1-house-food-plurals"]
+    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours"]
   },
   {
     id: "a1-food-shopping",
     title: "کھانا اور خریداری",
     goal: "بنیادی کھانا، قیمتیں، خریدنا، اور قیمت پوچھنا۔",
     practice: "ik wil..., hoeveel kost...? جیسے روزمرہ فقرے۔",
-    lessonIds: ["a1-shopping-transport"]
+    lessonIds: ["a1-cafe-ordering", "a1-shopping-clothes"]
   },
   {
     id: "a1-going-out-transport",
     title: "باہر جانا اور سفر",
     goal: "station، bus، trein، ٹکٹ، کہیں جانا۔",
     practice: "ik ga naar het station جیسے حرکت جملے۔",
-    lessonIds: ["a1-shopping-transport"]
+    lessonIds: ["a1-shopping-transport", "a1-public-transport"]
   },
   {
     id: "a1-body-health",
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments"]
+    lessonIds: ["a1-health-appointments", "a1-health-pharmacy"]
+  },
+  {
+    id: "a1-work-school-messages",
+    title: "کام اور اسکول کے پیغام",
+    goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
+    practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
+    lessonIds: ["a1-work-school-messages"]
   }
 ];
 

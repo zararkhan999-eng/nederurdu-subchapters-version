@@ -166,7 +166,7 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
     window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => lesson.id))
   ));
 
-  expect(lessonIds).toHaveLength(59);
+  expect(lessonIds).toHaveLength(67);
   for (const lessonId of lessonIds) {
     await page.evaluate((id) => window.startLesson(id), lessonId);
     await expect(page.locator(".quiz-screen"), lessonId).toBeVisible();
@@ -312,8 +312,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
   });
 
   expect(audit).toEqual({
-    lessonCount: 59,
-    questionCount: 3540,
+    lessonCount: 67,
+    questionCount: 4020,
     duplicateIds: [],
     duplicateQuestionIds: [],
     invalidAnswers: [],
@@ -447,6 +447,48 @@ test("all review modes accept new A0 daily lesson IDs", async ({ page }) => {
   await page.locator('[data-action="settings"]').click();
   await page.locator('[data-action="review"][data-review-kind="old"]').click();
   await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
+});
+
+test("new A1 practical lessons have complete interaction-focused banks", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const a1 = window.NEDERURDU_CHAPTERS.find((chapter) => chapter.id === "a1");
+    const ids = [
+      "a1-daily-routine", "a1-plans-invitations", "a1-cafe-ordering", "a1-shopping-clothes",
+      "a1-public-transport", "a1-home-neighbours", "a1-health-pharmacy", "a1-work-school-messages"
+    ];
+    return {
+      count: a1.lessons.length,
+      duplicatedPathLessons: a1.subchapters.flatMap((subchapter) => subchapter.lessonIds)
+        .filter((id, index, all) => all.indexOf(id) !== index),
+      lessons: ids.map((id) => {
+        const lesson = a1.lessons.find((item) => item.id === id);
+        const mix = lesson.questions.reduce((counts, question) => {
+          counts[question.type] = (counts[question.type] || 0) + 1;
+          return counts;
+        }, {});
+        return {
+          id,
+          mix,
+          replies: lesson.questions.filter((question) => question.mode === "listen-reply").length,
+          missingVisualIds: lesson.questions.filter((question) => question.type === "image-choice" && !question.visualId).map((question) => question.id),
+          missingAudio: lesson.questions.filter((question) => question.type === "listen-choice" && !question.speak).map((question) => question.id)
+        };
+      })
+    };
+  });
+
+  expect(audit.count).toBe(18);
+  expect(audit.duplicatedPathLessons).toEqual([]);
+  for (const lesson of audit.lessons) {
+    expect(lesson.mix, lesson.id).toEqual({
+      uitleg: 1, meaning: 8, reverse: 6, "image-choice": 8,
+      "listen-choice": 8, "fill-gap": 10, situation: 13, build: 6
+    });
+    expect(lesson.replies, lesson.id).toBe(3);
+    expect(lesson.missingVisualIds, lesson.id).toEqual([]);
+    expect(lesson.missingAudio, lesson.id).toEqual([]);
+  }
 });
 
 test("repeating a lesson prioritizes unseen questions", async ({ page }) => {
