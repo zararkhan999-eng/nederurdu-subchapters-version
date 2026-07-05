@@ -18,10 +18,21 @@ def pending_ids():
 
 def visual_kind(visual_id):
     people = {"man", "vrouw", "kind", "jongen", "meisje", "familie", "vader", "moeder", "broer", "zus", "collega", "docent"}
-    body = {"oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "rust"}
-    action_hints = ("bellen", "betalen", "helpen", "herhalen", "koken", "kopen", "leren", "opstaan", "parkeren", "ruilen", "schoonmaken", "terugkomen", "verb-")
-    situation_hints = ("gemeente", "huisarts", "ziekenhuis", "apotheek", "tandarts", "sollicitatie", "verzekering", "lekkage", "verwarming", "loket", "klacht")
-    foundation_hints = ("letter-", "pronoun-", "article-", "modal-", "connector-", "word-")
+    body = {"oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "rust", "honger", "dorst"}
+    action_hints = (
+        "bellen", "betalen", "helpen", "herhalen", "koken", "kopen", "leren", "opstaan",
+        "parkeren", "ruilen", "schoonmaken", "terugkomen", "alstublieft", "sorry", "graag",
+        "begrijpen", "nog-een-keer", "spreken", "luisteren", "eten", "slapen", "lopen",
+        "zitten", "staan", "wachten", "lezen", "schrijven", "pinnen", "hulp", "verb-"
+    )
+    situation_hints = (
+        "gemeente", "huisarts", "ziekenhuis", "apotheek", "tandarts", "sollicitatie",
+        "verzekering", "lekkage", "verwarming", "loket", "klacht", "goedemorgen",
+        "goedemiddag", "goedenavond", "tot-ziens", "ambulance"
+    )
+    foundation_hints = (
+        "letter-", "pronoun-", "article-", "modal-", "connector-", "word-", "number-"
+    )
     if visual_id in people:
         return "people-body"
     if visual_id in body:
@@ -30,7 +41,7 @@ def visual_kind(visual_id):
         return "actions"
     if any(hint in visual_id for hint in situation_hints):
         return "situations"
-    if visual_id == "possessive" or visual_id.startswith(foundation_hints):
+    if visual_id in {"possessive", "dit", "dat", "hier", "daar", "links", "rechts", "rechtdoor"} or visual_id.startswith(foundation_hints):
         return "foundations"
     return "objects-places"
 

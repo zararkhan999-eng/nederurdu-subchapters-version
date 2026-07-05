@@ -166,7 +166,7 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
     window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => lesson.id))
   ));
 
-  expect(lessonIds).toHaveLength(40);
+  expect(lessonIds).toHaveLength(59);
   for (const lessonId of lessonIds) {
     await page.evaluate((id) => window.startLesson(id), lessonId);
     await expect(page.locator(".quiz-screen"), lessonId).toBeVisible();
@@ -207,16 +207,17 @@ test("the three bottom navigation destinations open", async ({ page }) => {
 test("lesson completion marks its path node complete", async ({ page }) => {
   await openCleanApp(page);
 
-  await page.evaluate(() => {
+  const lessonId = await page.evaluate(() => {
     const lesson = window.NEDERURDU_CHAPTERS[0].lessons[0];
     window.startLesson(lesson.id);
     window.completeLesson(lesson);
+    return lesson.id;
   });
   await expect(page.locator(".complete-screen")).toBeVisible();
   await page.locator('[data-action="home"]').click();
-  await expect(page.locator('[data-path-lesson="a0-letters-1"] .lesson-node')).toHaveClass(/completed/);
+  await expect(page.locator(`[data-path-lesson="${lessonId}"] .lesson-node`)).toHaveClass(/completed/);
   const completed = await page.evaluate(() => JSON.parse(localStorage.getItem("nederurdu-progress-v3")).completedLessons);
-  expect(completed).toContain("a0-letters-1");
+  expect(completed).toContain(lessonId);
 });
 
 test("matching pairs enable Check after every pair is matched", async ({ page }) => {
@@ -311,14 +312,14 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
   });
 
   expect(audit).toEqual({
-    lessonCount: 40,
-    questionCount: 2400,
+    lessonCount: 59,
+    questionCount: 3540,
     duplicateIds: [],
     duplicateQuestionIds: [],
     invalidAnswers: [],
     invalidTypes: [],
     wrongSizedLessons: [],
-    visualCount: 152,
+    visualCount: 221,
     duplicateVisualIds: [],
     duplicateVisualTerms: [],
     missingVisualIds: [],
@@ -357,4 +358,115 @@ test("every approved visual loads as a 1024px WebP without fallbacks", async ({ 
   });
 
   expect(audit).toEqual({ pending: [], invalid: [] });
+});
+
+test("new A0 daily lessons have the planned structure and explicit media", async ({ page }) => {
+  await openCleanApp(page);
+
+  const audit = await page.evaluate(() => {
+    const a0 = window.NEDERURDU_CHAPTERS.find((chapter) => chapter.id === "a0");
+    const newIds = [
+      "a0-greetings-courtesy", "a0-understanding-help", "a0-dit-dat-questions",
+      "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days",
+      "a0-daily-actions", "a0-food-drink", "a0-shopping-payment",
+      "a0-transport-directions", "a0-health-emergency", "a0-daily-checkpoint",
+      "a0-spelling-personal-details", "a0-address-phone", "a0-date-appointment",
+      "a0-home-needs", "a0-child-school", "a0-work-basics", "a0-weather-clothing-safety"
+    ];
+    const expectedNormalMix = {
+      uitleg: 1, meaning: 10, reverse: 8, "image-choice": 10,
+      "listen-choice": 10, "fill-gap": 8, situation: 9, build: 4
+    };
+    const expectedCheckpointMix = {
+      meaning: 10, reverse: 8, "image-choice": 10,
+      "listen-choice": 10, "fill-gap": 8, situation: 10, build: 4
+    };
+
+    return {
+      a0Count: a0.lessons.length,
+      order: a0.lessons.map((lesson) => lesson.id),
+      lessons: newIds.map((id) => {
+        const lesson = a0.lessons.find((item) => item.id === id);
+        const mix = lesson.questions.reduce((counts, question) => {
+          counts[question.type] = (counts[question.type] || 0) + 1;
+          return counts;
+        }, {});
+        return {
+          id,
+          mix,
+          structuredConcepts: Array.isArray(lesson.concepts) && lesson.concepts.length > 0,
+          missingImageIds: lesson.questions
+            .filter((question) => question.type === "image-choice" && !question.visualId)
+            .map((question) => question.id),
+          missingAudio: lesson.questions
+            .filter((question) => question.type === "listen-choice" && !question.speak)
+            .map((question) => question.id)
+        };
+      }),
+      expectedNormalMix,
+      expectedCheckpointMix
+    };
+  });
+
+  expect(audit.a0Count).toBe(39);
+  expect(audit.order[0]).toBe("a0-greetings-courtesy");
+  expect(audit.order.at(-1)).toBe("a0-daily-checkpoint");
+  for (const lesson of audit.lessons) {
+    expect(lesson.structuredConcepts, lesson.id).toBe(true);
+    expect(lesson.missingImageIds, lesson.id).toEqual([]);
+    expect(lesson.missingAudio, lesson.id).toEqual([]);
+    expect(lesson.mix, lesson.id).toEqual(
+      lesson.id === "a0-daily-checkpoint" ? audit.expectedCheckpointMix : audit.expectedNormalMix
+    );
+  }
+});
+
+test("all review modes accept new A0 daily lesson IDs", async ({ page }) => {
+  await openCleanApp(page, {
+    completedLessons: ["a0-greetings-courtesy", "a0-understanding-help"],
+    lastLessonId: "a0-understanding-help",
+    mistakes: [{
+      lessonId: "a0-greetings-courtesy",
+      questionId: "a0-greetings-courtesy-meaning-02",
+      prompt: "hallo",
+      answer: "سلام"
+    }]
+  });
+
+  await page.locator('[data-action="practice"]').click();
+  await page.locator('[data-action="review"][data-review-kind="mistakes"]').click();
+  await expect(page.locator(".quiz-screen")).toBeVisible();
+  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 1");
+
+  await page.locator('[data-action="home"]').click();
+  await page.locator('[data-action="settings"]').click();
+  await page.locator('[data-action="review"][data-review-kind="today"]').click();
+  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
+
+  await page.locator('[data-action="home"]').click();
+  await page.locator('[data-action="settings"]').click();
+  await page.locator('[data-action="review"][data-review-kind="old"]').click();
+  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
+});
+
+test("repeating a lesson prioritizes unseen questions", async ({ page }) => {
+  await openCleanApp(page);
+  const lessonId = "a0-address-phone";
+  const firstRun = await page.evaluate((id) => {
+    const lesson = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).find((item) => item.id === id);
+    return sampleLessonQuestions(lesson.questions, id).map((question) => question.id);
+  }, lessonId);
+
+  await page.evaluate(({ ids }) => {
+    const key = "nederurdu-progress-v3";
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    saveProgress({ ...saved, seenQuestionIds: ids });
+  }, { ids: firstRun });
+
+  const secondRun = await page.evaluate((id) => {
+    const lesson = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).find((item) => item.id === id);
+    return sampleLessonQuestions(lesson.questions, id).map((question) => question.id);
+  }, lessonId);
+  const repeatedPractice = secondRun.filter((id) => firstRun.includes(id) && !id.includes("-uitleg-"));
+  expect(repeatedPractice).toEqual([]);
 });

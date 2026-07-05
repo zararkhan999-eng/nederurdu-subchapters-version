@@ -1502,6 +1502,91 @@ window.NEDERURDU_WORD_VISUALS = legacyWordVisuals.map((entry) => {
   };
 });
 
+const extraVisual = (id, altUrdu, canonicalTerm, dutchTerms, kind) => ({
+  id,
+  src: `assets/word-visuals/${id}.webp`,
+  altUrdu,
+  canonicalTerm,
+  dutchTerms,
+  concept: String(altUrdu).replace(/^تصویر:\s*/, ""),
+  kind
+});
+
+const additionalWordVisuals = [
+  extraVisual("goedemorgen", "تصویر: صبح سلام", "goedemorgen", ["goedemorgen"], "situation"),
+  extraVisual("goedemiddag", "تصویر: دوپہر سلام", "goedemiddag", ["goedemiddag"], "situation"),
+  extraVisual("goedenavond", "تصویر: شام سلام", "goedenavond", ["goedenavond"], "situation"),
+  extraVisual("tot-ziens", "تصویر: رخصت ہوتے وقت پھر ملیں گے", "tot ziens", ["tot ziens"], "situation"),
+  extraVisual("alstublieft", "تصویر: ادب سے چیز دینا", "alstublieft", ["alstublieft"], "action"),
+  extraVisual("sorry", "تصویر: معافی مانگنا", "sorry", ["sorry"], "action"),
+  extraVisual("graag", "تصویر: خوشی سے قبول کرنا", "graag", ["graag"], "action"),
+  extraVisual("begrijpen", "تصویر: بات سمجھنا", "begrijpen", ["begrijpen"], "action"),
+  extraVisual("nog-een-keer", "تصویر: ایک بار پھر", "nog een keer", ["nog een keer"], "action"),
+  extraVisual("spreken", "تصویر: بات کرنا", "spreken", ["spreken"], "action"),
+  extraVisual("luisteren", "تصویر: غور سے سننا", "luisteren", ["luisteren"], "action"),
+  extraVisual("middag", "تصویر: دوپہر", "middag", ["middag"], "object"),
+  extraVisual("avond", "تصویر: شام", "avond", ["avond"], "object"),
+  extraVisual("nacht", "تصویر: رات", "nacht", ["nacht"], "object"),
+  extraVisual("dit", "تصویر: قریب کی یہ چیز", "dit", ["dit"], "foundation"),
+  extraVisual("dat", "تصویر: دور کی وہ چیز", "dat", ["dat"], "foundation"),
+  extraVisual("hier", "تصویر: یہاں", "hier", ["hier"], "foundation"),
+  extraVisual("daar", "تصویر: وہاں", "daar", ["daar"], "foundation"),
+  extraVisual("toilet", "تصویر: ٹوائلٹ", "toilet", ["toilet"], "object"),
+  extraVisual("eten", "تصویر: کھانا کھانا", "eten", ["eten"], "action"),
+  extraVisual("slapen", "تصویر: سونا", "slapen", ["slapen"], "action"),
+  extraVisual("lopen", "تصویر: چلنا", "lopen", ["lopen"], "action"),
+  extraVisual("zitten", "تصویر: بیٹھنا", "zitten", ["zitten"], "action"),
+  extraVisual("staan", "تصویر: کھڑا ہونا", "staan", ["staan"], "action"),
+  extraVisual("wachten", "تصویر: انتظار کرنا", "wachten", ["wachten"], "action"),
+  extraVisual("lezen", "تصویر: پڑھنا", "lezen", ["lezen"], "action"),
+  extraVisual("schrijven", "تصویر: لکھنا", "schrijven", ["schrijven"], "action"),
+  extraVisual("melk", "تصویر: دودھ", "melk", ["melk"], "object"),
+  extraVisual("koffie", "تصویر: کافی", "koffie", ["koffie"], "object"),
+  extraVisual("thee", "تصویر: چائے", "thee", ["thee"], "object"),
+  extraVisual("honger", "تصویر: بھوک", "honger", ["honger"], "body"),
+  extraVisual("dorst", "تصویر: پیاس", "dorst", ["dorst"], "body"),
+  extraVisual("pinnen", "تصویر: کارڈ سے ادائیگی", "pinnen", ["pinnen"], "action"),
+  extraVisual("links", "تصویر: بائیں سمت", "links", ["links"], "foundation"),
+  extraVisual("rechts", "تصویر: دائیں سمت", "rechts", ["rechts"], "foundation"),
+  extraVisual("rechtdoor", "تصویر: سیدھی سمت", "rechtdoor", ["rechtdoor"], "foundation"),
+  extraVisual("ingang", "تصویر: داخلے کا راستہ", "ingang", ["ingang"], "object"),
+  extraVisual("uitgang", "تصویر: باہر جانے کا راستہ", "uitgang", ["uitgang"], "object"),
+  extraVisual("ambulance", "تصویر: ایمبولینس", "ambulance", ["ambulance"], "situation"),
+  extraVisual("hulp", "تصویر: فوری مدد", "hulp", ["hulp"], "situation")
+];
+
+const numberVisualTerms = [
+  [0, "nul", "صفر"], [1, "een", "ایک"], [2, "twee", "دو"], [3, "drie", "تین"],
+  [4, "vier", "چار"], [5, "vijf", "پانچ"], [6, "zes", "چھ"], [7, "zeven", "سات"],
+  [8, "acht", "آٹھ"], [9, "negen", "نو"], [10, "tien", "دس"], [11, "elf", "گیارہ"],
+  [12, "twaalf", "بارہ"], [13, "dertien", "تیرہ"], [14, "veertien", "چودہ"],
+  [15, "vijftien", "پندرہ"], [16, "zestien", "سولہ"], [17, "zeventien", "سترہ"],
+  [18, "achttien", "اٹھارہ"], [19, "negentien", "انیس"], [20, "twintig", "بیس"],
+  [30, "dertig", "تیس"], [40, "veertig", "چالیس"], [50, "vijftig", "پچاس"],
+  [60, "zestig", "ساٹھ"], [70, "zeventig", "ستر"], [80, "tachtig", "اسی"],
+  [90, "negentig", "نوے"], [100, "honderd", "سو"]
+];
+
+for (const [number, dutch, urdu] of numberVisualTerms) {
+  additionalWordVisuals.push(extraVisual(
+    `number-${number}`,
+    `تصویر: عدد ${urdu}`,
+    `getal ${dutch}`,
+    [],
+    "foundation"
+  ));
+}
+
+for (const visual of additionalWordVisuals) {
+  visual.dutchTerms = visual.dutchTerms.filter((term) => {
+    const normalized = normalizeVisualTerm(term);
+    if (!normalized || claimedVisualTerms.has(normalized)) return false;
+    claimedVisualTerms.add(normalized);
+    return true;
+  });
+  window.NEDERURDU_WORD_VISUALS.push(visual);
+}
+
 const visualTermIndex = new Map();
 for (const visual of window.NEDERURDU_WORD_VISUALS) {
   visualTermIndex.set(normalizeVisualTerm(visual.id.replaceAll("-", " ")), visual.id);
@@ -1530,6 +1615,9 @@ function resolveExplicitVisualId(value) {
 for (const chapter of window.NEDERURDU_CHAPTERS || []) {
   for (const lesson of chapter.lessons || []) {
     for (const question of lesson.questions || []) {
+      const explicitVisualId = window.NEDERURDU_WORD_VISUALS.some((visual) => visual.id === question.visualId)
+        ? question.visualId
+        : "";
       const visualSource = question.type === "meaning"
         ? question.prompt
         : ["reverse", "situation", "build"].includes(question.type)
@@ -1537,7 +1625,7 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
           : question.type === "fill-gap"
             ? question.prompt.replace("___", "")
             : question.visual || "";
-      question.visualId = resolveExplicitVisualId(visualSource) || undefined;
+      question.visualId = explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
     }
   }

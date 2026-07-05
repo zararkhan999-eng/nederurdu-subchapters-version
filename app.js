@@ -254,6 +254,7 @@ const REVIEW_QUESTION_LIMIT = 20;
 const defaultProgress = {
   completedLessons: [],
   scores: {},
+  seenQuestionIds: [],
   totalXp: 0,
   practiceDays: [],
   mistakes: [],
@@ -794,6 +795,9 @@ function renderQuizTopBar(percentage, current, total) {
 
 function getQuestionTitle(question) {
   if (isInfoQuestion(question)) return "پہلے یہ سمجھیں";
+  if (question.mode === "listen-reply") return "سنیں اور جواب منتخب کریں";
+  if (question.mode === "dialogue") return "گفتگو مکمل کریں";
+  if (question.mode === "guided-recall") return "صحیح Nederlands منتخب کریں";
   if (question.type === "listen-choice") return "آپ نے کیا سنا؟";
   if (question.type === "build") return "جملہ بنائیں";
   if (question.type === "fill-gap") return "خالی جگہ پُر کریں";
@@ -1622,6 +1626,10 @@ function completeLesson(lesson) {
       ...progress.scores,
       [lesson.id]: Math.max(progress.scores[lesson.id] || 0, correct)
     },
+    seenQuestionIds: [...new Set([
+      ...(progress.seenQuestionIds || []),
+      ...questions.map((question) => question.id).filter(Boolean)
+    ])],
     totalXp: progress.totalXp + earnedXp,
     practiceDays,
     mistakes: [...keptMistakes, ...newMistakes],
@@ -1692,11 +1700,16 @@ function sampleLessonQuestions(questions, lessonId) {
   const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
   if (questions.length <= LESSON_QUESTION_LIMIT) return [...infoQuestions, ...usableQuestions].slice(0, LESSON_QUESTION_LIMIT);
   const explanationCount = Math.min(2, infoQuestions.length);
-  const seed = hashText(`${lessonId}:${progress.scores[lessonId] || 0}`);
+  const seenIds = new Set(progress.seenQuestionIds || []);
+  const lessonSeenCount = usableQuestions.filter((question) => seenIds.has(question.id)).length;
+  const seed = hashText(`${lessonId}:${lessonSeenCount}:${progress.scores[lessonId] || 0}`);
   const types = ["meaning", "reverse", "image-choice", "listen-choice", "fill-gap", "situation", "build"];
   const groups = new Map(types.map((type, index) => [
     type,
-    seededShuffle(usableQuestions.filter((question) => question.type === type), seed + index)
+    [
+      ...seededShuffle(usableQuestions.filter((question) => question.type === type && !seenIds.has(question.id)), seed + index),
+      ...seededShuffle(usableQuestions.filter((question) => question.type === type && seenIds.has(question.id)), seed + index + 41)
+    ]
   ]));
   const practice = [];
   while (practice.length < LESSON_QUESTION_LIMIT - explanationCount) {
