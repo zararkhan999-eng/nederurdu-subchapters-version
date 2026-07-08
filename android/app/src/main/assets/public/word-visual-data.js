@@ -1640,6 +1640,15 @@ function resolveExplicitVisualId(value) {
   return candidates[0]?.id || "";
 }
 
+function isSafeImageChoiceAnswer(answer) {
+  const normalized = normalizeVisualTerm(answer);
+  if (!normalized) return false;
+  if (/[,?!]/.test(String(answer || ""))) return false;
+  if (/^(de|het|een|geen)\s+[a-z0-9-]+$/.test(normalized)) return true;
+  if (normalized.split(/\s+/).length <= 3) return true;
+  return false;
+}
+
 for (const chapter of window.NEDERURDU_CHAPTERS || []) {
   for (const lesson of chapter.lessons || []) {
     for (const question of lesson.questions || []) {
@@ -1655,6 +1664,12 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
             : question.visual || question.visualId || "";
       question.visualId = explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
+      if (question.type === "image-choice" && !isSafeImageChoiceAnswer(question.answer)) {
+        question.type = "situation";
+        question.label = "حال کے لیے صحیح Nederlands جملہ منتخب کریں";
+        question.prompt = "اس حال کے لیے صحیح Nederlands منتخب کریں۔";
+        delete question.visualId;
+      }
     }
   }
 }

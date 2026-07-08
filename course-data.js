@@ -982,7 +982,8 @@ const fillGap = (sentence, options, answer, explain) => ({
   type: "fill-gap",
   label: "خالی جگہ کے لیے صحیح لفظ منتخب کریں",
   prompt: sentence,
-  options,
+  speak: completeGapSentence(sentence, answer),
+  options: cleanFillOptions(options, answer),
   answer,
   explain
 });
@@ -1052,6 +1053,28 @@ function cleanDutchWord(word) {
   return String(word || "").replace(/^[^A-Za-zÀ-ÿ]+|[^A-Za-zÀ-ÿ]+$/g, "");
 }
 
+function extractDutchWords(text) {
+  return String(text || "").match(/[A-Za-zÀ-ÿ]+/g) || [];
+}
+
+function isCleanDutchWord(word) {
+  return /^[A-Za-zÀ-ÿ0-9-]+$/.test(String(word || ""));
+}
+
+function cleanFillOptions(options, answer) {
+  const cleanAnswer = String(answer || "").trim();
+  const cleaned = uniq([cleanAnswer, ...(options || [])]
+    .map((option) => String(option || "").trim())
+    .filter((option) => option && option !== "___" && isCleanDutchWord(option)));
+  return cleaned.includes(cleanAnswer) ? cleaned : [cleanAnswer, ...cleaned].filter(isCleanDutchWord);
+}
+
+function completeGapSentence(sentence, answer) {
+  const prompt = String(sentence || "");
+  if (!prompt.includes("___")) return prompt;
+  return prompt.replace("___", String(answer || "").trim()).replace(/\s+/g, " ").trim();
+}
+
 function missingWordSentence(sentence) {
   const words = String(sentence || "").split(/\s+/).filter(Boolean);
   if (words.length < 2) return null;
@@ -1064,6 +1087,78 @@ function missingWordSentence(sentence) {
     prompt: promptWords.join(" "),
     missing: entry.clean
   };
+}
+
+function simpleFillSentenceForWord(word) {
+  const answer = String(word || "").trim().toLowerCase();
+  const oneLetter = /^[a-z]$/.test(answer);
+  const pronounFrames = {
+    ik: "___ ben hier",
+    jij: "___ bent hier",
+    je: "___ bent hier",
+    u: "___ bent hier",
+    hij: "___ is hier",
+    zij: "___ is hier",
+    wij: "___ zijn hier",
+    we: "___ zijn hier"
+  };
+  const verbFrames = {
+    ben: "ik ___ hier",
+    bent: "jij ___ hier",
+    is: "hij ___ hier",
+    zijn: "wij ___ hier",
+    heb: "ik ___ een boek",
+    hebt: "jij ___ een boek",
+    heeft: "hij ___ een boek",
+    woon: "ik ___ hier",
+    woont: "hij ___ hier",
+    ga: "ik ___ naar huis",
+    gaat: "hij ___ naar huis",
+    kom: "ik ___ morgen",
+    komt: "hij ___ morgen",
+    wil: "ik ___ water",
+    moet: "ik ___ bellen",
+    kan: "ik ___ komen"
+  };
+  const prepositionFrames = {
+    in: "ik woon ___ Nederland",
+    op: "het boek ligt ___ tafel",
+    onder: "de tas ligt ___ tafel",
+    naast: "ik sta ___ de deur",
+    voor: "ik sta ___ het huis",
+    achter: "ik sta ___ het huis",
+    bij: "ik ben ___ de dokter",
+    naar: "ik ga ___ huis",
+    met: "ik kom ___ mijn kind",
+    om: "ik kom ___ tien uur"
+  };
+  const shortFrames = {
+    ja: "antwoord: ___",
+    nee: "antwoord: ___",
+    goed: "het gaat ___",
+    niet: "ik kom ___",
+    geen: "ik heb ___ boek",
+    de: "___ man",
+    het: "___ boek",
+    een: "___ boek",
+    mijn: "___ naam is Ali",
+    jouw: "___ naam is Sara",
+    zijn: "___ boek is hier",
+    haar: "___ boek is hier",
+    uw: "___ naam graag"
+  };
+  if (oneLetter) return "letter ___";
+  return pronounFrames[answer]
+    || verbFrames[answer]
+    || prepositionFrames[answer]
+    || shortFrames[answer]
+    || "dit is ___";
+}
+
+function singleWordFillGap(word) {
+  const answer = cleanDutchWord(word);
+  if (!isCleanDutchWord(answer)) return null;
+  return { prompt: simpleFillSentenceForWord(answer), missing: answer };
 }
 
 function makeImageRevision(lesson, index) {
@@ -1430,7 +1525,7 @@ function dailyOptions(concepts, index, key) {
 }
 
 function makeA0DailyLesson({ id, unit, title, description, explanation, concepts, fills, situations, builds, listenReplies = [] }) {
-  const visualConcepts = concepts.filter((concept) => concept.visualId);
+  const visualConcepts = concepts.filter((concept) => concept.visualId && concept.role !== "phrase");
   const questions = explanation ? [
     uitleg(explanation.title, explanation.points, explanation.note)
   ] : [];
@@ -1455,6 +1550,7 @@ function makeA0DailyLesson({ id, unit, title, description, explanation, concepts
     ));
   }
   for (let index = 0; index < 10; index += 1) {
+    if (!visualConcepts.length) break;
     const concept = visualConcepts[index % visualConcepts.length];
     const options = dailyOptions(visualConcepts, index, "dutch");
     questions.push({
@@ -2180,7 +2276,7 @@ function makeA1PracticalLesson({ id, unit, title, description, explanation, conc
     };
   });
 
-  const fillWords = uniq(phraseConcepts.flatMap((concept) => concept.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+  const fillWords = uniq(phraseConcepts.flatMap((concept) => extractDutchWords(concept.dutch)).filter((word) => word.length > 1));
   for (let index = 0; index < 10; index += 1) {
     const concept = phraseConcepts[index % phraseConcepts.length];
     const gap = missingWordSentence(concept.dutch);
@@ -2233,7 +2329,7 @@ function makeA2PracticalLesson({ id, unit, title, description, explanation, conc
     questions[listeningIndexes[index]] = { ...listenChoice(speak, options, answer, explain), prompt: "بات سنیں اور مناسب جواب منتخب کریں۔", mode: "listen-reply" };
   });
 
-  const fillWords = uniq(phraseConcepts.flatMap((concept) => concept.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+  const fillWords = uniq(phraseConcepts.flatMap((concept) => extractDutchWords(concept.dutch)).filter((word) => word.length > 1));
   for (let index = 0; index < 12; index += 1) {
     const concept = phraseConcepts[index % phraseConcepts.length];
     const gap = missingWordSentence(concept.dutch);
@@ -3400,32 +3496,108 @@ function conceptOptions(concepts, index, key) {
 }
 
 function fallbackVisualIdForDutch(text) {
-  const value = String(text || "").toLowerCase();
-  const rules = [
-    [/\b(ik|mijn|ben)\b/, "pronoun-ik"],
-    [/\b(jij|je|jouw|bent)\b/, "pronoun-jij"],
-    [/\b(u|uw)\b/, "pronoun-u"],
-    [/\b(hij|zij|zijn|haar)\b/, "pronoun-hij-zij"],
-    [/\b(wij|we)\b/, "pronoun-wij"],
-    [/\b(naam|voornaam|achternaam)\b/, "naam"],
-    [/\b(adres|postcode|straat|woonplaats)\b/, "adres"],
-    [/\b(telefoon|nummer|bericht|bellen)\b/, "telefoon"],
-    [/\b(school|docent|huiswerk|rooster)\b/, "school"],
-    [/\b(kind|kinderen|zoon|dochter)\b/, "kind"],
-    [/\b(man|vader|broer)\b/, "man"],
-    [/\b(vrouw|moeder|zus)\b/, "vrouw"],
-    [/\b(huis|woning|kamer|keuken|badkamer)\b/, "huis"],
-    [/\b(werk|baan|collega|salaris)\b/, "werk"],
-    [/\b(dokter|huisarts|pijn|ziek|koorts|medicijn|apotheek)\b/, "dokter"],
-    [/\b(bus|trein|station|halte|kaartje|spoor)\b/, "station"],
-    [/\b(winkel|supermarkt|kassa|bon|prijs|betalen|pin)\b/, "winkel"],
-    [/\b(brood|water|melk|koffie|thee|eten)\b/, "eten"],
-    [/\b(waar|wat|wie|hoe|wanneer|waarom|welke)\b/, "vraag"],
-    [/\b(vandaag|morgen|gisteren|uur|maandag|vrijdag)\b/, "rooster"],
-    [/\b(links|rechts|rechtdoor)\b/, "rechtdoor"]
-  ];
-  const match = rules.find(([pattern]) => pattern.test(value));
-  return match ? match[1] : "vraag";
+  const value = String(text || "").toLowerCase().trim();
+  if (!/^[a-zà-ÿ]+(?:\s+[a-zà-ÿ]+)?$/.test(value)) return "";
+  const exactVisuals = {
+    appel: "appel",
+    boek: "boek",
+    deur: "deur",
+    fiets: "fiets",
+    huis: "huis",
+    lamp: "lamp",
+    kat: "kat",
+    oog: "oog",
+    pen: "pen",
+    rijst: "rijst",
+    stoel: "stoel",
+    tafel: "tafel",
+    water: "water",
+    man: "man",
+    vrouw: "vrouw",
+    kind: "kind",
+    jongen: "jongen",
+    meisje: "meisje",
+    familie: "familie",
+    vader: "vader",
+    moeder: "moeder",
+    broer: "broer",
+    zus: "zus",
+    telefoon: "telefoon",
+    naam: "naam",
+    adres: "adres",
+    paspoort: "paspoort",
+    afspraak: "afspraak",
+    dokter: "dokter",
+    huisarts: "huisarts",
+    tandarts: "tandarts",
+    apotheek: "apotheek",
+    ziekenhuis: "ziekenhuis",
+    medicijn: "medicijn",
+    pijn: "pijn",
+    hoofdpijn: "hoofdpijn",
+    buikpijn: "buikpijn",
+    hoesten: "hoesten",
+    koorts: "koorts",
+    ziek: "ziek",
+    badkamer: "badkamer",
+    keuken: "keuken",
+    kamer: "kamer",
+    verwarming: "verwarming",
+    lekkage: "lekkage",
+    reparatie: "reparatie",
+    formulier: "formulier",
+    gemeente: "gemeente",
+    document: "document",
+    contract: "contract",
+    baan: "baan",
+    werk: "werk",
+    school: "school",
+    huiswerk: "huiswerk",
+    rooster: "rooster",
+    supermarkt: "supermarkt",
+    winkel: "winkel",
+    kassa: "kassa",
+    bon: "bon",
+    prijs: "prijs",
+    pinpas: "pinpas",
+    contant: "contant",
+    brood: "brood",
+    kaas: "kaas",
+    fruit: "fruit",
+    groente: "groente",
+    tas: "tas",
+    jas: "jas",
+    station: "station",
+    halte: "halte",
+    bus: "bus",
+    trein: "trein",
+    kaartje: "kaartje",
+    stad: "stad",
+    land: "land",
+    kopen: "kopen",
+    koken: "koken",
+    leren: "leren",
+    bellen: "bellen",
+    helpen: "helpen",
+    betalen: "betalen",
+    bericht: "bericht",
+    uur: "uur",
+    vandaag: "vandaag",
+    morgen: "morgen",
+    gisteren: "gisteren",
+    ochtend: "ochtend",
+    ja: "ja",
+    nee: "nee",
+    goed: "goed",
+    niet: "niet",
+    vraag: "vraag",
+    langzaam: "langzaam",
+    goedkoop: "goedkoop",
+    duur: "duur",
+    kapot: "kapot"
+  };
+  if (exactVisuals[value]) return exactVisuals[value];
+  return "";
 }
 
 function buildGeneratedQuestion(type, concepts, index) {
@@ -3462,11 +3634,15 @@ function buildGeneratedQuestion(type, concepts, index) {
   if (type === "fill-gap") {
     const gap = missingWordSentence(concept.dutch);
     if (gap) {
-      const words = uniq(concepts.flatMap((item) => item.dutch.split(/\s+/).map(cleanDutchWord)).filter((word) => word.length > 1));
+      const words = uniq(concepts.flatMap((item) => extractDutchWords(item.dutch)).filter((word) => isCleanDutchWord(word)));
       const options = [gap.missing, ...rotate(words.filter((word) => word !== gap.missing), index).slice(0, 2)];
       return fillGap(gap.prompt, options, gap.missing, `خالی جگہ میں ${gap.missing} آئے گا۔`);
     }
-    return fillGap("___", dutchSet.options, concept.dutch, `صحیح لفظ ${concept.dutch} ہے۔`);
+    const singleWordGap = singleWordFillGap(concept.dutch);
+    if (!singleWordGap) return null;
+    const words = uniq(concepts.flatMap((item) => extractDutchWords(item.dutch)).filter((word) => isCleanDutchWord(word)));
+    const options = [singleWordGap.missing, ...rotate(words.filter((word) => word !== singleWordGap.missing), index).slice(0, 2)];
+    return fillGap(singleWordGap.prompt, options, singleWordGap.missing, `خالی جگہ میں ${singleWordGap.missing} آئے گا۔`);
   }
   if (type === "situation") {
     return situation(`حال: آپ کو کہنا ہے: ${concept.urdu}`, dutchSet.options, concept.dutch, `صحیح Nederlands: ${concept.dutch}۔`);
@@ -3522,6 +3698,15 @@ function buildLessonBank(lesson, level) {
   const bank = [...explanations];
   for (const [type, target] of Object.entries(blueprint)) {
     bank.push(...takeQuestionsForType(seedQuestions, type, target, concepts));
+  }
+  let fillerAttempt = 0;
+  while (bank.length < 60 && fillerAttempt < 180) {
+    const fallbackType = fillerAttempt % 3 === 0 ? "situation" : fillerAttempt % 3 === 1 ? "fill-gap" : "listen-choice";
+    const filler = buildGeneratedQuestion(fallbackType, concepts, fillerAttempt + bank.length);
+    if (filler && !bank.some((question) => questionSignature(question) === questionSignature(filler))) {
+      bank.push(filler);
+    }
+    fillerAttempt += 1;
   }
 
   lesson.questions = bank.slice(0, 60).map((question, index) => ({

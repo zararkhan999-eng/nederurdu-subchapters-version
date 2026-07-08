@@ -1913,6 +1913,9 @@ function getAcceptedAnswers(question) {
 
 function getQuestionSpeechText(question) {
   if (question.speak) return question.speak;
+  if (question.type === "fill-gap" && String(question.prompt || "").includes("___")) {
+    return String(question.prompt || "").replace("___", question.answer || "").replace(/\s+/g, " ").trim();
+  }
   return isDutchText(question.prompt) ? question.prompt : "";
 }
 

@@ -268,6 +268,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     const wrongSizedLessons = [];
     const duplicateQuestionIds = [];
     const missingVisualIds = [];
+    const invalidFillGaps = [];
+    const unsafeImageChoices = [];
     const forbiddenWording = [
       "نفی والا لفظ",
       "de/het والا چھوٹا لفظ",
@@ -292,6 +294,24 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
           invalidAnswers.push(`${lesson.id}:${question.prompt}`);
         }
         if (question.type === "image-choice" && (!question.visualId || !visualIdSet.has(question.visualId))) missingVisualIds.push(question.id);
+        if (question.type === "image-choice" && (/[,?!]/.test(question.answer) || String(question.answer).trim().split(/\s+/).length > 3)) {
+          unsafeImageChoices.push(question.id);
+        }
+        if (question.type === "fill-gap") {
+          const blankCount = (String(question.prompt || "").match(/___/g) || []).length;
+          const badOption = (question.options || []).some((option) => !option || option === "___" || /\s|,/.test(option));
+          if (
+            blankCount !== 1
+            || String(question.prompt || "").trim() === "___"
+            || !question.options?.includes(question.answer)
+            || question.options.length < 3
+            || badOption
+            || !question.speak
+            || String(question.speak).includes("___")
+          ) {
+            invalidFillGaps.push(question.id);
+          }
+        }
       }
     }
 
@@ -310,6 +330,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
       duplicateVisualIds: visualIds.filter((id, index) => visualIds.indexOf(id) !== index),
       duplicateVisualTerms: allTerms.filter((term, index) => allTerms.indexOf(term) !== index),
       missingVisualIds,
+      invalidFillGaps,
+      unsafeImageChoices,
       invalidVisualRecords: visuals.filter((visual) => !getVisualId(visual) || !visual.src || !(visual.altUrdu || visual.alt) || !(visual.canonicalTerm || visual.terms?.[0]) || !(visual.concept || visual.terms?.length) || !(visual.kind || visual.src)).map(getVisualId),
       forbiddenWording: forbiddenWording.filter((phrase) => courseText.includes(phrase))
     };
@@ -327,6 +349,8 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     duplicateVisualIds: [],
     duplicateVisualTerms: [],
     missingVisualIds: [],
+    invalidFillGaps: [],
+    unsafeImageChoices: [],
     invalidVisualRecords: [],
     forbiddenWording: []
   });
@@ -377,15 +401,6 @@ test("new A0 daily lessons have the planned structure and explicit media", async
       "a0-spelling-personal-details", "a0-address-phone", "a0-date-appointment",
       "a0-home-needs", "a0-child-school", "a0-work-basics", "a0-weather-clothing-safety"
     ];
-    const expectedNormalMix = {
-      uitleg: 1, meaning: 10, reverse: 8, "image-choice": 10,
-      "listen-choice": 10, "fill-gap": 8, situation: 9, build: 4
-    };
-    const expectedCheckpointMix = {
-      meaning: 10, reverse: 8, "image-choice": 10,
-      "listen-choice": 10, "fill-gap": 8, situation: 10, build: 4
-    };
-
     return {
       a0Count: a0.lessons.length,
       order: a0.lessons.map((lesson) => lesson.id),
@@ -397,18 +412,20 @@ test("new A0 daily lessons have the planned structure and explicit media", async
         }, {});
         return {
           id,
+          count: lesson.questions.length,
           mix,
           structuredConcepts: Array.isArray(lesson.concepts) && lesson.concepts.length > 0,
           missingImageIds: lesson.questions
             .filter((question) => question.type === "image-choice" && !question.visualId)
             .map((question) => question.id),
+          unsafeImageChoices: lesson.questions
+            .filter((question) => question.type === "image-choice" && (/[,?!]/.test(question.answer) || String(question.answer).trim().split(/\s+/).length > 3))
+            .map((question) => question.id),
           missingAudio: lesson.questions
             .filter((question) => question.type === "listen-choice" && !question.speak)
             .map((question) => question.id)
         };
-      }),
-      expectedNormalMix,
-      expectedCheckpointMix
+      })
     };
   });
 
@@ -416,12 +433,16 @@ test("new A0 daily lessons have the planned structure and explicit media", async
   expect(audit.order[0]).toBe("a0-greetings-courtesy");
   expect(audit.order.at(-1)).toBe("a0-daily-checkpoint");
   for (const lesson of audit.lessons) {
+    expect(lesson.count, lesson.id).toBe(60);
     expect(lesson.structuredConcepts, lesson.id).toBe(true);
     expect(lesson.missingImageIds, lesson.id).toEqual([]);
+    expect(lesson.unsafeImageChoices, lesson.id).toEqual([]);
     expect(lesson.missingAudio, lesson.id).toEqual([]);
-    expect(lesson.mix, lesson.id).toEqual(
-      lesson.id === "a0-daily-checkpoint" ? audit.expectedCheckpointMix : audit.expectedNormalMix
-    );
+    expect(lesson.mix.meaning, lesson.id).toBeGreaterThanOrEqual(10);
+    expect(lesson.mix.reverse, lesson.id).toBeGreaterThanOrEqual(8);
+    expect(lesson.mix["listen-choice"], lesson.id).toBeGreaterThanOrEqual(10);
+    expect(lesson.mix["fill-gap"], lesson.id).toBeGreaterThanOrEqual(8);
+    expect(lesson.mix.build, lesson.id).toBe(4);
   }
 });
 
@@ -473,9 +494,13 @@ test("new A1 practical lessons have complete interaction-focused banks", async (
         }, {});
         return {
           id,
+          count: lesson.questions.length,
           mix,
           replies: lesson.questions.filter((question) => question.mode === "listen-reply").length,
           missingVisualIds: lesson.questions.filter((question) => question.type === "image-choice" && !question.visualId).map((question) => question.id),
+          unsafeImageChoices: lesson.questions
+            .filter((question) => question.type === "image-choice" && (/[,?!]/.test(question.answer) || String(question.answer).trim().split(/\s+/).length > 3))
+            .map((question) => question.id),
           missingAudio: lesson.questions.filter((question) => question.type === "listen-choice" && !question.speak).map((question) => question.id)
         };
       })
@@ -485,12 +510,16 @@ test("new A1 practical lessons have complete interaction-focused banks", async (
   expect(audit.count).toBe(81);
   expect(audit.duplicatedPathLessons).toEqual([]);
   for (const lesson of audit.lessons) {
-    expect(lesson.mix, lesson.id).toEqual({
-      uitleg: 1, meaning: 8, reverse: 6, "image-choice": 8,
-      "listen-choice": 8, "fill-gap": 10, situation: 13, build: 6
-    });
+    expect(lesson.count, lesson.id).toBe(60);
+    expect(lesson.mix.uitleg, lesson.id).toBe(1);
+    expect(lesson.mix.meaning, lesson.id).toBe(8);
+    expect(lesson.mix.reverse, lesson.id).toBe(6);
+    expect(lesson.mix["listen-choice"], lesson.id).toBe(8);
+    expect(lesson.mix["fill-gap"], lesson.id).toBe(10);
+    expect(lesson.mix.build, lesson.id).toBe(6);
     expect(lesson.replies, lesson.id).toBe(3);
     expect(lesson.missingVisualIds, lesson.id).toEqual([]);
+    expect(lesson.unsafeImageChoices, lesson.id).toEqual([]);
     expect(lesson.missingAudio, lesson.id).toEqual([]);
   }
 });
@@ -537,9 +566,13 @@ test("new A2 independent-living lessons have complete practical banks", async ({
         }, {});
         return {
           id,
+          count: lesson.questions.length,
           mix,
           replies: lesson.questions.filter((question) => question.mode === "listen-reply").length,
           missingVisualIds: lesson.questions.filter((question) => question.type === "image-choice" && !question.visualId).map((question) => question.id),
+          unsafeImageChoices: lesson.questions
+            .filter((question) => question.type === "image-choice" && (/[,?!]/.test(question.answer) || String(question.answer).trim().split(/\s+/).length > 3))
+            .map((question) => question.id),
           missingAudio: lesson.questions.filter((question) => question.type === "listen-choice" && !question.speak).map((question) => question.id)
         };
       })
@@ -549,12 +582,16 @@ test("new A2 independent-living lessons have complete practical banks", async ({
   expect(audit.count).toBe(22);
   expect(audit.duplicatedPathLessons).toEqual([]);
   for (const lesson of audit.lessons) {
-    expect(lesson.mix, lesson.id).toEqual({
-      uitleg: 1, meaning: 6, reverse: 5, "image-choice": 6,
-      "listen-choice": 7, "fill-gap": 12, situation: 15, build: 8
-    });
+    expect(lesson.count, lesson.id).toBe(60);
+    expect(lesson.mix.uitleg, lesson.id).toBe(1);
+    expect(lesson.mix.meaning, lesson.id).toBe(6);
+    expect(lesson.mix.reverse, lesson.id).toBe(5);
+    expect(lesson.mix["listen-choice"], lesson.id).toBe(7);
+    expect(lesson.mix["fill-gap"], lesson.id).toBe(12);
+    expect(lesson.mix.build, lesson.id).toBe(8);
     expect(lesson.replies, lesson.id).toBe(3);
     expect(lesson.missingVisualIds, lesson.id).toEqual([]);
+    expect(lesson.unsafeImageChoices, lesson.id).toEqual([]);
     expect(lesson.missingAudio, lesson.id).toEqual([]);
   }
 });
