@@ -960,6 +960,7 @@ const imageChoice = (visual, options, answer, explain) => ({
   label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
   prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔",
   visual,
+  visualId: visual,
   options,
   answer,
   explain
@@ -2947,6 +2948,309 @@ a2Lessons.push(
   })
 );
 
+const a1ExpansionTopics = [
+  {
+    id: "a1-details-forms",
+    unit: "A1: ذاتی معلومات",
+    title: "Gegevens invullen",
+    description: "فارم میں نام، پتہ، تاریخ پیدائش، فون نمبر، اور ای میل سمجھنا۔",
+    focus: "فارم میں ذاتی معلومات آہستہ اور صحیح جگہ پر بھری جاتی ہیں۔",
+    words: [["voornaam","پہلا نام","naam"],["achternaam","خاندانی نام","naam"],["geboortedatum","تاریخ پیدائش","number-12"],["adres","پتہ","adres"],["postcode","پوسٹ کوڈ","adres"],["woonplaats","رہنے کا شہر","stad"],["telefoonnummer","فون نمبر","telefoon"],["e-mailadres","ای میل پتہ","telefoon"]],
+    phrases: [["mijn voornaam is Sara","میرا پہلا نام Sara ہے","حال: فارم میں پہلا نام بتانا ہے۔"],["mijn achternaam is Khan","میرا خاندانی نام Khan ہے","حال: خاندانی نام بتانا ہے۔"],["mijn geboortedatum is 12 mei","میری تاریخ پیدائش 12 مئی ہے","حال: تاریخ پیدائش بتانی ہے۔"],["ik woon op Marktstraat 12","میں Marktstraat 12 پر رہتا / رہتی ہوں","حال: پتہ بتانا ہے۔"],["mijn postcode is 1234 AB","میرا پوسٹ کوڈ 1234 AB ہے","حال: پوسٹ کوڈ بتانا ہے۔"],["mijn woonplaats is Utrecht","میرا رہنے کا شہر Utrecht ہے","حال: شہر بتانا ہے۔"],["mijn telefoonnummer is nul zes","میرا فون نمبر صفر چھ سے شروع ہوتا ہے","حال: فون نمبر بتانا ہے۔"],["ik heb geen e-mailadres","میرے پاس ای میل پتہ نہیں ہے","حال: ای میل نہ ہونے کی بات بتانی ہے۔"]]
+  },
+  {
+    id: "a1-phone-calls",
+    unit: "A1: فون",
+    title: "Bellen",
+    description: "فون اٹھانا، واپس فون مانگنا، نمبر دہرانا، اور غلط نمبر بتانا۔",
+    focus: "فون پر جملے بہت مختصر رکھیں: نام، وجہ، اور واپس رابطہ۔",
+    words: [["telefoon","فون","telefoon"],["nummer","نمبر","telefoon"],["bericht","پیغام","bericht"],["voicemail","وائس میل","telefoon"],["bereik","سگنل","telefoon"],["verkeerd nummer","غلط نمبر","telefoon"],["terugbellen","واپس فون کرنا","telefoon"],["later","بعد میں","morgen"]],
+    phrases: [["met Sara","Sara بول رہی ہوں","حال: فون اٹھا کر اپنا نام کہنا ہے۔"],["wie spreekt er?","کون بول رہا ہے؟","حال: فون پر سامنے والے کا نام پوچھنا ہے۔"],["kunt u later terugbellen?","کیا آپ بعد میں واپس فون کر سکتے ہیں؟","حال: ابھی بات ممکن نہیں۔"],["ik bel u vanavond terug","میں آپ کو شام کو واپس فون کروں گا / گی","حال: واپس فون کا وقت بتانا ہے۔"],["u heeft het verkeerde nummer","آپ نے غلط نمبر ملایا ہے","حال: غلط نمبر بتانا ہے۔"],["kunt u het nummer herhalen?","کیا آپ نمبر دہرا سکتے ہیں؟","حال: نمبر دوبارہ سننا ہے۔"],["spreek een bericht in","پیغام بول دیں","حال: وائس میل پر بات ہے۔"],["mijn telefoon heeft geen bereik","میرے فون میں سگنل نہیں ہے","حال: رابطہ مسئلہ بتانا ہے۔"]]
+  },
+  {
+    id: "a1-short-messages",
+    unit: "A1: پیغام",
+    title: "Korte berichten",
+    description: "WhatsApp یا SMS میں مختصر، صاف، ادب والا پیغام لکھنا۔",
+    focus: "پیغام میں وجہ، وقت، اور اگلا قدم ایک یا دو جملوں میں دیں۔",
+    words: [["bericht","پیغام","bericht"],["app","ایپ","telefoon"],["vandaag","آج","ochtend"],["morgen","کل","morgen"],["laat","دیر","wachten"],["ziek","بیمار","ziek"],["afspraak","ملاقات","rooster"],["antwoord","جواب","bericht"]],
+    phrases: [["ik kom vandaag later","میں آج دیر سے آؤں گا / گی","حال: دیر سے آنے کی اطلاع دینی ہے۔"],["ik ben vandaag ziek","میں آج بیمار ہوں","حال: بیماری کا پیغام بھیجنا ہے۔"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","حال: واپس رابطہ مانگنا ہے۔"],["ik heb morgen een afspraak","کل میری ملاقات ہے","حال: ملاقات کی اطلاع دینی ہے۔"],["stuur mij alstublieft een bericht","مجھے پیغام بھیج دیں، برائے مہربانی","حال: تحریری جواب مانگنا ہے۔"],["ik heb uw bericht gelezen","میں نے آپ کا پیغام پڑھ لیا ہے","حال: پیغام پڑھنے کی تصدیق کرنی ہے۔"],["sorry voor mijn late antwoord","دیر سے جواب کے لیے معاف کیجیے","حال: دیر سے جواب پر معافی مانگنی ہے۔"],["dank u voor uw bericht","آپ کے پیغام کا شکریہ","حال: پیغام کا شکریہ کہنا ہے۔"]]
+  },
+  {
+    id: "a1-appointments",
+    unit: "A1: ملاقات",
+    title: "Afspraak maken",
+    description: "ملاقات لینا، بدلنا، منسوخ کرنا، اور وقت دوبارہ پوچھنا۔",
+    focus: "afspraak کے ساتھ دن اور وقت دونوں صاف بولیں۔",
+    words: [["afspraak","ملاقات کا وقت","rooster"],["datum","تاریخ","number-12"],["tijd","وقت","uur"],["maandag","پیر","rooster"],["ochtend","صبح","ochtend"],["middag","دوپہر","middag"],["annuleren","منسوخ کرنا","formulier"],["veranderen","بدلنا","rooster"]],
+    phrases: [["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ملاقات لینی ہے۔"],["heeft u vandaag tijd?","کیا آج آپ کے پاس وقت ہے؟","حال: آج کا وقت پوچھنا ہے۔"],["kan het morgen in de ochtend?","کیا کل صبح ہو سکتا ہے؟","حال: کل صبح کا وقت مانگنا ہے۔"],["ik kan maandag niet komen","میں پیر کو نہیں آ سکتا / سکتی","حال: دن پر نہ آ سکنے کی بات بتانی ہے۔"],["ik wil de afspraak veranderen","میں ملاقات کا وقت بدلنا چاہتا / چاہتی ہوں","حال: وقت بدلنا ہے۔"],["ik moet de afspraak annuleren","مجھے ملاقات منسوخ کرنی ہے","حال: ملاقات منسوخ کرنی ہے۔"],["hoe laat is de afspraak?","ملاقات کتنے بجے ہے؟","حال: وقت پوچھنا ہے۔"],["kunt u de afspraak bevestigen?","کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟","حال: تصدیق مانگنی ہے۔"]]
+  },
+  {
+    id: "a1-school-contact",
+    unit: "A1: اسکول",
+    title: "Schoolcontact",
+    description: "استاد، بچے کی غیر حاضری، ہوم ورک، اور بچے کو لینے کا وقت۔",
+    focus: "اسکول کے پیغام میں بچے کا نام، وجہ، اور وقت ضروری ہے۔",
+    words: [["school","اسکول","school"],["docent","استاد","docent"],["kind","بچہ","kind"],["huiswerk","گھر کا کام","huiswerk"],["rooster","اوقات","rooster"],["ziek","بیمار","ziek"],["brengen","چھوڑنا","school"],["ophalen","لینے آنا","school"]],
+    phrases: [["mijn kind is vandaag ziek","میرا بچہ آج بیمار ہے","حال: غیر حاضری بتانی ہے۔"],["ik breng mijn kind om acht uur","میں بچے کو آٹھ بجے چھوڑتا / چھوڑتی ہوں","حال: چھوڑنے کا وقت بتانا ہے۔"],["ik haal mijn kind om drie uur op","میں بچے کو تین بجے لینے آتا / آتی ہوں","حال: لینے کا وقت بتانا ہے۔"],["ik wil de docent spreken","میں استاد سے بات کرنا چاہتا / چاہتی ہوں","حال: استاد سے رابطہ چاہیے۔"],["waar staat het huiswerk?","گھر کا کام کہاں لکھا ہے؟","حال: ہوم ورک پوچھنا ہے۔"],["het rooster staat in de app","اوقات ایپ میں ہیں","حال: اوقات کی جگہ بتانی ہے۔"],["morgen is er geen school","کل اسکول نہیں ہے","حال: اسکول بند ہونے کی بات سمجھنی ہے۔"],["kunt u mij een bericht sturen?","کیا آپ مجھے پیغام بھیج سکتے ہیں؟","حال: اسکول سے پیغام مانگنا ہے۔"]]
+  },
+  {
+    id: "a1-neighbour-talk",
+    unit: "A1: پڑوسی",
+    title: "Met de buren",
+    description: "سلام، شور، مدد، پیکٹ، کچرا، اور عمارت کی آسان بات چیت۔",
+    focus: "پڑوسی سے بات کرتے وقت نرم الفاظ اور مختصر درخواست زیادہ بہتر ہیں۔",
+    words: [["buurman","پڑوسی مرد","man"],["buurvrouw","پڑوسی عورت","vrouw"],["lawaai","شور","oor"],["pakket","پارسل","bericht"],["vuilnis","کچرا","afval"],["deur","دروازہ","deur"],["sleutel","چابی","sleutel"],["hulp","مدد","helpen"]],
+    phrases: [["goedemorgen buurvrouw","صبح بخیر پڑوسن","حال: پڑوسی کو سلام کرنا ہے۔"],["kunt u mij helpen?","کیا آپ میری مدد کر سکتے ہیں؟","حال: مدد مانگنی ہے۔"],["ik heb last van lawaai","مجھے شور سے پریشانی ہے","حال: شور کی بات بتانی ہے۔"],["kunt u zachter zijn?","کیا آپ آواز کم کر سکتے ہیں؟","حال: ادب سے شور کم کروانا ہے۔"],["er ligt een pakket voor u","آپ کے لیے پارسل رکھا ہے","حال: پارسل کی اطلاع دینی ہے۔"],["waar moet het vuilnis staan?","کچرا کہاں رکھنا ہے؟","حال: کچرے کی جگہ پوچھنی ہے۔"],["ik ben mijn sleutel kwijt","میری چابی گم ہو گئی ہے","حال: چابی گم ہے۔"],["dank u voor uw hulp","آپ کی مدد کا شکریہ","حال: مدد کے بعد شکریہ کہنا ہے۔"]]
+  },
+  {
+    id: "a1-home-repairs",
+    unit: "A1: گھر",
+    title: "Iets is kapot",
+    description: "ہیٹنگ، پانی، بتی، دروازہ، اور مرمت کے لیے آسان جملے۔",
+    focus: "گھر کی خرابی میں چیز، مسئلہ، اور کب مدد چاہیے یہ بتائیں۔",
+    words: [["verwarming","ہیٹنگ","verwarming"],["water","پانی","water"],["lamp","بتی","lamp"],["deur","دروازہ","deur"],["raam","کھڑکی","raam"],["sleutel","چابی","sleutel"],["monteur","مرمت کرنے والا","reparatie"],["kapot","خراب","kapot"]],
+    phrases: [["de verwarming doet het niet","ہیٹنگ کام نہیں کر رہی","حال: ہیٹنگ خراب ہے۔"],["er is geen warm water","گرم پانی نہیں ہے","حال: گرم پانی کا مسئلہ ہے۔"],["de lamp is kapot","بتی خراب ہے","حال: بتی خراب ہے۔"],["ik kan de deur niet openen","میں دروازہ نہیں کھول سکتا / سکتی","حال: دروازہ نہیں کھل رہا۔"],["het raam sluit niet goed","کھڑکی صحیح بند نہیں ہوتی","حال: کھڑکی کا مسئلہ ہے۔"],["wanneer komt de monteur?","مرمت کرنے والا کب آئے گا؟","حال: مرمت کا وقت پوچھنا ہے۔"],["kunt u iemand sturen?","کیا آپ کسی کو بھیج سکتے ہیں؟","حال: مدد کے لیے آدمی بھیجنے کو کہنا ہے۔"],["het probleem is opgelost","مسئلہ حل ہو گیا ہے","حال: مسئلہ ختم ہونے کی تصدیق کرنی ہے۔"]]
+  },
+  {
+    id: "a1-shopping-returns",
+    unit: "A1: خریداری",
+    title: "Ruilen en terugbrengen",
+    description: "چیز واپس کرنا، بدلنا، رسید دکھانا، سائز یا خرابی بتانا۔",
+    focus: "واپسی میں رسید، مسئلہ، اور مطلوبہ حل صاف بتائیں۔",
+    words: [["bon","رسید","bon"],["maat","سائز","maat"],["kleur","رنگ","kleur"],["jas","جیکٹ","jas"],["schoenen","جوتے","schoenen"],["kapot","خراب","kapot"],["ruilen","بدلنا","winkel"],["terugbrengen","واپس لانا","winkel"]],
+    phrases: [["ik wil dit terugbrengen","میں یہ واپس کرنا چاہتا / چاہتی ہوں","حال: چیز واپس کرنی ہے۔"],["ik wil dit ruilen","میں یہ بدلنا چاہتا / چاہتی ہوں","حال: چیز بدلنی ہے۔"],["hier is de bon","یہ رہی رسید","حال: رسید دکھانی ہے۔"],["de maat is te klein","سائز بہت چھوٹا ہے","حال: سائز کا مسئلہ بتانا ہے۔"],["heeft u een grotere maat?","کیا آپ کے پاس بڑا سائز ہے؟","حال: بڑا سائز مانگنا ہے۔"],["de kleur is niet goed","رنگ صحیح نہیں ہے","حال: رنگ کا مسئلہ بتانا ہے۔"],["de jas is kapot","جیکٹ خراب ہے","حال: خرابی بتانی ہے۔"],["kan ik mijn geld terugkrijgen?","کیا مجھے پیسے واپس مل سکتے ہیں؟","حال: رقم واپسی پوچھنی ہے۔"]]
+  },
+  {
+    id: "a1-supermarket",
+    unit: "A1: سپر مارکیٹ",
+    title: "In de supermarkt",
+    description: "چیز تلاش کرنا، قیمت، وزن، تھیلا، رسید، اور ادائیگی۔",
+    focus: "سپر مارکیٹ میں waar, hoeveel, mag ik سے آسان سوال بنائیں۔",
+    words: [["supermarkt","سپر مارکیٹ","supermarkt"],["brood","روٹی","brood"],["melk","دودھ","melk"],["rijst","چاول","rijst"],["groente","سبزی","groente"],["fruit","پھل","fruit"],["tas","بیگ","tas"],["kassa","کاؤنٹر","kassa"]],
+    phrases: [["waar ligt de rijst?","چاول کہاں رکھے ہیں؟","حال: چیز تلاش کرنی ہے۔"],["ik zoek melk","میں دودھ تلاش کر رہا / رہی ہوں","حال: چیز پوچھنی ہے۔"],["hoeveel kost dit brood?","یہ روٹی کتنے کی ہے؟","حال: قیمت پوچھنی ہے۔"],["mag ik een tas?","کیا مجھے ایک بیگ مل سکتا ہے؟","حال: تھیلا مانگنا ہے۔"],["ik betaal met pin","میں کارڈ سے ادائیگی کرتا / کرتی ہوں","حال: ادائیگی کا طریقہ بتانا ہے۔"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","حال: رسید مانگنی ہے۔"],["de kassa is daar","کاؤنٹر وہاں ہے","حال: کاؤنٹر کی جگہ بتانی ہے۔"],["dit is te duur","یہ بہت مہنگا ہے","حال: قیمت زیادہ ہے۔"]]
+  },
+  {
+    id: "a1-cafe-food-needs",
+    unit: "A1: کھانا",
+    title: "Eten bestellen",
+    description: "کھانا منگوانا، بغیر گوشت، الرجی، غلط آرڈر، اور بل۔",
+    focus: "کھانے میں ضرورت صاف بتائیں: zonder, met, ik wil graag۔",
+    words: [["menu","مینو","eten"],["water","پانی","water"],["koffie","کافی","koffie"],["thee","چائے","thee"],["soep","سوپ","eten"],["vlees","گوشت","eten"],["rekening","بل","bon"],["bestelling","آرڈر","eten"]],
+    phrases: [["mag ik het menu?","کیا مجھے مینو مل سکتا ہے؟","حال: مینو مانگنا ہے۔"],["ik wil graag water","مجھے پانی چاہیے","حال: پانی مانگنا ہے۔"],["voor mij een thee","میرے لیے ایک چائے","حال: چائے منگوانی ہے۔"],["zonder vlees alstublieft","گوشت کے بغیر، برائے مہربانی","حال: گوشت کے بغیر کھانا چاہیے۔"],["ik ben allergisch voor noten","مجھے nuts سے الرجی ہے","حال: الرجی بتانی ہے۔"],["dit is niet mijn bestelling","یہ میرا آرڈر نہیں ہے","حال: غلط آرڈر بتانا ہے۔"],["ik heb nog niets gekregen","مجھے ابھی تک کچھ نہیں ملا","حال: آرڈر نہیں آیا۔"],["de rekening alstublieft","بل، برائے مہربانی","حال: بل مانگنا ہے۔"]]
+  },
+  {
+    id: "a1-directions-town",
+    unit: "A1: راستہ",
+    title: "De weg vragen",
+    description: "راستہ پوچھنا، بائیں، دائیں، سیدھا، قریب، دور، اور نقشہ۔",
+    focus: "راستہ پوچھنے میں waar is... اور hoe kom ik bij... بہت کام آتے ہیں۔",
+    words: [["links","بائیں","links"],["rechts","دائیں","rechts"],["rechtdoor","سیدھا","rechtdoor"],["straat","سڑک","straat"],["plein","چوک","stad"],["kaart","نقشہ","kaart"],["dichtbij","قریب","hier"],["ver weg","دور","daar"]],
+    phrases: [["waar is het station?","اسٹیشن کہاں ہے؟","حال: اسٹیشن پوچھنا ہے۔"],["hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟","حال: راستہ پوچھنا ہے۔"],["ga rechtdoor","سیدھا جائیں","حال: سمت بتانی ہے۔"],["sla links af","بائیں مڑیں","حال: بائیں مڑنے کو کہنا ہے۔"],["sla rechts af","دائیں مڑیں","حال: دائیں مڑنے کو کہنا ہے۔"],["het is dichtbij","یہ قریب ہے","حال: جگہ قریب ہے۔"],["het is ver weg","یہ دور ہے","حال: جگہ دور ہے۔"],["kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟","حال: نقشے پر مدد چاہیے۔"]]
+  },
+  {
+    id: "a1-bus-train-extra",
+    unit: "A1: سفر",
+    title: "Bus en trein",
+    description: "ٹکٹ، پلیٹ فارم، اسٹاپ، تاخیر، گاڑی بدلنا، اور منزل۔",
+    focus: "سفر میں bestemming, spoor, halte, vertraging بار بار آتے ہیں۔",
+    words: [["bus","بس","bus"],["trein","ٹرین","trein"],["station","اسٹیشن","station"],["halte","بس اسٹاپ","halte"],["kaartje","ٹکٹ","kaartje"],["spoor","پلیٹ فارم","station"],["vertraging","تاخیر","wachten"],["bestemming","منزل","kaart"]],
+    phrases: [["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے","حال: ٹکٹ خریدنا ہے۔"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟","حال: بس کی منزل پوچھنی ہے۔"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟","حال: پلیٹ فارم پوچھنا ہے۔"],["de trein heeft vertraging","ٹرین دیر سے ہے","حال: تاخیر سمجھنی ہے۔"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟","حال: گاڑی بدلنے کی جگہ پوچھنی ہے۔"],["moet ik hier uitstappen?","کیا مجھے یہاں اترنا ہے؟","حال: اترنے کی جگہ پوچھنی ہے۔"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے","حال: اگلا اسٹاپ سمجھنا ہے۔"],["ik ben mijn kaartje kwijt","میرا ٹکٹ گم ہو گیا ہے","حال: ٹکٹ گم ہے۔"]]
+  },
+  {
+    id: "a1-weather-clothes",
+    unit: "A1: موسم",
+    title: "Weer en kleding",
+    description: "بارش، سردی، گرمی، جیکٹ، چھتری، اور باہر جانے کی تیاری۔",
+    focus: "موسم کے ساتھ kleding اور nodig والے جملے آسانی سے بنتے ہیں۔",
+    words: [["regen","بارش","regen"],["zon","دھوپ","zon"],["koud","سرد","koud"],["warm","گرم","warm"],["jas","جیکٹ","jas"],["paraplu","چھتری","paraplu"],["schoenen","جوتے","schoenen"],["buiten","باہر","buiten"]],
+    phrases: [["het regent vandaag","آج بارش ہو رہی ہے","حال: موسم بتانا ہے۔"],["het is koud buiten","باہر سردی ہے","حال: باہر سردی ہے۔"],["ik heb een jas nodig","مجھے جیکٹ چاہیے","حال: جیکٹ کی ضرورت ہے۔"],["neem een paraplu mee","چھتری ساتھ لیں","حال: بارش کے لیے نصیحت ہے۔"],["de zon schijnt","دھوپ نکلی ہے","حال: دھوپ ہے۔"],["het is warm vandaag","آج گرمی ہے","حال: موسم گرم ہے۔"],["mijn schoenen zijn nat","میرے جوتے گیلے ہیں","حال: جوتے گیلے ہو گئے۔"],["ik ga niet naar buiten","میں باہر نہیں جا رہا / رہی","حال: باہر نہ جانے کا فیصلہ ہے۔"]]
+  },
+  {
+    id: "a1-pharmacy-medicine",
+    unit: "A1: دوا",
+    title: "Bij de apotheek",
+    description: "نسخہ، دوا، مقدار، دن میں کتنی بار، اور دوا لینے کا طریقہ۔",
+    focus: "دوا کے لیے hoeveel, hoe vaak, voor/na het eten سمجھنا ضروری ہے۔",
+    words: [["apotheek","دواخانہ","apotheek"],["medicijn","دوا","medicijn"],["recept","نسخہ","formulier"],["tablet","گولی","medicijn"],["pijn","درد","pijn"],["koorts","بخار","ziek"],["water","پانی","water"],["etiket","لیبل","formulier"]],
+    phrases: [["ik heb een recept","میرے پاس نسخہ ہے","حال: نسخہ دکھانا ہے۔"],["ik kom mijn medicijn ophalen","میں اپنی دوا لینے آیا / آئی ہوں","حال: دوا لینی ہے۔"],["hoe vaak moet ik dit nemen?","مجھے یہ کتنی بار لینی ہے؟","حال: مقدار پوچھنی ہے۔"],["twee keer per dag","دن میں دو بار","حال: دوا کی مقدار سمجھنی ہے۔"],["voor het eten of na het eten?","کھانے سے پہلے یا بعد؟","حال: دوا کا وقت پوچھنا ہے۔"],["neem dit met water","یہ پانی کے ساتھ لیں","حال: دوا کی ہدایت سمجھنی ہے۔"],["ik heb pijn en koorts","مجھے درد اور بخار ہے","حال: علامات بتانی ہیں۔"],["ik begrijp het etiket niet","مجھے لیبل سمجھ نہیں آیا","حال: دوا کا لیبل سمجھ نہیں آتا۔"]]
+  },
+  {
+    id: "a1-doctor-symptoms",
+    unit: "A1: ڈاکٹر",
+    title: "Klachten vertellen",
+    description: "درد کہاں ہے، کب سے ہے، بخار، کھانسی، اور ملاقات کا وقت۔",
+    focus: "ڈاکٹر کے پاس waar, sinds wanneer, ik heb... سے بات شروع کریں۔",
+    words: [["huisarts","گھر کا ڈاکٹر","huisarts"],["pijn","درد","pijn"],["hoofd","سر","hoofd"],["buik","پیٹ","buik"],["koorts","بخار","ziek"],["hoesten","کھانسی","hoesten"],["moe","تھکا ہوا","slapen"],["afspraak","ملاقات","rooster"]],
+    phrases: [["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ڈاکٹر سے وقت لینا ہے۔"],["ik heb pijn in mijn hoofd","میرے سر میں درد ہے","حال: سر درد بتانا ہے۔"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے","حال: پیٹ درد بتانا ہے۔"],["ik heb koorts","مجھے بخار ہے","حال: بخار بتانا ہے۔"],["ik moet veel hoesten","مجھے بہت کھانسی ہے","حال: کھانسی بتانی ہے۔"],["ik ben erg moe","میں بہت تھکا / تھکی ہوں","حال: تھکن بتانی ہے۔"],["sinds gisteren","کل سے","حال: مدت بتانی ہے۔"],["wanneer kan ik komen?","میں کب آ سکتا / سکتی ہوں؟","حال: ملاقات کا وقت پوچھنا ہے۔"]]
+  },
+  {
+    id: "a1-work-schedule",
+    unit: "A1: کام",
+    title: "Rooster en werk",
+    description: "کام کا وقت، وقفہ، تاخیر، بیماری، اور شفٹ کا پیغام۔",
+    focus: "کام کے پیغام میں vandaag, morgen, laat, ziek, rooster بہت ضروری ہیں۔",
+    words: [["werk","کام","werk"],["rooster","شیڈول","rooster"],["pauze","وقفہ","wachten"],["baas","ذمہ دار","persoon"],["collega","ساتھی","persoon"],["te laat","دیر سے","wachten"],["ziek","بیمار","ziek"],["dienst","شفٹ","rooster"]],
+    phrases: [["ik begin om negen uur","میں نو بجے شروع کرتا / کرتی ہوں","حال: کام شروع ہونے کا وقت ہے۔"],["ik heb om twaalf uur pauze","میرا بارہ بجے وقفہ ہے","حال: وقفے کا وقت ہے۔"],["ik kom vandaag later","میں آج دیر سے آؤں گا / گی","حال: دیر سے آنے کا پیغام ہے۔"],["ik ben ziek en kan niet werken","میں بیمار ہوں اور کام نہیں کر سکتا / سکتی","حال: بیماری کی اطلاع ہے۔"],["staat het rooster in de app?","کیا شیڈول ایپ میں ہے؟","حال: شیڈول پوچھنا ہے۔"],["ik werk morgen niet","میں کل کام نہیں کرتا / کرتی","حال: کل کام نہیں ہے۔"],["kan ik met mijn baas spreken?","کیا میں اپنے ذمہ دار سے بات کر سکتا / سکتی ہوں؟","حال: ذمہ دار سے بات چاہیے۔"],["mijn dienst is veranderd","میری شفٹ بدل گئی ہے","حال: شیڈول بدل گیا۔"]]
+  },
+  {
+    id: "a1-money-bank",
+    unit: "A1: پیسے",
+    title: "Betalen en bank",
+    description: "کارڈ، نقد، رسید، رقم، ادائیگی، اور کارڈ نہ چلنا۔",
+    focus: "ادائیگی میں pin, contant, bon, bedrag, betalen بار بار آتے ہیں۔",
+    words: [["pinpas","بینک کارڈ","pinpas"],["contant","نقد","contant"],["bon","رسید","bon"],["bedrag","رقم","prijs"],["rekening","بل","bon"],["betalen","ادائیگی کرنا","betalen"],["geld","پیسے","prijs"],["automaat","مشین","pinpas"]],
+    phrases: [["ik betaal met pin","میں کارڈ سے ادائیگی کرتا / کرتی ہوں","حال: کارڈ سے ادائیگی ہے۔"],["ik betaal contant","میں نقد ادائیگی کرتا / کرتی ہوں","حال: نقد ادائیگی ہے۔"],["mijn pinpas werkt niet","میرا بینک کارڈ کام نہیں کر رہا","حال: کارڈ مسئلہ ہے۔"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","حال: رسید چاہیے۔"],["het bedrag klopt niet","رقم درست نہیں ہے","حال: رقم میں مسئلہ ہے۔"],["ik heb niet genoeg geld","میرے پاس کافی پیسے نہیں ہیں","حال: پیسے کم ہیں۔"],["waar is de pinautomaat?","کارڈ مشین کہاں ہے؟","حال: مشین پوچھنی ہے۔"],["ik heb de rekening betaald","میں نے بل ادا کر دیا ہے","حال: ادائیگی ہو چکی ہے۔"]]
+  },
+  {
+    id: "a1-post-parcel-extra",
+    unit: "A1: ڈاک",
+    title: "Post ophalen",
+    description: "خط، پارسل، پتہ، وصولی، شناخت، اور ڈلیوری پیغام۔",
+    focus: "پارسل لینے میں bericht, identiteitsbewijs, afhaalpunt اہم ہیں۔",
+    words: [["post","ڈاک","bericht"],["brief","خط","bericht"],["pakket","پارسل","bericht"],["adres","پتہ","adres"],["afhaalpunt","وصولی کی جگہ","winkel"],["identiteitsbewijs","شناختی کاغذ","paspoort"],["bezorger","ڈلیوری والا","persoon"],["handtekening","دستخط","handtekening"]],
+    phrases: [["ik wil mijn pakket ophalen","میں اپنا پارسل لینا چاہتا / چاہتی ہوں","حال: پارسل لینا ہے۔"],["hier is mijn bericht","یہ میرا پیغام ہے","حال: ڈلیوری پیغام دکھانا ہے۔"],["heeft u een identiteitsbewijs?","کیا آپ کے پاس شناختی کاغذ ہے؟","حال: شناخت پوچھی گئی۔"],["hier is mijn identiteitsbewijs","یہ میرا شناختی کاغذ ہے","حال: شناخت دکھانی ہے۔"],["het pakket is nog niet gekomen","پارسل ابھی نہیں آیا","حال: پارسل نہیں پہنچا۔"],["op welk adres is het bezorgd?","یہ کس پتے پر پہنچایا گیا؟","حال: پتہ پوچھنا ہے۔"],["ik moet hier tekenen","مجھے یہاں دستخط کرنے ہیں","حال: دستخط کرنا ہے۔"],["de brief is voor mijn buurman","خط میرے پڑوسی کے لیے ہے","حال: غلط ڈاک آئی ہے۔"]]
+  },
+  {
+    id: "a1-child-care",
+    unit: "A1: خاندان",
+    title: "Kind en opvang",
+    description: "بچہ، وقت، لانا، لے جانا، کھانا، بیماری، اور اجازت۔",
+    focus: "بچے کے بارے میں جملے نرم، واضح، اور وقت کے ساتھ ہوتے ہیں۔",
+    words: [["kind","بچہ","kind"],["opvang","بچوں کی دیکھ بھال","school"],["ouder","والدین","persoon"],["eten","کھانا","eten"],["drinken","پینا","water"],["slaap","نیند","slapen"],["jas","جیکٹ","jas"],["ziek","بیمار","ziek"]],
+    phrases: [["mijn kind komt vandaag niet","میرا بچہ آج نہیں آئے گا","حال: غیر حاضری بتانی ہے۔"],["ik breng mijn kind om acht uur","میں بچے کو آٹھ بجے چھوڑتا / چھوڑتی ہوں","حال: چھوڑنے کا وقت ہے۔"],["ik haal mijn kind om vijf uur op","میں بچے کو پانچ بجے لینے آؤں گا / گی","حال: لینے کا وقت ہے۔"],["mijn kind heeft eten mee","میرے بچے کے پاس کھانا ساتھ ہے","حال: کھانا ساتھ ہے۔"],["mijn kind heeft water nodig","میرے بچے کو پانی چاہیے","حال: بچے کو پانی چاہیے۔"],["mijn kind is moe","میرا بچہ تھکا ہوا ہے","حال: بچے کی حالت بتانی ہے۔"],["zijn jas hangt aan de kapstok","اس کی جیکٹ ہینگر پر ہے","حال: جیکٹ کی جگہ بتانی ہے۔"],["mag mijn kind buiten spelen?","کیا میرا بچہ باہر کھیل سکتا ہے؟","حال: اجازت پوچھنی ہے۔"]]
+  },
+  {
+    id: "a1-house-search-extra",
+    unit: "A1: گھر",
+    title: "Woning bekijken",
+    description: "گھر دیکھنا، کمرے، کرایہ، تاریخ، بچوں کے ساتھ رہنا، اور دلچسپی۔",
+    focus: "گھر کے اشتہار میں huur, kamer, beschikbaar, bezichtiging سمجھنا ضروری ہے۔",
+    words: [["woning","گھر","huis"],["kamer","کمرہ","kamer"],["huur","کرایہ","prijs"],["keuken","کچن","keuken"],["badkamer","باتھ روم","badkamer"],["tuin","باغ","buiten"],["beschikbaar","دستیاب","rooster"],["bezichtiging","گھر دیکھنے کا وقت","afspraak"]],
+    phrases: [["ik zoek een woning","میں گھر تلاش کر رہا / رہی ہوں","حال: گھر تلاش کرنا ہے۔"],["hoeveel is de huur?","کرایہ کتنا ہے؟","حال: کرایہ پوچھنا ہے۔"],["heeft de woning twee kamers?","کیا گھر میں دو کمرے ہیں؟","حال: کمروں کی تعداد پوچھنی ہے۔"],["wanneer is de woning beschikbaar?","گھر کب دستیاب ہے؟","حال: تاریخ پوچھنی ہے۔"],["kan ik de woning bekijken?","کیا میں گھر دیکھ سکتا / سکتی ہوں؟","حال: گھر دیکھنے کا وقت مانگنا ہے۔"],["is er een tuin?","کیا باغ ہے؟","حال: باغ پوچھنا ہے۔"],["mag ik hier met kinderen wonen?","کیا میں یہاں بچوں کے ساتھ رہ سکتا / سکتی ہوں؟","حال: بچوں کے ساتھ رہنے کی اجازت پوچھنی ہے۔"],["ik ben geïnteresseerd","مجھے دلچسپی ہے","حال: دلچسپی بتانی ہے۔"]]
+  },
+  {
+    id: "a1-library-community",
+    unit: "A1: محلہ",
+    title: "Bibliotheek en buurt",
+    description: "لائبریری، کلاس، ممبرشپ، کھلنے کا وقت، اور محلے کی مدد۔",
+    focus: "محلے میں leren, lid worden, open, gesloten جیسے لفظ کام آتے ہیں۔",
+    words: [["bibliotheek","لائبریری","bibliotheek"],["les","کلاس","school"],["taal","زبان","boek"],["boek","کتاب","boek"],["pas","کارڈ","pinpas"],["open","کھلا","ingang"],["gesloten","بند","uitgang"],["buurthuis","محلے کا مرکز","stad"]],
+    phrases: [["waar is de bibliotheek?","لائبریری کہاں ہے؟","حال: لائبریری پوچھنی ہے۔"],["ik wil Nederlands leren","میں Nederlands سیکھنا چاہتا / چاہتی ہوں","حال: زبان سیکھنی ہے۔"],["heeft u taalles?","کیا آپ کے پاس زبان کی کلاس ہے؟","حال: کلاس پوچھنی ہے۔"],["ik wil lid worden","میں ممبر بننا چاہتا / چاہتی ہوں","حال: ممبرشپ چاہیے۔"],["heb ik een pas nodig?","کیا مجھے کارڈ چاہیے؟","حال: کارڈ پوچھنا ہے۔"],["hoe laat is het open?","یہ کتنے بجے کھلتا ہے؟","حال: کھلنے کا وقت پوچھنا ہے۔"],["vandaag is het gesloten","آج یہ بند ہے","حال: بند ہونے کی بات سمجھنی ہے۔"],["kunt u mij inschrijven?","کیا آپ مجھے رجسٹر کر سکتے ہیں؟","حال: رجسٹریشن چاہیے۔"]]
+  },
+  {
+    id: "a1-safety-rules",
+    unit: "A1: حفاظت",
+    title: "Regels en veiligheid",
+    description: "منع، اجازت، انتظار، داخلہ، خروج، خطرہ، اور مدد۔",
+    focus: "عوامی جگہ میں mag, moet, verboden, gevaarlijk سمجھنا ضروری ہے۔",
+    words: [["verboden","منع","verboden"],["toegestaan","اجازت ہے","goed"],["gevaarlijk","خطرناک","gevaar"],["veilig","محفوظ","veilig"],["ingang","داخلہ","ingang"],["uitgang","خروج","uitgang"],["wachten","انتظار کرنا","wachten"],["helpen","مدد کرنا","helpen"]],
+    phrases: [["het is hier verboden","یہاں منع ہے","حال: منع سمجھنا ہے۔"],["mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا / سکتی ہوں؟","حال: اجازت پوچھنی ہے۔"],["u moet hier wachten","آپ کو یہاں انتظار کرنا ہے","حال: ہدایت سمجھنی ہے۔"],["waar is de uitgang?","خروج کہاں ہے؟","حال: باہر کا راستہ پوچھنا ہے۔"],["de ingang is daar","داخلہ وہاں ہے","حال: داخلہ بتانا ہے۔"],["dit is gevaarlijk","یہ خطرناک ہے","حال: خطرہ سمجھنا ہے۔"],["alles is veilig","سب محفوظ ہے","حال: حفاظت کی تصدیق ہے۔"],["ik heb hulp nodig","مجھے مدد چاہیے","حال: مدد چاہیے۔"]]
+  },
+  {
+    id: "a1-calendar-time",
+    unit: "A1: وقت",
+    title: "Dagen en tijden",
+    description: "دن، صبح، دوپہر، شام، آج، کل، وقت پر، اور دیر سے۔",
+    focus: "وقت بتانے میں op دن کے ساتھ اور om گھڑی کے وقت کے ساتھ آتا ہے۔",
+    words: [["maandag","پیر","rooster"],["vrijdag","جمعہ","rooster"],["weekend","ہفتہ وار چھٹی","rooster"],["ochtend","صبح","ochtend"],["middag","دوپہر","middag"],["avond","شام","avond"],["op tijd","وقت پر","rooster"],["te laat","دیر سے","wachten"]],
+    phrases: [["ik kom op maandag","میں پیر کو آتا / آتی ہوں","حال: دن بتانا ہے۔"],["ik werk op vrijdag","میں جمعہ کو کام کرتا / کرتی ہوں","حال: کام کا دن بتانا ہے۔"],["in het weekend ben ik thuis","ہفتہ وار چھٹی میں گھر پر ہوں","حال: ویک اینڈ بتانا ہے۔"],["ik kom in de ochtend","میں صبح آتا / آتی ہوں","حال: صبح کا وقت ہے۔"],["ik heb tijd in de middag","دوپہر میں میرے پاس وقت ہے","حال: دستیاب وقت ہے۔"],["ik bel u in de avond","میں آپ کو شام کو فون کروں گا / گی","حال: فون کا وقت ہے۔"],["ik ben op tijd","میں وقت پر ہوں","حال: وقت پر پہنچے ہیں۔"],["sorry ik ben te laat","معاف کیجیے، میں دیر سے ہوں","حال: دیر ہو گئی ہے۔"]]
+  },
+  {
+    id: "a1-questions-revision",
+    unit: "A1: سوال",
+    title: "Veel vragen",
+    description: "wie, wat, waar, wanneer, hoeveel, waarom, hoe کو روزمرہ میں استعمال کرنا۔",
+    focus: "A1 میں سوال کا پہلا لفظ پورے جملے کا راستہ دکھاتا ہے۔",
+    words: [["wie","کون","vraag"],["wat","کیا","vraag"],["waar","کہاں","vraag"],["wanneer","کب","rooster"],["hoeveel","کتنا","prijs"],["waarom","کیوں","vraag"],["hoe","کیسے","vraag"],["welke","کون سا","vraag"]],
+    phrases: [["wie is dat?","وہ کون ہے؟","حال: شخص پوچھنا ہے۔"],["wat is dit?","یہ کیا ہے؟","حال: چیز پوچھنی ہے۔"],["waar woont u?","آپ کہاں رہتے ہیں؟","حال: رہنے کی جگہ پوچھنی ہے۔"],["wanneer komt u?","آپ کب آئیں گے؟","حال: وقت پوچھنا ہے۔"],["hoeveel kost dit?","یہ کتنے کا ہے؟","حال: قیمت پوچھنی ہے۔"],["waarom komt u niet?","آپ کیوں نہیں آ رہے؟","حال: وجہ پوچھنی ہے۔"],["hoe gaat het?","آپ کیسے ہیں؟","حال: حال پوچھنا ہے۔"],["welke bus moet ik nemen?","مجھے کون سی بس لینی ہے؟","حال: درست بس پوچھنی ہے۔"]]
+  },
+  {
+    id: "a1-polite-chunks",
+    unit: "A1: ادب",
+    title: "Beleefd spreken",
+    description: "براہ مہربانی، شکریہ، معاف کیجیے، کیا آپ کر سکتے ہیں، اور نرم درخواست۔",
+    focus: "ادب والے چھوٹے لفظ مشکل حالت کو آسان بنا دیتے ہیں۔",
+    words: [["alstublieft","براہ مہربانی","thanks"],["dank u wel","شکریہ","thanks"],["sorry","معاف کیجیے","sorry"],["graag","خوشی سے / چاہیے","goed"],["kunt u","کیا آپ کر سکتے ہیں","helpen"],["mag ik","کیا میں کر سکتا ہوں","vraag"],["geen probleem","کوئی مسئلہ نہیں","goed"],["tot ziens","پھر ملیں گے","totziens"]],
+    phrases: [["kunt u mij helpen alstublieft?","کیا آپ میری مدد کر سکتے ہیں، برائے مہربانی؟","حال: ادب سے مدد مانگنی ہے۔"],["mag ik iets vragen?","کیا میں کچھ پوچھ سکتا / سکتی ہوں؟","حال: سوال شروع کرنا ہے۔"],["dank u wel voor uw hulp","آپ کی مدد کا شکریہ","حال: مدد کے بعد شکریہ ہے۔"],["sorry ik begrijp het niet","معاف کیجیے، مجھے سمجھ نہیں آیا","حال: نہ سمجھنے پر ادب ہے۔"],["ja graag","جی ہاں، خوشی سے","حال: پیشکش قبول کرنی ہے۔"],["nee dank u","نہیں، شکریہ","حال: ادب سے انکار ہے۔"],["geen probleem","کوئی مسئلہ نہیں","حال: مسئلہ نہیں کہنا ہے۔"],["tot ziens en fijne dag","پھر ملیں گے، اچھا دن ہو","حال: رخصت ہونا ہے۔"]]
+  },
+  {
+    id: "a1-family-routine-extra",
+    unit: "A1: خاندان",
+    title: "Familie en dag",
+    description: "خاندان کے افراد، عمر، رہنا، کام، اسکول، اور روزمرہ عادت۔",
+    focus: "خاندان کے بارے میں ik heb, hij is, zij gaat سے آسان جملے بنتے ہیں۔",
+    words: [["moeder","ماں","vrouw"],["vader","باپ","man"],["zoon","بیٹا","kind"],["dochter","بیٹی","kind"],["broer","بھائی","man"],["zus","بہن","vrouw"],["familie","خاندان","familie"],["kinderen","بچے","kind"]],
+    phrases: [["ik heb twee kinderen","میرے دو بچے ہیں","حال: بچوں کی تعداد بتانی ہے۔"],["mijn zoon gaat naar school","میرا بیٹا اسکول جاتا ہے","حال: بچے کا اسکول بتانا ہے۔"],["mijn dochter is vijf jaar","میری بیٹی پانچ سال کی ہے","حال: عمر بتانی ہے۔"],["mijn moeder woont dichtbij","میری ماں قریب رہتی ہے","حال: خاندان کی رہائش بتانی ہے۔"],["mijn vader werkt vandaag","میرے والد آج کام کرتے ہیں","حال: خاندان کے کام کی بات ہے۔"],["ik heb een broer en een zus","میرا ایک بھائی اور ایک بہن ہے","حال: بہن بھائی بتانے ہیں۔"],["mijn familie woont in Nederland","میرا خاندان Nederland میں رہتا ہے","حال: خاندان کی جگہ بتانی ہے۔"],["wij eten samen in de avond","ہم شام کو ساتھ کھاتے ہیں","حال: خاندان کا معمول بتانا ہے۔"]]
+  },
+  {
+    id: "a1-cleaning-house",
+    unit: "A1: گھر",
+    title: "Schoonmaken",
+    description: "صفائی، کچرا، کپڑے دھونا، برتن، کمرہ، اور گھر کا کام۔",
+    focus: "روزمرہ گھر کے کاموں کے لیے ik moet اور ik ga بہت کام آتے ہیں۔",
+    words: [["schoonmaken","صفائی کرنا","huis"],["vuilnis","کچرا","afval"],["was","دھلائی","kleding"],["kleding","کپڑے","jas"],["kamer","کمرہ","kamer"],["keuken","کچن","keuken"],["badkamer","باتھ روم","badkamer"],["stofzuiger","ویکیوم","huis"]],
+    phrases: [["ik moet de kamer schoonmaken","مجھے کمرہ صاف کرنا ہے","حال: صفائی کرنی ہے۔"],["waar moet het vuilnis staan?","کچرا کہاں رکھنا ہے؟","حال: کچرے کی جگہ پوچھنی ہے۔"],["ik doe vandaag de was","میں آج کپڑے دھوتا / دھوتی ہوں","حال: کپڑے دھونے ہیں۔"],["de keuken is schoon","کچن صاف ہے","حال: کچن صاف ہے۔"],["de badkamer is vies","باتھ روم گندا ہے","حال: باتھ روم گندا ہے۔"],["ik gebruik de stofzuiger","میں ویکیوم استعمال کرتا / کرتی ہوں","حال: ویکیوم کر رہے ہیں۔"],["mijn kleding is nat","میرے کپڑے گیلے ہیں","حال: کپڑے گیلے ہیں۔"],["ik ben klaar met schoonmaken","میں صفائی سے فارغ ہو گیا / گئی","حال: کام مکمل ہے۔"]]
+  },
+  {
+    id: "a1-daily-review-one",
+    unit: "A1: دہرائی",
+    title: "Dagelijkse mix 1",
+    description: "تعارف، فون، پیغام، ملاقات، اسکول، اور پڑوسی کی مشترک مشق۔",
+    focus: "یہ دہرائی نئے لفظ نہیں دیتی؛ روزمرہ جواب جلدی پہچنوانے کے لیے ہے۔",
+    words: [["naam","نام","naam"],["telefoon","فون","telefoon"],["bericht","پیغام","bericht"],["afspraak","ملاقات","rooster"],["school","اسکول","school"],["buurvrouw","پڑوسن","vrouw"],["hulp","مدد","helpen"],["tijd","وقت","uur"]],
+    phrases: [["mijn naam is Sara","میرا نام Sara ہے","حال: تعارف ہے۔"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","حال: فون کا جواب چاہیے۔"],["ik stuur u een bericht","میں آپ کو پیغام بھیجتا / بھیجتی ہوں","حال: پیغام بھیجنا ہے۔"],["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ملاقات لینی ہے۔"],["mijn kind is vandaag ziek","میرا بچہ آج بیمار ہے","حال: اسکول کو اطلاع ہے۔"],["goedemorgen buurvrouw","صبح بخیر پڑوسن","حال: پڑوسی کو سلام ہے۔"],["kunt u mij helpen?","کیا آپ میری مدد کر سکتے ہیں؟","حال: مدد مانگنی ہے۔"],["hoe laat komt u?","آپ کتنے بجے آئیں گے؟","حال: وقت پوچھنا ہے۔"]]
+  },
+  {
+    id: "a1-daily-review-two",
+    unit: "A1: دہرائی",
+    title: "Dagelijkse mix 2",
+    description: "گھر، خریداری، سفر، صحت، کام، اور وقت کی مشترک مشق۔",
+    focus: "یہ دہرائی حقیقی دن کے چھوٹے مسائل کو ملاتی ہے۔",
+    words: [["verwarming","ہیٹنگ","verwarming"],["bon","رسید","bon"],["kaartje","ٹکٹ","kaartje"],["apotheek","دواخانہ","apotheek"],["werk","کام","werk"],["rooster","شیڈول","rooster"],["pijn","درد","pijn"],["regen","بارش","regen"]],
+    phrases: [["de verwarming doet het niet","ہیٹنگ کام نہیں کر رہی","حال: گھر کا مسئلہ ہے۔"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","حال: رسید چاہیے۔"],["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے","حال: سفر ہے۔"],["waar is de apotheek?","دواخانہ کہاں ہے؟","حال: دواخانہ تلاش کرنا ہے۔"],["ik kom vandaag later op werk","میں آج کام پر دیر سے آؤں گا / گی","حال: کام کو اطلاع ہے۔"],["staat het rooster in de app?","کیا شیڈول ایپ میں ہے؟","حال: شیڈول پوچھنا ہے۔"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے","حال: صحت کا مسئلہ ہے۔"],["het regent vandaag","آج بارش ہو رہی ہے","حال: موسم ہے۔"]]
+  }
+];
+
+function makeA1ExpansionLessons(spec) {
+  const makeLesson = (variant) => {
+    const rotatedWords = rotate(spec.words, variant);
+    const rotatedPhrases = rotate(spec.phrases, variant * 3);
+    const concepts = [
+      ...rotatedWords.map(([dutch, urdu, visualId], index) => dailyConcept(`${spec.id}-w${variant}-${index + 1}`, dutch, urdu, visualId)),
+      ...rotatedPhrases.map(([dutch, urdu, context, speak], index) => a1Phrase(`${spec.id}-p${variant}-${index + 1}`, dutch, urdu, context, speak || ""))
+    ];
+    const phraseConcepts = concepts.filter((concept) => concept.role === "phrase");
+    return makeA1PracticalLesson({
+      id: variant === 0 ? spec.id : `${spec.id}-review`,
+      unit: spec.unit,
+      title: variant === 0 ? spec.title : `${spec.title} - Herhaling`,
+      description: variant === 0 ? spec.description : `${spec.description} دہرائی اور نئے حالات کے ساتھ۔`,
+      explanation: practicalExplanation(variant === 0 ? spec.focus : `${spec.focus} اب اسی چیز کو دوسری ترتیب میں دہرائیں۔`, [
+        "پہلے معنی پہچانیں، پھر اسی لفظ کو سن کر جواب دیں۔",
+        "روزمرہ جملے پورے فقروں کی طرح یاد کریں۔",
+        "دہرائی میں پرانے الفاظ نئے حالات کے ساتھ دوبارہ آئیں گے۔"
+      ]),
+      concepts,
+      listenReplies: phraseConcepts.slice(0, 3).map((concept, index) => [
+        index === 0 ? "wat zegt u?" : "wat is een goed antwoord?",
+        dailyOptions(phraseConcepts, index, "dutch"),
+        concept.dutch,
+        `اس حال میں کہیں: ${concept.dutch}۔`
+      ]),
+      builds: phraseConcepts.slice(0, 6).map((concept) => [
+        concept.urdu,
+        concept.dutch.split(/\s+/),
+        concept.dutch,
+        `صحیح ترتیب: ${concept.dutch}۔`
+      ])
+    });
+  };
+  return [makeLesson(0), makeLesson(1)];
+}
+
+a1Lessons.push(...a1ExpansionTopics.flatMap(makeA1ExpansionLessons));
+
 const a0DailyCheckpointConcepts = [
   dailyConcept("check-greeting", "goedemorgen", "صبح بخیر", "goedemorgen"),
   dailyConcept("check-thanks", "dank u wel", "آپ کا شکریہ", "thanks"),
@@ -3025,7 +3329,8 @@ const a1LessonOrder = [
   "a1-people-family-articles", "a1-hebben-family", "a1-present-time", "a1-daily-routine",
   "a1-questions", "a1-plans-invitations", "a1-house-food-plurals", "a1-home-neighbours",
   "a1-cafe-ordering", "a1-shopping-clothes", "a1-shopping-transport", "a1-public-transport",
-  "a1-health-appointments", "a1-health-pharmacy", "a1-work-school-messages"
+  "a1-health-appointments", "a1-health-pharmacy", "a1-work-school-messages",
+  ...a1ExpansionTopics.flatMap((topic) => [topic.id, `${topic.id}-review`])
 ];
 const a1OrderIndex = new Map(a1LessonOrder.map((id, index) => [id, index]));
 a1Lessons.sort((left, right) => a1OrderIndex.get(left.id) - a1OrderIndex.get(right.id));
@@ -3061,16 +3366,20 @@ function questionSignature(question) {
 function lessonConcepts(questions) {
   const concepts = [];
   const seen = new Set();
-  const add = (dutch, urdu) => {
+  const add = (dutch, urdu, visualId = "") => {
     if (!isDutchOnlyText(dutch) || !isUrduText(urdu)) return;
     const key = `${dutch}|${urdu}`;
-    if (seen.has(key)) return;
+    const existing = concepts.find((concept) => `${concept.dutch}|${concept.urdu}` === key);
+    if (existing) {
+      if (!existing.visualId && visualId) existing.visualId = visualId;
+      return;
+    }
     seen.add(key);
-    concepts.push({ dutch: String(dutch), urdu: String(urdu) });
+    concepts.push({ dutch: String(dutch), urdu: String(urdu), visualId });
   };
   for (const question of questions) {
-    add(question.prompt, question.answer);
-    add(question.answer, question.prompt);
+    add(question.prompt, question.answer, question.visualId || question.visual || "");
+    add(question.answer, question.prompt, question.visualId || question.visual || "");
     if (question.type === "listen-choice") add(question.speak, question.answer);
   }
   return concepts;
@@ -3090,6 +3399,35 @@ function conceptOptions(concepts, index, key) {
   return { concept, options: [answer, ...distractors] };
 }
 
+function fallbackVisualIdForDutch(text) {
+  const value = String(text || "").toLowerCase();
+  const rules = [
+    [/\b(ik|mijn|ben)\b/, "pronoun-ik"],
+    [/\b(jij|je|jouw|bent)\b/, "pronoun-jij"],
+    [/\b(u|uw)\b/, "pronoun-u"],
+    [/\b(hij|zij|zijn|haar)\b/, "pronoun-hij-zij"],
+    [/\b(wij|we)\b/, "pronoun-wij"],
+    [/\b(naam|voornaam|achternaam)\b/, "naam"],
+    [/\b(adres|postcode|straat|woonplaats)\b/, "adres"],
+    [/\b(telefoon|nummer|bericht|bellen)\b/, "telefoon"],
+    [/\b(school|docent|huiswerk|rooster)\b/, "school"],
+    [/\b(kind|kinderen|zoon|dochter)\b/, "kind"],
+    [/\b(man|vader|broer)\b/, "man"],
+    [/\b(vrouw|moeder|zus)\b/, "vrouw"],
+    [/\b(huis|woning|kamer|keuken|badkamer)\b/, "huis"],
+    [/\b(werk|baan|collega|salaris)\b/, "werk"],
+    [/\b(dokter|huisarts|pijn|ziek|koorts|medicijn|apotheek)\b/, "dokter"],
+    [/\b(bus|trein|station|halte|kaartje|spoor)\b/, "station"],
+    [/\b(winkel|supermarkt|kassa|bon|prijs|betalen|pin)\b/, "winkel"],
+    [/\b(brood|water|melk|koffie|thee|eten)\b/, "eten"],
+    [/\b(waar|wat|wie|hoe|wanneer|waarom|welke)\b/, "vraag"],
+    [/\b(vandaag|morgen|gisteren|uur|maandag|vrijdag)\b/, "rooster"],
+    [/\b(links|rechts|rechtdoor)\b/, "rechtdoor"]
+  ];
+  const match = rules.find(([pattern]) => pattern.test(value));
+  return match ? match[1] : "vraag";
+}
+
 function buildGeneratedQuestion(type, concepts, index) {
   if (!concepts.length) return null;
   const dutchSet = conceptOptions(concepts, index, "dutch");
@@ -3103,7 +3441,20 @@ function buildGeneratedQuestion(type, concepts, index) {
     return reverse(concept.urdu, dutchSet.options, concept.dutch, `${concept.urdu} = ${concept.dutch}۔`);
   }
   if (type === "image-choice") {
-    return imageChoice(concept.dutch, dutchSet.options, concept.dutch, `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔`);
+    const visualConcepts = concepts
+      .map((item) => ({ ...item, visualId: item.visualId || fallbackVisualIdForDutch(item.dutch) }))
+      .filter((item) => item.visualId);
+    if (!visualConcepts.length) return null;
+    const visualSet = conceptOptions(visualConcepts, index, "dutch");
+    return {
+      type: "image-choice",
+      label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
+      prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔",
+      visualId: visualSet.concept.visualId,
+      options: visualSet.options,
+      answer: visualSet.concept.dutch,
+      explain: `تصویر میں ${visualSet.concept.urdu} ہے: ${visualSet.concept.dutch}۔`
+    };
   }
   if (type === "listen-choice") {
     return listenChoice(concept.dutch, urduSet.options, concept.urdu, `${concept.dutch} = ${concept.urdu}۔`);
@@ -3442,6 +3793,7 @@ const missionSpecs = [
 
 const missionLessons = missionSpecs.map(makeMissionLesson);
 const missionById = new Map(missionLessons.map((lesson) => [lesson.id, lesson]));
+const a1Expanded = (...ids) => ids.flatMap((id) => [id, `${id}-review`]);
 
 insertLessonAfter(a0Lessons, "a0-home-needs", missionById.get("a0-mission-home-start"));
 insertLessonAfter(a0Lessons, "a0-transport-directions", missionById.get("a0-mission-neighbourhood"));
@@ -3535,63 +3887,63 @@ const a1Subchapters = [
     title: "میری معلومات",
     goal: "اپنا نام، پتہ، فون نمبر، ملک اور آسان تعارف دینا۔",
     practice: "فارم والے الفاظ اور چھوٹے تعارف والے جملے۔",
-    lessonIds: ["a1-zero-tiny-words", "a1-zijn-first-sentences", "a1-greetings-personal-info"]
+    lessonIds: ["a1-zero-tiny-words", "a1-zijn-first-sentences", "a1-greetings-personal-info", ...a1Expanded("a1-details-forms")]
   },
   {
     id: "a1-family-people",
     title: "خاندان اور لوگ",
     goal: "خاندان، لوگ، اور بنیادی تفصیل کے الفاظ استعمال کرنا۔",
     practice: "dit is mijn..., ik heb..., hij/zij is... جیسے جملے۔",
-    lessonIds: ["a1-people-family-articles", "a1-hebben-family"]
+    lessonIds: ["a1-people-family-articles", "a1-hebben-family", ...a1Expanded("a1-family-routine-extra", "a1-child-care")]
   },
   {
     id: "a1-daily-routine",
     title: "روزمرہ معمول",
     goal: "آج، کل، وقت، کام، اسکول اور آسان معمول بتانا۔",
     practice: "فاعل + فعل + باقی حصہ اور وقت والے الفاظ کے ساتھ جملہ بنانا۔",
-    lessonIds: ["a1-present-time", "a1-daily-routine"]
+    lessonIds: ["a1-present-time", "a1-daily-routine", ...a1Expanded("a1-calendar-time", "a1-weather-clothes", "a1-daily-review-one")]
   },
   {
     id: "a1-questions-help",
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-plans-invitations", "a1-mission-phone-internet"]
+    lessonIds: ["a1-questions", "a1-plans-invitations", ...a1Expanded("a1-phone-calls", "a1-short-messages", "a1-appointments", "a1-questions-revision", "a1-polite-chunks"), "a1-mission-phone-internet"]
   },
   {
     id: "a1-home-objects",
     title: "گھر اور چیزیں",
     goal: "گھر، کمرہ، فرنیچر، اور چیز کہاں ہے بتانا۔",
     practice: "het boek is in huis جیسے جگہ جملے۔",
-    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours", "a1-mission-house-search"]
+    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours", ...a1Expanded("a1-neighbour-talk", "a1-home-repairs", "a1-cleaning-house", "a1-house-search-extra"), "a1-mission-house-search"]
   },
   {
     id: "a1-food-shopping",
     title: "کھانا اور خریداری",
     goal: "بنیادی کھانا، قیمتیں، خریدنا، اور قیمت پوچھنا۔",
     practice: "ik wil..., hoeveel kost...? جیسے روزمرہ فقرے۔",
-    lessonIds: ["a1-cafe-ordering", "a1-shopping-clothes"]
+    lessonIds: ["a1-cafe-ordering", "a1-shopping-clothes", ...a1Expanded("a1-supermarket", "a1-cafe-food-needs", "a1-shopping-returns", "a1-money-bank")]
   },
   {
     id: "a1-going-out-transport",
     title: "باہر جانا اور سفر",
     goal: "station، bus، trein، ٹکٹ، کہیں جانا۔",
     practice: "ik ga naar het station جیسے حرکت جملے۔",
-    lessonIds: ["a1-shopping-transport", "a1-public-transport", "a1-mission-post-parcel"]
+    lessonIds: ["a1-shopping-transport", "a1-public-transport", ...a1Expanded("a1-directions-town", "a1-bus-train-extra", "a1-post-parcel-extra", "a1-library-community", "a1-safety-rules"), "a1-mission-post-parcel"]
   },
   {
     id: "a1-body-health",
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments", "a1-health-pharmacy", "a1-mission-doctor"]
+    lessonIds: ["a1-health-appointments", "a1-health-pharmacy", ...a1Expanded("a1-pharmacy-medicine", "a1-doctor-symptoms"), "a1-mission-doctor"]
   },
   {
     id: "a1-work-school-messages",
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-work-school-messages", "a1-mission-school-day"]
+    lessonIds: ["a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
   }
 ];
 

@@ -1598,6 +1598,34 @@ function resolveExplicitVisualId(value) {
   const normalized = normalizeVisualTerm(value);
   if (!normalized) return "";
   if (normalized === "u") return "pronoun-u";
+  if (normalized === "a") return "letter-a";
+  const aliases = {
+    afval: "schoonmaken",
+    bibliotheek: "boek",
+    buik: "buikpijn",
+    buiten: "uitgang",
+    gevaar: "hulp",
+    hoofd: "hoofdpijn",
+    kaart: "adres",
+    kleding: "jas",
+    kleur: "jas",
+    koud: "jas",
+    oor: "luisteren",
+    paraplu: "water",
+    persoon: "pronoun-u",
+    raam: "huis",
+    regen: "water",
+    schoenen: "jas",
+    sleutel: "deur",
+    straat: "adres",
+    totziens: "tot-ziens",
+    veilig: "hulp",
+    verboden: "uitgang",
+    warm: "ochtend",
+    zon: "ochtend",
+    zoon: "kind"
+  };
+  if (aliases[normalized]) return aliases[normalized];
   if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
   const withoutArticle = normalized.replace(/^(de|het|een)\s+/, "");
   if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
@@ -1624,7 +1652,7 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
           ? question.answer
           : question.type === "fill-gap"
             ? question.prompt.replace("___", "")
-            : question.visual || "";
+            : question.visual || question.visualId || "";
       question.visualId = explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
     }

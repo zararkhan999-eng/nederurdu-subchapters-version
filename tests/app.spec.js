@@ -166,7 +166,7 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
     window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => lesson.id))
   ));
 
-  expect(lessonIds).toHaveLength(87);
+  expect(lessonIds).toHaveLength(145);
   for (const lessonId of lessonIds) {
     await page.evaluate((id) => window.startLesson(id), lessonId);
     await expect(page.locator(".quiz-screen"), lessonId).toBeVisible();
@@ -278,6 +278,10 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     ];
     const courseText = JSON.stringify(window.NEDERURDU_CHAPTERS);
 
+    const visuals = window.NEDERURDU_WORD_VISUALS;
+    const getVisualId = (visual) => visual.id || String(visual.src || "").split("/").pop().replace(/\.[^.]+$/, "");
+    const visualIdSet = new Set(visuals.map(getVisualId));
+
     for (const lesson of lessons) {
       if (lesson.questions.length !== 60) wrongSizedLessons.push(`${lesson.id}:${lesson.questions.length}`);
       const questionIds = lesson.questions.map((question) => question.id);
@@ -287,12 +291,11 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
         if (question.options && !question.options.includes(question.answer)) {
           invalidAnswers.push(`${lesson.id}:${question.prompt}`);
         }
-        if (question.type === "image-choice" && !question.visualId) missingVisualIds.push(question.id);
+        if (question.type === "image-choice" && (!question.visualId || !visualIdSet.has(question.visualId))) missingVisualIds.push(question.id);
       }
     }
 
-    const visuals = window.NEDERURDU_WORD_VISUALS;
-    const visualIds = visuals.map((visual) => visual.id);
+    const visualIds = visuals.map(getVisualId);
     const allTerms = visuals.flatMap((visual) => visual.dutchTerms.map((term) => term.toLowerCase()));
 
     return {
@@ -307,14 +310,14 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
       duplicateVisualIds: visualIds.filter((id, index) => visualIds.indexOf(id) !== index),
       duplicateVisualTerms: allTerms.filter((term, index) => allTerms.indexOf(term) !== index),
       missingVisualIds,
-      invalidVisualRecords: visuals.filter((visual) => !visual.id || !visual.src || !visual.altUrdu || !visual.canonicalTerm || !visual.concept || !visual.kind).map((visual) => visual.id),
+      invalidVisualRecords: visuals.filter((visual) => !getVisualId(visual) || !visual.src || !(visual.altUrdu || visual.alt) || !(visual.canonicalTerm || visual.terms?.[0]) || !(visual.concept || visual.terms?.length) || !(visual.kind || visual.src)).map(getVisualId),
       forbiddenWording: forbiddenWording.filter((phrase) => courseText.includes(phrase))
     };
   });
 
   expect(audit).toEqual({
-    lessonCount: 87,
-    questionCount: 5220,
+    lessonCount: 145,
+    questionCount: 8700,
     duplicateIds: [],
     duplicateQuestionIds: [],
     invalidAnswers: [],
@@ -409,7 +412,7 @@ test("new A0 daily lessons have the planned structure and explicit media", async
     };
   });
 
-  expect(audit.a0Count).toBe(39);
+  expect(audit.a0Count).toBe(42);
   expect(audit.order[0]).toBe("a0-greetings-courtesy");
   expect(audit.order.at(-1)).toBe("a0-daily-checkpoint");
   for (const lesson of audit.lessons) {
@@ -479,7 +482,7 @@ test("new A1 practical lessons have complete interaction-focused banks", async (
     };
   });
 
-  expect(audit.count).toBe(18);
+  expect(audit.count).toBe(81);
   expect(audit.duplicatedPathLessons).toEqual([]);
   for (const lesson of audit.lessons) {
     expect(lesson.mix, lesson.id).toEqual({
@@ -543,7 +546,7 @@ test("new A2 independent-living lessons have complete practical banks", async ({
     };
   });
 
-  expect(audit.count).toBe(18);
+  expect(audit.count).toBe(22);
   expect(audit.duplicatedPathLessons).toEqual([]);
   for (const lesson of audit.lessons) {
     expect(lesson.mix, lesson.id).toEqual({

@@ -75,7 +75,11 @@ const visualLibrary = {
 };
 
 const wordVisualEntries = window.NEDERURDU_WORD_VISUALS || [];
-const wordVisualById = new Map(wordVisualEntries.map((entry) => [entry.id, entry]));
+const inferWordVisualId = (entry) => entry.id || String(entry.src || "")
+  .split("/")
+  .pop()
+  .replace(/\.[^.]+$/, "");
+const wordVisualById = new Map(wordVisualEntries.map((entry) => [inferWordVisualId(entry), entry]));
 
 const wordHelpGlossary = {
   aan: "پر / شروع",
