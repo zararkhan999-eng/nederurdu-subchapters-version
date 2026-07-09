@@ -268,7 +268,9 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     const wrongSizedLessons = [];
     const duplicateQuestionIds = [];
     const missingVisualIds = [];
+    const invalidImageVisuals = [];
     const invalidFillGaps = [];
+    const invalidFillVisuals = [];
     const unsafeImageChoices = [];
     const forbiddenWording = [
       "نفی والا لفظ",
@@ -283,6 +285,16 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     const visuals = window.NEDERURDU_WORD_VISUALS;
     const getVisualId = (visual) => visual.id || String(visual.src || "").split("/").pop().replace(/\.[^.]+$/, "");
     const visualIdSet = new Set(visuals.map(getVisualId));
+    const normalize = (value) => String(value || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ");
+    const visualMatchesAnswer = (visualId, answer) => {
+      const visual = visuals.find((item) => getVisualId(item) === visualId);
+      if (!visual) return false;
+      const answerTerm = normalize(answer);
+      const answerNoArticle = answerTerm.replace(/^(de|het|een|geen)\s+/, "");
+      return [getVisualId(visual), visual.canonicalTerm, ...(visual.dutchTerms || [])]
+        .map(normalize)
+        .some((term) => term === answerTerm || term === answerNoArticle || term === `getal ${answerTerm}`);
+    };
 
     for (const lesson of lessons) {
       if (lesson.questions.length !== 60) wrongSizedLessons.push(`${lesson.id}:${lesson.questions.length}`);
@@ -294,6 +306,7 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
           invalidAnswers.push(`${lesson.id}:${question.prompt}`);
         }
         if (question.type === "image-choice" && (!question.visualId || !visualIdSet.has(question.visualId))) missingVisualIds.push(question.id);
+        if (question.type === "image-choice" && question.visualId && !visualMatchesAnswer(question.visualId, question.answer)) invalidImageVisuals.push(question.id);
         if (question.type === "image-choice" && (/[,?!]/.test(question.answer) || String(question.answer).trim().split(/\s+/).length > 3)) {
           unsafeImageChoices.push(question.id);
         }
@@ -310,6 +323,9 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
             || String(question.speak).includes("___")
           ) {
             invalidFillGaps.push(question.id);
+          }
+          if (question.visualId) {
+            if (!visualMatchesAnswer(question.visualId, question.answer)) invalidFillVisuals.push(question.id);
           }
         }
       }
@@ -330,7 +346,9 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
       duplicateVisualIds: visualIds.filter((id, index) => visualIds.indexOf(id) !== index),
       duplicateVisualTerms: allTerms.filter((term, index) => allTerms.indexOf(term) !== index),
       missingVisualIds,
+      invalidImageVisuals,
       invalidFillGaps,
+      invalidFillVisuals,
       unsafeImageChoices,
       invalidVisualRecords: visuals.filter((visual) => !getVisualId(visual) || !visual.src || !(visual.altUrdu || visual.alt) || !(visual.canonicalTerm || visual.terms?.[0]) || !(visual.concept || visual.terms?.length) || !(visual.kind || visual.src)).map(getVisualId),
       forbiddenWording: forbiddenWording.filter((phrase) => courseText.includes(phrase))
@@ -349,7 +367,9 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     duplicateVisualIds: [],
     duplicateVisualTerms: [],
     missingVisualIds: [],
+    invalidImageVisuals: [],
     invalidFillGaps: [],
+    invalidFillVisuals: [],
     unsafeImageChoices: [],
     invalidVisualRecords: [],
     forbiddenWording: []

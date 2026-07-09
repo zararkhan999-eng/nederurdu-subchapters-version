@@ -237,9 +237,9 @@ button {
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 42px;
+  gap: 34px;
   column-gap: 0;
-  min-height: 120px;
+  min-height: 112px;
   padding: 12px 0;
   direction: ltr;
 }

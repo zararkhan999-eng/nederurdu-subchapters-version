@@ -1822,15 +1822,16 @@ function sampleLessonQuestions(questions, lessonId) {
   const lessonSeenCount = usableQuestions.filter((question) => seenIds.has(question.id)).length;
   const seed = hashText(`${lessonId}:${lessonSeenCount}:${progress.scores[lessonId] || 0}`);
   const types = ["meaning", "reverse", "image-choice", "document-choice", "listen-choice", "fill-gap", "situation", "sequence", "build", "short-input"];
-  const groups = new Map(types.map((type, index) => [
+  const unseenGroups = new Map(types.map((type, index) => [
     type,
-    [
-      ...seededShuffle(usableQuestions.filter((question) => question.type === type && !seenIds.has(question.id)), seed + index),
-      ...seededShuffle(usableQuestions.filter((question) => question.type === type && seenIds.has(question.id)), seed + index + 41)
-    ]
+    seededShuffle(usableQuestions.filter((question) => question.type === type && !seenIds.has(question.id)), seed + index)
+  ]));
+  const seenGroups = new Map(types.map((type, index) => [
+    type,
+    seededShuffle(usableQuestions.filter((question) => question.type === type && seenIds.has(question.id)), seed + index + 41)
   ]));
   const practice = [];
-  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount) {
+  const takeRound = (groups) => {
     let added = false;
     for (const type of types) {
       const question = groups.get(type)?.shift();
@@ -1839,7 +1840,16 @@ function sampleLessonQuestions(questions, lessonId) {
       added = true;
       if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) break;
     }
-    if (!added) break;
+    return added;
+  };
+  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount && takeRound(unseenGroups)) {}
+  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount && takeRound(seenGroups)) {}
+  if (practice.length < LESSON_QUESTION_LIMIT - explanationCount) {
+    const remainingIds = new Set(practice.map((question) => question.id));
+    for (const question of seededShuffle(usableQuestions.filter((item) => !remainingIds.has(item.id)), seed + 163)) {
+      practice.push(question);
+      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) break;
+    }
   }
   return [...infoQuestions.slice(0, explanationCount), ...seededShuffle(practice, seed + 97)].slice(0, LESSON_QUESTION_LIMIT);
 }

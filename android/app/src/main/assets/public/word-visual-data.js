@@ -1649,6 +1649,20 @@ function isSafeImageChoiceAnswer(answer) {
   return false;
 }
 
+function visualIncludesTerm(visualId, term) {
+  const visual = window.NEDERURDU_WORD_VISUALS.find((item) => item.id === visualId);
+  if (!visual) return false;
+  const normalizedTerm = normalizeVisualTerm(term);
+  const withoutArticle = normalizedTerm.replace(/^(de|het|een|geen)\s+/, "");
+  return [visual.id, visual.canonicalTerm, ...(visual.dutchTerms || [])]
+    .map(normalizeVisualTerm)
+    .some((visualTerm) => (
+      visualTerm === normalizedTerm
+      || visualTerm === withoutArticle
+      || visualTerm === `getal ${normalizedTerm}`
+    ));
+}
+
 for (const chapter of window.NEDERURDU_CHAPTERS || []) {
   for (const lesson of chapter.lessons || []) {
     for (const question of lesson.questions || []) {
@@ -1660,11 +1674,14 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
         : ["reverse", "situation", "build"].includes(question.type)
           ? question.answer
           : question.type === "fill-gap"
-            ? question.prompt.replace("___", "")
+            ? question.answer
             : question.visual || question.visualId || "";
       question.visualId = explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
-      if (question.type === "image-choice" && !isSafeImageChoiceAnswer(question.answer)) {
+      if (question.type === "fill-gap" && question.visualId && !visualIncludesTerm(question.visualId, question.answer)) {
+        delete question.visualId;
+      }
+      if (question.type === "image-choice" && (!isSafeImageChoiceAnswer(question.answer) || !visualIncludesTerm(question.visualId, question.answer))) {
         question.type = "situation";
         question.label = "حال کے لیے صحیح Nederlands جملہ منتخب کریں";
         question.prompt = "اس حال کے لیے صحیح Nederlands منتخب کریں۔";
