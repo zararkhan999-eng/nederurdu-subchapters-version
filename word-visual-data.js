@@ -1555,6 +1555,133 @@ const additionalWordVisuals = [
   extraVisual("hulp", "تصویر: فوری مدد", "hulp", ["hulp"], "situation")
 ];
 
+const generatedMissingWordVisuals = [
+  ["te-laat", "تصویر: دیر سے پہنچنا", "te laat", "situation"],
+  ["sleutel", "تصویر: چابی", "sleutel", "object"],
+  ["rekening", "تصویر: بل", "rekening", "object"],
+  ["regen", "تصویر: بارش", "regen", "situation"],
+  ["datum", "تصویر: تاریخ", "datum", "foundation"],
+  ["voornaam", "تصویر: پہلا نام", "voornaam", "foundation"],
+  ["achternaam", "تصویر: خاندانی نام", "achternaam", "foundation"],
+  ["straat", "تصویر: گلی یا سڑک", "straat", "place"],
+  ["koud", "تصویر: ٹھنڈ", "koud", "situation"],
+  ["warm", "تصویر: گرمی", "warm", "situation"],
+  ["tijd", "تصویر: وقت", "tijd", "foundation"],
+  ["maandag", "تصویر: سوموار", "maandag", "foundation"],
+  ["buurvrouw", "تصویر: پڑوسن", "buurvrouw", "person"],
+  ["pakket", "تصویر: پیکٹ", "pakket", "object"],
+  ["vuilnis", "تصویر: کوڑا", "vuilnis", "object"],
+  ["schoenen", "تصویر: جوتے", "schoenen", "object"],
+  ["op-tijd", "تصویر: وقت پر", "op tijd", "situation"],
+  ["postcode", "تصویر: پوسٹ کوڈ", "postcode", "foundation"],
+  ["woonplaats", "تصویر: رہنے کا شہر", "woonplaats", "place"],
+  ["e-mailadres", "تصویر: ای میل پتہ", "e-mailadres", "object"],
+  ["open", "تصویر: کھلا", "open", "situation"],
+  ["drinken", "تصویر: پینا", "drinken", "action"],
+  ["brengen", "تصویر: لے کر آنا", "brengen", "action"],
+  ["ophalen", "تصویر: لینے آنا", "ophalen", "action"],
+  ["pauze", "تصویر: وقفہ", "pauze", "situation"],
+  ["paraplu", "تصویر: چھتری", "paraplu", "object"],
+  ["verboden", "تصویر: منع", "verboden", "situation"],
+  ["buurman", "تصویر: پڑوسی مرد", "buurman", "person"],
+  ["menu", "تصویر: مینو", "menu", "object"],
+  ["brief", "تصویر: خط", "brief", "object"],
+  ["ik-heb-gewerkt", "تصویر: میں نے کام کیا", "ik heb gewerkt", "situation"],
+  ["spellen", "تصویر: ہجے کرنا", "spellen", "action"],
+  ["letter", "تصویر: حرف", "letter", "foundation"],
+  ["leeftijd", "تصویر: عمر", "leeftijd", "foundation"],
+  ["huisnummer", "تصویر: گھر نمبر", "huisnummer", "foundation"],
+  ["geboortedatum", "تصویر: پیدائش کی تاریخ", "geboortedatum", "foundation"],
+  ["nummer", "تصویر: نمبر", "nummer", "foundation"],
+  ["voicemail", "تصویر: وائس میل", "voicemail", "object"],
+  ["bereik", "تصویر: فون سگنل", "bereik", "situation"],
+  ["verkeerd-nummer", "تصویر: غلط نمبر", "verkeerd nummer", "situation"],
+  ["terugbellen", "تصویر: واپس فون کرنا", "terugbellen", "action"],
+  ["later", "تصویر: بعد میں", "later", "foundation"],
+  ["app", "تصویر: ایپ", "app", "object"],
+  ["laat", "تصویر: دیر", "laat", "situation"],
+  ["antwoord", "تصویر: جواب", "antwoord", "object"],
+  ["annuleren", "تصویر: منسوخ کرنا", "annuleren", "action"],
+  ["veranderen", "تصویر: بدلنا", "veranderen", "action"],
+  ["lawaai", "تصویر: شور", "lawaai", "situation"],
+  ["raam", "تصویر: کھڑکی", "raam", "object"],
+  ["monteur", "تصویر: مرمت والا", "monteur", "person"],
+  ["kleur", "تصویر: رنگ", "kleur", "object"],
+  ["terugbrengen", "تصویر: واپس لانا", "terugbrengen", "action"],
+  ["soep", "تصویر: سوپ", "soep", "object"],
+  ["vlees", "تصویر: گوشت", "vlees", "object"],
+  ["bestelling", "تصویر: آرڈر", "bestelling", "object"],
+  ["plein", "تصویر: چوک", "plein", "place"],
+  ["kaart", "تصویر: نقشہ", "kaart", "object"],
+  ["dichtbij", "تصویر: قریب", "dichtbij", "foundation"],
+  ["ver-weg", "تصویر: دور", "ver weg", "foundation"],
+  ["spoor", "تصویر: ریل کی پٹڑی", "spoor", "place"],
+  ["vertraging", "تصویر: تاخیر", "vertraging", "situation"],
+  ["bestemming", "تصویر: منزل", "bestemming", "place"],
+  ["zon", "تصویر: سورج", "zon", "object"],
+  ["buiten", "تصویر: باہر", "buiten", "place"],
+  ["recept", "تصویر: نسخہ", "recept", "object"],
+  ["tablet", "تصویر: گولی", "tablet", "object"],
+  ["etiket", "تصویر: لیبل", "etiket", "object"],
+  ["hoofd", "تصویر: سر", "hoofd", "body"],
+  ["buik", "تصویر: پیٹ", "buik", "body"],
+  ["moe", "تصویر: تھکا ہوا", "moe", "body"],
+  ["baas", "تصویر: باس", "baas", "person"],
+  ["dienst", "تصویر: ڈیوٹی", "dienst", "situation"],
+  ["bedrag", "تصویر: رقم", "bedrag", "object"],
+  ["geld", "تصویر: پیسے", "geld", "object"],
+  ["automaat", "تصویر: مشین", "automaat", "object"],
+  ["post", "تصویر: ڈاک", "post", "object"],
+  ["afhaalpunt", "تصویر: لینے کی جگہ", "afhaalpunt", "place"],
+  ["identiteitsbewijs", "تصویر: شناختی کارڈ", "identiteitsbewijs", "object"],
+  ["bezorger", "تصویر: ڈیلیوری والا", "bezorger", "person"],
+  ["opvang", "تصویر: بچوں کی دیکھ بھال کی جگہ", "opvang", "place"],
+  ["ouder", "تصویر: والدین", "ouder", "person"],
+  ["slaap", "تصویر: نیند", "slaap", "body"],
+  ["woning", "تصویر: رہائش", "woning", "place"],
+  ["huur", "تصویر: کرایہ", "huur", "object"],
+  ["tuin", "تصویر: باغ", "tuin", "place"],
+  ["beschikbaar", "تصویر: دستیاب", "beschikbaar", "situation"],
+  ["bezichtiging", "تصویر: گھر دیکھنا", "bezichtiging", "situation"],
+  ["bibliotheek", "تصویر: کتاب خانہ", "bibliotheek", "place"],
+  ["les", "تصویر: سبق", "les", "foundation"],
+  ["taal", "تصویر: زبان", "taal", "foundation"],
+  ["pas", "تصویر: پاس", "pas", "object"],
+  ["gesloten", "تصویر: بند", "gesloten", "situation"],
+  ["buurthuis", "تصویر: محلہ مرکز", "buurthuis", "place"],
+  ["toegestaan", "تصویر: اجازت", "toegestaan", "situation"],
+  ["gevaarlijk", "تصویر: خطرناک", "gevaarlijk", "situation"],
+  ["veilig", "تصویر: محفوظ", "veilig", "situation"],
+  ["vrijdag", "تصویر: جمعہ", "vrijdag", "foundation"],
+  ["weekend", "تصویر: ہفتہ وار چھٹی", "weekend", "foundation"],
+  ["welke", "تصویر: کون سا", "welke", "foundation"],
+  ["mag-ik", "تصویر: کیا میں کر سکتا ہوں", "mag ik", "situation"],
+  ["geen-probleem", "تصویر: کوئی مسئلہ نہیں", "geen probleem", "situation"],
+  ["was", "تصویر: کپڑوں کی دھلائی", "was", "object"],
+  ["kleding", "تصویر: کپڑے", "kleding", "object"],
+  ["stofzuiger", "تصویر: ویکیوم", "stofzuiger", "object"],
+  ["dag", "تصویر: دن", "dag", "foundation"],
+  ["te-vroeg", "تصویر: بہت جلدی", "te vroeg", "situation"],
+  ["licht", "تصویر: روشنی", "licht", "object"],
+  ["dicht", "تصویر: بند", "dicht", "situation"],
+  ["klas", "تصویر: کلاس", "klas", "place"],
+  ["afwezig", "تصویر: غیر حاضر", "afwezig", "situation"],
+  ["schooltijd", "تصویر: اسکول کا وقت", "schooltijd", "situation"],
+  ["leidinggevende", "تصویر: انچارج", "leidinggevende", "person"],
+  ["beginnen", "تصویر: شروع کرنا", "beginnen", "action"],
+  ["stoppen", "تصویر: روکنا", "stoppen", "action"],
+  ["stop", "تصویر: رکنا", "stop", "action"],
+  ["gevaar", "تصویر: خطرہ", "gevaar", "situation"],
+  ["om-acht-uur", "تصویر: آٹھ بجے", "om acht uur", "foundation"],
+  ["ontbijt", "تصویر: ناشتہ", "ontbijt", "object"],
+  ["agenda", "تصویر: شیڈول", "agenda", "object"],
+  ["rapport", "تصویر: رپورٹ", "rapport", "object"]
+];
+
+for (const [id, altUrdu, canonicalTerm, kind] of generatedMissingWordVisuals) {
+  additionalWordVisuals.push(extraVisual(id, altUrdu, canonicalTerm, [canonicalTerm], kind));
+}
+
 const numberVisualTerms = [
   [0, "nul", "صفر"], [1, "een", "ایک"], [2, "twee", "دو"], [3, "drie", "تین"],
   [4, "vier", "چار"], [5, "vijf", "پانچ"], [6, "zes", "چھ"], [7, "zeven", "سات"],
@@ -1640,6 +1767,22 @@ function resolveExplicitVisualId(value) {
   return candidates[0]?.id || "";
 }
 
+function resolveExactVisualId(value) {
+  const normalized = normalizeVisualTerm(value);
+  if (!normalized) return "";
+  const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
+  const candidates = [
+    normalized,
+    withoutArticle,
+    `getal ${normalized}`,
+    `getal ${withoutArticle}`
+  ];
+  for (const candidate of candidates) {
+    if (visualTermIndex.has(candidate)) return visualTermIndex.get(candidate);
+  }
+  return "";
+}
+
 function isSafeImageChoiceAnswer(answer) {
   const normalized = normalizeVisualTerm(answer);
   if (!normalized) return false;
@@ -1669,6 +1812,9 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
       const explicitVisualId = window.NEDERURDU_WORD_VISUALS.some((visual) => visual.id === question.visualId)
         ? question.visualId
         : "";
+      const answerVisualId = ["image-choice", "fill-gap"].includes(question.type)
+        ? resolveExactVisualId(question.answer)
+        : "";
       const visualSource = question.type === "meaning"
         ? question.prompt
         : ["reverse", "situation", "build"].includes(question.type)
@@ -1676,7 +1822,7 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
           : question.type === "fill-gap"
             ? question.answer
             : question.visual || question.visualId || "";
-      question.visualId = explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
+      question.visualId = answerVisualId || explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
       if (question.type === "fill-gap" && question.visualId && !visualIncludesTerm(question.visualId, question.answer)) {
         delete question.visualId;

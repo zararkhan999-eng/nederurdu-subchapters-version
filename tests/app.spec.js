@@ -363,7 +363,7 @@ test("course bank has exact sizes, stable IDs, valid answers, and visual mapping
     invalidAnswers: [],
     invalidTypes: [],
     wrongSizedLessons: [],
-    visualCount: 221,
+    visualCount: 341,
     duplicateVisualIds: [],
     duplicateVisualTerms: [],
     missingVisualIds: [],
