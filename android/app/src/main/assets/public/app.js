@@ -351,6 +351,13 @@ let matchPairError = "";
 let typedAnswer = "";
 let typedFallback = false;
 let preferredDutchVoice = null;
+let answerCombo = 0;
+let bestAnswerCombo = 0;
+let experienceObserver = null;
+let globalMotionBound = false;
+let pointerFrame = 0;
+
+const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 function loadProgress() {
   try {
@@ -543,8 +550,10 @@ function render() {
   applyDisplaySettings();
   const screenChanged = screen !== lastRenderedScreen;
   app.classList.toggle("screen-changing", screenChanged);
+  document.body.dataset.screen = screen;
   try {
     app.innerHTML = `
+      ${renderExperienceBackdrop()}
       ${screen === "home" ? renderHome() : ""}
       ${screen === "preview" ? renderLessonPreview() : ""}
       ${screen === "lesson" ? renderLesson() : ""}
@@ -569,7 +578,24 @@ function render() {
     `;
   }
   bindEvents();
+  bindExperienceMotion();
   lastRenderedScreen = screen;
+}
+
+function renderExperienceBackdrop() {
+  return `
+    <div class="experience-backdrop" aria-hidden="true">
+      <span class="ambient-orb orb-green"></span>
+      <span class="ambient-orb orb-blue"></span>
+      <span class="ambient-orb orb-gold"></span>
+      <span class="ambient-grid"></span>
+      <span class="ambient-grain"></span>
+      <span class="ambient-spark spark-one"></span>
+      <span class="ambient-spark spark-two"></span>
+      <span class="ambient-spark spark-three"></span>
+      <span class="ambient-spark spark-four"></span>
+    </div>
+  `;
 }
 
 function applyDisplaySettings() {
@@ -608,10 +634,13 @@ function renderIcon(name, className = "") {
 
 function renderProgressHeader() {
   const activeDays = progress.practiceDays.length;
+  const totalLessons = getAllLessons().length || 1;
+  const totalCompleted = getAllLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
+  const coursePercent = Math.round((totalCompleted / totalLessons) * 100);
   return `
-    <header class="progress-header" aria-label="زبان">
+    <header class="progress-header" aria-label="زبان" style="--course-progress:${coursePercent * 3.6}deg">
       <div class="brand-lockup">
-        <img class="header-logo" src="icon.svg" alt="" />
+        <span class="header-logo-wrap"><img class="header-logo" src="icon.svg" alt="" /><i></i></span>
         <span class="brand-lockup-copy">
           <strong class="latin">NederUrdu</strong>
           <small>اردو سے Nederlands تک</small>
@@ -623,7 +652,7 @@ function renderProgressHeader() {
         <span class="journey-language latin"><b>NL</b><small>Nederlands</small></span>
       </div>
       <div class="header-days" title="مشق کے دن">
-        ${renderIcon("calendar")}
+        <span class="header-days-orbit">${renderIcon("calendar")}</span>
         <span><strong class="latin">${activeDays}</strong><small>دن</small></span>
       </div>
     </header>
@@ -645,6 +674,7 @@ function renderHome() {
       ${renderProgressHeader()}
       <aside class="home-rail">
         <section class="today-panel">
+          <div class="mission-atmosphere" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
           <div class="mission-topline">
             <span class="eyeline">${beginnerFirstHome ? "آپ کا پہلا قدم" : "آج کی سمت"}</span>
             <span class="mission-level latin">${chapter.id.toUpperCase()} · ${String(getLessonIndexInChapter(nextLesson.id, chapter) + 1).padStart(2, "0")}</span>
@@ -661,6 +691,7 @@ function renderHome() {
             <div class="mission-art" aria-hidden="true">
               ${renderVisual(dailyVisual, "mission-visual")}
               <span class="mission-art-seal">${renderIcon("flag")}</span>
+              <span class="mission-art-halo"></span>
             </div>
           </div>
           <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
@@ -714,6 +745,7 @@ function renderUnitCard(chapter, nextLesson) {
   const visual = getVisualForSubchapter(section || { id: chapter.id, title: chapter.title, goal: chapter.subtitle, practice: "" }, nextLesson);
   return `
     <button class="unit-card chapter-${chapter.id}" data-action="preview" data-lesson="${nextLesson.id}">
+      <span class="unit-card-aura" aria-hidden="true"></span>
       <span class="unit-card-visual">${renderVisual(visual, "unit-visual")}</span>
       <span class="unit-card-copy">
         <small><b class="latin">${chapter.id.toUpperCase()}</b>${chapter.title}</small>
@@ -998,8 +1030,14 @@ function renderQuizTopBar(percentage, current, total) {
   return `
     <header class="quiz-topbar">
       <button class="quiz-close" data-action="home" aria-label="سبق بند کریں">${renderIcon("close")}</button>
-      <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"></span></div>
-      <span class="quiz-count latin">${current}/${total}</span>
+      <div class="quiz-progress-shell">
+        <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"><i></i></span></div>
+        <span class="quiz-progress-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </div>
+      <div class="quiz-status">
+        ${answerCombo >= 2 ? `<span class="quiz-combo latin">${renderIcon("spark")}<b>${answerCombo}</b></span>` : ""}
+        <span class="quiz-count latin">${current}/${total}</span>
+      </div>
     </header>
   `;
 }
@@ -1470,17 +1508,20 @@ function renderComplete() {
       : "اچھا آغاز۔ مشکل الفاظ دہرائی کے لیے محفوظ ہیں۔";
   return `
     <main class="complete-screen">
-      <div class="complete-celebration" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="complete-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="complete-celebration" aria-hidden="true">${renderCelebrationPieces(28)}</div>
       <div class="complete-ring" style="--score:${percent * 3.6}deg">
-        <div class="complete-mark">${renderIcon("check")}</div>
+        <span class="complete-ring-glow" aria-hidden="true"></span>
+        <div class="complete-mark">${renderIcon("check")}<i></i></div>
       </div>
       <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : "آج کا قدم مکمل"}</span>
       <h1>${isReview ? "دہرائی مکمل!" : "سبق مکمل!"}</h1>
       <p class="complete-summary">${summary}</p>
+      ${bestAnswerCombo >= 2 ? `<div class="complete-combo">${renderIcon("spark")}<span><strong class="latin">${bestAnswerCombo}</strong><small>مسلسل درست جواب</small></span></div>` : ""}
       <div class="complete-metrics">
         <span><strong class="latin">${result.correct}/${result.total}</strong><small>درست</small></span>
-        <span><strong class="latin">${percent}%</strong><small>کامیابی</small></span>
-        <span><strong class="latin">${result.xp || 0}</strong><small>پوائنٹس</small></span>
+        <span><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><small>کامیابی</small></span>
+        <span><strong class="latin" data-count-up="${result.xp || 0}">${result.xp || 0}</strong><small>پوائنٹس</small></span>
       </div>
       <div class="complete-meter"><span style="width:${percent}%"></span></div>
       <div class="complete-actions">
@@ -1489,6 +1530,16 @@ function renderComplete() {
       </div>
     </main>
   `;
+}
+
+function renderCelebrationPieces(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const x = (index * 37 + 11) % 100;
+    const delay = ((index * 13) % 17) / 10;
+    const duration = 2.2 + ((index * 7) % 9) / 10;
+    const rotation = (index * 47) % 180;
+    return `<span style="--piece-x:${x}%;--piece-delay:${delay}s;--piece-duration:${duration}s;--piece-rotation:${rotation}deg"></span>`;
+  }).join("");
 }
 
 function renderPracticeScreen() {
@@ -1626,6 +1677,7 @@ function bindEvents() {
   document.querySelectorAll("[data-action]").forEach((element) => {
     element.addEventListener("click", (event) => {
       const action = element.dataset.action;
+      triggerPressRipple(element, event);
       if (action === "word-help") {
         event.preventDefault();
         event.stopPropagation();
@@ -1634,11 +1686,13 @@ function bindEvents() {
       if (action === "speak") {
         event.preventDefault();
         event.stopPropagation();
+        animateSpeakingControl(element);
         speakDutch(element.dataset.speak);
       }
       if (action === "slow-speak") {
         event.preventDefault();
         event.stopPropagation();
+        animateSpeakingControl(element);
         speakDutch(element.dataset.speak, true);
       }
       if (action === "home") goHome();
@@ -1691,6 +1745,142 @@ function bindEvents() {
       if (checkButton) checkButton.disabled = !typedAnswer.trim();
     });
   });
+}
+
+function bindExperienceMotion() {
+  experienceObserver?.disconnect();
+  const revealTargets = document.querySelectorAll([
+    ".path-section",
+    ".review-hub-card",
+    ".letter-card",
+    ".setting-row",
+    ".utility-action"
+  ].join(","));
+
+  revealTargets.forEach((element, index) => {
+    element.classList.add("experience-reveal");
+    element.style.setProperty("--reveal-order", String(index % 8));
+  });
+
+  if (!prefersReducedMotion() && "IntersectionObserver" in window) {
+    experienceObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        experienceObserver?.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -24px" });
+    revealTargets.forEach((element) => experienceObserver.observe(element));
+  } else {
+    revealTargets.forEach((element) => element.classList.add("is-visible"));
+  }
+
+  if (!prefersReducedMotion() && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) {
+    document.querySelectorAll(".today-panel, .unit-card, .review-hero").forEach((element) => {
+      element.classList.add("motion-tilt");
+      element.addEventListener("pointermove", (event) => {
+        const bounds = element.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5;
+        const y = (event.clientY - bounds.top) / Math.max(1, bounds.height) - 0.5;
+        element.style.setProperty("--tilt-x", `${(-y * 3.2).toFixed(2)}deg`);
+        element.style.setProperty("--tilt-y", `${(x * 4.2).toFixed(2)}deg`);
+        element.style.setProperty("--glow-x", `${((x + 0.5) * 100).toFixed(1)}%`);
+        element.style.setProperty("--glow-y", `${((y + 0.5) * 100).toFixed(1)}%`);
+      });
+      element.addEventListener("pointerleave", () => {
+        element.style.setProperty("--tilt-x", "0deg");
+        element.style.setProperty("--tilt-y", "0deg");
+      });
+    });
+  }
+
+  animateCountUpMetrics();
+  bindGlobalPointerGlow();
+}
+
+function bindGlobalPointerGlow() {
+  if (globalMotionBound || prefersReducedMotion()) return;
+  globalMotionBound = true;
+  document.addEventListener("pointermove", (event) => {
+    if (pointerFrame) cancelAnimationFrame(pointerFrame);
+    pointerFrame = requestAnimationFrame(() => {
+      const app = document.querySelector("#app");
+      if (!app) return;
+      app.style.setProperty("--pointer-x", `${event.clientX}px`);
+      app.style.setProperty("--pointer-y", `${event.clientY}px`);
+    });
+  }, { passive: true });
+}
+
+function animateCountUpMetrics() {
+  if (prefersReducedMotion()) return;
+  document.querySelectorAll("[data-count-up]").forEach((element) => {
+    const target = Number(element.dataset.countUp || 0);
+    const suffix = element.dataset.countSuffix || "";
+    const start = performance.now();
+    const duration = 760;
+    const update = (now) => {
+      const elapsed = Math.min(1, (now - start) / duration);
+      const eased = 1 - ((1 - elapsed) ** 3);
+      element.textContent = `${Math.round(target * eased)}${suffix}`;
+      if (elapsed < 1) requestAnimationFrame(update);
+    };
+    element.textContent = `0${suffix}`;
+    requestAnimationFrame(update);
+  });
+}
+
+function triggerPressRipple(element, event) {
+  if (prefersReducedMotion() || !element?.append) return;
+  const bounds = element.getBoundingClientRect();
+  const size = Math.max(bounds.width, bounds.height) * 1.6;
+  const ripple = document.createElement("span");
+  ripple.className = "press-ripple";
+  ripple.style.width = `${size}px`;
+  ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - bounds.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - bounds.top - size / 2}px`;
+  element.append(ripple);
+  window.setTimeout(() => ripple.remove(), 650);
+}
+
+function animateSpeakingControl(element) {
+  if (!element) return;
+  element.classList.remove("is-speaking");
+  requestAnimationFrame(() => element.classList.add("is-speaking"));
+  window.setTimeout(() => element.classList.remove("is-speaking"), 1350);
+}
+
+function triggerAnswerMoment(correct, compact = false) {
+  if (prefersReducedMotion()) return;
+  document.querySelectorAll(".answer-moment").forEach((element) => element.remove());
+  const moment = document.createElement("div");
+  moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
+  moment.setAttribute("aria-hidden", "true");
+  moment.innerHTML = correct
+    ? Array.from({ length: compact ? 7 : 14 }, (_, index) => `<span style="--burst-index:${index};--burst-angle:${(360 / (compact ? 7 : 14)) * index}deg"></span>`).join("")
+    : "<span></span><span></span><span></span>";
+  document.body.append(moment);
+  requestAnimationFrame(() => moment.classList.add("is-active"));
+  window.setTimeout(() => moment.remove(), correct ? 1050 : 620);
+
+  try {
+    navigator.vibrate?.(correct ? 18 : [12, 36, 12]);
+  } catch {
+    // Haptics are optional and may be blocked by the host browser.
+  }
+}
+
+function triggerLessonCelebration() {
+  if (prefersReducedMotion()) return;
+  document.body.classList.remove("celebrating-lesson");
+  requestAnimationFrame(() => document.body.classList.add("celebrating-lesson"));
+  window.setTimeout(() => document.body.classList.remove("celebrating-lesson"), 2400);
+  try {
+    navigator.vibrate?.([24, 48, 24]);
+  } catch {
+    // Haptics are optional and may be blocked by the host browser.
+  }
 }
 
 function scrollToTop() {
@@ -1798,6 +1988,8 @@ function startLesson(id) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
+  answerCombo = 0;
+  bestAnswerCombo = 0;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
@@ -1832,6 +2024,8 @@ function startReview(kind) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
+  answerCombo = 0;
+  bestAnswerCombo = 0;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
@@ -1917,6 +2111,7 @@ function selectMatchPair(id, side) {
     const question = getActiveQuestion();
     if (matchedPairIds.length === getMatchPairs(question).length) selectedAnswer = question.answer;
     render();
+    requestAnimationFrame(() => triggerAnswerMoment(true, true));
     return;
   }
   matchPairError = id;
@@ -1940,6 +2135,8 @@ function checkAnswer() {
   const correct = question.type === "short-input" && !typedFallback
     ? getAcceptedAnswers(question).includes(normalizeTypedAnswer(selectedAnswer))
     : selectedAnswer === question.answer;
+  answerCombo = correct ? answerCombo + 1 : 0;
+  bestAnswerCombo = Math.max(bestAnswerCombo, answerCombo);
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -1955,6 +2152,7 @@ function checkAnswer() {
   playAnswerSound(correct ? "correct" : "wrong");
   checked = true;
   render();
+  requestAnimationFrame(() => triggerAnswerMoment(correct));
 }
 
 function nextQuestion() {
@@ -2052,6 +2250,7 @@ function completeLesson(lesson) {
   activeReview = null;
   screen = "complete";
   render();
+  requestAnimationFrame(triggerLessonCelebration);
   scrollToTop();
 }
 
@@ -2063,6 +2262,8 @@ function resetProgress() {
   activeReview = null;
   buildAnswerIds = [];
   hintOpen = false;
+  answerCombo = 0;
+  bestAnswerCombo = 0;
   screen = "home";
   render();
   scrollToTop();

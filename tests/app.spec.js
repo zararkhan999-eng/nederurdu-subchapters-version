@@ -277,6 +277,34 @@ test("quiz check button enables and feedback appears", async ({ page }) => {
   await expect(page.locator('[data-action="next"]')).toBeEnabled();
 });
 
+test("kinetic experience layer responds to learning progress", async ({ page }) => {
+  await openCleanApp(page);
+
+  await expect(page.locator(".experience-backdrop")).toHaveCount(1);
+  await expect(page.locator(".mission-atmosphere")).toHaveCount(1);
+  await expect(page.locator(".unit-card-aura")).toHaveCount(1);
+
+  await page.evaluate(() => window.startLesson("a0-letters-1"));
+  await page.evaluate(() => {
+    let guard = 0;
+    while (guard < 20) {
+      const question = getActiveQuestion();
+      if (isInfoQuestion(question)) {
+        continueInfoStep();
+      } else {
+        chooseAnswer(question.answer);
+        checkAnswer();
+        if (document.querySelector(".quiz-combo")) break;
+        nextQuestion();
+      }
+      guard += 1;
+    }
+  });
+
+  await expect(page.locator(".quiz-combo b")).toHaveText("2");
+  await expect(page.locator(".answer-moment.is-correct")).toBeAttached();
+});
+
 test("the three bottom navigation destinations open without the progress page", async ({ page }) => {
   await openCleanApp(page);
 

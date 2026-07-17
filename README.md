@@ -42,7 +42,7 @@ Then open this folder in Android Studio and build the `app` module. See `docs/mo
 - Local browser progress saving
 - App dashboard with chapter progress, quick actions, and lesson preview screen
 - Settings screen for local sound and pronunciation toggles
-- Lightweight motion: screen entrances, answer feedback, word popup, and completion celebration
+- Premium kinetic experience: ambient depth, animated progress, responsive cards, tap/audio feedback, answer combos, particle bursts, and full lesson celebrations
 - Installable web-app metadata for public testing
 - Light offline fallback after a first successful load
 - Browser-based Dutch pronunciation with `nl-NL` speech when available
