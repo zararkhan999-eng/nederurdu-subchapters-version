@@ -1607,14 +1607,6 @@ button:not(:disabled):active {
   color: var(--green-dark);
 }
 
-.path-step.left .lesson-start-card {
-  left: -8px;
-}
-
-.path-step.right .lesson-start-card {
-  right: -8px;
-}
-
 .path-toggle {
   display: flex;
   align-items: center;
