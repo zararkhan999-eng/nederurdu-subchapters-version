@@ -1065,7 +1065,7 @@ function renderBuildExercise(question) {
       <div class="build-answer ${answerState}">
         ${selectedTiles.length ? selectedTiles.map((tile, index) => `
           <button class="word-tile selected-tile latin" data-action="build-remove" data-build-index="${index}">
-            ${renderTextWithWordHelp(tile.word, `build-answer-${activeQuestionIndex}-${index}`)}
+            ${escapeHtml(tile.word)}
           </button>
         `).join("") : `<span class="build-placeholder">Nederlands الفاظ یہاں بنائیں</span>`}
         ${checked && currentAnswer === question.answer ? renderChoiceConfetti() : ""}
@@ -1073,7 +1073,7 @@ function renderBuildExercise(question) {
       <div class="build-bank">
         ${remainingTiles.map((tile) => `
           <button class="word-tile latin" data-action="build-select" data-tile-id="${escapeAttr(tile.id)}">
-            ${renderTextWithWordHelp(tile.word, `build-bank-${activeQuestionIndex}-${tile.id}`)}
+            ${escapeHtml(tile.word)}
           </button>
         `).join("")}
       </div>

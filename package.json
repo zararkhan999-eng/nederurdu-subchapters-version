@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "node server.js",
+    "audit:course": "node scripts/audit-course-content.js",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "android:debug": "gradle :app:assembleDebug",

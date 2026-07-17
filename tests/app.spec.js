@@ -53,6 +53,34 @@ test("a lesson opens as a 20-step run", async ({ page }) => {
   await expect(page.locator('[data-action="home"]').first()).toBeVisible();
 });
 
+test("word-bank tiles select on tap instead of opening definitions", async ({ page }) => {
+  await openCleanApp(page);
+  await page.evaluate(() => {
+    startLesson("a1-zero-tiny-words");
+    while (getActiveQuestion().type !== "build") {
+      const question = getActiveQuestion();
+      if (isInfoQuestion(question)) {
+        continueInfoStep();
+      } else {
+        chooseAnswer(question.answer);
+        checkAnswer();
+        nextQuestion();
+      }
+    }
+  });
+
+  await expect(page.locator(".build-bank")).toBeVisible();
+  await expect(page.locator(".build-bank .word-help-token")).toHaveCount(0);
+
+  const firstTile = page.locator('[data-action="build-select"]').first();
+  const word = await firstTile.textContent();
+  await firstTile.click();
+
+  await expect(page.locator(".build-answer .selected-tile")).toHaveCount(1);
+  await expect(page.locator(".build-answer")).toContainText(word.trim());
+  await expect(page.locator(".word-help-popover")).toHaveCount(0);
+});
+
 test("today review starts with 20 mixed questions", async ({ page }) => {
   await openCleanApp(page, {
     completedLessons: ["a0-letters-1"],

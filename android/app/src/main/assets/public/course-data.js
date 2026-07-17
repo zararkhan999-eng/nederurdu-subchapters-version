@@ -124,7 +124,7 @@ const a0Lessons = [
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "اچھا"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "میں"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
+      meaning("niet", ["نہیں (جملے کے اندر)", "ہاں", "اچھا"], "نہیں (جملے کے اندر)", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "ہاں اچھا"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("ہاں", ["ja", "nee", "niet"], "ja", "ہاں = ja۔"),
       reverse("نہیں", ["nee", "ja", "goed"], "nee", "نہیں = nee۔"),
@@ -428,7 +428,7 @@ const a1Lessons = [
       meaning("ja", ["ہاں", "نہیں", "اچھا"], "ہاں", "ja = ہاں۔"),
       meaning("nee", ["نہیں", "ہاں", "میں"], "نہیں", "nee = نہیں۔"),
       meaning("goed", ["اچھا", "نہیں", "تم"], "اچھا", "goed = اچھا۔"),
-      meaning("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
+      meaning("niet", ["نہیں (جملے کے اندر)", "ہاں", "اچھا"], "نہیں (جملے کے اندر)", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
       meaning("niet goed", ["اچھا نہیں", "بہت اچھا", "میں اچھا ہوں"], "اچھا نہیں", "niet + goed = اچھا نہیں۔"),
       reverse("میں", ["ik", "jij", "ja"], "ik", "میں = ik۔"),
       reverse("تم", ["jij", "u", "ik"], "jij", "تم = jij۔"),
@@ -1010,8 +1010,29 @@ function uniq(items) {
   return [...new Set(items.filter(Boolean))];
 }
 
+function optionKey(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function uniqueOptions(items) {
+  const seen = new Set();
+  return items.filter((item) => {
+    if (!item) return false;
+    const key = optionKey(item);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function takeOptions(items, answer, count = 3) {
-  const clean = uniq([answer, ...items]).filter(Boolean);
+  const clean = uniqueOptions([answer, ...items]);
   return clean.slice(0, count);
 }
 
@@ -1152,7 +1173,7 @@ function simpleFillSentenceForWord(word) {
     || verbFrames[answer]
     || prepositionFrames[answer]
     || shortFrames[answer]
-    || "dit is ___";
+    || "het juiste woord is ___";
 }
 
 function singleWordFillGap(word) {
@@ -1236,7 +1257,7 @@ addRevisionExpansion(a2Lessons, 45);
 
 function addBeginnerAuditExpansion() {
   a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet").questions.push(
-    listenChoice("niet", ["نہیں", "ہاں", "اچھا"], "نہیں", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
+    listenChoice("niet", ["نہیں (جملے کے اندر)", "ہاں", "اچھا"], "نہیں (جملے کے اندر)", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
     fillGap("ik ben ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
   );
 
@@ -1520,7 +1541,7 @@ const dailyBuild = ([prompt, tiles, answer, explain]) => build(prompt, tiles, an
 
 function dailyOptions(concepts, index, key) {
   const answer = concepts[index % concepts.length][key];
-  const alternatives = concepts.map((concept) => concept[key]).filter((value) => value !== answer);
+  const alternatives = uniqueOptions(concepts.map((concept) => concept[key])).filter((value) => optionKey(value) !== optionKey(answer));
   return [answer, ...rotate(alternatives, index + 1).slice(0, 2)];
 }
 
@@ -3474,9 +3495,15 @@ function lessonConcepts(questions) {
     concepts.push({ dutch: String(dutch), urdu: String(urdu), visualId });
   };
   for (const question of questions) {
-    add(question.prompt, question.answer, question.visualId || question.visual || "");
-    add(question.answer, question.prompt, question.visualId || question.visual || "");
-    if (question.type === "listen-choice") add(question.speak, question.answer);
+    if (question.type === "meaning") {
+      add(question.prompt, question.answer, question.visualId || question.visual || "");
+    } else if (question.type === "reverse") {
+      add(question.answer, question.prompt, question.visualId || question.visual || "");
+    } else if (question.type === "listen-choice" && question.mode !== "listen-reply") {
+      add(question.speak, question.answer);
+    } else if (question.type === "build" && isUrduText(question.prompt)) {
+      add(question.answer, question.prompt, question.visualId || question.visual || "");
+    }
   }
   return concepts;
 }
@@ -3489,9 +3516,9 @@ function rotate(items, offset) {
 
 function conceptOptions(concepts, index, key) {
   const concept = concepts[index % concepts.length];
-  const values = uniq(concepts.map((item) => item[key]));
+  const values = uniqueOptions(concepts.map((item) => item[key]));
   const answer = concept[key];
-  const distractors = rotate(values.filter((value) => value !== answer), index + 1).slice(0, 2);
+  const distractors = rotate(values.filter((value) => optionKey(value) !== optionKey(answer)), index + 1).slice(0, 2);
   return { concept, options: [answer, ...distractors] };
 }
 
@@ -3618,6 +3645,7 @@ function buildGeneratedQuestion(type, concepts, index) {
       .filter((item) => item.visualId);
     if (!visualConcepts.length) return null;
     const visualSet = conceptOptions(visualConcepts, index, "dutch");
+    if (visualSet.options.length < 3) return null;
     return {
       type: "image-choice",
       label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
@@ -3703,8 +3731,14 @@ function buildLessonBank(lesson, level) {
   while (bank.length < 60 && fillerAttempt < 180) {
     const fallbackType = fillerAttempt % 3 === 0 ? "situation" : fillerAttempt % 3 === 1 ? "fill-gap" : "listen-choice";
     const filler = buildGeneratedQuestion(fallbackType, concepts, fillerAttempt + bank.length);
-    if (filler && !bank.some((question) => questionSignature(question) === questionSignature(filler))) {
-      bank.push(filler);
+    if (filler) {
+      if (bank.some((question) => questionSignature(question) === questionSignature(filler))) {
+        filler.note = `دہرائی ${fillerAttempt + 1}`;
+        filler.options = rotate(filler.options || [], fillerAttempt + 1);
+      }
+      if (!bank.some((question) => questionSignature(question) === questionSignature(filler))) {
+        bank.push(filler);
+      }
     }
     fillerAttempt += 1;
   }
@@ -3735,7 +3769,8 @@ const missionPhrase = (dutch, urdu) => ({ dutch, urdu });
 
 function missionOptions(items, index, key) {
   const answer = items[index % items.length][key];
-  return [answer, ...rotate(items.map((item) => item[key]).filter((value) => value !== answer), index + 1).slice(0, 2)];
+  const alternatives = uniqueOptions(items.map((item) => item[key])).filter((value) => optionKey(value) !== optionKey(answer));
+  return [answer, ...rotate(alternatives, index + 1).slice(0, 2)];
 }
 
 function makeMissionLesson(spec) {
@@ -3777,9 +3812,15 @@ function makeMissionLesson(spec) {
       const phraseIndex = index + 3;
       const phrase = spec.phrases[phraseIndex];
       add({
-        ...listenChoice(spec.cues[index], missionOptions(spec.phrases, phraseIndex, "dutch"), phrase.dutch, `مناسب جواب: ${phrase.dutch}۔`),
-        prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
-        mode: "listen-reply",
+        type: "listen-choice",
+        label: "آواز سن کر صحیح Nederlands جملہ منتخب کریں",
+        prompt: "آواز سنیں، پھر وہی Nederlands جملہ چنیں۔",
+        speak: phrase.dutch,
+        options: missionOptions(spec.phrases, phraseIndex, "dutch"),
+        answer: phrase.dutch,
+        explain: `آپ نے سنا: ${phrase.dutch}۔`,
+        mode: "listen-dutch",
+        note: "آواز کا بٹن دبائیں۔",
         skillId: `${spec.id}-phrase-${phraseIndex}`
       }, "listen-reply");
     }
