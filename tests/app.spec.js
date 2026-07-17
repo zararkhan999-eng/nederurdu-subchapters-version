@@ -13,7 +13,15 @@ async function openCleanApp(page, progress = {}) {
       totalXp: 0,
       practiceDays: [],
       mistakes: [],
-      settings: { sound: true, motion: true },
+      hasSeenBeginnerStart: true,
+      settings: {
+        soundEffects: true,
+        pronunciation: true,
+        beginnerMode: true,
+        largeText: false,
+        slowAudio: true,
+        extraUrduHelp: true
+      },
       selectedChapterId: "a0",
       lastLessonId: "a0-letters-1",
       ...progress
@@ -21,6 +29,34 @@ async function openCleanApp(page, progress = {}) {
   });
   await page.goto("/");
 }
+
+async function openFreshApp(page) {
+  await page.addInitScript((key) => localStorage.removeItem(key), STORAGE_KEY);
+  await page.goto("/");
+}
+
+test("fresh first launch shows guided start and can begin lesson one", async ({ page }) => {
+  await openFreshApp(page);
+
+  await expect(page.locator(".guided-start-screen")).toBeVisible();
+  await expect(page.locator("body")).toContainText("آپ Dutch بالکل شروع سے سیکھیں گے");
+  await expect(page.locator(".bottom-nav")).toHaveCount(0);
+  await page.locator('[data-action="beginner-start"]').click();
+  await expect(page.locator(".quiz-screen")).toBeVisible();
+  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
+
+  const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
+  expect(stored.hasSeenBeginnerStart).toBe(true);
+});
+
+test("fresh first launch can skip into the beginner home", async ({ page }) => {
+  await openFreshApp(page);
+
+  await page.locator('[data-action="beginner-explore"]').click();
+  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".today-stats")).toHaveCount(0);
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
+});
 
 test("home loads and every chapter remains available", async ({ page }) => {
   const runtimeErrors = [];
@@ -34,7 +70,7 @@ test("home loads and every chapter remains available", async ({ page }) => {
   await expect(page.locator("#app")).toBeVisible();
   await expect(page.locator("body")).not.toContainText(/(?:uncaught|syntaxerror|referenceerror|application error)/i);
   await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
-  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(4);
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
   await expect(page.locator('[data-action="preview"]:visible').first()).toBeEnabled();
   await expect(page.locator("body")).not.toContainText(/(?:XP|streak|heart|trophy|انعام)/i);
   await expect(page.locator("body")).not.toContainText(/\b(?:practice|lesson|chapter|progress|settings|home|today|mistake|review|next|continue|check)\b/i);
@@ -217,22 +253,56 @@ test("quiz check button enables and feedback appears", async ({ page }) => {
   await expect(page.locator('[data-action="next"]')).toBeEnabled();
 });
 
-test("the four bottom navigation destinations open", async ({ page }) => {
+test("the three bottom navigation destinations open without the progress page", async ({ page }) => {
   await openCleanApp(page);
 
   await page.locator('[data-action="practice"]').click();
   await expect(page.locator(".practice-screen")).toBeVisible();
   await expect(page.locator(".review-hub-grid")).toBeVisible();
-  await page.locator('.bottom-nav [data-action="progress"]').click();
-  await expect(page.locator(".progress-panel")).toBeVisible();
   await page.locator('.bottom-nav [data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="letters"]')).toBeVisible();
-  await expect(page.locator('.settings-panel [data-action="progress"]')).toBeVisible();
+  await expect(page.locator('.settings-panel [data-action="progress"]')).toHaveCount(0);
   await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="today"]')).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="old"]')).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("آپ کی پیش رفت");
   await page.locator('[data-action="home"]').click();
   await expect(page.locator(".learn-screen")).toBeVisible();
+});
+
+test("beginner settings persist and pronunciation hints render for core words", async ({ page }) => {
+  await openCleanApp(page);
+
+  await page.locator('[data-action="settings"]').click();
+  await expect(page.locator('[data-setting="largeText"]')).toBeVisible();
+  await page.locator('[data-setting="largeText"]').click();
+  await expect(page.locator("body")).toHaveClass(/large-text/);
+
+  await page.evaluate(() => window.startLesson("a0-letters-1"));
+  await expect(page.locator(".pronunciation-cards")).toBeVisible();
+  const appleCard = page.locator(".pronunciation-card").filter({ hasText: "appel" });
+  await expect(appleCard).toContainText("آ پَل");
+  await expect(appleCard).toContainText("سیب");
+
+  const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
+  expect(stored.settings.largeText).toBe(true);
+});
+
+test("slow audio setting lowers speech synthesis rate", async ({ page }) => {
+  await openCleanApp(page);
+
+  const rate = await page.evaluate(() => {
+    window.__spokenRate = 0;
+    const originalSpeak = window.speechSynthesis.speak.bind(window.speechSynthesis);
+    window.speechSynthesis.speak = (utterance) => {
+      window.__spokenRate = utterance.rate;
+      window.speechSynthesis.speak = originalSpeak;
+    };
+    window.speakDutch("appel");
+    return window.__spokenRate;
+  });
+  expect(rate).toBeGreaterThan(0);
+  expect(rate).toBeLessThan(0.88);
 });
 
 test("lesson completion marks its path node complete", async ({ page }) => {

@@ -43,6 +43,52 @@ const dutchLetters = [
   { letter: "z", speak: "z", sound: "زیت", word: "zus", meaning: "بہن" }
 ];
 
+const beginnerSupport = {
+  a: { soundHint: "آ", meaning: "حرف a" },
+  b: { soundHint: "بے", meaning: "حرف b" },
+  c: { soundHint: "سے", meaning: "حرف c" },
+  d: { soundHint: "دے", meaning: "حرف d" },
+  e: { soundHint: "اے", meaning: "حرف e" },
+  f: { soundHint: "اِف", meaning: "حرف f" },
+  g: { soundHint: "خے", meaning: "حرف g" },
+  h: { soundHint: "ہا", meaning: "حرف h" },
+  i: { soundHint: "ای", meaning: "حرف i" },
+  j: { soundHint: "یے", meaning: "حرف j" },
+  k: { soundHint: "کا", meaning: "حرف k" },
+  l: { soundHint: "ایل", meaning: "حرف l" },
+  m: { soundHint: "ایم", meaning: "حرف m" },
+  n: { soundHint: "این", meaning: "حرف n" },
+  o: { soundHint: "او", meaning: "حرف o" },
+  p: { soundHint: "پے", meaning: "حرف p" },
+  q: { soundHint: "کو", meaning: "حرف q" },
+  r: { soundHint: "ایر", meaning: "حرف r" },
+  s: { soundHint: "ایس", meaning: "حرف s" },
+  t: { soundHint: "تے", meaning: "حرف t" },
+  u: { soundHint: "او", meaning: "حرف u" },
+  v: { soundHint: "وے", meaning: "حرف v" },
+  w: { soundHint: "وے", meaning: "حرف w" },
+  x: { soundHint: "اِکس", meaning: "حرف x" },
+  y: { soundHint: "خریکسے ای", meaning: "حرف y" },
+  z: { soundHint: "زیت", meaning: "حرف z" },
+  appel: { soundHint: "آ پَل", meaning: "سیب" },
+  boek: { soundHint: "بوک", meaning: "کتاب" },
+  deur: { soundHint: "دُر", meaning: "دروازہ" },
+  fiets: { soundHint: "فیتس", meaning: "سائیکل" },
+  huis: { soundHint: "ہاؤس", meaning: "گھر" },
+  ik: { soundHint: "اِک", meaning: "میں" },
+  ja: { soundHint: "یا", meaning: "ہاں" },
+  kat: { soundHint: "کات", meaning: "بلی" },
+  man: { soundHint: "مان", meaning: "آدمی" },
+  nee: { soundHint: "نے", meaning: "نہیں" },
+  oog: { soundHint: "اوخ", meaning: "آنکھ" },
+  pen: { soundHint: "پین", meaning: "قلم" },
+  stoel: { soundHint: "ستول", meaning: "کرسی" },
+  tafel: { soundHint: "تافل", meaning: "میز" },
+  water: { soundHint: "واٹر", meaning: "پانی" },
+  vrouw: { soundHint: "فراؤ", meaning: "عورت" },
+  zus: { soundHint: "زُس", meaning: "بہن" }
+};
+
 const visualLibrary = {
   letters: {
     src: "assets/visuals/letters-first-words.svg",
@@ -264,9 +310,14 @@ const defaultProgress = {
   totalXp: 0,
   practiceDays: [],
   mistakes: [],
+  hasSeenBeginnerStart: false,
   settings: {
     soundEffects: true,
-    pronunciation: true
+    pronunciation: true,
+    beginnerMode: true,
+    largeText: false,
+    slowAudio: true,
+    extraUrduHelp: true
   },
   selectedChapterId: "a0",
   lastLessonId: "a0-letters-1"
@@ -348,6 +399,16 @@ function isLessonUnlocked(index) {
 
 function completedCount() {
   return getCurrentLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
+}
+
+function isFirstRunBeginner() {
+  return Boolean(progress.settings.beginnerMode)
+    && !progress.hasSeenBeginnerStart
+    && !(progress.completedLessons || []).length;
+}
+
+function isBeginnerFirstHome() {
+  return Boolean(progress.settings.beginnerMode) && !(progress.completedLessons || []).length;
 }
 
 function chapterCompletedCount(chapter) {
@@ -477,6 +538,7 @@ function getActiveLesson() {
 
 function render() {
   const app = document.querySelector("#app");
+  applyDisplaySettings();
   try {
     app.innerHTML = `
       ${screen === "home" ? renderHome() : ""}
@@ -485,7 +547,6 @@ function render() {
       ${screen === "complete" ? renderComplete() : ""}
       ${screen === "practice" ? renderPracticeScreen() : ""}
       ${screen === "letters" ? renderLetters() : ""}
-      ${screen === "progress" ? renderProgress() : ""}
       ${screen === "settings" ? renderSettings() : ""}
       ${renderBottomNav()}
     `;
@@ -504,6 +565,10 @@ function render() {
     `;
   }
   bindEvents();
+}
+
+function applyDisplaySettings() {
+  document.body.classList.toggle("large-text", Boolean(progress.settings.largeText));
 }
 
 function renderTopbar() {
@@ -543,27 +608,29 @@ function renderProgressHeader() {
 }
 
 function renderHome() {
+  if (isFirstRunBeginner()) return renderGuidedStart();
   const chapter = getSelectedChapter();
   const nextLesson = getNextLessonForChapter(chapter);
   const completed = chapterCompletedCount(chapter);
   const total = chapter.lessons.length || 1;
+  const beginnerFirstHome = isBeginnerFirstHome();
   activeLessonId = nextLesson.id;
 
   return `
-    <main class="learn-screen">
+    <main class="learn-screen ${beginnerFirstHome ? "beginner-home" : ""}">
       ${renderProgressHeader()}
       <section class="today-panel">
         <div class="today-copy">
-          <span class="eyeline">آج کا سبق</span>
+          <span class="eyeline">${beginnerFirstHome ? "شروع سے" : "آج کا سبق"}</span>
           <h1>${getShortLessonTitle(nextLesson)}</h1>
-          <p>${nextLesson.description}</p>
+          <p>${beginnerFirstHome ? "آج صرف پہلا سبق کریں۔ پہلے آواز سنیں، پھر لفظ پہچانیں۔" : nextLesson.description}</p>
         </div>
-        <div class="today-stats">
+        ${beginnerFirstHome ? "" : `<div class="today-stats">
           <span><strong class="latin">${completed}/${total}</strong><small>باب</small></span>
           <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
           <span><strong class="latin">${progress.practiceDays.length}</strong><small>دن</small></span>
-        </div>
-        <button class="primary-button" data-action="start" data-lesson="${nextLesson.id}">جاری رکھیں</button>
+        </div>`}
+        <button class="primary-button" data-action="start" data-lesson="${nextLesson.id}">${beginnerFirstHome ? "پہلا سبق جاری رکھیں" : "جاری رکھیں"}</button>
       </section>
       <div class="home-world">
         <div class="world-sky" aria-hidden="true">
@@ -577,6 +644,41 @@ function renderHome() {
         ${renderLessonPath(chapter, nextLesson)}
       </div>
     </main>
+  `;
+}
+
+function renderGuidedStart() {
+  return `
+    <main class="guided-start-screen">
+      <section class="guided-start-card">
+        <img class="guided-start-logo" src="icon.svg" alt="" />
+        <span class="eyeline">NederUrdu</span>
+        <h1>شروع سے Dutch سیکھیں</h1>
+        <p>آپ Dutch بالکل شروع سے سیکھیں گے: پہلے آوازیں، پھر الفاظ، پھر چھوٹے جملے۔</p>
+        <div class="guided-start-steps" aria-label="سیکھنے کا راستہ">
+          <span><b>1</b> آواز سنیں</span>
+          <span><b>2</b> لفظ پہچانیں</span>
+          <span><b>3</b> چھوٹا جواب دیں</span>
+        </div>
+        <div class="guided-toggles">
+          ${renderInlineToggle("largeText", "بڑا متن")}
+          ${renderInlineToggle("slowAudio", "آہستہ آواز")}
+          ${renderInlineToggle("extraUrduHelp", "زیادہ Urdu مدد")}
+        </div>
+        <button class="primary-button" data-action="beginner-start">پہلا سبق شروع کریں</button>
+        <button class="secondary-button" data-action="beginner-explore">ایپ دیکھیں</button>
+      </section>
+    </main>
+  `;
+}
+
+function renderInlineToggle(key, title) {
+  const enabled = progress.settings[key];
+  return `
+    <button class="inline-toggle ${enabled ? "on" : ""}" data-action="toggle-setting" data-setting="${key}" aria-pressed="${enabled}">
+      <span class="toggle ${enabled ? "on" : ""}"><span></span></span>
+      <strong>${title}</strong>
+    </button>
   `;
 }
 
@@ -835,6 +937,13 @@ function renderQuizTopBar(percentage, current, total) {
 }
 
 function getQuestionTitle(question) {
+  if (progress.settings.beginnerMode) {
+    if (isInfoQuestion(question)) return "دیکھیں اور سنیں";
+    if (question.type === "listen-choice" || question.mode === "listen-reply" || question.mode === "dialogue") return "سنیں";
+    if (question.type === "build" || question.type === "sequence" || question.type === "short-input") return "لفظ بنائیں";
+    if (question.type === "speak-repeat") return "دہرائیں";
+    return "صحیح جواب دبائیں";
+  }
   if (isInfoQuestion(question)) return "پہلے یہ سمجھیں";
   if (question.mode === "listen-reply") return "سنیں اور جواب منتخب کریں";
   if (question.mode === "dialogue") return "گفتگو مکمل کریں";
@@ -860,6 +969,7 @@ function renderQuestionCard(question, visual) {
       <div class="teaching-card">
         ${renderVisual(visual, "quiz-visual teaching-visual")}
         <h2>${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</h2>
+        ${renderPronunciationCards(question.supportWords)}
         ${renderUitlegExercise(question)}
       </div>
     `;
@@ -904,10 +1014,13 @@ function renderShortInputQuestion(question) {
 }
 
 function renderSpeakRepeatQuestion(question) {
+  const support = renderBeginnerSupport(question.answer, "large");
   return `
     <div class="speak-repeat-question">
       <button class="listening-button" data-action="speak" data-speak="${escapeAttr(question.speak || question.answer)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}</button>
       <strong class="latin">${escapeHtml(question.answer)}</strong>
+      ${support}
+      ${renderSlowSpeakButton(question.speak || question.answer)}
       <p>${escapeHtml(question.prompt)}</p>
     </div>
   `;
@@ -937,6 +1050,8 @@ function renderMultipleChoiceQuestion(question, visual) {
           ${getQuestionSpeechText(question) ? renderSpeakButton(getQuestionSpeechText(question), "prompt") : ""}
           <span>${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
         </div>
+        ${renderBeginnerSupport(question.prompt)}
+        ${renderSlowSpeakButton(getQuestionSpeechText(question))}
       </div>
       ${renderChoices(question)}
     </div>
@@ -949,6 +1064,7 @@ function renderWordBankQuestion(question, visual) {
       <div class="prompt-scene compact ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
         <div class="speech-bubble">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+        ${renderBeginnerSupport(question.prompt)}
       </div>
       ${renderBuildExercise(question)}
       ${renderHintButton()}
@@ -1001,7 +1117,7 @@ function renderQuizFooter(question, infoStep) {
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
           <span class="feedback-icon">${renderIcon(correct ? "check" : "close")}</span>
-          <div><strong>${correct ? "بہت خوب!" : "درست نہیں"}</strong>${correct ? "" : `<small>صحیح جواب: ${escapeHtml(question.answer)}</small>`}</div>
+          <div><strong>${correct ? "بہت خوب!" : "درست نہیں"}</strong>${correct ? "" : renderFeedbackDetail(question)}</div>
         </div>
         <button class="quiz-action enabled" data-action="next">${correct ? "جاری رکھیں" : "سمجھ گیا"}</button>
       </footer>
@@ -1013,6 +1129,15 @@ function renderQuizFooter(question, infoStep) {
       <button class="quiz-action" data-action="check" ${canCheckQuestion(question) ? "" : "disabled"}>جواب چیک کریں</button>
     </footer>
   `;
+}
+
+function renderFeedbackDetail(question) {
+  const answerSupport = getBeginnerSupport(question.answer);
+  const promptSupport = getBeginnerSupport(question.prompt);
+  if (answerSupport) return `<small>${escapeHtml(question.answer)} = ${escapeHtml(answerSupport.meaning)}</small>`;
+  if (promptSupport) return `<small>${escapeHtml(question.prompt)} کا مطلب ${escapeHtml(promptSupport.meaning)} ہے</small>`;
+  if (question.explain) return `<small>${escapeHtml(question.explain)}</small>`;
+  return `<small>صحیح جواب: ${escapeHtml(question.answer)}</small>`;
 }
 
 function renderMissingLesson() {
@@ -1048,6 +1173,26 @@ function renderUitlegExercise(question) {
   `;
 }
 
+function renderPronunciationCards(words = []) {
+  const cards = words
+    .map((word) => ({ word, support: getBeginnerSupport(word) }))
+    .filter((item) => item.support);
+  if (!cards.length) return "";
+  return `
+    <div class="pronunciation-cards">
+      ${cards.map(({ word, support }) => `
+        <article class="pronunciation-card">
+          <button class="pronunciation-play" data-action="speak" data-speak="${escapeAttr(word)}" aria-label="${escapeAttr(word)} سنیں">${renderIcon("speaker")}</button>
+          <strong class="latin">${escapeHtml(word)}</strong>
+          <span>${escapeHtml(support.soundHint)}</span>
+          <small>${escapeHtml(support.meaning)}</small>
+          ${renderSlowSpeakButton(word)}
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderChoices(question) {
   const compact = question.options.length === 4 && question.options.every((option) => String(option).length < 22);
   return `
@@ -1064,11 +1209,12 @@ function renderChoice(option, question, index) {
   if (checked && selectedAnswer === option && option !== question.answer) state = "wrong";
   const dutchChoice = isDutchText(option);
   const choiceText = dutchChoice ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : option;
+  const support = dutchChoice ? renderBeginnerSupport(option, "compact") : "";
 
   return `
     <div class="choice-wrap ${dutchChoice ? "has-sound" : ""}">
       <button class="choice-button ${state} ${dutchChoice ? "latin" : ""}" data-action="choose" data-answer="${escapeAttr(option)}">
-        <span class="choice-text">${choiceText}</span>
+        <span class="choice-text">${choiceText}${support}</span>
         <span class="choice-state">${state === "correct" ? renderIcon("check") : state === "wrong" ? renderIcon("close") : ""}</span>
         ${checked && selectedAnswer === question.answer && option === question.answer ? renderChoiceConfetti() : ""}
       </button>
@@ -1221,6 +1367,28 @@ function renderSpeakButton(text, variant) {
   `;
 }
 
+function getBeginnerSupport(text) {
+  if (!progress.settings.extraUrduHelp) return null;
+  const key = normalizeWord(String(text || "").trim());
+  return beginnerSupport[key] || null;
+}
+
+function renderBeginnerSupport(text, variant = "") {
+  const support = getBeginnerSupport(text);
+  if (!support) return "";
+  return `
+    <div class="beginner-support ${variant}">
+      <span class="beginner-sound">${escapeHtml(support.soundHint)}</span>
+      <span class="beginner-meaning">${escapeHtml(support.meaning)}</span>
+    </div>
+  `;
+}
+
+function renderSlowSpeakButton(text) {
+  if (!progress.settings.pronunciation || !progress.settings.slowAudio || !text || !isDutchText(text)) return "";
+  return `<button class="slow-speak-button" data-action="slow-speak" data-speak="${escapeAttr(text)}">آہستہ سنیں</button>`;
+}
+
 function renderComplete() {
   const result = lessonResult || { correct: 0, total: 1, xp: 0 };
   const percent = Math.round((result.correct / result.total) * 100);
@@ -1292,39 +1460,17 @@ function renderLetters() {
 }
 
 function renderLetterCard(item) {
+  const support = getBeginnerSupport(item.word);
   return `
     <article class="letter-card">
       <div class="letter-dot latin">${item.letter}</div>
       <div class="letter-info">
         <strong>${item.sound}</strong>
         <span>مثال: <b class="latin">${item.word}</b> — ${item.meaning}</span>
+        ${support && progress.settings.extraUrduHelp ? `<small class="beginner-support-line"><b>${escapeHtml(support.soundHint)}</b><span>${escapeHtml(support.meaning)}</span></small>` : ""}
       </div>
       ${renderSpeakButton(item.speak, "choice")}
     </article>
-  `;
-}
-
-function renderProgress() {
-  const lessons = getCurrentLessons();
-  return `
-    ${renderTopbar()}
-    <section class="progress-panel">
-      <h1>آپ کی پیش رفت</h1>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <span class="summary-value">${completedCount()}</span>
-          <span class="summary-label">مکمل سبق</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-value">${progress.mistakes.length}</span>
-          <span class="summary-label">غلطیاں</span>
-        </div>
-      </div>
-      <div class="unit-list">
-        ${lessons.map(renderUnitRow).join("")}
-      </div>
-      <button class="secondary-button" data-action="reset">پیش رفت دوبارہ شروع کریں</button>
-    </section>
   `;
 }
 
@@ -1338,9 +1484,12 @@ function renderSettings() {
         ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "ملے جلے 20 سوال", "today")}
         ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
         ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
-        ${renderSettingsLink("progress", "chart", "تفصیلی پیش رفت", "مکمل سبق اور غلطیاں دیکھیں")}
       </div>
       <div class="settings-list">
+        ${renderToggleRow("beginnerMode", "شروع سے سیکھنے والا انداز", "نئے طالب علم کے لیے آسان راستہ")}
+        ${renderToggleRow("largeText", "بڑا متن", "الفاظ اور بٹن کچھ بڑے دکھائیں")}
+        ${renderToggleRow("slowAudio", "آہستہ آواز", "Dutch آواز تھوڑی آہستہ سنائیں")}
+        ${renderToggleRow("extraUrduHelp", "زیادہ Urdu مدد", "آواز، معنی، اور چھوٹی مدد زیادہ دکھائیں")}
         ${renderToggleRow("soundEffects", "درست/غلط کی آوازیں", "جواب چیک کرتے وقت چھوٹی آوازیں")}
         ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}
       </div>
@@ -1367,11 +1516,11 @@ function renderToggleRow(key, title, subtitle) {
 }
 
 function renderBottomNav() {
+  if (isFirstRunBeginner()) return "";
   if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
       ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters"].includes(screen))}
-      ${renderNavButton("progress", "chart", "پیش رفت", screen === "progress")}
       ${renderNavButton("practice", "dumbbell", "دہرائی", screen === "practice")}
       ${renderNavButton("home", "book", "سبق", screen === "home" || screen === "preview")}
     </nav>
@@ -1396,9 +1545,15 @@ function bindEvents() {
         event.stopPropagation();
         speakDutch(element.dataset.speak);
       }
+      if (action === "slow-speak") {
+        event.preventDefault();
+        event.stopPropagation();
+        speakDutch(element.dataset.speak, true);
+      }
+      if (action === "beginner-start") beginFirstLesson();
+      if (action === "beginner-explore") exploreBeginnerApp();
       if (action === "home") goHome();
       if (action === "practice") goPractice();
-      if (action === "progress") goProgress();
       if (action === "letters") goLetters();
       if (action === "settings") goSettings();
       if (action === "chapter") selectChapter(element.dataset.chapter);
@@ -1472,18 +1627,26 @@ function goPractice() {
   scrollToTop();
 }
 
-function goProgress() {
-  activeWordHelp = null;
-  activeReview = null;
-  screen = "progress";
-  render();
-  scrollToTop();
-}
-
 function goLetters() {
   activeWordHelp = null;
   activeReview = null;
   screen = "letters";
+  render();
+  scrollToTop();
+}
+
+function beginFirstLesson() {
+  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: "a0", lastLessonId: "a0-letters-1" });
+  selectedChapterId = "a0";
+  startLesson("a0-letters-1");
+}
+
+function exploreBeginnerApp() {
+  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: "a0", lastLessonId: "a0-letters-1" });
+  selectedChapterId = "a0";
+  activeWordHelp = null;
+  activeReview = null;
+  screen = "home";
   render();
   scrollToTop();
 }
@@ -1504,7 +1667,7 @@ function showLessonPreview(id) {
   activeWordHelp = null;
   activeReview = null;
   pathCardLessonId = lesson.id;
-  saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
+  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "home";
   render();
   requestAnimationFrame(() => {
@@ -1553,7 +1716,7 @@ function startLesson(id) {
   typedFallback = false;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
-  saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
+  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
   scrollToTop();
@@ -1856,12 +2019,38 @@ function buildSessionQuestions(lesson) {
     : lesson?.kind === "mission"
       ? lesson.variants[(progress.missionVariantRuns?.[lesson.id] || 0) % lesson.variants.length].questions
       : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
-  return sourceQuestions.map((question) => ({
+  const beginnerIntro = getBeginnerIntroQuestion(lesson);
+  const questions = beginnerIntro ? [beginnerIntro, ...sourceQuestions].slice(0, LESSON_QUESTION_LIMIT) : sourceQuestions;
+  return questions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
     tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : [],
     fallbackTiles: question.fallbackTiles ? shuffleArray(question.fallbackTiles.map((word, index) => ({ id: `fallback-${index}-${word}`, word }))) : []
   }));
+}
+
+function getBeginnerIntroQuestion(lesson) {
+  if (!progress.settings.beginnerMode || !progress.settings.extraUrduHelp || lesson?.reviewKind) return null;
+  const supportWordsByLesson = {
+    "a0-letters-1": ["a", "b", "appel", "boek"],
+    "a0-letters-2": ["h", "i", "huis", "ik", "ja"],
+    "a0-letters-3": ["oog", "pen", "stoel", "tafel", "water"]
+  };
+  const supportWords = supportWordsByLesson[lesson?.id];
+  if (!supportWords) return null;
+  return {
+    id: `${lesson.id}-beginner-intro`,
+    type: "uitleg",
+    prompt: "دیکھیں اور سنیں",
+    points: [
+      "پہلے Dutch آواز سنیں۔",
+      "نیچے Urdu آواز کی مدد اور معنی دیکھیں۔",
+      "پھر آسان سوالات شروع ہوں گے۔"
+    ],
+    supportWords,
+    answer: "سمجھ گیا",
+    explain: "اب اسی آواز اور لفظ کی مشق کریں۔"
+  };
 }
 
 function sampleLessonQuestions(questions, lessonId) {
@@ -1997,7 +2186,7 @@ function isDutchText(value) {
   return /[A-Za-zÀ-ÿ]/.test(value) && !/[\u0600-\u06ff]/.test(value);
 }
 
-function speakDutch(text) {
+function speakDutch(text, forceSlow = false) {
   if (!progress.settings.pronunciation || !text) return;
 
   if (window.NederUrduTts?.speak?.(text)) {
@@ -2010,7 +2199,8 @@ function speakDutch(text) {
   const voices = window.speechSynthesis.getVoices();
   const dutchVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith("nl"));
   utterance.lang = "nl-NL";
-  utterance.rate = text.length === 1 ? 0.72 : 0.88;
+  const baseRate = text.length === 1 ? 0.72 : 0.88;
+  utterance.rate = (progress.settings.slowAudio || forceSlow) ? Math.max(0.58, baseRate - 0.18) : baseRate;
   utterance.pitch = 1;
   if (dutchVoice) utterance.voice = dutchVoice;
 
