@@ -13,7 +13,6 @@ async function openCleanApp(page, progress = {}) {
       totalXp: 0,
       practiceDays: [],
       mistakes: [],
-      hasSeenBeginnerStart: true,
       settings: {
         soundEffects: true,
         pronunciation: true,
@@ -35,27 +34,17 @@ async function openFreshApp(page) {
   await page.goto("/");
 }
 
-test("fresh first launch shows guided start and can begin lesson one", async ({ page }) => {
+test("fresh first launch opens the home map with all chapters visible", async ({ page }) => {
   await openFreshApp(page);
 
-  await expect(page.locator(".guided-start-screen")).toBeVisible();
-  await expect(page.locator("body")).toContainText("آپ Dutch بالکل شروع سے سیکھیں گے");
-  await expect(page.locator(".bottom-nav")).toHaveCount(0);
-  await page.locator('[data-action="beginner-start"]').click();
-  await expect(page.locator(".quiz-screen")).toBeVisible();
-  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
-
-  const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
-  expect(stored.hasSeenBeginnerStart).toBe(true);
-});
-
-test("fresh first launch can skip into the beginner home", async ({ page }) => {
-  await openFreshApp(page);
-
-  await page.locator('[data-action="beginner-explore"]').click();
   await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".guided-start-screen")).toHaveCount(0);
+  await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
   await expect(page.locator(".today-stats")).toHaveCount(0);
   await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
+  await page.locator('[data-action="start"]').first().click();
+  await expect(page.locator(".quiz-screen")).toBeVisible();
+  await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", "1 از 20");
 });
 
 test("home loads and every chapter remains available", async ({ page }) => {

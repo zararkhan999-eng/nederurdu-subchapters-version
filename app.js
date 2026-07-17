@@ -310,7 +310,6 @@ const defaultProgress = {
   totalXp: 0,
   practiceDays: [],
   mistakes: [],
-  hasSeenBeginnerStart: false,
   settings: {
     soundEffects: true,
     pronunciation: true,
@@ -399,12 +398,6 @@ function isLessonUnlocked(index) {
 
 function completedCount() {
   return getCurrentLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
-}
-
-function isFirstRunBeginner() {
-  return Boolean(progress.settings.beginnerMode)
-    && !progress.hasSeenBeginnerStart
-    && !(progress.completedLessons || []).length;
 }
 
 function isBeginnerFirstHome() {
@@ -608,7 +601,6 @@ function renderProgressHeader() {
 }
 
 function renderHome() {
-  if (isFirstRunBeginner()) return renderGuidedStart();
   const chapter = getSelectedChapter();
   const nextLesson = getNextLessonForChapter(chapter);
   const completed = chapterCompletedCount(chapter);
@@ -644,41 +636,6 @@ function renderHome() {
         ${renderLessonPath(chapter, nextLesson)}
       </div>
     </main>
-  `;
-}
-
-function renderGuidedStart() {
-  return `
-    <main class="guided-start-screen">
-      <section class="guided-start-card">
-        <img class="guided-start-logo" src="icon.svg" alt="" />
-        <span class="eyeline">NederUrdu</span>
-        <h1>شروع سے Dutch سیکھیں</h1>
-        <p>آپ Dutch بالکل شروع سے سیکھیں گے: پہلے آوازیں، پھر الفاظ، پھر چھوٹے جملے۔</p>
-        <div class="guided-start-steps" aria-label="سیکھنے کا راستہ">
-          <span><b>1</b> آواز سنیں</span>
-          <span><b>2</b> لفظ پہچانیں</span>
-          <span><b>3</b> چھوٹا جواب دیں</span>
-        </div>
-        <div class="guided-toggles">
-          ${renderInlineToggle("largeText", "بڑا متن")}
-          ${renderInlineToggle("slowAudio", "آہستہ آواز")}
-          ${renderInlineToggle("extraUrduHelp", "زیادہ Urdu مدد")}
-        </div>
-        <button class="primary-button" data-action="beginner-start">پہلا سبق شروع کریں</button>
-        <button class="secondary-button" data-action="beginner-explore">ایپ دیکھیں</button>
-      </section>
-    </main>
-  `;
-}
-
-function renderInlineToggle(key, title) {
-  const enabled = progress.settings[key];
-  return `
-    <button class="inline-toggle ${enabled ? "on" : ""}" data-action="toggle-setting" data-setting="${key}" aria-pressed="${enabled}">
-      <span class="toggle ${enabled ? "on" : ""}"><span></span></span>
-      <strong>${title}</strong>
-    </button>
   `;
 }
 
@@ -1516,7 +1473,6 @@ function renderToggleRow(key, title, subtitle) {
 }
 
 function renderBottomNav() {
-  if (isFirstRunBeginner()) return "";
   if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
@@ -1550,8 +1506,6 @@ function bindEvents() {
         event.stopPropagation();
         speakDutch(element.dataset.speak, true);
       }
-      if (action === "beginner-start") beginFirstLesson();
-      if (action === "beginner-explore") exploreBeginnerApp();
       if (action === "home") goHome();
       if (action === "practice") goPractice();
       if (action === "letters") goLetters();
@@ -1635,22 +1589,6 @@ function goLetters() {
   scrollToTop();
 }
 
-function beginFirstLesson() {
-  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: "a0", lastLessonId: "a0-letters-1" });
-  selectedChapterId = "a0";
-  startLesson("a0-letters-1");
-}
-
-function exploreBeginnerApp() {
-  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: "a0", lastLessonId: "a0-letters-1" });
-  selectedChapterId = "a0";
-  activeWordHelp = null;
-  activeReview = null;
-  screen = "home";
-  render();
-  scrollToTop();
-}
-
 function goSettings() {
   activeWordHelp = null;
   activeReview = null;
@@ -1667,7 +1605,7 @@ function showLessonPreview(id) {
   activeWordHelp = null;
   activeReview = null;
   pathCardLessonId = lesson.id;
-  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
+  saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "home";
   render();
   requestAnimationFrame(() => {
@@ -1716,7 +1654,7 @@ function startLesson(id) {
   typedFallback = false;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
-  saveProgress({ ...progress, hasSeenBeginnerStart: true, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
+  saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
   scrollToTop();
