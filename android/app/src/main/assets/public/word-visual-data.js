@@ -1726,36 +1726,13 @@ function resolveExplicitVisualId(value) {
   if (!normalized) return "";
   if (normalized === "u") return "pronoun-u";
   if (normalized === "a") return "letter-a";
+  if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
+  const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
+  if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
   const aliases = {
-    afval: "schoonmaken",
-    bibliotheek: "boek",
-    buik: "buikpijn",
-    buiten: "uitgang",
-    gevaar: "hulp",
-    hoofd: "hoofdpijn",
-    kaart: "adres",
-    kleding: "jas",
-    kleur: "jas",
-    koud: "jas",
-    oor: "luisteren",
-    paraplu: "water",
-    persoon: "pronoun-u",
-    raam: "huis",
-    regen: "water",
-    schoenen: "jas",
-    sleutel: "deur",
-    straat: "adres",
-    totziens: "tot-ziens",
-    veilig: "hulp",
-    verboden: "uitgang",
-    warm: "ochtend",
-    zon: "ochtend",
-    zoon: "kind"
+    totziens: "tot-ziens"
   };
   if (aliases[normalized]) return aliases[normalized];
-  if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
-  const withoutArticle = normalized.replace(/^(de|het|een)\s+/, "");
-  if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
   const padded = ` ${normalized} `;
   const candidates = [...visualTermIndex.entries()]
     .filter(([term]) => term && padded.includes(` ${term} `))
@@ -1865,13 +1842,17 @@ function ensureChoiceOptionsIncludeAnswer(question) {
     .slice(0, 3);
 }
 
+const strictVisualTypes = new Set([
+  "meaning", "reverse", "image-choice", "fill-gap", "situation", "build", "sequence", "short-input"
+]);
+
 for (const chapter of window.NEDERURDU_CHAPTERS || []) {
   for (const lesson of chapter.lessons || []) {
     for (const question of lesson.questions || []) {
       const explicitVisualId = window.NEDERURDU_WORD_VISUALS.some((visual) => visual.id === question.visualId)
         ? question.visualId
         : "";
-      const answerVisualId = ["image-choice", "fill-gap"].includes(question.type)
+      const answerVisualId = ["image-choice", "fill-gap", "reverse", "situation", "build", "sequence", "short-input"].includes(question.type)
         ? resolveExactVisualId(question.answer)
         : "";
       const visualSource = question.type === "meaning"
@@ -1883,7 +1864,8 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
             : question.visual || question.visualId || "";
       question.visualId = answerVisualId || explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
-      if (question.type === "fill-gap" && question.visualId && !visualIncludesTerm(question.visualId, question.answer)) {
+      const expectedVisualTerm = question.type === "meaning" ? question.prompt : question.answer;
+      if (strictVisualTypes.has(question.type) && question.visualId && !visualIncludesTerm(question.visualId, expectedVisualTerm)) {
         delete question.visualId;
       }
       if (question.type === "image-choice" && (!isSafeImageChoiceAnswer(question.answer) || !visualIncludesTerm(question.visualId, question.answer))) {

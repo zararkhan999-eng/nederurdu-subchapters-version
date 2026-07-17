@@ -30,7 +30,6 @@ function copyDirectory(source, destination) {
   }
 }
 
-fs.rmSync(target, { recursive: true, force: true });
 fs.mkdirSync(target, { recursive: true });
 
 for (const file of files) {

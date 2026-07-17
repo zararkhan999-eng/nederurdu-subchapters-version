@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v52-kinetic-experience";
+const CACHE_NAME = "nederurdu-v53-cinematic-experience";
 const APP_SHELL = [
   "./",
   "./index.html",

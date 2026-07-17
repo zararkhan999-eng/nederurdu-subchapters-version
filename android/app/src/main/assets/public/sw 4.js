@@ -1,10 +1,9 @@
-const CACHE_NAME = "nederurdu-v53-cinematic-experience";
+const CACHE_NAME = "nederurdu-v51-generated-missing-visuals";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./duo.css",
-  "./experience.css",
   "./course-data.js",
   "./word-visual-data.js",
   "./app.js",

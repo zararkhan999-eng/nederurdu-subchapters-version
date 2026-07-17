@@ -1,10 +1,22 @@
 const STORAGE_KEY = "nederurdu-progress-v3";
 const launchScreen = document.querySelector(".launch-screen");
 
-window.setTimeout(() => {
+let launchFinished = false;
+const finishLaunch = () => {
+  if (launchFinished) return;
+  launchFinished = true;
   document.body.classList.remove("launching");
-  launchScreen?.remove();
-}, 4200);
+  document.body.classList.add("launch-complete");
+  window.setTimeout(() => launchScreen?.remove(), 720);
+};
+
+if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+  finishLaunch();
+} else {
+  requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
+  launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
+  window.setTimeout(finishLaunch, 3800);
+}
 
 const chapters = window.NEDERURDU_CHAPTERS || [
   {
@@ -356,6 +368,7 @@ let bestAnswerCombo = 0;
 let experienceObserver = null;
 let globalMotionBound = false;
 let pointerFrame = 0;
+let scrollFrame = 0;
 
 const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -588,12 +601,17 @@ function renderExperienceBackdrop() {
       <span class="ambient-orb orb-green"></span>
       <span class="ambient-orb orb-blue"></span>
       <span class="ambient-orb orb-gold"></span>
+      <span class="ambient-ribbon ribbon-one"></span>
+      <span class="ambient-ribbon ribbon-two"></span>
       <span class="ambient-grid"></span>
       <span class="ambient-grain"></span>
       <span class="ambient-spark spark-one"></span>
       <span class="ambient-spark spark-two"></span>
       <span class="ambient-spark spark-three"></span>
       <span class="ambient-spark spark-four"></span>
+      <span class="ambient-glyph glyph-urdu">ا</span>
+      <span class="ambient-glyph glyph-latin latin">N</span>
+      <span class="experience-scroll-meter"><i></i></span>
     </div>
   `;
 }
@@ -1676,6 +1694,7 @@ function renderNavButton(action, icon, label, active) {
 function bindEvents() {
   document.querySelectorAll("[data-action]").forEach((element) => {
     element.addEventListener("click", (event) => {
+      if (document.body.classList.contains("launching")) finishLaunch();
       const action = element.dataset.action;
       triggerPressRipple(element, event);
       if (action === "word-help") {
@@ -1796,6 +1815,17 @@ function bindExperienceMotion() {
 
   animateCountUpMetrics();
   bindGlobalPointerGlow();
+  updateScrollMotion();
+}
+
+function updateScrollMotion() {
+  const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const progressValue = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+  document.body.style.setProperty("--scroll-progress", progressValue.toFixed(4));
+  document.body.style.setProperty("--scroll-shift", `${Math.min(72, window.scrollY * 0.035).toFixed(1)}px`);
+  const meter = document.querySelector(".experience-scroll-meter i");
+  if (meter) meter.style.transform = `scaleY(${Math.max(0.035, progressValue)})`;
+  scrollFrame = 0;
 }
 
 function bindGlobalPointerGlow() {
@@ -1804,12 +1834,16 @@ function bindGlobalPointerGlow() {
   document.addEventListener("pointermove", (event) => {
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
     pointerFrame = requestAnimationFrame(() => {
-      const app = document.querySelector("#app");
-      if (!app) return;
-      app.style.setProperty("--pointer-x", `${event.clientX}px`);
-      app.style.setProperty("--pointer-y", `${event.clientY}px`);
+      document.body.style.setProperty("--pointer-x", `${event.clientX}px`);
+      document.body.style.setProperty("--pointer-y", `${event.clientY}px`);
     });
   }, { passive: true });
+
+  window.addEventListener("scroll", () => {
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
+  }, { passive: true });
+  window.addEventListener("resize", updateScrollMotion, { passive: true });
+  updateScrollMotion();
 }
 
 function animateCountUpMetrics() {
@@ -1853,6 +1887,9 @@ function animateSpeakingControl(element) {
 
 function triggerAnswerMoment(correct, compact = false) {
   if (prefersReducedMotion()) return;
+  document.body.classList.remove("answer-correct-flash", "answer-wrong-flash");
+  requestAnimationFrame(() => document.body.classList.add(correct ? "answer-correct-flash" : "answer-wrong-flash"));
+  window.setTimeout(() => document.body.classList.remove("answer-correct-flash", "answer-wrong-flash"), correct ? 900 : 650);
   document.querySelectorAll(".answer-moment").forEach((element) => element.remove());
   const moment = document.createElement("div");
   moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
@@ -1862,7 +1899,7 @@ function triggerAnswerMoment(correct, compact = false) {
     : "<span></span><span></span><span></span>";
   document.body.append(moment);
   requestAnimationFrame(() => moment.classList.add("is-active"));
-  window.setTimeout(() => moment.remove(), correct ? 1050 : 620);
+  window.setTimeout(() => moment.remove(), correct ? 1800 : 720);
 
   try {
     navigator.vibrate?.(correct ? 18 : [12, 36, 12]);

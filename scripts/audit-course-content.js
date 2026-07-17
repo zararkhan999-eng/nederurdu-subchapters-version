@@ -43,6 +43,9 @@ const choiceTypes = new Set([
 const dutchAnswerTypes = new Set(["reverse", "image-choice", "situation", "build", "sequence", "short-input", "speak-repeat"]);
 const urduAnswerTypes = new Set(["meaning", "document-choice"]);
 const infoTypes = new Set(["uitleg", "speak-repeat"]);
+const strictVisualTypes = new Set([
+  "meaning", "reverse", "image-choice", "fill-gap", "situation", "build", "sequence", "short-input"
+]);
 const knownUiPrompts = new Set([
   "آواز سنیں، پھر صحیح مطلب چنیں۔",
   "تصویر دیکھیں اور صحیح لفظ چنیں۔",
@@ -76,6 +79,16 @@ function resolveVisualTerm(value, lookup) {
   const normalized = normalize(value);
   const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
   return lookup.terms.get(normalized) || lookup.terms.get(withoutArticle) || "";
+}
+
+function visualMatchesTerm(visualIdValue, value, lookup) {
+  const visual = lookup.byId.get(visualIdValue);
+  if (!visual) return false;
+  const normalized = normalize(value);
+  const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
+  return [visualIdValue.replaceAll("-", " "), visual.canonicalTerm, ...(visual.dutchTerms || [])]
+    .map(normalize)
+    .some((term) => term === normalized || term === withoutArticle || term === `getal ${normalized}`);
 }
 
 const imagePersonTerms = new Set([
@@ -218,6 +231,22 @@ function auditQuestion(findings, chapter, lesson, question, visualIds, visualLoo
       } else if (imageOptionGroup(optionVisual, option, visualLookup) === answerGroup) {
         addFinding(findings, "error", chapter, lesson, question, "image-option-overlap", "Image-choice options are too visually similar.", `${answer} / ${option}`);
       }
+    }
+  }
+
+  if (question.visualId && strictVisualTypes.has(question.type)) {
+    const expectedVisualTerm = question.type === "meaning" ? prompt : answer;
+    if (!visualMatchesTerm(question.visualId, expectedVisualTerm, visualLookup)) {
+      addFinding(
+        findings,
+        "error",
+        chapter,
+        lesson,
+        question,
+        "visual-context-mismatch",
+        "Visual does not exactly represent the word or phrase being tested.",
+        `${question.visualId} != ${expectedVisualTerm}`
+      );
     }
   }
 

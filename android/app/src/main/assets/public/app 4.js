@@ -1,22 +1,10 @@
 const STORAGE_KEY = "nederurdu-progress-v3";
 const launchScreen = document.querySelector(".launch-screen");
 
-let launchFinished = false;
-const finishLaunch = () => {
-  if (launchFinished) return;
-  launchFinished = true;
+window.setTimeout(() => {
   document.body.classList.remove("launching");
-  document.body.classList.add("launch-complete");
-  window.setTimeout(() => launchScreen?.remove(), 720);
-};
-
-if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-  finishLaunch();
-} else {
-  requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
-  launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
-  window.setTimeout(finishLaunch, 3800);
-}
+  launchScreen?.remove();
+}, 4200);
 
 const chapters = window.NEDERURDU_CHAPTERS || [
   {
@@ -355,7 +343,6 @@ let audioContext = null;
 let activeReview = null;
 let pathCardLessonId = "";
 let pathExpanded = false;
-let lastRenderedScreen = "";
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -363,14 +350,6 @@ let matchPairError = "";
 let typedAnswer = "";
 let typedFallback = false;
 let preferredDutchVoice = null;
-let answerCombo = 0;
-let bestAnswerCombo = 0;
-let experienceObserver = null;
-let globalMotionBound = false;
-let pointerFrame = 0;
-let scrollFrame = 0;
-
-const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 function loadProgress() {
   try {
@@ -561,12 +540,8 @@ function getActiveLesson() {
 function render() {
   const app = document.querySelector("#app");
   applyDisplaySettings();
-  const screenChanged = screen !== lastRenderedScreen;
-  app.classList.toggle("screen-changing", screenChanged);
-  document.body.dataset.screen = screen;
   try {
     app.innerHTML = `
-      ${renderExperienceBackdrop()}
       ${screen === "home" ? renderHome() : ""}
       ${screen === "preview" ? renderLessonPreview() : ""}
       ${screen === "lesson" ? renderLesson() : ""}
@@ -591,29 +566,6 @@ function render() {
     `;
   }
   bindEvents();
-  bindExperienceMotion();
-  lastRenderedScreen = screen;
-}
-
-function renderExperienceBackdrop() {
-  return `
-    <div class="experience-backdrop" aria-hidden="true">
-      <span class="ambient-orb orb-green"></span>
-      <span class="ambient-orb orb-blue"></span>
-      <span class="ambient-orb orb-gold"></span>
-      <span class="ambient-ribbon ribbon-one"></span>
-      <span class="ambient-ribbon ribbon-two"></span>
-      <span class="ambient-grid"></span>
-      <span class="ambient-grain"></span>
-      <span class="ambient-spark spark-one"></span>
-      <span class="ambient-spark spark-two"></span>
-      <span class="ambient-spark spark-three"></span>
-      <span class="ambient-spark spark-four"></span>
-      <span class="ambient-glyph glyph-urdu">ا</span>
-      <span class="ambient-glyph glyph-latin latin">N</span>
-      <span class="experience-scroll-meter"><i></i></span>
-    </div>
-  `;
 }
 
 function applyDisplaySettings() {
@@ -641,37 +593,24 @@ function renderIcon(name, className = "") {
     image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 4"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/>',
     chevron: '<path d="m7 9 5 5 5-5"/>',
-    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
-    spark: '<path d="m12 3 1.35 4.15L17.5 8.5l-4.15 1.35L12 14l-1.35-4.15L6.5 8.5l4.15-1.35L12 3Z"/><path d="m18 14 .75 2.25L21 17l-2.25.75L18 20l-.75-2.25L15 17l2.25-.75L18 14Z"/>',
-    flag: '<path d="M5 21V4M5 5h11l-2 3 2 3H5"/>',
-    calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 10h18"/>',
     trash: '<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/>'
   };
   return `<svg class="ui-icon ${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
 }
 
 function renderProgressHeader() {
-  const activeDays = progress.practiceDays.length;
-  const totalLessons = getAllLessons().length || 1;
-  const totalCompleted = getAllLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
-  const coursePercent = Math.round((totalCompleted / totalLessons) * 100);
   return `
-    <header class="progress-header" aria-label="زبان" style="--course-progress:${coursePercent * 3.6}deg">
+    <header class="progress-header" aria-label="زبان">
       <div class="brand-lockup">
-        <span class="header-logo-wrap"><img class="header-logo" src="icon.svg" alt="" /><i></i></span>
+        <img class="header-logo" src="icon.svg" alt="" />
         <span class="brand-lockup-copy">
           <strong class="latin">NederUrdu</strong>
-          <small>اردو سے Nederlands تک</small>
+          <small>روزمرہ Nederlands</small>
         </span>
       </div>
-      <div class="header-journey" aria-label="سیکھنے کی زبانیں">
-        <span class="journey-language"><b>اردو</b><small>سمجھیں</small></span>
-        <span class="journey-line" aria-hidden="true"><i></i></span>
-        <span class="journey-language latin"><b>NL</b><small>Nederlands</small></span>
-      </div>
-      <div class="header-days" title="مشق کے دن">
-        <span class="header-days-orbit">${renderIcon("calendar")}</span>
-        <span><strong class="latin">${activeDays}</strong><small>دن</small></span>
+      <div class="language-pair">
+        <span class="language-dot">NL</span>
+        <span class="language-copy"><strong>Nederlands</strong><small>اردو میں سیکھیں</small></span>
       </div>
     </header>
   `;
@@ -684,50 +623,35 @@ function renderHome() {
   const total = chapter.lessons.length || 1;
   const chapterPercent = Math.round((completed / total) * 100);
   const beginnerFirstHome = isBeginnerFirstHome();
-  const dailyVisual = getVisualForLesson(nextLesson);
   activeLessonId = nextLesson.id;
 
   return `
     <main class="learn-screen ${beginnerFirstHome ? "beginner-home" : ""}">
       ${renderProgressHeader()}
-      <aside class="home-rail">
-        <section class="today-panel">
-          <div class="mission-atmosphere" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="mission-topline">
-            <span class="eyeline">${beginnerFirstHome ? "آپ کا پہلا قدم" : "آج کی سمت"}</span>
-            <span class="mission-level latin">${chapter.id.toUpperCase()} · ${String(getLessonIndexInChapter(nextLesson.id, chapter) + 1).padStart(2, "0")}</span>
+      <section class="today-panel">
+        <div class="today-main">
+          <div class="today-copy">
+            <span class="eyeline">${beginnerFirstHome ? "شروع سے" : "آج کا سبق"}</span>
+            <h1>${getShortLessonTitle(nextLesson)}</h1>
+            <p>${beginnerFirstHome ? "آج صرف پہلا سبق کریں۔ پہلے آواز سنیں، پھر لفظ پہچانیں۔" : nextLesson.description}</p>
           </div>
-          <div class="today-main">
-            <div class="today-copy">
-              <h1>${getShortLessonTitle(nextLesson)}</h1>
-              <p>${beginnerFirstHome ? "آواز سنیں، لفظ پہچانیں، اور اپنا پہلا Nederlands جملہ بنائیں۔" : nextLesson.description}</p>
-              <div class="mission-details">
-                <span>${renderIcon("spark")}<b class="latin">20</b> چھوٹے قدم</span>
-                <span>${renderIcon("speaker")} آواز کے ساتھ</span>
-              </div>
-            </div>
-            <div class="mission-art" aria-hidden="true">
-              ${renderVisual(dailyVisual, "mission-visual")}
-              <span class="mission-art-seal">${renderIcon("flag")}</span>
-              <span class="mission-art-halo"></span>
-            </div>
+          <div class="today-emblem" aria-hidden="true">
+            <span>${renderIcon(beginnerFirstHome ? "speaker" : "play")}</span>
+            <strong class="latin">20</strong>
+            <small>چھوٹے قدم</small>
           </div>
-          <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
-            <span class="button-icon">${renderIcon("play")}</span>
-            <span>${beginnerFirstHome ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span>
-            <span class="button-progress latin">${chapterPercent}%</span>
-          </button>
-          ${beginnerFirstHome ? "" : `<div class="today-stats">
-            <span><strong class="latin">${completed}/${total}</strong><small>مکمل</small></span>
-            <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
-            <span><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></span>
-          </div>`}
-        </section>
-        <div class="rail-note">
-          <span>${renderIcon("spark")}</span>
-          <p><strong>روز تھوڑا، مگر مسلسل</strong><small>ایک سبق تقریباً پانچ منٹ میں مکمل ہوتا ہے۔</small></p>
         </div>
-      </aside>
+        ${beginnerFirstHome ? "" : `<div class="today-stats">
+          <span><strong class="latin">${completed}/${total}</strong><small>باب</small></span>
+          <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
+          <span><strong class="latin">${progress.practiceDays.length}</strong><small>دن</small></span>
+        </div>`}
+        <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
+          <span class="button-icon">${renderIcon("play")}</span>
+          <span>${beginnerFirstHome ? "پہلا سبق جاری رکھیں" : "جاری رکھیں"}</span>
+          <span class="button-progress latin">${chapterPercent}%</span>
+        </button>
+      </section>
       <div class="home-world">
         <div class="world-sky" aria-hidden="true">
           <span class="cloud cloud-one"></span>
@@ -744,12 +668,12 @@ function renderHome() {
 }
 
 function renderChapterSwitcher() {
-  return `<div class="chapter-switcher-wrap"><div class="chapter-switcher-label"><span>اپنی سطح</span><small>ایک راستہ منتخب کریں</small></div><div class="chapter-switcher" aria-label="باب منتخب کریں">${chapters.map((chapter) => `
+  return `<div class="chapter-switcher" aria-label="باب منتخب کریں">${chapters.map((chapter) => `
     <button class="chapter-chip ${chapter.id === selectedChapterId ? "active" : ""}" data-action="chapter" data-chapter="${chapter.id}">
       <strong class="latin">${chapter.id.toUpperCase()}</strong>
       <small class="latin">${chapterCompletedCount(chapter)}/${chapter.lessons.length}</small>
     </button>
-  `).join("")}</div></div>`;
+  `).join("")}</div>`;
 }
 
 function getSubchapterForLesson(chapter, lessonId) {
@@ -760,18 +684,16 @@ function renderUnitCard(chapter, nextLesson) {
   const section = getSubchapterForLesson(chapter, nextLesson.id);
   const completed = chapterCompletedCount(chapter);
   const percent = Math.round((completed / Math.max(1, chapter.lessons.length)) * 100);
-  const visual = getVisualForSubchapter(section || { id: chapter.id, title: chapter.title, goal: chapter.subtitle, practice: "" }, nextLesson);
   return `
     <button class="unit-card chapter-${chapter.id}" data-action="preview" data-lesson="${nextLesson.id}">
-      <span class="unit-card-aura" aria-hidden="true"></span>
-      <span class="unit-card-visual">${renderVisual(visual, "unit-visual")}</span>
+      <span class="unit-card-icon">${renderIcon("notebook")}</span>
       <span class="unit-card-copy">
-        <small><b class="latin">${chapter.id.toUpperCase()}</b>${chapter.title}</small>
+        <small>${chapter.title}</small>
         <strong>${section?.title || nextLesson.unit}</strong>
         <span>${section?.goal || nextLesson.description}</span>
-        <span class="unit-card-footer"><span class="unit-card-meter" aria-hidden="true"><i style="width:${percent}%"></i></span><b class="latin">${percent}%</b></span>
+        <span class="unit-card-meter" aria-hidden="true"><i style="width:${percent}%"></i></span>
       </span>
-      <span class="unit-card-arrow" aria-hidden="true">${renderIcon("arrow")}</span>
+      <span class="unit-card-arrow" aria-hidden="true">‹</span>
     </button>
   `;
 }
@@ -790,7 +712,7 @@ function renderLessonPath(chapter, nextLesson) {
   let pathIndex = 0;
   return `<section class="lesson-path path-stage" aria-label="سبق کا راستہ">
     <div class="path-overview">
-      <div><span class="path-kicker">آپ کا نقشہ</span><strong>${remainingLessons ? `${remainingLessons} سبق باقی` : "باب مکمل"}</strong><small>ہر قدم پچھلے سبق کو مضبوط کرتا ہے</small></div>
+      <div><span class="eyeline">سیکھنے کا راستہ</span><strong>${remainingLessons ? `${remainingLessons} سبق باقی` : "باب مکمل"}</strong></div>
       <span class="path-overview-mark">${renderIcon(remainingLessons ? "book" : "check")}</span>
     </div>
     ${visibleGroups.map(({ section, lessons, index: sectionIndex }) => `
@@ -817,8 +739,8 @@ function renderLessonSectionDivider(title, index, lessons) {
   return `
     <div class="section-divider">
       <span class="section-number latin">${String(index + 1).padStart(2, "0")}</span>
-      <span class="section-copy"><small>حصہ ${index + 1}</small><strong>${title}</strong></span>
-      <span class="section-status"><b class="latin">${completed}/${lessons.length}</b><span class="section-progress" aria-hidden="true"><i style="width:${percent}%"></i></span></span>
+      <span class="section-copy"><strong>${title}</strong><small>${completed}/${lessons.length} مکمل</small></span>
+      <span class="section-progress" aria-hidden="true"><i style="width:${percent}%"></i></span>
     </div>
   `;
 }
@@ -831,9 +753,8 @@ function renderLessonNode(lesson, index, position, current, pathRow) {
   const icon = completed ? "check" : locked ? "lock" : current ? "play" : "book";
   return `
     <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}" style="--path-row:${pathRow}">
-      <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}"><span class="lesson-node-index latin">${String(index + 1).padStart(2, "0")}</span><span class="lesson-node-icon">${renderIcon(icon)}</span></button>
-      <div class="node-copy"><span>${completed ? "مکمل سبق" : current ? "ابھی سیکھیں" : locked ? "اگلا مرحلہ" : "دستیاب"}</span><strong>${getShortLessonTitle(lesson)}</strong><small>${getLessonRunCount(lesson)} سوال · ${lesson.xp || 0} پوائنٹس</small></div>
-      <span class="node-trailing" aria-hidden="true">${locked ? renderIcon("lock") : renderIcon("arrow")}</span>
+      <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}">${renderIcon(icon)}</button>
+      <div class="node-copy"><strong>${getShortLessonTitle(lesson)}</strong><span>${completed ? "مکمل" : current ? "اگلا سبق" : locked ? "بند" : "دستیاب"}</span></div>
       ${selected ? renderLessonStartCard(lesson, index) : ""}
     </div>
   `;
@@ -848,10 +769,9 @@ function renderLessonStartCard(lesson, index) {
   return `
     <article class="lesson-start-card">
       <span class="lesson-card-pointer" aria-hidden="true"></span>
-      <span class="lesson-card-kicker">منتخب سبق · <b class="latin">${String(index + 1).padStart(2, "0")}</b></span>
       <strong>${getShortLessonTitle(lesson)}</strong>
-      <small>${getLessonRunCount(lesson)} سوال · آواز اور فوری مدد کے ساتھ</small>
-      <button data-action="start" data-lesson="${lesson.id}"><span>${done ? "دوبارہ کریں" : "شروع کریں"}</span>${renderIcon("arrow")}</button>
+      <small>سبق ${index + 1} از ${getCurrentLessons().length}</small>
+      <button data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ کریں" : "شروع کریں"}</button>
     </article>
   `;
 }
@@ -1048,14 +968,8 @@ function renderQuizTopBar(percentage, current, total) {
   return `
     <header class="quiz-topbar">
       <button class="quiz-close" data-action="home" aria-label="سبق بند کریں">${renderIcon("close")}</button>
-      <div class="quiz-progress-shell">
-        <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"><i></i></span></div>
-        <span class="quiz-progress-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      </div>
-      <div class="quiz-status">
-        ${answerCombo >= 2 ? `<span class="quiz-combo latin">${renderIcon("spark")}<b>${answerCombo}</b></span>` : ""}
-        <span class="quiz-count latin">${current}/${total}</span>
-      </div>
+      <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"></span></div>
+      <span class="quiz-count latin">${current}/${total}</span>
     </header>
   `;
 }
@@ -1526,20 +1440,17 @@ function renderComplete() {
       : "اچھا آغاز۔ مشکل الفاظ دہرائی کے لیے محفوظ ہیں۔";
   return `
     <main class="complete-screen">
-      <div class="complete-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="complete-celebration" aria-hidden="true">${renderCelebrationPieces(28)}</div>
+      <div class="complete-celebration" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="complete-ring" style="--score:${percent * 3.6}deg">
-        <span class="complete-ring-glow" aria-hidden="true"></span>
-        <div class="complete-mark">${renderIcon("check")}<i></i></div>
+        <div class="complete-mark">${renderIcon("check")}</div>
       </div>
       <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : "آج کا قدم مکمل"}</span>
       <h1>${isReview ? "دہرائی مکمل!" : "سبق مکمل!"}</h1>
       <p class="complete-summary">${summary}</p>
-      ${bestAnswerCombo >= 2 ? `<div class="complete-combo">${renderIcon("spark")}<span><strong class="latin">${bestAnswerCombo}</strong><small>مسلسل درست جواب</small></span></div>` : ""}
       <div class="complete-metrics">
         <span><strong class="latin">${result.correct}/${result.total}</strong><small>درست</small></span>
-        <span><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><small>کامیابی</small></span>
-        <span><strong class="latin" data-count-up="${result.xp || 0}">${result.xp || 0}</strong><small>پوائنٹس</small></span>
+        <span><strong class="latin">${percent}%</strong><small>کامیابی</small></span>
+        <span><strong class="latin">${result.xp || 0}</strong><small>پوائنٹس</small></span>
       </div>
       <div class="complete-meter"><span style="width:${percent}%"></span></div>
       <div class="complete-actions">
@@ -1548,16 +1459,6 @@ function renderComplete() {
       </div>
     </main>
   `;
-}
-
-function renderCelebrationPieces(count) {
-  return Array.from({ length: count }, (_, index) => {
-    const x = (index * 37 + 11) % 100;
-    const delay = ((index * 13) % 17) / 10;
-    const duration = 2.2 + ((index * 7) % 9) / 10;
-    const rotation = (index * 47) % 180;
-    return `<span style="--piece-x:${x}%;--piece-delay:${delay}s;--piece-duration:${duration}s;--piece-rotation:${rotation}deg"></span>`;
-  }).join("");
 }
 
 function renderPracticeScreen() {
@@ -1694,9 +1595,7 @@ function renderNavButton(action, icon, label, active) {
 function bindEvents() {
   document.querySelectorAll("[data-action]").forEach((element) => {
     element.addEventListener("click", (event) => {
-      if (document.body.classList.contains("launching")) finishLaunch();
       const action = element.dataset.action;
-      triggerPressRipple(element, event);
       if (action === "word-help") {
         event.preventDefault();
         event.stopPropagation();
@@ -1705,13 +1604,11 @@ function bindEvents() {
       if (action === "speak") {
         event.preventDefault();
         event.stopPropagation();
-        animateSpeakingControl(element);
         speakDutch(element.dataset.speak);
       }
       if (action === "slow-speak") {
         event.preventDefault();
         event.stopPropagation();
-        animateSpeakingControl(element);
         speakDutch(element.dataset.speak, true);
       }
       if (action === "home") goHome();
@@ -1764,160 +1661,6 @@ function bindEvents() {
       if (checkButton) checkButton.disabled = !typedAnswer.trim();
     });
   });
-}
-
-function bindExperienceMotion() {
-  experienceObserver?.disconnect();
-  const revealTargets = document.querySelectorAll([
-    ".path-section",
-    ".review-hub-card",
-    ".letter-card",
-    ".setting-row",
-    ".utility-action"
-  ].join(","));
-
-  revealTargets.forEach((element, index) => {
-    element.classList.add("experience-reveal");
-    element.style.setProperty("--reveal-order", String(index % 8));
-  });
-
-  if (!prefersReducedMotion() && "IntersectionObserver" in window) {
-    experienceObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        experienceObserver?.unobserve(entry.target);
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -24px" });
-    revealTargets.forEach((element) => experienceObserver.observe(element));
-  } else {
-    revealTargets.forEach((element) => element.classList.add("is-visible"));
-  }
-
-  if (!prefersReducedMotion() && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) {
-    document.querySelectorAll(".today-panel, .unit-card, .review-hero").forEach((element) => {
-      element.classList.add("motion-tilt");
-      element.addEventListener("pointermove", (event) => {
-        const bounds = element.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5;
-        const y = (event.clientY - bounds.top) / Math.max(1, bounds.height) - 0.5;
-        element.style.setProperty("--tilt-x", `${(-y * 3.2).toFixed(2)}deg`);
-        element.style.setProperty("--tilt-y", `${(x * 4.2).toFixed(2)}deg`);
-        element.style.setProperty("--glow-x", `${((x + 0.5) * 100).toFixed(1)}%`);
-        element.style.setProperty("--glow-y", `${((y + 0.5) * 100).toFixed(1)}%`);
-      });
-      element.addEventListener("pointerleave", () => {
-        element.style.setProperty("--tilt-x", "0deg");
-        element.style.setProperty("--tilt-y", "0deg");
-      });
-    });
-  }
-
-  animateCountUpMetrics();
-  bindGlobalPointerGlow();
-  updateScrollMotion();
-}
-
-function updateScrollMotion() {
-  const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-  const progressValue = Math.min(1, Math.max(0, window.scrollY / maxScroll));
-  document.body.style.setProperty("--scroll-progress", progressValue.toFixed(4));
-  document.body.style.setProperty("--scroll-shift", `${Math.min(72, window.scrollY * 0.035).toFixed(1)}px`);
-  const meter = document.querySelector(".experience-scroll-meter i");
-  if (meter) meter.style.transform = `scaleY(${Math.max(0.035, progressValue)})`;
-  scrollFrame = 0;
-}
-
-function bindGlobalPointerGlow() {
-  if (globalMotionBound || prefersReducedMotion()) return;
-  globalMotionBound = true;
-  document.addEventListener("pointermove", (event) => {
-    if (pointerFrame) cancelAnimationFrame(pointerFrame);
-    pointerFrame = requestAnimationFrame(() => {
-      document.body.style.setProperty("--pointer-x", `${event.clientX}px`);
-      document.body.style.setProperty("--pointer-y", `${event.clientY}px`);
-    });
-  }, { passive: true });
-
-  window.addEventListener("scroll", () => {
-    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
-  }, { passive: true });
-  window.addEventListener("resize", updateScrollMotion, { passive: true });
-  updateScrollMotion();
-}
-
-function animateCountUpMetrics() {
-  if (prefersReducedMotion()) return;
-  document.querySelectorAll("[data-count-up]").forEach((element) => {
-    const target = Number(element.dataset.countUp || 0);
-    const suffix = element.dataset.countSuffix || "";
-    const start = performance.now();
-    const duration = 760;
-    const update = (now) => {
-      const elapsed = Math.min(1, (now - start) / duration);
-      const eased = 1 - ((1 - elapsed) ** 3);
-      element.textContent = `${Math.round(target * eased)}${suffix}`;
-      if (elapsed < 1) requestAnimationFrame(update);
-    };
-    element.textContent = `0${suffix}`;
-    requestAnimationFrame(update);
-  });
-}
-
-function triggerPressRipple(element, event) {
-  if (prefersReducedMotion() || !element?.append) return;
-  const bounds = element.getBoundingClientRect();
-  const size = Math.max(bounds.width, bounds.height) * 1.6;
-  const ripple = document.createElement("span");
-  ripple.className = "press-ripple";
-  ripple.style.width = `${size}px`;
-  ripple.style.height = `${size}px`;
-  ripple.style.left = `${event.clientX - bounds.left - size / 2}px`;
-  ripple.style.top = `${event.clientY - bounds.top - size / 2}px`;
-  element.append(ripple);
-  window.setTimeout(() => ripple.remove(), 650);
-}
-
-function animateSpeakingControl(element) {
-  if (!element) return;
-  element.classList.remove("is-speaking");
-  requestAnimationFrame(() => element.classList.add("is-speaking"));
-  window.setTimeout(() => element.classList.remove("is-speaking"), 1350);
-}
-
-function triggerAnswerMoment(correct, compact = false) {
-  if (prefersReducedMotion()) return;
-  document.body.classList.remove("answer-correct-flash", "answer-wrong-flash");
-  requestAnimationFrame(() => document.body.classList.add(correct ? "answer-correct-flash" : "answer-wrong-flash"));
-  window.setTimeout(() => document.body.classList.remove("answer-correct-flash", "answer-wrong-flash"), correct ? 900 : 650);
-  document.querySelectorAll(".answer-moment").forEach((element) => element.remove());
-  const moment = document.createElement("div");
-  moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
-  moment.setAttribute("aria-hidden", "true");
-  moment.innerHTML = correct
-    ? Array.from({ length: compact ? 7 : 14 }, (_, index) => `<span style="--burst-index:${index};--burst-angle:${(360 / (compact ? 7 : 14)) * index}deg"></span>`).join("")
-    : "<span></span><span></span><span></span>";
-  document.body.append(moment);
-  requestAnimationFrame(() => moment.classList.add("is-active"));
-  window.setTimeout(() => moment.remove(), correct ? 1800 : 720);
-
-  try {
-    navigator.vibrate?.(correct ? 18 : [12, 36, 12]);
-  } catch {
-    // Haptics are optional and may be blocked by the host browser.
-  }
-}
-
-function triggerLessonCelebration() {
-  if (prefersReducedMotion()) return;
-  document.body.classList.remove("celebrating-lesson");
-  requestAnimationFrame(() => document.body.classList.add("celebrating-lesson"));
-  window.setTimeout(() => document.body.classList.remove("celebrating-lesson"), 2400);
-  try {
-    navigator.vibrate?.([24, 48, 24]);
-  } catch {
-    // Haptics are optional and may be blocked by the host browser.
-  }
 }
 
 function scrollToTop() {
@@ -2025,8 +1768,6 @@ function startLesson(id) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
-  answerCombo = 0;
-  bestAnswerCombo = 0;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(lesson);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
@@ -2061,8 +1802,6 @@ function startReview(kind) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
-  answerCombo = 0;
-  bestAnswerCombo = 0;
   sessionAnswers = [];
   sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
@@ -2148,7 +1887,6 @@ function selectMatchPair(id, side) {
     const question = getActiveQuestion();
     if (matchedPairIds.length === getMatchPairs(question).length) selectedAnswer = question.answer;
     render();
-    requestAnimationFrame(() => triggerAnswerMoment(true, true));
     return;
   }
   matchPairError = id;
@@ -2172,8 +1910,6 @@ function checkAnswer() {
   const correct = question.type === "short-input" && !typedFallback
     ? getAcceptedAnswers(question).includes(normalizeTypedAnswer(selectedAnswer))
     : selectedAnswer === question.answer;
-  answerCombo = correct ? answerCombo + 1 : 0;
-  bestAnswerCombo = Math.max(bestAnswerCombo, answerCombo);
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -2189,7 +1925,6 @@ function checkAnswer() {
   playAnswerSound(correct ? "correct" : "wrong");
   checked = true;
   render();
-  requestAnimationFrame(() => triggerAnswerMoment(correct));
 }
 
 function nextQuestion() {
@@ -2287,7 +2022,6 @@ function completeLesson(lesson) {
   activeReview = null;
   screen = "complete";
   render();
-  requestAnimationFrame(triggerLessonCelebration);
   scrollToTop();
 }
 
@@ -2299,8 +2033,6 @@ function resetProgress() {
   activeReview = null;
   buildAnswerIds = [];
   hintOpen = false;
-  answerCombo = 0;
-  bestAnswerCombo = 0;
   screen = "home";
   render();
   scrollToTop();

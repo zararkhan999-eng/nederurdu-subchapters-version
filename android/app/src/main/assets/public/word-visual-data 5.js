@@ -1726,13 +1726,36 @@ function resolveExplicitVisualId(value) {
   if (!normalized) return "";
   if (normalized === "u") return "pronoun-u";
   if (normalized === "a") return "letter-a";
-  if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
-  const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
-  if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
   const aliases = {
-    totziens: "tot-ziens"
+    afval: "schoonmaken",
+    bibliotheek: "boek",
+    buik: "buikpijn",
+    buiten: "uitgang",
+    gevaar: "hulp",
+    hoofd: "hoofdpijn",
+    kaart: "adres",
+    kleding: "jas",
+    kleur: "jas",
+    koud: "jas",
+    oor: "luisteren",
+    paraplu: "water",
+    persoon: "pronoun-u",
+    raam: "huis",
+    regen: "water",
+    schoenen: "jas",
+    sleutel: "deur",
+    straat: "adres",
+    totziens: "tot-ziens",
+    veilig: "hulp",
+    verboden: "uitgang",
+    warm: "ochtend",
+    zon: "ochtend",
+    zoon: "kind"
   };
   if (aliases[normalized]) return aliases[normalized];
+  if (visualTermIndex.has(normalized)) return visualTermIndex.get(normalized);
+  const withoutArticle = normalized.replace(/^(de|het|een)\s+/, "");
+  if (visualTermIndex.has(withoutArticle)) return visualTermIndex.get(withoutArticle);
   const padded = ` ${normalized} `;
   const candidates = [...visualTermIndex.entries()]
     .filter(([term]) => term && padded.includes(` ${term} `))
@@ -1783,76 +1806,13 @@ function visualIncludesTerm(visualId, term) {
     ));
 }
 
-const safeImageChoiceFallbacks = [
-  "huis", "bus", "brood", "boek", "dokter", "station",
-  "lamp", "water", "telefoon", "school", "fiets", "appel"
-];
-
-const imageChoicePersonTerms = new Set([
-  "man", "vrouw", "kind", "kinderen", "jongen", "meisje", "familie",
-  "vader", "moeder", "broer", "zus", "zoon", "dochter", "ouder",
-  "buurman", "buurvrouw", "collega", "docent", "dokter", "monteur",
-  "bezorger", "baas", "leidinggevende"
-]);
-
-function imageChoiceGroup(visualId, term) {
-  const normalizedTerm = normalizeVisualTerm(term);
-  const normalizedVisualId = normalizeVisualTerm(visualId).replace(/\s+/g, "-");
-  if (imageChoicePersonTerms.has(normalizedTerm) || imageChoicePersonTerms.has(normalizedVisualId)) return "person";
-  if (["appel", "brood", "kaas", "fruit", "groente", "rijst", "water", "melk", "koffie", "thee", "soep", "vlees"].includes(normalizedTerm)) return "food";
-  if (["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(normalizedTerm) || ["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(normalizedVisualId)) return "transport";
-  if (["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(normalizedTerm) || ["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(normalizedVisualId)) return "home";
-  if (["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(normalizedTerm) || ["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(normalizedVisualId)) return "place";
-  if (["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(normalizedTerm) || ["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(normalizedVisualId)) return "health";
-  return window.NEDERURDU_WORD_VISUALS.find((item) => item.id === visualId)?.kind || "other";
-}
-
-function distinctImageChoiceOptions(question) {
-  const answer = String(question.answer || "").trim();
-  const answerVisualId = question.visualId || resolveExactVisualId(answer);
-  const answerGroup = imageChoiceGroup(answerVisualId, answer);
-  const seen = new Set([normalizeVisualTerm(answer)]);
-  const options = [answer];
-  for (const option of [...(question.options || []), ...safeImageChoiceFallbacks]) {
-    const value = String(option || "").trim();
-    const normalized = normalizeVisualTerm(value);
-    if (!normalized || seen.has(normalized) || normalized === normalizeVisualTerm(answer)) continue;
-    const optionVisualId = resolveExactVisualId(value);
-    if (answerVisualId && optionVisualId && optionVisualId === answerVisualId) continue;
-    if (imageChoiceGroup(optionVisualId, value) === answerGroup) continue;
-    seen.add(normalized);
-    options.push(value);
-    if (options.length === 3) break;
-  }
-  return options;
-}
-
-function ensureChoiceOptionsIncludeAnswer(question) {
-  const answer = String(question.answer || "").trim();
-  const fallbackOptions = ["ik ben hier", "waar is het station?", "ik heb een boek", "het is kapot"];
-  const seen = new Set();
-  return [answer, ...(question.options || []), ...fallbackOptions]
-    .map((option) => String(option || "").trim())
-    .filter((option) => {
-      const normalized = normalizeVisualTerm(option);
-      if (!normalized || seen.has(normalized)) return false;
-      seen.add(normalized);
-      return true;
-    })
-    .slice(0, 3);
-}
-
-const strictVisualTypes = new Set([
-  "meaning", "reverse", "image-choice", "fill-gap", "situation", "build", "sequence", "short-input"
-]);
-
 for (const chapter of window.NEDERURDU_CHAPTERS || []) {
   for (const lesson of chapter.lessons || []) {
     for (const question of lesson.questions || []) {
       const explicitVisualId = window.NEDERURDU_WORD_VISUALS.some((visual) => visual.id === question.visualId)
         ? question.visualId
         : "";
-      const answerVisualId = ["image-choice", "fill-gap", "reverse", "situation", "build", "sequence", "short-input"].includes(question.type)
+      const answerVisualId = ["image-choice", "fill-gap"].includes(question.type)
         ? resolveExactVisualId(question.answer)
         : "";
       const visualSource = question.type === "meaning"
@@ -1864,24 +1824,14 @@ for (const chapter of window.NEDERURDU_CHAPTERS || []) {
             : question.visual || question.visualId || "";
       question.visualId = answerVisualId || explicitVisualId || resolveExplicitVisualId(visualSource) || undefined;
       delete question.visual;
-      const expectedVisualTerm = question.type === "meaning" ? question.prompt : question.answer;
-      if (strictVisualTypes.has(question.type) && question.visualId && !visualIncludesTerm(question.visualId, expectedVisualTerm)) {
+      if (question.type === "fill-gap" && question.visualId && !visualIncludesTerm(question.visualId, question.answer)) {
         delete question.visualId;
       }
       if (question.type === "image-choice" && (!isSafeImageChoiceAnswer(question.answer) || !visualIncludesTerm(question.visualId, question.answer))) {
         question.type = "situation";
         question.label = "حال کے لیے صحیح Nederlands جملہ منتخب کریں";
         question.prompt = "اس حال کے لیے صحیح Nederlands منتخب کریں۔";
-        question.options = ensureChoiceOptionsIncludeAnswer(question);
         delete question.visualId;
-      } else if (question.type === "image-choice") {
-        question.options = distinctImageChoiceOptions(question);
-        if (question.options.length < 3) {
-          question.type = "situation";
-          question.label = "حال کے لیے صحیح Nederlands جملہ منتخب کریں";
-          question.prompt = "اس حال کے لیے صحیح Nederlands منتخب کریں۔";
-          delete question.visualId;
-        }
       }
     }
   }

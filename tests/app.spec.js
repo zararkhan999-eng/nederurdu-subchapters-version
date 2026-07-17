@@ -35,6 +35,21 @@ async function openFreshApp(page) {
   await page.goto("/");
 }
 
+test("cinematic bilingual launch hands off cleanly to the app", async ({ page }) => {
+  await openCleanApp(page);
+
+  await expect(page.locator(".launch-screen")).toHaveClass(/is-playing/);
+  await expect(page.locator(".launch-language")).toHaveCount(2);
+  await expect(page.locator(".launch-orbit")).toHaveCount(3);
+  await expect(page.locator(".launch-wordmark")).toContainText("NederUrdu");
+  await expect(page.locator(".launch-progress")).toHaveCount(1);
+
+  await page.evaluate(() => finishLaunch());
+  await expect(page.locator("body")).not.toHaveClass(/launching/);
+  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".bottom-nav")).toBeVisible();
+});
+
 test("fresh first launch opens the home map with all chapters visible", async ({ page }) => {
   await openFreshApp(page);
 
