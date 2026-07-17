@@ -1957,8 +1957,8 @@ function buildSessionQuestions(lesson) {
     : lesson?.kind === "mission"
       ? lesson.variants[(progress.missionVariantRuns?.[lesson.id] || 0) % lesson.variants.length].questions
       : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
-  const beginnerIntro = getBeginnerIntroQuestion(lesson);
-  const questions = beginnerIntro ? [beginnerIntro, ...sourceQuestions].slice(0, LESSON_QUESTION_LIMIT) : sourceQuestions;
+  const lessonIntro = getLessonIntroQuestion(lesson, sourceQuestions);
+  const questions = lessonIntro ? [lessonIntro, ...sourceQuestions].slice(0, LESSON_QUESTION_LIMIT) : sourceQuestions;
   return questions.map((question) => ({
     ...question,
     options: question.options ? shuffleArray(question.options) : [],
@@ -1967,28 +1967,59 @@ function buildSessionQuestions(lesson) {
   }));
 }
 
-function getBeginnerIntroQuestion(lesson) {
-  if (!progress.settings.beginnerMode || !progress.settings.extraUrduHelp || lesson?.reviewKind) return null;
+function getLessonIntroQuestion(lesson, sourceQuestions = []) {
+  if (!lesson || lesson.reviewKind || lesson.kind === "mission") return null;
+  if (sourceQuestions.some(isInfoQuestion)) return null;
+  const pairs = getLessonIntroPairs(lesson, sourceQuestions);
+  if (pairs.length < 2) return null;
   const supportWordsByLesson = {
     "a0-letters-1": ["a", "b", "appel", "boek"],
     "a0-letters-2": ["h", "i", "huis", "ik", "ja"],
     "a0-letters-3": ["oog", "pen", "stoel", "tafel", "water"]
   };
-  const supportWords = supportWordsByLesson[lesson?.id];
-  if (!supportWords) return null;
+  const supportWords = supportWordsByLesson[lesson.id] || pairs
+    .map((pair) => pair.dutch)
+    .filter((word) => /^[a-zà-ÿ]+$/i.test(word))
+    .slice(0, 5);
   return {
     id: `${lesson.id}-beginner-intro`,
     type: "uitleg",
-    prompt: "دیکھیں اور سنیں",
+    prompt: "پہلے یہ سیکھیں",
     points: [
-      "پہلے Dutch آواز سنیں۔",
-      "نیچے Urdu آواز کی مدد اور معنی دیکھیں۔",
-      "پھر آسان سوالات شروع ہوں گے۔"
+      "اس سبق میں پہلے یہ Nederlands معنی دیکھیں۔",
+      ...pairs.slice(0, 7).map((pair) => `${pair.dutch} = ${pair.urdu}`),
+      "پہلے پہچان کی مشق آئے گی، پھر خالی جگہ یا جملہ بنانے والی مشق آئے گی۔"
     ],
     supportWords,
     answer: "سمجھ گیا",
-    explain: "اب اسی آواز اور لفظ کی مشق کریں۔"
+    explain: "اب انہی الفاظ اور جملوں کی مشق کریں۔"
   };
+}
+
+function getLessonIntroPairs(lesson, sourceQuestions = []) {
+  const pairs = [];
+  const seen = new Set();
+  const add = (dutch, urdu) => {
+    const cleanDutch = String(dutch || "").replace(/\s+/g, " ").trim();
+    const cleanUrdu = String(urdu || "").replace(/^یہ بنائیں:\s*/, "").replace(/^حال:\s*/, "").replace(/\s+/g, " ").trim();
+    if (!/[A-Za-zÀ-ÿ]/.test(cleanDutch) || /[\u0600-\u06ff]/.test(cleanDutch)) return;
+    if (!/[\u0600-\u06ff]/.test(cleanUrdu)) return;
+    const key = `${cleanDutch.toLowerCase()}|${cleanUrdu}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    pairs.push({ dutch: cleanDutch, urdu: cleanUrdu });
+  };
+
+  for (const concept of lesson.concepts || []) add(concept.dutch, concept.urdu);
+  for (const question of [...(lesson.questions || []), ...sourceQuestions]) {
+    if (question.type === "meaning") add(question.prompt, question.answer);
+    if (question.type === "reverse") add(question.answer, question.prompt);
+    if (question.type === "listen-choice" && question.mode !== "listen-dutch" && /[\u0600-\u06ff]/.test(String(question.answer || ""))) {
+      add(question.speak, question.answer);
+    }
+    if (question.type === "build") add(question.answer, question.prompt);
+  }
+  return pairs;
 }
 
 function sampleLessonQuestions(questions, lessonId) {
@@ -1999,7 +2030,7 @@ function sampleLessonQuestions(questions, lessonId) {
   const seenIds = new Set(progress.seenQuestionIds || []);
   const lessonSeenCount = usableQuestions.filter((question) => seenIds.has(question.id)).length;
   const seed = hashText(`${lessonId}:${lessonSeenCount}:${progress.scores[lessonId] || 0}`);
-  const types = ["meaning", "reverse", "image-choice", "document-choice", "listen-choice", "fill-gap", "situation", "sequence", "build", "short-input"];
+  const types = ["meaning", "image-choice", "listen-choice", "document-choice", "reverse", "fill-gap", "situation", "sequence", "build", "short-input"];
   const unseenGroups = new Map(types.map((type, index) => [
     type,
     seededShuffle(usableQuestions.filter((question) => question.type === type && !seenIds.has(question.id)), seed + index)
@@ -2009,27 +2040,52 @@ function sampleLessonQuestions(questions, lessonId) {
     seededShuffle(usableQuestions.filter((question) => question.type === type && seenIds.has(question.id)), seed + index + 41)
   ]));
   const practice = [];
-  const takeRound = (groups) => {
+  const phaseTypes = [
+    ["meaning", "image-choice", "listen-choice", "document-choice"],
+    ["reverse", "fill-gap"],
+    ["situation", "sequence", "build", "short-input"]
+  ];
+  const practiceLimit = LESSON_QUESTION_LIMIT - explanationCount;
+  const phaseTargets = [8, 14, practiceLimit].map((target) => Math.min(target, practiceLimit));
+  const takeRound = (groups, phase) => {
     let added = false;
-    for (const type of types) {
+    for (const type of phase) {
       const question = groups.get(type)?.shift();
       if (!question) continue;
       practice.push(question);
       added = true;
-      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) break;
+      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) return added;
     }
     return added;
   };
-  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount && takeRound(unseenGroups)) {}
-  while (practice.length < LESSON_QUESTION_LIMIT - explanationCount && takeRound(seenGroups)) {}
-  if (practice.length < LESSON_QUESTION_LIMIT - explanationCount) {
+  for (const [index, phase] of phaseTypes.entries()) {
+    const phaseLimit = index === phaseTypes.length - 1
+      ? practiceLimit
+      : phaseTargets[index];
+    while (practice.length < phaseLimit && takeRound(unseenGroups, phase)) {}
+  }
+  for (const [index, phase] of phaseTypes.entries()) {
+    const phaseLimit = index === phaseTypes.length - 1
+      ? practiceLimit
+      : phaseTargets[index];
+    while (practice.length < phaseLimit && takeRound(seenGroups, phase)) {}
+  }
+  if (practice.length < practiceLimit) {
     const remainingIds = new Set(practice.map((question) => question.id));
-    for (const question of seededShuffle(usableQuestions.filter((item) => !remainingIds.has(item.id)), seed + 163)) {
-      practice.push(question);
-      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) break;
+    for (const groups of [unseenGroups, seenGroups]) {
+      for (const phase of phaseTypes) {
+        for (const question of seededShuffle(phase.flatMap((type) => groups.get(type) || []), seed + practice.length + 163)) {
+          if (remainingIds.has(question.id)) continue;
+          practice.push(question);
+          remainingIds.add(question.id);
+          if (practice.length >= practiceLimit) break;
+        }
+        if (practice.length >= practiceLimit) break;
+      }
+      if (practice.length >= practiceLimit) break;
     }
   }
-  return [...infoQuestions.slice(0, explanationCount), ...seededShuffle(practice, seed + 97)].slice(0, LESSON_QUESTION_LIMIT);
+  return [...infoQuestions.slice(0, explanationCount), ...practice].slice(0, LESSON_QUESTION_LIMIT);
 }
 
 function hashText(value) {

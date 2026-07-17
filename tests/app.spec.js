@@ -227,6 +227,40 @@ test("every lesson produces a valid 20-step session", async ({ page }) => {
   }
 });
 
+test("normal lesson sessions teach before asking harder production questions", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const recognitionTypes = new Set(["meaning", "image-choice", "listen-choice", "document-choice"]);
+    const hardTypes = new Set(["fill-gap", "situation", "sequence", "build", "short-input"]);
+    return window.NEDERURDU_CHAPTERS
+      .flatMap((chapter) => chapter.lessons)
+      .filter((lesson) => lesson.kind !== "mission" && !lesson.reviewKind)
+      .map((lesson) => {
+        const questions = buildSessionQuestions(lesson);
+        const firstHardIndex = questions.findIndex((question) => hardTypes.has(question.type));
+        const recognitionBeforeHard = firstHardIndex < 0
+          ? questions.filter((question) => recognitionTypes.has(question.type)).length
+          : questions.slice(0, firstHardIndex).filter((question) => recognitionTypes.has(question.type)).length;
+        return {
+          id: lesson.id,
+          count: questions.length,
+          firstType: questions[0]?.type || "",
+          firstHardIndex,
+          recognitionBeforeHard,
+          types: questions.map((question) => question.type)
+        };
+      })
+      .filter((lesson) => (
+        lesson.count !== 20
+        || lesson.firstType !== "uitleg"
+        || lesson.firstHardIndex < 8
+        || lesson.recognitionBeforeHard < 6
+      ));
+  });
+
+  expect(audit).toEqual([]);
+});
+
 test("quiz check button enables and feedback appears", async ({ page }) => {
   await openCleanApp(page);
   await page.evaluate(() => window.startLesson("a0-letters-1"));
