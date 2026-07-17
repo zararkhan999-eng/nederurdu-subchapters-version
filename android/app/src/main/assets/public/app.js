@@ -589,13 +589,17 @@ function renderIcon(name, className = "") {
 function renderProgressHeader() {
   return `
     <header class="progress-header" aria-label="زبان">
+      <div class="brand-lockup">
+        <img class="header-logo" src="icon.svg" alt="" />
+        <span class="brand-lockup-copy">
+          <strong class="latin">NederUrdu</strong>
+          <small>روزمرہ Nederlands</small>
+        </span>
+      </div>
       <div class="language-pair">
         <span class="language-dot">NL</span>
-        <strong>Nederlands</strong>
-        <span aria-hidden="true">→</span>
-        <strong>اردو</strong>
+        <span class="language-copy"><strong>Nederlands</strong><small>اردو میں سیکھیں</small></span>
       </div>
-      <img class="header-logo" src="icon.svg" alt="" />
     </header>
   `;
 }
