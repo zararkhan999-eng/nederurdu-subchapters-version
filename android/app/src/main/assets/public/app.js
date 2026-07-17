@@ -593,24 +593,34 @@ function renderIcon(name, className = "") {
     image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 4"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/>',
     chevron: '<path d="m7 9 5 5 5-5"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    spark: '<path d="m12 3 1.35 4.15L17.5 8.5l-4.15 1.35L12 14l-1.35-4.15L6.5 8.5l4.15-1.35L12 3Z"/><path d="m18 14 .75 2.25L21 17l-2.25.75L18 20l-.75-2.25L15 17l2.25-.75L18 14Z"/>',
+    flag: '<path d="M5 21V4M5 5h11l-2 3 2 3H5"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 10h18"/>',
     trash: '<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/>'
   };
   return `<svg class="ui-icon ${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
 }
 
 function renderProgressHeader() {
+  const activeDays = progress.practiceDays.length;
   return `
     <header class="progress-header" aria-label="زبان">
       <div class="brand-lockup">
         <img class="header-logo" src="icon.svg" alt="" />
         <span class="brand-lockup-copy">
           <strong class="latin">NederUrdu</strong>
-          <small>روزمرہ Nederlands</small>
+          <small>اردو سے Nederlands تک</small>
         </span>
       </div>
-      <div class="language-pair">
-        <span class="language-dot">NL</span>
-        <span class="language-copy"><strong>Nederlands</strong><small>اردو میں سیکھیں</small></span>
+      <div class="header-journey" aria-label="سیکھنے کی زبانیں">
+        <span class="journey-language"><b>اردو</b><small>سمجھیں</small></span>
+        <span class="journey-line" aria-hidden="true"><i></i></span>
+        <span class="journey-language latin"><b>NL</b><small>Nederlands</small></span>
+      </div>
+      <div class="header-days" title="مشق کے دن">
+        ${renderIcon("calendar")}
+        <span><strong class="latin">${activeDays}</strong><small>دن</small></span>
       </div>
     </header>
   `;
@@ -623,35 +633,48 @@ function renderHome() {
   const total = chapter.lessons.length || 1;
   const chapterPercent = Math.round((completed / total) * 100);
   const beginnerFirstHome = isBeginnerFirstHome();
+  const dailyVisual = getVisualForLesson(nextLesson);
   activeLessonId = nextLesson.id;
 
   return `
     <main class="learn-screen ${beginnerFirstHome ? "beginner-home" : ""}">
       ${renderProgressHeader()}
-      <section class="today-panel">
-        <div class="today-main">
-          <div class="today-copy">
-            <span class="eyeline">${beginnerFirstHome ? "شروع سے" : "آج کا سبق"}</span>
-            <h1>${getShortLessonTitle(nextLesson)}</h1>
-            <p>${beginnerFirstHome ? "آج صرف پہلا سبق کریں۔ پہلے آواز سنیں، پھر لفظ پہچانیں۔" : nextLesson.description}</p>
+      <aside class="home-rail">
+        <section class="today-panel">
+          <div class="mission-topline">
+            <span class="eyeline">${beginnerFirstHome ? "آپ کا پہلا قدم" : "آج کی سمت"}</span>
+            <span class="mission-level latin">${chapter.id.toUpperCase()} · ${String(getLessonIndexInChapter(nextLesson.id, chapter) + 1).padStart(2, "0")}</span>
           </div>
-          <div class="today-emblem" aria-hidden="true">
-            <span>${renderIcon(beginnerFirstHome ? "speaker" : "play")}</span>
-            <strong class="latin">20</strong>
-            <small>چھوٹے قدم</small>
+          <div class="today-main">
+            <div class="today-copy">
+              <h1>${getShortLessonTitle(nextLesson)}</h1>
+              <p>${beginnerFirstHome ? "آواز سنیں، لفظ پہچانیں، اور اپنا پہلا Nederlands جملہ بنائیں۔" : nextLesson.description}</p>
+              <div class="mission-details">
+                <span>${renderIcon("spark")}<b class="latin">20</b> چھوٹے قدم</span>
+                <span>${renderIcon("speaker")} آواز کے ساتھ</span>
+              </div>
+            </div>
+            <div class="mission-art" aria-hidden="true">
+              ${renderVisual(dailyVisual, "mission-visual")}
+              <span class="mission-art-seal">${renderIcon("flag")}</span>
+            </div>
           </div>
+          <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
+            <span class="button-icon">${renderIcon("play")}</span>
+            <span>${beginnerFirstHome ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span>
+            <span class="button-progress latin">${chapterPercent}%</span>
+          </button>
+          ${beginnerFirstHome ? "" : `<div class="today-stats">
+            <span><strong class="latin">${completed}/${total}</strong><small>مکمل</small></span>
+            <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
+            <span><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></span>
+          </div>`}
+        </section>
+        <div class="rail-note">
+          <span>${renderIcon("spark")}</span>
+          <p><strong>روز تھوڑا، مگر مسلسل</strong><small>ایک سبق تقریباً پانچ منٹ میں مکمل ہوتا ہے۔</small></p>
         </div>
-        ${beginnerFirstHome ? "" : `<div class="today-stats">
-          <span><strong class="latin">${completed}/${total}</strong><small>باب</small></span>
-          <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
-          <span><strong class="latin">${progress.practiceDays.length}</strong><small>دن</small></span>
-        </div>`}
-        <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
-          <span class="button-icon">${renderIcon("play")}</span>
-          <span>${beginnerFirstHome ? "پہلا سبق جاری رکھیں" : "جاری رکھیں"}</span>
-          <span class="button-progress latin">${chapterPercent}%</span>
-        </button>
-      </section>
+      </aside>
       <div class="home-world">
         <div class="world-sky" aria-hidden="true">
           <span class="cloud cloud-one"></span>
@@ -668,12 +691,12 @@ function renderHome() {
 }
 
 function renderChapterSwitcher() {
-  return `<div class="chapter-switcher" aria-label="باب منتخب کریں">${chapters.map((chapter) => `
+  return `<div class="chapter-switcher-wrap"><div class="chapter-switcher-label"><span>اپنی سطح</span><small>ایک راستہ منتخب کریں</small></div><div class="chapter-switcher" aria-label="باب منتخب کریں">${chapters.map((chapter) => `
     <button class="chapter-chip ${chapter.id === selectedChapterId ? "active" : ""}" data-action="chapter" data-chapter="${chapter.id}">
       <strong class="latin">${chapter.id.toUpperCase()}</strong>
       <small class="latin">${chapterCompletedCount(chapter)}/${chapter.lessons.length}</small>
     </button>
-  `).join("")}</div>`;
+  `).join("")}</div></div>`;
 }
 
 function getSubchapterForLesson(chapter, lessonId) {
@@ -684,16 +707,17 @@ function renderUnitCard(chapter, nextLesson) {
   const section = getSubchapterForLesson(chapter, nextLesson.id);
   const completed = chapterCompletedCount(chapter);
   const percent = Math.round((completed / Math.max(1, chapter.lessons.length)) * 100);
+  const visual = getVisualForSubchapter(section || { id: chapter.id, title: chapter.title, goal: chapter.subtitle, practice: "" }, nextLesson);
   return `
     <button class="unit-card chapter-${chapter.id}" data-action="preview" data-lesson="${nextLesson.id}">
-      <span class="unit-card-icon">${renderIcon("notebook")}</span>
+      <span class="unit-card-visual">${renderVisual(visual, "unit-visual")}</span>
       <span class="unit-card-copy">
-        <small>${chapter.title}</small>
+        <small><b class="latin">${chapter.id.toUpperCase()}</b>${chapter.title}</small>
         <strong>${section?.title || nextLesson.unit}</strong>
         <span>${section?.goal || nextLesson.description}</span>
-        <span class="unit-card-meter" aria-hidden="true"><i style="width:${percent}%"></i></span>
+        <span class="unit-card-footer"><span class="unit-card-meter" aria-hidden="true"><i style="width:${percent}%"></i></span><b class="latin">${percent}%</b></span>
       </span>
-      <span class="unit-card-arrow" aria-hidden="true">‹</span>
+      <span class="unit-card-arrow" aria-hidden="true">${renderIcon("arrow")}</span>
     </button>
   `;
 }
@@ -712,7 +736,7 @@ function renderLessonPath(chapter, nextLesson) {
   let pathIndex = 0;
   return `<section class="lesson-path path-stage" aria-label="سبق کا راستہ">
     <div class="path-overview">
-      <div><span class="eyeline">سیکھنے کا راستہ</span><strong>${remainingLessons ? `${remainingLessons} سبق باقی` : "باب مکمل"}</strong></div>
+      <div><span class="path-kicker">آپ کا نقشہ</span><strong>${remainingLessons ? `${remainingLessons} سبق باقی` : "باب مکمل"}</strong><small>ہر قدم پچھلے سبق کو مضبوط کرتا ہے</small></div>
       <span class="path-overview-mark">${renderIcon(remainingLessons ? "book" : "check")}</span>
     </div>
     ${visibleGroups.map(({ section, lessons, index: sectionIndex }) => `
@@ -739,8 +763,8 @@ function renderLessonSectionDivider(title, index, lessons) {
   return `
     <div class="section-divider">
       <span class="section-number latin">${String(index + 1).padStart(2, "0")}</span>
-      <span class="section-copy"><strong>${title}</strong><small>${completed}/${lessons.length} مکمل</small></span>
-      <span class="section-progress" aria-hidden="true"><i style="width:${percent}%"></i></span>
+      <span class="section-copy"><small>حصہ ${index + 1}</small><strong>${title}</strong></span>
+      <span class="section-status"><b class="latin">${completed}/${lessons.length}</b><span class="section-progress" aria-hidden="true"><i style="width:${percent}%"></i></span></span>
     </div>
   `;
 }
@@ -753,8 +777,9 @@ function renderLessonNode(lesson, index, position, current, pathRow) {
   const icon = completed ? "check" : locked ? "lock" : current ? "play" : "book";
   return `
     <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}" style="--path-row:${pathRow}">
-      <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}">${renderIcon(icon)}</button>
-      <div class="node-copy"><strong>${getShortLessonTitle(lesson)}</strong><span>${completed ? "مکمل" : current ? "اگلا سبق" : locked ? "بند" : "دستیاب"}</span></div>
+      <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}"><span class="lesson-node-index latin">${String(index + 1).padStart(2, "0")}</span><span class="lesson-node-icon">${renderIcon(icon)}</span></button>
+      <div class="node-copy"><span>${completed ? "مکمل سبق" : current ? "ابھی سیکھیں" : locked ? "اگلا مرحلہ" : "دستیاب"}</span><strong>${getShortLessonTitle(lesson)}</strong><small>${getLessonRunCount(lesson)} سوال · ${lesson.xp || 0} پوائنٹس</small></div>
+      <span class="node-trailing" aria-hidden="true">${locked ? renderIcon("lock") : renderIcon("arrow")}</span>
       ${selected ? renderLessonStartCard(lesson, index) : ""}
     </div>
   `;
@@ -769,9 +794,10 @@ function renderLessonStartCard(lesson, index) {
   return `
     <article class="lesson-start-card">
       <span class="lesson-card-pointer" aria-hidden="true"></span>
+      <span class="lesson-card-kicker">منتخب سبق · <b class="latin">${String(index + 1).padStart(2, "0")}</b></span>
       <strong>${getShortLessonTitle(lesson)}</strong>
-      <small>سبق ${index + 1} از ${getCurrentLessons().length}</small>
-      <button data-action="start" data-lesson="${lesson.id}">${done ? "دوبارہ کریں" : "شروع کریں"}</button>
+      <small>${getLessonRunCount(lesson)} سوال · آواز اور فوری مدد کے ساتھ</small>
+      <button data-action="start" data-lesson="${lesson.id}"><span>${done ? "دوبارہ کریں" : "شروع کریں"}</span>${renderIcon("arrow")}</button>
     </article>
   `;
 }
