@@ -13,6 +13,7 @@ async function openCleanApp(page, progress = {}) {
       totalXp: 0,
       practiceDays: [],
       mistakes: [],
+      speechProfileVersion: 2,
       settings: {
         soundEffects: true,
         pronunciation: true,
@@ -326,6 +327,39 @@ test("slow audio setting lowers speech synthesis rate", async ({ page }) => {
   });
   expect(rate).toBeGreaterThan(0);
   expect(rate).toBeLessThan(0.88);
+});
+
+test("natural speech prefers an enhanced local Netherlands voice", async ({ page }) => {
+  await openCleanApp(page);
+
+  const voice = await page.evaluate(() => window.selectPreferredDutchVoice([
+    { name: "Generic Dutch", lang: "nl-BE", localService: true },
+    { name: "Cloud Neural Dutch", lang: "nl-NL", localService: false },
+    { name: "Xander Enhanced", lang: "nl-NL", localService: true }
+  ]));
+
+  expect(voice.name).toBe("Xander Enhanced");
+});
+
+test("native speech receives cleaned text and tuned pacing", async ({ page }) => {
+  await openCleanApp(page);
+
+  const spoken = await page.evaluate(() => {
+    window.__nativeSpeech = null;
+    window.NederUrduTts = {
+      speakNatural(text, rate, pitch) {
+        window.__nativeSpeech = { text, rate, pitch };
+        return true;
+      }
+    };
+    window.speakDutch("Hoi | hoe gaat het?");
+    return window.__nativeSpeech;
+  });
+
+  expect(spoken.text).toBe("Hoi, hoe gaat het?");
+  expect(spoken.rate).toBeGreaterThanOrEqual(0.7);
+  expect(spoken.rate).toBeLessThan(0.9);
+  expect(spoken.pitch).toBeCloseTo(0.98, 2);
 });
 
 test("lesson completion marks its path node complete", async ({ page }) => {

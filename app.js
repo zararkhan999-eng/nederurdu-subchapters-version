@@ -300,6 +300,7 @@ const wordHelpGlossary = {
 
 const LESSON_QUESTION_LIMIT = 20;
 const REVIEW_QUESTION_LIMIT = 20;
+const SPEECH_PROFILE_VERSION = 2;
 
 const defaultProgress = {
   completedLessons: [],
@@ -315,9 +316,10 @@ const defaultProgress = {
     pronunciation: true,
     beginnerMode: true,
     largeText: false,
-    slowAudio: true,
+    slowAudio: false,
     extraUrduHelp: true
   },
+  speechProfileVersion: SPEECH_PROFILE_VERSION,
   selectedChapterId: "a0",
   lastLessonId: "a0-letters-1"
 };
@@ -346,16 +348,21 @@ let matchedPairIds = [];
 let matchPairError = "";
 let typedAnswer = "";
 let typedFallback = false;
+let preferredDutchVoice = null;
 
 function loadProgress() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const storedSettings = stored?.settings || {};
+    const needsSpeechMigration = stored?.speechProfileVersion !== SPEECH_PROFILE_VERSION;
     return {
       ...defaultProgress,
       ...stored,
+      speechProfileVersion: SPEECH_PROFILE_VERSION,
       settings: {
         ...defaultProgress.settings,
-        ...(stored?.settings || {})
+        ...storedSettings,
+        slowAudio: needsSpeechMigration ? false : Boolean(storedSettings.slowAudio)
       }
     };
   } catch {
@@ -2184,26 +2191,84 @@ function isDutchText(value) {
   return /[A-Za-zÀ-ÿ]/.test(value) && !/[\u0600-\u06ff]/.test(value);
 }
 
+function normalizeDutchSpeechText(value) {
+  return String(value || "")
+    .replaceAll("___", "")
+    .replace(/\s*\|\s*/g, ", ")
+    .replace(/\s*[–—]\s*/g, ", ")
+    .replace(/\s*&\s*/g, " en ")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.!?])/g, "$1")
+    .trim();
+}
+
+function scoreDutchVoice(voice) {
+  const language = String(voice?.lang || "").toLowerCase().replace("_", "-");
+  if (!language.startsWith("nl")) return Number.NEGATIVE_INFINITY;
+
+  const name = String(voice?.name || "").toLowerCase();
+  let score = language === "nl-nl" ? 120 : language.startsWith("nl-nl") ? 110 : 80;
+  if (voice?.localService) score += 35;
+  if (/(natural|neural|enhanced|premium|studio)/.test(name)) score += 50;
+  if (/(google|microsoft|siri|xander|claire)/.test(name)) score += 16;
+  if (/(compact|espeak)/.test(name)) score -= 30;
+  return score;
+}
+
+function selectPreferredDutchVoice(voices = []) {
+  return [...voices]
+    .filter((voice) => Number.isFinite(scoreDutchVoice(voice)))
+    .sort((left, right) => scoreDutchVoice(right) - scoreDutchVoice(left)
+      || String(left.name || "").localeCompare(String(right.name || "")))[0] || null;
+}
+
+function refreshPreferredDutchVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  preferredDutchVoice = selectPreferredDutchVoice(window.speechSynthesis.getVoices());
+  return preferredDutchVoice;
+}
+
+function getDutchSpeechRate(text, forceSlow = false) {
+  const cleanText = normalizeDutchSpeechText(text);
+  const singleLetter = cleanText.length === 1;
+  const singleWord = !/\s/.test(cleanText);
+  const slow = progress.settings.slowAudio || forceSlow;
+  if (slow) return singleLetter ? 0.7 : singleWord ? 0.76 : 0.8;
+  return singleLetter ? 0.82 : singleWord ? 0.92 : 0.96;
+}
+
 function speakDutch(text, forceSlow = false) {
   if (!progress.settings.pronunciation || !text) return;
 
-  if (window.NederUrduTts?.speak?.(text)) {
-    return;
+  const spokenText = normalizeDutchSpeechText(text);
+  if (!spokenText) return;
+  const rate = getDutchSpeechRate(spokenText, forceSlow);
+  const pitch = 0.98;
+
+  try {
+    if (window.NederUrduTts?.speakNatural?.(spokenText, rate, pitch)) return;
+    if (window.NederUrduTts?.speak?.(spokenText)) return;
+  } catch {
+    // Continue with the browser voice when the native bridge is unavailable.
   }
 
   if (!("speechSynthesis" in window)) return;
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  const dutchVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith("nl"));
+  const utterance = new SpeechSynthesisUtterance(spokenText);
+  const dutchVoice = refreshPreferredDutchVoice();
   utterance.lang = "nl-NL";
-  const baseRate = text.length === 1 ? 0.72 : 0.88;
-  utterance.rate = (progress.settings.slowAudio || forceSlow) ? Math.max(0.58, baseRate - 0.18) : baseRate;
-  utterance.pitch = 1;
+  utterance.rate = rate;
+  utterance.pitch = pitch;
+  utterance.volume = 1;
   if (dutchVoice) utterance.voice = dutchVoice;
 
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
+}
+
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.addEventListener?.("voiceschanged", refreshPreferredDutchVoice);
+  refreshPreferredDutchVoice();
 }
 
 function getAudioContext() {
