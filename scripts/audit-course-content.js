@@ -58,6 +58,45 @@ function visualId(visual) {
   return visual.id || text(visual.src).split("/").pop().replace(/\.[^.]+$/, "");
 }
 
+function buildVisualLookup(visuals) {
+  const terms = new Map();
+  const byId = new Map();
+  for (const visual of visuals) {
+    const id = visualId(visual);
+    byId.set(id, visual);
+    for (const term of [id.replaceAll("-", " "), visual.canonicalTerm, ...(visual.dutchTerms || [])]) {
+      const key = normalize(term);
+      if (key) terms.set(key, id);
+    }
+  }
+  return { terms, byId };
+}
+
+function resolveVisualTerm(value, lookup) {
+  const normalized = normalize(value);
+  const withoutArticle = normalized.replace(/^(de|het|een|geen)\s+/, "");
+  return lookup.terms.get(normalized) || lookup.terms.get(withoutArticle) || "";
+}
+
+const imagePersonTerms = new Set([
+  "man", "vrouw", "kind", "kinderen", "jongen", "meisje", "familie",
+  "vader", "moeder", "broer", "zus", "zoon", "dochter", "ouder",
+  "buurman", "buurvrouw", "collega", "docent", "dokter", "monteur",
+  "bezorger", "baas", "leidinggevende"
+]);
+
+function imageOptionGroup(visualIdValue, term, lookup) {
+  const normalizedTerm = normalize(term);
+  const normalizedVisualId = normalize(visualIdValue).replace(/\s+/g, "-");
+  if (imagePersonTerms.has(normalizedTerm) || imagePersonTerms.has(normalizedVisualId)) return "person";
+  if (["appel", "brood", "kaas", "fruit", "groente", "rijst", "water", "melk", "koffie", "thee", "soep", "vlees"].includes(normalizedTerm)) return "food";
+  if (["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(normalizedTerm) || ["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(normalizedVisualId)) return "transport";
+  if (["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(normalizedTerm) || ["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(normalizedVisualId)) return "home";
+  if (["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(normalizedTerm) || ["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(normalizedVisualId)) return "place";
+  if (["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(normalizedTerm) || ["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(normalizedVisualId)) return "health";
+  return lookup.byId.get(visualIdValue)?.kind || "other";
+}
+
 function addFinding(findings, severity, chapter, lesson, question, rule, message, detail = "") {
   findings.push({
     severity,
@@ -74,7 +113,7 @@ function addFinding(findings, severity, chapter, lesson, question, rule, message
   });
 }
 
-function auditQuestion(findings, chapter, lesson, question, visualIds) {
+function auditQuestion(findings, chapter, lesson, question, visualIds, visualLookup) {
   const prompt = text(question.prompt);
   const answer = text(question.answer);
 
@@ -169,6 +208,17 @@ function auditQuestion(findings, chapter, lesson, question, visualIds) {
     if (/[,.?!]/.test(answer) || words(answer).length > 3) {
       addFinding(findings, "error", chapter, lesson, question, "unsafe-image-answer", "Image-choice answer is phrase-like or punctuated.");
     }
+    const answerVisual = question.visualId || resolveVisualTerm(answer, visualLookup);
+    const answerGroup = imageOptionGroup(answerVisual, answer, visualLookup);
+    for (const option of question.options || []) {
+      if (normalize(option) === normalize(answer)) continue;
+      const optionVisual = resolveVisualTerm(option, visualLookup);
+      if (answerVisual && optionVisual && answerVisual === optionVisual) {
+        addFinding(findings, "error", chapter, lesson, question, "image-option-overlap", "Image-choice has two options that resolve to the same picture.", `${answer} / ${option}`);
+      } else if (imageOptionGroup(optionVisual, option, visualLookup) === answerGroup) {
+        addFinding(findings, "error", chapter, lesson, question, "image-option-overlap", "Image-choice options are too visually similar.", `${answer} / ${option}`);
+      }
+    }
   }
 
   if (question.type === "situation") {
@@ -213,7 +263,7 @@ function auditConsistency(findings, chapter, lesson) {
   }
 }
 
-function auditChapter(chapter, visualIds) {
+function auditChapter(chapter, visualIds, visualLookup) {
   const findings = [];
   const lessonIds = new Set();
   for (const lesson of chapter.lessons || []) {
@@ -230,7 +280,7 @@ function auditChapter(chapter, visualIds) {
         addFinding(findings, "error", chapter, lesson, question, "duplicate-question-id", "Lesson contains duplicate question id.");
       }
       questionIds.add(question.id);
-      auditQuestion(findings, chapter, lesson, question, visualIds);
+      auditQuestion(findings, chapter, lesson, question, visualIds, visualLookup);
     }
     auditConsistency(findings, chapter, lesson);
   }
@@ -260,9 +310,10 @@ function summarize(chapter, findings) {
 
 const { chapters, visuals } = loadCourse();
 const visualIds = new Set(visuals.map(visualId));
+const visualLookup = buildVisualLookup(visuals);
 const selected = chapters.filter((chapter) => !chapterFilter || chapter.id === chapterFilter);
 const results = selected.map((chapter) => {
-  const findings = auditChapter(chapter, visualIds);
+  const findings = auditChapter(chapter, visualIds, visualLookup);
   return { summary: summarize(chapter, findings), findings };
 });
 

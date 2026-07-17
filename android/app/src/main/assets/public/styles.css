@@ -3225,12 +3225,15 @@ body {
 }
 
 .quiz-visual {
+  width: min(100%, 320px);
+  justify-self: center;
   border-radius: 22px;
   border-color: rgba(28, 176, 246, 0.14);
 }
 
 .quiz-visual img {
-  max-height: 178px;
+  aspect-ratio: 1 / 1;
+  max-height: min(42vh, 260px);
   object-fit: contain;
   background: #f4fbff;
 }

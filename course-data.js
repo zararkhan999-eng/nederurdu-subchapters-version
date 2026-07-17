@@ -1182,11 +1182,69 @@ function singleWordFillGap(word) {
   return { prompt: simpleFillSentenceForWord(answer), missing: answer };
 }
 
+const imageOptionFallbacks = [
+  { dutch: "huis", urdu: "گھر", visualId: "huis" },
+  { dutch: "bus", urdu: "بس", visualId: "bus" },
+  { dutch: "brood", urdu: "روٹی", visualId: "brood" },
+  { dutch: "boek", urdu: "کتاب", visualId: "boek" },
+  { dutch: "dokter", urdu: "ڈاکٹر", visualId: "dokter" },
+  { dutch: "station", urdu: "اسٹیشن", visualId: "station" },
+  { dutch: "lamp", urdu: "لیمپ", visualId: "lamp" },
+  { dutch: "water", urdu: "پانی", visualId: "water" },
+  { dutch: "telefoon", urdu: "فون", visualId: "telefoon" },
+  { dutch: "school", urdu: "اسکول", visualId: "school" },
+  { dutch: "fiets", urdu: "سائیکل", visualId: "fiets" },
+  { dutch: "appel", urdu: "سیب", visualId: "appel" }
+];
+
+const imagePersonTerms = new Set([
+  "man", "vrouw", "kind", "kinderen", "jongen", "meisje", "familie",
+  "vader", "moeder", "broer", "zus", "zoon", "dochter", "ouder",
+  "buurman", "buurvrouw", "collega", "docent", "dokter", "monteur",
+  "bezorger", "baas", "leidinggevende"
+]);
+
+function visualGroupForOption(concept) {
+  const value = optionKey(concept?.dutch || concept);
+  const visualId = optionKey(concept?.visualId || "").replace(/\s+/g, "-");
+  if (imagePersonTerms.has(value) || imagePersonTerms.has(visualId)) return "person";
+  if (["appel", "brood", "kaas", "fruit", "groente", "rijst", "water", "melk", "koffie", "thee", "soep", "vlees"].includes(value)) return "food";
+  if (["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(value) || ["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"].includes(visualId)) return "transport";
+  if (["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(value) || ["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"].includes(visualId)) return "home";
+  if (["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(value) || ["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"].includes(visualId)) return "place";
+  if (["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(value) || ["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"].includes(visualId)) return "health";
+  return "other";
+}
+
+function imageOptions(concepts, index, key = "dutch") {
+  const concept = concepts[index % concepts.length];
+  const answer = concept[key];
+  const answerGroup = visualGroupForOption(concept);
+  const answerVisual = optionKey(concept.visualId || fallbackVisualIdForDutch(answer) || "");
+  const pool = uniqueOptions([...concepts, ...imageOptionFallbacks].map((item) => item[key]))
+    .map((value) => {
+      const source = [...concepts, ...imageOptionFallbacks].find((item) => optionKey(item[key]) === optionKey(value));
+      return source ? { ...source, [key]: value } : { [key]: value, dutch: value, visualId: fallbackVisualIdForDutch(value) };
+    })
+    .filter((item) => {
+      if (optionKey(item[key]) === optionKey(answer)) return false;
+      if (answerVisual && optionKey(item.visualId || fallbackVisualIdForDutch(item[key]) || "") === answerVisual) return false;
+      return visualGroupForOption(item) !== answerGroup;
+    });
+  return [answer, ...rotate(pool.map((item) => item[key]), index + 1).slice(0, 2)];
+}
+
 function makeImageRevision(lesson, index) {
   const sources = meaningSources(lesson);
   const source = sources[index % sources.length];
   if (!source) return null;
-  const options = takeOptions(sources.map((item) => item.prompt), source.prompt);
+  const concepts = sources.map((item) => ({
+    dutch: item.prompt,
+    urdu: item.answer,
+    visualId: item.visualId || item.visual || fallbackVisualIdForDutch(item.prompt)
+  })).filter((item) => item.visualId);
+  const sourceIndex = Math.max(0, concepts.findIndex((item) => optionKey(item.dutch) === optionKey(source.prompt)));
+  const options = imageOptions(concepts.length ? concepts : [{ dutch: source.prompt, urdu: source.answer, visualId: fallbackVisualIdForDutch(source.prompt) }], sourceIndex >= 0 ? sourceIndex : index, "dutch");
   if (options.length < 3) return null;
   return imageChoice(source.prompt, options, source.prompt, `${source.prompt} = ${source.answer}۔`);
 }
@@ -1573,7 +1631,7 @@ function makeA0DailyLesson({ id, unit, title, description, explanation, concepts
   for (let index = 0; index < 10; index += 1) {
     if (!visualConcepts.length) break;
     const concept = visualConcepts[index % visualConcepts.length];
-    const options = dailyOptions(visualConcepts, index, "dutch");
+    const options = imageOptions(visualConcepts, index, "dutch");
     questions.push({
       type: "image-choice",
       label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
@@ -2274,7 +2332,7 @@ function makeA1PracticalLesson({ id, unit, title, description, explanation, conc
       label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں",
       prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔",
       visualId: concept.visualId,
-      options: dailyOptions(visualConcepts, index, "dutch"),
+      options: imageOptions(visualConcepts, index, "dutch"),
       answer: concept.dutch,
       explain: `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔`
     });
@@ -2338,7 +2396,7 @@ function makeA2PracticalLesson({ id, unit, title, description, explanation, conc
   }
   for (let index = 0; index < 6; index += 1) {
     const concept = visualConcepts[index % visualConcepts.length];
-    questions.push({ type: "image-choice", label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں", prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔", visualId: concept.visualId, options: dailyOptions(visualConcepts, index, "dutch"), answer: concept.dutch, explain: `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔` });
+    questions.push({ type: "image-choice", label: "تصویر دیکھ کر صحیح Nederlands لفظ منتخب کریں", prompt: "تصویر دیکھیں اور صحیح لفظ چنیں۔", visualId: concept.visualId, options: imageOptions(visualConcepts, index, "dutch"), answer: concept.dutch, explain: `تصویر میں ${concept.urdu} ہے: ${concept.dutch}۔` });
   }
   for (let index = 0; index < 7; index += 1) {
     const concept = concepts[(index + 1) % concepts.length];
@@ -3644,7 +3702,10 @@ function buildGeneratedQuestion(type, concepts, index) {
       .map((item) => ({ ...item, visualId: item.visualId || fallbackVisualIdForDutch(item.dutch) }))
       .filter((item) => item.visualId);
     if (!visualConcepts.length) return null;
-    const visualSet = conceptOptions(visualConcepts, index, "dutch");
+    const visualSet = {
+      concept: visualConcepts[index % visualConcepts.length],
+      options: imageOptions(visualConcepts, index, "dutch")
+    };
     if (visualSet.options.length < 3) return null;
     return {
       type: "image-choice",
@@ -3863,7 +3924,7 @@ function makeMissionLesson(spec) {
           label: "تصویر دیکھ کر صحیح Nederlands منتخب کریں",
           prompt: "تصویر کے لیے صحیح لفظ منتخب کریں۔",
           visualId: concept.visualId,
-          options: missionOptions(spec.concepts, conceptIndex, "dutch"),
+          options: imageOptions(spec.concepts, conceptIndex, "dutch"),
           answer: concept.dutch,
           explain: `${concept.dutch} = ${concept.urdu}۔`,
           skillId: `${spec.id}-concept-${concept.id}`
