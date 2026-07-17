@@ -76,7 +76,7 @@ button {
   animation: launch-logo-reveal 4000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-body.launching .app-shell {
+.app-shell {
   animation: app-reveal 4000ms ease-out both;
 }
 
@@ -141,6 +141,7 @@ body.launching .app-shell {
   0%,
   62% {
     opacity: 0;
+    transform: scale(0.985);
   }
 
   82% {
@@ -149,6 +150,7 @@ body.launching .app-shell {
 
   100% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -413,16 +415,6 @@ body.launching .app-shell {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
-}
-
-.app-shell.screen-changing :where(
-  .hero-panel,
-  .preview-panel,
-  .result-panel,
-  .progress-panel,
-  .settings-panel,
-  .letters-panel
-) {
   animation: panel-enter 260ms ease-out both;
 }
 
@@ -3233,15 +3225,12 @@ body {
 }
 
 .quiz-visual {
-  width: min(100%, 320px);
-  justify-self: center;
   border-radius: 22px;
   border-color: rgba(28, 176, 246, 0.14);
 }
 
 .quiz-visual img {
-  aspect-ratio: 1 / 1;
-  max-height: min(42vh, 260px);
+  max-height: 178px;
   object-fit: contain;
   background: #f4fbff;
 }

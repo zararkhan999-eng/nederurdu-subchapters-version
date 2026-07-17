@@ -343,6 +343,7 @@ let audioContext = null;
 let activeReview = null;
 let pathCardLessonId = "";
 let pathExpanded = false;
+let lastRenderedScreen = "";
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -540,6 +541,8 @@ function getActiveLesson() {
 function render() {
   const app = document.querySelector("#app");
   applyDisplaySettings();
+  const screenChanged = screen !== lastRenderedScreen;
+  app.classList.toggle("screen-changing", screenChanged);
   try {
     app.innerHTML = `
       ${screen === "home" ? renderHome() : ""}
@@ -566,6 +569,7 @@ function render() {
     `;
   }
   bindEvents();
+  lastRenderedScreen = screen;
 }
 
 function applyDisplaySettings() {
