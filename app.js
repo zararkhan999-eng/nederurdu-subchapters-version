@@ -545,14 +545,37 @@ function renderProgressHeader() {
 function renderHome() {
   const chapter = getSelectedChapter();
   const nextLesson = getNextLessonForChapter(chapter);
+  const completed = chapterCompletedCount(chapter);
+  const total = chapter.lessons.length || 1;
   activeLessonId = nextLesson.id;
 
   return `
     <main class="learn-screen">
       ${renderProgressHeader()}
-      ${renderChapterSwitcher()}
-      ${renderUnitCard(chapter, nextLesson)}
-      ${renderLessonPath(chapter, nextLesson)}
+      <section class="today-panel">
+        <div class="today-copy">
+          <span class="eyeline">آج کا سبق</span>
+          <h1>${getShortLessonTitle(nextLesson)}</h1>
+          <p>${nextLesson.description}</p>
+        </div>
+        <div class="today-stats">
+          <span><strong class="latin">${completed}/${total}</strong><small>باب</small></span>
+          <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
+          <span><strong class="latin">${progress.practiceDays.length}</strong><small>دن</small></span>
+        </div>
+        <button class="primary-button" data-action="start" data-lesson="${nextLesson.id}">جاری رکھیں</button>
+      </section>
+      <div class="home-world">
+        <div class="world-sky" aria-hidden="true">
+          <span class="cloud cloud-one"></span>
+          <span class="cloud cloud-two"></span>
+          <span class="hill hill-one"></span>
+          <span class="hill hill-two"></span>
+        </div>
+        ${renderChapterSwitcher()}
+        ${renderUnitCard(chapter, nextLesson)}
+        ${renderLessonPath(chapter, nextLesson)}
+      </div>
     </main>
   `;
 }
@@ -583,7 +606,7 @@ function renderLessonPath(chapter, nextLesson) {
     ? chapter.subchapters.map((section) => ({ section, lessons: subchapterLessons(section) }))
     : [{ section: { title: chapter.title }, lessons: chapter.lessons }];
   let pathIndex = 0;
-  return `<section class="lesson-path" aria-label="سبق کا راستہ">${groups.map(({ section, lessons }) => `
+  return `<section class="lesson-path path-stage" aria-label="سبق کا راستہ">${groups.map(({ section, lessons }) => `
     ${renderLessonSectionDivider(section.title)}
     <div class="path-group">${lessons.map((lesson, groupLessonIndex) => {
       const lessonIndex = chapter.lessons.findIndex((item) => item.id === lesson.id);
@@ -789,6 +812,10 @@ function renderLesson() {
     <main class="quiz-screen">
       ${renderQuizTopBar(percentage, activeQuestionIndex + 1, questions.length)}
       <section class="quiz-content">
+        <div class="question-meta">
+          <span>${lesson.reviewKind ? "دہرائی" : getShortLessonTitle(lesson)}</span>
+          <b class="latin">${percentage}%</b>
+        </div>
         <h1 class="question-title">${getQuestionTitle(question)}</h1>
         ${renderQuestionCard(question, visual)}
       </section>
@@ -1210,16 +1237,38 @@ function renderComplete() {
 }
 
 function renderPracticeScreen() {
+  const today = getReviewConfig("today");
   const mistakes = getReviewConfig("mistakes");
+  const old = getReviewConfig("old");
   return `
-    <main class="utility-screen practice-screen mistake-screen">
+    <main class="utility-screen practice-screen review-screen">
       ${renderProgressHeader()}
-      <div class="utility-heading"><span>${renderIcon("mistake")}</span><div><h1>غلطیوں کی مشق</h1><p>صرف وہ سوالات جو پہلے مشکل لگے</p></div></div>
-      ${mistakes.questions.length ? `
-        <div class="mistake-ready"><strong class="latin">${mistakes.questions.length}</strong><span>سوال دوبارہ تیار ہیں</span></div>
-        <button class="primary-button" data-action="review" data-review-kind="mistakes">مشق شروع کریں</button>
-      ` : `<div class="empty-state"><span>${renderIcon("check")}</span><h2>ابھی کوئی غلطی نہیں</h2><p>نیا سبق کریں، غلط سوال خود یہاں جمع ہو جائے گا۔</p></div>`}
+      <section class="review-hero">
+        <div class="utility-heading"><span>${renderIcon("dumbbell")}</span><div><h1>دہرائی</h1><p>آج کی مشق، پرانے سبق، اور مشکل سوالات ایک جگہ</p></div></div>
+        <div class="review-total"><strong class="latin">${today.questions.length + mistakes.questions.length + old.questions.length}</strong><span>تیار سوالات</span></div>
+      </section>
+      <div class="review-hub-grid">
+        ${renderReviewHubCard("today", today, "dumbbell")}
+        ${renderReviewHubCard("mistakes", mistakes, "mistake")}
+        ${renderReviewHubCard("old", old, "book")}
+        <button class="review-hub-card accent-blue" data-action="letters">
+          <span class="review-hub-icon">${renderIcon("alphabet")}</span>
+          <strong>Nederlands حروف</strong>
+          <small>سنیں اور دہرائیں</small>
+        </button>
+      </div>
     </main>
+  `;
+}
+
+function renderReviewHubCard(kind, config, icon) {
+  const disabled = !config.questions.length;
+  return `
+    <button class="review-hub-card ${disabled ? "disabled" : ""}" data-action="review" data-review-kind="${kind}" ${disabled ? "disabled" : ""}>
+      <span class="review-hub-icon">${renderIcon(icon)}</span>
+      <strong>${config.title}</strong>
+      <small>${disabled ? config.empty : `${config.questions.length} سوالات`}</small>
+    </button>
   `;
 }
 
@@ -1285,6 +1334,7 @@ function renderSettings() {
     <section class="settings-panel">
       <h1>ترتیبات</h1>
       <div class="settings-links">
+        ${renderSettingsLink("practice", "dumbbell", "دہرائی", "آج، غلطیاں، اور پرانے سبق")}
         ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "ملے جلے 20 سوال", "today")}
         ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
         ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
@@ -1320,9 +1370,10 @@ function renderBottomNav() {
   if (["lesson", "complete"].includes(screen)) return "";
   return `
     <nav class="bottom-nav" aria-label="اصل راستے">
-      ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters", "progress"].includes(screen))}
-      ${renderNavButton("practice", "mistake", "غلطیاں", screen === "practice")}
-      ${renderNavButton("home", "book", "گھر", screen === "home" || screen === "preview")}
+      ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters"].includes(screen))}
+      ${renderNavButton("progress", "chart", "پیش رفت", screen === "progress")}
+      ${renderNavButton("practice", "dumbbell", "دہرائی", screen === "practice")}
+      ${renderNavButton("home", "book", "سبق", screen === "home" || screen === "preview")}
     </nav>
   `;
 }

@@ -34,7 +34,7 @@ test("home loads and every chapter remains available", async ({ page }) => {
   await expect(page.locator("#app")).toBeVisible();
   await expect(page.locator("body")).not.toContainText(/(?:uncaught|syntaxerror|referenceerror|application error)/i);
   await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
-  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(4);
   await expect(page.locator('[data-action="preview"]:visible').first()).toBeEnabled();
   await expect(page.locator("body")).not.toContainText(/(?:XP|streak|heart|trophy|انعام)/i);
   await expect(page.locator("body")).not.toContainText(/\b(?:practice|lesson|chapter|progress|settings|home|today|mistake|review|next|continue|check)\b/i);
@@ -217,11 +217,14 @@ test("quiz check button enables and feedback appears", async ({ page }) => {
   await expect(page.locator('[data-action="next"]')).toBeEnabled();
 });
 
-test("the three bottom navigation destinations open", async ({ page }) => {
+test("the four bottom navigation destinations open", async ({ page }) => {
   await openCleanApp(page);
 
   await page.locator('[data-action="practice"]').click();
   await expect(page.locator(".practice-screen")).toBeVisible();
+  await expect(page.locator(".review-hub-grid")).toBeVisible();
+  await page.locator('.bottom-nav [data-action="progress"]').click();
+  await expect(page.locator(".progress-panel")).toBeVisible();
   await page.locator('.bottom-nav [data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="letters"]')).toBeVisible();
