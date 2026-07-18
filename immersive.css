@@ -1154,13 +1154,13 @@ input:focus-visible,
   position: fixed;
   z-index: 200;
   right: auto !important;
-  bottom: max(18px, env(safe-area-inset-bottom));
+  bottom: 0;
   left: 50% !important;
   width: min(470px, calc(100% - 32px));
   height: 78px;
   padding: 8px;
   border: 1px solid rgba(190, 255, 237, 0.16);
-  border-radius: 28px;
+  border-radius: 28px 28px 0 0;
   background:
     linear-gradient(110deg, rgba(255, 255, 255, 0.065), transparent 34%),
     rgba(5, 24, 29, 0.88);
@@ -1712,13 +1712,13 @@ input:focus-visible,
 .quiz-action-bar,
 .quiz-feedback-panel {
   right: 50%;
-  bottom: max(18px, env(safe-area-inset-bottom));
+  bottom: 0;
   left: auto;
   width: min(820px, calc(100% - 40px));
   min-height: 94px;
   padding: 16px;
   border: 1px solid var(--line);
-  border-radius: 27px;
+  border-radius: 27px 27px 0 0;
   background: rgba(5, 25, 30, 0.9);
   box-shadow: 0 24px 64px rgba(0, 7, 10, 0.58), var(--edge-light);
   transform: translateX(50%);
@@ -2172,8 +2172,8 @@ input:focus-visible,
 }
 
 @keyframes world-enter {
-  from { opacity: 0; transform: translateY(14px) scale(0.992); filter: blur(6px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes world-reveal {
@@ -2271,6 +2271,14 @@ input:focus-visible,
   .home-rail,
   .home-world {
     grid-column: 1;
+  }
+
+  .home-rail {
+    grid-row: 2;
+  }
+
+  .home-world {
+    grid-row: 3;
   }
 
   .home-rail {
@@ -2505,11 +2513,11 @@ input:focus-visible,
   }
 
   .bottom-nav {
-    bottom: max(10px, env(safe-area-inset-bottom));
+    bottom: 0;
     width: calc(100% - 20px);
     height: 72px;
     padding: 7px;
-    border-radius: 25px;
+    border-radius: 25px 25px 0 0;
   }
 
   .nav-button {
@@ -2572,11 +2580,11 @@ input:focus-visible,
 
   .quiz-action-bar,
   .quiz-feedback-panel {
-    bottom: max(10px, env(safe-area-inset-bottom));
+    bottom: 0;
     width: calc(100% - 20px);
     min-height: 84px;
     padding: 12px;
-    border-radius: 23px;
+    border-radius: 23px 23px 0 0;
   }
 
   .quiz-action {
