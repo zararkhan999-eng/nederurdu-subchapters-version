@@ -4,8 +4,8 @@
   "description": "اردو بولنے والے نو آموز لوگوں کے لیے Nederlands سیکھنے کی ایپ۔",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#071d22",
-  "theme_color": "#071d22",
+  "background_color": "#f2efe4",
+  "theme_color": "#174d3a",
   "icons": [
     {
       "src": "icon.svg",

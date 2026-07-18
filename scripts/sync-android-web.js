@@ -9,6 +9,7 @@ const files = [
   "duo.css",
   "experience.css",
   "immersive.css",
+  "landing.css",
   "app.js",
   "course-data.js",
   "word-visual-data.js",

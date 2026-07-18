@@ -1,0 +1,1263 @@
+/*
+ * NederUrdu natural landing experience
+ * Scoped to the launch and home/preview screens so lesson behaviour and
+ * exercise styling remain unchanged.
+ */
+
+:root {
+  --land-canvas: #f2efe4;
+  --land-paper: #fffdf7;
+  --land-paper-soft: #f8f5eb;
+  --land-forest: #174d3a;
+  --land-forest-deep: #0d382b;
+  --land-leaf: #4f7d61;
+  --land-sage: #a8c2a4;
+  --land-moss: #78936e;
+  --land-sun: #f4c966;
+  --land-sun-soft: #f9e6ad;
+  --land-clay: #c97250;
+  --land-water: #6f9e9a;
+  --land-sky: #b9d4d0;
+  --land-ink: #21362e;
+  --land-muted: #687a72;
+  --land-line: rgba(42, 74, 61, 0.13);
+  --land-shadow: 0 26px 70px rgba(43, 65, 54, 0.13), 0 5px 18px rgba(43, 65, 54, 0.08);
+  --land-shadow-soft: 0 14px 38px rgba(43, 65, 54, 0.1), 0 3px 10px rgba(43, 65, 54, 0.06);
+}
+
+/* A softer, nature-led first impression. */
+.launch-screen {
+  color: var(--land-ink);
+  background:
+    radial-gradient(circle at 76% 18%, rgba(244, 201, 102, 0.56), transparent 17rem),
+    radial-gradient(circle at 14% 84%, rgba(111, 158, 154, 0.22), transparent 24rem),
+    linear-gradient(145deg, #f9f5e8 0%, #edf1df 52%, #dde8d9 100%);
+}
+
+.launch-screen::before {
+  width: min(76vw, 660px);
+  border-color: rgba(23, 77, 58, 0.1);
+  box-shadow:
+    0 0 0 68px rgba(23, 77, 58, 0.022),
+    0 0 0 136px rgba(23, 77, 58, 0.014);
+}
+
+.launch-screen::after,
+.launch-grid,
+.launch-beam,
+.launch-particle,
+.launch-scan {
+  display: none;
+}
+
+.launch-aurora {
+  filter: blur(54px);
+}
+
+.launch-aurora span:nth-child(1) {
+  background: rgba(89, 133, 94, 0.22);
+}
+
+.launch-aurora span:nth-child(2) {
+  background: rgba(111, 158, 154, 0.17);
+}
+
+.launch-aurora span:nth-child(3) {
+  background: rgba(244, 201, 102, 0.22);
+}
+
+.launch-language small {
+  color: rgba(33, 54, 46, 0.48);
+}
+
+.launch-language strong,
+.launch-wordmark strong {
+  color: var(--land-ink);
+  text-shadow: 0 14px 34px rgba(42, 74, 61, 0.1);
+}
+
+.launch-screen.is-playing .launch-language-urdu,
+.launch-screen.is-playing .launch-language-nl {
+  animation: launch-language-natural-in 720ms 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes launch-language-natural-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.launch-wordmark strong span {
+  color: var(--land-forest);
+}
+
+.launch-wordmark small {
+  color: var(--land-muted);
+}
+
+.launch-logo-shell {
+  border-color: rgba(255, 255, 255, 0.66);
+  background: rgba(255, 253, 247, 0.78);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 30px 70px rgba(47, 77, 62, 0.18),
+    0 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.launch-logo-glow {
+  background: rgba(79, 125, 97, 0.22);
+}
+
+.launch-orbit {
+  border-color: rgba(23, 77, 58, 0.12);
+}
+
+.launch-orbit-two {
+  border-color: rgba(111, 158, 154, 0.12);
+}
+
+.launch-orbit-three {
+  border-color: rgba(201, 114, 80, 0.11);
+}
+
+.launch-orbit::after {
+  background: var(--land-leaf);
+  box-shadow: none;
+}
+
+.launch-orbit-two::after {
+  background: var(--land-water);
+  box-shadow: none;
+}
+
+.launch-orbit-three::after {
+  background: var(--land-clay);
+  box-shadow: none;
+}
+
+.launch-progress {
+  background: rgba(23, 77, 58, 0.09);
+}
+
+.launch-progress span {
+  background: linear-gradient(90deg, var(--land-water), var(--land-leaf), var(--land-sun));
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) {
+  color-scheme: light;
+  color: var(--land-ink);
+  background:
+    radial-gradient(circle at 86% 7%, rgba(244, 201, 102, 0.25), transparent 22rem),
+    radial-gradient(circle at 6% 26%, rgba(111, 158, 154, 0.16), transparent 25rem),
+    radial-gradient(circle at 88% 88%, rgba(168, 194, 164, 0.18), transparent 28rem),
+    linear-gradient(155deg, #f7f4ea 0%, var(--land-canvas) 54%, #edf0e5 100%);
+  background-attachment: fixed;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"])::before {
+  background:
+    radial-gradient(460px circle at var(--pointer-x, 50vw) var(--pointer-y, 30vh), rgba(23, 77, 58, 0.045), transparent 72%),
+    radial-gradient(circle at 25% 34%, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.5px);
+  background-size: auto, 24px 24px;
+  mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.22) 72%, transparent);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .app-shell {
+  width: min(100%, 1400px);
+  padding: 24px 32px 116px;
+  background: transparent;
+}
+
+/* Remove the technological ambient language on the landing screen. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .ambient-grid,
+:is(body[data-screen="home"], body[data-screen="preview"]) .ambient-glyph,
+:is(body[data-screen="home"], body[data-screen="preview"]) .ambient-spark,
+:is(body[data-screen="home"], body[data-screen="preview"]) .experience-scroll-meter {
+  display: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .ambient-orb {
+  opacity: 0.16;
+  filter: blur(36px);
+  mix-blend-mode: multiply;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .orb-green {
+  background: radial-gradient(circle, rgba(98, 143, 98, 0.68), transparent 69%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .orb-blue {
+  background: radial-gradient(circle, rgba(111, 158, 154, 0.52), transparent 69%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .orb-gold {
+  background: radial-gradient(circle, rgba(244, 201, 102, 0.52), transparent 69%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .ambient-ribbon {
+  opacity: 0.11;
+  border-color: rgba(23, 77, 58, 0.42);
+  filter: none;
+}
+
+/* Calm product header. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .progress-header {
+  min-height: 86px;
+  margin-bottom: 22px;
+  padding: 14px 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 28px;
+  background:
+    linear-gradient(105deg, rgba(255, 255, 255, 0.75), rgba(255, 253, 247, 0.52)),
+    rgba(255, 253, 247, 0.72);
+  box-shadow: var(--land-shadow-soft), inset 0 1px 0 #fff;
+  backdrop-filter: blur(24px) saturate(1.12);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .progress-header::before {
+  background:
+    radial-gradient(circle at 3% 50%, rgba(168, 194, 164, 0.18), transparent 15rem),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .progress-header::after {
+  right: 34px;
+  left: 34px;
+  background: linear-gradient(90deg, transparent, rgba(23, 77, 58, 0.18), transparent);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-logo-wrap {
+  border-color: rgba(23, 77, 58, 0.08);
+  background: var(--land-paper);
+  box-shadow: 0 10px 24px rgba(41, 70, 56, 0.12), 0 0 0 5px rgba(79, 125, 97, 0.05);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-logo-wrap i {
+  background: var(--land-sun);
+  box-shadow: 0 0 0 4px rgba(244, 201, 102, 0.18);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .brand-lockup-copy strong {
+  color: var(--land-forest-deep);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .brand-lockup-copy strong::after {
+  color: var(--land-clay);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .brand-lockup-copy small,
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-language small,
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-days small {
+  color: var(--land-muted);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-journey {
+  border-color: var(--land-line);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-language b {
+  color: var(--land-ink);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-line {
+  background: rgba(23, 77, 58, 0.09);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-line::before {
+  border-color: var(--land-paper);
+  background: var(--land-leaf);
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-line::after {
+  border-color: var(--land-paper);
+  background: var(--land-water);
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .journey-line i {
+  background: linear-gradient(90deg, var(--land-leaf), var(--land-sun), var(--land-water));
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-days {
+  border-color: var(--land-line);
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-days::before {
+  background: conic-gradient(var(--land-leaf) var(--course-progress), rgba(23, 77, 58, 0.07) 0);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-days-orbit {
+  color: #fff;
+  background: linear-gradient(145deg, #5f8b6c, var(--land-forest));
+  box-shadow: 0 8px 20px rgba(23, 77, 58, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .header-days strong {
+  color: var(--land-ink);
+}
+
+/* A true landing-page flow: one strong hero, then the learning world. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .learn-screen {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .learn-screen > .progress-header {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .home-rail {
+  position: static;
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: stretch;
+  gap: 18px;
+  direction: ltr;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-panel,
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note {
+  direction: rtl;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .home-world {
+  grid-column: 1;
+  grid-row: 3;
+  padding-top: 6px;
+}
+
+/* Forest hero with organic contours and guaranteed copy/art separation. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+  min-height: 420px;
+  padding: 30px 34px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 38px;
+  background:
+    radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255, 255, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 10% 8%, rgba(244, 201, 102, 0.2), transparent 20rem),
+    linear-gradient(145deg, #2a684d 0%, var(--land-forest) 54%, var(--land-forest-deep) 100%);
+  box-shadow: 0 30px 70px rgba(23, 77, 58, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-panel::before {
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 18% 128%, transparent 0 32%, rgba(255, 255, 255, 0.055) 32.3% 32.8%, transparent 33.1% 39%, rgba(255, 255, 255, 0.04) 39.3% 39.8%, transparent 40.1%),
+    radial-gradient(ellipse at 86% -24%, transparent 0 28%, rgba(255, 255, 255, 0.05) 28.3% 28.8%, transparent 29.1% 36%, rgba(255, 255, 255, 0.035) 36.3% 36.8%, transparent 37.1%);
+  background-size: 100% 100%;
+  animation: land-contours 16s ease-in-out infinite alternate;
+  mask-image: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-panel::after {
+  top: -92px;
+  right: auto;
+  left: -72px;
+  width: 250px;
+  height: 250px;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 40%, #ffe7a2, var(--land-sun) 34%, rgba(244, 201, 102, 0.14) 36%, transparent 68%);
+  box-shadow: none;
+  animation: land-sun-breathe 7s ease-in-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-atmosphere span {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 65% 0 65% 0;
+  background: rgba(220, 236, 208, 0.48);
+  box-shadow: none;
+  animation: land-leaf-drift 7s ease-in-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-atmosphere span:nth-child(even) {
+  background: rgba(244, 201, 102, 0.62);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-topline {
+  margin-bottom: 12px;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .eyeline,
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-level {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f5f2dd;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-main {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  min-height: 212px;
+  direction: ltr;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-copy {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  justify-self: stretch;
+  width: auto;
+  max-width: 620px;
+  padding: 0;
+  direction: rtl;
+  transform: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-copy h1 {
+  max-width: 620px;
+  margin-bottom: 10px;
+  color: #fffdf4;
+  font-size: clamp(2.4rem, 4.3vw, 4.7rem);
+  line-height: 1.02;
+  text-shadow: 0 14px 34px rgba(7, 37, 27, 0.22);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-copy p {
+  max-width: 590px;
+  color: rgba(244, 250, 240, 0.76);
+  font-size: 0.98rem;
+  line-height: 1.9;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-details {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 14px 0 0 auto;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-details span {
+  border-color: rgba(255, 255, 255, 0.13);
+  color: rgba(248, 252, 242, 0.84);
+  background: rgba(255, 255, 255, 0.075);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-details .ui-icon {
+  color: var(--land-sun);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  grid-column: 1;
+  grid-row: 1;
+  place-self: center;
+  width: min(100%, 220px);
+  height: 216px;
+  border: 0;
+  border-radius: 34px;
+  background: transparent;
+  box-shadow: none;
+  transform: rotate(-2deg);
+  animation: land-art-float 6s ease-in-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art::before {
+  inset: -20px;
+  border: 1px solid rgba(237, 245, 226, 0.18);
+  border-radius: 46% 54% 48% 52%;
+  animation: land-shape-turn 18s linear infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art::after {
+  inset: -34px;
+  border: 1px dashed rgba(244, 201, 102, 0.2);
+  border-radius: 54% 46% 52% 48%;
+  animation: land-shape-turn 28s linear infinite reverse;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art .learning-visual {
+  height: 100%;
+  border: 8px solid rgba(255, 253, 247, 0.95);
+  border-radius: 30px;
+  background: var(--land-paper);
+  box-shadow: 0 24px 54px rgba(8, 45, 32, 0.28), 8px 10px 0 rgba(244, 201, 102, 0.22);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art-halo {
+  inset: 8% -14% -18% 10%;
+  background: rgba(168, 194, 164, 0.18);
+  filter: blur(18px);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .mission-art-seal {
+  color: #fff;
+  background: var(--land-clay);
+  box-shadow: 0 10px 22px rgba(118, 57, 35, 0.22);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .primary-button.today-action {
+  min-height: 62px;
+  margin-top: 12px;
+  border: 1px solid rgba(255, 246, 207, 0.72);
+  border-radius: 19px;
+  color: #243a30;
+  background: linear-gradient(105deg, #f1c45d, #f8dc91 48%, #f1c45d);
+  background-size: 180% 100%;
+  box-shadow: 0 6px 0 #a97925, 0 18px 30px rgba(10, 40, 28, 0.22), inset 0 1px 0 #fff5cb;
+  animation: land-button-light 5s ease-in-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .primary-button.today-action:hover {
+  box-shadow: 0 9px 0 #a97925, 0 24px 38px rgba(10, 40, 28, 0.26), inset 0 1px 0 #fff5cb;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .button-icon,
+:is(body[data-screen="home"], body[data-screen="preview"]) .button-progress {
+  color: #243a30;
+  background: rgba(33, 54, 46, 0.09);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .today-stats {
+  border-color: rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+/* Daily rhythm card: warm and editorial, not technological. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note {
+  position: relative;
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  gap: 16px;
+  min-height: 420px;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(108, 117, 78, 0.13);
+  border-radius: 38px;
+  color: var(--land-ink);
+  background:
+    radial-gradient(circle at 76% 14%, rgba(244, 201, 102, 0.38), transparent 9rem),
+    linear-gradient(155deg, #f8edd1, #edf0d8 62%, #dce6d3);
+  box-shadow: var(--land-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  right: 34px;
+  width: 120px;
+  height: 170px;
+  border-radius: 100% 0 100% 0;
+  background:
+    linear-gradient(135deg, rgba(79, 125, 97, 0.05), rgba(79, 125, 97, 0.2)),
+    var(--land-sage);
+  transform: rotate(18deg);
+  opacity: 0.56;
+  animation: land-leaf-sway 8s ease-in-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::after {
+  content: "";
+  position: absolute;
+  top: 72px;
+  right: 106px;
+  width: 54px;
+  height: 108px;
+  border-radius: 100% 0 100% 0;
+  background: rgba(79, 125, 97, 0.35);
+  transform: rotate(-22deg);
+  animation: land-leaf-sway 7s 0.7s ease-in-out infinite reverse;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note > span {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  background: var(--land-forest);
+  box-shadow: 0 9px 20px rgba(23, 77, 58, 0.18);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note p {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 5px;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note strong {
+  color: var(--land-forest-deep);
+  font-size: 1.15rem;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .rail-note small {
+  color: var(--land-muted);
+  line-height: 1.8;
+}
+
+/* Course controls become tactile paper and natural colour. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher-wrap {
+  margin: 4px 0 18px;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher-label span {
+  color: var(--land-ink);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher-label small {
+  color: var(--land-muted);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher {
+  border-color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 253, 247, 0.74);
+  box-shadow: var(--land-shadow-soft), inset 0 1px 0 #fff;
+  backdrop-filter: blur(18px);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-chip {
+  color: #819087;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-chip:hover {
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.07);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .chapter-chip.active {
+  color: #fff;
+  background: linear-gradient(145deg, #5f8b6c, var(--land-forest));
+  box-shadow: 0 12px 25px rgba(23, 77, 58, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card {
+  min-height: 232px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255, 255, 255, 0.14), transparent 30%),
+    linear-gradient(135deg, #477f70, #6ca08d 58%, #35685d);
+  box-shadow: 0 25px 58px rgba(49, 92, 76, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card.chapter-a1 {
+  background:
+    radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255, 255, 255, 0.14), transparent 30%),
+    linear-gradient(135deg, #b96042, #d78d67 58%, #9c4d39);
+  box-shadow: 0 25px 58px rgba(126, 65, 43, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card.chapter-a2 {
+  background:
+    radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255, 255, 255, 0.14), transparent 30%),
+    linear-gradient(135deg, #527b83, #7da5a7 58%, #426872);
+  box-shadow: 0 25px 58px rgba(53, 94, 101, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card::before {
+  background:
+    radial-gradient(ellipse at 12% 120%, transparent 0 32%, rgba(255, 255, 255, 0.09) 32.5% 33%, transparent 33.5% 43%, rgba(255, 255, 255, 0.055) 43.5% 44%, transparent 44.5%),
+    linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, 0.07) 49%, transparent 64%);
+  background-size: 100% 100%, 230% 100%;
+  animation: land-card-light 8s ease-in-out infinite;
+  mask-image: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card-aura {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.022), 0 0 0 56px rgba(255, 255, 255, 0.014);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card-visual .learning-visual {
+  border-color: rgba(255, 253, 247, 0.9);
+  background: var(--land-paper);
+  box-shadow: 0 22px 44px rgba(29, 68, 57, 0.22), 8px 8px 0 rgba(255, 255, 255, 0.12);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card-copy small b {
+  color: var(--land-forest-deep);
+  background: var(--land-sun-soft);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card-meter i {
+  background: linear-gradient(90deg, var(--land-sun), #fff1bd);
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .unit-card-arrow {
+  color: var(--land-forest-deep);
+  background: rgba(255, 253, 247, 0.86);
+  box-shadow: 0 10px 22px rgba(33, 54, 46, 0.17);
+}
+
+/* The course map reads like a calm workbook. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-path,
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-stage {
+  border-color: rgba(255, 255, 255, 0.9);
+  background:
+    radial-gradient(circle at 94% 6%, rgba(168, 194, 164, 0.17), transparent 24rem),
+    rgba(255, 253, 247, 0.82);
+  box-shadow: var(--land-shadow), inset 0 1px 0 #fff;
+  backdrop-filter: blur(18px) saturate(1.05);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-path::before {
+  background: linear-gradient(to bottom, var(--land-leaf), rgba(79, 125, 97, 0.14) 34%, rgba(111, 158, 154, 0.16) 76%, transparent);
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-overview {
+  border-bottom-color: var(--land-line);
+  background:
+    linear-gradient(110deg, rgba(168, 194, 164, 0.13), transparent 50%),
+    rgba(255, 255, 255, 0.24);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-kicker {
+  border-color: rgba(23, 77, 58, 0.11);
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.08);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-overview strong,
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-copy strong,
+:is(body[data-screen="home"], body[data-screen="preview"]) .node-copy strong {
+  color: var(--land-ink);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-overview small,
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-copy small,
+:is(body[data-screen="home"], body[data-screen="preview"]) .node-copy span,
+:is(body[data-screen="home"], body[data-screen="preview"]) .node-copy small,
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-status b {
+  color: var(--land-muted);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-overview-mark {
+  color: #fff;
+  background: linear-gradient(145deg, #628d6f, var(--land-forest));
+  box-shadow: 0 11px 24px rgba(23, 77, 58, 0.18), 0 0 0 7px rgba(79, 125, 97, 0.05);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-section {
+  border-bottom-color: rgba(42, 74, 61, 0.08);
+  background: transparent;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-section.tone-1 {
+  background: linear-gradient(90deg, rgba(111, 158, 154, 0.045), transparent 45%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-section.tone-2 {
+  background: linear-gradient(90deg, rgba(244, 201, 102, 0.05), transparent 45%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-section.tone-3 {
+  background: linear-gradient(90deg, rgba(201, 114, 80, 0.04), transparent 45%);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-divider {
+  border-bottom-color: rgba(42, 74, 61, 0.09);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-number {
+  border-color: rgba(79, 125, 97, 0.14);
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.08);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-progress {
+  background: rgba(42, 74, 61, 0.09);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .section-progress i {
+  background: linear-gradient(90deg, var(--land-leaf), var(--land-water));
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-step:hover {
+  border-color: rgba(79, 125, 97, 0.12);
+  background: rgba(79, 125, 97, 0.045);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-step.selected {
+  border-color: rgba(79, 125, 97, 0.16);
+  background: rgba(79, 125, 97, 0.06);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node {
+  border-color: rgba(42, 74, 61, 0.13);
+  color: var(--land-muted);
+  background: linear-gradient(145deg, #fffef9, #e9eee6);
+  box-shadow: 0 7px 0 #bdc9be, 0 13px 25px rgba(42, 74, 61, 0.11), inset 0 1px 0 #fff;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node:hover:not(:disabled) {
+  box-shadow: 0 10px 0 #bdc9be, 0 19px 32px rgba(42, 74, 61, 0.14), inset 0 1px 0 #fff;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node.current {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.36);
+  background: linear-gradient(145deg, #628f70, var(--land-forest));
+  box-shadow: 0 7px 0 #0e392b, 0 17px 32px rgba(23, 77, 58, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node.current::after {
+  border-color: rgba(79, 125, 97, 0.28);
+  animation: land-current-pulse 2.4s ease-out infinite;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node.available {
+  color: #4c7775;
+  border-color: rgba(111, 158, 154, 0.24);
+  background: linear-gradient(145deg, #f4faf7, #d9e8e3);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node.completed {
+  color: var(--land-forest-deep);
+  border-color: rgba(255, 238, 184, 0.62);
+  background: linear-gradient(145deg, #fff1bd, var(--land-sun));
+  box-shadow: 0 7px 0 #b2842f, 0 15px 28px rgba(153, 111, 33, 0.15);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-node.locked {
+  color: #9aa69f;
+  border-color: rgba(42, 74, 61, 0.08);
+  background: #edf0ea;
+  box-shadow: 0 5px 0 #d0d7d0;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .node-trailing {
+  color: #87988f;
+  background: rgba(42, 74, 61, 0.04);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-start-card {
+  border-color: rgba(79, 125, 97, 0.15);
+  color: var(--land-ink);
+  background:
+    radial-gradient(circle at 100% 0, rgba(168, 194, 164, 0.15), transparent 42%),
+    rgba(255, 253, 247, 0.98);
+  box-shadow: 0 19px 42px rgba(42, 74, 61, 0.14), inset 0 1px 0 #fff;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-card-kicker {
+  border-color: rgba(79, 125, 97, 0.12);
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.07);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-start-card small {
+  color: var(--land-muted);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .lesson-start-card button {
+  color: #fff;
+  background: linear-gradient(145deg, #628f70, var(--land-forest));
+  box-shadow: 0 5px 0 #0e392b, 0 11px 22px rgba(23, 77, 58, 0.16);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-toggle {
+  border-color: var(--land-line);
+  color: var(--land-muted);
+  background: rgba(79, 125, 97, 0.035);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .path-toggle:hover {
+  border-color: rgba(79, 125, 97, 0.2);
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.07);
+}
+
+/* A light dock anchors the page without looking futuristic. */
+:is(body[data-screen="home"], body[data-screen="preview"]) .bottom-nav {
+  border-color: rgba(255, 255, 255, 0.78);
+  color: var(--land-muted);
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.75), transparent 46%),
+    rgba(255, 253, 247, 0.92);
+  box-shadow: 0 18px 50px rgba(42, 74, 61, 0.16), inset 0 1px 0 #fff;
+  backdrop-filter: blur(24px) saturate(1.05);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .bottom-nav::before {
+  background: linear-gradient(90deg, rgba(79, 125, 97, 0.1), transparent 42%, transparent 58%, rgba(201, 114, 80, 0.07));
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .nav-button {
+  color: #819087;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .nav-button:hover {
+  color: var(--land-forest);
+  background: rgba(79, 125, 97, 0.055);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .nav-button.active {
+  color: var(--land-forest);
+  background: linear-gradient(145deg, rgba(168, 194, 164, 0.28), rgba(255, 255, 255, 0.48));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .nav-button::after {
+  background: var(--land-forest);
+  box-shadow: none;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .nav-button.active .nav-icon {
+  color: #fff;
+  background: linear-gradient(145deg, #628f70, var(--land-forest));
+  box-shadow: 0 7px 17px rgba(23, 77, 58, 0.18);
+}
+
+@keyframes land-contours {
+  from { transform: translate3d(-8px, 3px, 0) scale(1.015); opacity: 0.72; }
+  to { transform: translate3d(8px, -3px, 0) scale(1.035); opacity: 1; }
+}
+
+@keyframes land-sun-breathe {
+  0%, 100% { transform: scale(0.96); opacity: 0.82; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes land-leaf-drift {
+  0%, 100% { transform: rotate(38deg) translateY(0); opacity: 0.35; }
+  50% { transform: rotate(52deg) translateY(-9px); opacity: 0.75; }
+}
+
+@keyframes land-art-float {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50% { transform: rotate(1deg) translateY(-7px); }
+}
+
+@keyframes land-shape-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes land-leaf-sway {
+  0%, 100% { transform: rotate(16deg) translateY(0); }
+  50% { transform: rotate(22deg) translateY(-7px); }
+}
+
+@keyframes land-button-light {
+  0%, 100% { background-position: 0 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes land-card-light {
+  0%, 100% { background-position: 0 0, 0 0; }
+  50% { background-position: 0 0, 100% 0; }
+}
+
+@keyframes land-current-pulse {
+  0% { opacity: 0.55; transform: scale(0.92); }
+  80%, 100% { opacity: 0; transform: scale(1.23); }
+}
+
+@media (max-width: 980px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) .app-shell {
+    padding-inline: 22px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .home-rail {
+    grid-template-columns: minmax(0, 1fr) 230px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+    padding-inline: 28px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-main {
+    grid-template-columns: minmax(170px, 205px) minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy h1 {
+    font-size: clamp(2.35rem, 5.2vw, 4rem);
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note {
+    padding: 23px;
+  }
+}
+
+@media (max-width: 780px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) .app-shell {
+    padding: 16px 16px 108px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .home-rail {
+    grid-template-columns: 1fr;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+    min-height: 430px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note {
+    grid-template-columns: auto 1fr;
+    align-content: center;
+    align-items: center;
+    justify-items: start;
+    min-height: 112px;
+    padding: 20px 22px;
+    border-radius: 28px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::before {
+    top: -42px;
+    right: auto;
+    left: 30px;
+    width: 90px;
+    height: 145px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::after {
+    top: -28px;
+    right: auto;
+    left: 104px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note > span {
+    grid-column: 1;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note p {
+    grid-column: 2;
+  }
+}
+
+/* Keep the first course control clear of the dock on short landscape laptops. */
+@media (min-width: 781px) and (max-height: 800px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher {
+    min-height: 50px;
+    padding: 5px;
+    border-radius: 20px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .chapter-chip {
+    min-height: 40px;
+    border-radius: 15px;
+  }
+}
+
+@media (max-width: 620px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) {
+    background:
+      radial-gradient(circle at 88% 4%, rgba(244, 201, 102, 0.26), transparent 17rem),
+      radial-gradient(circle at 4% 28%, rgba(111, 158, 154, 0.14), transparent 20rem),
+      linear-gradient(160deg, #f7f4ea, #f0eee3 58%, #eaf0e6);
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .app-shell {
+    padding: 10px 10px 102px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .progress-header {
+    min-height: 70px;
+    margin-bottom: 14px;
+    padding: 9px 10px 9px 13px;
+    border-radius: 22px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+    min-height: 480px;
+    padding: 20px 18px 18px;
+    border-radius: 30px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel::after {
+    top: -105px;
+    left: -92px;
+    width: 230px;
+    height: 230px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-topline {
+    margin-bottom: 8px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-main {
+    grid-template-columns: minmax(112px, 142px) minmax(0, 1fr);
+    gap: 14px;
+    min-height: 294px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy {
+    width: auto;
+    max-width: none;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy h1 {
+    max-width: none;
+    font-size: clamp(2rem, 10.4vw, 2.75rem);
+    line-height: 1.04;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy p {
+    max-width: none;
+    font-size: 0.78rem;
+    line-height: 1.82;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-details {
+    display: grid;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-details span {
+    width: fit-content;
+    font-size: 0.66rem;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art {
+    width: 134px;
+    height: 174px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art .learning-visual {
+    border-width: 6px;
+    border-radius: 24px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .primary-button.today-action {
+    min-height: 60px;
+    margin-top: 8px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note {
+    min-height: 100px;
+    padding: 17px;
+    border-radius: 24px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .chapter-switcher-wrap {
+    margin-top: 2px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .unit-card {
+    min-height: 206px;
+    border-radius: 28px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .lesson-path,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .path-stage {
+    border-radius: 28px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .bottom-nav {
+    width: calc(100% - 20px);
+  }
+}
+
+@media (max-width: 390px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+    min-height: 464px;
+    padding-inline: 15px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-main {
+    grid-template-columns: 116px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy h1 {
+    font-size: 1.95rem;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy p {
+    font-size: 0.73rem;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art {
+    width: 116px;
+    height: 154px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-details span {
+    font-size: 0.62rem;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note p {
+    max-width: 230px;
+  }
+}
+
+@media (max-width: 350px) {
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel {
+    min-height: 360px;
+    padding: 16px 15px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-main {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 190px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy {
+    grid-column: 1;
+    text-align: center;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-copy h1 {
+    font-size: 1.9rem;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-inline: auto;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .primary-button.today-action {
+    min-height: 54px;
+    margin-top: 4px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .bottom-nav {
+    min-height: 72px;
+    height: 72px;
+    padding: 7px;
+  }
+
+  :is(body[data-screen="home"], body[data-screen="preview"]) .nav-button {
+    min-height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launch-orbit,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel::before,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .today-panel::after,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art::before,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-art::after,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .mission-atmosphere span,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::before,
+  :is(body[data-screen="home"], body[data-screen="preview"]) .rail-note::after {
+    animation: none !important;
+  }
+}
