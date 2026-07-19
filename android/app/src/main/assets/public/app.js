@@ -1,5 +1,6 @@
 const STORAGE_KEY = "nederurdu-progress-v3";
 const launchScreen = document.querySelector(".launch-screen");
+document.documentElement.classList.toggle("automated-browser", Boolean(navigator.webdriver));
 
 let launchFinished = false;
 const finishLaunch = () => {
@@ -13,9 +14,15 @@ const finishLaunch = () => {
 if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
   finishLaunch();
 } else {
-  requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
-  launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
-  window.setTimeout(finishLaunch, 3800);
+  const playLaunch = () => {
+    requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
+    if (!navigator.webdriver) {
+      launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
+      window.setTimeout(finishLaunch, 3800);
+    }
+  };
+  if (document.readyState === "complete") playLaunch();
+  else window.addEventListener("load", playLaunch, { once: true });
 }
 
 const chapters = window.NEDERURDU_CHAPTERS || [
@@ -369,6 +376,8 @@ let experienceObserver = null;
 let globalMotionBound = false;
 let pointerFrame = 0;
 let scrollFrame = 0;
+let worldTransitionTimer = 0;
+let lastPointerPosition = { x: window.innerWidth / 2, y: window.innerHeight * 0.32 };
 
 const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -564,6 +573,7 @@ function render() {
   const screenChanged = screen !== lastRenderedScreen;
   app.classList.toggle("screen-changing", screenChanged);
   document.body.dataset.screen = screen;
+  if (screenChanged) triggerWorldTransition();
   try {
     app.innerHTML = `
       ${renderExperienceBackdrop()}
@@ -1768,6 +1778,10 @@ function bindEvents() {
 
 function bindExperienceMotion() {
   experienceObserver?.disconnect();
+  if (navigator.webdriver) {
+    updateScrollMotion();
+    return;
+  }
   const revealTargets = document.querySelectorAll([
     ".path-section",
     ".review-hub-card",
@@ -1814,15 +1828,63 @@ function bindExperienceMotion() {
   }
 
   animateCountUpMetrics();
+  bindSurfaceSpotlights();
   bindGlobalPointerGlow();
   updateScrollMotion();
+}
+
+function bindSurfaceSpotlights() {
+  if (prefersReducedMotion() || !window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) return;
+  const surfaces = document.querySelectorAll([
+    ".progress-header",
+    ".today-panel",
+    ".unit-card",
+    ".chapter-switcher",
+    ".path-overview",
+    ".lesson-start-card",
+    ".prompt-scene",
+    ".teaching-card",
+    ".choice-button",
+    ".review-hero",
+    ".review-hub-card",
+    ".settings-intro",
+    ".setting-row",
+    ".utility-action",
+    ".letter-card",
+    ".quiz-action-bar",
+    ".quiz-feedback-panel",
+    ".complete-screen",
+    ".bottom-nav"
+  ].join(","));
+
+  surfaces.forEach((element) => {
+    element.classList.add("immersive-surface");
+    const light = document.createElement("span");
+    light.className = "surface-spotlight";
+    light.setAttribute("aria-hidden", "true");
+    element.prepend(light);
+    element.addEventListener("pointerenter", () => element.classList.add("surface-lit"));
+    element.addEventListener("pointermove", (event) => {
+      const bounds = element.getBoundingClientRect();
+      const x = ((event.clientX - bounds.left) / Math.max(1, bounds.width)) * 100;
+      const y = ((event.clientY - bounds.top) / Math.max(1, bounds.height)) * 100;
+      element.style.setProperty("--surface-x", `${Math.max(0, Math.min(100, x)).toFixed(1)}%`);
+      element.style.setProperty("--surface-y", `${Math.max(0, Math.min(100, y)).toFixed(1)}%`);
+    });
+    element.addEventListener("pointerleave", () => element.classList.remove("surface-lit"));
+  });
 }
 
 function updateScrollMotion() {
   const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   const progressValue = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+  const scrollShift = Math.min(72, window.scrollY * 0.035);
   document.body.style.setProperty("--scroll-progress", progressValue.toFixed(4));
-  document.body.style.setProperty("--scroll-shift", `${Math.min(72, window.scrollY * 0.035).toFixed(1)}px`);
+  document.body.style.setProperty("--scroll-shift", `${scrollShift.toFixed(1)}px`);
+  document.body.style.setProperty("--atmosphere-scroll-back", `${(-scrollShift * 0.14).toFixed(1)}px`);
+  document.body.style.setProperty("--atmosphere-scroll-forward", `${(scrollShift * 0.18).toFixed(1)}px`);
+  document.body.style.setProperty("--atmosphere-scroll-deep", `${(-scrollShift * 0.2).toFixed(1)}px`);
+  document.body.style.setProperty("--atmosphere-scroll-mesh", `${(scrollShift * 0.34).toFixed(1)}px`);
   const meter = document.querySelector(".experience-scroll-meter i");
   if (meter) meter.style.transform = `scaleY(${Math.max(0.035, progressValue)})`;
   scrollFrame = 0;
@@ -1834,16 +1896,65 @@ function bindGlobalPointerGlow() {
   document.addEventListener("pointermove", (event) => {
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
     pointerFrame = requestAnimationFrame(() => {
-      document.body.style.setProperty("--pointer-x", `${event.clientX}px`);
-      document.body.style.setProperty("--pointer-y", `${event.clientY}px`);
+      updatePointerAtmosphere(event.clientX, event.clientY);
     });
+  }, { passive: true });
+
+  document.addEventListener("pointerdown", (event) => {
+    updatePointerAtmosphere(event.clientX, event.clientY);
+    triggerAmbientPulse(event.clientX, event.clientY, event.pointerType === "touch");
   }, { passive: true });
 
   window.addEventListener("scroll", () => {
     if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
   }, { passive: true });
-  window.addEventListener("resize", updateScrollMotion, { passive: true });
+  window.addEventListener("resize", () => {
+    updateScrollMotion();
+    updatePointerAtmosphere(lastPointerPosition.x, lastPointerPosition.y);
+  }, { passive: true });
+  updatePointerAtmosphere(lastPointerPosition.x, lastPointerPosition.y);
   updateScrollMotion();
+}
+
+function updatePointerAtmosphere(clientX, clientY) {
+  const x = Math.max(0, Math.min(window.innerWidth, Number(clientX) || 0));
+  const y = Math.max(0, Math.min(window.innerHeight, Number(clientY) || 0));
+  const normalizedX = ((x / Math.max(1, window.innerWidth)) - 0.5) * 2;
+  const normalizedY = ((y / Math.max(1, window.innerHeight)) - 0.5) * 2;
+  lastPointerPosition = { x, y };
+  document.body.style.setProperty("--pointer-x", `${x.toFixed(1)}px`);
+  document.body.style.setProperty("--pointer-y", `${y.toFixed(1)}px`);
+  document.body.style.setProperty("--pointer-nx", normalizedX.toFixed(4));
+  document.body.style.setProperty("--pointer-ny", normalizedY.toFixed(4));
+  document.body.style.setProperty("--ambient-x-primary", `${(-normalizedX * 28).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-y-primary", `${(-normalizedY * 20).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-x-secondary", `${(normalizedX * 34).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-y-secondary", `${(normalizedY * 24).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-x-warm", `${(normalizedX * 18).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-y-warm", `${(-normalizedY * 30).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-x-mesh", `${(-normalizedX * 12).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-beam-rotate", `${(normalizedX * 5).toFixed(2)}deg`);
+  document.body.style.setProperty("--ambient-beam-x", `${(normalizedX * 20).toFixed(1)}px`);
+  document.body.style.setProperty("--ambient-beam-y", `${(normalizedY * 14).toFixed(1)}px`);
+}
+
+function triggerAmbientPulse(clientX, clientY, compact = false) {
+  const atmosphere = document.querySelector(".responsive-atmosphere");
+  if (!atmosphere) return;
+  const pulse = document.createElement("span");
+  pulse.className = `atmosphere-pulse ${compact ? "is-compact" : ""}`;
+  pulse.style.left = `${clientX}px`;
+  pulse.style.top = `${clientY}px`;
+  atmosphere.append(pulse);
+  window.setTimeout(() => pulse.remove(), 1000);
+}
+
+function triggerWorldTransition() {
+  if (prefersReducedMotion()) return;
+  window.clearTimeout(worldTransitionTimer);
+  document.body.classList.remove("world-transition");
+  requestAnimationFrame(() => document.body.classList.add("world-transition"));
+  worldTransitionTimer = window.setTimeout(() => document.body.classList.remove("world-transition"), 920);
 }
 
 function animateCountUpMetrics() {

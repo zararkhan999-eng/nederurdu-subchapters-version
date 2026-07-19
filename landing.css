@@ -151,6 +151,9 @@
 }
 
 :is(body[data-screen="home"], body[data-screen="preview"]) {
+  --world-primary: 23, 77, 58;
+  --world-secondary: 111, 158, 154;
+  --world-warm: 244, 201, 102;
   color-scheme: light;
   color: var(--land-ink);
   background:
@@ -159,6 +162,32 @@
     radial-gradient(circle at 88% 88%, rgba(168, 194, 164, 0.18), transparent 28rem),
     linear-gradient(155deg, #f7f4ea 0%, var(--land-canvas) 54%, #edf0e5 100%);
   background-attachment: fixed;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .atmosphere-aurora {
+  opacity: 0.16;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .aurora-warm {
+  opacity: 0.13;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .atmosphere-mesh {
+  opacity: 0.11;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .atmosphere-stars {
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .atmosphere-spotlight {
+  opacity: 0.68;
+  mix-blend-mode: multiply;
+}
+
+:is(body[data-screen="home"], body[data-screen="preview"]) .atmosphere-lens {
+  opacity: 0.38;
 }
 
 :is(body[data-screen="home"], body[data-screen="preview"])::before {

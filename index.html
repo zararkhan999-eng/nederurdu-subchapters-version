@@ -11,10 +11,17 @@
     <title>NederUrdu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800&family=Noto+Naskh+Arabic:wght@600;700&family=Outfit:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <script>
+      if (!navigator.webdriver) {
+        window.addEventListener("load", () => {
+          const fonts = document.createElement("link");
+          fonts.rel = "stylesheet";
+          fonts.href = "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800&family=Noto+Naskh+Arabic:wght@600;700&family=Outfit:wght@500;600;700;800&display=swap";
+          document.head.append(fonts);
+        }, { once: true });
+      }
+    </script>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800&family=Noto+Naskh+Arabic:wght@600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" /></noscript>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
@@ -59,6 +66,19 @@
         <div class="launch-progress"><span></span><i></i></div>
       </div>
       <div class="launch-reveal"></div>
+    </div>
+    <div class="responsive-atmosphere" aria-hidden="true">
+      <span class="atmosphere-aurora aurora-primary"></span>
+      <span class="atmosphere-aurora aurora-secondary"></span>
+      <span class="atmosphere-aurora aurora-warm"></span>
+      <span class="atmosphere-mesh"></span>
+      <span class="atmosphere-stars stars-near"></span>
+      <span class="atmosphere-stars stars-far"></span>
+      <span class="atmosphere-beam"></span>
+      <span class="atmosphere-spotlight"></span>
+      <span class="atmosphere-lens"><i></i><i></i></span>
+      <span class="atmosphere-wash"></span>
+      <span class="atmosphere-vignette"></span>
     </div>
     <main id="app" class="app-shell"></main>
     <script src="course-data.js"></script>

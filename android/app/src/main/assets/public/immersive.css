@@ -78,6 +78,15 @@ html {
 }
 
 body {
+  --world-primary: 110, 243, 197;
+  --world-secondary: 141, 145, 255;
+  --world-warm: 255, 209, 102;
+  --world-intensity: 1;
+  --pointer-x: 50vw;
+  --pointer-y: 32vh;
+  --pointer-nx: 0;
+  --pointer-ny: -0.36;
+  position: relative;
   min-height: 100vh;
   overflow-x: hidden;
   color: var(--text);
@@ -87,6 +96,224 @@ body {
     radial-gradient(circle at 50% 86%, rgba(255, 188, 80, 0.075), transparent 34rem),
     linear-gradient(145deg, #041519 0%, #08242a 48%, #06191e 100%);
   background-attachment: fixed;
+}
+
+body[data-screen="preview"] {
+  --world-primary: 98, 217, 255;
+  --world-secondary: 110, 243, 197;
+  --world-warm: 255, 209, 102;
+}
+
+body[data-screen="lesson"] {
+  --world-primary: 98, 217, 255;
+  --world-secondary: 141, 145, 255;
+  --world-warm: 110, 243, 197;
+  --world-intensity: 1.12;
+}
+
+body[data-screen="complete"] {
+  --world-primary: 255, 209, 102;
+  --world-secondary: 110, 243, 197;
+  --world-warm: 141, 145, 255;
+  --world-intensity: 1.2;
+}
+
+body[data-screen="practice"] {
+  --world-primary: 141, 145, 255;
+  --world-secondary: 98, 217, 255;
+  --world-warm: 255, 124, 114;
+}
+
+body[data-screen="letters"],
+body[data-screen="settings"] {
+  --world-primary: 141, 145, 255;
+  --world-secondary: 110, 243, 197;
+  --world-warm: 255, 209, 102;
+}
+
+/* A persistent world behind every render. It changes colour with the current
+   screen and follows mouse, pen, touch and scroll without moving app controls. */
+.responsive-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+}
+
+html.automated-browser .responsive-atmosphere {
+  display: none;
+}
+
+.responsive-atmosphere > span {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.atmosphere-aurora {
+  width: clamp(380px, 62vw, 920px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.2;
+  will-change: transform;
+  transition: background 760ms ease, opacity 760ms ease;
+}
+
+.aurora-primary {
+  top: -34%;
+  right: -19%;
+  background: radial-gradient(circle, rgba(var(--world-primary), 0.72), rgba(var(--world-primary), 0) 69%);
+  transform: translate3d(var(--ambient-x-primary, 0px), calc(var(--ambient-y-primary, 0px) + var(--atmosphere-scroll-back, 0px)), 0);
+}
+
+.aurora-secondary {
+  bottom: -42%;
+  left: -22%;
+  background: radial-gradient(circle, rgba(var(--world-secondary), 0.6), rgba(var(--world-secondary), 0) 70%);
+  transform: translate3d(var(--ambient-x-secondary, 0px), calc(var(--ambient-y-secondary, 0px) + var(--atmosphere-scroll-forward, 0px)), 0);
+  animation-delay: -3s;
+}
+
+.aurora-warm {
+  top: 24%;
+  left: 34%;
+  width: clamp(280px, 42vw, 640px);
+  background: radial-gradient(circle, rgba(var(--world-warm), 0.33), rgba(var(--world-warm), 0) 69%);
+  opacity: 0.12;
+  transform: translate3d(var(--ambient-x-warm, 0px), calc(var(--ambient-y-warm, 0px) + var(--atmosphere-scroll-deep, 0px)), 0);
+  animation-delay: -5s;
+}
+
+.atmosphere-mesh {
+  inset: -28% -18%;
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(var(--world-primary), 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--world-primary), 0.055) 1px, transparent 1px);
+  background-size: clamp(46px, 5vw, 76px) clamp(46px, 5vw, 76px);
+  mask-image: radial-gradient(ellipse at 50% 42%, #000 0%, rgba(0, 0, 0, 0.55) 46%, transparent 74%);
+  transform: perspective(850px) rotateX(62deg) translate3d(var(--ambient-x-mesh, 0px), calc(24% + var(--atmosphere-scroll-mesh, 0px)), 0);
+  transform-origin: center 62%;
+  transition: background-image 760ms ease;
+}
+
+.atmosphere-stars {
+  inset: -8%;
+  opacity: 0.34;
+  background-image:
+    radial-gradient(circle, rgba(225, 255, 247, 0.72) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(var(--world-secondary), 0.62) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(var(--world-warm), 0.55) 0 1.2px, transparent 1.7px);
+  background-position: 4px 11px, 38px 29px, 71px 57px;
+  background-size: 93px 93px, 137px 137px, 181px 181px;
+  mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.15) 80%, transparent);
+  transform: translate3d(var(--ambient-x-mesh, 0px), var(--atmosphere-scroll-back, 0px), 0);
+  will-change: transform;
+}
+
+.stars-far {
+  opacity: 0.16;
+  transform: translate3d(var(--ambient-x-primary, 0px), var(--atmosphere-scroll-forward, 0px), 0) scale(1.08);
+}
+
+.atmosphere-beam {
+  inset: -36%;
+  background: conic-gradient(from 205deg at 50% 50%, transparent 0 31%, rgba(var(--world-primary), 0.075) 35%, rgba(var(--world-secondary), 0.04) 39%, transparent 44% 100%);
+  opacity: 0.72;
+  transform: rotate(var(--ambient-beam-rotate, 0deg)) translate3d(var(--ambient-beam-x, 0px), var(--ambient-beam-y, 0px), 0);
+  transform-origin: center;
+  transition: background 760ms ease, transform 260ms ease-out;
+}
+
+.atmosphere-spotlight {
+  inset: 0;
+  background:
+    radial-gradient(clamp(280px, 34vw, 540px) circle at var(--pointer-x) var(--pointer-y), rgba(var(--world-primary), 0.13), rgba(var(--world-primary), 0.035) 38%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  transition: background 760ms ease, opacity 760ms ease;
+}
+
+.atmosphere-lens {
+  top: var(--pointer-y);
+  left: var(--pointer-x);
+  width: clamp(190px, 26vw, 360px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(var(--world-primary), 0.07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 clamp(30px, 5vw, 76px) rgba(var(--world-primary), 0.012),
+    0 0 90px rgba(var(--world-primary), 0.04);
+  opacity: 0.72;
+  transform: translate(-50%, -50%);
+  transition: top 140ms ease-out, left 140ms ease-out, border-color 760ms ease;
+}
+
+.atmosphere-lens i {
+  position: absolute;
+  border: 1px solid rgba(var(--world-secondary), 0.08);
+  border-radius: 50%;
+  animation: atmosphere-lens-pulse 4.8s ease-in-out infinite;
+}
+
+.atmosphere-lens i:first-child {
+  inset: 17%;
+}
+
+.atmosphere-lens i:last-child {
+  inset: 34%;
+  animation-delay: -2.4s;
+}
+
+.atmosphere-wash,
+.atmosphere-vignette {
+  inset: 0;
+}
+
+.atmosphere-wash {
+  opacity: 0;
+  background: radial-gradient(circle at 50% 46%, rgba(var(--world-primary), 0.19), transparent 58%);
+}
+
+.atmosphere-vignette {
+  background:
+    linear-gradient(to bottom, rgba(1, 10, 13, 0.08), transparent 22%, transparent 72%, rgba(1, 10, 13, 0.34)),
+    radial-gradient(ellipse at center, transparent 42%, rgba(1, 10, 13, 0.3) 120%);
+}
+
+body.world-transition .atmosphere-wash {
+  animation: atmosphere-screen-wash 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+body[data-screen="lesson"] .atmosphere-spotlight,
+body[data-screen="complete"] .atmosphere-spotlight {
+  opacity: 1;
+}
+
+body[data-screen="complete"] .atmosphere-aurora {
+  opacity: 0.24;
+}
+
+.atmosphere-pulse {
+  z-index: 4;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(var(--world-primary), 0.52);
+  border-radius: 50%;
+  box-shadow: 0 0 32px rgba(var(--world-primary), 0.18);
+  transform: translate(-50%, -50%) scale(0.25);
+  animation: atmosphere-touch-wave 920ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.atmosphere-pulse.is-compact {
+  width: 18px;
+  height: 18px;
+}
+
+.app-shell {
+  z-index: 1;
 }
 
 body::before {
@@ -2145,6 +2372,140 @@ input:focus-visible,
   color: var(--text-soft);
 }
 
+/* Local light gives every important surface depth without changing its
+   layout. The element is injected after each app render and follows hover. */
+.immersive-surface {
+  --surface-x: 50%;
+  --surface-y: 42%;
+  isolation: isolate;
+}
+
+.chapter-switcher.immersive-surface,
+.path-overview.immersive-surface,
+.prompt-scene.immersive-surface,
+.teaching-card.immersive-surface,
+.setting-row.immersive-surface,
+.utility-action.immersive-surface,
+.letter-card.immersive-surface {
+  position: relative;
+}
+
+.surface-spotlight {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 8 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid transparent;
+  border-radius: inherit !important;
+  background:
+    radial-gradient(260px circle at var(--surface-x) var(--surface-y), rgba(255, 255, 255, 0.13), rgba(var(--world-primary), 0.07) 27%, transparent 68%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: opacity 240ms ease, border-color 240ms ease;
+}
+
+.immersive-surface.surface-lit > .surface-spotlight {
+  border-color: rgba(var(--world-primary), 0.08);
+  opacity: 1;
+}
+
+/* Popups and feedback now arrive as pieces of the same illuminated world. */
+.lesson-start-card,
+.path-step .lesson-start-card,
+.path-step.left .lesson-start-card,
+.path-step.right .lesson-start-card,
+.word-help-popover,
+.hint-popover {
+  transform-origin: 78% 0;
+  animation: immersive-popup-arrive 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  backdrop-filter: blur(30px) saturate(1.35);
+}
+
+.lesson-start-card {
+  overflow: hidden;
+  box-shadow:
+    0 26px 64px rgba(0, 8, 11, 0.46),
+    0 0 0 1px rgba(var(--world-primary), 0.035),
+    0 0 50px rgba(var(--world-primary), 0.07),
+    var(--edge-light);
+}
+
+.lesson-start-card::before,
+.word-help-popover::before,
+.hint-popover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 14%;
+  left: 14%;
+  z-index: 9;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--world-primary), 0.82), transparent);
+  box-shadow: 0 0 18px rgba(var(--world-primary), 0.38);
+  pointer-events: none;
+}
+
+.path-step.selected {
+  border-radius: 24px;
+  background: radial-gradient(circle at 18% 50%, rgba(var(--world-primary), 0.055), transparent 44%);
+}
+
+.path-step.selected .lesson-node {
+  filter: brightness(1.08) saturate(1.12);
+}
+
+.word-help-popover,
+.hint-popover {
+  overflow: hidden;
+  box-shadow:
+    0 30px 76px rgba(0, 7, 10, 0.5),
+    0 0 0 1px rgba(var(--world-primary), 0.045),
+    0 0 42px rgba(var(--world-primary), 0.08),
+    var(--edge-light);
+}
+
+.quiz-feedback-panel {
+  overflow: hidden;
+  animation: immersive-feedback-arrive 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-feedback-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 10%;
+  left: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--world-primary), 0.82), transparent);
+  box-shadow: 0 0 22px rgba(var(--world-primary), 0.44);
+}
+
+.quiz-feedback-panel.correct .feedback-icon {
+  animation: feedback-icon-pop 620ms 110ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-feedback-panel.wrong .feedback-icon {
+  animation: feedback-icon-wobble 460ms 110ms ease-out both;
+}
+
+.app-shell.screen-changing .bottom-nav {
+  animation: immersive-dock-arrive 520ms 90ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.choice-button.selected:not(.correct):not(.wrong),
+.match-pair-card.selected {
+  box-shadow:
+    0 5px 0 #153d67,
+    0 18px 40px rgba(var(--world-primary), 0.16),
+    0 0 0 4px rgba(var(--world-primary), 0.06),
+    var(--edge-light);
+}
+
 /* Shared movement and feedback. */
 .press-ripple {
   background: rgba(255, 255, 255, 0.2) !important;
@@ -2216,6 +2577,52 @@ input:focus-visible,
   0%, 100% { transform: scale(1); filter: brightness(1); }
   35% { transform: scale(1.06); filter: brightness(1.22); }
   65% { transform: scale(0.98); filter: brightness(1.08); }
+}
+
+@keyframes atmosphere-lens-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.84); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+
+@keyframes atmosphere-screen-wash {
+  0% { opacity: 0; transform: scale(0.72); }
+  22% { opacity: 0.78; }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+
+@keyframes atmosphere-touch-wave {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  16% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(7); }
+}
+
+@keyframes immersive-popup-arrive {
+  0% { opacity: 0; transform: translateY(-10px) scale(0.9); filter: blur(9px); }
+  58% { opacity: 1; transform: translateY(2px) scale(1.012); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@keyframes immersive-feedback-arrive {
+  0% { opacity: 0; clip-path: inset(100% 0 0 round 27px); filter: blur(8px); }
+  100% { opacity: 1; clip-path: inset(0 0 0 round 27px); filter: blur(0); }
+}
+
+@keyframes feedback-icon-pop {
+  0% { opacity: 0; transform: scale(0.45) rotate(-18deg); }
+  62% { opacity: 1; transform: scale(1.12) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes feedback-icon-wobble {
+  0% { opacity: 0; transform: scale(0.7); }
+  35% { opacity: 1; transform: translateX(-4px) scale(1.04); }
+  62% { transform: translateX(3px) scale(1); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes immersive-dock-arrive {
+  0% { opacity: 0; clip-path: inset(100% 0 0 round 28px); }
+  100% { opacity: 1; clip-path: inset(0 0 0 round 28px); }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -2319,6 +2726,47 @@ input:focus-visible,
       radial-gradient(circle at 10% 2%, rgba(91, 97, 238, 0.18), transparent 22rem),
       radial-gradient(circle at 92% 14%, rgba(39, 215, 161, 0.12), transparent 22rem),
       linear-gradient(160deg, #041519, #082229 55%, #05191e);
+    background-attachment: scroll;
+  }
+
+  .atmosphere-aurora {
+    width: 132vw;
+  }
+
+  .aurora-primary {
+    top: -24%;
+    right: -58%;
+  }
+
+  .aurora-secondary {
+    bottom: -30%;
+    left: -62%;
+  }
+
+  .aurora-warm {
+    top: 34%;
+    left: 18%;
+    width: 88vw;
+  }
+
+  .atmosphere-mesh {
+    inset: -18% -72%;
+    opacity: 0.14;
+    background-size: 52px 52px;
+  }
+
+  .atmosphere-stars {
+    opacity: 0.24;
+  }
+
+  .atmosphere-lens {
+    width: 210px;
+    opacity: 0.48;
+  }
+
+  .atmosphere-beam {
+    inset: -58%;
+    opacity: 0.56;
   }
 
   .app-shell {
@@ -2705,6 +3153,11 @@ input:focus-visible,
   .quiz-count {
     font-size: 0.68rem;
   }
+
+  .path-toggle {
+    width: calc(100% - 18px);
+    margin-inline: 9px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2724,6 +3177,19 @@ input:focus-visible,
   .today-panel,
   .unit-card,
   .review-hero {
+    transform: none !important;
+  }
+
+  .atmosphere-stars,
+  .atmosphere-lens,
+  .atmosphere-beam,
+  .atmosphere-pulse,
+  .surface-spotlight {
+    display: none !important;
+  }
+
+  .atmosphere-aurora,
+  .atmosphere-mesh {
     transform: none !important;
   }
 }
