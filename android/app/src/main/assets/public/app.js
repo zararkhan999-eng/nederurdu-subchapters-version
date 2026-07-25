@@ -1,6 +1,14 @@
 const STORAGE_KEY = "nederurdu-progress-v3";
 const launchScreen = document.querySelector(".launch-screen");
-document.documentElement.classList.toggle("automated-browser", Boolean(navigator.webdriver));
+const constrainedViewport = Boolean(
+  window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
+);
+const constrainedHardware = Boolean(
+  (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
+  || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4)
+);
+const performanceLite = constrainedViewport || (constrainedHardware && window.innerWidth <= 1100);
+document.documentElement.classList.toggle("performance-lite", performanceLite);
 
 let launchFinished = false;
 const finishLaunch = () => {
@@ -1778,7 +1786,7 @@ function bindEvents() {
 
 function bindExperienceMotion() {
   experienceObserver?.disconnect();
-  if (navigator.webdriver) {
+  if (navigator.webdriver || performanceLite) {
     updateScrollMotion();
     return;
   }
@@ -1828,7 +1836,6 @@ function bindExperienceMotion() {
   }
 
   animateCountUpMetrics();
-  bindSurfaceSpotlights();
   bindGlobalPointerGlow();
   updateScrollMotion();
 }

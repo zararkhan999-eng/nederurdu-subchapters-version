@@ -134,15 +134,6 @@ body[data-screen="settings"] {
 /* A persistent world behind every render. It changes colour with the current
    screen and follows mouse, pen, touch and scroll without moving app controls. */
 .responsive-atmosphere {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  contain: strict;
-  pointer-events: none;
-}
-
-html.automated-browser .responsive-atmosphere {
   display: none;
 }
 
