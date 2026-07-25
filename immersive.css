@@ -1323,7 +1323,9 @@ input:focus-visible,
 
 .lesson-start-card {
   grid-column: 1 / -1;
-  margin: 6px 76px 6px 0;
+  /* Keep the selection panel in the same grid width as its lesson row.
+     The former asymmetric RTL margin pulled it beyond the left edge. */
+  margin: 6px 0;
   border: 1px solid rgba(110, 243, 197, 0.19);
   border-radius: 22px;
   background:

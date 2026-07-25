@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v56-immersive-world";
+const CACHE_NAME = "nederurdu-v57-map-card-position";
 const APP_SHELL = [
   "./",
   "./index.html",

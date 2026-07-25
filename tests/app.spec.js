@@ -95,21 +95,23 @@ test("a lesson opens as a 20-step run", async ({ page }) => {
 });
 
 test("lesson selection cards never leave the phone viewport", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await openCleanApp(page);
+  for (const viewport of [{ width: 320, height: 568 }, { width: 360, height: 800 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await openCleanApp(page);
 
-  const lessonIds = await page.locator(".path-step").evaluateAll((steps) =>
-    steps.slice(0, 7).map((step) => step.dataset.pathLesson)
-  );
+    const lessonIds = await page.locator(".path-step").evaluateAll((steps) =>
+      steps.slice(0, 7).map((step) => step.dataset.pathLesson)
+    );
 
-  for (const lessonId of lessonIds) {
-    await page.locator(`[data-path-lesson="${lessonId}"] .lesson-node`).click();
-    const bounds = await page.locator(`[data-path-lesson="${lessonId}"] .lesson-start-card`).evaluate((card) => {
-      const rect = card.getBoundingClientRect();
-      return { left: rect.left, right: rect.right, viewportWidth: window.innerWidth };
-    });
-    expect(bounds.left, lessonId).toBeGreaterThanOrEqual(0);
-    expect(bounds.right, lessonId).toBeLessThanOrEqual(bounds.viewportWidth);
+    for (const lessonId of lessonIds) {
+      await page.locator(`[data-path-lesson="${lessonId}"] .lesson-node`).click();
+      const bounds = await page.locator(`[data-path-lesson="${lessonId}"] .lesson-start-card`).evaluate((card) => {
+        const rect = card.getBoundingClientRect();
+        return { left: rect.left, right: rect.right, viewportWidth: window.innerWidth };
+      });
+      expect(bounds.left, `${lessonId} at ${viewport.width}px`).toBeGreaterThanOrEqual(0);
+      expect(bounds.right, `${lessonId} at ${viewport.width}px`).toBeLessThanOrEqual(bounds.viewportWidth);
+    }
   }
 });
 
