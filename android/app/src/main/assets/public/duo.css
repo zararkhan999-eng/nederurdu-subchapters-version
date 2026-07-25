@@ -3567,6 +3567,9 @@ body::before {
   background: var(--ink);
   color: #fff;
   box-shadow: 0 16px 34px rgba(16, 35, 31, 0.18);
+  /* This map is a grid, not the older zig-zag popup layout. Reset the
+     inherited horizontal centering so centred (every second) lessons stay on-screen. */
+  transform: none;
   animation: studio-card-open 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

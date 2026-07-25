@@ -94,6 +94,25 @@ test("a lesson opens as a 20-step run", async ({ page }) => {
   await expect(page.locator('[data-action="home"]').first()).toBeVisible();
 });
 
+test("lesson selection cards never leave the phone viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openCleanApp(page);
+
+  const lessonIds = await page.locator(".path-step").evaluateAll((steps) =>
+    steps.slice(0, 7).map((step) => step.dataset.pathLesson)
+  );
+
+  for (const lessonId of lessonIds) {
+    await page.locator(`[data-path-lesson="${lessonId}"] .lesson-node`).click();
+    const bounds = await page.locator(`[data-path-lesson="${lessonId}"] .lesson-start-card`).evaluate((card) => {
+      const rect = card.getBoundingClientRect();
+      return { left: rect.left, right: rect.right, viewportWidth: window.innerWidth };
+    });
+    expect(bounds.left, lessonId).toBeGreaterThanOrEqual(0);
+    expect(bounds.right, lessonId).toBeLessThanOrEqual(bounds.viewportWidth);
+  }
+});
+
 test("word-bank tiles select on tap instead of opening definitions", async ({ page }) => {
   await openCleanApp(page);
   await page.evaluate(() => {

@@ -2948,7 +2948,9 @@ input:focus-visible,
   }
 
   .lesson-start-card {
-    margin-right: 60px;
+    /* The card already occupies the content column. An extra RTL margin
+       shifts it outside the left edge on phone screens. */
+    margin-right: 0;
   }
 
   .bottom-nav {
@@ -3134,7 +3136,7 @@ input:focus-visible,
   }
 
   .lesson-start-card {
-    margin-right: 56px;
+    margin-right: 0;
   }
 
   .quiz-status {
