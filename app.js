@@ -1,4 +1,7 @@
-const STORAGE_KEY = "nederurdu-progress-v3";
+const STORAGE_KEY = "nederurdu-progress-v4";
+const LEGACY_STORAGE_KEY = "nederurdu-progress-v3";
+const PROGRESS_SCHEMA_VERSION = 4;
+const COURSE_SCHEMA_VERSION = Number(window.NEDERURDU_COURSE?.schemaVersion || 0);
 const launchScreen = document.querySelector(".launch-screen");
 const constrainedViewport = Boolean(
   window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
@@ -33,7 +36,31 @@ if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
   else window.addEventListener("load", playLaunch, { once: true });
 }
 
-const chapters = window.NEDERURDU_CHAPTERS || [
+function normalizeCourseChapters(course) {
+  if (!Array.isArray(course?.chapters) || !course.chapters.length) return null;
+  return course.chapters.map((chapter) => {
+    const units = Array.isArray(chapter.units) ? chapter.units : [];
+    const lessons = Array.isArray(chapter.lessons) && chapter.lessons.length
+      ? chapter.lessons
+      : units.flatMap((unit) => (unit.lessons || []).map((lesson) => ({
+        ...lesson,
+        unit: lesson.unit || unit.title || unit.name || chapter.title
+      })));
+    const subchapters = Array.isArray(chapter.subchapters) && chapter.subchapters.length
+      ? chapter.subchapters
+      : units.map((unit, index) => ({
+        id: unit.id || `${chapter.id}-unit-${index + 1}`,
+        title: unit.title || unit.name || `حصہ ${index + 1}`,
+        goal: unit.goal || unit.outcomeUrdu || "",
+        practice: unit.practice || "",
+        lessonIds: (unit.lessons || []).map((lesson) => lesson.id)
+      }));
+    return { ...chapter, lessons, subchapters };
+  });
+}
+
+const course = window.NEDERURDU_COURSE || null;
+const chapters = normalizeCourseChapters(course) || window.NEDERURDU_CHAPTERS || [
   {
     id: "a0",
     title: "باب A0",
@@ -41,6 +68,16 @@ const chapters = window.NEDERURDU_CHAPTERS || [
     lessons: window.NEDERURDU_LESSONS || []
   }
 ];
+const courseConcepts = new Map(
+  (Array.isArray(course?.concepts) ? course.concepts : Object.values(course?.concepts || {}))
+    .filter((concept) => concept?.id)
+    .map((concept) => [concept.id, concept])
+);
+const courseSkills = new Map(
+  (Array.isArray(course?.skills) ? course.skills : Object.values(course?.skills || {}))
+    .filter((skill) => skill?.id)
+    .map((skill) => [skill.id, skill])
+);
 const dutchLetters = [
   { letter: "a", speak: "a", sound: "آ", word: "appel", meaning: "سیب" },
   { letter: "b", speak: "b", sound: "بے", word: "boek", meaning: "کتاب" },
@@ -325,16 +362,29 @@ const wordHelpGlossary = {
   zus: "بہن"
 };
 
-const LESSON_QUESTION_LIMIT = 20;
-const REVIEW_QUESTION_LIMIT = 20;
+const REVIEW_SKILL_SAFETY_CAP = 12;
 const SPEECH_PROFILE_VERSION = 2;
+const LEARNING_PHASES = [
+  { id: "learn", label: "سیکھیں", preview: "نئی بات" },
+  { id: "understand", label: "سمجھیں", preview: "پہچان" },
+  { id: "guided", label: "مدد سے مشق", preview: "مدد کے ساتھ" },
+  { id: "use", label: "استعمال کریں", preview: "حقیقی صورت" },
+  { id: "check", label: "خود جانچیں", preview: "بغیر مدد" },
+  { id: "correction", label: "درستگی", preview: "غلطی سمجھیں" }
+];
+const MASTERY_RANK = { new: 0, introduced: 1, practiced: 2, secure: 3 };
 
 const defaultProgress = {
+  schemaVersion: PROGRESS_SCHEMA_VERSION,
   completedLessons: [],
   scores: {},
   seenQuestionIds: [],
   missionVariantRuns: {},
   skillAttempts: {},
+  skillReviewHistory: {},
+  lessonMastery: {},
+  skillMastery: {},
+  lessonRunProgress: {},
   totalXp: 0,
   practiceDays: [],
   mistakes: [],
@@ -343,12 +393,12 @@ const defaultProgress = {
     pronunciation: true,
     beginnerMode: true,
     largeText: false,
-    slowAudio: false,
+    slowAudio: true,
     extraUrduHelp: true
   },
   speechProfileVersion: SPEECH_PROFILE_VERSION,
   selectedChapterId: "a0",
-  lastLessonId: "a0-letters-1"
+  lastLessonId: "a0-greetings-courtesy"
 };
 
 let progress = loadProgress();
@@ -362,6 +412,10 @@ let checked = false;
 let lessonResult = null;
 let sessionAnswers = [];
 let sessionQuestions = [];
+let activeLearningRun = null;
+let pendingCorrectionQuestion = null;
+let pendingCorrectionQuestions = [];
+let correctedCheckQuestionIds = new Set();
 let lessonProgressSteps = 0;
 let activeWordHelp = null;
 let buildAnswerIds = [];
@@ -391,26 +445,126 @@ const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion:
 
 function loadProgress() {
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    const storedSettings = stored?.settings || {};
-    const needsSpeechMigration = stored?.speechProfileVersion !== SPEECH_PROFILE_VERSION;
-    return {
+    const currentRaw = localStorage.getItem(STORAGE_KEY);
+    const legacyRaw = currentRaw ? null : localStorage.getItem(LEGACY_STORAGE_KEY);
+    const stored = JSON.parse(currentRaw || legacyRaw);
+    const migrated = !currentRaw && legacyRaw ? migrateLegacyProgress(stored) : stored;
+    const storedSettings = migrated?.settings || {};
+    const needsSpeechMigration = migrated?.speechProfileVersion !== SPEECH_PROFILE_VERSION;
+    const loaded = {
       ...defaultProgress,
-      ...stored,
+      ...migrated,
+      schemaVersion: PROGRESS_SCHEMA_VERSION,
+      lessonMastery: { ...defaultProgress.lessonMastery, ...(migrated?.lessonMastery || {}) },
+      skillMastery: { ...defaultProgress.skillMastery, ...(migrated?.skillMastery || {}) },
+      skillReviewHistory: { ...defaultProgress.skillReviewHistory, ...(migrated?.skillReviewHistory || {}) },
+      lessonRunProgress: { ...defaultProgress.lessonRunProgress, ...(migrated?.lessonRunProgress || {}) },
       speechProfileVersion: SPEECH_PROFILE_VERSION,
       settings: {
         ...defaultProgress.settings,
         ...storedSettings,
-        slowAudio: needsSpeechMigration ? false : Boolean(storedSettings.slowAudio)
+        slowAudio: needsSpeechMigration ? true : storedSettings.slowAudio !== false
       }
     };
+    backfillCompletedMastery(loaded);
+    if (!currentRaw && legacyRaw) localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+    return loaded;
   } catch {
     return { ...defaultProgress };
   }
 }
 
+function backfillCompletedMastery(target) {
+  const updatedAt = new Date().toISOString();
+  const evidence = getLegacySkillEvidence(target);
+  for (const lessonId of target.completedLessons || []) {
+    const existingLesson = target.lessonMastery[lessonId];
+    if (!statusAtLeast(getMasteryStatus(existingLesson), "practiced")) {
+      target.lessonMastery[lessonId] = {
+        ...(existingLesson || {}),
+        status: "practiced",
+        restoredFromCompletion: true,
+        updatedAt
+      };
+    }
+    for (const [skillId, details] of evidence.entries()) {
+      if (details.lessonId !== lessonId) continue;
+      const existingSkill = target.skillMastery[skillId];
+      if (statusAtLeast(getMasteryStatus(existingSkill), "practiced")) continue;
+      target.skillMastery[skillId] = {
+        ...(existingSkill || {}),
+        status: "practiced",
+        lessonId,
+        restoredFromCompletion: true,
+        updatedAt
+      };
+    }
+  }
+}
+
+function migrateLegacyProgress(stored) {
+  if (!stored || typeof stored !== "object") return { ...defaultProgress };
+  const migratedAt = new Date().toISOString();
+  const lessonMastery = { ...(stored.lessonMastery || {}) };
+  const skillMastery = { ...(stored.skillMastery || {}) };
+  const evidence = getLegacySkillEvidence(stored);
+  const completedLessonIds = new Set(stored.completedLessons || []);
+  for (const lessonId of stored.completedLessons || []) {
+    lessonMastery[lessonId] = {
+      ...(lessonMastery[lessonId] || {}),
+      status: "practiced",
+      migratedFromCompletion: true,
+      updatedAt: lessonMastery[lessonId]?.updatedAt || migratedAt
+    };
+  }
+  for (const [skillId, details] of evidence.entries()) {
+    const evidencedStatus = completedLessonIds.has(details.lessonId) ? "practiced" : "introduced";
+    skillMastery[skillId] = raiseMastery(skillMastery[skillId], evidencedStatus, {
+      lessonId: details.lessonId,
+      migratedFromEvidence: true,
+      updatedAt: skillMastery[skillId]?.updatedAt || migratedAt
+    });
+  }
+  const migrated = {
+    ...stored,
+    schemaVersion: PROGRESS_SCHEMA_VERSION,
+    migratedFrom: LEGACY_STORAGE_KEY,
+    migratedAt,
+    legacyRecoveryKey: LEGACY_STORAGE_KEY,
+    lessonMastery,
+    skillMastery,
+    lessonRunProgress: { ...(stored.lessonRunProgress || {}) }
+  };
+  return migrated;
+}
+
+function getLegacySkillEvidence(stored) {
+  const seenIds = new Set(stored?.seenQuestionIds || []);
+  const legacyMistakes = stored?.mistakes || [];
+  for (const mistake of legacyMistakes) {
+    if (mistake?.questionId) seenIds.add(mistake.questionId);
+  }
+  const evidence = new Map();
+  if (!seenIds.size && !legacyMistakes.length) return evidence;
+  for (const lesson of getAllLessons()) {
+    for (const question of getLegacyEvidenceExercises(lesson)) {
+      const matchesSavedId = seenIds.has(question.id) || seenIds.has(question.legacyId);
+      const matchesLegacyMistake = legacyMistakes.some((mistake) => (
+        (!mistake.lessonId || mistake.lessonId === lesson.id)
+        && mistake.prompt === question.prompt
+        && mistake.answer === question.answer
+      ));
+      if (!matchesSavedId && !matchesLegacyMistake) continue;
+      for (const skillId of getQuestionSkillIds(question)) {
+        if (!evidence.has(skillId)) evidence.set(skillId, { lessonId: lesson.id, questionId: question.id });
+      }
+    }
+  }
+  return evidence;
+}
+
 function saveProgress(nextProgress = progress) {
-  progress = nextProgress;
+  progress = { ...nextProgress, schemaVersion: PROGRESS_SCHEMA_VERSION };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
@@ -436,6 +590,247 @@ function getCurrentLessons() {
 
 function getChapterForLesson(id) {
   return chapters.find((chapter) => chapter.lessons.some((lesson) => lesson.id === id)) || getSelectedChapter();
+}
+
+function normalizeIdList(...values) {
+  return [...new Set(values.flatMap((value) => {
+    if (Array.isArray(value)) return value.map((item) => (typeof item === "object" ? item?.id : item));
+    if (typeof value === "string" && value) return [value];
+    if (value && typeof value === "object" && value.id) return [value.id];
+    return [];
+  }).filter(Boolean))];
+}
+
+function getLessonLearning(lesson) {
+  return lesson?.learning || {};
+}
+
+function getLessonExercises(lesson) {
+  return Array.isArray(lesson?.exercises) ? lesson.exercises : (lesson?.questions || []);
+}
+
+function getLegacyEvidenceExercises(lesson) {
+  const seen = new Set();
+  return [...getLessonExercises(lesson), ...(lesson?.legacyQuestions || [])].filter((question) => {
+    const key = question?.id || question?.legacyId || `${question?.type}|${question?.prompt}|${question?.answer}`;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function getLearningRuns(lesson) {
+  const learning = getLessonLearning(lesson);
+  const runs = Array.isArray(learning.runs) ? learning.runs : [];
+  if (runs.length) return runs.map((run, index) => ({
+    ...run,
+    id: run.id || `${lesson.id}-run-${index + 1}`
+  }));
+  return [];
+}
+
+function getRunTargetCap(lesson, run) {
+  const chapterId = getChapterForLesson(lesson.id)?.id || String(lesson.id || "").slice(0, 2);
+  if (chapterId === "a1") return 5;
+  if (chapterId === "a2") return 4;
+  return run?.patternId || run?.pattern ? 3 : 4;
+}
+
+function capLearningRun(lesson, run) {
+  if (!run) return null;
+  const cap = getRunTargetCap(lesson, run);
+  const declaredConceptIds = normalizeIdList(run.conceptIds, run.concepts?.map((item) => item.id || item));
+  const declaredNewConceptIds = normalizeIdList(run.newConceptIds);
+  const newConceptIds = (declaredNewConceptIds.length ? declaredNewConceptIds : declaredConceptIds).slice(0, cap);
+  const reviewConceptIds = normalizeIdList(run.reviewConceptIds);
+  const conceptIds = normalizeIdList(newConceptIds, reviewConceptIds);
+  const conceptSet = new Set(conceptIds);
+  const teachingBlocks = (run.teachingBlocks || run.teaching || run.blocks || []).filter((block) => {
+    const conceptId = block?.conceptId || block?.concept?.id;
+    return !conceptId || conceptSet.has(conceptId);
+  });
+  const relatedSkillIds = conceptIds.flatMap((conceptId) => normalizeIdList(courseConcepts.get(conceptId)?.skillIds));
+  const skillIds = normalizeIdList(run.skillIds, relatedSkillIds).filter((skillId) => {
+    const skill = courseSkills.get(skillId);
+    const ownedConceptIds = normalizeIdList(skill?.conceptIds, skill?.conceptId);
+    if (ownedConceptIds.length) return ownedConceptIds.some((conceptId) => conceptSet.has(conceptId));
+    if (skill?.patternId) return !run.patternId || skill.patternId === run.patternId;
+    return true;
+  });
+  return {
+    ...run,
+    conceptIds,
+    newConceptIds,
+    reviewConceptIds,
+    skillIds,
+    teachingBlocks,
+    capApplied: (declaredNewConceptIds.length || declaredConceptIds.length) > newConceptIds.length
+  };
+}
+
+function selectLearningRun(lesson) {
+  const runs = getLearningRuns(lesson);
+  if (!runs.length) return null;
+  const runState = progress.lessonRunProgress?.[lesson.id] || {};
+  const completedRunIds = new Set(runState.completedRunIds || []);
+  const secureRunIds = new Set(runState.secureRunIds || []);
+  const preferred = runs.find((run) => !completedRunIds.has(run.id))
+    || runs.find((run) => !secureRunIds.has(run.id))
+    || runs[runs.length - 1];
+  return capLearningRun(lesson, preferred);
+}
+
+function getLessonConceptIds(lesson, run = null) {
+  const learning = getLessonLearning(lesson);
+  const runs = run ? [run] : getLearningRuns(lesson);
+  return normalizeIdList(
+    run ? [] : learning.conceptIds,
+    run ? [] : lesson?.conceptIds,
+    runs.flatMap((item) => item.conceptIds || [])
+  );
+}
+
+function getLessonSkillIds(lesson, run = null) {
+  const learning = getLessonLearning(lesson);
+  const runs = run ? [run] : getLearningRuns(lesson);
+  return normalizeIdList(
+    run ? [] : learning.skillIds,
+    run ? [] : lesson?.skillIds,
+    runs.flatMap((item) => item.skillIds || []),
+    getLessonConceptIds(lesson, run).flatMap((conceptId) => courseConcepts.get(conceptId)?.skillIds || [])
+  );
+}
+
+function getQuestionSkillIds(question) {
+  const canonicalSkillIds = normalizeIdList(question?.skillIds);
+  return canonicalSkillIds.length ? canonicalSkillIds : normalizeIdList(question?.skillId);
+}
+
+function getQuestionConceptIds(question) {
+  return normalizeIdList(question?.conceptIds, question?.conceptId);
+}
+
+function getMasteryStatus(record) {
+  return record?.status && MASTERY_RANK[record.status] != null ? record.status : "new";
+}
+
+function getSkillStatus(skillId) {
+  return getMasteryStatus(progress.skillMastery?.[skillId]);
+}
+
+function getLessonStatus(lessonId) {
+  return getMasteryStatus(progress.lessonMastery?.[lessonId]);
+}
+
+function statusAtLeast(status, minimum) {
+  return (MASTERY_RANK[status] || 0) >= (MASTERY_RANK[minimum] || 0);
+}
+
+function getPrerequisiteSkillIds(lesson, run = null) {
+  const learning = getLessonLearning(lesson);
+  return normalizeIdList(
+    run?.prerequisiteSkillIds,
+    learning.prerequisiteSkillIds,
+    learning.prerequisites,
+    lesson?.prerequisiteSkillIds,
+    lesson?.prerequisites,
+    lesson?.mission?.prerequisiteSkillIds
+  );
+}
+
+function getMissionAssessmentSkillIds(lesson) {
+  const learning = getLessonLearning(lesson);
+  const declaredSkillIds = normalizeIdList(
+    lesson?.assessmentSkillIds,
+    lesson?.mission?.assessmentSkillIds,
+    learning.assessmentSkillIds
+  );
+  if (declaredSkillIds.length) return declaredSkillIds;
+  return normalizeIdList(
+    getLessonSkillIds(lesson),
+    getLessonExercises(lesson).flatMap(getQuestionSkillIds)
+  );
+}
+
+function getMissingPrerequisites(lesson, run = null) {
+  const requiredStatus = lesson?.kind === "mission" ? "practiced" : "secure";
+  const requiredIds = lesson?.kind === "mission"
+    ? normalizeIdList(getPrerequisiteSkillIds(lesson, run), getMissionAssessmentSkillIds(lesson))
+    : getPrerequisiteSkillIds(lesson, run);
+  return requiredIds.filter((skillId) => !statusAtLeast(getSkillStatus(skillId), requiredStatus));
+}
+
+function getSkillDisplayName(skillId) {
+  const skill = courseSkills.get(skillId);
+  const conceptId = skill?.conceptId || normalizeIdList(skill?.conceptIds)[0];
+  const concept = conceptId ? courseConcepts.get(conceptId) : null;
+  const label = concept?.dutch
+    || skill?.titleUrdu
+    || skill?.labelUrdu
+    || skill?.canDoUrdu
+    || skill?.urdu
+    || skill?.name
+    || skill?.title
+    || skillId;
+  return String(label).replace(/\s+سمجھنا اور استعمال کرنا$/u, "");
+}
+
+function getConceptSkillIds(concept, run) {
+  return normalizeIdList(
+    concept?.skillIds,
+    (run?.skillIds || []).filter((skillId) => {
+      const skill = courseSkills.get(skillId);
+      return skill?.conceptId === concept?.id || normalizeIdList(skill?.conceptIds).includes(concept?.id);
+    })
+  );
+}
+
+function getPatternSkillIds(pattern, run) {
+  return normalizeIdList(
+    pattern?.skillIds,
+    (run?.skillIds || []).filter((skillId) => {
+      const skill = courseSkills.get(skillId);
+      return skill?.patternId === pattern?.id
+        || skill?.targetId === pattern?.id
+        || (skill?.kind === "pattern" && (!pattern?.id || String(skillId).includes(pattern.id)));
+    })
+  );
+}
+
+function getLessonOutcome(lesson) {
+  const learning = getLessonLearning(lesson);
+  return learning.outcomeUrdu || learning.outcome || lesson?.outcomeUrdu || lesson?.goal || lesson?.description || "اس سبق کی بات سمجھ کر روزمرہ میں استعمال کریں۔";
+}
+
+function getLessonMinutes(lesson) {
+  const learning = getLessonLearning(lesson);
+  const runs = getLearningRuns(lesson);
+  if (lesson?.kind !== "mission" && runs.length) {
+    return Math.max(1, Math.round(Number(learning.estimatedMinutes || runs.length * 8) / runs.length));
+  }
+  return Number(learning.estimatedMinutes || lesson?.estimatedMinutes || 6);
+}
+
+function raiseMastery(record, nextStatus, details = {}) {
+  const currentStatus = getMasteryStatus(record);
+  const status = statusAtLeast(currentStatus, nextStatus) ? currentStatus : nextStatus;
+  return { ...(record || {}), ...details, status, updatedAt: new Date().toISOString() };
+}
+
+function persistSkillMastery(skillIds, status, details = {}) {
+  const skillMastery = { ...(progress.skillMastery || {}) };
+  for (const skillId of skillIds) {
+    skillMastery[skillId] = raiseMastery(skillMastery[skillId], status, details);
+  }
+  const lesson = getActiveLesson();
+  const lessonMastery = { ...(progress.lessonMastery || {}) };
+  if (lesson
+    && !lesson.reviewKind
+    && details.updateLesson !== false
+    && (status !== "introduced" || details.phaseComplete)) {
+    lessonMastery[lesson.id] = raiseMastery(lessonMastery[lesson.id], status, details);
+  }
+  saveProgress({ ...progress, skillMastery, lessonMastery });
 }
 
 function isLessonUnlocked(index) {
@@ -464,6 +859,16 @@ function subchapterCompletedCount(subchapter) {
 
 function completedLessonsInOrder() {
   return progress.completedLessons.map((id) => getLesson(id)).filter(Boolean);
+}
+
+function reviewableLessonsInOrder() {
+  return getAllLessons().filter((lesson) => (
+    lesson.kind !== "mission"
+    && (
+      progress.completedLessons.includes(lesson.id)
+      || statusAtLeast(getLessonStatus(lesson.id), "introduced")
+    )
+  ));
 }
 
 function getNextLessonForChapter(chapter = getSelectedChapter()) {
@@ -508,17 +913,17 @@ function getReviewConfig(kind) {
 }
 
 function getTodayReviewQuestions() {
-  const completed = completedLessonsInOrder();
-  const sourceLessons = completed.length
-    ? completed.slice(-3).reverse()
+  const reviewable = reviewableLessonsInOrder();
+  const sourceLessons = reviewable.length
+    ? reviewable
     : [getLesson(progress.lastLessonId || getNextLessonForChapter().id)];
   return pickReviewQuestions(sourceLessons);
 }
 
 function getOldLessonReviewQuestions() {
-  const completed = completedLessonsInOrder();
-  const olderLessons = completed.filter((lesson) => lesson.id !== progress.lastLessonId);
-  return pickReviewQuestions(olderLessons.length ? olderLessons : completed);
+  const reviewable = reviewableLessonsInOrder();
+  const olderLessons = reviewable.filter((lesson) => lesson.id !== progress.lastLessonId);
+  return pickReviewQuestions(olderLessons.length ? olderLessons : reviewable);
 }
 
 function getMistakeReviewQuestions() {
@@ -528,17 +933,110 @@ function getMistakeReviewQuestions() {
     const key = mistakeKey(mistake);
     if (seen.has(key)) continue;
     const question = findQuestionForMistake(mistake);
-    if (!question) continue;
+    if (!question || !isQuestionEligibleForReview(question)) continue;
     seen.add(key);
-    questions.push({ ...cloneQuestion(question), mistakeOrigin: { ...mistake } });
-    if (questions.length >= REVIEW_QUESTION_LIMIT) break;
+    questions.push(prepareAdaptiveReviewQuestion(question, { mistakeOrigin: { ...mistake } }));
+    if (questions.length >= REVIEW_SKILL_SAFETY_CAP) break;
   }
   return questions;
 }
 
 function pickReviewQuestions(lessons) {
-  const questions = lessons.flatMap((lesson) => lesson.questions.filter((question) => !isInfoQuestion(question)).map(cloneQuestion));
-  return shuffleArray(questions).slice(0, REVIEW_QUESTION_LIMIT);
+  const candidates = shuffleArray(lessons.flatMap((lesson) => getLessonExercises(lesson)
+    .filter((question) => !isInfoQuestion(question) && isQuestionEligibleForReview(question))
+    .map((question) => prepareAdaptiveReviewQuestion(question))));
+  candidates.sort((left, right) => reviewPriority(left) - reviewPriority(right));
+  const coveredSkillIds = new Set();
+  const selected = [];
+  for (const question of candidates) {
+    const skillIds = getQuestionSkillIds(question);
+    if (skillIds.length && skillIds.every((skillId) => coveredSkillIds.has(skillId))) continue;
+    selected.push(question);
+    skillIds.forEach((skillId) => coveredSkillIds.add(skillId));
+    if (selected.length >= REVIEW_SKILL_SAFETY_CAP) break;
+  }
+  return selected;
+}
+
+function reviewPriority(question) {
+  const skillIds = getQuestionSkillIds(question);
+  if (!skillIds.length) return 1;
+  return Math.min(...skillIds.map((skillId) => {
+    const attempts = progress.skillAttempts?.[skillId] || { correct: 0, total: 0 };
+    const accuracy = attempts.total ? attempts.correct / attempts.total : 0;
+    const status = getSkillStatus(skillId);
+    const statusWeight = status === "introduced" ? 0 : status === "practiced" ? 0.15 : 0.3;
+    const reviewHistory = progress.skillReviewHistory?.[skillId];
+    const nextDueAt = Date.parse(reviewHistory?.nextDueAt || "");
+    const dueWeight = !Number.isFinite(nextDueAt) || Date.now() >= nextDueAt ? 0 : 1.5;
+    return accuracy + statusWeight + dueWeight;
+  }));
+}
+
+function isQuestionEligibleForReview(question) {
+  if (question.adaptiveReviewEligible === false) return false;
+  const skillIds = getQuestionSkillIds(question);
+  if (!skillIds.length || !skillIds.every((skillId) => statusAtLeast(getSkillStatus(skillId), "introduced"))) {
+    return false;
+  }
+  const hasIntroducedOnlySkill = skillIds.some((skillId) => getSkillStatus(skillId) === "introduced");
+  if (!hasIntroducedOnlySkill) return true;
+  return getQuestionPhase(question) === "understand"
+    && ["meaning", "listen-choice", "image-choice", "match-pairs", "document-choice"].includes(question.type);
+}
+
+function prepareAdaptiveReviewQuestion(question, extra = {}) {
+  return {
+    ...cloneQuestion(question),
+    ...extra,
+    phase: "guided",
+    supported: true,
+    adaptiveReview: true,
+    instructionUrdu: question.reviewInstructionUrdu
+      || question.instructionUrdu
+      || question.instruction
+      || "پہلے سیکھی ہوئی بات کو مدد کے ساتھ دوبارہ مضبوط کریں۔",
+    hint: question.hint
+      || question.hintUrdu
+      || "ضرورت ہو تو پہلے سکھایا ہوا معنی، آواز، یا مثال یاد کریں۔"
+  };
+}
+
+function updateSkillReviewHistory(previousHistory, answers) {
+  const history = { ...(previousHistory || {}) };
+  const results = new Map();
+  for (const answer of answers.filter((item) => item.phase !== "correction")) {
+    for (const skillId of normalizeIdList(answer.skillIds, answer.skillId)) {
+      const result = results.get(skillId) || { correct: 0, total: 0 };
+      result.correct += answer.correct ? 1 : 0;
+      result.total += 1;
+      results.set(skillId, result);
+    }
+  }
+  const now = new Date();
+  const successfulIntervals = [1, 3, 7, 14, 30];
+  for (const [skillId, result] of results.entries()) {
+    const previous = history[skillId] || {};
+    const reviewCount = Number(previous.reviewCount || 0) + 1;
+    const successful = result.total > 0 && result.correct / result.total >= 0.8;
+    const successfulStreak = successful ? Number(previous.successfulStreak || 0) + 1 : 0;
+    const intervalDays = successful
+      ? successfulIntervals[Math.min(successfulStreak - 1, successfulIntervals.length - 1)]
+      : 1;
+    const nextDue = new Date(now);
+    nextDue.setDate(nextDue.getDate() + intervalDays);
+    history[skillId] = {
+      ...previous,
+      reviewCount,
+      successfulStreak,
+      lastReviewedAt: now.toISOString(),
+      nextDueAt: nextDue.toISOString(),
+      intervalDays,
+      lastCorrect: result.correct,
+      lastTotal: result.total
+    };
+  }
+  return history;
 }
 
 function cloneQuestion(question) {
@@ -550,20 +1048,32 @@ function cloneQuestion(question) {
 }
 
 function findQuestionForMistake(mistake) {
-  const lesson = getLesson(mistake.lessonId);
-  if (mistake.skillId) {
-    const alternate = getAllLessons()
-      .flatMap((item) => item.questions)
-      .find((question) => question.skillId === mistake.skillId && question.id !== mistake.questionId && !isInfoQuestion(question));
-    if (alternate) return alternate;
-  }
-  if (mistake.questionId) {
-    const exactQuestion = lesson.questions.find((question) => question.id === mistake.questionId);
-    if (exactQuestion) return exactQuestion;
-  }
-  return lesson.questions.find((question) => (
-    question.prompt === mistake.prompt && question.answer === mistake.answer
+  const allQuestions = getAllLessons().flatMap((item) => getLessonExercises(item));
+  const legacyQuestions = getAllLessons().flatMap((item) => item.legacyQuestions || []);
+  const lesson = getAllLessons().find((item) => item.id === mistake.lessonId);
+  const lessonQuestions = lesson ? getLegacyEvidenceExercises(lesson) : [];
+  const sourceQuestion = [...lessonQuestions, ...allQuestions, ...legacyQuestions].find((question) => (
+    (mistake.questionId && (question.id === mistake.questionId || question.legacyId === mistake.questionId))
+    || (question.prompt === mistake.prompt && question.answer === mistake.answer)
   ));
+  if (sourceQuestion
+    && allQuestions.includes(sourceQuestion)
+    && !isInfoQuestion(sourceQuestion)
+    && isQuestionEligibleForReview(sourceQuestion)) {
+    return sourceQuestion;
+  }
+  const skillIds = normalizeIdList(
+    mistake.skillIds,
+    mistake.skillId,
+    sourceQuestion ? getQuestionSkillIds(sourceQuestion) : []
+  );
+  if (!skillIds.length) return null;
+  return allQuestions.find((question) => (
+    !isInfoQuestion(question)
+    && question.id !== sourceQuestion?.id
+    && getQuestionSkillIds(question).some((skillId) => skillIds.includes(skillId))
+    && isQuestionEligibleForReview(question)
+  )) || null;
 }
 
 function mistakeKey(item) {
@@ -718,9 +1228,9 @@ function renderHome() {
           <div class="today-main">
             <div class="today-copy">
               <h1>${getShortLessonTitle(nextLesson)}</h1>
-              <p>${beginnerFirstHome ? "آواز سنیں، لفظ پہچانیں، اور اپنا پہلا Nederlands جملہ بنائیں۔" : nextLesson.description}</p>
+              <p>${beginnerFirstHome ? "آواز سنیں، مطلب سمجھیں، اور اپنی پہلی روزمرہ Nederlands بات کہیں۔" : nextLesson.description}</p>
               <div class="mission-details">
-                <span>${renderIcon("spark")}<b class="latin">20</b> چھوٹے قدم</span>
+                <span>${renderIcon("spark")} سیکھنے کے <b class="latin">${getLessonDisplayPhases(nextLesson).length}</b> واضح مرحلے</span>
                 <span>${renderIcon("speaker")} آواز کے ساتھ</span>
               </div>
             </div>
@@ -730,7 +1240,7 @@ function renderHome() {
               <span class="mission-art-halo"></span>
             </div>
           </div>
-          <button class="primary-button today-action" data-action="start" data-lesson="${nextLesson.id}">
+          <button class="primary-button today-action" data-action="preview" data-lesson="${nextLesson.id}">
             <span class="button-icon">${renderIcon("play")}</span>
             <span>${beginnerFirstHome ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span>
             <span class="button-progress latin">${chapterPercent}%</span>
@@ -743,7 +1253,7 @@ function renderHome() {
         </section>
         <div class="rail-note">
           <span>${renderIcon("spark")}</span>
-          <p><strong>روز تھوڑا، مگر مسلسل</strong><small>ایک سبق تقریباً پانچ منٹ میں مکمل ہوتا ہے۔</small></p>
+          <p><strong>روز تھوڑا، مگر مسلسل</strong><small>ایک سیکھنے کا حصہ تقریباً آٹھ منٹ میں مکمل ہوتا ہے۔</small></p>
         </div>
       </aside>
       <div class="home-world">
@@ -823,7 +1333,7 @@ function renderLessonPath(chapter, nextLesson) {
     </article>
     `).join("")}
     ${groups.length > 2 ? `<button class="path-toggle" data-action="toggle-path" aria-expanded="${pathExpanded}">
-      <span>${pathExpanded ? "مختصر راستہ دکھائیں" : `پورا راستہ دیکھیں${hiddenGroupCount ? ` · ${hiddenGroupCount} حصے` : ""}`}</span>
+      <span>${pathExpanded ? "مختصر راستہ دکھائیں" : `پورا راستہ دیکھیں${hiddenGroupCount ? ` · مزید ${hiddenGroupCount} حصے` : ""}`}</span>
       ${renderIcon("chevron")}
     </button>` : ""}
   </section>`;
@@ -850,7 +1360,7 @@ function renderLessonNode(lesson, index, position, current, pathRow) {
   return `
     <div class="path-step ${position} ${selected ? "selected" : ""}" data-path-lesson="${lesson.id}" style="--path-row:${pathRow}">
       <button class="lesson-node ${state}" data-action="preview" data-lesson="${lesson.id}" ${locked ? "disabled" : ""} aria-label="${escapeAttr(lesson.title)}"><span class="lesson-node-index latin">${String(index + 1).padStart(2, "0")}</span><span class="lesson-node-icon">${renderIcon(icon)}</span></button>
-      <div class="node-copy"><span>${completed ? "مکمل سبق" : current ? "ابھی سیکھیں" : locked ? "اگلا مرحلہ" : "دستیاب"}</span><strong>${getShortLessonTitle(lesson)}</strong><small>${getLessonRunCount(lesson)} سوال · ${lesson.xp || 0} پوائنٹس</small></div>
+      <div class="node-copy"><span>${completed ? "مکمل سبق" : current ? "ابھی سیکھیں" : locked ? "اگلا مرحلہ" : "دستیاب"}</span><strong>${getShortLessonTitle(lesson)}</strong><small>تقریباً ${getLessonMinutes(lesson)} منٹ · ${getLessonStatus(lesson.id) === "secure" ? "مہارت پکی" : lesson.kind === "mission" ? "عملی مشن کے 4 مرحلے" : "6 سیکھنے کے مرحلے"}</small></div>
       <span class="node-trailing" aria-hidden="true">${locked ? renderIcon("lock") : renderIcon("arrow")}</span>
       ${selected ? renderLessonStartCard(lesson, index) : ""}
     </div>
@@ -868,7 +1378,7 @@ function renderLessonStartCard(lesson, index) {
       <span class="lesson-card-pointer" aria-hidden="true"></span>
       <span class="lesson-card-kicker">منتخب سبق · <b class="latin">${String(index + 1).padStart(2, "0")}</b></span>
       <strong>${getShortLessonTitle(lesson)}</strong>
-      <small>${getLessonRunCount(lesson)} سوال · آواز اور فوری مدد کے ساتھ</small>
+      <small>تقریباً ${getLessonMinutes(lesson)} منٹ · پہلے سیکھیں، پھر خود جانچیں</small>
       <button data-action="start" data-lesson="${lesson.id}"><span>${done ? "دوبارہ کریں" : "شروع کریں"}</span>${renderIcon("arrow")}</button>
     </article>
   `;
@@ -1010,7 +1520,7 @@ function renderUnitRow(lesson, index) {
       <span class="unit-number">${icon}</span>
       <span>
         <strong class="unit-title">${lesson.unit}</strong>
-        <p class="unit-meta">${getLessonRunCount(lesson)} سوالات · ${lesson.xp} پوائنٹس</p>
+        <p class="unit-meta">تقریباً ${getLessonMinutes(lesson)} منٹ · ${getLessonStatus(lesson.id) === "secure" ? "مہارت پکی" : lesson.kind === "mission" ? "عملی مشن کے 4 مرحلے" : "سیکھنے کے 6 مرحلے"}</p>
       </span>
       <span class="status-dot ${done ? "done" : ""}"></span>
     </button>
@@ -1018,35 +1528,216 @@ function renderUnitRow(lesson, index) {
 }
 
 function renderLessonPreview() {
-  return renderHome();
+  const lesson = getLesson(previewLessonId);
+  if (!lesson) return renderMissingLesson();
+  const chapter = getChapterForLesson(lesson.id);
+  const run = selectLearningRun(lesson);
+  const lessonRuns = getLearningRuns(lesson);
+  const runNumber = run ? lessonRuns.findIndex((item) => item.id === run.id) + 1 : 0;
+  const conceptIds = getLessonConceptIds(lesson, run);
+  const prerequisiteIds = getPrerequisiteSkillIds(lesson, run);
+  const missingPrerequisites = getMissingPrerequisites(lesson, run);
+  const missionBlocked = lesson.kind === "mission" && missingPrerequisites.length > 0;
+  const previewPhases = getLessonDisplayPhases(lesson);
+  const masteryStatus = getLessonStatus(lesson.id);
+  const completedRunIds = new Set(progress.lessonRunProgress?.[lesson.id]?.completedRunIds || []);
+  const hasIncompleteRuns = lessonRuns.some((item) => !completedRunIds.has(item.id));
+  const masteryLabels = {
+    new: "ابھی شروع نہیں",
+    introduced: "تعارف مکمل",
+    practiced: "مشق مکمل",
+    secure: "مہارت پکی"
+  };
+  const knownNames = normalizeIdList(
+    prerequisiteIds,
+    (run?.reviewConceptIds || []).flatMap((conceptId) => courseConcepts.get(conceptId)?.skillIds || [])
+  )
+    .filter((skillId) => statusAtLeast(getSkillStatus(skillId), "introduced"))
+    .map(getSkillDisplayName);
+  const prerequisiteSummary = knownNames.length
+    ? knownNames.join("، ")
+    : prerequisiteIds.length
+      ? "اس سبق کی پچھلی ضروری باتیں ابھی مشق کی محتاج ہیں؛ اوپر دی گئی یاد دہانی دیکھیں۔"
+      : "اس سبق کے لیے کوئی لازمی پچھلی بات نہیں۔";
+  const newNames = (run?.newConceptIds?.length ? run.newConceptIds : conceptIds).map((conceptId) => {
+    const concept = courseConcepts.get(conceptId);
+    return concept?.dutch || concept?.title || conceptId;
+  });
+  if (run?.patternId && lesson.pattern) {
+    newNames.push(`جملے کا طریقہ: ${lesson.pattern.titleUrdu || lesson.pattern.modelDutch || run.patternId}`);
+  }
+  const targetCount = conceptIds.length + (run?.patternId ? 1 : 0);
+  const startLabel = missionBlocked
+    ? "پہلے تیاری مکمل کریں"
+    : lesson.kind === "mission"
+      ? "مشن شروع کریں"
+      : lessonRuns.length > 1 && hasIncompleteRuns && runNumber > 1
+        ? "اگلا حصہ سیکھیں"
+        : masteryStatus === "new"
+          ? "سیکھنا شروع کریں"
+          : "سبق دوبارہ کریں";
+
+  return `
+    <main class="learning-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
+      ${renderProgressHeader()}
+      <section class="learning-preview-hero">
+        <button class="quiz-close" data-action="home" aria-label="سبق کے نقشے پر واپس جائیں">${renderIcon("close")}</button>
+        <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
+        <span class="mastery-badge mastery-${masteryStatus}">${masteryLabels[masteryStatus]}</span>
+        <h1>${escapeHtml(getShortLessonTitle(lesson))}</h1>
+        <p class="learning-preview-goal"><strong>اس سبق کے بعد آپ:</strong> ${escapeHtml(run?.outcomeUrdu || getLessonOutcome(lesson))}</p>
+        <div class="learning-preview-meta">
+          <span>${renderIcon("calendar")} تقریباً <b class="latin">${getLessonMinutes(lesson)}</b> منٹ</span>
+          <span>${renderIcon("book")} <b class="latin">${targetCount || 1}</b> سیکھنے کے ہدف${lessonRuns.length > 1 ? ` · حصہ <b class="latin">${runNumber}/${lessonRuns.length}</b>` : ""}</span>
+          <span>${renderIcon("speaker")} آواز اور آہستہ تلفظ</span>
+        </div>
+      </section>
+
+      ${renderPrerequisiteGuidance(lesson, prerequisiteIds, missingPrerequisites)}
+
+      <section class="learning-preview-content">
+        <div class="learning-preview-column">
+          <span class="eyeline">${lesson.kind === "mission" ? "اس مشن میں استعمال ہونے والی سیکھی ہوئی باتیں" : "اس بار کیا نیا ہے؟"}</span>
+          <div class="learning-preview-targets">
+            ${(newNames.length ? newNames : [lesson.unit]).map((name) => `<span class="learning-target ${isDutchText(name) ? "latin" : ""}">${escapeHtml(name)}</span>`).join("")}
+          </div>
+        </div>
+        <div class="learning-preview-column">
+          <span class="eyeline">پہلے سے سیکھی ہوئی یا ضروری باتیں</span>
+          <p>${escapeHtml(prerequisiteSummary)}</p>
+        </div>
+      </section>
+
+      <section class="learning-preview-phases" aria-label="سبق کے مرحلے">
+        ${previewPhases.map((phase, index) => `
+          <span class="learning-phase-chip phase-${phase.id}">
+            <b class="latin">${index + 1}</b>
+            <span><strong>${phase.label}</strong><small>${phase.preview}</small></span>
+          </span>
+        `).join("")}
+      </section>
+
+      <div class="learning-preview-action">
+        <button class="primary-button" data-action="start" data-lesson="${lesson.id}" ${missionBlocked ? "disabled" : ""}>
+          <span class="button-icon">${renderIcon(missionBlocked ? "lock" : "play")}</span>
+          <span>${startLabel}</span>
+        </button>
+        <small>${lesson.kind === "mission" ? "مشن میں صرف پہلے سے مشق کی ہوئی باتیں استعمال ہوں گی؛ جانچ آخر میں ہوگی۔" : "پڑھانے والے حصے پر کوئی نمبر نہیں؛ جانچ آخر میں ہوگی۔"}</small>
+      </div>
+    </main>
+  `;
+}
+
+function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds) {
+  if (!prerequisiteIds.length && !missingIds.length) return "";
+  const missingNames = missingIds.map(getSkillDisplayName);
+  const visibleMissingNames = missingNames.slice(0, 5);
+  const remainingMissingCount = Math.max(0, missingNames.length - visibleMissingNames.length);
+  const missingSkillTags = visibleMissingNames.map((name) => (
+    /[A-Za-zÀ-ÿ]/.test(name)
+      ? `<bdi class="prerequisite-skill latin" dir="ltr">${escapeHtml(name)}</bdi>`
+      : `<span class="prerequisite-skill">${escapeHtml(name)}</span>`
+  )).join("");
+  const readyCount = Math.max(0, prerequisiteIds.length - missingIds.length);
+  const mission = lesson.kind === "mission";
+  return `
+    <aside class="prerequisite-guidance ${missingIds.length ? "needs-preparation" : "ready"}">
+      <span>${renderIcon(missingIds.length ? "notebook" : "check")}</span>
+      <div>
+        <strong>${missingIds.length ? (mission ? "اس مشن سے پہلے تیاری کریں" : "پچھلی بات کی مختصر یاد دہانی") : "آپ اس سبق کے لیے تیار ہیں"}</strong>
+        ${missingIds.length ? `<p>یہ باتیں پہلے مضبوط کرنا بہتر ہے:</p><div class="prerequisite-skill-list">${missingSkillTags}</div>` : ""}
+        <p>${missingIds.length
+    ? `${remainingMissingCount ? `اس کے علاوہ ${remainingMissingCount} مزید باتیں بھی دہرانی ہیں۔ ` : ""}${mission ? "یہ مشن صرف مشق کی ہوئی مہارتیں استعمال کرتا ہے۔" : "سبق پھر بھی کھلا ہے؛ ضرورت پر یاد دہانی اسی سبق میں ملے گی۔"}`
+    : `${readyCount || prerequisiteIds.length} ضروری مہارتیں پہلے سے سیکھی ہوئی ہیں۔`}</p>
+        ${missingIds.length ? `<button class="secondary-button prerequisite-review-button" data-action="practice">ضروری باتیں دہرائیں</button>` : ""}
+      </div>
+    </aside>
+  `;
 }
 
 function renderLesson() {
   const lesson = getActiveLesson();
-  const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
+  if (!lesson) return renderMissingLesson();
+  const questions = sessionQuestions.length ? sessionQuestions : (lesson.questions || []);
   const question = questions[activeQuestionIndex];
-  if (!lesson || !question) return renderMissingLesson();
+  if (!question) return renderMissingLesson();
   const visual = getExerciseVisual(question, lesson);
   const percentage = Math.round(((activeQuestionIndex + (checked ? 1 : 0)) / questions.length) * 100);
   const infoStep = isInfoQuestion(question);
   const questionTheme = getQuestionTheme(question);
+  const phase = getQuestionPhase(question);
 
   return `
-    <main class="quiz-screen ${questionTheme.className}">
-      ${renderQuizTopBar(percentage, activeQuestionIndex + 1, questions.length)}
+    <main class="quiz-screen ${questionTheme.className} learning-phase-${phase} ${lesson.kind === "mission" ? "mission-lesson" : ""}">
+      ${renderQuizTopBar(percentage)}
       <section class="quiz-content">
+        ${renderLearningPhaseHeader(phase)}
         <div class="question-meta">
           <span>${lesson.reviewKind ? "دہرائی" : getShortLessonTitle(lesson)}</span>
           <b class="latin">${percentage}%</b>
         </div>
         <div class="question-heading">
           <span class="question-kind-icon" aria-hidden="true">${renderIcon(questionTheme.icon)}</span>
-          <h1 class="question-title">${getQuestionTitle(question)}</h1>
+          <h1 class="question-title">${escapeHtml(getQuestionTitle(question))}</h1>
         </div>
+        ${["understand", "guided"].includes(phase) && question.hint ? `<aside class="guided-support"><strong>مدد:</strong> <span>${escapeHtml(question.hint)}</span></aside>` : ""}
+        ${question.correctionRetry ? `<aside class="correction-retry-banner"><strong>مدد کے ساتھ دوبارہ کوشش</strong><span>${escapeHtml(question.hint || question.explain || "")}</span></aside>` : ""}
         ${renderQuestionCard(question, visual)}
       </section>
       ${renderQuizFooter(question, infoStep)}
     </main>
+  `;
+}
+
+function getQuestionPhase(question) {
+  const phase = String(question?.phase || "").toLowerCase().replaceAll("-", "");
+  if (["preview", "missionpreview"].includes(phase)) return "preview";
+  if (["learn", "teaching"].includes(phase)) return "learn";
+  if (["understand", "recognition", "model"].includes(phase)) return "understand";
+  if (["guided", "guidedpractice", "practice"].includes(phase)) return "guided";
+  if (["use", "situation", "application"].includes(phase)) return "use";
+  if (["check", "independent", "independentcheck"].includes(phase)) return "check";
+  if (["correction", "retry"].includes(phase)) return "correction";
+  if (isInfoQuestion(question)) return "learn";
+  return "guided";
+}
+
+function getLessonDisplayPhases(lesson) {
+  if (lesson?.reviewKind) {
+    return [
+      LEARNING_PHASES.find((phase) => phase.id === "learn"),
+      LEARNING_PHASES.find((phase) => phase.id === "guided"),
+      LEARNING_PHASES.find((phase) => phase.id === "correction")
+    ];
+  }
+  if (lesson?.kind !== "mission") return LEARNING_PHASES;
+  const phaseById = {
+    preview: { id: "preview", label: "تیاری", preview: "مشن سمجھیں" },
+    use: LEARNING_PHASES.find((phase) => phase.id === "use"),
+    check: LEARNING_PHASES.find((phase) => phase.id === "check"),
+    correction: LEARNING_PHASES.find((phase) => phase.id === "correction")
+  };
+  const declared = normalizeIdList(lesson.learning?.phaseOrder)
+    .map((phase) => phase === "independent-check" ? "check" : phase);
+  const ordered = (declared.length ? declared : ["preview", "use", "check", "correction"])
+    .map((phase) => phaseById[phase])
+    .filter(Boolean);
+  return ordered.length ? ordered : [phaseById.preview, phaseById.use, phaseById.check, phaseById.correction];
+}
+
+function renderLearningPhaseHeader(activePhase) {
+  const displayPhases = getLessonDisplayPhases(getActiveLesson());
+  const activeIndex = displayPhases.findIndex((phase) => phase.id === activePhase);
+  return `
+    <div class="learning-phase-header">
+      <span class="learning-phase-name">${displayPhases.find((phase) => phase.id === activePhase)?.label || "مشق"}</span>
+      <div class="learning-phase-track" aria-label="سبق کے مرحلے">
+        ${displayPhases.map((phase) => {
+    const index = displayPhases.findIndex((item) => item.id === phase.id);
+    return `<span class="learning-phase-step phase-${phase.id} ${phase.id === activePhase ? "active" : ""} ${index < activeIndex ? "complete" : ""}" title="${phase.label}"><i></i><b>${phase.label}</b></span>`;
+  }).join("")}
+      </div>
+    </div>
   `;
 }
 
@@ -1062,23 +1753,26 @@ function getQuestionTheme(question) {
   return { className: "question-choice", icon: "book" };
 }
 
-function renderQuizTopBar(percentage, current, total) {
+function renderQuizTopBar(percentage) {
   return `
     <header class="quiz-topbar">
       <button class="quiz-close" data-action="home" aria-label="سبق بند کریں">${renderIcon("close")}</button>
       <div class="quiz-progress-shell">
-        <div class="quiz-progress" aria-label="${current} از ${total}"><span style="width:${percentage}%"><i></i></span></div>
+        <div class="quiz-progress" aria-label="سبق کی پیش رفت ${percentage} فیصد"><span style="width:${percentage}%"><i></i></span></div>
         <span class="quiz-progress-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       </div>
       <div class="quiz-status">
         ${answerCombo >= 2 ? `<span class="quiz-combo latin">${renderIcon("spark")}<b>${answerCombo}</b></span>` : ""}
-        <span class="quiz-count latin">${current}/${total}</span>
       </div>
     </header>
   `;
 }
 
 function getQuestionTitle(question) {
+  if (question.instructionUrdu || question.instruction || question.label) return question.instructionUrdu || question.instruction || question.label;
+  if (question.type === "concept-teach") return "لفظ کو دیکھیں، سنیں اور مثال سمجھیں";
+  if (question.type === "pattern-teach") return "جملے کا طریقہ سمجھیں";
+  if (question.type === "correction-teach") return "غلطی سمجھیں، پھر دوبارہ جواب دیں";
   if (progress.settings.beginnerMode) {
     if (isInfoQuestion(question)) return "دیکھیں اور سنیں";
     if (question.type === "listen-choice" || question.mode === "listen-reply" || question.mode === "dialogue") return "سنیں";
@@ -1105,6 +1799,9 @@ function getQuestionTitle(question) {
 }
 
 function renderQuestionCard(question, visual) {
+  if (question.type === "concept-teach") return renderConceptTeachingQuestion(question, visual);
+  if (question.type === "pattern-teach") return renderPatternTeachingQuestion(question);
+  if (question.type === "correction-teach") return renderCorrectionTeachingQuestion(question);
   if (question.type === "speak-repeat") return renderSpeakRepeatQuestion(question);
   if (isInfoQuestion(question)) {
     return `
@@ -1123,6 +1820,75 @@ function renderQuestionCard(question, visual) {
   if (question.type === "build") return renderWordBankQuestion(question, visual);
   if (question.type === "match-pairs") return renderMatchPairsQuestion(question);
   return renderMultipleChoiceQuestion(question, visual);
+}
+
+function renderConceptTeachingQuestion(question, visual) {
+  const concept = question.concept || {};
+  const dutch = concept.dutch || question.dutch || question.prompt || "";
+  const urdu = concept.urdu || question.urdu || "";
+  const pronunciation = concept.pronunciationUrdu || concept.pronunciation || question.pronunciationUrdu || getBeginnerSupport(dutch)?.soundHint || "";
+  const audioText = concept.audioText || concept.speak || dutch;
+  const example = Array.isArray(concept.examples) ? concept.examples[0] : concept.example;
+  const exampleDutch = example?.dutch || concept.exampleDutch || question.exampleDutch || "";
+  const exampleUrdu = example?.urdu || concept.exampleUrdu || question.exampleUrdu || "";
+  const usage = concept.usageUrdu || concept.usage || question.usageUrdu || "";
+  const confusion = concept.commonConfusionUrdu || concept.commonConfusion || question.commonConfusionUrdu || "";
+  return `
+    <article class="learning-teaching-card concept-teaching-card">
+      ${renderVisual(visual, "quiz-visual teaching-visual")}
+      <span class="teaching-eyebrow">${question.teachingMode === "refresh" ? "پچھلی بات یاد کریں" : "نیا لفظ یا جملہ"}</span>
+      <div class="teaching-dutch latin">
+        <strong>${escapeHtml(dutch)}</strong>
+        ${audioText ? renderSpeakButton(audioText, "teaching") : ""}
+      </div>
+      <p class="teaching-urdu">${escapeHtml(urdu)}</p>
+      ${pronunciation ? `<p class="teaching-pronunciation"><span>قریب ترین اردو آواز:</span> ${escapeHtml(pronunciation)}</p>` : ""}
+      <div class="teaching-actions">${renderSlowSpeakButton(audioText, true)}</div>
+      ${usage ? `<p class="teaching-usage"><strong>کب کہیں؟</strong> ${escapeHtml(usage)}</p>` : ""}
+      ${exampleDutch || exampleUrdu ? `<div class="teaching-example"><span>مثال</span><strong class="latin">${escapeHtml(exampleDutch)}</strong><small>${escapeHtml(exampleUrdu)}</small></div>` : ""}
+      ${confusion ? `<p class="teaching-confusion"><strong>یاد رکھیں:</strong> ${escapeHtml(confusion)}</p>` : ""}
+    </article>
+  `;
+}
+
+function renderPatternTeachingQuestion(question) {
+  const pattern = question.pattern || {};
+  const sentence = pattern.modelDutch || pattern.sentence || pattern.exampleDutch || question.prompt || "";
+  const sentenceUrdu = pattern.modelUrdu || pattern.sentenceUrdu || pattern.exampleUrdu || "";
+  const highlight = pattern.highlight || pattern.pattern || "";
+  const explanation = pattern.explanationUrdu || pattern.explanation || question.explain || "";
+  const contrast = pattern.contrastUrdu || pattern.contrast || "";
+  const mistake = pattern.commonMistakeUrdu || pattern.commonMistake || "";
+  return `
+    <article class="learning-teaching-card pattern-teaching-card">
+      <span class="teaching-eyebrow">جملے کا طریقہ</span>
+      <div class="pattern-sentence">
+        <strong class="latin">${escapeHtml(sentence)}</strong>
+        ${sentence ? renderSpeakButton(sentence, "teaching") : ""}
+        ${renderSlowSpeakButton(sentence, true)}
+        ${sentenceUrdu ? `<small>${escapeHtml(sentenceUrdu)}</small>` : ""}
+      </div>
+      ${highlight ? `<p class="pattern-highlight latin">${escapeHtml(highlight)}</p>` : ""}
+      ${explanation ? `<p class="pattern-explanation">${escapeHtml(explanation)}</p>` : ""}
+      ${contrast ? `<p class="pattern-contrast"><strong>فرق:</strong> ${escapeHtml(contrast)}</p>` : ""}
+      ${mistake ? `<p class="pattern-mistake"><strong>عام غلطی:</strong> ${escapeHtml(mistake)}</p>` : ""}
+    </article>
+  `;
+}
+
+function renderCorrectionTeachingQuestion(question) {
+  const original = question.originalQuestion || {};
+  const explanation = question.wrongExplanation || original.wrongExplanation || original.feedback?.wrong || original.explain || `صحیح جواب ${original.answer || ""} ہے۔`;
+  return `
+    <article class="learning-teaching-card correction-teaching-card">
+      <span class="teaching-eyebrow">غلطی سے سیکھیں</span>
+      <h2>${escapeHtml(question.prompt || "اس بات کو ایک بار پھر دیکھیں")}</h2>
+      <p>${escapeHtml(explanation)}</p>
+      ${original.answer ? `<div class="teaching-example"><span>صحیح جواب</span><strong class="${isDutchText(original.answer) ? "latin" : ""}">${escapeHtml(original.answer)}</strong></div>` : ""}
+      ${original.hint ? `<p class="teaching-usage">${escapeHtml(original.hint)}</p>` : ""}
+      <div class="correction-retry-banner">اگلے قدم میں اسی مہارت کو مدد کے ساتھ دوبارہ آزمائیں۔</div>
+    </article>
+  `;
 }
 
 function renderDocumentQuestion(question) {
@@ -1184,16 +1950,19 @@ function renderListeningQuestion(question) {
 }
 
 function renderMultipleChoiceQuestion(question, visual) {
+  const helpFreeCheck = isHelpFreeCheckQuestion(question);
+  const intrinsicListening = question.type === "listen-choice" || question.mode === "listen-reply";
+  const speechText = getQuestionSpeechText(question);
   return `
     <div class="multiple-choice-question ${question.type === "image-choice" ? "image-prompt" : ""}">
       <div class="prompt-scene ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
         <div class="speech-bubble ${isPromptLatin(question) ? "latin" : ""}">
-          ${getQuestionSpeechText(question) ? renderSpeakButton(getQuestionSpeechText(question), "prompt") : ""}
-          <span>${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
+          ${speechText && (!helpFreeCheck || intrinsicListening) ? renderSpeakButton(speechText, "prompt") : ""}
+          <span>${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
         </div>
-        ${renderBeginnerSupport(question.prompt)}
-        ${renderSlowSpeakButton(getQuestionSpeechText(question))}
+        ${helpFreeCheck ? "" : renderBeginnerSupport(question.prompt)}
+        ${helpFreeCheck ? "" : renderSlowSpeakButton(speechText)}
       </div>
       ${renderChoices(question)}
     </div>
@@ -1201,16 +1970,17 @@ function renderMultipleChoiceQuestion(question, visual) {
 }
 
 function renderWordBankQuestion(question, visual) {
+  const helpFreeCheck = isHelpFreeCheckQuestion(question);
   return `
     <div class="word-bank-question">
       <div class="prompt-scene compact ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
-        <div class="speech-bubble">${renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
-        ${renderBeginnerSupport(question.prompt)}
+        <div class="speech-bubble">${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+        ${helpFreeCheck ? "" : renderBeginnerSupport(question.prompt)}
       </div>
       ${renderBuildExercise(question)}
-      ${renderHintButton()}
-      ${hintOpen ? renderHintPopover(question) : ""}
+      ${helpFreeCheck ? "" : renderHintButton()}
+      ${!helpFreeCheck && hintOpen ? renderHintPopover(question) : ""}
     </div>
   `;
 }
@@ -1259,9 +2029,9 @@ function renderQuizFooter(question, infoStep) {
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
           <span class="feedback-icon">${renderIcon(correct ? "check" : "close")}</span>
-          <div><strong>${correct ? "بہت خوب!" : "درست نہیں"}</strong>${correct ? "" : renderFeedbackDetail(question)}</div>
+          <div><strong>${correct ? "درست — وجہ بھی دیکھیں" : "اب غلطی سمجھیں"}</strong>${renderFeedbackDetail(question, correct)}</div>
         </div>
-        <button class="quiz-action enabled" data-action="next">${correct ? "جاری رکھیں" : "سمجھ گیا"}</button>
+        <button class="quiz-action enabled" data-action="next">${getFeedbackNextLabel(question, correct)}</button>
       </footer>
     `;
   }
@@ -1273,13 +2043,43 @@ function renderQuizFooter(question, infoStep) {
   `;
 }
 
-function renderFeedbackDetail(question) {
+function getFeedbackNextLabel(question, correct) {
+  if (correct) return "جاری رکھیں";
+  if (question.correctionRetry) return "مدد سے دوبارہ درست کریں";
+  if (getQuestionPhase(question) !== "check") return "سمجھ گیا";
+
+  const questions = sessionQuestions.length ? sessionQuestions : (getActiveLesson()?.questions || []);
+  const hasRemainingIndependentItem = questions
+    .slice(activeQuestionIndex + 1)
+    .some((item) => getQuestionPhase(item) !== "correction");
+  return hasRemainingIndependentItem
+    ? "غلطی سمجھ لی، جانچ جاری رکھیں"
+    : "درستگی شروع کریں";
+}
+
+function renderFeedbackDetail(question, correct = false) {
+  const selectedOptionExplanation = !correct
+    ? getWrongOptionExplanation(question, selectedAnswer)
+    : "";
+  if (selectedOptionExplanation) return `<small>${escapeHtml(selectedOptionExplanation)}</small>`;
+  const authored = correct
+    ? question.correctExplanation || question.feedback?.correct
+    : question.wrongExplanation || question.feedback?.wrong;
+  if (authored) return `<small>${escapeHtml(authored)}</small>`;
+  if (question.explain) return `<small>${escapeHtml(question.explain)}</small>`;
   const answerSupport = getBeginnerSupport(question.answer);
   const promptSupport = getBeginnerSupport(question.prompt);
   if (answerSupport) return `<small>${escapeHtml(question.answer)} = ${escapeHtml(answerSupport.meaning)}</small>`;
   if (promptSupport) return `<small>${escapeHtml(question.prompt)} کا مطلب ${escapeHtml(promptSupport.meaning)} ہے</small>`;
-  if (question.explain) return `<small>${escapeHtml(question.explain)}</small>`;
   return `<small>صحیح جواب: ${escapeHtml(question.answer)}</small>`;
+}
+
+function getWrongOptionExplanation(question, answer) {
+  return question?.optionExplanationsUrdu?.[answer]
+    || question?.wrongExplanationsByOption?.[answer]
+    || question?.optionExplanations?.[answer]
+    || question?.feedbackByOption?.[answer]
+    || "";
 }
 
 function renderMissingLesson() {
@@ -1350,8 +2150,9 @@ function renderChoice(option, question, index) {
   if (checked && option === question.answer) state = "correct";
   if (checked && selectedAnswer === option && option !== question.answer) state = "wrong";
   const dutchChoice = isDutchText(option);
-  const choiceText = dutchChoice ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : option;
-  const support = dutchChoice ? renderBeginnerSupport(option, "compact") : "";
+  const helpFreeCheck = isHelpFreeCheckQuestion(question);
+  const choiceText = dutchChoice && !helpFreeCheck ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : escapeHtml(option);
+  const support = dutchChoice && !helpFreeCheck ? renderBeginnerSupport(option, "compact") : "";
 
   return `
     <div class="choice-wrap ${dutchChoice ? "has-sound" : ""}">
@@ -1361,7 +2162,7 @@ function renderChoice(option, question, index) {
         <span class="choice-state">${state === "correct" ? renderIcon("check") : state === "wrong" ? renderIcon("close") : ""}</span>
         ${checked && selectedAnswer === question.answer && option === question.answer ? renderChoiceConfetti() : ""}
       </button>
-      ${dutchChoice && progress.settings.pronunciation ? `<button class="choice-audio" data-action="speak" data-speak="${escapeAttr(option)}" aria-label="Nederlands تلفظ">${renderIcon("speaker")}</button>` : ""}
+      ${dutchChoice && progress.settings.pronunciation && !helpFreeCheck ? `<button class="choice-audio" data-action="speak" data-speak="${escapeAttr(option)}" aria-label="Nederlands تلفظ">${renderIcon("speaker")}</button>` : ""}
     </div>
   `;
 }
@@ -1400,6 +2201,10 @@ function renderBuildExercise(question) {
 function isCurrentAnswerCorrect(question) {
   if (question.type === "short-input" && !typedFallback) return getAcceptedAnswers(question).includes(normalizeTypedAnswer(selectedAnswer));
   return selectedAnswer === question.answer;
+}
+
+function isHelpFreeCheckQuestion(question) {
+  return getQuestionPhase(question) === "check" && !question.correctionRetry;
 }
 
 function renderChoiceConfetti() {
@@ -1504,6 +2309,7 @@ function renderSpeakButton(text, variant) {
       tabindex="0"
       data-action="speak"
       data-speak="${escapeAttr(text)}"
+      ${variant === "teaching" ? 'data-regular="true"' : ""}
       title="Nederlands تلفظ"
       aria-label="Nederlands تلفظ"
     >${renderIcon("speaker")}</span>
@@ -1527,8 +2333,8 @@ function renderBeginnerSupport(text, variant = "") {
   `;
 }
 
-function renderSlowSpeakButton(text) {
-  if (!progress.settings.pronunciation || !progress.settings.slowAudio || !text || !isDutchText(text)) return "";
+function renderSlowSpeakButton(text, forceVisible = false) {
+  if (!progress.settings.pronunciation || (!progress.settings.slowAudio && !forceVisible) || !text || !isDutchText(text)) return "";
   return `<button class="slow-speak-button" data-action="slow-speak" data-speak="${escapeAttr(text)}">آہستہ سنیں</button>`;
 }
 
@@ -1537,11 +2343,15 @@ function renderComplete() {
   const percent = Math.round((result.correct / result.total) * 100);
   const incorrect = Math.max(0, result.total - result.correct);
   const isReview = Boolean(result.reviewKind);
-  const summary = percent >= 90
-    ? "بہترین! یہ سبق اب مضبوط بنیاد بن گیا ہے۔"
-    : percent >= 70
-      ? "بہت خوب! تھوڑی دہرائی سے یہ اور پکا ہو جائے گا۔"
-      : "اچھا آغاز۔ مشکل الفاظ دہرائی کے لیے محفوظ ہیں۔";
+  const secure = result.masteryStatus === "secure";
+  const hasMoreLearning = !isReview && Number(result.remainingRuns || 0) > 0;
+  const summary = isReview
+    ? "آپ نے پہلے سیکھی ہوئی باتیں دوبارہ مضبوط کیں۔"
+    : secure
+      ? "آپ نے جانچ پوری کی اور ہر غلطی درست کر لی؛ یہ مہارت اب پکی ہے۔"
+      : hasMoreLearning
+        ? "اس سبق کا یہ حصہ مکمل ہوا؛ اگلا سیکھنے والا حصہ ابھی باقی ہے۔"
+        : "سیکھنے اور مشق کا مرحلہ مکمل ہوا؛ آزاد جانچ دوبارہ کر کے مہارت پکی کریں۔";
   return `
     <main class="complete-screen">
       <div class="complete-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -1550,20 +2360,35 @@ function renderComplete() {
         <span class="complete-ring-glow" aria-hidden="true"></span>
         <div class="complete-mark">${renderIcon("check")}<i></i></div>
       </div>
-      <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : "آج کا قدم مکمل"}</span>
-      <h1>${isReview ? "دہرائی مکمل!" : "سبق مکمل!"}</h1>
+      <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : hasMoreLearning ? "سیکھنے کا ایک حصہ مکمل" : "آج کا قدم مکمل"}</span>
+      <h1>${isReview ? "دہرائی مکمل!" : hasMoreLearning ? "اگلے حصے کے لیے تیار" : "سبق مکمل!"}</h1>
       <p class="complete-summary">${summary}</p>
-      ${bestAnswerCombo >= 2 ? `<div class="complete-combo">${renderIcon("spark")}<span><strong class="latin">${bestAnswerCombo}</strong><small>مسلسل درست جواب</small></span></div>` : ""}
-      <div class="complete-metrics">
+      ${isReview ? "" : `
+        <section class="learning-recap">
+          <span class="mastery-result mastery-${result.masteryStatus || "practiced"}">${secure ? "مہارت پکی" : "مشق مکمل"}</span>
+          <h2>آج آپ نے کیا سیکھا؟</h2>
+          <p class="latin">${escapeHtml((result.learnedConcepts || []).join(" · ") || "اس سبق کی عملی مہارت")}</p>
+          <div>
+            <span><strong class="latin">${result.correctedCount || 0}</strong><small>غلطیاں درست کیں</small></span>
+            <span><strong class="latin">${result.unresolvedCount || 0}</strong><small>دوبارہ دہرائیں</small></span>
+            ${result.remainingRuns ? `<span><strong class="latin">${result.remainingRuns}</strong><small>اگلے حصے</small></span>` : ""}
+          </div>
+          <small>${secure ? "اگلی دہرائی میں یہ مہارت دوبارہ آئے گی۔" : "اگلی تجویز: اسی سبق کی آزاد جانچ دوبارہ کریں۔"}</small>
+        </section>
+      `}
+      <div class="complete-actions">
+        ${hasMoreLearning
+          ? `<button class="quiz-action enabled" data-action="start" data-lesson="${escapeAttr(result.lessonId)}">اگلا سیکھنے والا حصہ</button>
+             <button class="secondary-button" data-action="home">اسباق پر واپس</button>`
+          : `<button class="quiz-action enabled" data-action="home">اسباق پر واپس</button>`}
+        ${incorrect ? `<button class="secondary-button" data-action="practice">تجویز کردہ دہرائی · ${incorrect}</button>` : ""}
+      </div>
+      <div class="complete-metrics complete-metrics-secondary" aria-label="ثانوی نتیجہ">
         <span><strong class="latin">${result.correct}/${result.total}</strong><small>درست</small></span>
-        <span><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><small>کامیابی</small></span>
+        <span><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><small>آزاد جانچ</small></span>
         <span><strong class="latin" data-count-up="${result.xp || 0}">${result.xp || 0}</strong><small>پوائنٹس</small></span>
       </div>
       <div class="complete-meter"><span style="width:${percent}%"></span></div>
-      <div class="complete-actions">
-        <button class="quiz-action enabled" data-action="home">اسباق پر واپس</button>
-        ${incorrect ? `<button class="secondary-button" data-action="practice">دہرائی کھولیں · ${incorrect}</button>` : ""}
-      </div>
     </main>
   `;
 }
@@ -1582,12 +2407,13 @@ function renderPracticeScreen() {
   const today = getReviewConfig("today");
   const mistakes = getReviewConfig("mistakes");
   const old = getReviewConfig("old");
+  const reviewSkillCount = getReviewSkillCount([...today.questions, ...mistakes.questions, ...old.questions]);
   return `
     <main class="utility-screen practice-screen review-screen">
       ${renderProgressHeader()}
       <section class="review-hero">
         <div class="utility-heading"><span>${renderIcon("dumbbell")}</span><div><h1>دہرائی</h1><p>آج کی مشق، پرانے سبق، اور مشکل سوالات ایک جگہ</p></div></div>
-        <div class="review-total"><strong class="latin">${today.questions.length + mistakes.questions.length + old.questions.length}</strong><span>تیار سوالات</span></div>
+        <div class="review-total"><strong class="latin">${reviewSkillCount}</strong><span>دہرائی کی مہارتیں</span></div>
       </section>
       <div class="review-hub-grid">
         ${renderReviewHubCard("today", today, "dumbbell")}
@@ -1605,13 +2431,19 @@ function renderPracticeScreen() {
 
 function renderReviewHubCard(kind, config, icon) {
   const disabled = !config.questions.length;
+  const skillCount = getReviewSkillCount(config.questions);
   return `
     <button class="review-hub-card review-${kind} ${disabled ? "disabled" : ""}" data-action="review" data-review-kind="${kind}" ${disabled ? "disabled" : ""}>
       <span class="review-hub-icon">${renderIcon(icon)}</span>
       <span class="review-hub-copy"><strong>${config.title}</strong><small>${disabled ? config.empty : "مشق تیار ہے"}</small></span>
-      <b class="review-hub-count latin">${config.questions.length}</b>
+      <b class="review-hub-count latin" title="دہرائی کی مہارتیں">${skillCount}</b>
     </button>
   `;
+}
+
+function getReviewSkillCount(questions) {
+  const skillIds = normalizeIdList((questions || []).flatMap(getQuestionSkillIds));
+  return skillIds.length || (questions || []).length;
 }
 
 function renderLetters() {
@@ -1659,7 +2491,7 @@ function renderSettings() {
       <div class="settings-section-heading"><strong>سیکھنے کے راستے</strong><span></span></div>
       <div class="settings-links">
         ${renderSettingsLink("practice", "dumbbell", "دہرائی", "آج، غلطیاں، اور پرانے سبق")}
-        ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "ملے جلے 20 سوال", "today")}
+        ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "کمزور مہارتوں کے مطابق دہرائی", "today")}
         ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
         ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
       </div>
@@ -1724,7 +2556,7 @@ function bindEvents() {
         event.preventDefault();
         event.stopPropagation();
         animateSpeakingControl(element);
-        speakDutch(element.dataset.speak);
+        speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
       }
       if (action === "slow-speak") {
         event.preventDefault();
@@ -1761,7 +2593,7 @@ function bindEvents() {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       event.stopPropagation();
-      speakDutch(element.dataset.speak);
+      speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
     });
   });
 
@@ -2088,11 +2920,9 @@ function showLessonPreview(id) {
   activeReview = null;
   pathCardLessonId = lesson.id;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
-  screen = "home";
+  screen = "preview";
   render();
-  requestAnimationFrame(() => {
-    document.querySelector(`[data-path-lesson="${lesson.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
+  scrollToTop();
 }
 
 function selectChapter(id) {
@@ -2121,9 +2951,16 @@ function togglePath() {
 
 function startLesson(id) {
   const lesson = getLesson(id);
-  if (!lesson || !lesson.questions?.length) {
+  if (!lesson || (!getLessonExercises(lesson).length && !getLearningRuns(lesson).length)) {
     screen = "home";
     render();
+    return;
+  }
+  if (lesson.kind === "mission" && getMissingPrerequisites(lesson).length) {
+    previewLessonId = lesson.id;
+    screen = "preview";
+    render();
+    scrollToTop();
     return;
   }
   const chapter = getChapterForLesson(lesson.id);
@@ -2146,6 +2983,10 @@ function startLesson(id) {
   answerCombo = 0;
   bestAnswerCombo = 0;
   sessionAnswers = [];
+  activeLearningRun = lesson.kind === "mission" ? null : selectLearningRun(lesson);
+  pendingCorrectionQuestion = null;
+  pendingCorrectionQuestions = [];
+  correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(lesson);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
@@ -2182,6 +3023,10 @@ function startReview(kind) {
   answerCombo = 0;
   bestAnswerCombo = 0;
   sessionAnswers = [];
+  activeLearningRun = null;
+  pendingCorrectionQuestion = null;
+  pendingCorrectionQuestions = [];
+  correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(activeReview);
   screen = "lesson";
   render();
@@ -2275,6 +3120,16 @@ function selectMatchPair(id, side) {
 }
 
 function continueInfoStep() {
+  const question = getActiveQuestion();
+  if (getQuestionPhase(question) === "learn") {
+    const skillIds = getQuestionSkillIds(question);
+    const phaseComplete = !sessionQuestions.slice(activeQuestionIndex + 1).some((item) => getQuestionPhase(item) === "learn");
+    persistSkillMastery(skillIds, "introduced", {
+      lessonId: getActiveLesson()?.id,
+      runId: activeLearningRun?.id,
+      phaseComplete
+    });
+  }
   lessonProgressSteps = Math.max(lessonProgressSteps, activeQuestionIndex + 1);
   nextQuestion();
 }
@@ -2301,9 +3156,52 @@ function checkAnswer() {
     answer: question.answer,
     selected: selectedAnswer,
     correct,
-    skillId: question.skillId || "",
+    phase: getQuestionPhase(question),
+    conceptIds: getQuestionConceptIds(question),
+    skillIds: getQuestionSkillIds(question),
+    skillId: getQuestionSkillIds(question)[0] || question.skillId || "",
+    correctionRootId: question.correctionRootId || "",
+    correctionOriginPhase: question.correctionOriginPhase
+      || (question.originalQuestion ? getQuestionPhase(question.originalQuestion) : ""),
     mistakeOrigin: question.mistakeOrigin || null
   });
+  const phase = getQuestionPhase(question);
+  if (correct && !getActiveLesson()?.reviewKind && (phase === "guided" || phase === "use")) {
+    persistSkillMastery(getQuestionSkillIds(question), "practiced", {
+      lessonId: getActiveLesson()?.id,
+      runId: activeLearningRun?.id,
+      updateLesson: false
+    });
+  }
+  const correctionOriginPhase = question.correctionOriginPhase
+    || (question.originalQuestion ? getQuestionPhase(question.originalQuestion) : "");
+  if (correct && question.correctionRetry) {
+    correctedCheckQuestionIds.add(question.correctionRootId || question.id);
+    if (
+      !getActiveLesson()?.reviewKind
+      && ["guided", "use"].includes(correctionOriginPhase)
+    ) {
+      persistSkillMastery(getQuestionSkillIds(question), "practiced", {
+        lessonId: getActiveLesson()?.id,
+        runId: activeLearningRun?.id,
+        correctedPractice: true,
+        updateLesson: false
+      });
+    }
+  }
+  const correctionQuestion = correct ? question : {
+    ...question,
+    selectedWrongAnswer: selectedAnswer,
+    selectedWrongExplanation: getWrongOptionExplanation(question, selectedAnswer)
+  };
+  if (!correct && question.correctionRetry) {
+    pendingCorrectionQuestion = correctionQuestion;
+  } else if (!correct) {
+    const rootId = question.correctionRootId || question.id;
+    if (!pendingCorrectionQuestions.some((item) => (item.correctionRootId || item.id) === rootId)) {
+      pendingCorrectionQuestions.push(correctionQuestion);
+    }
+  }
   playAnswerSound(correct ? "correct" : "wrong");
   checked = true;
   render();
@@ -2313,6 +3211,21 @@ function checkAnswer() {
 function nextQuestion() {
   const lesson = getActiveLesson();
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
+  if (pendingCorrectionQuestion) {
+    const correctionPair = buildCorrectionPair(pendingCorrectionQuestion);
+    pendingCorrectionQuestion = null;
+    sessionQuestions.splice(activeQuestionIndex + 1, 0, ...correctionPair);
+  }
+  const hasRemainingOriginalQuestion = questions
+    .slice(activeQuestionIndex + 1)
+    .some((question) => getQuestionPhase(question) !== "correction");
+  if (getQuestionPhase(questions[activeQuestionIndex]) !== "correction"
+    && !hasRemainingOriginalQuestion
+    && pendingCorrectionQuestions.length) {
+    const correctionPairs = pendingCorrectionQuestions.flatMap((question) => buildCorrectionPair(question));
+    pendingCorrectionQuestions = [];
+    sessionQuestions.push(...correctionPairs);
+  }
   if (activeQuestionIndex < questions.length - 1) {
     activeQuestionIndex += 1;
     selectedAnswer = "";
@@ -2333,14 +3246,110 @@ function nextQuestion() {
   completeLesson(lesson);
 }
 
+function buildCorrectionPair(question) {
+  const rootQuestion = question.originalQuestion || question;
+  const rootId = question.correctionRootId || rootQuestion.id;
+  const attemptNumber = sessionAnswers.filter((answer) => answer.correctionRootId === rootId || answer.questionId === rootId).length;
+  const teaching = {
+    id: `${rootId}-correction-${attemptNumber}`,
+    type: "correction-teach",
+    phase: "correction",
+    instructionUrdu: "غلطی کی وجہ پڑھیں اور صحیح جواب سمجھیں",
+    prompt: "یہ بات دوبارہ سمجھیں",
+    answer: "سمجھ گیا",
+    conceptIds: getQuestionConceptIds(rootQuestion),
+    skillIds: getQuestionSkillIds(rootQuestion),
+    originalQuestion: rootQuestion,
+    wrongExplanation: question.selectedWrongExplanation
+      || rootQuestion.wrongExplanation
+      || rootQuestion.feedback?.wrong
+      || rootQuestion.explain
+  };
+  const retry = prepareSessionQuestion({
+    ...cloneQuestion(rootQuestion),
+    id: `${rootId}-supported-retry-${attemptNumber}`,
+    phase: "correction",
+    instructionUrdu: rootQuestion.retryInstructionUrdu || "مدد دیکھ کر اسی بات کا صحیح جواب دوبارہ دیں",
+    hint: rootQuestion.hint || rootQuestion.wrongExplanation || rootQuestion.explain || "صحیح معنی اور مثال کو دیکھ کر جواب چنیں۔",
+    correctionRetry: true,
+    correctionRootId: rootId,
+    correctionOriginPhase: getQuestionPhase(rootQuestion),
+    originalQuestion: rootQuestion,
+    supported: true
+  });
+  return [teaching, retry];
+}
+
 function completeLesson(lesson) {
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
   const scoredQuestions = questions.filter((question) => !isInfoQuestion(question));
   lessonProgressSteps = questions.length;
-  const correct = sessionAnswers.filter((answer) => answer.correct).length;
   const isReview = Boolean(lesson.reviewKind);
+  const independentAnswers = sessionAnswers.filter((answer) => answer.phase === "check" && !answer.correctionRootId);
+  const assessmentAnswers = independentAnswers.length
+    ? independentAnswers
+    : sessionAnswers.filter((answer) => answer.phase !== "correction");
+  const correct = assessmentAnswers.filter((answer) => answer.correct).length;
+  const total = independentAnswers.length || scoredQuestions.filter((question) => getQuestionPhase(question) !== "correction").length;
+  const missedCheckIds = independentAnswers.filter((answer) => !answer.correct).map((answer) => answer.questionId);
+  const unresolvedCheckIds = missedCheckIds.filter((questionId) => !correctedCheckQuestionIds.has(questionId));
+  const missedRequiredIds = sessionAnswers
+    .filter((answer) => !answer.correct && answer.phase !== "correction")
+    .map((answer) => answer.questionId);
+  const unresolvedRequiredIds = missedRequiredIds.filter((questionId) => !correctedCheckQuestionIds.has(questionId));
+  const minimumScore = Number(activeLearningRun?.phases?.independentCheck?.minimumScore || 0.8);
+  const independentRate = independentAnswers.length ? correct / independentAnswers.length : 0;
+  const requiredRunSkillIds = isReview
+    ? []
+    : lesson.kind === "mission"
+      ? getMissionAssessmentSkillIds(lesson)
+      : getLessonSkillIds(lesson, activeLearningRun);
+  const independentSkillIds = normalizeIdList(
+    independentAnswers.flatMap((answer) => answer.skillIds || answer.skillId || [])
+  );
+  const independentCheckCoversRequiredSkills = requiredRunSkillIds.length > 0
+    && requiredRunSkillIds.every((skillId) => independentSkillIds.includes(skillId));
+  const practicedEvidenceSkillIds = normalizeIdList(
+    sessionAnswers
+      .filter((answer) => (
+        answer.correct
+        && (
+          ["guided", "use"].includes(answer.phase)
+          || (
+            answer.phase === "correction"
+            && answer.correctionRootId
+            && ["guided", "use"].includes(answer.correctionOriginPhase)
+          )
+        )
+      ))
+      .flatMap((answer) => answer.skillIds || answer.skillId || [])
+  );
+  const practicedStateSkillIds = requiredRunSkillIds.filter((skillId) => (
+    statusAtLeast(getSkillStatus(skillId), "practiced")
+    || practicedEvidenceSkillIds.includes(skillId)
+  ));
+  const requiredPracticeComplete = requiredRunSkillIds.length > 0
+    && requiredRunSkillIds.every((skillId) => practicedStateSkillIds.includes(skillId));
+  const currentRunSecure = Boolean(independentAnswers.length)
+    && independentRate >= minimumScore
+    && unresolvedCheckIds.length === 0
+    && unresolvedRequiredIds.length === 0
+    && requiredPracticeComplete
+    && independentCheckCoversRequiredSkills;
   const alreadyCompleted = progress.completedLessons.includes(lesson.id);
-  const earnedXp = isReview || alreadyCompleted ? 0 : lesson.xp;
+  const previousRunState = progress.lessonRunProgress?.[lesson.id] || {};
+  const completedRunIds = new Set(previousRunState.completedRunIds || []);
+  const practicedRunIds = new Set(previousRunState.practicedRunIds || []);
+  const secureRunIds = new Set(previousRunState.secureRunIds || []);
+  if (activeLearningRun?.id) completedRunIds.add(activeLearningRun.id);
+  if (activeLearningRun?.id && requiredPracticeComplete) practicedRunIds.add(activeLearningRun.id);
+  if (activeLearningRun?.id && currentRunSecure) secureRunIds.add(activeLearningRun.id);
+  const allRunIds = getLearningRuns(lesson).map((run) => run.id);
+  const allRunsCompleted = !allRunIds.length || allRunIds.every((runId) => completedRunIds.has(runId));
+  const allRunsPracticed = Boolean(allRunIds.length) && allRunIds.every((runId) => practicedRunIds.has(runId));
+  const allRunsSecure = Boolean(allRunIds.length) && allRunIds.every((runId) => secureRunIds.has(runId));
+  const completedNow = !isReview && allRunsCompleted;
+  const earnedXp = isReview || alreadyCompleted || !completedNow ? 0 : lesson.xp;
   const practiceDays = progress.practiceDays.includes(todayKey())
     ? progress.practiceDays
     : [...progress.practiceDays, todayKey()];
@@ -2354,11 +3363,15 @@ function completeLesson(lesson) {
     })))
     : new Set();
   const newMistakes = sessionAnswers
-    .filter((answer) => !answer.correct)
+    .filter((answer) => !answer.correct
+      && answer.phase !== "correction"
+      && !correctedCheckQuestionIds.has(answer.questionId))
     .map((answer) => ({
       lessonId: isReview ? findLessonIdForQuestion(answer.prompt, answer.answer, answer.questionId) : lesson.id,
       questionId: answer.questionId,
-      skillId: answer.skillId,
+      skillId: answer.skillIds?.[0] || answer.skillId,
+      skillIds: answer.skillIds || [],
+      conceptIds: answer.conceptIds || [],
       prompt: answer.prompt,
       answer: answer.answer,
       selected: answer.selected,
@@ -2368,16 +3381,65 @@ function completeLesson(lesson) {
     ? progress.mistakes.filter((mistake) => !correctedMistakes.has(mistakeKey(mistake)))
     : progress.mistakes;
 
+  const currentLessonMasteryStatus = lesson.kind === "mission"
+    ? requiredPracticeComplete
+      ? "practiced"
+      : "introduced"
+    : allRunsSecure
+      ? "secure"
+      : allRunsPracticed
+        ? "practiced"
+        : "introduced";
   lessonResult = {
+    lessonId: lesson.id,
     correct,
-    total: scoredQuestions.length,
+    total: Math.max(1, total),
     xp: earnedXp,
-    reviewKind: lesson.reviewKind || ""
+    reviewKind: lesson.reviewKind || "",
+    masteryStatus: isReview ? "" : currentLessonMasteryStatus,
+    independentRate,
+    correctedCount: missedRequiredIds.length - unresolvedRequiredIds.length,
+    unresolvedCount: unresolvedRequiredIds.length,
+    learnedConcepts: [
+      ...getLessonConceptIds(lesson, activeLearningRun).map((conceptId) => courseConcepts.get(conceptId)?.dutch || conceptId),
+      ...(activeLearningRun?.patternId && lesson.pattern
+        ? [lesson.pattern.modelDutch || lesson.pattern.titleUrdu || activeLearningRun.patternId]
+        : [])
+    ],
+    remainingRuns: Math.max(0, allRunIds.length - completedRunIds.size)
   };
+
+  const lessonMastery = { ...(progress.lessonMastery || {}) };
+  const skillMastery = { ...(progress.skillMastery || {}) };
+  if (!isReview) {
+    const lessonEvidence = {
+      runId: activeLearningRun?.id || "",
+      independentCorrect: correct,
+      independentTotal: independentAnswers.length,
+      correctedMisses: missedCheckIds.length - unresolvedCheckIds.length,
+      unresolvedMisses: unresolvedCheckIds.length
+    };
+    lessonMastery[lesson.id] = lesson.kind === "mission"
+      ? raiseMastery(lessonMastery[lesson.id], currentLessonMasteryStatus, lessonEvidence)
+      : {
+        ...(lessonMastery[lesson.id] || {}),
+        ...lessonEvidence,
+        status: currentLessonMasteryStatus,
+        updatedAt: new Date().toISOString()
+      };
+    const introducedSkillIds = requiredRunSkillIds;
+    const practicedSkillIds = practicedEvidenceSkillIds;
+    const secureSkillIds = currentRunSecure
+      ? requiredRunSkillIds
+      : [];
+    for (const skillId of introducedSkillIds) skillMastery[skillId] = raiseMastery(skillMastery[skillId], "introduced", { lessonId: lesson.id });
+    for (const skillId of practicedSkillIds) skillMastery[skillId] = raiseMastery(skillMastery[skillId], "practiced", { lessonId: lesson.id });
+    for (const skillId of secureSkillIds) skillMastery[skillId] = raiseMastery(skillMastery[skillId], "secure", { lessonId: lesson.id });
+  }
 
   saveProgress({
     ...progress,
-    completedLessons: isReview || alreadyCompleted ? progress.completedLessons : [...progress.completedLessons, lesson.id],
+    completedLessons: isReview || alreadyCompleted || !completedNow ? progress.completedLessons : [...progress.completedLessons, lesson.id],
     scores: isReview ? progress.scores : {
       ...progress.scores,
       [lesson.id]: Math.max(progress.scores[lesson.id] || 0, correct)
@@ -2390,12 +3452,32 @@ function completeLesson(lesson) {
       ...(progress.missionVariantRuns || {}),
       [lesson.id]: (progress.missionVariantRuns?.[lesson.id] || 0) + 1
     } : (progress.missionVariantRuns || {}),
-    skillAttempts: sessionAnswers.reduce((attempts, answer) => {
-      if (!answer.skillId) return attempts;
-      const previous = attempts[answer.skillId] || { correct: 0, total: 0 };
-      attempts[answer.skillId] = { correct: previous.correct + (answer.correct ? 1 : 0), total: previous.total + 1 };
+    skillAttempts: sessionAnswers
+      .filter((answer) => answer.phase !== "correction")
+      .reduce((attempts, answer) => {
+      const skillIds = normalizeIdList(answer.skillIds, answer.skillId);
+      for (const skillId of skillIds) {
+        const previous = attempts[skillId] || { correct: 0, total: 0 };
+        attempts[skillId] = { correct: previous.correct + (answer.correct ? 1 : 0), total: previous.total + 1 };
+      }
       return attempts;
     }, { ...(progress.skillAttempts || {}) }),
+    skillReviewHistory: isReview
+      ? updateSkillReviewHistory(progress.skillReviewHistory, sessionAnswers)
+      : (progress.skillReviewHistory || {}),
+    lessonMastery,
+    skillMastery,
+    lessonRunProgress: isReview || !activeLearningRun?.id ? (progress.lessonRunProgress || {}) : {
+      ...(progress.lessonRunProgress || {}),
+      [lesson.id]: {
+        ...previousRunState,
+        completedRunIds: [...completedRunIds],
+        practicedRunIds: [...practicedRunIds],
+        secureRunIds: [...secureRunIds],
+        lastRunId: activeLearningRun.id,
+        updatedAt: new Date().toISOString()
+      }
+    },
     totalXp: progress.totalXp + earnedXp,
     practiceDays,
     mistakes: [...keptMistakes, ...newMistakes],
@@ -2454,19 +3536,371 @@ function normalizeWord(value) {
 }
 
 function buildSessionQuestions(lesson) {
+  if (!lesson?.reviewKind && lesson?.kind !== "mission" && getLearningRuns(lesson).length) {
+    const activeRunBelongsToLesson = activeLearningRun
+      && getLearningRuns(lesson).some((run) => run.id === activeLearningRun.id);
+    activeLearningRun = activeRunBelongsToLesson ? activeLearningRun : selectLearningRun(lesson);
+    return buildLearningFirstSession(lesson, activeLearningRun);
+  }
   const sourceQuestions = lesson?.reviewKind
     ? lesson.questions
     : lesson?.kind === "mission"
       ? lesson.variants[(progress.missionVariantRuns?.[lesson.id] || 0) % lesson.variants.length].questions
-      : sampleLessonQuestions(lesson?.questions || [], lesson?.id || "lesson");
-  const lessonIntro = getLessonIntroQuestion(lesson, sourceQuestions);
-  const questions = lessonIntro ? [lessonIntro, ...sourceQuestions].slice(0, LESSON_QUESTION_LIMIT) : sourceQuestions;
-  return questions.map((question) => ({
+      : (lesson?.questions || []);
+  const lessonIntro = lesson?.kind === "mission" ? null : getLessonIntroQuestion(lesson, sourceQuestions);
+  const questions = lessonIntro ? [lessonIntro, ...sourceQuestions] : sourceQuestions;
+  return questions.map((question) => prepareSessionQuestion(question));
+}
+
+function buildLearningFirstSession(lesson, run) {
+  if (!run) return [];
+  const exerciseById = new Map(getLessonExercises(lesson).flatMap((question) => [
+    [question.id, question],
+    ...(question.legacyId ? [[question.legacyId, question]] : [])
+  ]));
+  const runConcepts = run.conceptIds.map((conceptId) => courseConcepts.get(conceptId)).filter(Boolean);
+  const newConceptIds = run.newConceptIds?.length ? run.newConceptIds : run.conceptIds;
+  const newConcepts = newConceptIds.map((conceptId) => courseConcepts.get(conceptId)).filter(Boolean);
+  const practiceConcepts = newConcepts.length ? newConcepts : runConcepts;
+  const phaseConfig = run.phases || {};
+  const questions = [];
+
+  const teachingBlockById = new Map(
+    [...(lesson.teachingBlocks || []), ...(run.teachingBlocks || [])]
+      .filter(Boolean)
+      .map((block) => [block.id || `${block.type}-${block.conceptId || block.patternId}`, block])
+  );
+  const requestedTeachingIds = normalizeIdList(phaseConfig.learn?.teachingBlockIds, run.teachingBlockIds);
+  const requestedBlocks = requestedTeachingIds.map((id) => teachingBlockById.get(id)).filter(Boolean);
+  const teachingBlocks = requestedBlocks.length ? requestedBlocks : [...teachingBlockById.values()];
+  const taughtConceptIds = new Set();
+  let patternAdded = false;
+
+  for (const block of teachingBlocks) {
+    if (block.type === "concept" || block.conceptId) {
+      const concept = courseConcepts.get(block.conceptId);
+      const refreshNeeded = block.mode === "refresh"
+        && (!getConceptSkillIds(concept, run).length
+          || getConceptSkillIds(concept, run).some((skillId) => !statusAtLeast(getSkillStatus(skillId), "secure")));
+      if (!newConceptIds.includes(block.conceptId) && !refreshNeeded) continue;
+      if (!concept || taughtConceptIds.has(concept.id)) continue;
+      questions.push(makeConceptTeachingQuestion(lesson, run, concept, block));
+      taughtConceptIds.add(concept.id);
+    }
+    if (block.type === "pattern" || block.patternId) {
+      const pattern = lesson.pattern || block.pattern;
+      if (!pattern || (run.patternId && pattern.id && pattern.id !== run.patternId)) continue;
+      questions.push(makePatternTeachingQuestion(lesson, run, pattern, block));
+      patternAdded = true;
+    }
+  }
+  for (const concept of newConcepts) {
+    if (!taughtConceptIds.has(concept.id)) questions.push(makeConceptTeachingQuestion(lesson, run, concept));
+  }
+  if (run.patternId && lesson.pattern && !patternAdded) {
+    questions.push(makePatternTeachingQuestion(lesson, run, lesson.pattern));
+  }
+
+  const understand = getRunPhaseExercises(phaseConfig.understand, exerciseById, run, "understand");
+  const conceptsWithRecognition = new Set(understand.flatMap(getQuestionConceptIds));
+  const skillsWithRecognition = new Set(understand.flatMap(getQuestionSkillIds));
+  const taughtConcepts = [...taughtConceptIds].map((conceptId) => courseConcepts.get(conceptId)).filter(Boolean);
+  for (const concept of taughtConcepts) {
+    if (!conceptsWithRecognition.has(concept.id)) understand.push(makeRecognitionQuestion(run, concept, runConcepts));
+  }
+  if (run.patternId && lesson.pattern) {
+    const patternSkillIds = getPatternSkillIds(lesson.pattern, run);
+    if (patternSkillIds.some((skillId) => !skillsWithRecognition.has(skillId))) {
+      understand.push(makePatternRecognitionQuestion(run, lesson.pattern, runConcepts));
+    }
+  }
+  questions.push(...understand);
+
+  const guidedConfig = phaseConfig.guidedPractice || phaseConfig.guided;
+  const guided = getRunPhaseExercises(guidedConfig, exerciseById, run, "guided");
+  if (!guided.length) {
+    guided.push(...practiceConcepts.map((concept) => makeGuidedQuestion(run, concept, runConcepts)));
+  }
+  questions.push(...guided);
+
+  const use = getRunPhaseExercises(phaseConfig.use, exerciseById, run, "use");
+  if (!use.length && practiceConcepts.length) {
+    use.push(...practiceConcepts.slice(0, Math.min(2, practiceConcepts.length)).map((concept) => makeUseQuestion(run, concept, runConcepts)));
+  }
+  questions.push(...use);
+
+  const authoredCheck = getRunPhaseExercises(
+    phaseConfig.independentCheck || phaseConfig.check,
+    exerciseById,
+    run,
+    "check"
+  );
+  const check = [...authoredCheck];
+  let generatedIndex = 0;
+  while (check.length < 4 && practiceConcepts.length) {
+    const concept = practiceConcepts[generatedIndex % practiceConcepts.length];
+    const generated = generatedIndex % 2 === 0
+      ? makeRecognitionQuestion(run, concept, runConcepts, "check", generatedIndex)
+      : makeGuidedQuestion(run, concept, runConcepts, "check", generatedIndex);
+    if (!check.some((question) => question.id === generated.id)) check.push(generated);
+    generatedIndex += 1;
+    if (generatedIndex > 20) break;
+  }
+  while (check.length < 4 && run.patternId && lesson.pattern) {
+    check.push(makePatternCheckQuestion(run, lesson.pattern, runConcepts, check.length));
+  }
+  while (check.length < 4 && authoredCheck.length) {
+    const source = authoredCheck[check.length % authoredCheck.length];
+    check.push({
+      ...cloneQuestion(source),
+      id: `${source.id}-coverage-${check.length + 1}`,
+      phase: "check",
+      instructionUrdu: source.instructionUrdu || source.instruction || source.label || "اسی مہارت کو ایک نئی بار بغیر مدد کے جانچیں"
+    });
+  }
+  questions.push(...check.slice(0, 6));
+
+  return questions.map(prepareSessionQuestion);
+}
+
+function getRunPhaseExercises(config, exerciseById, run, phase) {
+  const ids = normalizeIdList(config?.exerciseIds);
+  const exercises = ids.map((id) => exerciseById.get(id)).filter(Boolean);
+  return exercises
+    .filter((question) => isExerciseInLearningRun(question, run))
+    .map((question) => normalizeLearningExercise(question, phase));
+}
+
+function isExerciseInLearningRun(question, run) {
+  if (question?.runId && question.runId !== run.id) return false;
+  const conceptIds = getQuestionConceptIds(question);
+  const skillIds = getQuestionSkillIds(question);
+  const allowedConceptIds = new Set(run.conceptIds || []);
+  const allowedSkillIds = new Set(run.skillIds || []);
+  const conceptsAllowed = !conceptIds.length || conceptIds.every((id) => allowedConceptIds.has(id));
+  const skillsAllowed = !skillIds.length || skillIds.every((id) => allowedSkillIds.has(id));
+  return conceptsAllowed && skillsAllowed;
+}
+
+function normalizeLearningExercise(question, phase) {
+  const instructionUrdu = question.instructionUrdu || question.instruction || question.label || getGeneratedInstruction(question.type, phase);
+  return {
+    ...cloneQuestion(question),
+    phase,
+    instructionUrdu,
+    supported: ["understand", "guided"].includes(phase),
+    hint: question.hint || (phase === "understand"
+      ? "ابھی سکھایا ہوا معنی، آواز، اور مثال دیکھ کر جواب دیں۔"
+      : phase === "guided" ? "سکھائے ہوئے الفاظ اور جملے کے نمونے کی مدد لیں۔" : ""),
+    correctExplanation: question.correctExplanation || question.explanationCorrectUrdu || question.correctExplanationUrdu || question.explain,
+    wrongExplanation: question.wrongExplanation || question.explanationWrongUrdu || question.wrongExplanationUrdu || question.explain
+  };
+}
+
+function makeConceptTeachingQuestion(lesson, run, concept, block = {}) {
+  return {
+    id: block.id || `${lesson.id}-${run.id}-learn-${concept.id}`,
+    type: "concept-teach",
+    phase: "learn",
+    instructionUrdu: block.instructionUrdu || "لفظ کو دیکھیں، سنیں، اور مثال کے ساتھ سمجھیں",
+    prompt: concept.dutch,
+    answer: "سمجھ گیا",
+    teachingMode: block.mode === "refresh" ? "refresh" : "teach",
+    concept,
+    conceptIds: [concept.id],
+    skillIds: getConceptSkillIds(concept, run),
+    visualId: concept.visualId || block.visualId || ""
+  };
+}
+
+function makePatternTeachingQuestion(lesson, run, pattern, block = {}) {
+  return {
+    id: block.id || `${lesson.id}-${run.id}-learn-${pattern.id || "pattern"}`,
+    type: "pattern-teach",
+    phase: "learn",
+    instructionUrdu: block.instructionUrdu || "مثال دیکھ کر جملے کا طریقہ سمجھیں",
+    prompt: pattern.modelDutch || pattern.sentence || pattern.titleUrdu,
+    answer: "سمجھ گیا",
+    pattern,
+    conceptIds: normalizeIdList(run.conceptIds),
+    skillIds: getPatternSkillIds(pattern, run)
+  };
+}
+
+function getConceptOptions(concepts, field, answer) {
+  const options = [...new Set(concepts.map((concept) => concept?.[field]).filter(Boolean))];
+  if (!options.includes(answer)) options.unshift(answer);
+  return options;
+}
+
+function semanticVariantName(variant) {
+  if (typeof variant === "string" && variant) return variant;
+  return ["primary", "reinforcement", "retention", "transfer"][Number(variant) || 0]
+    || `reinforcement-${Number(variant) + 1}`;
+}
+
+function getGeneratedOptionExplanations(concepts, targetConcept, options, answerField) {
+  const answer = targetConcept?.[answerField] || "";
+  const answerIsDutch = answerField === "dutch";
+  return Object.fromEntries((options || [])
+    .filter((option) => option !== answer)
+    .map((option) => {
+      const distractor = (concepts || []).find((concept) => concept?.[answerField] === option);
+      const explanation = answerIsDutch
+        ? distractor
+          ? `“${option}” کا مطلب “${distractor.urdu}” ہے، لیکن یہاں “${targetConcept.urdu}” کہنا ہے؛ اس لیے “${targetConcept.dutch}” درست ہے۔`
+          : `“${option}” اس معنی “${targetConcept.urdu}” کے لیے درست نہیں؛ سیکھی ہوئی بات “${targetConcept.dutch}” ہے۔`
+        : distractor
+          ? `“${option}” تو “${distractor.dutch}” کا مطلب ہے۔ یہاں “${targetConcept.dutch}” دیا گیا ہے، اس لیے “${targetConcept.urdu}” درست ہے۔`
+          : `“${option}” کا مطلب اس ہدف سے مختلف ہے؛ “${targetConcept.dutch}” کا درست مطلب “${targetConcept.urdu}” ہے۔`;
+      return [String(option), explanation];
+    }));
+}
+
+function makeRecognitionQuestion(run, concept, concepts, phase = "understand", variant = "primary") {
+  const semanticVariant = semanticVariantName(variant);
+  const options = getConceptOptions(concepts, "urdu", concept.urdu);
+  const optionExplanationsUrdu = getGeneratedOptionExplanations(concepts, concept, options, "urdu");
+  return {
+    id: `${run.id}-${phase}-${concept.id}-meaning-${semanticVariant}`,
+    semanticKey: `${phase}:meaning:${concept.id}:${semanticVariant}`,
+    type: "meaning",
+    phase,
+    instructionUrdu: phase === "check"
+      ? `بغیر مدد بتائیں: “${concept.dutch}” کا صحیح اردو مطلب کون سا ہے؟`
+      : `مثال دیکھنے کے بعد بتائیں: “${concept.dutch}” کا اردو مطلب کون سا ہے؟`,
+    prompt: concept.dutch,
+    options,
+    answer: concept.urdu,
+    conceptIds: [concept.id],
+    skillIds: getConceptSkillIds(concept, run),
+    hint: `${concept.dutch} کی مثال اور تلفظ یاد کریں۔`,
+    correctExplanation: `درست۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے۔`,
+    wrongExplanation: `آپ نے “${concept.dutch}” دیکھا یا سنا؛ اس کا درست مطلب “${concept.urdu}” ہے۔`,
+    optionExplanationsUrdu,
+    wrongExplanationsByOption: { ...optionExplanationsUrdu },
+    visualId: concept.visualId || ""
+  };
+}
+
+function makeGuidedQuestion(run, concept, concepts, phase = "guided", variant = "primary") {
+  const semanticVariant = semanticVariantName(variant);
+  const options = getConceptOptions(concepts, "dutch", concept.dutch);
+  const optionExplanationsUrdu = getGeneratedOptionExplanations(concepts, concept, options, "dutch");
+  return {
+    id: `${run.id}-${phase}-${concept.id}-recall-${semanticVariant}`,
+    semanticKey: `${phase}:recall:${concept.id}:${semanticVariant}`,
+    type: "reverse",
+    phase,
+    instructionUrdu: phase === "check"
+      ? `بغیر اشارے کے “${concept.urdu}” کے لیے صحیح Nederlands منتخب کریں`
+      : `مدد کے ساتھ “${concept.urdu}” کے لیے صحیح Nederlands منتخب کریں`,
+    prompt: concept.urdu,
+    options,
+    answer: concept.dutch,
+    conceptIds: [concept.id],
+    skillIds: getConceptSkillIds(concept, run),
+    hint: concept.pronunciationUrdu ? `آواز کا اشارہ: ${concept.pronunciationUrdu}` : `${concept.urdu} والا سکھایا ہوا لفظ یاد کریں۔`,
+    correctExplanation: `درست۔ “${concept.urdu}” کے لیے “${concept.dutch}” کہتے ہیں۔`,
+    wrongExplanation: `یہاں “${concept.urdu}” کہنا ہے؛ اس کے لیے درست Nederlands “${concept.dutch}” ہے۔`,
+    optionExplanationsUrdu,
+    wrongExplanationsByOption: { ...optionExplanationsUrdu },
+    visualId: concept.visualId || ""
+  };
+}
+
+function makeUseQuestion(run, concept, concepts) {
+  const prompt = concept.usageUrdu || concept.exampleUrdu || `اس صورت میں “${concept.urdu}” کہنا ہے۔`;
+  return {
+    ...makeGuidedQuestion(run, concept, concepts, "use"),
+    id: `${run.id}-use-${concept.id}`,
+    semanticKey: `use:situation:${concept.id}`,
+    type: "situation",
+    instructionUrdu: "روزمرہ صورت پڑھیں اور وہی سکھایا ہوا Nederlands جملہ منتخب کریں جو یہاں کام آئے",
+    prompt,
+    correctExplanation: `${concept.dutch} یہاں مناسب ہے: ${concept.usageUrdu || concept.exampleUrdu || concept.urdu}`,
+    wrongExplanation: `اس صورت میں ${concept.dutch} کہیں۔ یہ اسی سبق میں مثال کے ساتھ سکھایا گیا تھا۔`
+  };
+}
+
+function makePatternCheckQuestion(run, pattern, concepts, variant) {
+  const reverse = variant % 2 === 1;
+  const semanticVariant = semanticVariantName(variant);
+  const dutch = pattern.modelDutch || pattern.exampleDutch || "";
+  const urdu = pattern.modelUrdu || pattern.exampleUrdu || pattern.explanationUrdu || "";
+  const targetConcept = concepts.find((concept) => concept?.id === pattern.modelConceptId)
+    || { dutch, urdu };
+  const answerField = reverse ? "dutch" : "urdu";
+  const options = getConceptOptions(concepts, answerField, reverse ? dutch : urdu);
+  const optionExplanationsUrdu = getGeneratedOptionExplanations(concepts, targetConcept, options, answerField);
+  return {
+    id: `${run.id}-check-${pattern.id || "pattern"}-${semanticVariant}`,
+    semanticKey: `check:pattern:${pattern.id || "pattern"}:${semanticVariant}`,
+    type: reverse ? "reverse" : "meaning",
+    phase: "check",
+    instructionUrdu: reverse
+      ? "سکھائے ہوئے جملے کا صحیح Nederlands نمونہ منتخب کریں"
+      : "سکھائے ہوئے Nederlands نمونے کا صحیح اردو مطلب منتخب کریں",
+    prompt: reverse ? urdu : dutch,
+    options,
+    answer: reverse ? dutch : urdu,
+    conceptIds: normalizeIdList(run.conceptIds),
+    skillIds: getPatternSkillIds(pattern, run),
+    correctExplanation: `${dutch} کا مطلب ${urdu} ہے۔`,
+    wrongExplanation: `یہ اسی سبق کا جملہ ہے: ${dutch} = ${urdu}۔`,
+    optionExplanationsUrdu,
+    wrongExplanationsByOption: { ...optionExplanationsUrdu }
+  };
+}
+
+function makePatternRecognitionQuestion(run, pattern, concepts) {
+  const dutch = pattern.modelDutch || pattern.exampleDutch || "";
+  const urdu = pattern.modelUrdu || pattern.exampleUrdu || pattern.explanationUrdu || "";
+  const targetConcept = concepts.find((concept) => concept?.id === pattern.modelConceptId)
+    || { dutch, urdu };
+  const options = getConceptOptions(concepts, "urdu", urdu);
+  const optionExplanationsUrdu = getGeneratedOptionExplanations(concepts, targetConcept, options, "urdu");
+  return {
+    id: `${run.id}-understand-${pattern.id || "pattern"}`,
+    semanticKey: `understand:pattern:${pattern.id || "pattern"}`,
+    type: "meaning",
+    phase: "understand",
+    instructionUrdu: "اب مثال دیکھ کر سکھائے ہوئے جملے کے طریقے کو پہچانیں",
+    prompt: dutch,
+    options,
+    answer: urdu,
+    conceptIds: normalizeIdList(run.conceptIds),
+    skillIds: getPatternSkillIds(pattern, run),
+    hint: pattern.explanationUrdu || "اوپر والی مثال اور نمایاں طریقہ دوبارہ دیکھیں۔",
+    supported: true,
+    correctExplanation: `${dutch} میں یہی سکھایا ہوا جملے کا طریقہ استعمال ہوا ہے۔`,
+    wrongExplanation: `سکھائی ہوئی مثال ${dutch} ہے، اور یہاں اس کا مطلب ${urdu} ہے۔`,
+    optionExplanationsUrdu,
+    wrongExplanationsByOption: { ...optionExplanationsUrdu }
+  };
+}
+
+function getGeneratedInstruction(type, phase) {
+  if (phase === "understand") return "سکھائی ہوئی بات پہچان کر صحیح جواب منتخب کریں";
+  if (phase === "guided") return "اشارے اور معنی کی مدد سے صحیح جواب دیں";
+  if (phase === "use") return "روزمرہ صورت میں مناسب جواب منتخب کریں";
+  if (phase === "check") return "بغیر خودکار مدد کے اپنی سمجھ جانچیں";
+  if (type === "speak-repeat") return "آواز سنیں اور آرام سے دہرائیں";
+  return "دی گئی بات کو غور سے دیکھیں";
+}
+
+function prepareSessionQuestion(question) {
+  const prepareTiles = (tiles, prefix) => shuffleArray((tiles || []).map((tile, index) => (
+    typeof tile === "object" && tile?.word
+      ? { ...tile, id: tile.id || `${prefix}-${index}-${tile.word}` }
+      : { id: `${prefix}-${index}-${tile}`, word: tile }
+  )));
+  return {
     ...question,
-    options: question.options ? shuffleArray(question.options) : [],
-    tiles: question.tiles ? shuffleArray(question.tiles.map((word, index) => ({ id: `${index}-${word}`, word }))) : [],
-    fallbackTiles: question.fallbackTiles ? shuffleArray(question.fallbackTiles.map((word, index) => ({ id: `fallback-${index}-${word}`, word }))) : []
-  }));
+    options: question.options ? shuffleArray([...question.options]) : [],
+    tiles: prepareTiles(question.tiles, "tile"),
+    fallbackTiles: prepareTiles(question.fallbackTiles, "fallback")
+  };
 }
 
 function getLessonIntroQuestion(lesson, sourceQuestions = []) {
@@ -2513,7 +3947,7 @@ function getLessonIntroPairs(lesson, sourceQuestions = []) {
   };
 
   for (const concept of lesson.concepts || []) add(concept.dutch, concept.urdu);
-  for (const question of [...(lesson.questions || []), ...sourceQuestions]) {
+  for (const question of [...getLessonExercises(lesson), ...sourceQuestions]) {
     if (question.type === "meaning") add(question.prompt, question.answer);
     if (question.type === "reverse") add(question.answer, question.prompt);
     if (question.type === "listen-choice" && question.mode !== "listen-dutch" && /[\u0600-\u06ff]/.test(String(question.answer || ""))) {
@@ -2524,93 +3958,6 @@ function getLessonIntroPairs(lesson, sourceQuestions = []) {
   return pairs;
 }
 
-function sampleLessonQuestions(questions, lessonId) {
-  const infoQuestions = questions.filter(isInfoQuestion);
-  const usableQuestions = questions.filter((question) => !isInfoQuestion(question));
-  if (questions.length <= LESSON_QUESTION_LIMIT) return [...infoQuestions, ...usableQuestions].slice(0, LESSON_QUESTION_LIMIT);
-  const explanationCount = Math.min(2, infoQuestions.length);
-  const seenIds = new Set(progress.seenQuestionIds || []);
-  const lessonSeenCount = usableQuestions.filter((question) => seenIds.has(question.id)).length;
-  const seed = hashText(`${lessonId}:${lessonSeenCount}:${progress.scores[lessonId] || 0}`);
-  const types = ["meaning", "image-choice", "listen-choice", "document-choice", "reverse", "fill-gap", "situation", "sequence", "build", "short-input"];
-  const unseenGroups = new Map(types.map((type, index) => [
-    type,
-    seededShuffle(usableQuestions.filter((question) => question.type === type && !seenIds.has(question.id)), seed + index)
-  ]));
-  const seenGroups = new Map(types.map((type, index) => [
-    type,
-    seededShuffle(usableQuestions.filter((question) => question.type === type && seenIds.has(question.id)), seed + index + 41)
-  ]));
-  const practice = [];
-  const phaseTypes = [
-    ["meaning", "image-choice", "listen-choice", "document-choice"],
-    ["reverse", "fill-gap"],
-    ["situation", "sequence", "build", "short-input"]
-  ];
-  const practiceLimit = LESSON_QUESTION_LIMIT - explanationCount;
-  const phaseTargets = [8, 14, practiceLimit].map((target) => Math.min(target, practiceLimit));
-  const takeRound = (groups, phase) => {
-    let added = false;
-    for (const type of phase) {
-      const question = groups.get(type)?.shift();
-      if (!question) continue;
-      practice.push(question);
-      added = true;
-      if (practice.length >= LESSON_QUESTION_LIMIT - explanationCount) return added;
-    }
-    return added;
-  };
-  for (const [index, phase] of phaseTypes.entries()) {
-    const phaseLimit = index === phaseTypes.length - 1
-      ? practiceLimit
-      : phaseTargets[index];
-    while (practice.length < phaseLimit && takeRound(unseenGroups, phase)) {}
-  }
-  for (const [index, phase] of phaseTypes.entries()) {
-    const phaseLimit = index === phaseTypes.length - 1
-      ? practiceLimit
-      : phaseTargets[index];
-    while (practice.length < phaseLimit && takeRound(seenGroups, phase)) {}
-  }
-  if (practice.length < practiceLimit) {
-    const remainingIds = new Set(practice.map((question) => question.id));
-    for (const groups of [unseenGroups, seenGroups]) {
-      for (const phase of phaseTypes) {
-        for (const question of seededShuffle(phase.flatMap((type) => groups.get(type) || []), seed + practice.length + 163)) {
-          if (remainingIds.has(question.id)) continue;
-          practice.push(question);
-          remainingIds.add(question.id);
-          if (practice.length >= practiceLimit) break;
-        }
-        if (practice.length >= practiceLimit) break;
-      }
-      if (practice.length >= practiceLimit) break;
-    }
-  }
-  return [...infoQuestions.slice(0, explanationCount), ...practice].slice(0, LESSON_QUESTION_LIMIT);
-}
-
-function hashText(value) {
-  let hash = 2166136261;
-  for (const char of String(value)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
-  return hash >>> 0;
-}
-
-function seededShuffle(items, seed) {
-  const shuffled = [...items];
-  let state = seed || 1;
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    const swapIndex = state % (index + 1);
-    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
-  }
-  return shuffled;
-}
-
-function getLessonRunCount(lesson) {
-  return Math.min(LESSON_QUESTION_LIMIT, lesson.questions.length);
-}
-
 function getActiveQuestion() {
   const lesson = getActiveLesson();
   const questions = sessionQuestions.length ? sessionQuestions : lesson.questions;
@@ -2618,7 +3965,7 @@ function getActiveQuestion() {
 }
 
 function findLessonIdForQuestion(prompt, answer, questionId = "") {
-  const lesson = getAllLessons().find((item) => item.questions.some((question) => (
+  const lesson = getAllLessons().find((item) => getLessonExercises(item).some((question) => (
     (questionId && question.id === questionId) || (question.prompt === prompt && question.answer === answer)
   )));
   return lesson?.id || activeLessonId;
@@ -2633,7 +3980,7 @@ function getBuildAnswerText(question) {
 }
 
 function isInfoQuestion(question) {
-  return question?.type === "uitleg" || question?.type === "speak-repeat";
+  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach"].includes(question?.type);
 }
 
 function canCheckQuestion(question) {
@@ -2719,21 +4066,21 @@ function refreshPreferredDutchVoice() {
   return preferredDutchVoice;
 }
 
-function getDutchSpeechRate(text, forceSlow = false) {
+function getDutchSpeechRate(text, forceSlow = false, forceRegular = false) {
   const cleanText = normalizeDutchSpeechText(text);
   const singleLetter = cleanText.length === 1;
   const singleWord = !/\s/.test(cleanText);
-  const slow = progress.settings.slowAudio || forceSlow;
+  const slow = forceRegular ? false : progress.settings.slowAudio || forceSlow;
   if (slow) return singleLetter ? 0.7 : singleWord ? 0.76 : 0.8;
   return singleLetter ? 0.82 : singleWord ? 0.92 : 0.96;
 }
 
-function speakDutch(text, forceSlow = false) {
+function speakDutch(text, forceSlow = false, forceRegular = false) {
   if (!progress.settings.pronunciation || !text) return;
 
   const spokenText = normalizeDutchSpeechText(text);
   if (!spokenText) return;
-  const rate = getDutchSpeechRate(spokenText, forceSlow);
+  const rate = getDutchSpeechRate(spokenText, forceSlow, forceRegular);
   const pitch = 0.98;
 
   try {

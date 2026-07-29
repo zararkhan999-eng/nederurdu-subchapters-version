@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v57-map-card-position";
+const CACHE_NAME = "nederurdu-v59-learning-first-offline";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "./landing.css",
   "./course-data.js",
   "./word-visual-data.js",
+  "./assets/word-visuals/offline-manifest.json",
   "./app.js",
   "./manifest.webmanifest",
   "./icon.svg",
@@ -22,7 +23,14 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil((async () => {
+    const visualManifestResponse = await fetch("./assets/word-visuals/offline-manifest.json");
+    const visualAssets = (await visualManifestResponse.json())
+      .map((asset) => `./${String(asset).replace(/^\.?\//, "")}`);
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll([...new Set([...APP_SHELL, ...visualAssets])]);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
@@ -30,6 +38,7 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim())
   );
 });
 

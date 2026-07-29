@@ -135,7 +135,7 @@ const a0Lessons = [
     id: "a0-people-nouns",
     unit: "A0: naamwoorden 1",
     title: "A0 les 6: man, vrouw, kind",
-    description: "لوگوں کے نام: آدمی، عورت، بچہ، لڑکا، لڑکی۔",
+    description: "لوگ اور قریبی خاندان: آدمی، عورت، بچہ، والدین، بھائی، اور بہن۔",
     xp: 45,
     questions: [
       meaning("man", ["آدمی", "عورت", "بچہ"], "آدمی", "man = آدمی۔"),
@@ -3773,6 +3773,10 @@ function takeQuestionsForType(seedQuestions, type, target, concepts) {
 function buildLessonBank(lesson, level) {
   const seedQuestions = lesson.questions.map((question) => ({ ...question }));
   const concepts = lessonConcepts(seedQuestions);
+  // Preserve the authored seed inventory before the 60-question v3
+  // compatibility bank is expanded. Schema v4 reads this compact inventory,
+  // never the generated distractor/practice bank, as its concept source.
+  lesson.seedConcepts = concepts.map((concept) => ({ ...concept }));
   const explanations = [];
   const explanationSignatures = new Set();
   for (const question of seedQuestions.filter((item) => item.type === "uitleg")) {
@@ -4300,7 +4304,969 @@ const a2Subchapters = [
   }
 ];
 
-window.NEDERURDU_CHAPTERS = [
+/*
+ * Learning-first course contract (schema v4)
+ *
+ * The arrays above remain the authored/generated compatibility source. This
+ * final normalization pass adds stable semantic ownership and learning phases
+ * without changing the answer/options/type shape used by the existing app.
+ */
+
+const learningPhaseOrderV4 = [
+  "preview",
+  "learn",
+  "understand",
+  "guided-practice",
+  "use",
+  "independent-check",
+  "correction"
+];
+
+const chapterOutcomesV4 = {
+  a0: "روزمرہ کی فوری ضرورت میں آسان Nederlands پہچاننا، مدد مانگنا، اور چھوٹا جواب دینا۔",
+  a1: "گھر، خاندان، کام، اسکول، خریداری، سفر، اور صحت کے عام حالات میں آسان بات چیت کرنا۔",
+  a2: "سرکاری، کام، اسکول، صحت، گھر، بل، اور پیغام کے عملی کام نسبتاً خود مختار ہو کر مکمل کرنا۔"
+};
+
+const chapterCompletionAreasV4 = [
+  "meaning",
+  "listening",
+  "reading",
+  "speaking-support",
+  "practical-use"
+];
+
+function stableHashV4(value) {
+  let hash = 2166136261;
+  const text = String(value || "");
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function semanticSlugV4(value, fallback = "item") {
+  const slug = String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 42);
+  return slug || fallback;
+}
+
+function normalizedTextV4(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKC")
+    .replace(/[.!?,;:()[\]{}"'’`|/\\]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function uniqueV4(items) {
+  return [...new Set((items || []).filter(Boolean))];
+}
+
+function dutchWordsV4(value) {
+  return uniqueV4(
+    (String(value || "").toLowerCase().match(/[a-zà-ÿ0-9-]+/g) || [])
+      .filter((word) => word.length > 1)
+  );
+}
+
+function hasUsefulOverlapV4(left, right) {
+  const leftWords = new Set(dutchWordsV4(left));
+  return dutchWordsV4(right).some((word) => leftWords.has(word));
+}
+
+function approximateDutchPronunciationUrduV4(value) {
+  const wholeWordOverrides = {
+    ik: "اِک",
+    jij: "یَے",
+    je: "یَہ",
+    u: "یو",
+    uw: "یو",
+    wij: "وَے",
+    hij: "ہَے",
+    zij: "زَے",
+    een: "اَن",
+    de: "دَ",
+    het: "ہَت",
+    ben: "بَین",
+    bent: "بَینٹ",
+    is: "اِس",
+    heb: "ہَیپ",
+    hebt: "ہَیپٹ",
+    heeft: "ہےفٹ",
+    hebben: "ہَیبَن",
+    geen: "خین",
+    goed: "خُوت",
+    morgen: "مورخَن",
+    niet: "نیت",
+    nee: "نے",
+    ja: "یا",
+    huis: "ہاؤس",
+    uit: "اؤَیٹ",
+    zijn: "زَین",
+    appel: "آپَل",
+    boek: "بوک",
+    boeken: "بوکَن",
+    deur: "ڈُر",
+    fiets: "فیتس",
+    oog: "اوخ",
+    pen: "پَین",
+    rijst: "رَیست",
+    stoel: "ستول",
+    tafel: "تافَل",
+    water: "واتَر",
+    man: "مان",
+    vrouw: "فراؤ",
+    kind: "کِنٹ",
+    kinderen: "کِنڈَرَن",
+    familie: "فامیلی",
+    vader: "فادَر",
+    moeder: "مودَر",
+    broer: "برور",
+    zus: "زُس",
+    naam: "نام",
+    land: "لانٹ",
+    stad: "ستاٹ",
+    woon: "وون",
+    nederland: "نے دَر لانٹ",
+    nederlands: "نے دَر لانٹس",
+    pakistan: "پاکستان",
+    ali: "علی",
+    sara: "سارا",
+    mijn: "مَین",
+    jouw: "یاؤ",
+    haar: "ہار",
+    dit: "دِت",
+    dat: "دات",
+    hier: "ہیر",
+    daar: "دار",
+    wie: "وی",
+    wat: "وات",
+    waar: "وار",
+    hoe: "ہو",
+    toilet: "توا لَیٹ",
+    nul: "نُل",
+    twee: "توے",
+    drie: "دری",
+    vier: "فیر",
+    vijf: "فَیف",
+    zes: "زَیس",
+    zeven: "زے وَن",
+    acht: "آخٹ",
+    negen: "نے خَن",
+    tien: "تین",
+    elf: "اَیلف",
+    twaalf: "توالف",
+    dertien: "ڈَیر تین",
+    veertien: "فیر تین",
+    vijftien: "فَیف تین",
+    zestien: "زَیس تین",
+    zeventien: "زے وَن تین",
+    achttien: "آخ تین",
+    negentien: "نے خَن تین",
+    twintig: "توِن ٹَخ",
+    dertig: "ڈَیر ٹَخ",
+    veertig: "فیر ٹَخ",
+    vijftig: "فَیف ٹَخ",
+    zestig: "زَیس ٹَخ",
+    zeventig: "زے وَن ٹَخ",
+    tachtig: "تاخ ٹَخ",
+    negentig: "نے خَن ٹَخ",
+    honderd: "ہون ڈَرٹ",
+    euro: "اُورو",
+    jaar: "یار",
+    vandaag: "فان داخ",
+    gisteren: "خِس تَرَن",
+    nu: "نیو",
+    uur: "یور",
+    maandag: "مان داخ",
+    dinsdag: "ڈِنس داخ",
+    woensdag: "وونز داخ",
+    donderdag: "دون دَر داخ",
+    vrijdag: "فرَی داخ",
+    zaterdag: "زا تَر داخ",
+    zondag: "زون داخ",
+    ochtend: "آخ تَنٹ",
+    middag: "مِداخ",
+    avond: "آ وُنٹ",
+    nacht: "ناخٹ",
+    om: "اوم",
+    laat: "لات",
+    tijd: "تَیٹ",
+    voornaam: "فور نام",
+    achternaam: "آخ تَر نام",
+    spellen: "سپَیلَن",
+    spelt: "سپَیلٹ",
+    letter: "لَیتَر",
+    leeftijd: "لَیف تَیٹ",
+    kunt: "کُنٹ",
+    herhalen: "ہَر ہا لَن",
+    schrijf: "سخرَیف",
+    op: "اوپ",
+    langzaam: "لانخ زام",
+    langzamer: "لانخ زا مَر",
+    heet: "ہیت",
+    adres: "آ د ریس",
+    straat: "سترات",
+    huisnummer: "ہاؤس نُمَر",
+    postcode: "پوسٹ کوڈ",
+    woonplaats: "وون پلاتس",
+    telefoonnummer: "تے لے فون نُمَر",
+    nummer: "نُمَر",
+    mail: "مَیل",
+    mailadres: "مَیل آ د ریس",
+    afspraak: "آف سپراک",
+    vroeg: "فروخ",
+    wanneer: "وا نیر",
+    veranderen: "فَ ران دَرَن",
+    in: "اِن",
+    onder: "اون دَر",
+    naast: "ناست",
+    voor: "فور",
+    achter: "آخ تَر",
+    bij: "بَی",
+    naar: "نار",
+    met: "مَیٹ",
+    ga: "خا",
+    gaat: "خات",
+    kom: "کوم",
+    komt: "کومٹ",
+    komen: "کو مَن",
+    school: "سخول",
+    sleutel: "سلو تَل",
+    kamer: "کامَر",
+    licht: "لِخٹ",
+    verwarming: "فَر وار مِنگ",
+    open: "او پَن",
+    dicht: "دِخٹ",
+    koud: "کاؤٹ",
+    warm: "وارَم",
+    kapot: "کا پوت",
+    nodig: "نو ڈَخ",
+    doet: "ڈوت",
+    doe: "ڈو",
+    werk: "وَیرک",
+    werken: "وَیر کَن",
+    eten: "اے تَن",
+    eet: "ایت",
+    drinken: "درِن کَن",
+    drink: "درِنک",
+    slapen: "سلا پَن",
+    lopen: "لو پَن",
+    zitten: "زِ تَن",
+    staan: "ستان",
+    wachten: "واخ تَن",
+    wacht: "واخٹ",
+    lezen: "لے زَن",
+    schrijven: "سخرَی وَن",
+    brood: "بروٹ",
+    melk: "مَیلک",
+    koffie: "کوفی",
+    thee: "تے",
+    fruit: "فراؤَیٹ",
+    groente: "خرون تَ",
+    honger: "ہونگَر",
+    dorst: "دورسٹ",
+    winkel: "وِن کَل",
+    supermarkt: "سو پَر مارکٹ",
+    prijs: "پرَیس",
+    kassa: "کا سا",
+    bon: "بون",
+    contant: "کون تانٹ",
+    pinnen: "پِنَن",
+    betalen: "بَ تا لَن",
+    betaal: "بَ تال",
+    goedkoop: "خُوت کوپ",
+    duur: "ڈُر",
+    hoeveel: "ہو فیل",
+    kost: "کوسٹ",
+    wil: "وِل",
+    mag: "ماخ",
+    bus: "بُس",
+    trein: "ٹرَین",
+    station: "ستا شون",
+    halte: "ہال تَ",
+    kaartje: "کار چَ",
+    links: "لِنکس",
+    rechts: "رِخٹس",
+    rechtdoor: "رِخٹ ڈور",
+    ingang: "اِن خانخ",
+    uitgang: "اؤَیٹ خانخ",
+    ziek: "زیک",
+    pijn: "پَین",
+    dokter: "ڈوک تَر",
+    apotheek: "آ پو تیک",
+    medicijn: "مے ڈی سَین",
+    ziekenhuis: "زیکَن ہاؤس",
+    ambulance: "آم بیو لان سَ",
+    hoofdpijn: "ہوفٹ پَین",
+    buikpijn: "بَؤک پَین",
+    hulp: "ہُلپ",
+    bel: "بَیل",
+    docent: "دو سَینٹ",
+    klas: "کلاس",
+    brengen: "برَین خَن",
+    breng: "برَینخ",
+    ophalen: "اوپ ہا لَن",
+    haal: "ہال",
+    afwezig: "آف وے زَخ",
+    schooltijd: "سخول تَیٹ",
+    collega: "کو لے خا",
+    leidinggevende: "لَی ڈِنگ خے فَن دَ",
+    beginnen: "بَ خِنَن",
+    begin: "بَ خِن",
+    stoppen: "سٹو پَن",
+    stop: "سٹوپ",
+    pauze: "پاؤ زَ",
+    kan: "کان",
+    regen: "رے خَن",
+    regent: "رے خَنٹ",
+    jas: "یاس",
+    paraplu: "پا را پلیو",
+    gevaar: "خَ فار",
+    verboden: "فَر بو دَن"
+  };
+  const chunks = [
+    ["sch", "سخ"], ["ng", "نگ"], ["ch", "خ"], ["g", "خ"],
+    ["ij", "َے"], ["ei", "َے"], ["ui", "اؤی"], ["ou", "آؤ"], ["au", "آؤ"],
+    ["oe", "او"], ["ie", "ای"], ["eu", "ُو"], ["aa", "آ"], ["ee", "اے"],
+    ["oo", "او"], ["uu", "یو"], ["sj", "ش"], ["th", "ت"], ["ph", "ف"],
+    ["a", "اَ"], ["b", "ب"], ["c", "ک"], ["d", "د"], ["e", "َ"],
+    ["f", "ف"], ["h", "ہ"], ["i", "ِ"], ["j", "ی"], ["k", "ک"],
+    ["l", "ل"], ["m", "م"], ["n", "ن"], ["o", "و"], ["p", "پ"],
+    ["q", "ک"], ["r", "ر"], ["s", "س"], ["t", "ت"], ["u", "ُ"],
+    ["v", "و"], ["w", "و"], ["x", "کس"], ["y", "ی"], ["z", "ز"]
+  ];
+  return String(value || "")
+    .toLowerCase()
+    .split(/(\s+|[,.!?;:()/-]+)/)
+    .map((part) => {
+      if (!/[a-zà-ÿ]/.test(part)) return part;
+      const normalized = part.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+      if (wholeWordOverrides[normalized]) return wholeWordOverrides[normalized];
+      let remaining = normalized;
+      let result = "";
+      while (remaining) {
+        const match = chunks.find(([source]) => remaining.startsWith(source));
+        if (match) {
+          result += match[1];
+          remaining = remaining.slice(match[0].length);
+        } else {
+          remaining = remaining.slice(1);
+        }
+      }
+      return (result || "آواز")
+        .replace(/^([\u064b-\u065f\u0670])/u, "ا$1");
+    })
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function cleanConceptUrduV4(value) {
+  return String(value || "")
+    .replace(/^(?:یہ بنائیں|حال|آخری قدم)\s*:\s*/u, "")
+    .trim();
+}
+
+const removedA1ReviewLessonIdsV4 = a1Lessons
+  .filter((lesson) => /-review$/.test(lesson.id))
+  .map((lesson) => lesson.id);
+const retiredAdaptiveLessonsV4 = a1Lessons.filter((lesson) => /-review$/.test(lesson.id));
+
+for (let index = a1Lessons.length - 1; index >= 0; index -= 1) {
+  if (/-review$/.test(a1Lessons[index].id)) a1Lessons.splice(index, 1);
+}
+
+for (const subchapter of a1Subchapters) {
+  subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => !/-review$/.test(lessonId));
+}
+
+function retirePathLessonV4(lessons, lessonId) {
+  const index = lessons.findIndex((lesson) => lesson.id === lessonId);
+  if (index < 0) return;
+  retiredAdaptiveLessonsV4.push(lessons[index]);
+  lessons.splice(index, 1);
+}
+
+retirePathLessonV4(a0Lessons, "a0-checkpoint");
+retirePathLessonV4(a0Lessons, "a0-things-nouns");
+retirePathLessonV4(a0Lessons, "a0-daily-checkpoint");
+retirePathLessonV4(a1Lessons, "a1-zero-tiny-words");
+retirePathLessonV4(a1Lessons, "a1-zijn-first-sentences");
+retirePathLessonV4(a1Lessons, "a1-daily-review-one");
+retirePathLessonV4(a1Lessons, "a1-daily-review-two");
+
+for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
+  subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
+    ![
+      "a0-checkpoint",
+      "a0-things-nouns",
+      "a0-daily-checkpoint",
+      "a1-zero-tiny-words",
+      "a1-zijn-first-sentences",
+      "a1-daily-review-one",
+      "a1-daily-review-two"
+    ].includes(lessonId)
+  ));
+}
+for (const subchapters of [a0Subchapters, a1Subchapters]) {
+  for (let index = subchapters.length - 1; index >= 0; index -= 1) {
+    if (!subchapters[index].lessonIds.length) subchapters.splice(index, 1);
+  }
+}
+
+const a0StartUnitV4 = a0Subchapters.find((unit) => unit.id === "a0-start-speaking");
+const a0LettersUnitV4 = a0Subchapters.find((unit) => unit.id === "a0-letters-sounds");
+const a0PeopleUnitV4 = a0Subchapters.find((unit) => unit.id === "a0-people-things");
+if (a0StartUnitV4) {
+  a0StartUnitV4.lessonIds = [
+    "a0-greetings-courtesy",
+    "a0-understanding-help",
+    "a0-ja-nee-goed-niet"
+  ];
+}
+if (a0PeopleUnitV4 && !a0PeopleUnitV4.lessonIds.includes("a0-ik-jij-u")) {
+  a0PeopleUnitV4.lessonIds.unshift("a0-ik-jij-u");
+}
+if (a0LettersUnitV4) {
+  const orderedUnitIds = [
+    "a0-start-speaking",
+    "a0-letters-sounds",
+    "a0-people-things",
+    "a0-numbers-time"
+  ];
+  a0Subchapters.sort((left, right) => {
+    const leftIndex = orderedUnitIds.indexOf(left.id);
+    const rightIndex = orderedUnitIds.indexOf(right.id);
+    if (leftIndex >= 0 || rightIndex >= 0) {
+      return (leftIndex < 0 ? orderedUnitIds.length : leftIndex)
+        - (rightIndex < 0 ? orderedUnitIds.length : rightIndex);
+    }
+    return 0;
+  });
+}
+
+const a0LetterLessonTitlesV4 = {
+  "a0-letters-1": {
+    title: "Eerste klanken: a en b",
+    description: "a اور b کی ضروری آوازیں سننا، پھر appel، boek، deur، اور fiets کو تصویر اور آواز سے پہچاننا۔"
+  },
+  "a0-letters-2": {
+    title: "Eerste klanken: h en i",
+    description: "h اور i کی ضروری آوازیں سننا، پھر huis، ijs، jas، kat، اور lamp کو تصویر اور آواز سے پہچاننا۔"
+  },
+  "a0-letters-3": {
+    title: "Herkenbare woorden en klanken",
+    description: "oog، pen، rijst، stoel، tafel، اور water کو آواز اور تصویر سے پہچاننا؛ مکمل حروف تہجی الگ letters tool میں دستیاب ہے۔"
+  }
+};
+for (const lesson of a0Lessons) {
+  if (a0LetterLessonTitlesV4[lesson.id]) Object.assign(lesson, a0LetterLessonTitlesV4[lesson.id]);
+}
+
+/*
+ * A0 follows the curriculum constitution's dependency order.  The original
+ * source grouped several grammar labels ahead of the real-life skill that
+ * needed them.  These nine units keep the stable lesson and mission IDs, but
+ * put identity before age, possession before dit/dat phrases, and give the two
+ * former "daily life" missions separate shop and travel/health purposes.
+ */
+const a0LearningFirstUnitsV4 = [
+  {
+    id: "a0-start-speaking",
+    title: "بات شروع کریں",
+    goal: "سلام کرنا، ادب سے جواب دینا، اور سمجھ نہ آنے پر مدد مانگنا۔",
+    practice: "سلام سے بات شروع کریں، دوبارہ یا آہستہ بولنے کو کہیں، چھوٹا جواب دیں، اور رخصت ہوں۔",
+    lessonIds: [
+      "a0-greetings-courtesy",
+      "a0-understanding-help",
+      "a0-ja-nee-goed-niet",
+      "a0-start-speaking-mission"
+    ]
+  },
+  {
+    id: "a0-letters-sounds",
+    title: "حروف، آواز، اور پہلے لفظ",
+    goal: "ضروری ڈچ آوازیں سننا، حروف پہچاننا، اور چند آسان لفظ پڑھنا۔",
+    practice: "حرف سنیں، اس کی شکل پہچانیں، پھر اسی آواز والا سکھایا ہوا لفظ چنیں۔",
+    lessonIds: [
+      "a0-letters-1",
+      "a0-letters-2",
+      "a0-letters-3",
+      "a0-letters-sounds-mission"
+    ]
+  },
+  {
+    id: "a0-first-sentences",
+    title: "میں، لوگ، خاندان، اور تعارف",
+    goal: "اپنا نام اور ملک بتانا، لوگوں اور قریبی خاندان کو پہچاننا، اور پہلا مکمل تعارف کہنا۔",
+    practice: "ik، jij، u، hij، zij، wij اور ben/bent/is کے ساتھ مختصر تعارف بنائیں۔",
+    lessonIds: [
+      "a0-ik-jij-u",
+      "a0-people-nouns",
+      "a0-hij-zij-wij",
+      "a0-een-de-het",
+      "a0-ben-bent-is",
+      "a0-first-sentences",
+      "a0-name-land-city",
+      "a0-first-sentences-mission"
+    ]
+  },
+  {
+    id: "a0-people-things",
+    title: "چیز، ملکیت، اور چھوٹا سوال",
+    goal: "بتانا کہ کس کے پاس کیا ہے یا نہیں، چیز کی ملکیت بتانا، اور شخص، چیز، یا جگہ پوچھنا۔",
+    practice: "ik heb، geen، mijn، dit/dat اور wie/wat/waar کو پہلے سیکھی ہوئی چیزوں کے ساتھ استعمال کریں۔",
+    lessonIds: [
+      "a0-hebben-1",
+      "a0-geen",
+      "a0-possessive",
+      "a0-dit-dat-questions",
+      "a0-people-things-mission"
+    ]
+  },
+  {
+    id: "a0-numbers-time",
+    title: "اعداد، وقت، اور رابطے کی معلومات",
+    goal: "عمر، دن، پورا وقت، نام کے حروف، پتہ، فون نمبر، اور ملاقات کی بنیادی معلومات دینا۔",
+    practice: "نمبر سنیں، نام ہجے کریں، رابطے کی معلومات سمجھیں، اور ملاقات کا وقت سنبھالیں۔",
+    lessonIds: [
+      "a0-numbers-0-10",
+      "a0-numbers-11-100",
+      "a0-time-days",
+      "a0-spelling-personal-details",
+      "a0-address-phone",
+      "a0-date-appointment",
+      "a0-numbers-time-mission"
+    ]
+  },
+  {
+    id: "a0-place-movement",
+    title: "جگہ، حرکت، اور گھر کی ضرورت",
+    goal: "چیز کی جگہ بتانا، گھر یا اسکول کی طرف جانا، اور گھر کی فوری ضرورت یا خرابی بتانا۔",
+    practice: "in/op/onder، naast/voor/achter، gaan/komen، naar/met اور گھر کے تیار جملے استعمال کریں۔",
+    lessonIds: [
+      "a0-place-1",
+      "a0-place-2",
+      "a0-gaan-komen",
+      "a0-naar-met",
+      "a0-home-needs",
+      "a0-mission-home-start"
+    ]
+  },
+  {
+    id: "a0-daily-shop",
+    title: "روزمرہ کام، کھانا، اور خریداری",
+    goal: "روزمرہ کام بتانا، کھانا یا مشروب مانگنا، قیمت پوچھنا، اور ادائیگی کرنا۔",
+    practice: "ایک روزمرہ عمل، پسند یا ضرورت، قیمت، پن یا نقد، اور رسید والی بات استعمال کریں۔",
+    lessonIds: [
+      "a0-daily-actions",
+      "a0-food-drink",
+      "a0-shopping-payment",
+      "a0-mission-neighbourhood"
+    ]
+  },
+  {
+    id: "a0-travel-health",
+    title: "سفر، راستہ، اور فوری صحت کی مدد",
+    goal: "اسٹیشن یا ٹکٹ پوچھنا، سمت سمجھنا، بیماری یا درد بتانا، اور فوری مدد مانگنا۔",
+    practice: "سفر کے نشان اور راستہ سمجھیں، پھر ڈاکٹر، فارمیسی، یا ہنگامی مدد کا ضروری جملہ کہیں۔",
+    lessonIds: [
+      "a0-transport-directions",
+      "a0-health-emergency",
+      "a0-mission-help"
+    ]
+  },
+  {
+    id: "a0-school-work-safety",
+    title: "اسکول، کام، موسم، اور حفاظت",
+    goal: "بچے یا کام کی غیر حاضری اور وقت بتانا، موسم کے مطابق چیز لینا، اور حفاظتی نشان سمجھنا۔",
+    practice: "اسکول، کام، موسم، اور حفاظت کی ایک مربوط عملی صورت مکمل کریں۔",
+    lessonIds: [
+      "a0-child-school",
+      "a0-work-basics",
+      "a0-weather-clothing-safety",
+      "a0-school-work-safety-mission"
+    ]
+  }
+];
+a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
+
+const a0LessonLabelsV4 = {
+  "a0-greetings-courtesy": "سلام اور ادب",
+  "a0-understanding-help": "سمجھ اور مدد",
+  "a0-ja-nee-goed-niet": "چھوٹے جواب",
+  "a0-letters-1": "آواز: a اور b",
+  "a0-letters-2": "آواز: h اور i",
+  "a0-letters-3": "آسان پڑھے ہوئے لفظ",
+  "a0-ik-jij-u": "میں، تم، اور آپ",
+  "a0-people-nouns": "لوگ اور قریبی خاندان",
+  "a0-hij-zij-wij": "وہ اور ہم",
+  "a0-een-de-het": "ایک اور چیز کا لفظ",
+  "a0-ben-bent-is": "میں ہوں، آپ ہیں، وہ ہے",
+  "a0-first-sentences": "پہلے مکمل جملے",
+  "a0-name-land-city": "میرا تعارف",
+  "a0-hebben-1": "میرے پاس کیا ہے",
+  "a0-geen": "میرے پاس کیا نہیں ہے",
+  "a0-possessive": "میرا، تمہارا، اس کا",
+  "a0-dit-dat-questions": "یہ، وہ، اور سوال",
+  "a0-numbers-0-10": "صفر سے دس",
+  "a0-numbers-11-100": "گیارہ سے سو",
+  "a0-time-days": "دن اور پورا وقت",
+  "a0-spelling-personal-details": "نام اور عمر",
+  "a0-address-phone": "پتہ اور فون",
+  "a0-date-appointment": "تاریخ اور ملاقات",
+  "a0-place-1": "جگہ: اندر، اوپر، نیچے",
+  "a0-place-2": "جگہ: ساتھ، آگے، پیچھے",
+  "a0-gaan-komen": "جانا اور آنا",
+  "a0-naar-met": "کی طرف اور ساتھ",
+  "a0-home-needs": "گھر کی فوری ضرورت",
+  "a0-daily-actions": "روزمرہ کام",
+  "a0-food-drink": "کھانا اور پینا",
+  "a0-shopping-payment": "دکان اور ادائیگی",
+  "a0-transport-directions": "سفر اور راستہ",
+  "a0-health-emergency": "صحت اور فوری مدد",
+  "a0-child-school": "بچہ اور اسکول",
+  "a0-work-basics": "کام کی اطلاع",
+  "a0-weather-clothing-safety": "موسم اور حفاظت"
+};
+for (const lesson of a0Lessons) {
+  if (a0LessonLabelsV4[lesson.id]) lesson.unit = a0LessonLabelsV4[lesson.id];
+}
+
+function replaceSeedConceptsV4(lessonId, concepts) {
+  const lesson = a0Lessons.find((item) => item.id === lessonId);
+  if (!lesson) return;
+  lesson.concepts = [];
+  lesson.seedConcepts = concepts.map(([dutch, urdu, extra = {}]) => ({
+    dutch,
+    urdu,
+    visualId: extra.visualId || fallbackVisualIdForDutch(dutch) || "",
+    ...extra
+  }));
+}
+
+replaceSeedConceptsV4("a0-letters-1", [
+  ["a", "حرف a", { role: "sound" }],
+  ["appel", "سیب"],
+  ["deur", "دروازہ"],
+  ["b", "حرف b", { role: "sound" }],
+  ["boek", "کتاب"],
+  ["fiets", "سائیکل"]
+]);
+replaceSeedConceptsV4("a0-letters-2", [
+  ["h", "حرف h", { role: "sound" }],
+  ["i", "حرف i", { role: "sound" }],
+  ["huis", "گھر"],
+  ["ijs", "آئس کریم"],
+  ["jas", "کوٹ / جیکٹ"],
+  ["kat", "بلی"],
+  ["lamp", "لیمپ"]
+]);
+replaceSeedConceptsV4("a0-letters-3", [
+  ["oog", "آنکھ"],
+  ["pen", "قلم"],
+  ["rijst", "چاول"],
+  ["stoel", "کرسی"],
+  ["tafel", "میز"],
+  ["water", "پانی"]
+]);
+replaceSeedConceptsV4("a0-people-nouns", [
+  ["man", "آدمی"],
+  ["vrouw", "عورت"],
+  ["kind", "بچہ"],
+  ["familie", "خاندان"],
+  ["vader", "والد / باپ"],
+  ["moeder", "والدہ / ماں"],
+  ["broer", "بھائی"],
+  ["zus", "بہن"]
+]);
+replaceSeedConceptsV4("a0-ik-jij-u", [
+  ["ik", "میں"],
+  ["jij", "تم"],
+  ["u", "آپ"]
+]);
+replaceSeedConceptsV4("a0-hij-zij-wij", [
+  ["hij", "وہ مرد"],
+  ["zij", "وہ عورت / وہ لوگ"],
+  ["wij", "ہم"]
+]);
+replaceSeedConceptsV4("a0-ben-bent-is", [
+  ["ik ben Ali", "میں Ali ہوں"],
+  ["ik ben", "میں ہوں"],
+  ["jij bent", "تم ہو"],
+  ["u bent", "آپ ہیں"],
+  ["hij is", "وہ مرد ہے"],
+  ["zij is", "وہ عورت ہے"],
+  ["wij zijn", "ہم ہیں"]
+]);
+replaceSeedConceptsV4("a0-first-sentences", [
+  ["ik ben een man", "میں ایک آدمی ہوں"],
+  ["ik ben een vrouw", "میں ایک عورت ہوں"],
+  ["hij is een man", "وہ ایک آدمی ہے"],
+  ["zij is een vrouw", "وہ ایک عورت ہے"],
+  ["wij zijn familie", "ہم خاندان ہیں"]
+]);
+replaceSeedConceptsV4("a0-name-land-city", [
+  ["naam", "نام"],
+  ["land", "ملک"],
+  ["stad", "شہر"],
+  ["mijn naam is Ali", "میرا نام Ali ہے"],
+  ["ik woon in Nederland", "میں Nederland میں رہتا/رہتی ہوں"],
+  ["ik kom uit Pakistan", "میں Pakistan سے آتا/آتی ہوں"]
+]);
+replaceSeedConceptsV4("a0-hebben-1", [
+  ["ik heb een boek", "میرے پاس ایک کتاب ہے"],
+  ["jij hebt een pen", "تمہارے پاس ایک قلم ہے"],
+  ["hij heeft een huis", "اس کے پاس ایک گھر ہے"]
+]);
+replaceSeedConceptsV4("a0-geen", [
+  ["geen boek", "کوئی کتاب نہیں"],
+  ["ik heb geen boek", "میرے پاس کتاب نہیں ہے"],
+  ["zij heeft geen pen", "اس کے پاس قلم نہیں ہے"],
+  ["wij hebben geen huis", "ہمارے پاس گھر نہیں ہے"],
+  ["ik ben niet goed", "میں ٹھیک نہیں ہوں"]
+]);
+replaceSeedConceptsV4("a0-spelling-personal-details", [
+  ["mijn naam is Sara", "میرا نام Sara ہے"],
+  ["hoe heet u?", "آپ کا نام کیا ہے؟"],
+  ["hoe spelt u dat?", "آپ اس کے حروف کیسے بولتے ہیں؟"],
+  ["voornaam", "پہلا نام"],
+  ["achternaam", "خاندانی نام"],
+  ["letter", "حرف"],
+  ["spellen", "حروف الگ الگ بولنا"],
+  ["kunt u dat herhalen?", "کیا آپ اسے دوبارہ کہہ سکتے ہیں؟"],
+  ["schrijf het op", "اسے لکھ دیں"],
+  ["langzaam alstublieft", "آہستہ، برائے مہربانی"],
+  ["leeftijd", "عمر"],
+  ["ik ben dertig jaar", "میں تیس سال کا / کی ہوں"]
+]);
+replaceSeedConceptsV4("a0-address-phone", [
+  ["wat is uw adres?", "آپ کا پتہ کیا ہے؟"],
+  ["ik woon op Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
+  ["adres", "پتہ"],
+  ["straat", "سڑک"],
+  ["huisnummer", "گھر نمبر"],
+  ["postcode", "پوسٹ کوڈ"],
+  ["woonplaats", "رہنے کا شہر"],
+  ["wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟"],
+  ["mijn nummer is nul zes", "میرا نمبر صفر چھ ہے"],
+  ["telefoonnummer", "فون نمبر"],
+  ["e-mailadres", "ای میل پتہ"],
+  ["ik heb geen e-mail", "میرے پاس ای میل نہیں ہے"]
+]);
+replaceSeedConceptsV4("a0-gaan-komen", [
+  ["ik ga naar huis", "میں گھر جاتا/جاتی ہوں"],
+  ["ik ga", "میں جاتا/جاتی ہوں"],
+  ["hij gaat", "وہ جاتا ہے"],
+  ["ik kom", "میں آتا/آتی ہوں"],
+  ["hij komt", "وہ آتا ہے"],
+  ["ik kom naar huis", "میں گھر آتا/آتی ہوں"]
+]);
+
+const a0HelpLessonV4 = a0Lessons.find((lesson) => lesson.id === "a0-understanding-help");
+const a0HelpExplanationV4 = a0HelpLessonV4?.questions.find((question) => question.type === "uitleg");
+if (a0HelpExplanationV4) {
+  Object.assign(a0HelpExplanationV4, {
+    prompt: "ادب سے Kunt u …? کہنا",
+    points: [
+      "Kunt u herhalen? میں “Kunt u …?” مؤدبانہ سوال کا آغاز ہے۔",
+      "Kunt u mij helpen? میں بھی “Kunt u …?” سے ادب کے ساتھ درخواست بنتی ہے۔",
+      "Langzamer, alstublieft مختصر درخواست ہے؛ Kunt u herhalen? پوری بات دوبارہ مانگتا ہے۔"
+    ],
+    note: "عام غلطی: u چھوڑ کر “Kunt herhalen?” کہنا۔ مؤدبانہ سوال میں u لازمی رکھیں۔"
+  });
+}
+
+const a0GreetingLessonV4 = a0Lessons.find((lesson) => lesson.id === "a0-greetings-courtesy");
+for (const raw of [
+  ...(a0GreetingLessonV4?.concepts || []),
+  ...(a0GreetingLessonV4?.seedConcepts || [])
+]) {
+  if (normalizedTextV4(raw.dutch) !== "goed dank u") continue;
+  raw.dutch = "goed, dank u";
+  raw.audio = "goed, dank u";
+  raw.audioText = "goed, dank u";
+}
+const a0ShortAnswersLessonV4 = a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet");
+if (a0ShortAnswersLessonV4) {
+  a0ShortAnswersLessonV4.description = "ہاں، نہیں، اچھا، اور اچھا نہیں: روزمرہ کے سب سے چھوٹے جواب۔";
+}
+
+const retiredA2GrammarUnitIdsV4 = new Set(["a2-past-plans", "a2-routine-word-order"]);
+for (let index = a2Subchapters.length - 1; index >= 0; index -= 1) {
+  if (retiredA2GrammarUnitIdsV4.has(a2Subchapters[index].id)) a2Subchapters.splice(index, 1);
+}
+for (const subchapter of a2Subchapters) {
+  subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
+    ![
+      "a2-perfect-tense",
+      "a2-future-modal-verbs",
+      "a2-separable-verbs-routine",
+      "a2-word-order-connectors"
+    ].includes(lessonId)
+  ));
+}
+
+const a2PracticalGrammarPlacementV4 = [
+  ["a2-gemeente-forms", "a2-separable-verbs-routine"],
+  ["a2-work-school", "a2-future-modal-verbs"],
+  ["a2-health-doctor", "a2-perfect-tense"],
+  ["a2-housing-problems", "a2-word-order-connectors"]
+];
+for (const [unitId, lessonId] of a2PracticalGrammarPlacementV4) {
+  const unit = a2Subchapters.find((subchapter) => subchapter.id === unitId);
+  if (unit) unit.lessonIds.unshift(lessonId);
+}
+
+const a2PracticalTitlesV4 = {
+  "a2-separable-verbs-routine": {
+    title: "Formulieren invullen en taken afronden",
+    description: "gemeente اور روزمرہ کام میں invullen، meenemen، opsturen جیسے فعل سمجھنا اور استعمال کرنا۔"
+  },
+  "a2-future-modal-verbs": {
+    title: "Werkafspraken en plannen",
+    description: "کام اور اسکول میں منصوبہ، امکان، ضرورت، اور اجازت کے عملی جملے کہنا۔"
+  },
+  "a2-perfect-tense": {
+    title: "Bij de dokter vertellen wat er is gebeurd",
+    description: "ڈاکٹر کو بتانا کہ کیا ہوا، علامت کب شروع ہوئی، اور پہلے کیا کیا گیا۔"
+  },
+  "a2-word-order-connectors": {
+    title: "Woonproblemen duidelijk uitleggen",
+    description: "گھر کی خرابی، وجہ، شرط، اور مطلوبہ حل کو واضح جملوں میں سمجھانا۔"
+  }
+};
+for (const lesson of a2Lessons) {
+  if (a2PracticalTitlesV4[lesson.id]) Object.assign(lesson, a2PracticalTitlesV4[lesson.id]);
+}
+
+const a0CompletionLessonV4 = a0Lessons.find((lesson) => lesson.id === "a0-daily-checkpoint");
+const a0CompletionUnitV4 = a0Subchapters.find((unit) => unit.id === "a0-daily-review");
+if (a0CompletionLessonV4) {
+  Object.assign(a0CompletionLessonV4, {
+    title: "A0 praktisch eindpunt",
+    description: "A0 کے آخر میں معنی، سننا، پڑھنا، بولنے کی مدد، اور روزمرہ استعمال کی عملی جانچ۔",
+    completionCheck: true
+  });
+}
+if (a0CompletionUnitV4) {
+  Object.assign(a0CompletionUnitV4, {
+    id: "a0-chapter-completion",
+    title: "A0 آخری عملی جانچ",
+    goal: "A0 کے ضروری معنی، آواز، پڑھنے، بولنے کی مدد، اور حقیقی استعمال کی آخری جانچ۔",
+    practice: "صرف پہلے سیکھی ہوئی باتوں سے مکمل روزمرہ کام کریں۔"
+  });
+}
+
+function unitMissionSeedConceptsV4(subchapter, lessons) {
+  const byDutch = new Map();
+  for (const lessonId of subchapter.lessonIds) {
+    const lesson = lessons.find((item) => item.id === lessonId && item.kind !== "mission");
+    if (!lesson) continue;
+    for (const raw of [
+      ...(lesson.concepts || []),
+      ...lessonConcepts(lesson.questions)
+    ]) {
+      if (!isDutchOnlyText(raw.dutch) || !isUrduText(raw.urdu)) continue;
+      const key = normalizedTextV4(raw.dutch);
+      if (!byDutch.has(key)) {
+        byDutch.set(key, {
+          dutch: String(raw.dutch),
+          urdu: cleanConceptUrduV4(raw.urdu),
+          visualId: raw.visualId || raw.visual || fallbackVisualIdForDutch(raw.dutch) || ""
+        });
+      }
+    }
+  }
+  return [...byDutch.values()];
+}
+
+function repeatMissionSeedsV4(items, count) {
+  if (!items.length) return [];
+  return Array.from({ length: count }, (_, index) => items[index % items.length]);
+}
+
+function addMissingUnitMissionsV4(chapterId, lessons, subchapters) {
+  for (const subchapter of subchapters) {
+    const existingMission = subchapter.lessonIds.some((lessonId) => (
+      lessons.find((lesson) => lesson.id === lessonId)?.kind === "mission"
+    ));
+    if (existingMission) continue;
+    const seeds = unitMissionSeedConceptsV4(subchapter, lessons);
+    if (!seeds.length) continue;
+    const phrases = seeds.filter((seed) => dutchWordsV4(seed.dutch).length > 1);
+    const missionPhrases = repeatMissionSeedsV4(phrases.length >= 3 ? phrases : seeds, 12);
+    const missionConcepts = repeatMissionSeedsV4(
+      seeds.filter((seed) => seed.visualId).length >= 3
+        ? seeds.filter((seed) => seed.visualId)
+        : seeds,
+      6
+    );
+    const missionId = `${subchapter.id}-mission`;
+    const generatedMission = makeMissionLesson(missionSpec({
+      level: chapterId,
+      id: missionId,
+      unit: `${chapterId.toUpperCase()}: عملی مشن`,
+      title: `${subchapter.title}: عملی مشن`,
+      description: `${subchapter.goal} اس مشن میں صرف پہلے سیکھی ہوئی باتیں استعمال ہوں گی۔`,
+      concepts: missionConcepts.map((seed, index) => [
+        `${semanticSlugV4(subchapter.id)}-${index + 1}`,
+        seed.dutch,
+        seed.urdu,
+        seed.visualId
+      ]),
+      phrases: missionPhrases.map((seed) => [seed.dutch, seed.urdu]),
+      cues: missionPhrases.slice(0, 3).map((seed) => seed.dutch),
+      variants: ["پہلا عملی موقع", "دوسرا عملی موقع", "آخری عملی موقع"],
+      documents: ["عملی معلومات", "روزمرہ پیغام", "کام کی تصدیق"]
+    }));
+    generatedMission.generatedCapstone = true;
+    const lastLessonId = subchapter.lessonIds[subchapter.lessonIds.length - 1];
+    insertLessonAfter(lessons, lastLessonId, generatedMission);
+    subchapter.lessonIds.push(missionId);
+  }
+}
+
+addMissingUnitMissionsV4("a0", a0Lessons, a0Subchapters);
+addMissingUnitMissionsV4("a1", a1Lessons, a1Subchapters);
+addMissingUnitMissionsV4("a2", a2Lessons, a2Subchapters);
+
+for (const subchapter of [...a0Subchapters, ...a1Subchapters, ...a2Subchapters]) {
+  const missionIds = uniqueV4(subchapter.lessonIds.filter((lessonId) => (
+    [...a0Lessons, ...a1Lessons, ...a2Lessons]
+      .find((lesson) => lesson.id === lessonId)?.kind === "mission"
+  )));
+  const normalIds = uniqueV4(
+    subchapter.lessonIds.filter((lessonId) => !missionIds.includes(lessonId))
+  );
+  // A unit always builds through its normal lessons and finishes at its
+  // practical capstone, even when a legacy mission used to sit mid-unit.
+  subchapter.lessonIds = [...normalIds, ...missionIds];
+}
+
+function reorderLessonsFromUnitsV4(lessons, subchapters) {
+  const order = subchapters.flatMap((subchapter) => subchapter.lessonIds);
+  const indexById = new Map(order.map((id, index) => [id, index]));
+  lessons.sort((left, right) => (
+    (indexById.get(left.id) ?? Number.MAX_SAFE_INTEGER)
+    - (indexById.get(right.id) ?? Number.MAX_SAFE_INTEGER)
+  ));
+}
+
+reorderLessonsFromUnitsV4(a0Lessons, a0Subchapters);
+reorderLessonsFromUnitsV4(a1Lessons, a1Subchapters);
+reorderLessonsFromUnitsV4(a2Lessons, a2Subchapters);
+
+const chaptersV4 = [
   {
     id: "a0",
     title: "باب A0",
@@ -4324,4 +5290,4831 @@ window.NEDERURDU_CHAPTERS = [
   }
 ];
 
+const conceptByIdV4 = new Map();
+const skillByIdV4 = new Map();
+const skillIdByConceptIdV4 = new Map();
+const lessonConceptIdsV4 = new Map();
+const authoredConceptIdsV4 = new Map();
+const patternsV4 = [];
+const unitsV4 = [];
+const reviewsV4 = [];
+
+function unitForLessonV4(chapter, lessonId) {
+  return chapter.subchapters.find((subchapter) => subchapter.lessonIds.includes(lessonId)) || null;
+}
+
+function conceptSenseV4(dutch, urdu, lessonId, raw = {}) {
+  if (raw.senseId) return semanticSlugV4(raw.senseId, "sense");
+  const target = normalizedTextV4(dutch);
+  const meaning = String(urdu || "");
+  if (target === "dat") {
+    return /کہ/u.test(meaning) || /^a2-/.test(lessonId)
+      ? "conjunction"
+      : "demonstrative";
+  }
+  if (target === "werk") {
+    return /کرتا|کرتی|کرتے|ہوں/u.test(meaning) || lessonId === "a1-present-time"
+      ? "verb-first-person"
+      : "noun";
+  }
+  if (target === "hoesten") {
+    return /کرنا/u.test(meaning) ? "verb" : "symptom";
+  }
+  return "";
+}
+
+function conceptIdV4(dutch, urdu, lessonId = "", raw = {}) {
+  const slug = semanticSlugV4(dutch, "target");
+  const senseId = conceptSenseV4(dutch, urdu, lessonId, raw);
+  return `concept:${slug}${senseId ? `:${senseId}` : ""}`;
+}
+
+function inferExampleV4(lesson, dutch, urdu) {
+  const sentenceQuestion = lesson.questions.find((question) => {
+    const candidate = String(question.speak || question.answer || "");
+    return isDutchOnlyText(candidate)
+      && dutchWordsV4(candidate).length > 1
+      && normalizedTextV4(candidate).includes(normalizedTextV4(dutch));
+  });
+  if (sentenceQuestion) {
+    const exampleUrdu = isUrduText(sentenceQuestion.answer)
+      ? String(sentenceQuestion.answer)
+      : (isUrduText(sentenceQuestion.prompt)
+        ? cleanConceptUrduV4(sentenceQuestion.prompt)
+        : "");
+    if (exampleUrdu && !/^(?:آواز سنیں|بات سنیں|تصویر دیکھیں|جملہ مکمل|صحیح جواب)/u.test(exampleUrdu)) {
+      return {
+        dutch: String(sentenceQuestion.speak || sentenceQuestion.answer),
+        urdu: exampleUrdu
+      };
+    }
+  }
+
+  const exactQuestion = lesson.questions.find((question) => (
+    (normalizedTextV4(question.prompt) === normalizedTextV4(dutch)
+      && normalizedTextV4(question.answer) === normalizedTextV4(urdu))
+    || (normalizedTextV4(question.answer) === normalizedTextV4(dutch)
+      && normalizedTextV4(question.prompt) === normalizedTextV4(urdu))
+  ));
+  if (exactQuestion) return { dutch: String(dutch), urdu: String(urdu) };
+  return { dutch: String(dutch), urdu: String(urdu) };
+}
+
+function isExerciseInstructionLikeUrduV4(value) {
+  const text = String(value || "").trim();
+  return !text
+    || /(?:صحیح\s+Nederlands|صحیح\s+(?:لفظ|جواب|مطلب)|منتخب\s+کریں|چنیں|خالی\s+جگہ|یہ\s+بنائیں|ترتیب\s+میں\s+رکھیں|آواز\s+سنیں|بات\s+سنیں|تصویر\s+دیکھیں|دستاویز\s+میں)/u.test(text);
+}
+
+function specificUsageV4(lesson, dutch, role, urdu = "") {
+  const targetDutchWords = new Set(meaningfulDutchWordsV4(dutch));
+  const targetUrduWords = new Set(meaningfulUrduWordsV4(urdu));
+  const situation = lesson.questions
+    .filter((question) => (
+      question.type === "situation"
+      && isUrduText(question.prompt)
+      && !isExerciseInstructionLikeUrduV4(question.prompt)
+    ))
+    .map((question) => {
+      const exact = normalizedTextV4(question.answer) === normalizedTextV4(dutch) ? 20 : 0;
+      const dutchOverlap = meaningfulDutchWordsV4(question.answer)
+        .filter((word) => targetDutchWords.has(word)).length * 3;
+      const urduOverlap = meaningfulUrduWordsV4(question.prompt)
+        .filter((word) => targetUrduWords.has(word)).length;
+      return { question, score: exact + dutchOverlap + urduOverlap };
+    })
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score)[0]?.question;
+  if (situation) {
+    const context = String(situation.prompt)
+      .replace(/^(?:حال|صورت)\s*:\s*/u, "")
+      .replace(/[۔؟?!]+$/u, "")
+      .trim();
+    return `${context} تو “${dutch}” ${role === "phrase" ? "مکمل فقرے کے طور پر کہیں" : "استعمال کریں"}۔`;
+  }
+
+  const purpose = [lesson.description, lesson.outcomeUrdu]
+    .map((value) => String(value || "").trim())
+    .find((value) => isUrduText(value));
+  if (purpose) {
+    const cleanPurpose = purpose.replace(/[۔؟?!]+$/u, "");
+    if (looksLikeDutchQuestionV4(dutch)) {
+      return `${cleanPurpose} اس موقع پر “${dutch}” سے متعلقہ سوال کریں۔`;
+    }
+    if (/^[a-z]$/i.test(dutch)) {
+      return `${cleanPurpose} حرف “${dutch}” کو مثال والے لفظ میں دیکھیں اور اس کی آواز پر توجہ دیں۔`;
+    }
+    return role === "phrase"
+      ? `${cleanPurpose} اس گفتگو میں پوری بات “${dutch}” کہیں۔`
+      : `${cleanPurpose} اس موضوع میں Nederlands لفظ “${dutch}” استعمال ہوتا ہے۔`;
+  }
+  return `روزمرہ گفتگو میں “${dutch}” کو اس کے معنی “${cleanConceptUrduV4(
+    lesson.questions.find((question) => normalizedTextV4(question.prompt) === normalizedTextV4(dutch))?.answer
+      || ""
+  )}” کے ساتھ استعمال کریں۔`;
+}
+
+function cleanTerminalPunctuationV4(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[۔؟?!.,،؛;:]+$/u, "")
+    .trim();
+}
+
+function inferCommonConfusionV4(lesson, dutch, urdu, role) {
+  const normalizedDutch = normalizedTextV4(dutch);
+  const words = dutchWordsV4(dutch);
+  const authoredPoint = lesson.questions
+    .filter((question) => question.type === "uitleg")
+    .flatMap((question) => question.points || [])
+    .find((point) => containsWholeDutchTargetV4(point, dutch));
+  if (authoredPoint) return `${cleanTerminalPunctuationV4(authoredPoint)}۔`;
+
+  const fixedBoundaries = {
+    goedemorgen: "goedemorgen صرف صبح کے سلام کے لیے ہے؛ دوپہر میں goedemiddag اور شام میں goedenavond کہیں۔",
+    goedemiddag: "goedemiddag دوپہر کے وقت آتا ہے؛ صبح کے لیے goedemorgen استعمال کریں۔",
+    goedenavond: "goedenavond شام کے سلام کے لیے ہے؛ رخصت ہوتے وقت tot ziens الگ فقرہ ہے۔",
+    dit: "dit قریب کی چیز کے لیے ہے؛ دور کی چیز کی طرف اشارہ کرتے وقت dat آتا ہے۔",
+    dat: "dat دور کی چیز کے لیے ہے؛ قریب کی چیز کے لیے dit کہیں۔",
+    hier: "hier جگہ یہاں بتاتا ہے؛ daar کا مطلب وہاں ہے۔",
+    daar: "daar جگہ وہاں بتاتا ہے؛ hier کا مطلب یہاں ہے۔",
+    wie: "wie سے شخص پوچھتے ہیں؛ چیز کے لیے wat اور جگہ کے لیے waar آتا ہے۔",
+    wat: "wat سے چیز یا بات پوچھتے ہیں؛ شخص کے لیے wie استعمال کریں۔",
+    waar: "waar جگہ پوچھتا ہے؛ طریقہ پوچھنے کے لیے hoe آتا ہے۔",
+    wanneer: "wanneer وقت پوچھتا ہے؛ جگہ کے سوال میں waar استعمال ہوتا ہے۔",
+    hoe: "hoe طریقہ یا حالت پوچھتا ہے؛ چیز پوچھنے کے لیے wat آتا ہے۔",
+    waarom: "waarom وجہ پوچھتا ہے؛ اسے جگہ پوچھنے والے waar سے الگ رکھیں۔",
+    ik: "ik اپنے لیے میں ہے؛ سامنے والے کے لیے jij یا رسمی u آتا ہے۔",
+    jij: "jij غیر رسمی تم ہے؛ رسمی بات میں u کہیں۔",
+    je: "je غیر رسمی مختصر تم یا تمہارا ہو سکتا ہے؛ رسمی موقع میں u یا uw چنیں۔",
+    u: "u رسمی آپ ہے؛ دوست یا قریبی شخص کے لیے jij استعمال ہوتا ہے۔",
+    hij: "hij مرد یا مذکر شخص کے لیے وہ ہے؛ zij عورت یا جمع کے لیے بھی آ سکتا ہے۔",
+    zij: "zij عورت کے لیے وہ یا کئی لوگوں کے لیے وہ سب ہو سکتا ہے؛ جملہ معنی واضح کرتا ہے۔",
+    wij: "wij کا مطلب ہم ہے؛ jullie کا مطلب تم سب ہے۔",
+    jullie: "jullie ایک سے زیادہ سامنے والے لوگوں کے لیے ہے؛ wij بولنے والے گروہ کے لیے ہے۔",
+    mijn: "mijn اپنی چیز کے لیے میرا یا میری ہے؛ سامنے والے کی چیز کے لیے jouw یا uw آتا ہے۔",
+    jouw: "jouw غیر رسمی تمہارا ہے؛ رسمی ملکیت کے لیے uw استعمال کریں۔",
+    uw: "uw رسمی آپ کا ہے؛ اسے فاعل u کے بجائے چیز کی ملکیت کے ساتھ رکھیں۔",
+    een: "een غیر معین ایک چیز کے لیے ہے؛ معلوم چیز کے ساتھ de یا het آتا ہے۔",
+    de: "de اور het دونوں انگریزی the جیسے ہیں، مگر ہر اسم کا اپنا مقرر article یاد کرنا پڑتا ہے۔",
+    het: "het کو صرف انہی اسموں کے ساتھ لگائیں جن کا article het ہے؛ اندازے سے de نہ بدلیں۔",
+    niet: "niet فعل، صفت، یا پوری بات کی نفی کرتا ہے؛ غیر معین اسم کی نفی میں اکثر geen آتا ہے۔",
+    geen: "geen غیر معین اسم یا مقدار کی نفی کرتا ہے؛ فعل یا صفت کی نفی کے لیے niet استعمال کریں۔",
+    ja: "ja ہاں ہے اور بات مانتا ہے؛ انکار کے لیے nee کہیں۔",
+    nee: "nee صاف انکار ہے؛ صرف بات کی نفی کرنی ہو تو جملے میں niet یا geen آ سکتا ہے۔"
+  };
+  if (fixedBoundaries[normalizedDutch]) return fixedBoundaries[normalizedDutch];
+
+  if (/^[a-z]$/i.test(dutch)) {
+    return `یہ حرف “${dutch}” ہے، پورا لفظ نہیں؛ اسے مثال والے لفظ میں دیکھ کر اس کی آواز پہچانیں۔`;
+  }
+  if (/^\d+(?:[.,]\d+)?$/.test(dutch)) {
+    return `عدد “${dutch}” پڑھتے وقت ہندسوں کی جگہ نہ بدلیں؛ پہلے پوری مقدار دیکھیں، پھر “${urdu}” کہیں۔`;
+  }
+  if (/^(de|het|een)\s+/i.test(dutch)) {
+    const article = words[0];
+    const noun = words.slice(1).join(" ");
+    return `“${noun}” کے ساتھ article “${article}” بھی یاد کریں؛ صرف اسم یاد کر کے article اندازے سے نہ لگائیں۔`;
+  }
+  if (words.includes("niet")) {
+    return `اس جملے میں نفی “niet” سے بنتی ہے؛ اسے “${dutch}” میں دکھائی گئی جگہ پر رکھیں، اردو ترتیب پر نہ منتقل کریں۔`;
+  }
+  if (words.includes("geen")) {
+    return `“geen” یہاں اسم یا مقدار کو صفر کرتا ہے؛ “${dutch}” میں اسے “niet” سے نہ بدلیں۔`;
+  }
+  if (words.includes("u") || words.includes("uw") || words.includes("kunt")) {
+    return `“${dutch}” رسمی انداز ہے؛ دوستوں والا jij یا jouw اسی جملے میں ملا دینا عام غلطی ہے۔`;
+  }
+  if (words.includes("jij") || words.includes("jouw") || words.includes("je")) {
+    return `“${dutch}” غیر رسمی انداز ہے؛ gemeente، ڈاکٹر، یا اجنبی سے بات میں رسمی u یا uw درکار ہو سکتا ہے۔`;
+  }
+  if (words.some((word) => ["mijn", "jouw", "uw", "zijn", "haar", "onze"].includes(word))) {
+    const ownerWord = words.find((word) => ["mijn", "jouw", "uw", "zijn", "haar", "onze"].includes(word));
+    return `ملکیت والا “${ownerWord}” اسم سے پہلے رہتا ہے؛ “${dutch}” میں چیز کے مالک کے مطابق mijn، jouw، uw، zijn، یا haar چنیں۔`;
+  }
+  if (words[0] === "hij" && words.includes("is")) {
+    return `فاعل hij کے ساتھ فعل is آتا ہے؛ “${dutch}” میں ben یا zijn نہ لگائیں۔`;
+  }
+  if (words[0] === "wij" && words.includes("zijn")) {
+    return `فاعل wij جمع ہے، اس لیے “${dutch}” میں zijn درست ہے؛ is واحد کے ساتھ آتا ہے۔`;
+  }
+  if (words[0] === "wij" && words.length > 1) {
+    return `فاعل wij کے بعد جمع والی فعل کی شکل “${words[1]}” آتی ہے؛ jij یا hij والی -t شکل یہاں نہ لگائیں۔`;
+  }
+  if (words[0] === "zeg") {
+    return `درخواست یا ہدایت میں “zeg” حکم والی مختصر شکل ہے؛ یہاں infinitive zeggen استعمال نہ کریں۔`;
+  }
+  if (words[0] === "ik" && words.includes("moet") && words.length > 2) {
+    return `modal moet کے بعد اصل کام “${words[words.length - 1]}” جملے کے آخر میں رہتا ہے؛ دونوں فعل ساتھ شروع میں نہ رکھیں۔`;
+  }
+  if (words[0] === "omdat" && words.length > 2) {
+    return `omdat وجہ والا تابع جملہ شروع کرتا ہے، اس لیے بدلنے والا فعل “${words[words.length - 1]}” آخر میں آتا ہے۔`;
+  }
+  if (["morgen", "vandaag", "gisteren", "daarna", "eerst"].includes(words[0]) && words.length > 2) {
+    return `وقت “${words[0]}” پہلے آئے تو بدلنے والا فعل “${words[1]}” فاعل سے پہلے رہتا ہے؛ “${words[0]} ik ${words[1]}” نہ کہیں۔`;
+  }
+  if (words[0] === "ik" && words[1] === "heb") {
+    return `فاعل ik کے ساتھ hebben کی شکل heb ہے؛ hij یا zij والی heeft شکل یہاں درست نہیں۔`;
+  }
+  const placeWordNotes = {
+    op: "op سطح کے اوپر ہونے کو بتاتا ہے",
+    onder: "onder کسی چیز کے نیچے ہونے کو بتاتا ہے",
+    achter: "achter کسی چیز کے پیچھے جگہ بتاتا ہے",
+    voor: "voor کسی چیز کے سامنے جگہ بتاتا ہے",
+    naast: "naast برابر یا ساتھ والی جگہ بتاتا ہے",
+    tussen: "tussen دو چیزوں کے درمیان جگہ بتاتا ہے",
+    bij: "bij قریب یا کسی کے پاس ہونے کو بتاتا ہے"
+  };
+  if (placeWordNotes[words[0]]) {
+    return `${placeWordNotes[words[0]]}؛ “${dutch}” میں جگہ والا لفظ اسم سے پہلے رکھیں۔`;
+  }
+  if (/plural/i.test(lesson.id) && role === "word") {
+    return `“${dutch}” کی واحد اور جمع شکل ایک جیسی فرض نہ کریں؛ تعداد دیکھ کر اسی سبق کی جمع والی شکل استعمال کریں۔`;
+  }
+  if (/[?]$/.test(String(dutch).trim()) || /^(wie|wat|waar|wanneer|hoe|waarom|welke)\b/i.test(dutch)) {
+    return `یہ سوال “${words[0]}” سے شروع ہوتا ہے؛ جواب والے جملے کی ترتیب لگا کر سوال کا آغاز نہ ہٹائیں۔`;
+  }
+
+  const situation = lesson.questions.find((question) => (
+    question.type === "situation"
+    && isUrduText(question.prompt)
+    && !isExerciseInstructionLikeUrduV4(question.prompt)
+    && normalizedTextV4(question.answer) === normalizedDutch
+  ));
+  const usefulExplanation = situation && isUrduText(situation.explain)
+    && !isExerciseInstructionLikeUrduV4(situation.explain)
+    ? cleanTerminalPunctuationV4(situation.explain)
+    : "";
+  if (situation) {
+    const context = cleanTerminalPunctuationV4(
+      String(situation.prompt).replace(/^(?:حال|صورت)\s*:\s*/u, "")
+    );
+    return usefulExplanation
+      ? `${context}: ${usefulExplanation}۔`
+      : `${context} میں “${dutch}” استعمال کریں؛ “${urdu}” کے دوسرے موقع میں جملے کی ساخت دوبارہ دیکھیں۔`;
+  }
+
+  const formQuestion = lesson.questions.find((question) => (
+    ["fill-gap", "build", "sequence"].includes(question.type)
+    && (
+      normalizedTextV4(question.answer) === normalizedDutch
+      || normalizedTextV4(question.speak) === normalizedDutch
+      || containsWholeDutchTargetV4(question.speak, dutch)
+    )
+    && isUrduText(question.explain)
+    && !isExerciseInstructionLikeUrduV4(question.explain)
+  ));
+  if (formQuestion) {
+    return `${cleanTerminalPunctuationV4(formQuestion.explain)}؛ مثال میں لفظوں کی یہی جگہ دوبارہ دیکھیں۔`;
+  }
+
+  const explanationQuestions = lesson.questions
+    .filter((question) => question.type === "uitleg");
+  const guidanceCandidates = explanationQuestions
+    .flatMap((question) => [
+      question.prompt,
+      ...(question.points || [])
+    ])
+    .filter((text) => isUrduText(text) && !isExerciseInstructionLikeUrduV4(text))
+    .map((text) => ({
+      text,
+      score: meaningfulDutchWordsV4(text)
+        .filter((word) => meaningfulDutchWordsV4(dutch).includes(word)).length * 3
+        + meaningfulUrduWordsV4(text)
+          .filter((word) => meaningfulUrduWordsV4(urdu).includes(word)).length
+    }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score);
+  const lessonGuidance = guidanceCandidates[0]?.text;
+  if (lessonGuidance) {
+    return `${cleanTerminalPunctuationV4(lessonGuidance)}۔`;
+  }
+
+  if (role === "phrase") {
+    const first = words[0] || dutch;
+    const last = words[words.length - 1] || dutch;
+    return `“${dutch}” میں “${first}” آغاز اور “${last}” آخر میں ہے؛ اردو کی ترتیب لگا کر ان دونوں کو الٹنا درست نہیں۔`;
+  }
+  return `${specificUsageV4(lesson, dutch, role, urdu)} عام غلطی یہ ہے کہ اس لفظ کو موقع دیکھے بغیر ہر “${urdu}” کے لیے استعمال کر دیا جائے۔`;
+}
+
+const approvedInstructionalVisualIdsV4 = new Set([
+  "appel", "boek", "deur", "fiets", "huis", "lamp", "kat", "oog", "pen",
+  "rijst", "stoel", "tafel", "water", "man", "vrouw", "kind", "jongen",
+  "meisje", "familie", "vader", "moeder", "broer", "zus", "telefoon",
+  "naam", "adres", "paspoort", "afspraak", "dokter", "huisarts", "tandarts",
+  "apotheek", "ziekenhuis", "medicijn", "pijn", "hoofdpijn", "buikpijn",
+  "hoesten", "koorts", "ziek", "badkamer", "keuken", "kamer", "verwarming",
+  "lekkage", "reparatie", "formulier", "gemeente", "document", "contract",
+  "baan", "werk", "school", "huiswerk", "rooster", "supermarkt", "winkel",
+  "kassa", "bon", "prijs", "pinpas", "contant", "brood", "kaas", "fruit",
+  "groente", "tas", "jas", "station", "halte", "bus", "trein", "kaartje",
+  "stad", "land", "bericht"
+]);
+
+function approvedConceptVisualIdV4(dutch, requestedVisualId = "") {
+  const fallbackVisualId = fallbackVisualIdForDutch(dutch);
+  const candidate = approvedInstructionalVisualIdsV4.has(requestedVisualId)
+    ? requestedVisualId
+    : approvedInstructionalVisualIdsV4.has(fallbackVisualId)
+      ? fallbackVisualId
+      : "";
+  if (!candidate) return null;
+  const targetWords = new Set(dutchWordsV4(dutch));
+  return targetWords.has(normalizedTextV4(candidate.replace(/[-_]+/g, " ")))
+    ? candidate
+    : null;
+}
+
+function registerConceptV4({ lesson, chapterId, raw, missionOnly = false }) {
+  const dutch = String(raw.dutch || "").trim();
+  const urdu = cleanConceptUrduV4(raw.urdu);
+  if (!isDutchOnlyText(dutch) || !isUrduText(urdu)) return null;
+
+  const senseId = conceptSenseV4(dutch, urdu, lesson.id, raw);
+  const id = conceptIdV4(dutch, urdu, lesson.id, raw);
+  const legacyConceptId = `concept:${semanticSlugV4(dutch, "target")}:${stableHashV4(normalizedTextV4(dutch))}`;
+  const example = inferExampleV4(lesson, dutch, urdu);
+  const requestedVisualId = raw.visualId || raw.visual || "";
+  const unsupportedGenericVisualIds = new Set(["persoon", "oor", "afval"]);
+  const visualId = unsupportedGenericVisualIds.has(requestedVisualId)
+    ? approvedConceptVisualIdV4(dutch)
+    : approvedConceptVisualIdV4(dutch, requestedVisualId);
+  const role = raw.role
+    || (/^[a-z]$/i.test(dutch) ? "sound" : "")
+    || (String(dutch).trim().split(/\s+/).filter(Boolean).length > 1 ? "phrase" : "word");
+  const usageUrdu = (
+    [raw.usageUrdu, raw.context].find((value) => (
+      isUrduText(value) && !isExerciseInstructionLikeUrduV4(value)
+    ))
+    || specificUsageV4(lesson, dutch, role, urdu)
+  );
+  let concept = conceptByIdV4.get(id);
+
+  if (!concept) {
+    concept = {
+      id,
+      semanticKey: `${semanticSlugV4(dutch, "target")}${senseId ? `:${senseId}` : ""}`,
+      senseId: senseId || "primary",
+      legacyConceptIds: senseId && !["demonstrative", "noun", "verb"].includes(senseId)
+        ? []
+        : [legacyConceptId],
+      dutch,
+      urdu,
+      translationAliasesUrdu: [urdu],
+      pronunciationUrdu: raw.pronunciationUrdu
+        || approximateDutchPronunciationUrduV4(dutch),
+      audioText: raw.audioText || raw.audio || dutch,
+      visualId,
+      visual: visualId
+        ? { kind: "asset", visualId }
+        : { kind: "context", descriptionUrdu: usageUrdu },
+      usageUrdu,
+      exampleDutch: raw.exampleDutch || example.dutch,
+      exampleUrdu: raw.exampleUrdu || example.urdu,
+      examples: [{
+        dutch: raw.exampleDutch || example.dutch,
+        urdu: raw.exampleUrdu || example.urdu
+      }],
+      commonConfusionUrdu: raw.commonConfusionUrdu
+        || inferCommonConfusionV4(lesson, dutch, urdu, role),
+      role,
+      lessonIds: [],
+      chapterIds: [],
+      introducedInLessonId: missionOnly ? null : lesson.id
+    };
+    conceptByIdV4.set(id, concept);
+  } else {
+    if (
+      (!senseId || ["demonstrative", "noun", "verb"].includes(senseId))
+      && !concept.legacyConceptIds.includes(legacyConceptId)
+    ) {
+      concept.legacyConceptIds.push(legacyConceptId);
+    }
+    if (!concept.translationAliasesUrdu.includes(urdu)) concept.translationAliasesUrdu.push(urdu);
+    if (!concept.visualId && visualId) {
+      concept.visualId = visualId;
+      concept.visual = { kind: "asset", visualId };
+    }
+    if (!concept.introducedInLessonId && !missionOnly) concept.introducedInLessonId = lesson.id;
+  }
+
+  if (!concept.lessonIds.includes(lesson.id)) concept.lessonIds.push(lesson.id);
+  if (!concept.chapterIds.includes(chapterId)) concept.chapterIds.push(chapterId);
+  return concept;
+}
+
+function rawLessonConceptsV4(lesson) {
+  const merged = new Map();
+  const add = (raw) => {
+    if (!raw || !isDutchOnlyText(raw.dutch) || !isUrduText(raw.urdu)) return;
+    const cleanUrdu = cleanConceptUrduV4(raw.urdu);
+    const key = `${normalizedTextV4(raw.dutch)}|${normalizedTextV4(cleanUrdu)}`;
+    const existing = merged.get(key) || {};
+    merged.set(key, {
+      ...existing,
+      ...raw,
+      urdu: cleanUrdu,
+      visualId: raw.visualId || existing.visualId || ""
+    });
+  };
+  (lesson.concepts || []).forEach(add);
+  (lesson.seedConcepts || []).forEach(add);
+  return [...merged.values()];
+}
+
+function registerNormalLessonConceptsV4(lesson, chapterId) {
+  const ids = [];
+  const authoredMap = new Map();
+  for (const raw of rawLessonConceptsV4(lesson)) {
+    const concept = registerConceptV4({ lesson, chapterId, raw });
+    if (!concept) continue;
+    ids.push(concept.id);
+    if (raw.id) authoredMap.set(String(raw.id), concept.id);
+  }
+  let orderedIds = uniqueV4(ids);
+  if (lesson.id === "a0-numbers-11-100") {
+    const numberOrder = [
+      "elf", "twaalf", "dertien", "dertig",
+      "veertien", "veertig", "vijftien", "vijftig",
+      "zestien", "zestig", "zeventien", "zeventig",
+      "achttien", "tachtig", "negentien", "negentig",
+      "twintig", "honderd"
+    ];
+    orderedIds.sort((leftId, rightId) => {
+      const left = normalizedTextV4(conceptByIdV4.get(leftId)?.dutch);
+      const right = normalizedTextV4(conceptByIdV4.get(rightId)?.dutch);
+      const leftIndex = numberOrder.indexOf(left);
+      const rightIndex = numberOrder.indexOf(right);
+      return (leftIndex < 0 ? numberOrder.length : leftIndex)
+        - (rightIndex < 0 ? numberOrder.length : rightIndex);
+    });
+  }
+  lessonConceptIdsV4.set(lesson.id, orderedIds);
+  authoredConceptIdsV4.set(lesson.id, authoredMap);
+}
+
+for (const chapter of chaptersV4) {
+  for (const lesson of chapter.lessons.filter((item) => item.kind !== "mission")) {
+    registerNormalLessonConceptsV4(lesson, chapter.id);
+  }
+}
+
+function containsWholeDutchTargetV4(candidate, target) {
+  const candidateText = ` ${normalizedTextV4(candidate)} `;
+  const targetText = ` ${normalizedTextV4(target)} `;
+  return targetText.trim() && candidateText.includes(targetText);
+}
+
+function translatedAuthoredExampleV4(candidate, lessonConcepts) {
+  const candidateWords = dutchWordsV4(candidate);
+  if (!candidateWords.length) return null;
+  const matches = [];
+  let index = 0;
+  while (index < candidateWords.length) {
+    const match = lessonConcepts
+      .map((concept) => ({ concept, words: dutchWordsV4(concept.dutch) }))
+      .filter(({ words }) => (
+        words.length
+        && words.every((word, offset) => candidateWords[index + offset] === word)
+      ))
+      .sort((left, right) => right.words.length - left.words.length)[0];
+    if (!match) return null;
+    matches.push(match.concept);
+    index += match.words.length;
+  }
+  const urduParts = matches
+    .map((concept) => cleanTerminalPunctuationV4(concept.urdu))
+    .filter((urdu, partIndex, parts) => partIndex === 0 || urdu !== parts[partIndex - 1]);
+  if (!urduParts.length) return null;
+  return `${urduParts.join("، ")}${String(candidate).trim().endsWith("?") ? "؟" : "۔"}`;
+}
+
+const normalLessonOrderV4 = new Map(
+  chaptersV4
+    .flatMap((chapter) => chapter.lessons.filter((lesson) => lesson.kind !== "mission"))
+    .map((lesson, index) => [lesson.id, index])
+);
+
+function looksLikeDutchQuestionV4(value) {
+  const text = String(value || "").trim();
+  return text.endsWith("?")
+    || /^(wie|wat|waar|wanneer|hoe|waarom|welke|hoeveel|kan|kun|kunt|mag|wil|wilt|moet|is|zijn|ben|heb|heeft|hebben|gaat|gaan|komt|kom)\b/i.test(text);
+}
+
+function meaningfulUrduWordsV4(value) {
+  const stopWords = new Set([
+    "ہے", "ہیں", "ہوں", "ہو", "میں", "کا", "کی", "کے", "کو", "سے",
+    "اور", "یا", "یہ", "وہ", "آپ", "تم", "ہم", "میرا", "میری", "میرے",
+    "کیا", "ایک", "پر", "نے", "نہیں"
+  ]);
+  return uniqueV4(
+    String(value || "")
+      .replace(/[۔،؛؟?!.,:()[\]{}"'’`|/\\]+/gu, " ")
+      .split(/\s+/)
+      .map((word) => word.trim())
+      .filter((word) => word.length > 1 && !stopWords.has(word))
+  );
+}
+
+function meaningfulDutchWordsV4(value) {
+  const stopWords = new Set([
+    "ik", "jij", "je", "u", "hij", "zij", "wij", "we", "de", "het", "een",
+    "is", "ben", "bent", "zijn", "heb", "heeft", "hebben", "mijn", "jouw",
+    "uw", "zijn", "haar", "onze", "dit", "dat", "en", "of", "in", "op", "aan",
+    "kan", "kun", "kunt", "kunnen", "mag", "moet", "moeten", "wil", "wilt",
+    "willen", "ga", "gaat", "gaan", "kom", "komt", "komen", "neem", "neemt",
+    "nemen", "doe", "doet", "doen", "maak", "maakt", "maken", "werk", "werkt",
+    "werken", "word", "wordt", "worden"
+  ]);
+  return dutchWordsV4(value).filter((word) => !stopWords.has(word));
+}
+
+function isCompletePatternModelV4(value) {
+  const dutch = normalizedTextV4(value);
+  const words = dutchWordsV4(dutch);
+  if (words.length < 2) return false;
+  if (looksLikeDutchQuestionV4(dutch)) return true;
+  if (/^(ga|kom|zeg|luister|wacht|stop|bel|stuur|neem|vul|lees|schrijf|betaal|kijk|sla)\b/i.test(dutch)) {
+    return true;
+  }
+  return /\b(ben|bent|is|zijn|heb|hebt|heeft|hebben|kan|kunt|kunnen|mag|moet|moeten|wil|wilt|willen|ga|gaat|gaan|kom|komt|komen|werk|werkt|werken|woon|woont|wonen|heet|heten|doe|doet|doen|word|wordt|worden|krijg|krijgt|krijgen|stuur|stuurt|sturen|betaal|betaalt|betalen|maak|maakt|maken)\b/i.test(dutch);
+}
+
+function compatibleQuestionAnswerV4(questionConcept, answerConcept) {
+  const question = normalizedTextV4(questionConcept.dutch);
+  const answer = normalizedTextV4(answerConcept.dutch);
+  const questionUrdu = String(questionConcept.urdu || "");
+  const answerUrdu = String(answerConcept.urdu || "");
+  const questionWords = new Set(meaningfulDutchWordsV4(question));
+  const answerWords = new Set(meaningfulDutchWordsV4(answer));
+  const sharedWords = [...questionWords].filter((word) => answerWords.has(word));
+  const hasAny = (value, words) => words.some((word) => new RegExp(`\\b${word}\\b`, "i").test(value));
+  const hasTime = (value) => (
+    /\d|uur|vandaag|morgen|gisteren|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag|ochtend|middag|avond|nacht/i.test(value)
+  );
+  const hasPlace = (value) => (
+    /\b(in|op|bij|naar|uit|hier|daar|straat|stad|huis|school|werk|station|halte|loket|kamer|adres)\b/i.test(value)
+  );
+  const hasPerson = (value) => (
+    /\b(ik|hij|zij|mijn|man|vrouw|moeder|vader|zoon|dochter|kind|docent|dokter|Sara|Ali|Zarar)\b/i.test(value)
+  );
+  const hasQuantity = (value) => (
+    /\d|\b(nul|een|twee|drie|vier|vijf|zes|zeven|acht|negen|tien|euro|cent|kilo|liter)\b/i.test(value)
+  );
+  const fieldMatch = [
+    ["naam", /نام/u],
+    ["adres", /پتہ/u],
+    ["telefoon", /فون|نمبر/u],
+    ["postcode", /پوسٹ/u],
+    ["leeftijd", /عمر/u],
+    ["geboortedatum", /پیدائش|تاریخ/u],
+    ["land", /ملک/u],
+    ["woonplaats", /شہر|رہنے/u]
+  ].some(([dutchWord, urduPattern]) => (
+    (question.includes(dutchWord) || urduPattern.test(questionUrdu))
+    && (answer.includes(dutchWord) || urduPattern.test(answerUrdu))
+  ));
+
+  if (/^waarom\b/.test(question)) {
+    return sharedWords.length >= 1 && (
+      /\b(omdat|want|door|niet|geen)\b/i.test(answer)
+      || /کیونکہ|اس لیے|نہیں|خراب|بیمار|درد/u.test(answerUrdu)
+    );
+  }
+  if (/^(wanneer|hoe laat)\b/.test(question)) {
+    return (hasTime(answer) && sharedWords.length >= 1) || fieldMatch;
+  }
+  if (/^hoeveel\b/.test(question)) return hasQuantity(answer);
+  if (/^waar\b/.test(question)) return sharedWords.length >= 1 && hasPlace(answer);
+  if (/^wie\b/.test(question)) {
+    return sharedWords.length >= 1 || fieldMatch || /^met\s+[A-Z]/.test(answerConcept.dutch);
+  }
+  if (/^welke\b/.test(question)) return sharedWords.length >= 1;
+  if (/^hoe heet\b/.test(question)) return fieldMatch;
+  if (/^hoe gaat\b/.test(question)) {
+    return /\b(goed|slecht|prima|ziek)\b/i.test(answer) || /اچھا|ٹھیک|بیمار|خراب/u.test(answerUrdu);
+  }
+  if (/^hoe\b/.test(question)) return sharedWords.length >= 1 || fieldMatch;
+  if (/^wat\b/.test(question)) return fieldMatch || sharedWords.length >= 1;
+  if (/^(kan|kun|kunt|mag|wil|wilt|moet|is|zijn|ben|heb|heeft|hebben|gaat|gaan|komt|kom)\b/.test(question)) {
+    return sharedWords.length >= 2 || fieldMatch;
+  }
+  return sharedWords.length >= 2 || fieldMatch;
+}
+
+function relatedConceptExampleV4(concept, lesson) {
+  const currentOrder = normalLessonOrderV4.get(lesson.id) ?? Number.MAX_SAFE_INTEGER;
+  const level = lesson.id.slice(0, 2);
+  const lessonConceptIds = lessonConceptIdsV4.get(lesson.id) || [];
+  const patternCandidateCap = level === "a0" ? 3 : level === "a1" ? 5 : 4;
+  const patternEligible = lesson.questions.some((question) => question.type === "uitleg")
+    && lessonConceptIds
+      .slice(0, patternCandidateCap)
+      .some((conceptId) => isCompletePatternModelV4(conceptByIdV4.get(conceptId)?.dutch));
+  const lessonRuns = splitTargetsIntoRunsV4(level, lessonConceptIds, patternEligible);
+  const targetRunIndex = Math.max(
+    0,
+    lessonRuns.findIndex((runConceptIds) => runConceptIds.includes(concept.id))
+  );
+  const available = [...conceptByIdV4.values()].filter((candidate) => (
+    candidate.id !== concept.id
+    && (
+      (normalLessonOrderV4.get(candidate.introducedInLessonId) ?? Number.MAX_SAFE_INTEGER)
+        < currentOrder
+      || (
+        candidate.introducedInLessonId === lesson.id
+        && lessonRuns.findIndex((runConceptIds) => runConceptIds.includes(candidate.id))
+          <= targetRunIndex
+      )
+    )
+  ));
+
+  const containing = available
+    .filter((candidate) => (
+      concept.role === "word"
+      &&
+      dutchWordsV4(candidate.dutch).length > dutchWordsV4(concept.dutch).length
+      && containsWholeDutchTargetV4(candidate.dutch, concept.dutch)
+      && normalizedTextV4(candidate.urdu) !== normalizedTextV4(concept.urdu)
+    ))
+    .sort((left, right) => (
+      Number(right.introducedInLessonId === lesson.id)
+      - Number(left.introducedInLessonId === lesson.id)
+      || dutchWordsV4(left.dutch).length - dutchWordsV4(right.dutch).length
+    ))[0];
+  if (containing) {
+    return {
+      exampleDutch: String(containing.dutch),
+      exampleUrdu: `${cleanTerminalPunctuationV4(containing.urdu)}${looksLikeDutchQuestionV4(containing.dutch) ? "؟" : "۔"}`,
+      source: "taught-containing-phrase"
+    };
+  }
+
+  if (concept.role !== "phrase") return null;
+  const targetIsQuestion = looksLikeDutchQuestionV4(concept.dutch);
+  const targetDutchWords = new Set(meaningfulDutchWordsV4(concept.dutch));
+  const targetUrduWords = new Set(meaningfulUrduWordsV4(concept.urdu));
+  const targetUnitId = chaptersV4
+    .flatMap((chapter) => chapter.subchapters)
+    .find((unit) => unit.lessonIds.includes(lesson.id))?.id;
+  const reliableCrossLessonUrduWords = new Set([
+    "نام", "پتہ", "فون", "نمبر", "عمر", "ملک", "شہر", "تاریخ", "وقت",
+    "قیمت", "کرایہ", "اسکول", "ڈاکٹر", "درد", "کام", "نوکری"
+  ]);
+  const paired = available
+    .filter((candidate) => (
+      looksLikeDutchQuestionV4(candidate.dutch) !== targetIsQuestion
+      && dutchWordsV4(candidate.dutch).length > 1
+      && compatibleQuestionAnswerV4(
+        targetIsQuestion ? concept : candidate,
+        targetIsQuestion ? candidate : concept
+      )
+    ))
+    .map((candidate) => {
+      const sharedDutchWords = meaningfulDutchWordsV4(candidate.dutch)
+        .filter((word) => targetDutchWords.has(word));
+      const sharedUrduWords = meaningfulUrduWordsV4(candidate.urdu)
+        .filter((word) => targetUrduWords.has(word));
+      const dutchOverlap = sharedDutchWords.length;
+      const urduOverlap = sharedUrduWords.length;
+      const sameLesson = candidate.introducedInLessonId === lesson.id ? 1 : 0;
+      const trustworthyTopicLink = sameLesson
+        && dutchOverlap > 0
+        && (
+          urduOverlap > 0
+          || sharedUrduWords.some((word) => reliableCrossLessonUrduWords.has(word))
+        );
+      return {
+        candidate,
+        score: trustworthyTopicLink
+          ? dutchOverlap * 3 + urduOverlap * 2 + sameLesson
+          : 0
+      };
+    })
+    .filter((item) => item.score >= 2)
+    .sort((left, right) => right.score - left.score)[0]?.candidate;
+  if (!paired) return null;
+
+  const question = targetIsQuestion ? concept : paired;
+  const answer = targetIsQuestion ? paired : concept;
+  return {
+    exampleDutch: `${cleanTerminalPunctuationV4(question.dutch)}? — ${cleanTerminalPunctuationV4(answer.dutch)}.`,
+    exampleUrdu: `${cleanTerminalPunctuationV4(question.urdu)}؟ — ${cleanTerminalPunctuationV4(answer.urdu)}۔`,
+    source: "taught-question-answer"
+  };
+}
+
+function practicalWordExampleV4(concept, lesson) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const lessonId = lesson.id;
+  const lessonConcepts = (lessonConceptIdsV4.get(lesson.id) || [])
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .filter(Boolean);
+
+  if (/^a0-letters-/.test(lessonId)) {
+    const letter = lessonConcepts.find((candidate) => (
+      /^[a-z]$/i.test(candidate.dutch)
+      && normalizedTextV4(dutch).includes(normalizedTextV4(candidate.dutch))
+    ));
+    if (letter) {
+      return {
+        exampleDutch: `${letter.dutch} → ${dutch}`,
+        exampleUrdu: `حرف ${letter.dutch} سے “${dutch}” (${urdu})۔`,
+        source: "phonics-word-example"
+      };
+    }
+  }
+
+  const formValues = {
+    voornaam: ["voornaam: Zarar", "پہلا نام: ضرار"],
+    achternaam: ["achternaam: Khan", "خاندانی نام: خان"],
+    naam: ["naam: Zarar", "نام: ضرار"],
+    land: ["land: Nederland", "ملک: نیدرلینڈز"],
+    stad: ["stad: Utrecht", "شہر: اترخت"],
+    straat: ["straat: Schoolstraat", "سڑک: Schoolstraat"],
+    postcode: ["postcode: 1234 AB", "پوسٹ کوڈ: 1234 AB"],
+    woonplaats: ["woonplaats: Utrecht", "رہنے کا شہر: اترخت"],
+    "e-mailadres": ["e-mailadres: naam@example.nl", "ای میل پتہ: naam@example.nl"],
+    leeftijd: ["leeftijd: 30", "عمر: 30 سال"],
+    datum: ["datum: 12-05-2026", "تاریخ: 12-05-2026"]
+  };
+  if (formValues[normalizedTextV4(dutch)]) {
+    const [exampleDutch, exampleUrdu] = formValues[normalizedTextV4(dutch)];
+    return { exampleDutch, exampleUrdu, source: "practical-form-field" };
+  }
+
+  const verbExamples = {
+    spellen: ["ik spel mijn naam", "میں اپنے نام کے حروف الگ الگ بولتا/بولتی ہوں"],
+    werken: ["ik werk vandaag", "میں آج کام کرتا/کرتی ہوں"],
+    eten: ["ik eet rijst", "میں چاول کھاتا/کھاتی ہوں"],
+    drinken: ["ik drink water", "میں پانی پیتا/پیتی ہوں"],
+    slapen: ["ik slaap nu", "میں ابھی سوتا/سوتی ہوں"],
+    lopen: ["ik loop naar huis", "میں گھر کی طرف چلتا/چلتی ہوں"],
+    staan: ["ik sta hier", "میں یہاں کھڑا/کھڑی ہوں"],
+    wachten: ["ik wacht hier", "میں یہاں انتظار کرتا/کرتی ہوں"],
+    lezen: ["ik lees een boek", "میں ایک کتاب پڑھتا/پڑھتی ہوں"],
+    schrijven: ["ik schrijf mijn naam", "میں اپنا نام لکھتا/لکھتی ہوں"],
+    pinnen: ["ik wil pinnen", "میں کارڈ سے ادائیگی کرنا چاہتا/چاہتی ہوں"],
+    betalen: ["ik wil betalen", "میں ادائیگی کرنا چاہتا/چاہتی ہوں"],
+    brengen: ["ik breng mijn kind", "میں اپنے بچے کو چھوڑتا/چھوڑتی ہوں"],
+    ophalen: ["ik haal mijn kind op", "میں اپنے بچے کو لینے آتا/آتی ہوں"],
+    beginnen: ["ik begin om 08:30", "میں 08:30 بجے شروع کرتا/کرتی ہوں"],
+    stoppen: ["ik stop om 17:00", "میں 17:00 بجے ختم کرتا/کرتی ہوں"]
+  };
+  if (verbExamples[normalizedTextV4(dutch)]) {
+    const [exampleDutch, exampleUrdu] = verbExamples[normalizedTextV4(dutch)];
+    return { exampleDutch, exampleUrdu: `${exampleUrdu}۔`, source: "known-pattern-sentence" };
+  }
+
+  if (/^(hier|daar)$/.test(normalizedTextV4(dutch))) {
+    return {
+      exampleDutch: "hier — daar",
+      exampleUrdu: "یہاں — وہاں۔",
+      source: "meaningful-location-contrast"
+    };
+  }
+  if (/(time|date|calendar|appointment|routine)/i.test(lessonId)
+    || /^(gisteren|nu|vandaag|morgen|middag|avond|nacht|donderdag)$/.test(normalizedTextV4(dutch))) {
+    return {
+      exampleDutch: `${dutch}: 08:30`,
+      exampleUrdu: `${urdu}: 08:30۔`,
+      source: "practical-schedule-label"
+    };
+  }
+  if (/(family|people|child-care)/i.test(lessonId)) {
+    return {
+      exampleDutch: `mijn ${dutch}`,
+      exampleUrdu: `میرا/میری ${urdu}۔`,
+      source: "known-possessive-phrase"
+    };
+  }
+  if (/(food|shopping|cafe|money|bank|clothes)/i.test(lessonId)) {
+    return {
+      exampleDutch: `${dutch}: €5`,
+      exampleUrdu: `${urdu}: 5 یورو۔`,
+      source: "practical-price-label"
+    };
+  }
+  if (/(transport|directions|bus|train|town)/i.test(lessonId)) {
+    return {
+      exampleDutch: `${dutch}: Utrecht`,
+      exampleUrdu: `${urdu}: اترخت۔`,
+      source: "practical-travel-label"
+    };
+  }
+  if (/(health|doctor|emergency)/i.test(lessonId)) {
+    if (/pijn$/i.test(dutch)) {
+      return {
+        exampleDutch: `ik heb ${dutch}`,
+        exampleUrdu: `مجھے ${urdu} ہے۔`,
+        source: "known-health-pattern"
+      };
+    }
+    return {
+      exampleDutch: `${dutch}: 10:00`,
+      exampleUrdu: `${urdu}: 10:00۔`,
+      source: "practical-health-label"
+    };
+  }
+  if (/(school|work|job|library|community)/i.test(lessonId)) {
+    return {
+      exampleDutch: `${dutch}: Sara`,
+      exampleUrdu: `${urdu}: سارا۔`,
+      source: "practical-contact-label"
+    };
+  }
+  if (/(home|house|housing|weather)/i.test(lessonId)
+    && /^(open|warm|koud|kapot|licht|donker|goedkoop|duur)$/i.test(dutch)) {
+    return {
+      exampleDutch: `het is ${dutch}`,
+      exampleUrdu: `یہ ${urdu} ہے۔`,
+      source: "known-description-pattern"
+    };
+  }
+  return {
+    exampleDutch: `${dutch}: 1`,
+    exampleUrdu: `${urdu}: 1۔`,
+    source: "practical-label"
+  };
+}
+
+function practicalPhraseExampleV4(concept, lesson, context = "") {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const words = dutchWordsV4(dutch);
+  const lessonId = lesson.id;
+  const negativeOrProblem = /\b(niet|geen|kapot|pijn|ziek|probleem|fout|kwijt|gestolen|klacht)\b/i.test(dutch)
+    || /نہیں|خراب|درد|بیمار|مسئلہ|گم|چوری|شکایت/u.test(urdu);
+  const imperative = /^(ga|kom|zeg|luister|wacht|stop|bel|stuur|neem|vul|lees|schrijf|betaal|kijk)\b/i.test(dutch);
+  const shortNounPhrase = /^(de|het|een|mijn|jouw|uw|zijn|haar|onze)\b/i.test(dutch)
+    && !/\b(is|zijn|ben|bent|heb|heeft|hebben|kan|kunt|wil|moet|gaat|komt)\b/i.test(dutch);
+
+  if (shortNounPhrase) {
+    return {
+      exampleDutch: `dit is ${dutch}.`,
+      exampleUrdu: `یہ ${urdu} ہے۔`,
+      source: "known-identification-pattern"
+    };
+  }
+  if (/^(twee|drie|vier|vijf|zes|zeven|acht|negen|tien)\b/i.test(dutch)) {
+    return {
+      exampleDutch: `${dutch}: €5`,
+      exampleUrdu: `${urdu}: 5 یورو۔`,
+      source: "practical-quantity-label"
+    };
+  }
+  if (imperative) {
+    return {
+      exampleDutch: `${dutch}, alstublieft.`,
+      exampleUrdu: `${urdu}، برائے مہربانی۔`,
+      source: "polite-action"
+    };
+  }
+  if (negativeOrProblem || /(health|home|housing|complaint|safety|emergency)/i.test(lessonId)) {
+    return {
+      exampleDutch: `${dutch}. kunt u mij helpen?`,
+      exampleUrdu: `${context ? `${context}: ` : ""}${urdu}۔ کیا آپ میری مدد کر سکتے ہیں؟`,
+      source: "problem-help-dialogue"
+    };
+  }
+  if (/(greeting|personal|details|address|form|phone|message|email)/i.test(lessonId)) {
+    return {
+      exampleDutch: `hallo, ${dutch}.`,
+      exampleUrdu: `سلام، ${urdu}۔`,
+      source: "real-life-opening"
+    };
+  }
+  if (/(appointment|transport|directions|shopping|cafe|bank|post|gemeente|service)/i.test(lessonId)) {
+    return {
+      exampleDutch: `${dutch}. dank u wel.`,
+      exampleUrdu: `${urdu}۔ آپ کا شکریہ۔`,
+      source: "service-exchange"
+    };
+  }
+  if (/(routine|calendar|time|school|work|job|plan)/i.test(lessonId)) {
+    return {
+      exampleDutch: `vandaag: ${dutch}.`,
+      exampleUrdu: `آج: ${urdu}۔`,
+      source: "practical-day-note"
+    };
+  }
+  if (words[0] === "ik" || words[0] === "wij") {
+    return {
+      exampleDutch: `hallo, ${dutch}.`,
+      exampleUrdu: `سلام، ${urdu}۔`,
+      source: "spoken-introduction"
+    };
+  }
+  return {
+    exampleDutch: `${dutch}. dank u wel.`,
+    exampleUrdu: `${urdu}۔ آپ کا شکریہ۔`,
+    source: "complete-exchange"
+  };
+}
+
+function contextualMiniExampleV4(concept, lesson) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const normalizedDutch = normalizedTextV4(dutch);
+  const questionStart = /^(wie|wat|waar|wanneer|hoe|waarom|welke|kan|kun|kunt|mag|wil|wilt|moet|is|zijn|ben|heb|heeft|hebben|gaat|gaan|komt|kom)\b/i;
+  const isQuestion = /[?]$/.test(String(concept.dutch).trim()) || questionStart.test(dutch);
+  const whQuestion = /^(wie|wat|waar|wanneer|hoe|waarom|welke|hoeveel)\b/i.test(dutch);
+
+  const fixedExamples = {
+    hallo: ["hallo! — hallo!", "سلام! — سلام!"],
+    goedemorgen: ["goedemorgen, Sara.", "Sara، صبح بخیر۔"],
+    goedemiddag: ["goedemiddag, Sara.", "Sara، دوپہر بخیر۔"],
+    goedenavond: ["goedenavond, Sara.", "Sara، شام بخیر۔"],
+    dag: ["dag! — dag!", "خدا حافظ! — خدا حافظ!"],
+    "tot ziens": ["tot ziens! — tot ziens!", "پھر ملیں گے! — پھر ملیں گے!"],
+    "dank u wel": ["dank u wel. — graag.", "آپ کا شکریہ۔ — خوشی سے۔"],
+    alstublieft: ["alstublieft. — dank u wel.", "لیجیے۔ — آپ کا شکریہ۔"],
+    sorry: ["sorry. — sorry.", "معاف کیجیے۔ — معاف کیجیے۔"],
+    graag: ["dank u wel. — graag.", "آپ کا شکریہ۔ — خوشی سے۔"],
+    "hoe gaat het": ["hoe gaat het? — goed, dank u.", "آپ کیسے ہیں؟ — اچھا ہوں، شکریہ۔"],
+    "goed dank u": ["hoe gaat het? — goed, dank u.", "آپ کیسے ہیں؟ — اچھا ہوں، شکریہ۔"],
+    ja: ["goed? — ja.", "ٹھیک ہے؟ — ہاں۔"],
+    nee: ["goed? — nee.", "ٹھیک ہے؟ — نہیں۔"],
+    goed: ["goed? — ja.", "ٹھیک ہے؟ — ہاں۔"],
+    "niet goed": ["goed? — nee, niet goed.", "ٹھیک ہے؟ — نہیں، ٹھیک نہیں۔"],
+    "ik begrijp het niet": ["sorry, ik begrijp het niet.", "معاف کیجیے، مجھے سمجھ نہیں آیا۔"],
+    "ik weet het niet": ["sorry, ik weet het niet.", "معاف کیجیے، مجھے معلوم نہیں۔"],
+    afhaalpunt: ["waar is het afhaalpunt?", "وصولی کی جگہ کہاں ہے؟"],
+    familie: ["dit is mijn familie.", "یہ میرا خاندان ہے۔"],
+    baan: ["ik zoek een baan.", "میں نوکری تلاش کر رہا/رہی ہوں۔"],
+    "vul het formulier in": ["vul het formulier in, alstublieft.", "فارم بھر دیں، برائے مہربانی۔"]
+  };
+  if (fixedExamples[normalizedDutch]) {
+    const [exampleDutch, exampleUrdu] = fixedExamples[normalizedDutch];
+    return { exampleDutch, exampleUrdu, source: "functional-mini-dialogue" };
+  }
+
+  if (lesson.id === "a0-understanding-help") {
+    if (isQuestion) {
+      return {
+        exampleDutch: `ik begrijp het niet. ${dutch}?`,
+        exampleUrdu: `مجھے سمجھ نہیں آیا۔ ${urdu}؟`,
+        source: "lesson-sequence"
+      };
+    }
+    return {
+      exampleDutch: `${dutch}, alstublieft.`,
+      exampleUrdu: `${urdu}، برائے مہربانی۔`,
+      source: "polite-request"
+    };
+  }
+
+  const situation = lesson.questions.find((question) => (
+    question.type === "situation"
+    && isUrduText(question.prompt)
+    && !isExerciseInstructionLikeUrduV4(question.prompt)
+    && normalizedTextV4(question.answer) === normalizedDutch
+  ));
+  const context = situation
+    ? cleanTerminalPunctuationV4(String(situation.prompt).replace(/^(?:حال|صورت)\s*:\s*/u, ""))
+    : "";
+
+  if (isQuestion) {
+    if (/^(kan|kun|kunt|mag|wil|wilt)\b/i.test(dutch)) {
+      return {
+        exampleDutch: `${dutch}, alstublieft?`,
+        exampleUrdu: `${context ? `${context}: ` : ""}${urdu}، برائے مہربانی؟`,
+        source: context ? "authored-polite-question" : "polite-question"
+      };
+    }
+    if (!/[?]$/.test(String(concept.dutch).trim()) && /^heeft\b/i.test(dutch)) {
+      return {
+        exampleDutch: `${dutch}, alstublieft?`,
+        exampleUrdu: `${context ? `${context}: ` : ""}${urdu}، برائے مہربانی؟`,
+        source: context ? "authored-polite-question" : "polite-question"
+      };
+    }
+    if (!/[?]$/.test(String(concept.dutch).trim()) && /^is\b/i.test(dutch)) {
+      return {
+        exampleDutch: `${dutch}? — ja, dat is voldoende.`,
+        exampleUrdu: `${context ? `${context}: ` : ""}${urdu}؟ — ہاں، یہ کافی ہے۔`,
+        source: context ? "authored-complete-answer" : "complete-answer"
+      };
+    }
+    const quantityQuestion = /^hoeveel\b/i.test(dutch);
+    const responseDutch = quantityQuestion ? "800 euro" : whQuestion ? "ik weet het niet" : "ja";
+    const responseUrdu = quantityQuestion ? "800 یورو" : whQuestion ? "مجھے معلوم نہیں" : "ہاں";
+    return {
+      exampleDutch: `${dutch}? — ${responseDutch}.`,
+      exampleUrdu: `${context ? `${context}: ` : ""}${urdu}؟ — ${responseUrdu}۔`,
+      source: context ? "authored-situation-dialogue" : "question-response"
+    };
+  }
+
+  if (concept.role === "word") {
+    return practicalWordExampleV4(concept, lesson);
+  }
+
+  return practicalPhraseExampleV4(concept, lesson, context);
+}
+
+function improveConceptExampleV4(concept, lesson) {
+  const lessonConcepts = (lessonConceptIdsV4.get(lesson.id) || [])
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .filter(Boolean);
+
+  if (/^[a-z]$/i.test(concept.dutch)) {
+    const exampleWord = lessonConcepts.find((candidate) => (
+      candidate.id !== concept.id
+      && dutchWordsV4(candidate.dutch).length === 1
+      && normalizedTextV4(candidate.dutch).includes(normalizedTextV4(concept.dutch))
+    ));
+    if (exampleWord) {
+      concept.exampleDutch = `${exampleWord.dutch} → ${concept.dutch}`;
+      concept.exampleUrdu = `“${exampleWord.dutch}” (${cleanTerminalPunctuationV4(
+        exampleWord.urdu
+      )}) میں حرف ${concept.dutch} دیکھیں اور سنیں۔`;
+      concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+      concept.exampleSource = "authored-letter-word";
+      return;
+    }
+  }
+
+  const relatedExample = relatedConceptExampleV4(concept, lesson);
+  if (relatedExample) {
+    concept.exampleDutch = relatedExample.exampleDutch;
+    concept.exampleUrdu = relatedExample.exampleUrdu;
+    concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+    concept.exampleSource = relatedExample.source;
+    return;
+  }
+
+  const candidates = uniqueV4(lesson.questions.flatMap((question) => [
+    question.speak,
+    question.type === "situation" ? null : question.prompt,
+    question.answer,
+    ...((question.document?.rows || []).map((row) => row.value))
+  ]).filter((candidate) => (
+    isDutchOnlyText(candidate)
+    && !String(candidate).includes("_")
+    && dutchWordsV4(candidate).length <= 12
+    && normalizedTextV4(candidate) !== normalizedTextV4(concept.dutch)
+    && containsWholeDutchTargetV4(candidate, concept.dutch)
+  )));
+
+  for (const candidate of candidates) {
+    const translated = translatedAuthoredExampleV4(candidate, lessonConcepts);
+    if (
+      !translated
+      || normalizedTextV4(cleanTerminalPunctuationV4(translated))
+        === normalizedTextV4(cleanTerminalPunctuationV4(concept.urdu))
+    ) continue;
+    concept.exampleDutch = String(candidate);
+    concept.exampleUrdu = translated;
+    concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+    concept.exampleSource = "authored-combination";
+    return;
+  }
+
+  const miniExample = contextualMiniExampleV4(concept, lesson);
+  concept.exampleDutch = miniExample.exampleDutch;
+  concept.exampleUrdu = miniExample.exampleUrdu;
+  concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+  concept.exampleSource = miniExample.source;
+}
+
+function teachingConceptIdsForV4(concept, lesson) {
+  const lessonIds = lessonConceptIdsV4.get(lesson.id) || [];
+  const level = lesson.id.slice(0, 2);
+  const firstCap = level === "a0" ? 3 : level === "a1" ? 5 : 4;
+  const patternEligible = lesson.questions.some((question) => question.type === "uitleg")
+    && lessonIds.slice(0, firstCap)
+      .some((conceptId) => isCompletePatternModelV4(conceptByIdV4.get(conceptId)?.dutch));
+  const runs = lesson.id === "a0-numbers-11-100"
+    ? [
+      lessonIds.slice(0, 4),
+      lessonIds.slice(4, 8),
+      lessonIds.slice(8, 12),
+      lessonIds.slice(12, 16),
+      lessonIds.slice(16, 20),
+      lessonIds.slice(20)
+    ].filter((ids) => ids.length)
+    : splitTargetsIntoRunsV4(level, lessonIds, patternEligible);
+  const runIndex = Math.max(0, runs.findIndex((ids) => ids.includes(concept.id)));
+  const previousLesson = chaptersV4
+    .flatMap((chapter) => chapter.lessons.filter((item) => item.kind !== "mission"))
+    .filter((item) => (
+      (normalLessonOrderV4.get(item.id) ?? Number.MAX_SAFE_INTEGER)
+      < (normalLessonOrderV4.get(lesson.id) ?? Number.MAX_SAFE_INTEGER)
+    ))
+    .slice(-1)[0];
+  const previousConceptIds = (lessonConceptIdsV4.get(previousLesson?.id) || []).slice(-5);
+  return uniqueV4([
+    ...runs.slice(0, runIndex + 1).flat(),
+    ...previousConceptIds
+  ]);
+}
+
+const teachingScaffoldTokensV4 = new Set([
+  "nederlands", "a", "b", "ali", "sara", "ahmed", "fatima",
+  "amsterdam", "rotterdam", "utrecht", "nederland", "digid", "iban", "bsn",
+  "www", "nl"
+]);
+
+function unownedTeachingTokensV4(value, allowedConceptIds) {
+  const allowed = new Set(teachingScaffoldTokensV4);
+  for (const conceptId of allowedConceptIds) {
+    const allowedConcept = conceptByIdV4.get(conceptId);
+    for (const word of dutchWordsV4(allowedConcept?.dutch)) allowed.add(word);
+    for (const word of dutchWordsV4(allowedConcept?.audioText)) allowed.add(word);
+  }
+  return dutchWordsV4(value).filter((word) => !allowed.has(word));
+}
+
+function safeTargetOnlyExampleV4(concept, lesson, allowedConceptIds) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const normalized = normalizedTextV4(dutch);
+  const numberValues = {
+    nul: "0", een: "1", twee: "2", drie: "3", vier: "4", vijf: "5",
+    zes: "6", zeven: "7", acht: "8", negen: "9", tien: "10", elf: "11",
+    twaalf: "12", dertien: "13", veertien: "14", vijftien: "15",
+    zestien: "16", zeventien: "17", achttien: "18", negentien: "19",
+    twintig: "20", dertig: "30", veertig: "40", vijftig: "50",
+    zestig: "60", zeventig: "70", tachtig: "80", negentig: "90",
+    honderd: "100"
+  };
+  if (numberValues[normalized]) {
+    return {
+      exampleDutch: `${dutch}: ${numberValues[normalized]}`,
+      exampleUrdu: `گنتی یا نمبر میں “${dutch}” سے ${urdu} مراد ہے۔`,
+      source: "verified-number-value"
+    };
+  }
+  const timeExamples = {
+    ochtend: ["ochtend: 08:30", "صبح 08:30 بجے۔"],
+    middag: ["middag: 13:00", "دوپہر 13:00 بجے۔"],
+    avond: ["avond: 19:00", "شام 19:00 بجے۔"],
+    nacht: ["nacht: 02:00", "رات 02:00 بجے۔"]
+  };
+  if (timeExamples[normalized]) {
+    return {
+      exampleDutch: timeExamples[normalized][0],
+      exampleUrdu: timeExamples[normalized][1],
+      source: "verified-time-value"
+    };
+  }
+  const directionExamples = {
+    links: ["links ← — rechts →", "بائیں تیر کے لیے “links”، دائیں تیر کے لیے “rechts”۔"],
+    rechts: ["links ← — rechts →", "بائیں تیر کے لیے “links”، دائیں تیر کے لیے “rechts”۔"],
+    rechtdoor: ["links ← — rechtdoor ↑ — rechts →", "درمیانی سیدھے تیر کے لیے “rechtdoor” کہیں۔"],
+    ingang: ["ingang → — uitgang ←", "داخل ہونے کا نشان “ingang”، باہر جانے کا نشان “uitgang”۔"],
+    uitgang: ["ingang → — uitgang ←", "داخل ہونے کا نشان “ingang”، باہر جانے کا نشان “uitgang”۔"]
+  };
+  if (
+    directionExamples[normalized]
+    && !unownedTeachingTokensV4(directionExamples[normalized][0], allowedConceptIds).length
+  ) {
+    return {
+      exampleDutch: directionExamples[normalized][0],
+      exampleUrdu: directionExamples[normalized][1],
+      source: "verified-sign-context"
+    };
+  }
+  const actionExamples = {
+    spellen: ["ik spel mijn naam", "میں اپنے نام کے حروف الگ الگ بولتا/بولتی ہوں۔"],
+    werken: ["ik werk", "میں کام کرتا/کرتی ہوں۔"],
+    eten: ["ik eet", "میں کھاتا/کھاتی ہوں۔"],
+    drinken: ["ik drink", "میں پیتا/پیتی ہوں۔"],
+    slapen: ["ik slaap", "میں سوتا/سوتی ہوں۔"],
+    lopen: ["ik loop", "میں چلتا/چلتی ہوں۔"],
+    zitten: ["ik zit", "میں بیٹھا/بیٹھی ہوں۔"],
+    staan: ["ik sta", "میں کھڑا/کھڑی ہوں۔"],
+    wachten: ["ik wacht", "میں انتظار کرتا/کرتی ہوں۔"],
+    lezen: ["ik lees", "میں پڑھتا/پڑھتی ہوں۔"],
+    schrijven: ["ik schrijf", "میں لکھتا/لکھتی ہوں۔"],
+    gaan: ["ik ga", "میں جاتا/جاتی ہوں۔"],
+    komen: ["ik kom", "میں آتا/آتی ہوں۔"],
+    kopen: ["ik koop", "میں خریدتا/خریدتی ہوں۔"],
+    betalen: ["ik betaal", "میں ادائیگی کرتا/کرتی ہوں۔"],
+    bellen: ["ik bel", "میں فون کرتا/کرتی ہوں۔"],
+    leren: ["ik leer", "میں سیکھتا/سیکھتی ہوں۔"],
+    helpen: ["ik help", "میں مدد کرتا/کرتی ہوں۔"]
+  };
+  if (actionExamples[normalized]) {
+    const [exampleDutch, exampleUrdu] = actionExamples[normalized];
+    if (!unownedTeachingTokensV4(exampleDutch, allowedConceptIds).length) {
+      return { exampleDutch, exampleUrdu, source: "verified-action-sentence" };
+    }
+  }
+  const contrasts = {
+    ik: ["ik — jij", "اپنے لیے “ik”، سامنے والے کے لیے “jij”۔"],
+    jij: ["ik — jij", "اپنے لیے “ik”، سامنے والے کے لیے “jij”۔"],
+    u: ["jij — u", "دوستانہ “jij”، ادب کے ساتھ “u”۔"],
+    ja: ["ja — nee", "ہاں کے لیے “ja”، انکار کے لیے “nee”۔"],
+    nee: ["ja — nee", "ہاں کے لیے “ja”، انکار کے لیے “nee”۔"],
+    goed: ["goed — niet goed", "اچھی حالت “goed”، اچھی نہ ہو تو “niet goed”۔"],
+    niet: ["goed — niet goed", "جملے میں انکار کے لیے “niet” آتا ہے۔"],
+    warm: ["warm — koud", "گرم کے لیے “warm”، سرد کے لیے “koud”۔"],
+    koud: ["warm — koud", "گرم کے لیے “warm”، سرد کے لیے “koud”۔"]
+  };
+  if (contrasts[normalized]
+    && !unownedTeachingTokensV4(contrasts[normalized][0], allowedConceptIds).length) {
+    return {
+      exampleDutch: contrasts[normalized][0],
+      exampleUrdu: contrasts[normalized][1],
+      source: "verified-meaning-contrast"
+    };
+  }
+  const lessonConceptOrder = lessonConceptIdsV4.get(lesson.id) || [];
+  const allowedSet = new Set(allowedConceptIds);
+  const conceptIndex = lessonConceptOrder.indexOf(concept.id);
+  const nearbyPartner = lessonConceptOrder
+    .map((conceptId, index) => ({
+      candidate: conceptByIdV4.get(conceptId),
+      index
+    }))
+    .filter(({ candidate }) => (
+      candidate
+      && candidate.id !== concept.id
+      && allowedSet.has(candidate.id)
+    ))
+    .sort((left, right) => {
+      const leftRole = left.candidate.role === concept.role ? 0 : 1;
+      const rightRole = right.candidate.role === concept.role ? 0 : 1;
+      return leftRole - rightRole
+        || Math.abs(left.index - conceptIndex) - Math.abs(right.index - conceptIndex);
+    })[0]?.candidate;
+  if (nearbyPartner) {
+    return {
+      exampleDutch: `${dutch} — ${nearbyPartner.dutch}`,
+      exampleUrdu: `“${dutch}” (${urdu}) کو “${nearbyPartner.dutch}” (${cleanTerminalPunctuationV4(
+        nearbyPartner.urdu
+      )}) سے الگ پہچانیں۔`,
+      source: "run-owned-meaning-contrast"
+    };
+  }
+  if (concept.visualId || concept.role === "sound" || concept.role === "letter"
+    || dutchWordsV4(dutch).length > 1) {
+    const context = concept.visualId
+      ? `تصویر میں ${urdu} دیکھیں؛ نیچے یہی ڈچ لفظ یا فقرہ بولا جائے گا۔`
+      : concept.role === "sound" || concept.role === "letter"
+        ? `حرف کی شکل دیکھیں اور آہستہ آڈیو میں اس کی ڈچ آواز سنیں۔`
+        : `${cleanPracticalContextUrduV4(concept.usageUrdu, `${urdu} کی روزمرہ بات`)}؛ اس موقع میں یہی مکمل ڈچ بات کہیں۔`;
+    return {
+      exampleDutch: dutch,
+      exampleUrdu: context,
+      source: "supported-target-context"
+    };
+  }
+  return {
+    exampleDutch: dutch,
+    exampleUrdu: `${urdu} کی مخصوص آواز سنیں اور اسی معنی والی تصویر یا صورت میں اسے پہچانیں۔`,
+    source: "supported-audio-context"
+  };
+}
+
+function preciseCommonConfusionV4(concept, lesson, allowedConceptIds) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const normalized = normalizedTextV4(dutch);
+  const numberTraps = {
+    vier: ["vijf", "“vier” چار ہے اور “vijf” پانچ؛ دونوں کی آخری آواز غور سے سنیں۔"],
+    vijf: ["vier", "“vijf” پانچ ہے اور “vier” چار؛ شروع اور آخر کی آواز الگ سنیں۔"],
+    zes: ["zeven", "“zes” چھ ہے اور “zeven” سات؛ چھوٹے اور لمبے لفظ کی آواز الگ رکھیں۔"],
+    zeven: ["zes", "zeven دو حصوں میں سنائی دیتا ہے؛ اسے مختصر zes نہ سمجھیں۔"],
+    dertien: ["dertig", "“dertien” تیرہ ہے اور “dertig” تیس؛ آخری حصے کی آواز بدلتی ہے۔"],
+    dertig: ["dertien", "“dertig” تیس ہے اور “dertien” تیرہ؛ پوری آواز سن کر عدد چنیں۔"],
+    veertien: ["veertig", "“veertien” چودہ ہے اور “veertig” چالیس؛ مختصر آخری آواز سے فرق سنیں۔"],
+    veertig: ["veertien", "“veertig” چالیس ہے اور “veertien” چودہ؛ پورا عدد سن کر فیصلہ کریں۔"],
+    vijftien: ["vijftig", "“vijftien” پندرہ ہے اور “vijftig” پچاس؛ آخری آواز دونوں کو الگ کرتی ہے۔"],
+    vijftig: ["vijftien", "“vijftig” پچاس ہے اور “vijftien” پندرہ؛ عدد کی پوری آواز سنیں۔"],
+    zestien: ["zestig", "“zestien” سولہ ہے اور “zestig” ساٹھ؛ آخری آواز پر توجہ دیں۔"],
+    zestig: ["zestien", "“zestig” ساٹھ ہے اور “zestien” سولہ؛ دونوں کو ہندسے کے ساتھ یاد کریں۔"],
+    zeventien: ["zeventig", "“zeventien” سترہ ہے اور “zeventig” ستر؛ آخری آواز الگ ہے۔"],
+    zeventig: ["zeventien", "“zeventig” ستر ہے اور “zeventien” سترہ؛ پوری آواز سنیں۔"],
+    achttien: ["tachtig", "“achttien” اٹھارہ ہے اور “tachtig” اسی؛ ابتدا اور آخر دونوں سنیں۔"],
+    tachtig: ["achttien", "“tachtig” اسی ہے اور “achttien” اٹھارہ؛ اسے ہندسے کے ساتھ پہچانیں۔"],
+    negentien: ["negentig", "“negentien” انیس ہے اور “negentig” نوے؛ آخری آواز فرق بتاتی ہے۔"],
+    negentig: ["negentien", "“negentig” نوے ہے اور “negentien” انیس؛ پورا عدد سن کر چنیں۔"]
+  };
+  if (numberTraps[normalized]) {
+    const [other, explanation] = numberTraps[normalized];
+    if (!unownedTeachingTokensV4(other, allowedConceptIds).length) return explanation;
+  }
+  const exact = {
+    ik: "“ik” بولنے والے اپنے لیے ہے؛ سامنے والے کے لیے یہ ضمیر استعمال نہ کریں۔",
+    jij: "“jij” ایک جان پہچان والے شخص کے لیے ہے؛ رسمی موقع میں ادب والا ضمیر چاہیے۔",
+    u: "“u” رسمی یا مؤدبانہ مخاطب کے لیے ہے؛ اسے اپنے لیے نہ بولیں۔",
+    hij: "“hij” ایک مرد یا مذکر شخص کے لیے ہے؛ عورت کے لیے دوسرا ضمیر آتا ہے۔",
+    zij: "“zij” ایک عورت کے لیے بھی اور جمع کے لیے بھی آ سکتا ہے؛ جملے کا فعل تعداد واضح کرتا ہے۔",
+    wij: "“wij” میں بولنے والا اور کم از کم ایک دوسرا شخص شامل ہوتے ہیں۔",
+    de: "“de” بہت سے اسموں کے ساتھ آتا ہے؛ ہر اسم کے آگے خود سے het نہ لگائیں۔",
+    het: "“het” مخصوص het-اسم کے ساتھ آتا ہے؛ ہر اسم کو de سمجھنا درست نہیں۔",
+    een: "“een” غیر مخصوص ایک چیز بتاتا ہے؛ اسے de یا het والے مخصوص معنی میں نہ پڑھیں۔",
+    niet: "“niet” فعل، کیفیت، یا پوری بات کی نفی کرتا ہے؛ اسم کے سامنے geen والا کام الگ ہے۔",
+    geen: "“geen” اسم کے ساتھ صفر یا کوئی نہیں کا معنی دیتا ہے؛ عام فعل کی نفی میں niet آتا ہے۔",
+    graag: "“graag” کسی کام کی پسند یا مؤدبانہ خواہش دکھاتا ہے؛ صرف شکریہ کے جواب تک محدود نہیں۔"
+  };
+  let result = exact[normalized];
+  if (!result) {
+    if (looksLikeDutchQuestionV4(dutch)) {
+      result = `“${dutch}” سوال ہے؛ جواب دیتے وقت سوال کے مانگے ہوئے شخص، چیز، جگہ، وقت، یا وجہ ہی بتائیں۔`;
+    } else if (concept.role === "phrase") {
+      result = `“${dutch}” مکمل تیار بات ہے؛ “${urdu}” کے اسی کام میں اسے ادھورا چھوڑے بغیر بولیں۔`;
+    } else if (concept.role === "sound" || concept.role === "letter") {
+      result = `“${dutch}” کی ڈچ آواز آڈیو سے سنیں؛ اردو حرف کی مانوس آواز خود سے نہ لگائیں۔`;
+    } else if (concept.visualId) {
+      result = `“${dutch}” تصویر میں ${urdu} کا نام ہے؛ اسے کسی عمل یا کیفیت کا لفظ نہ سمجھیں۔`;
+    } else {
+      const domain = lessonDomainV4(lesson.id);
+      const domainUrdu = {
+        "number-time": "نمبر یا وقت",
+        routine: "روزمرہ عمل",
+        travel: "راستہ یا سفر",
+        health: "صحت",
+        home: "گھر",
+        "food-shop": "دکان یا کھانے",
+        identity: "تعارف",
+        work: "کام",
+        school: "اسکول",
+        government: "سرکاری کام",
+        message: "پیغام"
+      }[domain] || "روزمرہ گفتگو";
+      result = `“${dutch}” ${domainUrdu} میں “${urdu}” کا مخصوص معنی دیتا ہے؛ اسے دوسرے کام یا چیز کے نام کی جگہ نہ بولیں۔`;
+    }
+  }
+  if (unownedTeachingTokensV4(result, allowedConceptIds).length) {
+    return `“${dutch}” کو “${urdu}” کے مخصوص معنی میں پہچانیں؛ کسی دوسرے شخص، چیز، یا کام کے لیے اسے نہ چنیں۔`;
+  }
+  return result;
+}
+
+const a0StartSpeakingLessonIdsV4 = new Set([
+  "a0-greetings-courtesy",
+  "a0-understanding-help",
+  "a0-ja-nee-goed-niet"
+]);
+
+const a0StartSpeakingTeachingV4 = {
+  hallo: {
+    usage: "دن کے کسی بھی وقت کسی سے بات شروع کرتے ہوئے عام سلام کہیں۔",
+    exampleDutch: "A: Hallo! — B: Hallo!",
+    exampleUrdu: "دو لوگ ملتے ہیں: سلام! — سلام!",
+    pronunciation: "ہا لو",
+    confusion: "“hallo” عام سلام ہے؛ صبح کے خاص سلام کے لیے “goedemorgen” کہیں۔",
+    boundary: "یہ ملاقات شروع کرتا ہے؛ رخصت ہونے کے لیے الوداع والا فقرہ درکار ہے۔",
+    contrasts: ["goedemorgen"]
+  },
+  goedemorgen: {
+    usage: "صبح کسی شخص سے پہلی ملاقات یا گفتگو شروع کرتے وقت یہ سلام کہیں۔",
+    exampleDutch: "08:00 — Goedemorgen!",
+    exampleUrdu: "صبح آٹھ بجے کہیں: صبح بخیر!",
+    pronunciation: "خُودَ مورخَن",
+    confusion: "“goedemorgen” صبح کے لیے ہے؛ دوپہر میں “goedemiddag” کہیں۔",
+    boundary: "یہ سلام صبح کے وقت تک محدود ہے؛ دن کے اگلے حصے میں وقت والا سلام بدلتا ہے۔",
+    contrasts: ["goedemiddag"]
+  },
+  goedemiddag: {
+    usage: "دوپہر میں دکان، اسکول، یا دفتر میں گفتگو شروع کرتے وقت یہ سلام کہیں۔",
+    exampleDutch: "13:00 — Goedemiddag!",
+    exampleUrdu: "دوپہر ایک بجے کہیں: دوپہر بخیر!",
+    pronunciation: "خُودَ مِداخ",
+    confusion: "“goedemiddag” دوپہر کے لیے ہے؛ شام میں “goedenavond” کہیں۔",
+    boundary: "یہ دوپہر کا سلام ہے؛ صبح یا شام کے وقت اسے استعمال نہ کریں۔",
+    contrasts: ["goedenavond"]
+  },
+  goedenavond: {
+    usage: "شام میں کسی سے ملتے یا گفتگو شروع کرتے وقت یہ سلام کہیں۔",
+    exampleDutch: "19:00 — Goedenavond!",
+    exampleUrdu: "شام سات بجے کہیں: شام بخیر!",
+    pronunciation: "خُودَن آوَنٹ",
+    confusion: "“goedenavond” شام کا سلام ہے؛ دوپہر کے لیے “goedemiddag” آتا ہے۔",
+    boundary: "یہ شام میں ملاقات شروع کرتا ہے؛ رخصت ہونے کا مطلب نہیں دیتا۔",
+    contrasts: ["goedemiddag"]
+  },
+  dag: {
+    usage: "جان پہچان والے شخص کو مختصر سلام یا مختصر الوداع کہتے وقت استعمال کریں۔",
+    exampleDutch: "A: Dag! — B: Dag!",
+    exampleUrdu: "دو جان پہچان والے مختصر سلام یا الوداع کہتے ہیں۔",
+    pronunciation: "داخ",
+    confusion: "“dag” سلام اور مختصر الوداع دونوں ہو سکتا ہے؛ “tot ziens” صرف دوبارہ ملنے تک رخصت ہے۔",
+    boundary: "اس کا مطلب موقع کے آغاز یا اختتام سے واضح ہوتا ہے؛ رسمی وقت والا سلام الگ ہے۔",
+    contrasts: ["tot ziens"]
+  },
+  "tot ziens": {
+    usage: "گفتگو ختم کرتے ہوئے اور دوبارہ ملنے کی امید کے ساتھ رخصت ہوں۔",
+    exampleDutch: "Dag. — Tot ziens!",
+    exampleUrdu: "رخصت ہوتے وقت کہیں: خدا حافظ، پھر ملیں گے!",
+    pronunciation: "توت زینس",
+    confusion: "“tot ziens” رخصت ہوتے وقت آتا ہے؛ ملاقات شروع کرنے کے لیے “dag” یا وقت والا سلام کہیں۔",
+    boundary: "یہ بات کے اختتام پر بولا جاتا ہے؛ گفتگو کے پہلے سلام کی جگہ نہیں آتا۔",
+    contrasts: ["dag"]
+  },
+  "dank u wel": {
+    usage: "کسی کی مدد، چیز، یا خدمت ملنے کے بعد ادب سے شکریہ کہیں۔",
+    exampleDutch: "A: Alstublieft. — B: Dank u wel.",
+    exampleUrdu: "ایک شخص چیز دیتا ہے: لیجیے۔ دوسرا کہتا ہے: آپ کا شکریہ۔",
+    pronunciation: "ڈانک یو ویل",
+    confusion: "“dank u wel” شکریہ ہے؛ چیز پیش کرنے یا مؤدبانہ درخواست کے لیے “alstublieft” آتا ہے۔",
+    boundary: "یہ مدد یا چیز ملنے کے بعد جواب ہے؛ کسی سے کام کروانے کی درخواست نہیں۔"
+  },
+  alstublieft: {
+    usage: "کسی چیز کو پیش کرتے ہوئے یا مؤدبانہ درخواست کے ساتھ لیجیے یا برائے مہربانی کہیں۔",
+    exampleDutch: "A: Alstublieft. — B: Dank u wel.",
+    exampleUrdu: "چیز دیتے وقت کہیں: لیجیے۔ جواب میں سنیں: آپ کا شکریہ۔",
+    pronunciation: "اَلس تُ بلیفٹ",
+    confusion: "“alstublieft” چیز پیش یا درخواست نرم کرتا ہے؛ شکریہ ادا کرنے کے لیے “dank u wel” کہیں۔",
+    boundary: "یہ دینے یا مانگنے کے موقع میں آتا ہے؛ صرف شکریہ کے معنی میں استعمال نہیں ہوتا۔"
+  },
+  sorry: {
+    usage: "غلطی، ٹکر، یا کسی کو روکنے پر مختصر معذرت کے طور پر کہیں۔",
+    exampleDutch: "Sorry. Dank u wel.",
+    exampleUrdu: "پہلے معذرت کریں، پھر مدد ملنے پر شکریہ کہیں۔",
+    pronunciation: "سو ری",
+    confusion: "“sorry” اپنی غلطی یا خلل پر معذرت ہے؛ مدد ملنے کے بعد شکریہ الگ کہا جاتا ہے۔",
+    boundary: "یہ معذرت کے لیے ہے؛ سلام، درخواست، یا رضامندی کا جواب نہیں۔"
+  },
+  graag: {
+    usage: "کسی پیشکش کو خوشی سے قبول کرتے یا اپنی پسند مؤدبانہ طور پر بتاتے وقت کہیں۔",
+    exampleDutch: "Graag! — Dank u wel.",
+    exampleUrdu: "پیشکش قبول کریں: خوشی سے! پھر کہیں: آپ کا شکریہ۔",
+    pronunciation: "خراخ",
+    confusion: "“graag” خوشی یا پسند دکھاتا ہے؛ یہ خود شکریہ نہیں، اس کے بعد “dank u wel” کہا جا سکتا ہے۔",
+    boundary: "یہ قبول یا پسند ظاہر کرتا ہے؛ صاف انکار یا معذرت کے لیے نہیں۔"
+  },
+  "hoe gaat het": {
+    usage: "سلام کے بعد سامنے والے کی خیریت پوچھنے کے لیے یہ مکمل سوال کہیں۔",
+    exampleDutch: "Hoe gaat het? — Goed, dank u.",
+    exampleUrdu: "آپ کیسے ہیں؟ — اچھا ہوں، شکریہ۔",
+    pronunciation: "ہو خات ہَت",
+    confusion: "“hoe gaat het” خیریت کا سوال ہے؛ جواب میں “goed, dank u” جیسی حالت بتائیں۔",
+    boundary: "یہ شخص کی خیریت پوچھتا ہے؛ نام، جگہ، یا وقت نہیں پوچھتا۔"
+  },
+  "goed dank u": {
+    usage: "خیریت کے سوال کا مختصر مؤدبانہ جواب دیتے ہوئے اپنی حالت اچھی بتائیں۔",
+    exampleDutch: "Hoe gaat het? — Goed, dank u.",
+    exampleUrdu: "آپ کیسے ہیں؟ — اچھا ہوں، شکریہ۔",
+    pronunciation: "خُوت، ڈانک یو",
+    confusion: "“goed, dank u” خیریت کے سوال کا جواب ہے؛ گفتگو شروع کرنے والا سلام نہیں۔",
+    boundary: "یہ اپنی اچھی حالت بتاتا ہے؛ سوال پوچھنے یا الوداع کہنے کے لیے نہیں۔"
+  },
+  "ik begrijp het niet": {
+    usage: "جب سامنے والے کی بات سمجھ نہ آئے تو فوراً اپنی مشکل واضح کریں۔",
+    exampleDutch: "Ik begrijp het niet. Kunt u herhalen?",
+    exampleUrdu: "مجھے سمجھ نہیں آیا۔ کیا آپ دہرا سکتے ہیں؟",
+    pronunciation: "اِک بَخرَیپ ہَت نیت",
+    confusion: "یہ نہ سمجھنے کی اطلاع ہے؛ دوبارہ سننے کی درخواست اگلے سوال “kunt u herhalen” سے کریں۔",
+    boundary: "یہ صرف سمجھ نہ آنے کی حالت بتاتا ہے؛ خود سے وضاحت یا ترجمہ نہیں مانگتا۔"
+  },
+  "kunt u herhalen": {
+    usage: "بات سنائی دی مگر پوری طرح سمجھ نہ آئے تو مؤدبانہ طور پر دوبارہ کہنے کو کہیں۔",
+    exampleDutch: "Ik begrijp het niet. Kunt u herhalen?",
+    exampleUrdu: "مجھے سمجھ نہیں آیا۔ کیا آپ دہرا سکتے ہیں؟",
+    pronunciation: "کُنٹ یو ہَر ہا لَن",
+    confusion: "“kunt u herhalen” بات دوبارہ مانگتا ہے؛ آہستہ رفتار مانگنے کے لیے “langzamer alstublieft” کہیں۔",
+    boundary: "یہ پوری بات دوبارہ سننے کے لیے ہے؛ صرف آواز کی رفتار کم کرانے کے لیے نہیں۔",
+    contrasts: ["langzamer alstublieft"]
+  },
+  "langzamer alstublieft": {
+    usage: "بات بہت تیز ہو تو مؤدبانہ طور پر آہستہ بولنے کی درخواست کریں۔",
+    exampleDutch: "Langzamer, alstublieft.",
+    exampleUrdu: "آہستہ بولیں، برائے مہربانی۔",
+    pronunciation: "لانگ زامَر، اَلس تُ بلیفٹ",
+    confusion: "“langzamer alstublieft” رفتار کم کراتا ہے؛ وہی بات دوبارہ مانگنے کے لیے “kunt u herhalen” کہیں۔",
+    boundary: "یہ بولنے کی رفتار کے لیے ہے؛ مطلب پوچھنے یا مدد مانگنے کا الگ فقرہ ہے۔",
+    contrasts: ["kunt u herhalen"]
+  },
+  "nog een keer": {
+    usage: "کسی آواز، لفظ، یا مختصر بات کو ایک بار پھر سننے کی ضرورت ہو تو کہیں۔",
+    exampleDutch: "Nog een keer, alstublieft.",
+    exampleUrdu: "ایک بار پھر، برائے مہربانی۔",
+    pronunciation: "نوخ اَن کیر",
+    confusion: "“nog een keer” صرف دوبارہ مانگتا ہے؛ معنی پوچھنے کے لیے “wat betekent dit” کہیں۔",
+    boundary: "یہ تکرار کی درخواست ہے؛ نامعلوم لفظ کی وضاحت خود نہیں مانگتا۔",
+    contrasts: ["wat betekent dit"]
+  },
+  "kunt u mij helpen": {
+    usage: "جب خود اگلا قدم نہ کر سکیں تو مؤدبانہ طور پر سامنے والے سے مدد مانگیں۔",
+    exampleDutch: "Kunt u mij helpen?",
+    exampleUrdu: "کاؤنٹر پر کہیں: کیا آپ میری مدد کر سکتے ہیں؟",
+    pronunciation: "کُنٹ یو مَے ہَیلپَن",
+    confusion: "یہ عام مدد مانگتا ہے؛ صرف لفظ کا معنی پوچھنے کے لیے زیادہ مخصوص سوال استعمال کریں۔",
+    boundary: "یہ عملی مدد کی درخواست ہے؛ اپنی سمجھ یا زبان کی سطح بتانے والا جملہ نہیں۔"
+  },
+  "wat betekent dit": {
+    usage: "کوئی لفظ، نشان، یا مختصر بات نامعلوم ہو تو اس کا معنی پوچھیں۔",
+    exampleDutch: "Wat betekent dit?",
+    exampleUrdu: "نامعلوم لفظ دکھا کر پوچھیں: اس کا کیا مطلب ہے؟",
+    pronunciation: "واٹ بَتے کَنٹ دِت",
+    confusion: "“wat betekent dit” معنی پوچھتا ہے؛ صرف وہی بات دوبارہ سننے کے لیے “nog een keer” کہیں۔",
+    boundary: "یہ معنی یا وضاحت کے لیے ہے؛ آواز کی رفتار یا عام مدد کا سوال نہیں۔",
+    contrasts: ["nog een keer"]
+  },
+  "ik spreek een beetje nederlands": {
+    usage: "شروع ہی میں بتائیں کہ آپ تھوڑی ڈچ بولتے ہیں تاکہ سامنے والا آسان بات کرے۔",
+    exampleDutch: "Ik spreek een beetje Nederlands.",
+    exampleUrdu: "گفتگو کے آغاز میں کہیں: میں تھوڑی ڈچ بولتا یا بولتی ہوں۔",
+    pronunciation: "اِک سپریک اَن بے چَ نے دَر لانٹس",
+    confusion: "یہ زبان کی محدود صلاحیت بتاتا ہے؛ “ik weet het niet” کسی ایک جواب کا معلوم نہ ہونا بتاتا ہے۔",
+    boundary: "یہ مجموعی زبان کی سطح بتاتا ہے؛ کسی خاص سوال کا جواب نہ جاننے کا جملہ نہیں۔",
+    contrasts: ["ik weet het niet"]
+  },
+  "ik weet het niet": {
+    usage: "کسی خاص سوال کا جواب معلوم نہ ہو تو صاف طور پر بتائیں۔",
+    exampleDutch: "Ik weet het niet. Kunt u mij helpen?",
+    exampleUrdu: "مجھے معلوم نہیں۔ کیا آپ میری مدد کر سکتے ہیں؟",
+    pronunciation: "اِک وےٹ ہَت نیت",
+    confusion: "“ik weet het niet” معلومات نہ ہونے کے لیے ہے؛ کم ڈچ بولنے کی عمومی بات الگ ہے۔",
+    boundary: "یہ ایک جواب معلوم نہ ہونے کو بتاتا ہے؛ ہر بات سمجھ نہ آنے کا جملہ نہیں۔",
+    contrasts: ["ik spreek een beetje Nederlands"]
+  },
+  "luister alstublieft": {
+    usage: "کسی کی توجہ آواز یا اہم مختصر ہدایت کی طرف مؤدبانہ طور پر لائیں۔",
+    exampleDutch: "Luister, alstublieft.",
+    exampleUrdu: "توجہ دلائیں: سنیں، برائے مہربانی۔",
+    pronunciation: "لاؤَیس تَر، اَلس تُ بلیفٹ",
+    confusion: "یہ سننے کی ہدایت ہے؛ سامنے والے سے اپنی بات دوبارہ کہلوانے کی درخواست نہیں۔",
+    boundary: "یہ دوسرے شخص کو سننے کے لیے کہتا ہے؛ آپ کے نہ سمجھنے کی اطلاع نہیں۔"
+  },
+  "zeg het nog een keer": {
+    usage: "سامنے والے سے وہی بات ایک بار پھر کہلوانے کے لیے سیدھی مگر مؤدبانہ ہدایت دیں۔",
+    exampleDutch: "Zeg het nog een keer, alstublieft.",
+    exampleUrdu: "اسے ایک بار پھر کہیں، برائے مہربانی۔",
+    pronunciation: "زَخ ہَت نوخ اَن کیر",
+    confusion: "یہ سامنے والے کو دوبارہ کہنے کی ہدایت ہے؛ صرف “nog een keer” اس کا مختصر حصہ ہے۔",
+    boundary: "یہ مکمل ہدایت ہے؛ معنی پوچھنے یا رفتار کم کرانے کے لیے نہیں۔"
+  },
+  "begrijpt u mij": {
+    usage: "اپنی بات کے بعد مؤدبانہ طور پر جانچیں کہ سامنے والے نے آپ کو سمجھا یا نہیں۔",
+    exampleDutch: "Begrijpt u mij? — Ja, ik begrijp het.",
+    exampleUrdu: "کیا آپ مجھے سمجھتے ہیں؟ — ہاں، میں سمجھ گیا یا گئی۔",
+    pronunciation: "بَخرَیپٹ یو مَے",
+    confusion: "یہ سامنے والے کی سمجھ پوچھتا ہے؛ اپنی سمجھ کی تصدیق جواب “ja, ik begrijp het” میں ہوتی ہے۔",
+    boundary: "یہ سوال ہے، اس لیے جواب درکار ہے؛ اپنی حالت کا سیدھا بیان نہیں۔"
+  },
+  "ja ik begrijp het": {
+    usage: "جب بات سمجھ آ جائے تو ہاں کے ساتھ واضح تصدیق کریں۔",
+    exampleDutch: "Begrijpt u mij? — Ja, ik begrijp het.",
+    exampleUrdu: "کیا آپ مجھے سمجھتے ہیں؟ — ہاں، میں سمجھ گیا یا گئی۔",
+    pronunciation: "یا، اِک بَخرَیپ ہَت",
+    confusion: "یہ سمجھ آنے کی تصدیق ہے؛ نہ سمجھ آنے پر اس کے بجائے منفی جملہ کہیں۔",
+    boundary: "یہ مثبت جواب ہے؛ سوال، مدد کی درخواست، یا تکرار کی ہدایت نہیں۔"
+  },
+  ja: {
+    usage: "ہاں یا رضامندی کا مختصر، صاف جواب دیں۔",
+    exampleDutch: "ja — nee",
+    exampleUrdu: "ہاں — نہیں۔",
+    pronunciation: "یا",
+    confusion: "“ja” رضامندی ہے؛ انکار کے لیے “nee” کہیں۔",
+    boundary: "یہ پورے سوال کا مثبت جواب ہے؛ جملے کے اندر نفی بنانے کے لیے نہیں۔",
+    contrasts: ["nee"]
+  },
+  nee: {
+    usage: "نہیں یا انکار کا مختصر، صاف جواب دیں۔",
+    exampleDutch: "ja — nee",
+    exampleUrdu: "ہاں — نہیں۔",
+    pronunciation: "نے",
+    confusion: "“nee” پورے سوال کا صاف انکار ہے؛ رضامندی کے جواب کے لیے “ja” کہیں۔",
+    boundary: "یہ اکیلا منفی جواب ہو سکتا ہے؛ کسی کیفیت کو منفی بنانے والا لفظ الگ ہے۔",
+    contrasts: ["ja"]
+  },
+  goed: {
+    usage: "حالت، معیار، یا خیریت اچھی ہو تو مختصر طور پر اچھا کہیں۔",
+    exampleDutch: "goed — niet goed",
+    exampleUrdu: "اچھا — اچھا نہیں۔",
+    pronunciation: "خُوت",
+    confusion: "“goed” اچھی حالت ہے؛ منفی حالت کے لیے “niet goed” مکمل حصہ کہیں۔",
+    boundary: "یہ مثبت کیفیت بتاتا ہے؛ ہاں والے جواب یا شکریہ کا لفظ نہیں۔",
+    contrasts: ["niet goed"]
+  },
+  niet: {
+    usage: "کسی جملے یا کیفیت کو منفی بنانے کے لیے اسے اسی بات کے اندر رکھیں۔",
+    exampleDutch: "goed — niet goed",
+    exampleUrdu: "اچھا — اچھا نہیں۔",
+    pronunciation: "نیت",
+    confusion: "“niet” جملے یا کیفیت کے اندر نفی ہے؛ اکیلے انکار کے جواب کے لیے “nee” کہیں۔",
+    boundary: "یہ جملے کے اندر کام کرتا ہے؛ پورے سوال کا اکیلا جواب بنانا اس سبق کا ہدف نہیں۔",
+    contrasts: ["nee"]
+  },
+  "niet goed": {
+    usage: "حالت یا نتیجہ اچھا نہ ہو تو یہ مکمل مختصر جواب کہیں۔",
+    exampleDutch: "goed — niet goed",
+    exampleUrdu: "اچھا — اچھا نہیں۔",
+    pronunciation: "نیت خُوت",
+    confusion: "“niet goed” منفی کیفیت ہے؛ صرف “niet” کہنے سے مطلوبہ کیفیت پوری طرح نہیں بتتی۔",
+    boundary: "یہ حالت کی منفی تشخیص ہے؛ صاف انکار یا لاعلمی کا جواب نہیں۔",
+    contrasts: ["goed"]
+  }
+};
+
+function applyA0StartSpeakingTeachingV4(concept) {
+  if (!a0StartSpeakingLessonIdsV4.has(concept.introducedInLessonId)) return;
+  const record = a0StartSpeakingTeachingV4[normalizedTextV4(concept.dutch)];
+  if (!record) return;
+  const contrastConceptIds = (record.contrasts || [])
+    .map((target) => [...conceptByIdV4.values()].find((candidate) => (
+      candidate.introducedInLessonId?.startsWith("a0-")
+      && normalizedTextV4(candidate.dutch) === normalizedTextV4(target)
+    ))?.id)
+    .filter(Boolean);
+  Object.assign(concept, {
+    usageUrdu: record.usage,
+    usageBoundaryUrdu: record.boundary,
+    commonConfusionUrdu: record.confusion,
+    exampleDutch: record.exampleDutch,
+    exampleUrdu: record.exampleUrdu,
+    pronunciationUrdu: record.pronunciation,
+    pronunciationReview: "a0-start-speaking-manual-v1",
+    contrastConceptIds,
+    exampleSource: "a0-start-speaking-authored"
+  });
+  concept.examples = [{
+    dutch: record.exampleDutch,
+    urdu: record.exampleUrdu
+  }];
+  if (concept.visual?.kind === "context") {
+    concept.visual.descriptionUrdu = record.usage;
+  }
+}
+
+for (const concept of conceptByIdV4.values()) {
+  const lesson = chaptersV4
+    .flatMap((chapter) => chapter.lessons)
+    .find((item) => item.id === concept.introducedInLessonId);
+  if (!lesson) continue;
+  improveConceptExampleV4(concept, lesson);
+  const allowedConceptIds = teachingConceptIdsForV4(concept, lesson);
+  concept.usageUrdu = practicalSituationV4(concept, lesson).prompt
+    .replace(/^حال:\s*/u, "");
+  if (concept.visual?.kind === "context") {
+    concept.visual.descriptionUrdu = concept.usageUrdu;
+  }
+  const unsafeGeneratedExample = [
+    "practical-label",
+    "practical-travel-label",
+    "practical-schedule-label",
+    "question-response"
+  ].includes(concept.exampleSource)
+    || /[?]\s*[—–-]\s*ik weet het niet/i.test(concept.exampleDutch)
+    || /[?]\s*[—–-]\s*ja[.!]?$/i.test(concept.exampleDutch)
+    || (
+      normalizedTextV4(concept.dutch) === "werk"
+      && /\bik\s+werk\b/i.test(concept.exampleDutch)
+      && !/(?:کرتا|کرتی|کرتے|ہوں|ہو|ہے|ہیں|رہا|رہی|رہے)/u.test(concept.urdu)
+    )
+    || (/^\s*[^:：]+\s*[:：]\s*1\s*$/u.test(concept.exampleDutch)
+      && !/^(nul|een|twee|drie|vier|vijf|zes|zeven|acht|negen|tien|elf|twaalf|dertien|veertien|vijftien|zestien|zeventien|achttien|negentien|twintig|dertig|veertig|vijftig|zestig|zeventig|tachtig|negentig|honderd)\s*[:：]/i.test(concept.exampleDutch));
+  if (
+    unsafeGeneratedExample
+    || unownedTeachingTokensV4(concept.exampleDutch, allowedConceptIds).length
+  ) {
+    const safeExample = safeTargetOnlyExampleV4(concept, lesson, allowedConceptIds);
+    concept.exampleDutch = safeExample.exampleDutch;
+    concept.exampleUrdu = safeExample.exampleUrdu;
+    concept.exampleSource = safeExample.source;
+  }
+  concept.commonConfusionUrdu = preciseCommonConfusionV4(
+    concept,
+    lesson,
+    allowedConceptIds
+  );
+  concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+  applyA0StartSpeakingTeachingV4(concept);
+}
+
+function a0ConceptTeachingPartnerV4(concept, lesson) {
+  const lessonConceptOrder = lessonConceptIdsV4.get(lesson.id) || [];
+  const allowedIds = new Set(teachingConceptIdsForV4(concept, lesson));
+  const currentIndex = lessonConceptOrder.indexOf(concept.id);
+  return lessonConceptOrder
+    .map((conceptId, index) => ({
+      candidate: conceptByIdV4.get(conceptId),
+      index
+    }))
+    .filter(({ candidate }) => (
+      candidate
+      && candidate.id !== concept.id
+      && allowedIds.has(candidate.id)
+    ))
+    .sort((left, right) => {
+      const leftEarlier = left.index < currentIndex ? 0 : 1;
+      const rightEarlier = right.index < currentIndex ? 0 : 1;
+      const leftRole = left.candidate.role === concept.role ? 0 : 1;
+      const rightRole = right.candidate.role === concept.role ? 0 : 1;
+      return leftEarlier - rightEarlier
+        || leftRole - rightRole
+        || Math.abs(left.index - currentIndex) - Math.abs(right.index - currentIndex);
+    })[0]?.candidate || null;
+}
+
+function a0ConceptUseGuidanceV4(concept, lesson, partner) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const domain = lessonDomainV4(lesson.id);
+  const isQuestion = looksLikeDutchQuestionV4(concept.dutch);
+  const role = String(concept.role || "").toLowerCase();
+  let firstSentence;
+  if (role === "sound" || role === "letter" || /^[a-z]$/i.test(dutch)) {
+    firstSentence = `لفظ سننے یا پڑھنے سے پہلے “${dutch}” کی شکل اور ڈچ آواز کو “${urdu}” کے طور پر پہچانیں۔`;
+  } else if (isQuestion) {
+    firstSentence = `جب ${urdu} پوچھنا مقصود ہو تو پورا سوال “${dutch}” استعمال کریں۔`;
+  } else if (role === "phrase" || dutchWordsV4(dutch).length > 1) {
+    firstSentence = `روزمرہ صورت میں ${urdu} کہنا ہو تو تیار بات “${dutch}” پوری بولیں۔`;
+  } else {
+    const contexts = {
+      sound: "آواز یا تصویر والے کارڈ",
+      identity: "تعارف، شخص، یا ذاتی معلومات",
+      "number-time": "نمبر، دن، وقت، یا ملاقات",
+      home: "گھر، چیز کی جگہ، یا فوری ضرورت",
+      "food-shop": "کھانے، دکان، قیمت، یا ادائیگی",
+      travel: "راستے، نشان، ٹکٹ، یا سفر",
+      health: "علامت، جگہ، دوا، یا فوری مدد",
+      school: "بچے یا اسکول کے پیغام",
+      work: "کام کے وقت یا اطلاع",
+      routine: "روزمرہ عمل یا منصوبے",
+      everyday: "روزمرہ گفتگو"
+    };
+    firstSentence = `${contexts[domain] || contexts.everyday} میں “${dutch}” سے ${urdu} مراد لیں۔`;
+  }
+  if (!partner) return firstSentence;
+  return `${firstSentence} اسی حصے میں “${partner.dutch}” کا مطلب ${cleanTerminalPunctuationV4(
+    partner.urdu
+  )} ہے؛ دونوں کو آواز، تصویر، یا کام دیکھ کر الگ چنیں۔`;
+}
+
+function a0ConceptBoundaryV4(concept, lesson, partner) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const role = String(concept.role || "").toLowerCase();
+  const targetKind = role === "sound" || role === "letter"
+    ? "حرف یا آواز"
+    : looksLikeDutchQuestionV4(concept.dutch)
+      ? "سوال"
+      : role === "phrase" || dutchWordsV4(dutch).length > 1
+        ? "مکمل تیار بات"
+        : "لفظ";
+  if (!partner) {
+    return `“${dutch}” کو صرف ${urdu} والے ${targetKind} کے طور پر استعمال کریں؛ مختلف مطلب یا کام کے لیے نیا ہدف دیکھیں۔`;
+  }
+  return `“${dutch}” ${urdu} والا ${targetKind} ہے؛ “${partner.dutch}” کا مطلب ${cleanTerminalPunctuationV4(
+    partner.urdu
+  )} ہے، اس لیے دونوں کا موقع ایک نہیں۔`;
+}
+
+function a0ConceptConfusionGuidanceV4(concept, lesson, partner) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const existing = cleanTerminalPunctuationV4(concept.commonConfusionUrdu);
+  const generic = (
+    /تصویر\s+میں.+کا\s+نام\s+ہے؛\s*اسے\s+کسی\s+عمل\s+یا\s+کیفیت/u.test(existing)
+    || /مخصوص\s+معنی\s+دیتا\s+ہے؛\s*اسے\s+دوسرے\s+کام\s+یا\s+چیز/u.test(existing)
+    || /عام\s+غلطی\s+یہ\s+ہے\s+کہ.+موقع\s+دیکھے\s+بغیر/u.test(existing)
+  );
+  const base = generic || !existing
+    ? `“${dutch}” کو ${urdu} کے لیے پہچانیں؛ صرف ملتی جلتی تصویر یا آواز دیکھ کر جواب نہ دیں`
+    : existing;
+  if (!partner) return `${base}۔`;
+  return `${base}۔ ساتھ پڑھا ہوا “${partner.dutch}” ${cleanTerminalPunctuationV4(
+    partner.urdu
+  )} کے لیے ہے؛ مطلوبہ معنی بدلتے ہی جواب بھی بدلتا ہے۔`;
+}
+
+for (const concept of conceptByIdV4.values()) {
+  if (!concept.introducedInLessonId?.startsWith("a0-")) continue;
+  if (a0StartSpeakingLessonIdsV4.has(concept.introducedInLessonId)) continue;
+  const lesson = chaptersV4
+    .flatMap((chapter) => chapter.lessons)
+    .find((item) => item.id === concept.introducedInLessonId);
+  if (!lesson) continue;
+  const partner = a0ConceptTeachingPartnerV4(concept, lesson);
+  concept.usageUrdu = a0ConceptUseGuidanceV4(concept, lesson, partner);
+  concept.usageBoundaryUrdu = a0ConceptBoundaryV4(concept, lesson, partner);
+  concept.commonConfusionUrdu = a0ConceptConfusionGuidanceV4(concept, lesson, partner);
+  if (normalizedTextV4(concept.dutch) === "zijn" && lesson.id === "a0-possessive") {
+    concept.exampleDutch = "mijn — zijn";
+    concept.exampleUrdu = "اپنی چیز کے لیے “mijn”، مرد کی چیز کے لیے “zijn”۔";
+    concept.exampleSource = "a0-possessive-owned-contrast";
+  }
+  concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
+  if (concept.visual?.kind === "context") {
+    concept.visual.descriptionUrdu = concept.usageUrdu;
+  }
+}
+
+const a0ReviewedTeachingOverridesV4 = {
+  "a0-ik-jij-u|ik": {
+    exampleDutch: "ik — jij",
+    exampleUrdu: "اپنے لیے “ik”، سامنے والے جان پہچان کے شخص کے لیے “jij”۔"
+  },
+  "a0-ik-jij-u|jij": {
+    exampleDutch: "ik — jij",
+    exampleUrdu: "اپنے لیے “ik”، سامنے والے جان پہچان کے شخص کے لیے “jij”۔"
+  },
+  "a0-ik-jij-u|u": {
+    exampleDutch: "jij — u",
+    exampleUrdu: "دوست کے لیے “jij”، ڈاکٹر یا دفتر میں ادب سے “u”۔"
+  },
+  "a0-possessive|zijn boek": {
+    urdu: "اس مرد کی کتاب"
+  },
+  "a0-possessive|haar pen": {
+    urdu: "اس عورت کا قلم"
+  },
+  "a0-numbers-0-10|twee boeken": {
+    exampleDutch: "twee boeken: 2",
+    exampleUrdu: "فہرست میں دو کتابیں: 2۔"
+  },
+  "a0-numbers-0-10|drie kinderen": {
+    exampleDutch: "drie kinderen: 3",
+    exampleUrdu: "کلاس کی فہرست میں تین بچے: 3۔"
+  },
+  "a0-numbers-0-10|bus acht": {
+    exampleDutch: "bus acht: bus 8",
+    exampleUrdu: "بس کے نشان پر نمبر آٹھ: بس 8۔"
+  },
+  "a0-numbers-0-10|vier euro": {
+    exampleDutch: "vier euro: €4",
+    exampleUrdu: "قیمت چار یورو: €4۔"
+  },
+  "a0-time-days|ik kom morgen": {
+    exampleDutch: "morgen: ik kom",
+    exampleUrdu: "کل: میں آتا یا آتی ہوں۔"
+  },
+  "a0-date-appointment|te vroeg": {
+    urdu: "وقت سے پہلے"
+  },
+  "a0-food-drink|melk": {
+    exampleDutch: "melk — water",
+    exampleUrdu: "دودھ کے لیے “melk”، پانی کے لیے “water”۔"
+  },
+  "a0-food-drink|koffie": {
+    exampleDutch: "koffie — thee",
+    exampleUrdu: "کافی کے لیے “koffie”، چائے کے لیے “thee”۔"
+  },
+  "a0-food-drink|thee": {
+    exampleDutch: "koffie — thee",
+    exampleUrdu: "کافی کے لیے “koffie”، چائے کے لیے “thee”۔"
+  },
+  "a0-food-drink|fruit": {
+    exampleDutch: "fruit — groente",
+    exampleUrdu: "پھل کے لیے “fruit”، سبزیوں کے لیے “groente”۔"
+  },
+  "a0-food-drink|groente": {
+    exampleDutch: "fruit — groente",
+    exampleUrdu: "پھل کے لیے “fruit”، سبزیوں کے لیے “groente”۔"
+  },
+  "a0-shopping-payment|winkel": {
+    exampleDutch: "winkel — supermarkt",
+    exampleUrdu: "عام دکان “winkel”، بڑی خوراک کی دکان “supermarkt”۔"
+  },
+  "a0-shopping-payment|supermarkt": {
+    exampleDutch: "winkel — supermarkt",
+    exampleUrdu: "عام دکان “winkel”، بڑی خوراک کی دکان “supermarkt”۔"
+  },
+  "a0-shopping-payment|kassa": {
+    exampleDutch: "prijs — kassa",
+    exampleUrdu: "پہلے “prijs” یعنی قیمت دیکھیں، پھر ادائیگی کے لیے “kassa” پر جائیں۔"
+  },
+  "a0-shopping-payment|goedkoop": {
+    exampleDutch: "goedkoop — duur",
+    exampleUrdu: "سستی چیز “goedkoop”، مہنگی چیز “duur”۔"
+  },
+  "a0-shopping-payment|duur": {
+    exampleDutch: "goedkoop — duur",
+    exampleUrdu: "سستی چیز “goedkoop”، مہنگی چیز “duur”۔"
+  },
+  "a0-child-school|klas": {
+    exampleDutch: "klas: 2",
+    exampleUrdu: "اسکول فارم پر جماعت: 2۔"
+  },
+  "a0-child-school|schooltijd": {
+    exampleDutch: "schooltijd: 08:30",
+    exampleUrdu: "اسکول شروع ہونے کا وقت: 08:30۔"
+  },
+  "a0-child-school|ik breng mijn kind naar school": {
+    urdu: "میں اپنے بچے کو اسکول چھوڑتا / چھوڑتی ہوں",
+    exampleDutch: "vandaag: ik breng mijn kind naar school",
+    exampleUrdu: "آج: میں اپنے بچے کو اسکول چھوڑتا یا چھوڑتی ہوں۔"
+  },
+  "a0-child-school|ik haal mijn kind om drie uur op": {
+    urdu: "میں اپنے بچے کو تین بجے لینے آتا / آتی ہوں",
+    exampleDutch: "vandaag: ik haal mijn kind om drie uur op",
+    exampleUrdu: "آج: میں اپنے بچے کو تین بجے لینے آتا یا آتی ہوں۔"
+  },
+  "a0-work-basics|pauze": {
+    exampleDutch: "pauze: 12:30",
+    exampleUrdu: "کام کے شیڈول میں وقفہ: 12:30۔"
+  },
+  "a0-weather-clothing-safety|waar is de uitgang": {
+    urdu: "باہر جانے کا راستہ کہاں ہے؟"
+  }
+};
+
+for (const concept of conceptByIdV4.values()) {
+  const lessonId = concept.introducedInLessonId;
+  if (!lessonId?.startsWith("a0-")) continue;
+  const override = a0ReviewedTeachingOverridesV4[
+    `${lessonId}|${normalizedTextV4(concept.dutch)}`
+  ];
+  if (!override) continue;
+  if (override.urdu) {
+    concept.urdu = override.urdu;
+    concept.translationAliasesUrdu = uniqueV4([
+      override.urdu,
+      ...(concept.translationAliasesUrdu || [])
+    ]);
+    const lesson = chaptersV4
+      .flatMap((chapter) => chapter.lessons)
+      .find((item) => item.id === lessonId);
+    const partner = lesson ? a0ConceptTeachingPartnerV4(concept, lesson) : null;
+    if (lesson) {
+      concept.usageUrdu = a0ConceptUseGuidanceV4(concept, lesson, partner);
+      concept.usageBoundaryUrdu = a0ConceptBoundaryV4(concept, lesson, partner);
+      concept.commonConfusionUrdu = a0ConceptConfusionGuidanceV4(concept, lesson, partner);
+    }
+  }
+  if (override.exampleDutch) concept.exampleDutch = override.exampleDutch;
+  if (override.exampleUrdu) concept.exampleUrdu = override.exampleUrdu;
+  if (override.pronunciationUrdu) concept.pronunciationUrdu = override.pronunciationUrdu;
+  concept.examples = [{
+    dutch: concept.exampleDutch,
+    urdu: concept.exampleUrdu
+  }];
+  concept.exampleSource = "a0-manual-review";
+  if (concept.visual?.kind === "context") {
+    concept.visual.descriptionUrdu = concept.usageUrdu;
+  }
+}
+
+function registerConceptSkillV4(concept) {
+  if (skillIdByConceptIdV4.has(concept.id)) return skillIdByConceptIdV4.get(concept.id);
+  const id = `skill:${concept.id.slice("concept:".length)}`;
+  const introducedLesson = chaptersV4
+    .flatMap((chapter) => chapter.lessons)
+    .find((lesson) => lesson.id === concept.introducedInLessonId);
+  const chapterId = introducedLesson ? introducedLesson.id.slice(0, 2) : concept.chapterIds[0];
+  const skill = {
+    id,
+    conceptId: concept.id,
+    conceptIds: [concept.id],
+    patternId: null,
+    targetId: concept.id,
+    chapterId,
+    introducedInLessonId: concept.introducedInLessonId,
+    labelUrdu: `${concept.dutch} سمجھنا اور استعمال کرنا`,
+    canDoUrdu: `سیکھنے والا “${concept.dutch}” کا مطلب سمجھ کر مناسب موقع میں استعمال کر سکتا ہے۔`,
+    evidenceTypes: ["meaning", "listening", "reading", "speaking-support", "practical-use"],
+    masteryStates: ["introduced", "practiced", "secure"]
+  };
+  skillByIdV4.set(id, skill);
+  skillIdByConceptIdV4.set(concept.id, id);
+  return id;
+}
+
+for (const concept of conceptByIdV4.values()) registerConceptSkillV4(concept);
+
+const a0AuthoredPatternSpecsV4 = {
+  "a0-ben-bent-is": {
+    modelDutch: "ik ben Ali",
+    titleUrdu: "شخص کے ساتھ ہوں، ہیں، یا ہے کی شکل",
+    highlight: "ben",
+    explanationUrdu: "پہلے دیکھیں بات کس شخص کے بارے میں ہے۔ اپنے لیے ik ben اور جان پہچان والے سامنے کے شخص کے لیے jij bent کہیں۔",
+    contrastUrdu: "ik کے ساتھ ben آتا ہے، مگر jij کے ساتھ bent؛ پہلے شخص دیکھیں، پھر درست جوڑا بولیں۔",
+    commonMistakeUrdu: "ik bent یا jij ben نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ben اور jij bent پوری یاد رکھیں۔"
+  },
+  "a0-hebben-1": {
+    modelDutch: "ik heb een boek",
+    titleUrdu: "کس کے پاس کیا ہے",
+    highlight: "heb",
+    explanationUrdu: "حقیقی چیز سے شروع کریں: ik heb een boek یعنی میرے پاس ایک کتاب ہے۔ سامنے والا بدلنے پر jij hebt اور دوسرے شخص کے لیے hij heeft یا zij heeft آتا ہے۔",
+    contrastUrdu: "ik heb اپنے پاس ہونے کی بات ہے؛ hij heeft کسی دوسرے مرد کے پاس ہونے کی بات ہے۔",
+    commonMistakeUrdu: "ik heeft یا hij heb نہ کہیں۔ پہلے شخص دیکھیں، پھر heb، hebt، یا heeft چنیں۔"
+  },
+  "a0-gaan-komen": {
+    modelDutch: "ik ga naar huis",
+    titleUrdu: "جانا اور آنا الگ رکھیں",
+    highlight: "ga",
+    explanationUrdu: "جگہ کی طرف اپنی روانگی کے لیے ik ga کہیں۔ ایک دوسرے مرد کے جانے کی بات میں hij gaat آتا ہے۔",
+    contrastUrdu: "اپنے لیے ik ga، دوسرے مرد کے لیے hij gaat؛ شخص بدلنے سے آخر میں چھوٹی تبدیلی آتی ہے۔",
+    commonMistakeUrdu: "ik gaat یا hij ga نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ga اور hij gaat پوری یاد رکھیں۔"
+  },
+  "a0-geen": {
+    modelDutch: "ik heb geen boek",
+    titleUrdu: "کوئی چیز پاس نہ ہونا",
+    highlight: "geen",
+    explanationUrdu: "جب کوئی شخص یا چیز موجود نہ ہو تو اس کے نام سے پہلے geen رکھیں: ik heb geen boek یعنی میرے پاس کتاب نہیں ہے۔",
+    contrastUrdu: "geen چیز کے نام سے پہلے آتا ہے، جیسے geen boek؛ کیفیت کے ساتھ پہلے سیکھا ہوا niet آتا ہے، جیسے niet goed۔",
+    commonMistakeUrdu: "ik heb niet boek نہ کہیں۔ کتاب نہ ہونے کے لیے ik heb geen boek کہیں۔"
+  },
+  "a0-spelling-personal-details": {
+    modelDutch: "mijn naam is Sara",
+    titleUrdu: "اپنا نام مکمل طور پر بتانا",
+    highlight: "mijn naam is",
+    explanationUrdu: "رجسٹریشن یا فون پر اپنا نام بتانے کے لیے mijn naam is کے بعد نام کہیں: mijn naam is Sara۔",
+    contrastUrdu: "voornaam پہلے نام کا خانہ ہے اور achternaam خاندانی نام کا؛ بولتے وقت مکمل بات mijn naam is … سے شروع کریں۔",
+    commonMistakeUrdu: "ik naam یا mijn naam اکیلا نہ چھوڑیں۔ مکمل بات mijn naam is … کہیں۔"
+  },
+  "a0-address-phone": {
+    modelDutch: "wat is uw adres?",
+    titleUrdu: "پتہ پوچھنا اور مکمل جواب دینا",
+    highlight: "uw adres",
+    explanationUrdu: "کاؤنٹر پر پتہ پوچھنے کے لیے wat is uw adres? کہیں۔ جواب میں مکمل سڑک اور گھر نمبر دیں: ik woon op Marktstraat 12۔",
+    contrastUrdu: "adres پورا پتہ ہے؛ postcode صرف پوسٹ کوڈ اور telefoonnummer صرف فون نمبر ہے۔",
+    commonMistakeUrdu: "صرف adres? کہنے کے بجائے مکمل سوال wat is uw adres? کہیں، پھر جواب میں سڑک اور گھر نمبر نہ چھوڑیں۔"
+  },
+  "a0-naar-met": {
+    modelDutch: "ik ga naar huis",
+    titleUrdu: "منزل یا ساتھ موجود شخص بتانا",
+    highlight: "naar",
+    explanationUrdu: "کسی منزل کی طرف جانے کے لیے naar استعمال کریں: ik ga naar huis یعنی میں گھر جاتا یا جاتی ہوں۔",
+    contrastUrdu: "naar منزل بتاتا ہے، جیسے naar huis؛ met ساتھ موجود شخص بتاتا ہے، جیسے met mijn kind۔",
+    commonMistakeUrdu: "ساتھ کے لیے naar اور منزل کے لیے met نہ کہیں۔ منزل کے ساتھ naar، شخص کے ساتھ met رکھیں۔"
+  }
+};
+
+function makePatternV4(lesson, chapterId, conceptIds) {
+  const explanation = lesson.questions.find((question) => question.type === "uitleg");
+  const authoredSpec = a0AuthoredPatternSpecsV4[lesson.id] || null;
+  if (!explanation && !authoredSpec) return null;
+  const firstRunCap = chapterId === "a0" ? 3 : chapterId === "a1" ? 5 : 4;
+  const firstRunConceptIds = conceptIds.slice(0, firstRunCap);
+  const defaultModelConcept = firstRunConceptIds
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .find((concept) => isCompletePatternModelV4(concept?.dutch));
+  const authoredModelConcept = authoredSpec
+    ? firstRunConceptIds
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find((concept) => (
+        normalizedTextV4(concept?.dutch) === normalizedTextV4(authoredSpec.modelDutch)
+      ))
+    : null;
+  const modelConcept = authoredModelConcept || (lesson.id === "a0-understanding-help"
+    ? firstRunConceptIds
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find((concept) => /^kunt u\b/i.test(String(concept?.dutch || "")))
+    : defaultModelConcept);
+  // A pattern is a complete, reusable sentence or communication function.
+  // Standalone words and sounds still receive full teaching cards, but must
+  // not be dressed up as grammar by borrowing a later phrase.
+  if (!modelConcept) return null;
+  const points = (explanation?.points || []).map(String).filter(Boolean);
+  const modelDutch = modelConcept.dutch;
+  const modelUrdu = canonicalUrduForDutchV4(
+    lesson,
+    modelConcept.dutch,
+    modelConcept.urdu
+  );
+  const id = `pattern:${lesson.id}`;
+  const rawMistake = String(explanation?.note || points[points.length - 1] || "");
+  const genericMistake = /(?:پہلے\s+سنیں|پورے\s+فقروں\s+کی\s+طرح\s+یاد\s+کریں|دوبارہ\s+دیکھیں|مثال\s+دیکھ)/u.test(rawMistake);
+  const pattern = {
+    id,
+    semanticKey: lesson.id,
+    lessonId: lesson.id,
+    chapterId,
+    modelConceptId: modelConcept.id,
+    conceptIds: [modelConcept.id],
+    titleUrdu: String(explanation?.prompt || "اس سبق کا آسان اصول"),
+    modelDutch,
+    modelUrdu,
+    highlight: dutchWordsV4(modelDutch).slice(0, 2).join(" ") || modelDutch,
+    explanationUrdu: points.join(" ") || String(explanation?.note || "مثال دیکھ کر اصول سمجھیں۔"),
+    contrastUrdu: points[1] || points[0] || "مثال میں بدلنے والے حصے کو غور سے دیکھیں۔",
+    commonMistakeUrdu: genericMistake
+      ? String(modelConcept.commonConfusionUrdu || `“${modelDutch}” کو مکمل بات کی طرح استعمال کریں۔`)
+      : (rawMistake || String(modelConcept.commonConfusionUrdu || `“${modelDutch}” کو مکمل بات کی طرح استعمال کریں۔`)),
+    audioText: modelConcept.audioText || modelConcept.dutch
+  };
+  if (lesson.id === "a0-understanding-help") {
+    Object.assign(pattern, {
+      titleUrdu: "ادب سے Kunt u …? کہنا",
+      modelDutch: "Kunt u herhalen?",
+      modelUrdu: "کیا آپ دہرا سکتے ہیں؟",
+      highlight: "Kunt u …?",
+      explanationUrdu: "Kunt u …? سے مؤدبانہ سوال یا درخواست شروع ہوتی ہے؛ اس کے بعد مطلوبہ کام آتا ہے۔",
+      contrastUrdu: "Langzamer, alstublieft رفتار کم کرنے کی مختصر درخواست ہے؛ Kunt u herhalen? پوری بات دوبارہ مانگتا ہے۔",
+      commonMistakeUrdu: "Kunt herhalen? میں u غائب ہے۔ درست مؤدبانہ سوال Kunt u herhalen? ہے۔",
+      audioText: "Kunt u herhalen?"
+    });
+  }
+  if (authoredSpec) {
+    Object.assign(pattern, {
+      ...authoredSpec,
+      modelUrdu,
+      audioText: authoredSpec.modelDutch
+    });
+  }
+  const skillId = `skill:${id.slice("pattern:".length)}`;
+  pattern.skillId = skillId;
+  skillByIdV4.set(skillId, {
+    id: skillId,
+    conceptId: null,
+    conceptIds: [modelConcept.id],
+    patternId: id,
+    targetId: id,
+    chapterId,
+    introducedInLessonId: lesson.id,
+    labelUrdu: `${pattern.titleUrdu} سمجھنا اور استعمال کرنا`,
+    canDoUrdu: `سیکھنے والا “${pattern.titleUrdu}” کا اصول مثال میں پہچان کر استعمال کر سکتا ہے۔`,
+    evidenceTypes: ["meaning", "reading", "practical-use"],
+    masteryStates: ["introduced", "practiced", "secure"]
+  });
+  patternsV4.push(pattern);
+  return pattern;
+}
+
+function questionTargetTextsV4(question) {
+  const texts = [
+    question.prompt,
+    question.answer,
+    question.speak,
+    ...(question.tiles || []),
+    ...((question.document?.rows || []).map((row) => row.value)),
+    ...(question.points || [])
+  ];
+  return uniqueV4(texts.map(String).filter(Boolean));
+}
+
+function matchQuestionConceptIdsV4(question, lessonId, fallbackIds) {
+  const authoredId = question.conceptId
+    ? authoredConceptIdsV4.get(lessonId)?.get(String(question.conceptId))
+    : null;
+  if (authoredId) return [authoredId];
+
+  const texts = questionTargetTextsV4(question);
+  const normalizedTexts = texts.map(normalizedTextV4).filter(Boolean);
+  const exact = [];
+  const partial = [];
+
+  for (const conceptId of fallbackIds) {
+    const concept = conceptByIdV4.get(conceptId);
+    if (!concept) continue;
+    const dutch = normalizedTextV4(concept.dutch);
+    const urdu = normalizedTextV4(concept.urdu);
+    if (normalizedTexts.includes(dutch) || normalizedTexts.includes(urdu)) {
+      exact.push(conceptId);
+      continue;
+    }
+    if (dutchWordsV4(concept.dutch).length > 1
+      && normalizedTexts.some((text) => text.includes(dutch))) {
+      partial.push(conceptId);
+    }
+  }
+
+  if (exact.length) return uniqueV4(exact).slice(0, 3);
+  if (partial.length) return uniqueV4(partial).slice(0, 3);
+  return fallbackIds.length ? [fallbackIds[0]] : [];
+}
+
+function defaultExercisePhaseV4(question) {
+  if (question.type === "uitleg") return "learn";
+  if (["meaning", "image-choice", "listen-choice", "document-choice"].includes(question.type)) return "understand";
+  if (["reverse", "fill-gap", "build", "sequence", "speak-repeat"].includes(question.type)) return "guided-practice";
+  if (question.type === "situation") return "use";
+  if (question.type === "short-input") return "independent-check";
+  return "guided-practice";
+}
+
+function instructionForQuestionV4(question, concepts) {
+  const target = concepts[0];
+  if (question.type === "uitleg") {
+    return `“${question.prompt}” کی مثال اور آسان وضاحت پڑھیں؛ یہاں اندازہ لگانے یا نمبر لینے کی ضرورت نہیں۔`;
+  }
+  if (question.type === "meaning") {
+    return `Nederlands “${question.prompt}” کا درست اردو مطلب منتخب کریں۔`;
+  }
+  if (question.type === "reverse") {
+    return `اردو “${question.prompt}” کے لیے درست Nederlands منتخب کریں۔`;
+  }
+  if (question.type === "image-choice") {
+    return `تصویر میں دکھائی گئی ${target?.urdu || "چیز یا حالت"} کے لیے درست Nederlands منتخب کریں۔`;
+  }
+  if (question.type === "listen-choice") {
+    return `آواز میں ${target?.urdu || "سبق کی بات"} سے متعلق لفظ یا فقرہ سنیں اور درست جواب منتخب کریں۔`;
+  }
+  if (question.type === "fill-gap") {
+    return `جملہ “${question.prompt}” مکمل کرنے والا درست Nederlands لفظ منتخب کریں۔`;
+  }
+  if (question.type === "situation") {
+    return `${question.prompt} اس خاص موقع کے لیے مناسب Nederlands جواب منتخب کریں۔`;
+  }
+  if (question.type === "build") {
+    return `اردو “${question.prompt}” کے لیے دیے گئے الفاظ سے مکمل Nederlands جملہ بنائیں۔`;
+  }
+  if (question.type === "document-choice") {
+    return `“${question.document?.title || "دستاویز"}” میں اہم Nederlands معلومات پڑھ کر درست اردو مطلب منتخب کریں۔`;
+  }
+  if (question.type === "sequence") {
+    return `“${question.prompt}” کے قدم پہلے سے آخری تک درست ترتیب میں رکھیں۔`;
+  }
+  if (question.type === "speak-repeat") {
+    return `“${question.speak || question.answer}” آہستہ سنیں، پھر بلند آواز میں دہرائیں؛ یہ مشق اسکور نہیں ہوگی۔`;
+  }
+  if (question.type === "short-input") {
+    return `اردو “${question.prompt}” کا مختصر Nederlands جواب لکھیں، یا ضرورت پر لفظوں کا بینک استعمال کریں۔`;
+  }
+  return `${question.prompt || "سوال"} غور سے پڑھیں اور اسی سیکھی ہوئی بات کے مطابق جواب دیں۔`;
+}
+
+function hintForQuestionV4(question, concepts) {
+  if (question.hint) return String(question.hint);
+  if (question.note) return String(question.note);
+  const concept = concepts[0];
+  if (question.type === "uitleg") return "مثال پہلے پڑھیں، پھر آواز سن کر اسے دہرائیں۔";
+  if (question.type === "listen-choice") return "آواز دوبارہ اور آہستہ سن سکتے ہیں۔";
+  if (question.type === "image-choice") return "تصویر کی اصل چیز یا عمل پہچانیں، پھر Nederlands لفظ دیکھیں۔";
+  if (question.type === "fill-gap") return `پورا جملہ ذہن میں بولیں؛ سبق کا ہدف ${concept?.dutch || "یاد کیا ہوا لفظ"} ہے۔`;
+  if (question.type === "build" || question.type === "sequence") {
+    return "پہلے کام کرنے والا شخص، پھر فعل، پھر باقی بات رکھیں۔";
+  }
+  if (question.type === "speak-repeat") return "آہستہ آواز استعمال کریں اور لفظ بہ لفظ دہرائیں۔";
+  if (question.type === "short-input") return "مشکل ہو تو لفظوں کا بینک کھولیں؛ آزاد ٹائپنگ لازمی نہیں۔";
+  return `معنی یاد کریں: ${concept?.dutch || question.answer} = ${concept?.urdu || question.prompt}۔`;
+}
+
+function semanticExerciseKeyV4(question, scopeId) {
+  const source = String(
+    question.semanticKey
+    || question.id
+    || [
+      scopeId,
+      question.generatedConceptId,
+      question.missionStage,
+      question.variantSlot,
+      question.type
+    ].filter(Boolean).join(":")
+  )
+    .replace(/^synthetic:/, "")
+    .replace(/^concept:/, "")
+    .replace(/[^A-Za-z0-9:_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return source || `${semanticSlugV4(question.type, "question")}:item`;
+}
+
+function semanticExerciseIdV4(lessonId, question, scopeId = lessonId) {
+  const semanticKey = semanticExerciseKeyV4(question, scopeId);
+  return `${lessonId}:exercise:${semanticSlugV4(question.type, "question")}:${semanticKey}`;
+}
+
+function conceptForOptionV4(value, conceptIds) {
+  const normalizedValue = normalizedTextV4(value);
+  return uniqueV4(conceptIds)
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .find((concept) => (
+      normalizedTextV4(concept?.dutch) === normalizedValue
+      || normalizedTextV4(concept?.urdu) === normalizedValue
+      || (concept?.translationAliasesUrdu || [])
+        .some((alias) => normalizedTextV4(alias) === normalizedValue)
+    )) || null;
+}
+
+function optionFeedbackUrduV4(question, targetConcept, availableConceptIds) {
+  if (!Array.isArray(question.options) || !question.options.length || !targetConcept) {
+    return {};
+  }
+  const correct = normalizedTextV4(question.answer);
+  const answerIsDutch = normalizedTextV4(targetConcept.dutch) === correct;
+  const targetMeaning = cleanTerminalPunctuationV4(targetConcept.urdu);
+  const feedback = {};
+  for (const option of question.options) {
+    if (normalizedTextV4(option) === correct) continue;
+    const distractor = conceptForOptionV4(option, availableConceptIds);
+    if (distractor) {
+      feedback[String(option)] = answerIsDutch
+        ? `“${option}” کا مطلب “${cleanTerminalPunctuationV4(distractor.urdu)}” ہے، لیکن یہاں “${targetMeaning}” کہنا ہے؛ اس لیے “${targetConcept.dutch}” درست ہے۔`
+        : `“${option}” کا ڈچ ہدف “${distractor.dutch}” ہے، لیکن آپ نے “${targetConcept.dutch}” سنا یا پڑھا؛ اس کا مطلب “${targetMeaning}” ہے۔`;
+    } else {
+      feedback[String(option)] = answerIsDutch
+        ? `“${option}” اس مخصوص معنی “${targetMeaning}” کے لیے درست نہیں؛ سیکھی ہوئی بات “${targetConcept.dutch}” استعمال کریں۔`
+        : `“${option}” کا معنی اس ہدف سے مختلف ہے؛ “${targetConcept.dutch}” کا درست مطلب “${targetMeaning}” ہے۔`;
+    }
+  }
+  return feedback;
+}
+
+function annotateQuestionV4({ lesson, question, conceptIds, pattern, scopeId, allowedSkillIds = null }) {
+  const explicitConceptId = question.generatedConceptId;
+  const matchedConceptIds = explicitConceptId && conceptIds.includes(explicitConceptId)
+    ? [explicitConceptId]
+    : matchQuestionConceptIdsV4(question, lesson.id, conceptIds);
+  const concepts = matchedConceptIds.map((id) => conceptByIdV4.get(id)).filter(Boolean);
+  let skillIds = matchedConceptIds
+    .map((id) => skillIdByConceptIdV4.get(id))
+    .filter(Boolean);
+  if (pattern && question.type === "uitleg") skillIds.unshift(pattern.skillId);
+  skillIds = uniqueV4(skillIds);
+
+  if (allowedSkillIds) {
+    const allowed = new Set(allowedSkillIds);
+    skillIds = skillIds.filter((id) => allowed.has(id));
+    if (!skillIds.length && allowedSkillIds.length) {
+      const text = questionTargetTextsV4(question).join(" ");
+      const overlapping = allowedSkillIds.find((skillId) => {
+        const skill = skillByIdV4.get(skillId);
+        const concept = skill?.conceptId ? conceptByIdV4.get(skill.conceptId) : null;
+        return concept && hasUsefulOverlapV4(text, concept.dutch);
+      });
+      skillIds = [overlapping || allowedSkillIds[0]];
+    }
+  }
+
+  const incomingId = String(question.id || "");
+  const semanticKey = incomingId.startsWith("synthetic:")
+    || question.generatedConceptId
+    ? semanticExerciseKeyV4(question, scopeId)
+    : [
+      "retired-source",
+      semanticSlugV4(question.type, "question"),
+      semanticSlugV4(concepts[0]?.dutch, "target"),
+      semanticSlugV4(question.answer || question.prompt, "item"),
+      semanticSlugV4(incomingId, "legacy")
+    ].join(":");
+  const legacyId = incomingId.startsWith("synthetic:")
+    ? ""
+    : String(question.legacyId || incomingId);
+  const instructionUrdu = instructionForQuestionV4(question, concepts);
+  const hintUrdu = hintForQuestionV4(question, concepts);
+  const targetSummary = concepts.length
+    ? concepts.map((concept) => `“${concept.dutch}” = “${concept.urdu}”`).join("، ")
+    : `صحیح جواب “${question.answer}”`;
+  const correctExplanation = question.type === "uitleg"
+    ? String(question.explain || "یہ تدریسی مثال اگلی مشق کی تیاری ہے۔")
+    : `درست۔ ${targetSummary}؛ اسی معنی یا ساخت کو آپ نے صحیح پہچانا۔`;
+  const optionExplanationsUrdu = optionFeedbackUrduV4(
+    question,
+    concepts[0],
+    conceptIds
+  );
+  const firstOptionExplanation = Object.values(optionExplanationsUrdu)[0];
+  const wrongExplanation = question.type === "uitleg"
+    ? "مثال اور آسان اصول دوبارہ پڑھیں، پھر اگلی مشق شروع کریں۔"
+    : (firstOptionExplanation
+      || `یہ جواب “${concepts[0]?.urdu || question.answer}” کے ہدف سے مختلف ہے؛ درست بات ${targetSummary} ہے۔`);
+
+  question.semanticKey = semanticKey;
+  Object.assign(question, {
+    id: semanticExerciseIdV4(lesson.id, question, scopeId),
+    semanticKey,
+    legacyId,
+    phase: defaultExercisePhaseV4(question),
+    conceptIds: matchedConceptIds,
+    skillIds,
+    instructionUrdu,
+    instruction: instructionUrdu,
+    hintUrdu,
+    hint: hintUrdu,
+    explainCorrectUrdu: correctExplanation,
+    explainWrongUrdu: wrongExplanation,
+    correctExplanation,
+    wrongExplanation,
+    optionExplanationsUrdu,
+    wrongExplanationsByOption: { ...optionExplanationsUrdu }
+  });
+}
+
+function splitTargetsIntoRunsV4(level, conceptIds, hasPattern) {
+  const chunks = [];
+  const cap = level === "a1" ? 5 : 4;
+  let remaining = [...conceptIds];
+  if (level === "a0" && hasPattern && remaining.length) {
+    const firstSize = Math.min(3, remaining.length);
+    chunks.push(remaining.slice(0, firstSize));
+    remaining = remaining.slice(firstSize);
+  }
+  while (remaining.length) {
+    const runCount = Math.ceil(remaining.length / cap);
+    const size = Math.ceil(remaining.length / runCount);
+    chunks.push(remaining.slice(0, size));
+    remaining = remaining.slice(size);
+  }
+  if (!chunks.length) chunks.push([]);
+  return chunks;
+}
+
+function conceptOptionsForRunV4(lesson, concept, key, allowedConceptIds = lesson.conceptIds) {
+  const answer = key === "urdu"
+    ? canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu)
+    : concept[key];
+  const allowedValues = uniqueV4(allowedConceptIds)
+    .map((conceptId) => {
+      const candidate = conceptByIdV4.get(conceptId);
+      if (!candidate) return "";
+      return key === "urdu"
+        ? canonicalUrduForDutchV4(lesson, candidate.dutch, candidate.urdu)
+        : candidate[key];
+    })
+    .filter(Boolean);
+  return uniqueV4([answer, ...allowedValues]).slice(0, 3);
+}
+
+function runOptionConceptIdsV4(run) {
+  const prerequisiteConceptIds = run.prerequisiteSkillIds
+    .map((skillId) => skillByIdV4.get(skillId)?.conceptId)
+    .filter(Boolean);
+  return uniqueV4([...run.conceptIds, ...prerequisiteConceptIds]);
+}
+
+function instructionalVisualGroupV4(visualId) {
+  if (["man", "vrouw", "kind", "jongen", "meisje", "familie", "vader", "moeder", "broer", "zus"].includes(visualId)) return "person";
+  if (["appel", "brood", "kaas", "fruit", "groente", "rijst", "water"].includes(visualId)) return "food";
+  if (["bus", "trein", "fiets", "station", "halte", "kaartje"].includes(visualId)) return "transport";
+  if (["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "verwarming"].includes(visualId)) return "home";
+  if (["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "stad", "land"].includes(visualId)) return "place";
+  if (["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "dokter", "huisarts", "tandarts", "medicijn"].includes(visualId)) return "health";
+  return "other";
+}
+
+function safeImageOptionsForRunV4(run, concept) {
+  if (!concept?.visualId || !approvedInstructionalVisualIdsV4.has(concept.visualId)) {
+    return [];
+  }
+  const answerGroup = instructionalVisualGroupV4(concept.visualId);
+  const distractors = runOptionConceptIdsV4(run)
+    .filter((conceptId) => conceptId !== concept.id)
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .filter((candidate) => (
+      candidate?.visualId
+      && approvedInstructionalVisualIdsV4.has(candidate.visualId)
+      && instructionalVisualGroupV4(candidate.visualId) !== answerGroup
+    ))
+    .map((candidate) => candidate.dutch);
+  const options = uniqueV4([concept.dutch, ...distractors]).slice(0, 3);
+  return options.length === 3 ? options : [];
+}
+
+function canonicalUrduForDutchV4(lesson, dutch, fallback) {
+  const key = normalizedTextV4(dutch);
+  const conceptCandidates = (
+    lesson.conceptIds
+    || lessonConceptIdsV4.get(lesson.id)
+    || []
+  )
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .filter((concept) => normalizedTextV4(concept?.dutch) === key)
+    .sort((left, right) => {
+      const score = (concept) => (
+        String(concept.urdu || "").replace(/\s+/g, "").length
+        + (/[؟?]$/.test(String(concept.urdu || "")) ? 3 : 0)
+      );
+      return score(right) - score(left);
+    });
+  return String(conceptCandidates[0]?.urdu || fallback || "");
+}
+
+function cleanPracticalContextUrduV4(value, fallback = "") {
+  const clean = String(value || "")
+    .replace(/^(?:حال|صورت)\s*:\s*/u, "")
+    .replace(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’-]*/gu, "")
+    .replace(/[“”"'`]+/gu, "")
+    .replace(/\(\s*\)|\[\s*\]/gu, "")
+    .replace(/\s+([،؛۔؟])/gu, "$1")
+    .replace(/([،؛:])\s*([،؛:])/gu, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  const meaningful = clean
+    .replace(/[0-9۰-۹\s،؛۔؟:()[\]{}\-–—/]+/gu, "");
+  if (/[\u0600-\u06ff]/u.test(clean) && meaningful.length >= 2) {
+    return cleanTerminalPunctuationV4(clean);
+  }
+  return cleanTerminalPunctuationV4(
+    String(fallback || "روزمرہ گفتگو میں اس معنی کی ضرورت ہے")
+      .replace(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’-]*/gu, "")
+      .replace(/\s{2,}/g, " ")
+      .trim()
+  );
+}
+
+function lessonDomainV4(lessonId) {
+  const routes = [
+    ["greeting", /greeting|courtesy|polite|start-speaking/i],
+    ["help", /understanding|help/i],
+    ["sound", /letter|sound|spelling|letters-sounds/i],
+    ["identity", /people|personal|pronoun|ik-jij|hij-zij|name|address|phone|family|possessive|people-things/i],
+    ["number-time", /number|time|date|calendar|appointment|numbers-time/i],
+    ["home", /home|house|housing|repair|neighbour|weather/i],
+    ["food-shop", /food|cafe|shop|clothes|money|bank|bill|customer/i],
+    ["travel", /transport|travel|direction|town|post/i],
+    ["health", /health|doctor|pharmacy|emergency/i],
+    ["school", /school|child|library/i],
+    ["work", /work|job|employment/i],
+    ["government", /gemeente|official|form|document/i],
+    ["message", /message|email|writing|digital/i],
+    ["routine", /routine|daily|action|verb|present|past|future|modal|order|connector/i]
+  ];
+  return routes.find(([, pattern]) => pattern.test(lessonId))?.[0] || "everyday";
+}
+
+function domainScenarioTitleUrduV4(domain) {
+  return {
+    greeting: "مختصر روزمرہ گفتگو",
+    help: "مدد اور وضاحت کی گفتگو",
+    sound: "آواز اور پہچان کا عملی کام",
+    identity: "تعارف اور ذاتی معلومات",
+    "number-time": "نمبر، وقت، اور ملاقات",
+    home: "گھر اور پڑوس کا معاملہ",
+    "food-shop": "دکان، کیفے، اور ادائیگی",
+    travel: "راستہ اور سفر",
+    health: "صحت اور ڈاکٹر",
+    school: "اسکول اور بچے سے رابطہ",
+    work: "کام کی جگہ کا معاملہ",
+    government: "سرکاری دفتر اور فارم",
+    message: "فون، خط، اور پیغام",
+    routine: "روزمرہ کام اور منصوبہ",
+    everyday: "روزمرہ عملی کام"
+  }[domain] || "روزمرہ عملی کام";
+}
+
+function authenticDocumentV4(domain, concept, title, variantIndex) {
+  const times = ["08:30", "13:00", "19:00"];
+  const dates = ["12-05-2026", "18-06-2026", "24-07-2026"];
+  const names = ["Sara", "Ali", "Fatima"];
+  const shared = {
+    documentKind: "message",
+    title,
+    rows: [
+      { label: "بھیجنے والا", value: names[variantIndex % names.length] },
+      { label: "وقت", value: times[variantIndex % times.length] },
+      { label: "پیغام", value: concept.dutch }
+    ]
+  };
+  const templates = {
+    "number-time": {
+      documentKind: "appointment-card",
+      title,
+      rows: [
+        { label: "تاریخ", value: dates[variantIndex % dates.length] },
+        { label: "وقت", value: times[variantIndex % times.length] },
+        { label: "تفصیل", value: concept.dutch }
+      ]
+    },
+    identity: {
+      documentKind: "form",
+      title,
+      rows: [
+        { label: "نام", value: names[variantIndex % names.length] },
+        { label: "نمبر", value: `${20 + variantIndex}` },
+        { label: "بھری ہوئی بات", value: concept.dutch }
+      ]
+    },
+    travel: {
+      documentKind: "ticket",
+      title,
+      rows: [
+        { label: "منزل", value: "Utrecht" },
+        { label: "روانگی", value: times[variantIndex % times.length] },
+        { label: "سفری بات", value: concept.dutch }
+      ]
+    },
+    "food-shop": {
+      documentKind: "receipt",
+      title,
+      rows: [
+        { label: "تعداد", value: `${variantIndex + 1}` },
+        { label: "رقم", value: `€${5 + variantIndex}` },
+        { label: "دکان کی بات", value: concept.dutch }
+      ]
+    },
+    health: {
+      documentKind: "appointment-card",
+      title,
+      rows: [
+        { label: "مریض", value: names[variantIndex % names.length] },
+        { label: "وقت", value: times[variantIndex % times.length] },
+        { label: "صحت کی بات", value: concept.dutch }
+      ]
+    },
+    school: {
+      documentKind: "school-message",
+      title,
+      rows: [
+        { label: "بچے کا نام", value: names[variantIndex % names.length] },
+        { label: "تاریخ", value: dates[variantIndex % dates.length] },
+        { label: "اسکول کی بات", value: concept.dutch }
+      ]
+    },
+    work: {
+      documentKind: "work-schedule",
+      title,
+      rows: [
+        { label: "ملازم", value: names[variantIndex % names.length] },
+        { label: "وقت", value: times[variantIndex % times.length] },
+        { label: "کام کی بات", value: concept.dutch }
+      ]
+    },
+    government: {
+      documentKind: "official-form",
+      title,
+      rows: [
+        { label: "نام", value: names[variantIndex % names.length] },
+        { label: "تاریخ", value: dates[variantIndex % dates.length] },
+        { label: "درخواست کی بات", value: concept.dutch }
+      ]
+    },
+    home: {
+      documentKind: "repair-message",
+      title,
+      rows: [
+        { label: "رہائشی", value: names[variantIndex % names.length] },
+        { label: "وقت", value: times[variantIndex % times.length] },
+        { label: "گھر کی بات", value: concept.dutch }
+      ]
+    }
+  };
+  return templates[domain] || shared;
+}
+
+function a0PracticalUsePromptV4(concept, lesson) {
+  const dutch = cleanTerminalPunctuationV4(concept.dutch);
+  const urdu = cleanTerminalPunctuationV4(concept.urdu);
+  const role = String(concept.role || "").toLowerCase();
+  const isQuestion = looksLikeDutchQuestionV4(concept.dutch);
+  const isPhrase = role === "phrase" || dutchWordsV4(dutch).length > 1;
+  const askForTarget = (setting, action = "") => {
+    const task = action || (isQuestion
+      ? `${urdu} پوچھنے کے لیے کون سا مکمل سوال کہیں؟`
+      : isPhrase
+        ? `“${urdu}” کہنا ہو تو کون سی مکمل ڈچ بات کہیں؟`
+        : `“${urdu}” کے لیے کون سا ڈچ لفظ درست ہے؟`);
+    return `حال: ${setting} ${task}`;
+  };
+
+  if (/^a0-letters-[123]$/.test(lesson.id)) {
+    if (role === "sound" || role === "letter" || /^[a-z]$/i.test(dutch)) {
+      return askForTarget(
+        "کمیونٹی مرکز میں نام کے حروف سن کر لفظی کارڈ مکمل کرنا ہے۔",
+        "جو آواز سنائی دی، اس کے لیے درست سکھایا ہوا حرف چنیں۔"
+      );
+    }
+    const setting = ["rijst", "water"].includes(normalizedTextV4(dutch))
+      ? "چھوٹی خریداری فہرست پر چیز کی تصویر بنی ہے۔"
+      : ["deur", "huis", "stoel", "tafel", "lamp"].includes(normalizedTextV4(dutch))
+        ? "گھر کی تصویری فہرست میں ایک چیز نشان زد ہے۔"
+        : "ابتدائی پڑھنے کے کارڈ پر ایک صاف تصویر بنی ہے۔";
+    return askForTarget(setting);
+  }
+
+  const exactScenes = {
+    "a0-ik-jij-u|ik": "تعارف میں اپنی طرف اشارہ کرکے “میں” کہنا ہے۔ کون سا ڈچ لفظ کہیں؟",
+    "a0-ik-jij-u|jij": "قریبی دوست سے “تم” کہنا ہے۔ کون سا ڈچ لفظ کہیں؟",
+    "a0-ik-jij-u|u": "ڈاکٹر سے ادب کے ساتھ “آپ” کہنا ہے۔ کون سا ڈچ لفظ کہیں؟",
+    "a0-ik-jij-u|ik jij u": "تعارف کارڈ میں پہلے اپنی، پھر دوست، پھر رسمی مخاطب کی جگہ ہے۔ “میں، تم، آپ” کی درست ڈچ ترتیب چنیں۔",
+    "a0-ja-nee-goed-niet|ja": "دکاندار پوچھتا ہے کہ کیا آپ رسید چاہتے ہیں۔ آپ رضامند ہیں۔ مختصر جواب کیا ہے؟",
+    "a0-ja-nee-goed-niet|nee": "دکاندار پوچھتا ہے کہ کیا آپ کو تھیلا چاہیے۔ آپ انکار کرتے ہیں۔ مختصر جواب کیا ہے؟",
+    "a0-ja-nee-goed-niet|goed": "ڈاکٹر پوچھتا ہے کہ اب حالت کیسی ہے۔ حالت اچھی ہے۔ مختصر جواب کیا ہے؟",
+    "a0-ja-nee-goed-niet|niet": "مرمت ابھی ٹھیک نہیں ہوئی۔ “goed” کو منفی بنانے کے لیے اس سے پہلے کون سا ڈچ لفظ لگائیں؟",
+    "a0-ja-nee-goed-niet|niet goed": "مرمت کے بعد چیز ابھی بھی صحیح کام نہیں کر رہی۔ اس کی حالت مختصر طور پر کیا کہیں؟",
+    "a0-hij-zij-wij|hij": "خاندانی تصویر میں ایک مرد کی طرف اشارہ کرکے “وہ” کہنا ہے۔ درست ڈچ لفظ چنیں۔",
+    "a0-hij-zij-wij|zij": "خاندانی تصویر میں ایک عورت کی طرف اشارہ کرکے “وہ” کہنا ہے۔ درست ڈچ لفظ چنیں۔",
+    "a0-hij-zij-wij|wij": "اپنے ساتھ کھڑے خاندان کی طرف اشارہ کرکے “ہم” کہنا ہے۔ درست ڈچ لفظ چنیں۔",
+    "a0-ben-bent-is|ben": "اپنے تعارف میں “میں ہوں” مکمل کرنے کے لیے “ہوں” والی درست ڈچ شکل چنیں۔",
+    "a0-ben-bent-is|bent": "سامنے والے سے “آپ ہیں” کہنا ہے۔ “ہیں” والی درست ڈچ شکل چنیں۔",
+    "a0-ben-bent-is|is": "تصویر کے ایک شخص کے بارے میں “وہ ہے” کہنا ہے۔ “ہے” والی درست ڈچ شکل چنیں۔",
+    "a0-hebben-1|heb": "اپنے بیگ کی چیز بتاتے ہوئے “میرے پاس ہے” مکمل کرنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-hebben-1|hebt": "دوست کے بیگ کے بارے میں “تمہارے پاس ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-hebben-1|heeft": "ایک شخص کے گھر کے بارے میں “اس کے پاس ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-gaan-komen|ga": "گھر سے نکلتے ہوئے اپنے بارے میں “جاتا یا جاتی ہوں” کہنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-gaan-komen|gaat": "ایک شخص کو جاتے دیکھ کر “جاتا یا جاتی ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-gaan-komen|kom": "دروازے پر پہنچ کر اپنے بارے میں “آتا یا آتی ہوں” کہنا ہے۔ درست ڈچ شکل چنیں۔",
+    "a0-gaan-komen|komt": "کسی شخص کی آمد بتاتے ہوئے “آتا یا آتی ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔"
+  };
+  const exactKey = `${lesson.id}|${normalizedTextV4(dutch)}`;
+  if (exactScenes[exactKey]) return `حال: ${exactScenes[exactKey]}`;
+
+  if (lesson.id === "a0-people-nouns") {
+    return askForTarget("خاندانی تصویر کے نیچے ہر شخص یا گروہ کا ڈچ نام لگانا ہے۔");
+  }
+  if (lesson.id === "a0-een-de-het") {
+    if (normalizedTextV4(dutch) === "een") {
+      return askForTarget(
+        "تصویری فہرست میں کسی ایک شخص یا چیز کے نام سے پہلے “ایک” لگانا ہے۔",
+        "“ایک” کے لیے کون سا چھوٹا ڈچ لفظ درست ہے؟"
+      );
+    }
+    return askForTarget(
+      "گھر کی تصویری فہرست میں شخص یا چیز کے نیچے مکمل ڈچ نام لکھا جا رہا ہے۔",
+      `${urdu} کے لیے اسم سے پہلے آنے والے چھوٹے لفظ سمیت کون سا مکمل نام درست ہے؟`
+    );
+  }
+  if (lesson.id === "a0-ben-bent-is") {
+    return askForTarget("کمیونٹی مرکز میں بہت مختصر تعارف ہو رہا ہے۔");
+  }
+  if (lesson.id === "a0-first-sentences") {
+    return askForTarget("نئے پڑوسی سے پہلی بار اپنا یا کسی دوسرے شخص کا مختصر تعارف ہو رہا ہے۔");
+  }
+  if (lesson.id === "a0-name-land-city") {
+    return askForTarget("رجسٹریشن کاؤنٹر پر نام، ملک، اور رہنے کی جگہ بتانی ہے۔");
+  }
+  if (lesson.id === "a0-hebben-1") {
+    return askForTarget("کلاس میں کتاب، قلم، یا گھر کی تصویر کے بارے میں بتانا ہے کہ کس کے پاس کیا ہے۔");
+  }
+  if (lesson.id === "a0-geen") {
+    return askForTarget("کلاس کی چیزوں کی فہرست دیکھی گئی، مگر مطلوبہ چیز موجود نہیں ہے۔");
+  }
+  if (lesson.id === "a0-possessive") {
+    return askForTarget("گمشدہ چیزوں کی میز پر نام اور مالک درست چیز کے ساتھ ملانا ہے۔");
+  }
+  if (lesson.id === "a0-dit-dat-questions") {
+    if (["wie", "wat", "waar", "hoe"].includes(normalizedTextV4(dutch))) {
+      return askForTarget(
+        "کمیونٹی مرکز میں شخص، چیز، جگہ، یا طریقے کے بارے میں سوال شروع کرنا ہے۔",
+        `“${urdu}” پوچھنے کے لیے سوال شروع کرنے والا کون سا ڈچ لفظ درست ہے؟`
+      );
+    }
+    return askForTarget("کمیونٹی مرکز میں ایک شخص، چیز، یا جگہ کی شناخت یا سمت معلوم کرنی ہے۔");
+  }
+  if (lesson.id === "a0-numbers-0-10") {
+    const setting = /euro/i.test(dutch)
+      ? "چھوٹی دکان کے ڈسپلے پر قیمت دکھائی گئی ہے۔"
+      : /bus/i.test(dutch)
+        ? "بس اسٹاپ کے برقی نشان پر لائن نمبر دکھائی دیتا ہے۔"
+        : /boek|kind/i.test(dutch)
+          ? "کلاس کی فہرست میں کتابوں یا بچوں کی تعداد لکھی ہے۔"
+          : "فون نمبر یا کاؤنٹر کے ٹوکن میں ایک عدد سنائی دیتا ہے۔";
+    return askForTarget(setting);
+  }
+  if (lesson.id === "a0-numbers-11-100") {
+    const setting = /huisnummer/i.test(dutch)
+      ? "گھر کے دروازے پر نمبر صاف لکھا ہے۔"
+      : /bus/i.test(dutch)
+        ? "بس اسٹاپ کے نشان پر لائن نمبر لکھا ہے۔"
+        : /euro/i.test(dutch)
+          ? "دکان کی قیمت کی تختی پر رقم لکھی ہے۔"
+          : /jaar/i.test(dutch)
+            ? "تعارف فارم پر عمر بتانی ہے۔"
+            : "کاؤنٹر کے ٹوکن یا فون میں ایک بڑا عدد سنائی دیتا ہے۔";
+    return askForTarget(setting);
+  }
+  if (lesson.id === "a0-time-days") {
+    return askForTarget("ہفتے کے شیڈول اور ملاقات کارڈ میں دن یا وقت کی معلومات دیکھنی ہیں۔");
+  }
+  if (lesson.id === "a0-spelling-personal-details") {
+    return askForTarget("فون پر رجسٹریشن کرتے ہوئے نام، ہجے، اور عمر صاف بتانی یا پوچھنی ہے۔");
+  }
+  if (lesson.id === "a0-address-phone") {
+    return askForTarget("مرکز کے رابطہ فارم میں پتہ، گھر نمبر، جگہ، اور فون کی معلومات دینی ہیں۔");
+  }
+  if (lesson.id === "a0-date-appointment") {
+    return askForTarget("استقبالی کاؤنٹر پر ملاقات کا دن، وقت، یا تبدیلی سنبھالنی ہے۔");
+  }
+  if (lesson.id === "a0-place-1" || lesson.id === "a0-place-2") {
+    return askForTarget("گھر میں چابی یا چیز تلاش کرتے ہوئے اس کی صحیح جگہ بتانی ہے۔");
+  }
+  if (lesson.id === "a0-gaan-komen") {
+    return askForTarget("دروازے پر کسی کی آمد یا روانگی کے بارے میں مختصر بات کرنی ہے۔");
+  }
+  if (lesson.id === "a0-naar-met") {
+    return askForTarget("گھر یا اسکول جاتے ہوئے منزل یا ساتھ موجود شخص بتانا ہے۔");
+  }
+  if (lesson.id === "a0-home-needs") {
+    return askForTarget("مالک یا مرمت والے کو گھر کی چیز، حالت، یا فوری خرابی واضح کرنی ہے۔");
+  }
+  if (lesson.id === "a0-daily-actions") {
+    return askForTarget("روزمرہ شیڈول کے تصویری خانوں میں کام، کھانا، آرام، یا انتظار کی بات درج کرنی ہے۔");
+  }
+  if (lesson.id === "a0-food-drink") {
+    return askForTarget("کیفے یا گھر کی کھانے پینے کی فہرست میں ضرورت یا پسند بتانی ہے۔");
+  }
+  if (lesson.id === "a0-shopping-payment") {
+    return askForTarget("دکان میں چیز، قیمت، کاؤنٹر، ادائیگی، یا رسید کے بارے میں بات کرنی ہے۔");
+  }
+  if (lesson.id === "a0-transport-directions") {
+    return askForTarget("اسٹیشن پر سفر، ٹکٹ، نشان، یا راستے کی فوری معلومات لینی ہیں۔");
+  }
+  if (lesson.id === "a0-health-emergency") {
+    return askForTarget("ڈاکٹر، فارمیسی، یا ہنگامی فون پر علامت، جگہ، یا فوری مدد بتانی ہے۔");
+  }
+  if (lesson.id === "a0-child-school") {
+    return askForTarget("صبح اسکول کو بچے، جماعت، وقت، یا غیر حاضری کی اطلاع دینی ہے۔");
+  }
+  if (lesson.id === "a0-work-basics") {
+    return askForTarget("کام کے ذمہ دار کو وقت، آغاز، وقفہ، دیر، یا بیماری کی اطلاع دینی ہے۔");
+  }
+  if (lesson.id === "a0-weather-clothing-safety") {
+    return askForTarget("عمارت سے نکلنے سے پہلے موسم، ضروری چیز، یا حفاظتی نشان سمجھنا ہے۔");
+  }
+  return "";
+}
+
+function practicalSituationV4(concept, lesson) {
+  const domain = lessonDomainV4(lesson.id);
+  const a0Prompt = lesson.id?.startsWith("a0-")
+    ? a0PracticalUsePromptV4(concept, lesson)
+    : "";
+  if (a0Prompt) {
+    return {
+      scenarioId: `${domain}:${semanticSlugV4(concept.dutch, "target")}`,
+      prompt: a0Prompt
+    };
+  }
+  const targetMeaning = cleanPracticalContextUrduV4(
+    concept.urdu,
+    "یہ معنی"
+  );
+  const templates = {
+    greeting: `آپ کسی شخص سے ملتے یا رخصت ہوتے ہیں؛ “${targetMeaning}” کے مطابق بات کرنی ہے`,
+    help: `گفتگو میں مدد یا وضاحت کی ضرورت ہے؛ “${targetMeaning}” والی بات کہنا یا جواب دینا ہے`,
+    sound: `آپ یہ ڈچ آواز یا لفظ سنتے ہیں؛ “${targetMeaning}” پہچان کر مناسب جواب دینا ہے`,
+    identity: `تعارف یا ذاتی معلومات کی گفتگو میں “${targetMeaning}” بتانا یا پوچھنا ہے`,
+    "number-time": `نمبر، دن، وقت، یا ملاقات طے کرتے ہوئے “${targetMeaning}” بتانا یا سمجھنا ہے`,
+    home: `گھر یا پڑوس کے روزمرہ معاملے میں “${targetMeaning}” واضح کرنا ہے`,
+    "food-shop": `دکان، کیفے، یا ادائیگی کے وقت “${targetMeaning}” کہنا یا پوچھنا ہے`,
+    travel: `راستہ یا سفر کے دوران “${targetMeaning}” سمجھنا یا پوچھنا ہے`,
+    health: `صحت کے متعلق بات کرتے ہوئے “${targetMeaning}” ڈاکٹر یا مددگار کو بتانا ہے`,
+    school: `اسکول یا بچے کے متعلق گفتگو میں “${targetMeaning}” واضح کرنا ہے`,
+    work: `کام کی جگہ “${targetMeaning}” ساتھی یا ذمہ دار کو بتانا ہے`,
+    government: `سرکاری دفتر یا فارم کے کام میں “${targetMeaning}” سمجھنا یا کہنا ہے`,
+    message: `فون، خط، یا پیغام میں “${targetMeaning}” واضح طور پر لکھنا یا کہنا ہے`,
+    routine: `روزمرہ کام یا منصوبے میں “${targetMeaning}” بتانا ہے`,
+    everyday: `روزمرہ گفتگو میں “${targetMeaning}” کے مطابق بات کرنی ہے`
+  };
+  return {
+    scenarioId: `${domain}:${semanticSlugV4(concept.dutch, "target")}`,
+    prompt: `حال: ${templates[domain]}۔`
+  };
+}
+
+function practicalSituationPromptV4(concept, lesson) {
+  return practicalSituationV4(concept, lesson).prompt;
+}
+
+function addSyntheticExerciseV4({
+  lesson,
+  run,
+  question,
+  phase,
+  conceptIds,
+  skillIds,
+  scope
+}) {
+  question.id = `synthetic:${run.id}:${scope}`;
+  annotateQuestionV4({
+    lesson,
+    question,
+    conceptIds: lesson.conceptIds,
+    pattern: null,
+    scopeId: `${run.id}:${scope}`
+  });
+  Object.assign(question, {
+    phase,
+    conceptIds: uniqueV4(conceptIds),
+    skillIds: uniqueV4(skillIds),
+    runId: run.id,
+    synthetic: true,
+    retiredCompatibility: false,
+    adaptiveReviewEligible: !["uitleg", "speak-repeat"].includes(question.type)
+  });
+  if (phase === "independent-check") {
+    question.hintMode = "after-attempt";
+    question.automaticHint = false;
+  }
+  lesson.questions.push(question);
+  return question;
+}
+
+function cloneForIndependentCheckV4(lesson, run, source, index, requiredSkillId) {
+  const requiredSkill = skillByIdV4.get(requiredSkillId);
+  const pattern = requiredSkill?.patternId
+    ? patternsV4.find((item) => item.id === requiredSkill.patternId)
+    : null;
+  const requiredConceptId = requiredSkill?.conceptId
+    || pattern?.modelConceptId
+    || source.conceptIds.find((conceptId) => run.conceptIds.includes(conceptId))
+    || run.conceptIds[index % Math.max(1, run.conceptIds.length)];
+  const concept = conceptByIdV4.get(requiredConceptId);
+  if (!concept) return null;
+  const canonicalUrdu = canonicalUrduForDutchV4(
+    lesson,
+    concept.dutch,
+    concept.urdu
+  );
+  const allowedConceptIds = runOptionConceptIdsV4(run);
+  const urduOptions = conceptOptionsForRunV4(
+    lesson,
+    concept,
+    "urdu",
+    allowedConceptIds
+  );
+  const dutchOptions = conceptOptionsForRunV4(
+    lesson,
+    concept,
+    "dutch",
+    allowedConceptIds
+  );
+  const imageOptions = safeImageOptionsForRunV4(run, concept);
+  const checkRoles = [
+    "check-listening",
+    "check-visual",
+    "check-recall",
+    "check-situation",
+    "check-listening-reinforcement",
+    "check-recall-application"
+  ];
+  let checkRole = checkRoles[index % checkRoles.length];
+  let checkQuestion;
+  if (checkRole === "check-listening" || checkRole === "check-listening-reinforcement") {
+    checkQuestion = {
+      type: "listen-choice",
+      label: "بغیر اشارے کے سن کر مطلب پہچانیں",
+      prompt: checkRole === "check-listening"
+        ? "روزمرہ گفتگو کی یہ بات سنیں اور اس کا درست اردو مطلب منتخب کریں۔"
+        : "مختصر اعلان میں یہ بات دوبارہ سنیں اور درست اردو مطلب منتخب کریں۔",
+      speak: concept.dutch,
+      mode: checkRole,
+      options: rotate(urduOptions, 1),
+      answer: canonicalUrdu,
+      explain: `${concept.dutch} = ${canonicalUrdu}۔`
+    };
+  } else if (checkRole === "check-visual" && imageOptions.length === 3) {
+    checkQuestion = {
+      type: "image-choice",
+      label: "بغیر اشارے کے تصویر سے یاد کریں",
+      prompt: `اس تصویر میں ${canonicalUrdu} والا ہدف پہچانیں اور درست ڈچ بات منتخب کریں۔`,
+      visualId: concept.visualId,
+      options: rotate(imageOptions, 1),
+      answer: concept.dutch,
+      explain: `${concept.dutch} = ${canonicalUrdu}۔`
+    };
+  } else if (checkRole === "check-situation") {
+    const checkSituation = practicalSituationV4(concept, lesson);
+    checkQuestion = situation(
+      `${checkSituation.prompt} اب مدد کے بغیر مناسب جواب منتخب کریں۔`,
+      rotate(dutchOptions, 1),
+      concept.dutch,
+      `اس موقع میں درست بات ${concept.dutch} ہے۔`
+    );
+    checkQuestion.scenarioId = `${checkSituation.scenarioId}:independent`;
+  } else {
+    if (checkRole === "check-visual") checkRole = "check-recall-context";
+    const recallLead = checkRole === "check-recall-application"
+      ? "نئے روزمرہ موقع میں اس معنی کے لیے ڈچ بات چنیں"
+      : checkRole === "check-recall-context"
+        ? "تصویر کے بغیر اس معنی کے لیے ڈچ بات یاد کریں"
+        : "اس معنی کے لیے ڈچ بات چنیں";
+    checkQuestion = reverse(
+      `${recallLead}: ${canonicalUrdu}`,
+      rotate(dutchOptions, 1),
+      concept.dutch,
+      `${canonicalUrdu} = ${concept.dutch}۔`
+    );
+    checkQuestion.label = "بغیر اشارے کے معنی سے یاد کریں";
+  }
+  checkQuestion.id = `synthetic:${run.id}:${checkRole}:${requiredSkillId}`;
+  checkQuestion.semanticKey = `${run.id}:${checkRole}:${requiredSkillId}`;
+  checkQuestion.legacyId = "";
+  checkQuestion.sourceExerciseId = source.id;
+  return addSyntheticExerciseV4({
+    lesson,
+    run,
+    question: checkQuestion,
+    phase: "independent-check",
+    conceptIds: [requiredConceptId],
+    skillIds: uniqueV4([requiredSkillId, skillIdByConceptIdV4.get(requiredConceptId)]),
+    scope: `${checkRole}:${requiredSkillId || "reinforce"}`
+  });
+}
+
+function pickAuthoredExerciseV4({
+  questions,
+  usedIds,
+  conceptId,
+  phase,
+  preferredTypes,
+  offset = 0
+}) {
+  const candidates = questions.filter((question) => (
+    !usedIds.has(question.id)
+    && question.phase === phase
+    && question.conceptIds.includes(conceptId)
+  ));
+  const orderedTypes = rotate(preferredTypes, offset);
+  const selected = orderedTypes
+    .map((type) => candidates.find((question) => question.type === type))
+    .find(Boolean)
+    || candidates[0]
+    || null;
+  if (selected) usedIds.add(selected.id);
+  return selected;
+}
+
+function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
+  const level = chapterId;
+  const conceptIds = lesson.conceptIds;
+  const targetChunks = lesson.id === "a0-ja-nee-goed-niet"
+    ? [
+      conceptIds.slice(0, 2),
+      conceptIds.slice(2)
+    ].filter((ids) => ids.length)
+    : lesson.id === "a0-numbers-11-100"
+    ? [
+      conceptIds.slice(0, 4),
+      conceptIds.slice(4, 8),
+      conceptIds.slice(8, 12),
+      conceptIds.slice(12, 16),
+      conceptIds.slice(16, 20),
+      conceptIds.slice(20)
+    ].filter((ids) => ids.length)
+    : splitTargetsIntoRunsV4(level, conceptIds, Boolean(pattern));
+  const prerequisiteConceptIds = prerequisiteSkillIds
+    .map((skillId) => skillByIdV4.get(skillId)?.conceptId)
+    .filter(Boolean);
+  const chunks = targetChunks.map((targetIds, chunkIndex) => {
+    const earlierCurrentLessonIds = targetChunks.slice(0, chunkIndex).flat();
+    const reviewCandidates = uniqueV4([
+      ...earlierCurrentLessonIds.slice().reverse(),
+      ...prerequisiteConceptIds.slice().reverse()
+    ]).filter((conceptId) => !targetIds.includes(conceptId));
+    const reviewIds = reviewCandidates.slice(0, Math.max(0, 3 - targetIds.length));
+    return {
+      targetIds,
+      conceptIds: uniqueV4([...targetIds, ...reviewIds])
+    };
+  });
+  // Preserve the complete v3 bank for one-time progress and mistake migration,
+  // but never expose it as active v4 lesson work. Every learner-facing
+  // exercise below is synthesized from the owned concepts in its current run.
+  const legacyQuestions = lesson.questions.map((question) => ({
+    ...question,
+    legacyId: String(question.legacyId || question.id || ""),
+    retiredCompatibility: true,
+    adaptiveReviewEligible: false
+  }));
+  lesson.legacyQuestions = legacyQuestions;
+  lesson.questions = [];
+  lesson.exercises = lesson.questions;
+  const authoredExplanations = [];
+  const authoredQuestions = [];
+  legacyQuestions.forEach((question) => {
+    question.runId = null;
+    question.retiredCompatibility = true;
+    question.adaptiveReviewEligible = false;
+  });
+
+  const runs = chunks.map((chunk, runIndex) => {
+    const runConceptIds = chunk.conceptIds;
+    const runPattern = runIndex === 0 ? pattern : null;
+    const newConceptIds = runConceptIds.filter((conceptId) => (
+      chunk.targetIds.includes(conceptId)
+      && conceptByIdV4.get(conceptId)?.introducedInLessonId === lesson.id
+    ));
+    const reviewConceptIds = runConceptIds.filter((conceptId) => !newConceptIds.includes(conceptId));
+    const teachingBlocks = [
+      ...runConceptIds.map((conceptId) => ({
+        id: `${lesson.id}:teach:${conceptId}`,
+        type: "concept",
+        conceptId,
+        mode: newConceptIds.includes(conceptId) ? "teach" : "refresh"
+      })),
+      ...(runPattern ? [{
+        id: `${lesson.id}:teach:${runPattern.id}`,
+        type: "pattern",
+        patternId: runPattern.id,
+        mode: "teach"
+      }] : [])
+    ];
+    const skillIds = uniqueV4([
+      ...runConceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)),
+      runPattern?.skillId
+    ]);
+    const reviewPrerequisiteSkillIds = reviewConceptIds
+      .map((conceptId) => skillIdByConceptIdV4.get(conceptId))
+      .filter(Boolean);
+    const earlierRunSkillIds = chunks
+      .slice(0, runIndex)
+      .flatMap((earlierChunk) => (
+        earlierChunk.conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId))
+      ))
+      .filter(Boolean);
+    const runMeaningsUrdu = runConceptIds
+      .map((conceptId) => conceptByIdV4.get(conceptId)?.urdu)
+      .filter(Boolean)
+      .map(cleanTerminalPunctuationV4);
+    const runOutcomeUrdu = runMeaningsUrdu.length
+      ? `${runMeaningsUrdu.join("، ")} سن کر سمجھنا اور مناسب روزمرہ موقع میں درست ڈچ بات استعمال کرنا۔`
+      : lesson.outcomeUrdu;
+    const runSemanticKey = runConceptIds
+      .map((conceptId) => semanticSlugV4(conceptByIdV4.get(conceptId)?.dutch, "target"))
+      .join("--");
+    return {
+      id: `${lesson.id}:run:${runSemanticKey}`,
+      semanticKey: runSemanticKey,
+      index: runIndex + 1,
+      outcomeUrdu: runOutcomeUrdu,
+      conceptIds: runConceptIds,
+      newConceptIds,
+      reviewConceptIds,
+      patternId: runPattern?.id || null,
+      skillIds,
+      prerequisiteSkillIds: uniqueV4([
+        ...prerequisiteSkillIds,
+        ...reviewPrerequisiteSkillIds,
+        ...earlierRunSkillIds
+      ]),
+      teachingBlocks,
+      teachingBlockIds: teachingBlocks.map((block) => block.id),
+      phases: null
+    };
+  });
+
+  const selectedAuthoredIds = new Set();
+  runs.forEach((run, runIndex) => {
+    const understand = [];
+    const guided = [];
+    const use = [];
+    const demonstrationConcept = conceptByIdV4.get(run.conceptIds[0]);
+    const demonstrationSkillId = skillIdByConceptIdV4.get(run.conceptIds[0]);
+    if (demonstrationConcept && demonstrationSkillId) {
+      const demonstrationUrdu = canonicalUrduForDutchV4(
+        lesson,
+        demonstrationConcept.dutch,
+        demonstrationConcept.urdu
+      );
+      const taskDemonstration = {
+        type: "uitleg",
+        label: "پہلے طریقہ سمجھیں",
+        prompt: "مثال دیکھیں: آواز سننے کے بعد جواب کیسے پہچاننا ہے",
+        points: [
+          `پہلے “${demonstrationConcept.dutch}” کی باقاعدہ یا آہستہ آواز سنیں۔`,
+          `اس نمونے میں درست مطلب “${demonstrationUrdu}” ہے؛ اگلی سرگرمی میں اسی طرح معنی پہچانیں۔`
+        ],
+        explain: `${demonstrationConcept.dutch} = ${demonstrationUrdu}۔`,
+        speak: demonstrationConcept.audioText || demonstrationConcept.dutch,
+        answer: demonstrationUrdu,
+        taskDemonstration: true,
+        demonstratesType: "listen-choice",
+        scored: false
+      };
+      understand.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: taskDemonstration,
+        phase: "understand",
+        conceptIds: [demonstrationConcept.id],
+        skillIds: [demonstrationSkillId],
+        scope: `understand:task-demo:${demonstrationConcept.id}`
+      }));
+    }
+
+    run.conceptIds.forEach((conceptId, conceptIndex) => {
+      const concept = conceptByIdV4.get(conceptId);
+      const skillId = skillIdByConceptIdV4.get(conceptId);
+      if (!concept || !skillId) return;
+      const canonicalUrdu = canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu);
+      const authoredUnderstand = pickAuthoredExerciseV4({
+        questions: authoredQuestions,
+        usedIds: selectedAuthoredIds,
+        conceptId,
+        phase: "understand",
+        preferredTypes: ["meaning", "listen-choice", "image-choice", "document-choice"],
+        offset: runIndex + conceptIndex
+      });
+      if (authoredUnderstand) {
+        authoredUnderstand.runId = run.id;
+        authoredUnderstand.adaptiveReviewEligible = false;
+        authoredUnderstand.conceptIds = [conceptId];
+        authoredUnderstand.skillIds = [skillId];
+        understand.push(authoredUnderstand);
+      } else {
+        const baseRecognition = conceptIndex === 0
+          ? listenChoice(
+            concept.audioText || concept.dutch,
+            conceptOptionsForRunV4(lesson, concept, "urdu", runOptionConceptIdsV4(run)),
+            canonicalUrdu,
+            `${concept.dutch} = ${canonicalUrdu}۔`
+          )
+          : meaning(
+            concept.dutch,
+            conceptOptionsForRunV4(lesson, concept, "urdu", runOptionConceptIdsV4(run)),
+            canonicalUrdu,
+            `${concept.dutch} = ${canonicalUrdu}۔`
+          );
+        understand.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: baseRecognition,
+          phase: "understand",
+          conceptIds: [conceptId],
+          skillIds: [skillId],
+          scope: `${conceptIndex === 0 ? "understand-listen" : "understand-meaning"}:${conceptId}`
+        }));
+        const safeImageOptions = safeImageOptionsForRunV4(run, concept);
+        if (safeImageOptions.length === 3) {
+          understand.push(addSyntheticExerciseV4({
+            lesson,
+            run,
+            question: imageChoice(
+              concept.visualId,
+              safeImageOptions,
+              concept.dutch,
+              `${concept.dutch} = ${canonicalUrdu}۔`
+            ),
+            phase: "understand",
+            conceptIds: [conceptId],
+            skillIds: [skillId],
+            scope: `understand-visual:${conceptId}`
+          }));
+        }
+      }
+
+      const authoredGuided = pickAuthoredExerciseV4({
+        questions: authoredQuestions,
+        usedIds: selectedAuthoredIds,
+        conceptId,
+        phase: "guided-practice",
+        preferredTypes: ["reverse", "fill-gap", "build", "sequence", "speak-repeat"],
+        offset: runIndex + conceptIndex
+      });
+      if (authoredGuided) {
+        authoredGuided.runId = run.id;
+        authoredGuided.adaptiveReviewEligible = false;
+        authoredGuided.conceptIds = [conceptId];
+        authoredGuided.skillIds = [skillId];
+        guided.push(authoredGuided);
+      } else {
+        guided.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: reverse(
+            canonicalUrdu,
+            conceptOptionsForRunV4(lesson, concept, "dutch", runOptionConceptIdsV4(run)),
+            concept.dutch,
+            `${canonicalUrdu} = ${concept.dutch}۔`
+          ),
+          phase: "guided-practice",
+          conceptIds: [conceptId],
+          skillIds: [skillId],
+          scope: `guided-recall:${conceptId}`
+        }));
+      }
+    });
+
+    if (run.patternId) {
+      const runPattern = patternsV4.find((item) => item.id === run.patternId);
+      const anchorConceptId = runPattern.modelConceptId;
+      const anchorConcept = conceptByIdV4.get(anchorConceptId);
+      const canonicalModelUrdu = canonicalUrduForDutchV4(
+        lesson,
+        runPattern.modelDutch,
+        runPattern.modelUrdu
+      );
+      const patternRecognition = meaning(
+        runPattern.modelDutch,
+        uniqueV4([
+          canonicalModelUrdu,
+          ...run.conceptIds.map((conceptId) => {
+            const concept = conceptByIdV4.get(conceptId);
+            return concept
+              ? canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu)
+              : "";
+          })
+        ]).slice(0, 3),
+        canonicalModelUrdu,
+        `${runPattern.modelDutch} = ${canonicalModelUrdu}۔ ${runPattern.explanationUrdu}`
+      );
+      understand.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: patternRecognition,
+        phase: "understand",
+        conceptIds: anchorConceptId ? [anchorConceptId] : [],
+        skillIds: uniqueV4([
+          runPattern.skillId,
+          anchorConceptId ? skillIdByConceptIdV4.get(anchorConceptId) : null
+        ]),
+        scope: `understand:pattern:${runPattern.id}`
+      }));
+    }
+
+    if (chapterId === "a2" && run.conceptIds.length) {
+      const documentConceptId = run.conceptIds[0];
+      const documentConcept = conceptByIdV4.get(documentConceptId);
+      const documentSkillId = skillIdByConceptIdV4.get(documentConceptId);
+      const documentUrdu = canonicalUrduForDutchV4(
+        lesson,
+        documentConcept.dutch,
+        documentConcept.urdu
+      );
+      understand.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: {
+          type: "document-choice",
+          label: "عملی دستاویز پڑھ کر درست مطلب منتخب کریں",
+          prompt: "دستاویز میں سیکھی ہوئی اہم Nederlands بات پڑھیں اور درست اردو مطلب منتخب کریں۔",
+          document: {
+            title: "عملی معلومات",
+            rows: [{ label: "اہم بات", value: documentConcept.dutch }]
+          },
+          options: conceptOptionsForRunV4(
+            lesson,
+            documentConcept,
+            "urdu",
+            runOptionConceptIdsV4(run)
+          ),
+          answer: documentUrdu,
+          explain: `${documentConcept.dutch} = ${documentUrdu}۔`
+        },
+        phase: "understand",
+        conceptIds: [documentConceptId],
+        skillIds: [documentSkillId],
+        scope: `understand:document:${documentConceptId}`
+      }));
+    }
+
+    const productionConceptIds = run.newConceptIds?.length
+      ? run.newConceptIds
+      : run.conceptIds;
+    if (guided.length && productionConceptIds.length) {
+      const targetConceptId = productionConceptIds[productionConceptIds.length - 1];
+      const targetConcept = conceptByIdV4.get(targetConceptId);
+      const targetSkillId = skillIdByConceptIdV4.get(targetConceptId);
+      guided.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: {
+          type: "speak-repeat",
+          label: "سنیں اور بغیر اسکور کے دہرائیں",
+          prompt: `“${targetConcept.dutch}” آہستہ سنیں اور بلند آواز میں دہرائیں۔`,
+          speak: targetConcept.dutch,
+          answer: targetConcept.dutch,
+          explain: `${targetConcept.dutch} = ${targetConcept.urdu}۔`,
+          scored: false
+        },
+        phase: "guided-practice",
+        conceptIds: [targetConceptId],
+        skillIds: [targetSkillId],
+        scope: `guided:speaking:${targetConceptId}`
+      }));
+      if (dutchWordsV4(targetConcept.dutch).length > 1) {
+        guided.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: {
+            type: "build",
+            label: "ایک سیکھی ہوئی بات کے الفاظ ترتیب دیں",
+            prompt: canonicalUrduForDutchV4(
+              lesson,
+              targetConcept.dutch,
+              targetConcept.urdu
+            ),
+            tiles: targetConcept.dutch.split(/\s+/).filter(Boolean),
+            answer: targetConcept.dutch,
+            explain: `صحیح لفظی ترتیب: ${targetConcept.dutch}۔`
+          },
+          phase: "guided-practice",
+          conceptIds: [targetConceptId],
+          skillIds: [targetSkillId],
+          scope: `guided:word-order:${targetConceptId}`
+        }));
+      }
+      if (chapterId === "a2" && runIndex % 2 === 1) {
+        guided.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: {
+            type: "short-input",
+            label: "مختصر Nederlands جواب بنائیں",
+            prompt: canonicalUrduForDutchV4(lesson, targetConcept.dutch, targetConcept.urdu),
+            answer: targetConcept.dutch,
+            acceptedAnswers: [targetConcept.dutch.replace(/[.!?]+$/g, "")],
+            fallbackTiles: targetConcept.dutch.split(/\s+/).filter(Boolean),
+            optional: true,
+            explain: `صحیح جواب: ${targetConcept.dutch}۔`
+          },
+          phase: "guided-practice",
+          conceptIds: [targetConceptId],
+          skillIds: [targetSkillId],
+          scope: `guided:short-input:${targetConceptId}`
+        }));
+      }
+    }
+
+    const useConceptIds = uniqueV4([
+      productionConceptIds[0],
+      productionConceptIds.length > 1
+        ? productionConceptIds[productionConceptIds.length - 1]
+        : null
+    ]);
+    useConceptIds.forEach((conceptId, useIndex) => {
+      const concept = conceptByIdV4.get(conceptId);
+      const skillId = skillIdByConceptIdV4.get(conceptId);
+      if (!concept || !skillId) return;
+      const authoredUse = pickAuthoredExerciseV4({
+        questions: authoredQuestions,
+        usedIds: selectedAuthoredIds,
+        conceptId,
+        phase: "use",
+        preferredTypes: ["situation"],
+        offset: runIndex + useIndex
+      });
+      const patternSkillId = useIndex === 0 && run.patternId
+        ? patternsV4.find((item) => item.id === run.patternId)?.skillId
+        : null;
+      if (authoredUse) {
+        authoredUse.runId = run.id;
+        authoredUse.adaptiveReviewEligible = false;
+        authoredUse.conceptIds = [conceptId];
+        authoredUse.skillIds = uniqueV4([skillId, patternSkillId]);
+        use.push(authoredUse);
+      } else {
+        const practicalSituation = practicalSituationV4(concept, lesson);
+        const useQuestion = situation(
+          practicalSituation.prompt,
+          conceptOptionsForRunV4(lesson, concept, "dutch", runOptionConceptIdsV4(run)),
+          concept.dutch,
+          `اس موقع میں درست Nederlands “${concept.dutch}” ہے۔`
+        );
+        useQuestion.scenarioId = practicalSituation.scenarioId;
+        useQuestion.semanticKey = `${run.id}:use-situation:${concept.id}`;
+        use.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: useQuestion,
+          phase: "use",
+          conceptIds: [conceptId],
+          skillIds: uniqueV4([skillId, patternSkillId]),
+          scope: `use-situation:${conceptId}`
+        }));
+      }
+    });
+
+    const earlierExercises = [...understand, ...guided, ...use];
+    const desiredChecks = Math.min(6, Math.max(5, run.skillIds.length));
+    const checks = [];
+    run.skillIds.forEach((skillId) => {
+      if (checks.length >= desiredChecks) return;
+      const source = earlierExercises.find((question) => question.skillIds.includes(skillId))
+        || earlierExercises[checks.length % Math.max(1, earlierExercises.length)];
+      if (source) checks.push(cloneForIndependentCheckV4(lesson, run, source, checks.length, skillId));
+    });
+    while (checks.length < desiredChecks && earlierExercises.length) {
+      const source = earlierExercises[checks.length % earlierExercises.length];
+      checks.push(cloneForIndependentCheckV4(
+        lesson,
+        run,
+        source,
+        checks.length,
+        source.skillIds[0]
+      ));
+    }
+
+    // Learn is represented by teaching cards, never by a recycled v3 uitleg
+    // record that may mention material from a later run.
+    const learnExerciseIds = authoredExplanations;
+    run.phases = {
+      preview: {
+        outcomeUrdu: run.outcomeUrdu,
+        prerequisiteSkillIds: run.prerequisiteSkillIds
+      },
+      learn: {
+        teachingBlockIds: run.teachingBlockIds,
+        exerciseIds: learnExerciseIds,
+        scored: false
+      },
+      understand: {
+        exerciseIds: understand.map((question) => question.id),
+        helpVisible: true
+      },
+      guidedPractice: {
+        exerciseIds: guided.map((question) => question.id),
+        helpVisible: true
+      },
+      use: {
+        exerciseIds: use.map((question) => question.id)
+      },
+      independentCheck: {
+        exerciseIds: checks.map((question) => question.id),
+        minimumScore: 0.8,
+        automaticHints: false
+      },
+      correction: {
+        mode: "retry-missed",
+        required: true,
+        requiresSupportedRetry: true
+      }
+    };
+  });
+
+  lesson.exercises = lesson.questions;
+  return runs;
+}
+
+const a0StartUseScenesV4 = {
+  hallo: "آپ پہلی بار نئے پڑوسی سے ملے ہیں۔ گفتگو کس سلام سے شروع کریں؟",
+  goedenavond: "شام کو عمارت کے نگہبان سے ملاقات ہوئی ہے۔ کون سا سلام مناسب ہے؟",
+  dag: "جان پہچان والے دکاندار کو مختصر سلام کہنا ہے۔ کیا کہیں؟",
+  alstublieft: "آپ کاؤنٹر پر کسی کو اپنا کاغذ دے رہے ہیں۔ کاغذ دیتے وقت کیا کہیں؟",
+  sorry: "راستے میں آپ سے کسی کو ہلکی ٹکر لگ گئی۔ فوراً کیا کہیں؟",
+  "goed dank u": "سامنے والا پوچھتا ہے: Hoe gaat het? اپنی خیریت کا مختصر مؤدبانہ جواب دیں۔",
+  "ik begrijp het niet": "ڈاکٹر کی آخری بات آپ کو سمجھ نہیں آئی۔ اپنی مشکل صاف کیسے بتائیں؟",
+  "langzamer alstublieft": "کاؤنٹر پر ملازم بہت تیز بول رہا ہے۔ رفتار کم کرنے کے لیے کیا کہیں؟",
+  "nog een keer": "مختصر اعلان کا آخری حصہ سنائی نہیں دیا۔ ایک بار پھر سننے کے لیے کیا کہیں؟",
+  "wat betekent dit": "فارم پر ایک لفظ سمجھ نہیں آ رہا۔ اس کا معنی پوچھنے کے لیے کیا کہیں؟",
+  "ik spreek een beetje nederlands": "گفتگو شروع ہوتے ہی بتانا ہے کہ آپ صرف تھوڑی ڈچ بولتے ہیں۔ کیا کہیں؟",
+  "luister alstublieft": "آپ کسی کی توجہ ایک اہم آواز کی طرف دلانا چاہتے ہیں۔ کیا کہیں؟",
+  "zeg het nog een keer": "جان پہچان والے شخص سے وہی مختصر بات پھر کہلوانی ہے۔ کیا کہیں؟",
+  "ja ik begrijp het": "سامنے والا پوچھتا ہے: Begrijpt u mij? بات اب سمجھ آ گئی ہے۔ کیا جواب دیں؟",
+  ja: "دکاندار پوچھتا ہے کہ کیا آپ رسید چاہتے ہیں۔ آپ رضامند ہیں۔ مختصر جواب کیا ہے؟",
+  goed: "ڈاکٹر پوچھتا ہے کہ اب حالت کیسی ہے۔ حالت اچھی ہے۔ مختصر جواب دیں۔",
+  "niet goed": "مرمت کے بعد چیز ابھی بھی صحیح کام نہیں کر رہی۔ اس کی حالت مختصر طور پر بتائیں۔"
+};
+
+function applyA0StartUseScenesV4(lesson) {
+  if (!a0StartSpeakingLessonIdsV4.has(lesson.id)) return;
+  for (const question of lesson.exercises || []) {
+    if (question.phase !== "use") continue;
+    const concept = (question.conceptIds || [])
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find(Boolean);
+    const key = normalizedTextV4(concept?.dutch || question.answer);
+    const prompt = a0StartUseScenesV4[key];
+    if (!prompt) continue;
+    Object.assign(question, {
+      prompt: `حال: ${prompt}`,
+      instructionUrdu: "صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں",
+      scenarioId: `a0-start:${semanticSlugV4(key, "reply")}`,
+      authenticUse: true
+    });
+  }
+}
+
+let previousChapterLastLessonV4 = null;
+for (const chapter of chaptersV4) {
+  let previousNormalLesson = null;
+  const normalLessons = chapter.lessons.filter((lesson) => lesson.kind !== "mission");
+  for (const lesson of normalLessons) {
+    const unit = unitForLessonV4(chapter, lesson.id);
+    const conceptIds = lessonConceptIdsV4.get(lesson.id) || [];
+    const pattern = makePatternV4(lesson, chapter.id, conceptIds);
+    const prerequisiteLesson = previousNormalLesson || previousChapterLastLessonV4;
+    const prerequisiteSkillIds = prerequisiteLesson
+      ? prerequisiteLesson.skillIds.slice(-5)
+      : [];
+    const newConceptIds = conceptIds.filter((conceptId) => (
+      conceptByIdV4.get(conceptId)?.introducedInLessonId === lesson.id
+    ));
+    const reviewConceptIds = conceptIds.filter((conceptId) => !newConceptIds.includes(conceptId));
+    const effectivePrerequisiteSkillIds = uniqueV4([
+      ...prerequisiteSkillIds,
+      ...reviewConceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId))
+    ]);
+    const skillIds = uniqueV4([
+      ...conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)),
+      pattern?.skillId
+    ]);
+
+    Object.assign(lesson, {
+      kind: "lesson",
+      chapterId: chapter.id,
+      unitId: unit?.id || `${chapter.id}-unassigned`,
+      outcomeUrdu: isUrduText(lesson.description)
+        ? lesson.description
+        : `${lesson.title} کے متعلق Nederlands سمجھنا اور مناسب موقع میں استعمال کرنا۔`,
+      prerequisites: {
+        lessonIds: prerequisiteLesson ? [prerequisiteLesson.id] : [],
+        skillIds: effectivePrerequisiteSkillIds,
+        recommended: true
+      },
+      prerequisiteSkillIds: effectivePrerequisiteSkillIds,
+      conceptIds,
+      newConceptIds,
+      reviewConceptIds,
+      skillIds,
+      pattern,
+      teachingBlocks: []
+    });
+
+    for (const question of lesson.questions) {
+      annotateQuestionV4({
+        lesson,
+        question,
+        conceptIds,
+        pattern,
+        scopeId: lesson.id
+      });
+    }
+
+    const runs = buildLearningRunsV4(lesson, chapter.id, pattern, effectivePrerequisiteSkillIds);
+    applyA0StartUseScenesV4(lesson);
+    lesson.teachingBlocks = [
+      ...new Map(
+        runs.flatMap((run) => run.teachingBlocks)
+          .map((block) => [block.id, block])
+      ).values()
+    ];
+    lesson.learning = {
+      outcomeUrdu: lesson.outcomeUrdu,
+      prerequisiteSkillIds: effectivePrerequisiteSkillIds,
+      conceptIds,
+      skillIds,
+      phaseOrder: learningPhaseOrderV4,
+      estimatedMinutes: Math.max(8, runs.length * 8),
+      runs
+    };
+    previousNormalLesson = lesson;
+  }
+  previousChapterLastLessonV4 = normalLessons[normalLessons.length - 1] || previousChapterLastLessonV4;
+}
+
+function selectMissionConceptsV4(mission, eligibleSkillIds) {
+  const missionChapterId = mission.id.slice(0, 2);
+  const levelBase = missionChapterId === "a0" ? 5 : missionChapterId === "a1" ? 6 : 7;
+  const coverageTarget = levelBase + (parseInt(stableHashV4(mission.id), 36) % 2);
+  const missionText = [
+    mission.title,
+    mission.description,
+    ...mission.questions.flatMap(questionTargetTextsV4)
+  ].join(" ");
+  const eligibleConcepts = uniqueV4(eligibleSkillIds)
+    .map((skillId, index) => {
+      const skill = skillByIdV4.get(skillId);
+      const concept = skill?.conceptId ? conceptByIdV4.get(skill.conceptId) : null;
+      if (!concept?.introducedInLessonId) return null;
+      if (concept.introducedInLessonId.slice(0, 2) !== missionChapterId) return null;
+      const overlap = hasUsefulOverlapV4(missionText, concept.dutch) ? 1 : 0;
+      const phrase = dutchWordsV4(concept.dutch).length > 1 ? 1 : 0;
+      return { concept, overlap, phrase, index };
+    })
+    .filter(Boolean)
+    .sort((left, right) => (
+      right.overlap - left.overlap
+      || right.phrase - left.phrase
+      || right.index - left.index
+    ));
+  const selected = eligibleConcepts.slice(0, coverageTarget).map((item) => item.concept.id);
+  return uniqueV4(
+    selected.length >= 3
+      ? selected
+      : eligibleConcepts.slice(0, Math.min(coverageTarget, eligibleConcepts.length)).map((item) => item.concept.id)
+  );
+}
+
+function missionConceptOptionsV4(conceptIds, conceptId, key) {
+  const concept = conceptByIdV4.get(conceptId);
+  return uniqueOptions([
+    concept?.[key],
+    ...conceptIds.map((id) => conceptByIdV4.get(id)?.[key])
+  ]).slice(0, 3);
+}
+
+function rewriteMissionToTaughtConceptsV4(mission, conceptIds) {
+  const phraseIds = conceptIds.filter((conceptId) => (
+    dutchWordsV4(conceptByIdV4.get(conceptId)?.dutch).length > 1
+  ));
+  const practicalIds = phraseIds.length >= 3 ? phraseIds : conceptIds;
+  const missionDomain = lessonDomainV4(mission.id);
+  const scenarioTitle = domainScenarioTitleUrduV4(missionDomain);
+  mission.scenarioTitleUrdu = scenarioTitle;
+  mission.scenarioId = `${mission.id}:${missionDomain}`;
+  const scenarioNames = ["arrival", "changed-details", "follow-up"];
+  const variantDetails = [
+    "سامنے والا آپ کی بات سن رہا ہے",
+    "وقت یا تفصیل بدلنے کے بعد بات دوبارہ واضح کرنی ہے",
+    "جواب ملنے کے بعد اگلا عملی قدم مکمل کرنا ہے"
+  ];
+
+  const makeMissionQuestion = (type, conceptId, variantIndex, stage) => {
+    const concept = conceptByIdV4.get(conceptId);
+    const conceptLesson = chaptersV4
+      .flatMap((chapter) => chapter.lessons)
+      .find((lesson) => lesson.id === concept?.introducedInLessonId);
+    const canonicalUrdu = concept
+      ? canonicalUrduForDutchV4(
+        conceptLesson,
+        concept.dutch,
+        concept.urdu
+      )
+      : "";
+    const targetSituation = practicalSituationV4(
+      concept,
+      conceptLesson || { id: mission.id, description: scenarioTitle }
+    ).prompt.replace(/^حال:\s*/u, "");
+    const stageContext = `${targetSituation} ${variantDetails[variantIndex]}۔`;
+    const scenarioId = `${mission.id}:${scenarioNames[variantIndex]}:${stage}`;
+    const base = {
+      generatedConceptId: conceptId,
+      conceptIds: [conceptId],
+      missionStage: stage,
+      scenarioId
+    };
+    if (type === "situation") {
+      return {
+        ...base,
+        ...situation(
+          `حال: ${stageContext}`,
+          missionConceptOptionsV4(conceptIds, conceptId, "dutch"),
+          concept.dutch,
+          `اس موقع میں کہیں: ${concept.dutch}۔`
+        ),
+        semanticKey: `${scenarioId}:situation:${concept.id}`
+      };
+    }
+    if (type === "listen-choice") {
+      return {
+        ...base,
+        ...listenChoice(
+          concept.audioText || concept.dutch,
+          missionConceptOptionsV4(conceptIds, conceptId, "urdu"),
+          canonicalUrdu,
+          `${concept.dutch} = ${canonicalUrdu}۔`
+        ),
+        prompt: `${stageContext} آواز سن کر درست اردو مطلب منتخب کریں۔`,
+        mode: "listen-meaning",
+        semanticKey: `${scenarioId}:listening:${concept.id}`
+      };
+    }
+    if (type === "document-choice") {
+      const conceptDomain = lessonDomainV4(conceptLesson?.id || mission.id);
+      return {
+        ...base,
+        type: "document-choice",
+        label: "عملی دستاویز پڑھ کر مطلب سمجھیں",
+        prompt: `${stageContext} سامنے موجود دستاویز میں متعلقہ ڈچ بات کا درست مطلب منتخب کریں۔`,
+        document: authenticDocumentV4(
+          conceptDomain,
+          concept,
+          `${scenarioTitle}: ${domainScenarioTitleUrduV4(conceptDomain)}`,
+          variantIndex
+        ),
+        options: missionConceptOptionsV4(conceptIds, conceptId, "urdu"),
+        answer: canonicalUrdu,
+        explain: `${concept.dutch} = ${canonicalUrdu}۔`,
+        semanticKey: `${scenarioId}:document-reading:${concept.id}`
+      };
+    }
+    return {
+      ...base,
+      type: "build",
+      label: "موقع کے مطابق ڈچ بات بنائیں",
+      prompt: `${stageContext}؛ ${canonicalUrdu}`,
+      tiles: concept.dutch.split(/\s+/).filter(Boolean),
+      answer: concept.dutch,
+      explain: `صحیح لفظی ترتیب: ${concept.dutch}۔`,
+      semanticKey: `${scenarioId}:supported-build:${concept.id}`
+    };
+  };
+
+  for (const [variantIndex, variant] of (mission.variants || []).entries()) {
+    const rotatedConceptIds = rotate(
+      practicalIds,
+      (variantIndex * 2) % Math.max(1, practicalIds.length)
+    );
+    const types = ["situation", "listen-choice", "document-choice", "build"];
+    const questions = [];
+    for (let index = 0; index < types.length; index += 1) {
+      questions.push(makeMissionQuestion(
+        types[index],
+        rotatedConceptIds[index % rotatedConceptIds.length],
+        variantIndex,
+        "use"
+      ));
+    }
+    for (let index = 0; index < types.length; index += 1) {
+      questions.push(makeMissionQuestion(
+        types[index],
+        rotatedConceptIds[(index + types.length) % rotatedConceptIds.length],
+        variantIndex,
+        "check"
+      ));
+    }
+    variant.scenarioId = `${mission.id}:${scenarioNames[variantIndex]}`;
+    variant.title = `${scenarioTitle} — ${
+      ["پہلا موقع", "بدلی ہوئی تفصیل", "اگلا قدم"][variantIndex]
+    }`;
+    variant.questions = questions;
+  }
+}
+
+function a0MissionTargetV4(lessonId, dutch, situations, related = []) {
+  return {
+    refs: [{ lessonId, dutch }, ...related],
+    situations
+  };
+}
+
+/*
+ * A0 missions are deliberately authored instead of being assembled from a
+ * rotating question template.  Each target represents a preceding lesson
+ * strand, every variant supplies supported Use evidence before Check, and the
+ * final mission samples all nine A0 units without introducing a surprise word.
+ */
+const a0MissionPlansV4 = {
+  "a0-start-speaking-mission": {
+    variantTitles: [
+      "نئی عمارت میں پہلی گفتگو",
+      "دکان کے کاؤنٹر پر مختصر گفتگو",
+      "اسکول کے دروازے پر مختصر گفتگو"
+    ],
+    documentTitles: ["عمارت کا استقبالی پیغام", "کاؤنٹر کا مختصر نوٹ", "اسکول کا مختصر پیغام"],
+    documentLabels: ["پہلی بات", "اگلا جواب"],
+    targets: [
+      a0MissionTargetV4("a0-greetings-courtesy", "hallo", [
+        "صبح نئی عمارت میں پڑوسی سے پہلی بار ملتے ہیں۔ بات شروع کریں۔",
+        "دکان میں ملازم آپ کی طرف متوجہ ہوتا ہے۔ گفتگو شروع کریں۔",
+        "اسکول کے دروازے پر استاد سے ملاقات ہوتی ہے۔ پہلے سلام کریں۔"
+      ]),
+      a0MissionTargetV4("a0-greetings-courtesy", "dank u wel", [
+        "پڑوسی آپ کے لیے دروازہ کھلا رکھتا ہے۔ ادب سے شکریہ کہیں۔",
+        "ملازم آپ کو رسید واپس دیتا ہے۔ ادب سے شکریہ کہیں۔",
+        "استاد آپ کو مطلوبہ معلومات دیتا ہے۔ ادب سے شکریہ کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-understanding-help", "kunt u herhalen", [
+        "پڑوسی نے اپنا نام بتایا مگر آپ سن نہ سکے۔ بات دوبارہ مانگیں۔",
+        "کاؤنٹر پر قیمت کا آخری حصہ سنائی نہیں دیا۔ پوری بات دوبارہ مانگیں۔",
+        "استاد کی آخری بات سنائی نہیں دی۔ مؤدبانہ طور پر دہرانے کو کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-understanding-help", "langzamer alstublieft", [
+        "پڑوسی بہت تیز بول رہا ہے۔ رفتار کم کرنے کی مختصر درخواست کریں۔",
+        "ملازم ہدایات بہت تیزی سے بتا رہا ہے۔ آہستہ بولنے کو کہیں۔",
+        "فون پر اسکول کا پیغام بہت تیز ہے۔ آہستہ بولنے کی درخواست کریں۔"
+      ]),
+      a0MissionTargetV4("a0-ja-nee-goed-niet", "nee", [
+        "پڑوسی پوچھتا ہے کہ کیا آپ کو مزید مدد چاہیے؛ ابھی ضرورت نہیں۔ مختصر جواب دیں۔",
+        "دکاندار پوچھتا ہے کہ کیا آپ تھیلا چاہتے ہیں؛ آپ نہیں چاہتے۔ مختصر جواب دیں۔",
+        "استاد پوچھتا ہے کہ کیا کوئی اور سوال ہے؛ ابھی کوئی سوال نہیں۔ مختصر جواب دیں۔"
+      ]),
+      a0MissionTargetV4("a0-greetings-courtesy", "tot ziens", [
+        "گفتگو مکمل ہو گئی ہے اور آپ پڑوسی سے رخصت ہو رہے ہیں۔ مناسب بات کہیں۔",
+        "خریداری مکمل ہو گئی ہے اور آپ دکان سے جا رہے ہیں۔ مناسب رخصتی کہیں۔",
+        "اسکول کی بات مکمل ہو گئی ہے اور آپ واپس جا رہے ہیں۔ مناسب رخصتی کہیں۔"
+      ])
+    ]
+  },
+  "a0-letters-sounds-mission": {
+    variantTitles: [
+      "گھر کے نشان اور لفظ پہچانیں",
+      "دکان کی مختصر فہرست پڑھیں",
+      "کمرے کی تصویری فہرست مکمل کریں"
+    ],
+    documentTitles: ["گھر کی لفظی فہرست", "خریداری کی چھوٹی فہرست", "کمرے کی تصویری فہرست"],
+    documentLabels: ["پہلا لفظ", "دوسرا لفظ"],
+    targets: [
+      a0MissionTargetV4("a0-letters-1", "a", [
+        "دروازے پر پہلا سکھایا ہوا بڑا حرف دکھائی دیتا ہے۔ سیکھی ہوئی آواز پہچانیں۔",
+        "لفظی کارڈ پر پہلا سکھایا ہوا حرف لکھا ہے۔ درست حرف پہچانیں۔",
+        "تصویری فہرست میں پہلے سکھائے ہوئے حرف کا خانہ مکمل کرنا ہے۔ درست حرف چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-1", "b", [
+        "کتاب کے کارڈ پر دوسرا سکھایا ہوا حرف ہے۔ درست حرف پہچانیں۔",
+        "دکان کی چھوٹی فہرست میں دوسرا سکھایا ہوا حرف سنائی دیتا ہے۔ درست حرف چنیں۔",
+        "کمرے کی مشق میں دوسرے سکھائے ہوئے حرف کا کارڈ الگ رکھنا ہے۔ درست حرف پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-2", "huis", [
+        "گھر کی تصویر کے نیچے صحیح ڈچ لفظ لگانا ہے۔ درست لفظ چنیں۔",
+        "پتے کے تصویری کارڈ پر گھر کا لفظ سنائی دیتا ہے۔ اسے پہچانیں۔",
+        "کمرے کی فہرست میں گھر کی تصویر کے لیے صحیح لفظ چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-2", "i", [
+        "آواز کی مشق میں اس سبق کا چھوٹا مصوتہ سنائی دیتا ہے۔ درست حرف پہچانیں۔",
+        "فہرست کے ایک خانے میں سکھایا ہوا مصوتہ لکھنا ہے۔ صحیح حرف چنیں۔",
+        "تصویری لفظ کے شروع میں چھوٹا مصوتہ سنائی دیتا ہے۔ سیکھی ہوئی شکل پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-3", "rijst", [
+        "باورچی خانے کی فہرست میں چاول شامل کرنے ہیں۔ صحیح ڈچ لفظ چنیں۔",
+        "دکان میں چاول کے کارڈ پر لکھا لفظ پہچانیں۔",
+        "کھانے کی تصویری فہرست میں چاول کے لیے صحیح لفظ لگائیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-3", "water", [
+        "گھر کی فہرست میں پانی شامل کرنا ہے۔ صحیح ڈچ لفظ چنیں۔",
+        "دکان میں پانی کی بوتل کے کارڈ پر لکھا لفظ پہچانیں۔",
+        "تصویری فہرست میں پانی کے لیے صحیح لفظ لگائیں۔"
+      ])
+    ]
+  },
+  "a0-first-sentences-mission": {
+    variantTitles: [
+      "نئے پڑوسی سے تعارف",
+      "کمیونٹی مرکز میں تعارف",
+      "اسکول کے استقبالی کمرے میں تعارف"
+    ],
+    documentTitles: ["پڑوسی کا تعارف کارڈ", "مرکز کا تعارف فارم", "اسکول کا تعارف کارڈ"],
+    documentLabels: ["تعارف", "خاندان"],
+    targets: [
+      a0MissionTargetV4("a0-ik-jij-u", "u", [
+        "نئے پڑوسی سے ادب کے ساتھ آپ کہنا ہے۔ درست ڈچ لفظ پہچانیں۔",
+        "مرکز کے ملازم سے رسمی انداز میں آپ کہنا ہے۔ درست لفظ چنیں۔",
+        "استقبالی استاد سے ادب کے ساتھ آپ کہنا ہے۔ درست لفظ چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-people-nouns", "familie", [
+        "پڑوسی آپ کے ساتھ موجود لوگوں کے بارے میں پوچھتا ہے۔ خاندان کا لفظ چنیں۔",
+        "فارم پر خاندان کی تصویر کے لیے صحیح لفظ درکار ہے۔ درست لفظ چنیں۔",
+        "اسکول کے کارڈ پر خاندان کی تصویر ہے۔ صحیح ڈچ لفظ پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-hij-zij-wij", "zij", [
+        "ایک عورت کی طرف اشارہ کرکے وہ کہنا ہے۔ درست ڈچ ضمیر چنیں۔",
+        "خاتون ملازم کے بارے میں وہ کہنا ہے۔ درست لفظ چنیں۔",
+        "بچی کی والدہ کے بارے میں وہ کہنا ہے۔ درست ضمیر چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-een-de-het", "een vrouw", [
+        "تصویر میں ایک عورت ہے۔ مکمل سیکھی ہوئی ڈچ بات چنیں۔",
+        "تعارف فارم میں ایک عورت لکھنا ہے۔ درست فقرہ چنیں۔",
+        "استقبالی کارڈ پر ایک عورت دکھائی گئی ہے۔ صحیح فقرہ پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-first-sentences", "ik ben een vrouw", [
+        "نئے پڑوسی کو اپنے بارے میں مکمل چھوٹا جملہ کہنا ہے۔ درست جملہ بنائیں۔",
+        "مرکز میں اپنے بارے میں ایک مکمل تعارفی جملہ کہیں۔",
+        "استقبالی کمرے میں اپنے بارے میں مکمل چھوٹی بات کہیں۔"
+      ], [{ lessonId: "a0-ben-bent-is", dutch: "ik ben" }]),
+      a0MissionTargetV4("a0-name-land-city", "mijn naam is Ali", [
+        "پڑوسی کو اپنا نام علی بتانا ہے۔ مکمل تعارفی جملہ کہیں۔",
+        "مرکز کے ملازم کو اپنا نام علی بتائیں۔ مکمل جملہ کہیں۔",
+        "اسکول کے استقبالی کمرے میں اپنا نام علی بتائیں۔ مکمل جملہ کہیں۔"
+      ])
+    ]
+  },
+  "a0-people-things-mission": {
+    variantTitles: [
+      "کلاس میں اپنی چیزیں",
+      "گھر میں گمشدہ چیز",
+      "کمیونٹی مرکز کی میز"
+    ],
+    documentTitles: ["کلاس کی چیزوں کی فہرست", "گمشدہ چیز کا نوٹ", "میز کی چیزوں کی فہرست"],
+    documentLabels: ["موجود چیز", "ملکیت"],
+    targets: [
+      a0MissionTargetV4("a0-hebben-1", "ik heb een boek", [
+        "کلاس میں بتانا ہے کہ آپ کے پاس ایک کتاب ہے۔ مکمل جملہ کہیں۔",
+        "گھر میں فہرست بناتے ہوئے بتائیں کہ آپ کے پاس ایک کتاب ہے۔",
+        "مرکز کی میز پر اپنی کتاب دکھا کر بتائیں کہ یہ آپ کے پاس ہے۔"
+      ]),
+      a0MissionTargetV4("a0-geen", "ik heb geen boek", [
+        "کلاس میں کتاب مانگی گئی مگر آپ کے پاس کتاب نہیں۔ مکمل جملہ کہیں۔",
+        "گھر کی فہرست میں بتانا ہے کہ آپ کے پاس کتاب نہیں۔",
+        "مرکز میں ملازم کتاب پوچھتا ہے مگر آپ کے پاس نہیں۔ مکمل جملہ کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-possessive", "mijn huis", [
+        "تصویر میں اپنا گھر دکھا کر میرا گھر کہنا ہے۔ درست فقرہ چنیں۔",
+        "گمشدہ چیز کے نوٹ میں اپنے گھر کا ذکر کرنا ہے۔ درست فقرہ چنیں۔",
+        "مرکز کے نقشے میں اپنا گھر دکھا کر درست فقرہ کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-dit-dat-questions", "wat is dit", [
+        "میز پر ایک نامعلوم چیز ہے۔ اس کے بارے میں چھوٹا سوال پوچھیں۔",
+        "گھر میں ایک چیز پہچان میں نہیں آ رہی۔ یہ کیا ہے پوچھیں۔",
+        "مرکز کی میز پر رکھی چیز کا نام معلوم کرنا ہے۔ درست سوال کہیں۔"
+      ])
+    ]
+  },
+  "a0-numbers-time-mission": {
+    variantTitles: [
+      "ملاقات کا وقت اور رابطہ",
+      "فون پر وقت بدلنا",
+      "استقبالی کاؤنٹر پر معلومات"
+    ],
+    documentTitles: ["ملاقات کارڈ", "فون نوٹ", "استقبالی فارم"],
+    documentLabels: ["اہم نمبر", "وقت یا رابطہ"],
+    targets: [
+      a0MissionTargetV4("a0-numbers-0-10", "vier euro", [
+        "ملاقات کے سفر کا ٹکٹ چار یورو ہے۔ رقم پہچانیں۔",
+        "فون پر بتائی گئی فیس چار یورو ہے۔ درست رقم چنیں۔",
+        "کاؤنٹر پر چار یورو ادا کرنے ہیں۔ رقم کی ڈچ بات پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-numbers-11-100", "huisnummer veertien", [
+        "ملاقات کے کارڈ پر گھر نمبر چودہ درج کرنا ہے۔ مکمل بات کہیں۔",
+        "فون پر اپنا گھر نمبر چودہ بتانا ہے۔ مکمل بات کہیں۔",
+        "استقبالی فارم میں گھر نمبر چودہ بتایا گیا ہے۔ اسے پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-time-days", "om acht uur", [
+        "ملاقات آٹھ بجے ہے۔ پورا وقت ڈچ میں کہیں۔",
+        "فون پر نیا وقت آٹھ بجے بتایا گیا ہے۔ اسے پہچانیں۔",
+        "کاؤنٹر پر آٹھ بجے پہنچنے کی بات کرنی ہے۔ پورا وقت کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-spelling-personal-details", "hoe spelt u dat?", [
+        "نام سن لیا مگر حروف معلوم نہیں۔ ادب سے ہجے پوچھیں۔",
+        "فون پر نام واضح نہیں ہوا۔ اس کے ہجے پوچھیں۔",
+        "کاؤنٹر پر لکھنے سے پہلے نام کے ہجے پوچھیں۔"
+      ]),
+      a0MissionTargetV4("a0-address-phone", "mijn nummer is nul zes", [
+        "ملاقات کے فارم میں اپنا فون نمبر صفر چھ سے شروع بتائیں۔",
+        "فون پر رابطے کے لیے اپنا نمبر صفر چھ سے شروع بتائیں۔",
+        "کاؤنٹر پر اپنا نمبر صفر چھ سے شروع بتائیں۔"
+      ]),
+      a0MissionTargetV4("a0-date-appointment", "ik heb een afspraak", [
+        "استقبال پر بتانا ہے کہ آپ کی ملاقات ہے۔ مکمل جملہ کہیں۔",
+        "فون اٹھانے والے کو بتائیں کہ آپ کی ملاقات ہے۔",
+        "کاؤنٹر پر پہنچ کر اپنی ملاقات کی وجہ واضح کریں۔"
+      ])
+    ]
+  },
+  "a0-mission-home-start": {
+    variantTitles: [
+      "نئے گھر میں چیز کی جگہ",
+      "مرمت والے کو گھر کی بات",
+      "گھر سے نکلنے سے پہلے"
+    ],
+    documentTitles: ["گھر کی مختصر فہرست", "مرمت کا پیغام", "گھر سے نکلنے کی فہرست"],
+    documentLabels: ["جگہ", "ضروری کام"],
+    targets: [
+      a0MissionTargetV4("a0-place-1", "op tafel", [
+        "چابی میز کے اوپر ہے۔ جگہ کی درست ڈچ بات کہیں۔",
+        "مرمت والے کے کاغذ میز کے اوپر رکھے ہیں۔ جگہ بتائیں۔",
+        "نکلنے سے پہلے کارڈ میز کے اوپر رکھا ہے۔ جگہ بتائیں۔"
+      ]),
+      a0MissionTargetV4("a0-place-2", "naast de tafel", [
+        "کرسی میز کے ساتھ ہے۔ جگہ کی سیکھی ہوئی بات پہچانیں۔",
+        "مرمت کا سامان میز کے ساتھ رکھا ہے۔ جگہ بتائیں۔",
+        "بیگ میز کے ساتھ رکھا ہے۔ صحیح جگہ کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-gaan-komen", "ik ga", [
+        "اب آپ کو نکلنا ہے۔ میں جاتا ہوں کی مختصر بات کہیں۔",
+        "مرمت کی بات مکمل ہے اور آپ جانے کی اطلاع دیتے ہیں۔ مختصر بات کہیں۔",
+        "دروازہ بند کرنے کے بعد آپ روانہ ہو رہے ہیں۔ مختصر بات کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-naar-met", "zij gaat naar school", [
+        "گھر سے ایک بچی اسکول جا رہی ہے۔ اس کے بارے میں مکمل جملہ کہیں۔",
+        "مرمت والے کو بتانا ہے کہ گھر کی ایک فرد اسکول جا رہی ہے۔ مکمل جملہ کہیں۔",
+        "راستے میں ایک خاتون اسکول کی طرف جا رہی ہے۔ اس کے بارے میں مکمل جملہ کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-home-needs", "de verwarming doet het niet", [
+        "گھر ٹھنڈا ہے اور ہیٹنگ کام نہیں کر رہی۔ خرابی واضح کریں۔",
+        "مرمت والے کو اصل مسئلہ بتائیں: ہیٹنگ کام نہیں کرتی۔",
+        "نکلنے سے پہلے مالک کو ہیٹنگ کی خرابی کا پیغام دیں۔"
+      ])
+    ]
+  },
+  "a0-mission-neighbourhood": {
+    variantTitles: [
+      "چھوٹی دکان میں خریداری",
+      "کیفے کے کاؤنٹر پر",
+      "سپر مارکیٹ میں ادائیگی"
+    ],
+    documentTitles: ["خریداری کی رسید", "کاؤنٹر کا آرڈر", "ادائیگی کی رسید"],
+    documentLabels: ["چیز یا مشروب", "ادائیگی"],
+    targets: [
+      a0MissionTargetV4("a0-daily-actions", "ik drink water", [
+        "خریداری کے بعد بتانا ہے کہ آپ پانی پیتے ہیں۔ مکمل جملہ کہیں۔",
+        "کیفے میں اپنی روزمرہ عادت بتائیں کہ آپ پانی پیتے ہیں۔",
+        "سپر مارکیٹ میں ساتھی کو بتائیں کہ آپ پانی پیتے ہیں۔"
+      ]),
+      a0MissionTargetV4("a0-food-drink", "ik wil graag water", [
+        "دکان میں پانی مؤدبانہ طور پر مانگیں۔",
+        "کیفے کے کاؤنٹر پر پانی مانگیں۔",
+        "سپر مارکیٹ کے کاؤنٹر پر پانی کی درخواست کریں۔"
+      ]),
+      a0MissionTargetV4("a0-shopping-payment", "hoeveel kost dit", [
+        "ایک چیز کی قیمت معلوم نہیں۔ قیمت کا سوال پوچھیں۔",
+        "کاؤنٹر پر آرڈر کی قیمت پوچھیں۔",
+        "سپر مارکیٹ میں چیز دکھا کر قیمت پوچھیں۔"
+      ]),
+      a0MissionTargetV4("a0-shopping-payment", "ik betaal met pin", [
+        "دکاندار ادائیگی کا طریقہ پوچھتا ہے۔ بتائیں کہ پن سے ادا کریں گے۔",
+        "کیفے کے کاؤنٹر پر پن سے ادائیگی کی بات کہیں۔",
+        "سپر مارکیٹ کی کَیش جگہ پر پن سے ادائیگی کی بات کہیں۔"
+      ])
+    ]
+  },
+  "a0-mission-help": {
+    variantTitles: [
+      "اسٹیشن سے دواخانے تک",
+      "بس کے سفر میں طبی مدد",
+      "رات کو فوری صحت کی مدد"
+    ],
+    documentTitles: ["سفر اور راستے کا نوٹ", "بس اور صحت کا پیغام", "فوری مدد کا کارڈ"],
+    documentLabels: ["راستہ یا سفر", "صحت یا مدد"],
+    targets: [
+      a0MissionTargetV4("a0-transport-directions", "waar is het station", [
+        "سفر شروع کرنے کے لیے اسٹیشن کا راستہ پوچھیں۔",
+        "بس سے اترنے کے بعد اسٹیشن معلوم کرنا ہے۔ درست سوال کہیں۔",
+        "رات کے وقت مددگار سے اسٹیشن کی جگہ پوچھیں۔"
+      ]),
+      a0MissionTargetV4("a0-transport-directions", "ik wil een kaartje", [
+        "اسٹیشن کے کاؤنٹر پر ایک ٹکٹ مانگیں۔",
+        "بس میں سفر کے لیے ٹکٹ کی درخواست کریں۔",
+        "رات کی گاڑی کے لیے ٹکٹ مانگیں۔"
+      ]),
+      a0MissionTargetV4("a0-transport-directions", "ga rechtdoor", [
+        "راستہ بتاتے ہوئے سیدھا جانے کی ہدایت دیں۔",
+        "مسافر کو بس اسٹاپ تک سیدھا جانے کو کہیں۔",
+        "مددگار آپ کو سیدھا جانے کی بات بتاتا ہے۔ اسے پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-health-emergency", "ik ben ziek", [
+        "دواخانے پہنچ کر بتائیں کہ آپ بیمار ہیں۔",
+        "بس میں طبیعت خراب ہے۔ مددگار کو بتائیں کہ آپ بیمار ہیں۔",
+        "رات کو فون پر بتائیں کہ آپ بیمار ہیں۔"
+      ]),
+      a0MissionTargetV4("a0-health-emergency", "waar is de apotheek", [
+        "اسٹیشن کے قریب دواخانے کی جگہ پوچھیں۔",
+        "بس ڈرائیور سے دواخانے کی جگہ پوچھیں۔",
+        "رات کو کھلے دواخانے کا راستہ پوچھیں۔"
+      ]),
+      a0MissionTargetV4("a0-health-emergency", "bel 112", [
+        "فوری خطرہ ہے اور کسی کو ہنگامی نمبر ملانے کو کہنا ہے۔",
+        "مسافر کو فوری طبی مدد چاہیے۔ ہنگامی نمبر ملانے کی ہدایت دیں۔",
+        "رات کو حالت بہت خراب ہو گئی ہے۔ فوراً ہنگامی نمبر ملانے کو کہیں۔"
+      ])
+    ]
+  },
+  "a0-school-work-safety-mission": {
+    variantTitles: [
+      "بیمار بچے کے دن کا انتظام",
+      "اسکول اور کام کو صبح کا پیغام",
+      "عمارت سے محفوظ رخصتی"
+    ],
+    documentTitles: ["دن کے ضروری پیغامات", "صبح کا رابطہ نوٹ", "محفوظ رخصتی کی فہرست"],
+    documentLabels: ["پہلی ضروری بات", "اگلا عملی قدم"],
+    completion: true,
+    useTypes: [
+      ["situation", "document-choice", "sequence", "sequence", "sequence", "sequence"],
+      ["meaning", "situation", "sequence", "sequence", "sequence", "sequence"],
+      ["listen-choice", "situation", "sequence", "sequence", "sequence", "sequence"]
+    ],
+    checkTypes: [
+      ["meaning", "listen-choice", "sequence", "sequence", "sequence", "sequence"],
+      ["listen-choice", "document-choice", "sequence", "sequence", "sequence", "sequence"],
+      ["document-choice", "meaning", "sequence", "sequence", "sequence", "sequence"]
+    ],
+    targets: [
+      a0MissionTargetV4("a0-understanding-help", "kunt u herhalen", [
+        "فون پر پہلی بات سنائی نہیں دی۔ مؤدبانہ طور پر دوبارہ مانگیں۔",
+        "صبح کے پیغام کا آخری حصہ واضح نہیں۔ دوبارہ کہنے کو کہیں۔",
+        "رخصتی کی ہدایت سنائی نہیں دی۔ مؤدبانہ طور پر دہرانے کو کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-3", "water", [
+        "بیمار بچے کے لیے فہرست میں پانی کا لفظ پہچانیں۔",
+        "صبح کی ضروری چیزوں میں پانی کا ڈچ لفظ چنیں۔",
+        "رخصتی سے پہلے پانی کی بوتل کے کارڈ پر لفظ پہچانیں۔"
+      ]),
+      a0MissionTargetV4("a0-name-land-city", "mijn naam is Ali", [
+        "فون پر پہلے اپنا نام علی بتائیں، پھر رابطے کے لیے اپنا صفر چھ والا نمبر دیں۔",
+        "صبح کے پیغام میں اپنا نام علی اور صفر چھ سے شروع فون نمبر درست ترتیب سے دیں۔",
+        "عمارت کے کاؤنٹر پر اپنا نام علی اور صفر چھ سے شروع نمبر درست ترتیب سے بتائیں۔"
+      ], [{ lessonId: "a0-address-phone", dutch: "mijn nummer is nul zes" }]),
+      a0MissionTargetV4("a0-possessive", "mijn huis", [
+        "اپنے گھر کا ذکر کریں، پھر بتائیں کہ وہاں ہیٹنگ کام نہیں کر رہی۔",
+        "مرمت کے پیغام میں پہلے میرا گھر کہیں، پھر ہیٹنگ کی خرابی بتائیں۔",
+        "رخصت ہونے سے پہلے اپنے گھر اور ہیٹنگ کی خرابی کی دو باتیں درست ترتیب سے کہیں۔"
+      ], [{ lessonId: "a0-home-needs", dutch: "de verwarming doet het niet" }]),
+      a0MissionTargetV4("a0-shopping-payment", "ik betaal met pin", [
+        "فارمیسی جانے کے سفر میں پہلے ٹکٹ مانگیں، پھر پن سے ادائیگی بتائیں۔",
+        "صبح کے سفر میں ٹکٹ کی درخواست اور پن سے ادائیگی کی بات درست ترتیب سے کہیں۔",
+        "محفوظ روانگی سے پہلے ٹکٹ مانگنے اور پن سے ادا کرنے کی بات ترتیب دیں۔"
+      ], [{ lessonId: "a0-transport-directions", dutch: "ik wil een kaartje" }]),
+      a0MissionTargetV4("a0-child-school", "mijn kind komt vandaag niet", [
+        "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
+        "صبح پہلے اسکول، پھر کام کو درست پیغام دیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
+        "محفوظ رخصتی میں بچے، کام، اور باہر جانے کی تین سیکھی ہوئی باتیں درست ترتیب سے کہیں۔"
+      ], [
+        { lessonId: "a0-work-basics", dutch: "ik kan vandaag niet komen" },
+        { lessonId: "a0-weather-clothing-safety", dutch: "waar is de uitgang" }
+      ])
+    ]
+  }
+};
+
+const a0DefaultMissionUseTypesV4 = [
+  ["situation", "reverse", "listen-choice", "meaning", "document-choice", "build"],
+  ["listen-choice", "document-choice", "situation", "reverse", "meaning", "build"],
+  ["document-choice", "meaning", "reverse", "listen-choice", "situation", "build"]
+];
+const a0DefaultMissionCheckTypesV4 = [
+  ["listen-choice", "meaning", "situation", "document-choice", "build", "reverse"],
+  ["document-choice", "situation", "listen-choice", "reverse", "meaning", "build"],
+  ["situation", "reverse", "document-choice", "listen-choice", "build", "meaning"]
+];
+
+function resolveA0MissionTargetV4(target) {
+  const resolved = target.refs.map((ref) => {
+    const concept = [...conceptByIdV4.values()].find((candidate) => (
+      candidate.introducedInLessonId === ref.lessonId
+      && normalizedTextV4(candidate.dutch) === normalizedTextV4(ref.dutch)
+    ));
+    if (!concept) {
+      throw new Error(`Missing A0 mission concept: ${ref.lessonId} / ${ref.dutch}`);
+    }
+    const skillId = skillIdByConceptIdV4.get(concept.id);
+    if (!skillId) throw new Error(`Missing A0 mission skill: ${concept.id}`);
+    return { concept, skillId, lessonId: ref.lessonId };
+  });
+  return { ...target, resolved };
+}
+
+function a0MissionOptionsV4(targets, target, key) {
+  return uniqueOptions([
+    target.resolved[0].concept[key],
+    ...targets.map((item) => item.resolved[0].concept[key])
+  ]).slice(0, 3);
+}
+
+function a0MissionDocumentV4(plan, targets, targetIndex, variantIndex) {
+  const target = targets[targetIndex];
+  const companion = targets[(targetIndex + 1) % targets.length];
+  return {
+    documentKind: plan.completion ? "day-plan" : "practical-note",
+    title: plan.documentTitles[variantIndex],
+    rows: [
+      {
+        label: plan.documentLabels[0],
+        value: target.resolved[0].concept.dutch
+      },
+      {
+        label: plan.documentLabels[1],
+        value: companion.resolved[0].concept.dutch
+      }
+    ]
+  };
+}
+
+function buildA0MissionQuestionV4({
+  mission,
+  plan,
+  targets,
+  targetIndex,
+  variantIndex,
+  phase,
+  requestedType
+}) {
+  const target = targets[targetIndex];
+  const primary = target.resolved[0].concept;
+  const concepts = target.resolved.map((item) => item.concept);
+  const skillIds = target.resolved.map((item) => item.skillId);
+  const conceptIds = concepts.map((concept) => concept.id);
+  const situationUrdu = target.situations[variantIndex];
+  const multiTarget = concepts.length > 1;
+  let type = multiTarget ? "sequence" : requestedType;
+  if (phase === "use" && type === "meaning") type = "reverse";
+  if (type === "build" && dutchWordsV4(primary.dutch).length < 2) type = "reverse";
+  const semanticKey = [
+    "a0-authored-mission",
+    mission.id,
+    `variant-${variantIndex + 1}`,
+    phase,
+    `slot-${targetIndex + 1}`,
+    type,
+    ...concepts.map((concept) => semanticSlugV4(concept.dutch, "target"))
+  ].join(":");
+  const common = {
+    type,
+    label: phase === "use" ? "مدد کے ساتھ عملی استعمال" : "آزاد عملی جانچ",
+    semanticKey,
+    generatedConceptId: primary.id,
+    authoredConceptIds: conceptIds,
+    authoredSkillIds: skillIds,
+    authoredPhase: phase,
+    scenarioId: `${mission.id}:variant-${variantIndex + 1}:target-${targetIndex + 1}`,
+    authenticUse: true
+  };
+  const urduOptions = a0MissionOptionsV4(targets, target, "urdu");
+  const dutchOptions = a0MissionOptionsV4(targets, target, "dutch");
+  let question;
+
+  if (type === "meaning") {
+    question = {
+      ...common,
+      prompt: primary.dutch,
+      options: urduOptions,
+      answer: primary.urdu,
+      explain: `${primary.dutch} = ${primary.urdu}۔`
+    };
+  } else if (type === "reverse") {
+    question = {
+      ...common,
+      prompt: phase === "use" ? `حال: ${situationUrdu}` : primary.urdu,
+      options: dutchOptions,
+      answer: primary.dutch,
+      explain: `${primary.urdu} کے لیے ${primary.dutch} کہیں۔`
+    };
+  } else if (type === "listen-choice") {
+    question = {
+      ...common,
+      prompt: `${situationUrdu} آواز سن کر درست اردو مطلب چنیں۔`,
+      speak: primary.audioText || primary.dutch,
+      mode: "listen-meaning",
+      options: urduOptions,
+      answer: primary.urdu,
+      explain: `${primary.dutch} = ${primary.urdu}۔`
+    };
+  } else if (type === "document-choice") {
+    question = {
+      ...common,
+      prompt: `${situationUrdu} سامنے موجود مختصر دستاویز کی اہم بات کا درست مطلب چنیں۔`,
+      document: a0MissionDocumentV4(plan, targets, targetIndex, variantIndex),
+      options: urduOptions,
+      answer: primary.urdu,
+      explain: `${primary.dutch} = ${primary.urdu}۔`
+    };
+  } else if (type === "build") {
+    question = {
+      ...common,
+      prompt: `${situationUrdu} الفاظ کو درست ترتیب میں رکھیں۔`,
+      tiles: primary.dutch.split(/\s+/).filter(Boolean),
+      answer: primary.dutch,
+      explain: `درست لفظی ترتیب: ${primary.dutch}۔`
+    };
+  } else if (type === "sequence") {
+    const steps = concepts.map((concept) => concept.dutch);
+    question = {
+      ...common,
+      prompt: `${situationUrdu} سیکھی ہوئی مکمل باتوں کو عملی ترتیب میں رکھیں۔`,
+      tiles: steps,
+      answer: steps.join(" | "),
+      explain: `درست ترتیب: ${steps.join("، پھر ")}۔`
+    };
+  } else {
+    question = {
+      ...common,
+      type: "situation",
+      prompt: `حال: ${situationUrdu}`,
+      options: dutchOptions,
+      answer: primary.dutch,
+      explain: `اس موقع میں کہیں: ${primary.dutch}۔`
+    };
+  }
+
+  const action = {
+    meaning: "سیکھی ہوئی ڈچ بات پڑھیں اور اسی موقع کے مطابق درست اردو مطلب منتخب کریں",
+    reverse: "اردو ضرورت پڑھیں اور پہلے سیکھی ہوئی درست ڈچ بات منتخب کریں",
+    "listen-choice": "اسی موقع کی ڈچ بات سنیں اور درست اردو مطلب منتخب کریں",
+    "document-choice": "مختصر حقیقی دستاویز پڑھیں اور نشان زدہ ڈچ بات کا درست اردو مطلب منتخب کریں",
+    build: "دیے گئے سکھائے ہوئے الفاظ سے اسی موقع کی مکمل ڈچ بات بنائیں",
+    sequence: "سکھائی ہوئی مکمل باتوں کو اس عملی کام کی درست ترتیب میں رکھیں",
+    situation: "صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں"
+  }[question.type];
+  question.authoredInstructionUrdu = `${situationUrdu} ${action}۔`;
+  question.authoredHintUrdu = phase === "use"
+    ? `مدد: “${primary.dutch}” کا مطلب “${primary.urdu}” ہے۔`
+    : `جواب دینے کے بعد ضرورت ہو تو یاد کریں: “${primary.dutch}” = “${primary.urdu}”۔`;
+  question.authoredCorrectExplanation = multiTarget
+    ? `درست۔ یہ ترتیب پہلے سیکھی ہوئی باتوں کو حقیقی کام کے مطابق جوڑتی ہے: ${concepts.map((concept) => concept.dutch).join("، پھر ")}۔`
+    : `درست۔ “${primary.dutch}” کا مطلب “${primary.urdu}” ہے اور یہی اس موقع کی مناسب بات ہے۔`;
+  question.authoredWrongExplanation = multiTarget
+    ? `ترتیب دوبارہ دیکھیں: پہلے ${concepts[0].dutch}، پھر ${concepts.slice(1).map((concept) => concept.dutch).join("، پھر ")}۔`
+    : `یہ جواب اس موقع کے ہدف سے مختلف ہے۔ یہاں “${primary.dutch}” کہنا یا پہچاننا ہے؛ اس کا مطلب “${primary.urdu}” ہے۔`;
+  return question;
+}
+
+function buildA0MissionPlanV4(mission, plan) {
+  const targets = plan.targets.map(resolveA0MissionTargetV4);
+  const conceptIds = uniqueV4(
+    targets.flatMap((target) => target.resolved.map((item) => item.concept.id))
+  );
+  const assessmentSkillIds = uniqueV4(
+    targets.flatMap((target) => target.resolved.map((item) => item.skillId))
+  );
+  const prerequisiteLessonIds = uniqueV4(
+    targets.flatMap((target) => target.resolved.map((item) => item.lessonId))
+  );
+  const variants = (mission.variants || []).slice(0, 3);
+  while (variants.length < 3) {
+    variants.push({
+      id: `${mission.id}-variant-${variants.length + 1}`,
+      title: plan.variantTitles[variants.length],
+      questions: []
+    });
+  }
+
+  for (let variantIndex = 0; variantIndex < variants.length; variantIndex += 1) {
+    const variant = variants[variantIndex];
+    const useTypes = plan.useTypes?.[variantIndex]
+      || a0DefaultMissionUseTypesV4[variantIndex];
+    const checkTypes = plan.checkTypes?.[variantIndex]
+      || a0DefaultMissionCheckTypesV4[variantIndex];
+    const questions = [];
+    const speakingTarget = targets[variantIndex % targets.length].resolved[0].concept;
+    questions.push({
+      type: "speak-repeat",
+      label: "سنیں اور بغیر اسکور کے دہرائیں",
+      prompt: `${plan.variantTitles[variantIndex]} میں پہلے یہ سیکھی ہوئی بات آہستہ سنیں اور دہرائیں۔`,
+      speak: speakingTarget.audioText || speakingTarget.dutch,
+      answer: speakingTarget.dutch,
+      scored: false,
+      semanticKey: `a0-authored-mission:${mission.id}:variant-${variantIndex + 1}:use:speaking:${semanticSlugV4(speakingTarget.dutch, "target")}`,
+      generatedConceptId: speakingTarget.id,
+      authoredConceptIds: [speakingTarget.id],
+      authoredSkillIds: [skillIdByConceptIdV4.get(speakingTarget.id)],
+      authoredPhase: "use",
+      authoredInstructionUrdu: `“${speakingTarget.dutch}” عام رفتار اور پھر آہستہ سنیں، بلند آواز میں دہرائیں؛ اس پر اسکور نہیں ہوگا۔`,
+      authoredHintUrdu: `آواز کو چھوٹے حصوں میں سنیں: ${speakingTarget.pronunciationUrdu}۔`,
+      authoredCorrectExplanation: `آپ نے “${speakingTarget.dutch}” کی بغیر اسکور والی بولنے کی مشق مکمل کی۔`,
+      authoredWrongExplanation: `آواز دوبارہ آہستہ سنیں اور ایک بار پھر دہرائیں۔`
+    });
+    for (let targetIndex = 0; targetIndex < targets.length; targetIndex += 1) {
+      questions.push(buildA0MissionQuestionV4({
+        mission,
+        plan,
+        targets,
+        targetIndex,
+        variantIndex,
+        phase: "use",
+        requestedType: useTypes[targetIndex % useTypes.length]
+      }));
+    }
+    for (let targetIndex = 0; targetIndex < targets.length; targetIndex += 1) {
+      questions.push(buildA0MissionQuestionV4({
+        mission,
+        plan,
+        targets,
+        targetIndex,
+        variantIndex,
+        phase: "independent-check",
+        requestedType: checkTypes[targetIndex % checkTypes.length]
+      }));
+    }
+    Object.assign(variant, {
+      title: plan.variantTitles[variantIndex],
+      scenarioId: `${mission.id}:authored-variant-${variantIndex + 1}`,
+      questions
+    });
+  }
+
+  mission.variants = variants;
+  mission.scenarioTitleUrdu = plan.variantTitles[0];
+  mission.scenarioId = `${mission.id}:a0-authored-capstone`;
+  return { conceptIds, assessmentSkillIds, prerequisiteLessonIds };
+}
+
+function organizeMissionVariantV4(variant) {
+  const authoredPhases = variant.questions.map((question) => question.phase);
+  const firstAuthoredCheck = authoredPhases.indexOf("independent-check");
+  const hasCompleteAuthoredOrder = (
+    authoredPhases.length > 0
+    && authoredPhases.every((phase) => ["use", "independent-check"].includes(phase))
+    && firstAuthoredCheck > 0
+    && authoredPhases.slice(firstAuthoredCheck).every((phase) => phase === "independent-check")
+  );
+  if (hasCompleteAuthoredOrder) {
+    const use = variant.questions.slice(0, firstAuthoredCheck);
+    const checks = variant.questions.slice(firstAuthoredCheck);
+    for (const question of checks) {
+      question.automaticHint = false;
+      question.hintMode = "after-attempt";
+    }
+    return {
+      preview: { exerciseIds: [], scored: false },
+      use: { exerciseIds: use.map((question) => question.id) },
+      independentCheck: {
+        exerciseIds: checks.map((question) => question.id),
+        minimumScore: 0.8,
+        automaticHints: false
+      },
+      correction: {
+        mode: "retry-missed",
+        required: true,
+        requiresSupportedRetry: true
+      }
+    };
+  }
+
+  const preview = [];
+  const use = [];
+  const checks = [];
+  const seenTypes = new Set();
+  const checkedTypes = new Set();
+  const checkableTypes = new Set([
+    "document-choice",
+    "listen-choice",
+    "situation",
+    "sequence",
+    "build",
+    "image-choice",
+    "short-input"
+  ]);
+
+  for (const question of variant.questions) {
+    if (question.type === "uitleg") {
+      // Preview is lesson metadata, not a scored or answerable exercise. Keep
+      // the contextual mission explanation inside Use so every exercise has
+      // one of the canonical assessable learning phases.
+      question.phase = "use";
+      use.push(question);
+      continue;
+    }
+    const canCheck = (
+      checks.length < 5
+      && checkableTypes.has(question.type)
+      && seenTypes.has(question.type)
+      && !checkedTypes.has(question.type)
+    );
+    if (canCheck) {
+      question.phase = "independent-check";
+      question.automaticHint = false;
+      question.hintMode = "after-attempt";
+      checks.push(question);
+      checkedTypes.add(question.type);
+    } else {
+      question.phase = "use";
+      use.push(question);
+      seenTypes.add(question.type);
+    }
+  }
+
+  if (checks.length < 5) {
+    for (let index = use.length - 1; index >= 0 && checks.length < 5; index -= 1) {
+      const question = use[index];
+      const earlierSameType = use.slice(0, index).some((item) => item.type === question.type);
+      if (!earlierSameType || !checkableTypes.has(question.type)) continue;
+      use.splice(index, 1);
+      question.phase = "independent-check";
+      question.automaticHint = false;
+      question.hintMode = "after-attempt";
+      checks.unshift(question);
+    }
+  }
+
+  variant.questions = [...preview, ...use, ...checks];
+  return {
+    preview: { exerciseIds: preview.map((question) => question.id), scored: false },
+    use: { exerciseIds: use.map((question) => question.id) },
+    independentCheck: {
+      exerciseIds: checks.map((question) => question.id),
+      minimumScore: 0.8,
+      automaticHints: false
+    },
+    correction: {
+      mode: "retry-missed",
+      required: true,
+      requiresSupportedRetry: true
+    }
+  };
+}
+
+function compactMissionVariantV4(variant, phases, assessmentSkillIds) {
+  const questionById = new Map(variant.questions.map((question) => [question.id, question]));
+  const useQuestions = phases.use.exerciseIds.map((id) => questionById.get(id)).filter(Boolean);
+  const checkQuestions = phases.independentCheck.exerciseIds
+    .map((id) => questionById.get(id))
+    .filter(Boolean);
+  const selectedUseIds = new Set();
+  const selectUse = (question) => {
+    if (question) selectedUseIds.add(question.id);
+  };
+
+  selectUse(useQuestions.find((question) => question.type === "uitleg"));
+  selectUse(useQuestions.find((question) => question.type === "speak-repeat"));
+  for (const checkType of uniqueV4(checkQuestions.map((question) => question.type))) {
+    selectUse(useQuestions.find((question) => question.type === checkType));
+  }
+
+  const coveredSkills = () => new Set([
+    ...checkQuestions,
+    ...useQuestions.filter((question) => selectedUseIds.has(question.id))
+  ].flatMap((question) => question.skillIds || []));
+  for (const skillId of assessmentSkillIds) {
+    if (coveredSkills().has(skillId)) continue;
+    selectUse(useQuestions.find((question) => question.skillIds?.includes(skillId)));
+  }
+
+  const desiredUseCount = Math.max(
+    selectedUseIds.size,
+    Math.min(
+      useQuestions.length,
+      assessmentSkillIds.length + 2 + (parseInt(stableHashV4(variant.id), 36) % 2)
+    )
+  );
+  for (const question of useQuestions) {
+    if (selectedUseIds.size >= desiredUseCount) break;
+    selectUse(question);
+  }
+
+  const compactUse = useQuestions.filter((question) => selectedUseIds.has(question.id));
+  variant.questions = [...compactUse, ...checkQuestions];
+  return {
+    preview: { exerciseIds: [], scored: false },
+    use: { exerciseIds: compactUse.map((question) => question.id) },
+    independentCheck: {
+      exerciseIds: checkQuestions.map((question) => question.id),
+      minimumScore: 0.8,
+      automaticHints: false
+    },
+    correction: {
+      mode: "retry-missed",
+      required: true,
+      requiresSupportedRetry: true
+    }
+  };
+}
+
+for (const chapter of chaptersV4) {
+  for (const lesson of chapter.lessons) {
+    if (lesson.kind !== "mission") continue;
+
+    const unit = unitForLessonV4(chapter, lesson.id);
+    const unitNormalLessons = (unit?.lessonIds || [])
+      .map((lessonId) => chapter.lessons.find((item) => item.id === lessonId))
+      .filter((item) => item?.kind === "lesson");
+    const unitEligibleSkillIds = uniqueV4(
+      unitNormalLessons.flatMap((item) => item.skillIds || [])
+    );
+    if (unit) {
+      lesson.title = `${unit.title}: عملی مشن`;
+      lesson.description = `${unit.goal} اس مشن میں اسی یونٹ کی پہلے سیکھی ہوئی باتیں استعمال کریں۔`;
+    }
+    const a0MissionPlan = chapter.id === "a0" ? a0MissionPlansV4[lesson.id] : null;
+    const authoredA0Mission = a0MissionPlan
+      ? buildA0MissionPlanV4(lesson, a0MissionPlan)
+      : null;
+    const conceptIds = authoredA0Mission?.conceptIds
+      || selectMissionConceptsV4(lesson, unitEligibleSkillIds);
+    if (!authoredA0Mission) rewriteMissionToTaughtConceptsV4(lesson, conceptIds);
+    const assessmentSkillIds = authoredA0Mission?.assessmentSkillIds
+      || uniqueV4(conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)));
+    const prerequisiteLessonIds = authoredA0Mission?.prerequisiteLessonIds
+      || unitNormalLessons.slice(-2).map((item) => item.id);
+    Object.assign(lesson, {
+      chapterId: chapter.id,
+      unitId: unit?.id || `${chapter.id}-unassigned`,
+      outcomeUrdu: isUrduText(lesson.description)
+        ? lesson.description
+        : `${lesson.title} کا عملی کام مکمل کرنا۔`,
+      conceptIds,
+      prerequisites: {
+        lessonIds: prerequisiteLessonIds,
+        skillIds: assessmentSkillIds,
+        recommended: true
+      },
+      prerequisiteSkillIds: assessmentSkillIds,
+      assessmentSkillIds,
+      introducesNewSkills: false,
+      requiresMastery: "practiced-or-secure"
+    });
+
+    const missionVariantPhases = new Map();
+    for (const variant of lesson.variants || []) {
+      for (const question of variant.questions) {
+        const authoredConceptIds = uniqueV4(question.authoredConceptIds || []);
+        const authoredSkillIds = uniqueV4(question.authoredSkillIds || []);
+        const authoredPhase = question.authoredPhase;
+        const authoredInstructionUrdu = question.authoredInstructionUrdu;
+        const authoredHintUrdu = question.authoredHintUrdu;
+        const authoredCorrectExplanation = question.authoredCorrectExplanation;
+        const authoredWrongExplanation = question.authoredWrongExplanation;
+        annotateQuestionV4({
+          lesson,
+          question,
+          conceptIds,
+          pattern: null,
+          scopeId: variant.id,
+          allowedSkillIds: assessmentSkillIds
+        });
+        if (authoredA0Mission) {
+          Object.assign(question, {
+            phase: authoredPhase,
+            conceptIds: authoredConceptIds,
+            skillIds: authoredSkillIds,
+            instructionUrdu: authoredInstructionUrdu,
+            instruction: authoredInstructionUrdu,
+            hintUrdu: authoredHintUrdu,
+            hint: authoredHintUrdu,
+            explainCorrectUrdu: authoredCorrectExplanation,
+            explainWrongUrdu: authoredWrongExplanation,
+            correctExplanation: authoredCorrectExplanation,
+            wrongExplanation: authoredWrongExplanation
+          });
+          if (authoredPhase === "independent-check") {
+            question.automaticHint = false;
+            question.hintMode = "after-attempt";
+          }
+        }
+      }
+      const organizedPhases = organizeMissionVariantV4(variant);
+      missionVariantPhases.set(
+        variant.id,
+        authoredA0Mission
+          ? organizedPhases
+          : compactMissionVariantV4(variant, organizedPhases, assessmentSkillIds)
+      );
+    }
+    lesson.questions = (lesson.variants || []).flatMap((variant) => variant.questions);
+
+    lesson.learning = {
+      outcomeUrdu: lesson.outcomeUrdu,
+      prerequisiteSkillIds: assessmentSkillIds,
+      assessmentSkillIds,
+      conceptIds,
+      phaseOrder: ["preview", "use", "independent-check", "correction"],
+      variants: (lesson.variants || []).map((variant) => ({
+        id: variant.id,
+        title: variant.title,
+        exerciseIds: variant.questions.map((question) => question.id),
+        phases: missionVariantPhases.get(variant.id)
+      }))
+    };
+  }
+}
+
+for (const chapter of chaptersV4) {
+  for (const subchapter of chapter.subchapters) {
+    const normalLessonIds = subchapter.lessonIds.filter((lessonId) => {
+      const lesson = chapter.lessons.find((item) => item.id === lessonId);
+      return lesson && lesson.kind !== "mission";
+    });
+    const missionIds = subchapter.lessonIds.filter((lessonId) => {
+      const lesson = chapter.lessons.find((item) => item.id === lessonId);
+      return lesson?.kind === "mission";
+    });
+    const eligibleSkillIds = uniqueV4(normalLessonIds.flatMap((lessonId) => (
+      chapter.lessons.find((lesson) => lesson.id === lessonId)?.skillIds || []
+    )));
+    const adaptiveReviewId = `${subchapter.id}:adaptive-review`;
+    const unit = {
+      id: subchapter.id,
+      chapterId: chapter.id,
+      title: subchapter.title,
+      outcomeUrdu: subchapter.goal,
+      practiceUrdu: subchapter.practice,
+      lessonIds: normalLessonIds,
+      missionIds,
+      capstoneMissionIds: missionIds,
+      adaptiveReviewId
+    };
+    unitsV4.push(unit);
+    reviewsV4.push({
+      id: adaptiveReviewId,
+      kind: "adaptive-review",
+      chapterId: chapter.id,
+      unitId: subchapter.id,
+      pathNode: false,
+      sourceLessonIds: normalLessonIds,
+      eligibleSkillIds,
+      states: ["introduced", "practiced", "secure"],
+      selection: "weakest-first-spaced"
+    });
+  }
+}
+
+for (let chapterIndex = 0; chapterIndex < chaptersV4.length; chapterIndex += 1) {
+  const chapter = chaptersV4[chapterIndex];
+  const previousChapter = chaptersV4[chapterIndex - 1] || null;
+  const normalLessons = chapter.lessons.filter((lesson) => lesson.kind !== "mission");
+  const missions = chapter.lessons.filter((lesson) => lesson.kind === "mission");
+  const prerequisiteSkillIds = previousChapter
+    ? previousChapter.lessons
+      .filter((lesson) => lesson.kind !== "mission")
+      .slice(-1)
+      .flatMap((lesson) => lesson.skillIds.slice(-5))
+    : [];
+  const newConceptIds = uniqueV4(normalLessons.flatMap((lesson) => lesson.newConceptIds));
+  const patternIds = normalLessons.map((lesson) => lesson.pattern?.id).filter(Boolean);
+  const dependencyMap = normalLessons.map((lesson) => ({
+    lessonId: lesson.id,
+    prerequisiteLessonIds: lesson.prerequisites.lessonIds,
+    prerequisiteSkillIds: lesson.prerequisiteSkillIds
+  }));
+  const completionMission = missions[missions.length - 1] || null;
+  if (completionMission) {
+    completionMission.completionCheck = true;
+    completionMission.completionSkillAreas = [...chapterCompletionAreasV4];
+    completionMission.outcomeUrdu = `${chapter.id.toUpperCase()} کے ضروری معنی، سننا، پڑھنا، بولنے کی مدد، اور روزمرہ عملی استعمال مکمل کرنا۔`;
+    completionMission.learning.outcomeUrdu = completionMission.outcomeUrdu;
+    completionMission.learning.completionSkillAreas = [...chapterCompletionAreasV4];
+  }
+
+  Object.assign(chapter, {
+    outcomeUrdu: chapterOutcomesV4[chapter.id],
+    prerequisiteChapterIds: previousChapter ? [previousChapter.id] : [],
+    prerequisiteSkillIds,
+    unitIds: chapter.subchapters.map((subchapter) => subchapter.id),
+    lessonIds: normalLessons.map((lesson) => lesson.id),
+    missionIds: missions.map((mission) => mission.id),
+    contract: {
+      outcomeUrdu: chapterOutcomesV4[chapter.id],
+      prerequisiteChapterIds: previousChapter ? [previousChapter.id] : [],
+      prerequisiteSkillIds,
+      newConceptIds,
+      newContent: {
+        vocabularyConceptIds: newConceptIds.filter((conceptId) => conceptByIdV4.get(conceptId)?.role !== "phrase"),
+        phraseConceptIds: newConceptIds.filter((conceptId) => conceptByIdV4.get(conceptId)?.role === "phrase"),
+        patternIds
+      },
+      patternIds,
+      dependencyMap,
+      completionSkillAreas: chapterCompletionAreasV4,
+      completionMissionId: completionMission?.id || null,
+      reviewPolicy: "adaptive-skill-review"
+    }
+  });
+}
+
+const courseV4 = {
+  schemaVersion: 4,
+  courseId: "nederurdu",
+  phaseOrder: learningPhaseOrderV4,
+  masteryRules: {
+    states: ["introduced", "practiced", "secure"],
+    introducedAfterPhase: "learn",
+    practicedAfterPhase: "use",
+    secureMinimumScore: 0.8,
+    correctionRequiredForSecure: true,
+    lessonsBrowseable: true,
+    missionMinimumState: "practiced"
+  },
+  concepts: [...conceptByIdV4.values()],
+  skills: [...skillByIdV4.values()],
+  patterns: patternsV4,
+  chapters: chaptersV4,
+  units: unitsV4,
+  lessons: chaptersV4.flatMap((chapter) => chapter.lessons.filter((lesson) => lesson.kind !== "mission")),
+  missions: chaptersV4.flatMap((chapter) => chapter.lessons.filter((lesson) => lesson.kind === "mission")),
+  reviews: reviewsV4,
+  reviewPolicy: {
+    mode: "adaptive",
+    pathNodes: false,
+    eligibleStates: ["introduced", "practiced", "secure"],
+    selection: "weakest-first-spaced",
+    removedLegacyLessonIds: uniqueV4(retiredAdaptiveLessonsV4.map((lesson) => lesson.id))
+  },
+  compatibility: {
+    chaptersGlobal: "NEDERURDU_CHAPTERS",
+    a0LessonsGlobal: "NEDERURDU_LESSONS",
+    legacyQuestionIdField: "legacyId"
+  }
+};
+
+window.NEDERURDU_COURSE = courseV4;
+window.NEDERURDU_CHAPTERS = chaptersV4;
 window.NEDERURDU_LESSONS = a0Lessons;
+window.NEDERURDU_ADAPTIVE_REVIEWS = reviewsV4;

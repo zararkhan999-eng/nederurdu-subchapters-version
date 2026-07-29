@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+require("./generate-offline-visual-manifest.js");
+
 const root = path.resolve(__dirname, "..");
 const target = path.join(root, "android", "app", "src", "main", "assets", "public");
 const files = [

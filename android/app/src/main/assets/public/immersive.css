@@ -3074,6 +3074,7 @@ input:focus-visible,
     border-radius: 19px;
   }
 
+  .ambient-glyph,
   .experience-scroll-meter {
     display: none;
   }

@@ -31,6 +31,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+        if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
         webView = new WebView(this);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
@@ -43,6 +46,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
         });
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        // Long Urdu lesson screens can be split into stale GPU tiles on some
+        // Android WebView builds. The phone layout already uses the static
+        // performance-lite presentation, so a software layer keeps those
+        // screens stable without removing any learning content or controls.
+        webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);

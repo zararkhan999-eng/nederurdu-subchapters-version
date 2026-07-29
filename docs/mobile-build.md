@@ -27,11 +27,16 @@ npm run android:sync-web
 
 ## Command-Line Builds
 
-If Gradle is installed locally:
+The repository includes its own Gradle wrapper (`./gradlew`), so a separate
+system Gradle installation is not required. On macOS, point the command line at
+Android Studio's bundled Java runtime before building:
 
 ```bash
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 npm run android:debug
 npm run android:bundle
 ```
 
-This environment does not currently include Gradle, so the first full build should be done through Android Studio or after installing Gradle.
+The first command-line build may download the wrapper's pinned Gradle version
+and Android dependencies. Android Studio can also run the same wrapper and use
+its bundled Java runtime automatically.

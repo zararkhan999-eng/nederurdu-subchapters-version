@@ -26,29 +26,42 @@ node scripts/sync-android-web.js
 
 Then open this folder in Android Studio and build the `app` module. See `docs/mobile-build.md` and `docs/store-listing/release-checklist.md` for release steps.
 
-## Version 1 Scope
+## Learning design
 
-- Subchapter course map for A0, A1, and A2 with daily-life goals, practice examples, and lesson groups
-- Twelve daily-life mission lessons with three ordered 20-step variants each
-- Realistic document reading, step sequencing, optional short Dutch input, and listen-repeat self-checks
-- Mission replay rotation and skill-based alternate mistake practice
-- Urdu-first A0 chapter for letters, basic words, tiny grammar pieces, and first sentences
-- A1 chapter ordered into simple daily communication
-- A2 chapter with practical daily-life and inburgering-style lessons
-- Dutch to Urdu and Urdu to Dutch multiple-choice practice
-- Sentence-building exercises with shuffled Dutch word tiles in A1 and A2
-- Urdu hint popups for sentence-building questions
-- Lesson completion screen
-- Local browser progress saving
-- App dashboard with chapter progress, quick actions, and lesson preview screen
-- Settings screen for local sound and pronunciation toggles
-- Premium kinetic experience: ambient depth, animated progress, responsive cards, tap/audio feedback, answer combos, particle bursts, and full lesson celebrations
-- Installable web-app metadata for public testing
-- Light offline fallback after a first successful load
-- Browser-based Dutch pronunciation with `nl-NL` speech when available
-- Generated correct and wrong answer sound effects
-- Dedicated Dutch letters page with letter-name audio, Urdu pronunciation hints, and example words
-- A1/A2 curriculum roadmap for future expansion into B1/B2 later
-- No accounts, backend, AI, or recorded audio files yet
+The permanent curriculum rules live in
+[`docs/learning-first-curriculum-roadmap.md`](docs/learning-first-curriculum-roadmap.md).
+Every normal lesson follows one continuous journey:
 
-Progress is saved in the browser under `nederurdu-progress-v3`.
+**Preview → Learn → Understand → Guided Practice → Use → Independent Check →
+Correction**
+
+Teaching cards introduce the Dutch target before any scored activity. They
+include an Urdu meaning, pronunciation help, regular and slow Dutch audio,
+context, an example, and likely confusion. Exercises then move from supported
+recognition to guided recall and practical use. The final check contains only
+material already taught in the lesson or declared as a prerequisite.
+
+Lessons remain browseable. Skills move from **introduced** to **practiced** and
+become **secure** only after an 80% Independent Check and correction of every
+missed required skill. Fixed review path nodes have been replaced by adaptive,
+skill-based review.
+
+## Current scope
+
+- Urdu-first A0, A1, and A2 chapters organized around practical daily life
+- Learning runs capped by new concepts rather than fixed question quotas
+- Dedicated concept and grammar teaching cards
+- Dutch meaning, listening, reading, supported speaking, and practical-use work
+- Real-life missions for appointments, shopping, school, transport, health,
+  work, forms, messages, housing, and public services
+- Specific Urdu instructions, hints, correct feedback, wrong-answer
+  explanations, and supported correction retries
+- Optional word-bank alternatives for typed Dutch responses
+- Regular and slow `nl-NL` pronunciation
+- Adaptive review based on introduced skills and prior mistakes
+- Local, offline-capable progress storage with Android asset parity
+- No account, backend, external AI service, or first-launch choice screen
+
+Progress is saved under `nederurdu-progress-v4`. The app performs a one-time
+migration from `nederurdu-progress-v3` and retains the old record as a recovery
+backup.
