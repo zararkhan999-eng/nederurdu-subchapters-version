@@ -1,11 +1,11 @@
 # NederUrdu Learning-First Rework — Implementation Ledger
 
-Status: **v4 foundation implemented; A0 curriculum audit clean; no chapter is frozen**
+Status: **v4 foundation implemented; A0 accepted and frozen; A1 is the active rework chapter**
 
 Authority:
 [`docs/learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
-Snapshot date: **2026-07-29**
+Snapshot date: **2026-08-05**
 
 Canonical data: `window.NEDERURDU_COURSE`, schema version `4`
 
@@ -50,14 +50,14 @@ authored replay variants.
 | Normal lessons | 97 |
 | Missions | 25 |
 | Adaptive unit reviews | 25 |
-| Concepts | 949 |
-| Skills | 964 |
-| Reusable patterns | 15 |
-| Internal learning runs | 359 |
-| Teaching blocks | 1,385 |
-| Active normal-lesson exercises | 6,404 |
+| Concepts | 941 |
+| Skills | 961 |
+| Reusable patterns | 20 |
+| Internal learning runs | 352 |
+| Teaching blocks | 1,354 |
+| Active normal-lesson exercises | 6,273 |
 | Retired v3 compatibility records | 5,820 |
-| Mission records across all variants | 705 |
+| Mission records across all variants | 723 |
 
 ### Per-chapter inventory
 
@@ -67,14 +67,14 @@ authored replay variants.
 | Normal lessons | 36 | 43 | 18 |
 | Missions | 9 | 9 | 7 |
 | Adaptive reviews | 9 | 9 | 7 |
-| Chapter-owned concepts | 345 | 405 | 199 |
-| Chapter-owned skills | 353 | 406 | 205 |
-| Patterns | 8 | 1 | 6 |
-| Learning runs | 107 | 173 | 79 |
-| Teaching blocks | 376 | 721 | 288 |
-| Active normal-lesson exercises | 1,800 | 3,136 | 1,468 |
+| Chapter-owned concepts | 345 | 397 | 199 |
+| Chapter-owned skills | 353 | 403 | 205 |
+| Patterns | 8 | 6 | 6 |
+| Learning runs | 107 | 166 | 79 |
+| Teaching blocks | 376 | 690 | 288 |
+| Active normal-lesson exercises | 1,800 | 3,005 | 1,468 |
 | Retired v3 records | 2,160 | 2,580 | 1,080 |
-| Mission records across all variants | 321 | 216 | 168 |
+| Mission records across all variants | 321 | 234 | 168 |
 
 ## 3. Sequential chapter status
 
@@ -110,9 +110,16 @@ Current result:
 a0: 45 lessons, 2121 questions, 0 errors, 0 review flags
 ```
 
-This clears the generated-course curriculum gate. A0 is still **not frozen**
-because the complete automated browser matrix and remaining representative
-visual journey checks have not run.
+The final A0 capstone also received a last semantic correction: its authored
+scenario now consistently asks for a ticket first and card payment second in
+every generated Use and Independent Check variant. The audit was strengthened
+at the same time to reject any run skill without scored, correctable evidence
+in Guided Practice or Use.
+
+The generated-course gate, full A0 browser matrix, representative responsive
+journeys, offline behavior, audio, migration, Android parity, and native build
+all pass. **A0 is frozen as of 2026-08-05.** Later changes may not weaken this
+contract or add unreviewed A0 material.
 
 ### A1 — Communicate in everyday life
 
@@ -120,10 +127,50 @@ The v4 schema, phase generator, semantic ownership, nine-unit structure, nine
 missions, and nine adaptive reviews exist. The 29 duplicate review nodes are no
 longer path lessons.
 
-A1 has not entered its permitted authoring and acceptance cycle. A diagnostic
-strict audit currently reports **671 errors and 0 review flags**. Its remaining
-generic Use contexts, teaching guidance, practical reading, and mission
-coverage must not be accepted or described as finished before A0 is frozen.
+A1 has now entered its permitted inventory and authoring cycle. The complete
+inventory and binding remain/split/move/merge/retire decisions are recorded in
+[`a1-learning-first-inventory.md`](./a1-learning-first-inventory.md).
+
+The audit now requires stable authored provenance on every selected scored A1
+Use task. That deliberate strengthening raised the pre-authoring baseline from
+671 to **1,092 errors** by exposing 421 generated Use tasks. Units 1 and 2 are
+the completed authoring batches. Unit 1, personal information, provides the
+bridge from A0:
+
+- `a1-greetings-personal-info` and `a1-details-forms` use individual authored
+  Urdu teaching records, complete sentence patterns, genuine A0 prerequisites,
+  and stable real-life scenarios;
+- the learner practises an actual Dutch personal-details form in Understand
+  before document reading appears in the mission;
+- `a1-personal-info-mission` has three authored variants, each with five Use
+  and five Independent Check tasks covering all six declared skills without a
+  duplicate quota-filling answer; and
+- the exact Unit 1 strict-audit slice reports **0 findings**, while its focused
+  browser gate passes **10/10** across desktop and mobile, including Preview,
+  teaching, supported recognition, authored Use provenance, mission coverage,
+  and responsive checks at 390×844, 768×1024, and 1440×900.
+
+Unit 2, family and people, now follows the same binding contract:
+
+- all four lessons have authored Urdu-first teaching records and complete
+  patterns for family articles, `hebben`, `geen` versus `niet`, family
+  description, and childcare handover language;
+- general work and time chunks were removed from `a1-family-routine-extra` and
+  remain reserved for their correct later units;
+- `a1-child-care` teaches and recognises a real handover card with separate
+  `Brengen`, `Ophalen`, and `Eten mee` fields before document reading is used
+  in scored production;
+- `a1-family-people-mission` has three authored family/childcare variants, each
+  with six Use and six Independent Check tasks covering all six declared
+  assessment skills; and
+- the exact Unit 2 audit slice reports **0 findings**. Its focused browser gate
+  passes **12/12** across desktop and mobile; the earlier Unit 1 gate still
+  passes **10/10** after the shared authoring helpers changed.
+
+The current full A1 result is **935 errors and 0 review flags**, down by 121
+from the post-Unit-1 result. Every
+remaining finding belongs to later units or the still-unwritten chapter
+completion mission. A1 as a whole is not accepted or frozen.
 
 ### A2 — Handle practical situations independently
 
@@ -153,30 +200,61 @@ Manual browser review confirmed:
 - Wrong check items are held until the check ends, then enter supported
   Correction. The continuation button now says whether the learner is
   continuing the check or starting Correction.
-- The first A0 home, Preview, and Learn surfaces have no document-width
-  overflow at 390×844, 768×1024, or 1440×900.
-- The final browser console review contained no errors.
+- Beginning, middle, final normal-lesson, and final mission surfaces have no
+  document-width overflow at 390×844, 768×1024, or 1440×900.
+- The middle `Adres en telefoonnummer` lesson was checked through Preview and
+  Learn. The final `Weer en veiligheid` lesson and final
+  `school-work-safety` mission were checked at all three sizes.
+- The final browser console review contained no warnings or errors.
+- A1 Unit 1 was manually reviewed from the chapter map through both normal
+  lesson Previews, authored teaching and pattern cards, supported recognition,
+  explanatory feedback, and the unit mission Preview. Its prerequisite summary
+  now keeps new concepts and reusable patterns distinct and uses correct Urdu
+  singular wording.
+- A1 Unit 2 was manually reviewed from the chapter map through its family and
+  childcare Previews, teaching cards, pattern explanations, supported
+  recognition, correct feedback, the `Kinderopvang` handover document, and the
+  unit mission Preview. The handover card and mission remained readable without
+  horizontal overflow at phone, tablet, and desktop sizes, and the final
+  browser console review contained no warnings or errors.
 
-Focused automated checks completed earlier for migration, run prerequisites,
-adaptive-review filtering, selected-distractor explanations, correction loops,
-mastery transitions, semantic IDs, active/legacy isolation, and mission phase
-materialisation.
+Focused automated checks cover migration, run prerequisites, adaptive-review
+filtering, selected-distractor explanations, correction loops, mastery
+transitions, semantic IDs, active/legacy isolation, offline loading, and
+mission phase materialisation.
 
-The complete 49-case desktop/mobile Playwright matrix is still blocked because
-the browser-execution environment exhausted its allowance. The reported retry
-time is **2026-08-05 15:58**. This is an acceptance blocker; it is not treated
-as a pass.
+The exact current A0 matrix passed in one serial invocation:
+
+```text
+Desktop: 48/48
+Mobile:  48/48
+Total:   96/96
+Failures: 0
+```
+
+The matrix deliberately contains all chapter-neutral runtime checks and all
+A0-specific curriculum, review, mission, migration, offline, mastery, and
+responsive checks. Explicit A1/A2 authoring checks remain outside this freeze
+gate until those chapters reach their own permitted acceptance cycles.
 
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public`. Hash comparison found no content
-  mismatch; the only excluded file is macOS `.DS_Store`.
-- A native debug build completed successfully.
-- Final APK:
+  `android/app/src/main/assets/public` after the A1 Unit 2 authoring batch. The
+  packaged APK contains the same course and service-worker hashes as the web
+  source.
+- The offline cache is `nederurdu-v62-learning-first-a1-unit2`.
+- A fresh native debug build completed successfully (31 tasks).
+- Current APK:
   `android/app/build/outputs/apk/debug/app-debug.apk`
-- Final SHA-256:
-  `b71f7fea3c54f36083530ee612d73fa7ef2adfc0dc72b5b281b8fe3e323f534f`
+- Current APK SHA-256:
+  `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
+- Packaged course-data SHA-256:
+  `51e28110809395e170ac452209564a65c80b0ee878c06ad164563038e30ee622`
+- Packaged app runtime SHA-256:
+  `bb3c8cc20b87c855fa26ad8d834fdad216b9c564714ad0b70f17e29e2a4dcbd4`
+- Packaged service-worker SHA-256:
+  `f853fee9ca8bacad3ec56ef0f9198183083bd53ac16eac2871d614886898daab`
 - The APK installed with `-r`, preserving existing app data.
 - On the installed app, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
@@ -197,29 +275,32 @@ as a pass.
 
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
-| Inventory and structural decisions | Passed | Scaffold only | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Not accepted | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | 671 errors / 0 flags | 379 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Blocked | Blocked |
-| Browser phase journey | Representative path passed | Blocked | Blocked |
-| Full 49-case browser matrix | **Blocked by environment allowance** | Blocked | Blocked |
-| Responsive visual checks | Beginning surfaces passed; remaining representative set pending | Blocked | Blocked |
-| Offline and 341 visuals | Android passed; final web automation pending | Blocked | Blocked |
+| Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
+| Urdu-first teaching records | Passed semantic review | Units 1–2 passed; Units 3–9 pending | Not accepted |
+| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–2: 0 local findings; full A1: 935 errors / 0 flags** | 379 errors / 1 flag |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–2 content passed; later units blocked | Blocked |
+| Browser phase journey | Representative path passed | Unit 1 **10/10** and Unit 2 **12/12**; later units blocked | Blocked |
+| Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–2 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
+| Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
 | Regular and slow audio | Android native requests passed | Blocked | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Shared package | Shared package |
-| Native debug build | Passed | Shared package | Shared package |
-| Chapter freeze | **NO** | **NO** | **NO** |
+| Android asset parity | Passed | Unit 2 web/package hashes match | Shared package |
+| Native debug build | Passed | Passed after Unit 2 sync | Shared package |
+| Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. When browser execution is available, run all 49 desktop/mobile cases.
-2. Complete representative beginning, middle, mission, and final A0 visual
-   journeys at phone, tablet, and desktop sizes.
-3. Rerun the A0 strict audit after any resulting fix.
-4. Record approval and freeze A0 only when every A0 gate is green.
-5. Author and audit A1 to zero errors and zero flags, then repeat all gates.
-6. Freeze A1 before beginning the A2 authoring and acceptance cycle.
+1. Rebuild A1 Unit 3, daily routine, using the same authored teaching,
+   dependency, schedule/message, mission, and focused-test gate now proven by
+   Units 1 and 2.
+2. Continue Units 4–9 strictly in the recorded inventory order.
+3. Add the separate chapter-wide A1 completion mission after all unit missions.
+4. Audit the complete generated A1 chapter to zero errors and zero review flags,
+   then
+   repeat the full browser, responsive, offline, audio, migration, and Android
+   acceptance gates.
+5. Freeze A1 before beginning the A2 authoring and acceptance cycle.
 
 Until those steps are complete, neither this ledger nor the v4 scaffold may be
 used to claim that the full A0–A2 rework is done.

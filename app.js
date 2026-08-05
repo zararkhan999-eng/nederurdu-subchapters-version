@@ -1647,7 +1647,7 @@ function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds) {
         <strong>${missingIds.length ? (mission ? "اس مشن سے پہلے تیاری کریں" : "پچھلی بات کی مختصر یاد دہانی") : "آپ اس سبق کے لیے تیار ہیں"}</strong>
         ${missingIds.length ? `<p>یہ باتیں پہلے مضبوط کرنا بہتر ہے:</p><div class="prerequisite-skill-list">${missingSkillTags}</div>` : ""}
         <p>${missingIds.length
-    ? `${remainingMissingCount ? `اس کے علاوہ ${remainingMissingCount} مزید باتیں بھی دہرانی ہیں۔ ` : ""}${mission ? "یہ مشن صرف مشق کی ہوئی مہارتیں استعمال کرتا ہے۔" : "سبق پھر بھی کھلا ہے؛ ضرورت پر یاد دہانی اسی سبق میں ملے گی۔"}`
+    ? `${remainingMissingCount ? (remainingMissingCount === 1 ? "اس کے علاوہ ایک مزید بات بھی دہرانی ہے۔ " : `اس کے علاوہ ${remainingMissingCount} مزید باتیں بھی دہرانی ہیں۔ `) : ""}${mission ? "یہ مشن صرف مشق کی ہوئی مہارتیں استعمال کرتا ہے۔" : "سبق پھر بھی کھلا ہے؛ ضرورت پر یاد دہانی اسی سبق میں ملے گی۔"}`
     : `${readyCount || prerequisiteIds.length} ضروری مہارتیں پہلے سے سیکھی ہوئی ہیں۔`}</p>
         ${missingIds.length ? `<button class="secondary-button prerequisite-review-button" data-action="practice">ضروری باتیں دہرائیں</button>` : ""}
       </div>

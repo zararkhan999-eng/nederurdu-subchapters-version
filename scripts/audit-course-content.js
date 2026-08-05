@@ -358,8 +358,21 @@ function sameIds(left, right) {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
-function addCourseFinding(findings, severity, rule, message, detail = "", chapter = null, lesson = null, question = null) {
+function addCourseFinding(
+  findings,
+  severity,
+  rule,
+  message,
+  detail = "",
+  chapter = null,
+  lesson = null,
+  question = null,
+  relatedConceptIds = []
+) {
   addFinding(findings, severity, chapter || { id: "course" }, lesson || {}, question, rule, message, detail);
+  if (relatedConceptIds.length) {
+    findings[findings.length - 1].relatedConceptIds = [...new Set(relatedConceptIds)];
+  }
 }
 
 function findDuplicates(items) {
@@ -1051,6 +1064,33 @@ function auditV4Exercise(findings, chapter, lesson, question, conceptMap, skillM
   if (question.type === "short-input" && (!question.optional || !(question.fallbackTiles || []).length)) {
     addCourseFinding(findings, "error", "typed-fallback", "Typed exercise must remain optional and provide a word-bank fallback.", "", chapter, lesson, question);
   }
+}
+
+function auditA1UseScenarioProvenance(findings, chapter, lesson, question) {
+  if (
+    chapter.id !== "a1"
+    || !question
+    || question.phase !== "use"
+    || question.scored === false
+    || unscoredTypes.has(question.type)
+  ) return;
+
+  const scenarioSource = text(question.scenarioSource);
+  if (
+    scenarioSource.startsWith("a1-authored:")
+    && scenarioSource.length > "a1-authored:".length
+  ) return;
+
+  addCourseFinding(
+    findings,
+    "error",
+    "a1-use-scenario-provenance",
+    "Every selected scored A1 Use exercise needs a stable authored scenarioSource beginning with a1-authored:.",
+    scenarioSource || "missing scenarioSource",
+    chapter,
+    lesson,
+    question
+  );
 }
 
 function auditV4Concept(findings, concept, conceptMap, lessonMap, chapterMap, visualIds) {
@@ -1805,6 +1845,25 @@ function auditV4Run(
     addCourseFinding(findings, "error", "independent-check-coverage", "Independent Check does not cover every run skill.", missingCheckSkills.join(", "), chapter, lesson);
   }
 
+  const practicedSkills = new Set(
+    ["guided-practice", "use"]
+      .flatMap((phase) => materialized.get(phase) || [])
+      .filter((question) => question && question.scored !== false && !unscoredTypes.has(question.type))
+      .flatMap((question) => list(question.skillIds))
+  );
+  const missingPracticeSkills = list(run.skillIds).filter((id) => !practicedSkills.has(id));
+  if (missingPracticeSkills.length) {
+    addCourseFinding(
+      findings,
+      "error",
+      "guided-use-skill-coverage",
+      "Every run skill needs correctable Guided Practice or Use evidence before it can become practiced.",
+      missingPracticeSkills.join(", "),
+      chapter,
+      lesson
+    );
+  }
+
   const recognisedSkills = new Set(understand.flatMap((question) => list(question.skillIds)));
   const understoodConcepts = new Set(understand.flatMap((question) => list(question.conceptIds)));
   const missingRecognition = newConceptIds.filter((id) => !understoodConcepts.has(id));
@@ -1863,6 +1922,7 @@ function auditV4Run(
     );
   }
   for (const question of materialized.get("use") || []) {
+    auditA1UseScenarioProvenance(findings, chapter, lesson, question);
     const prompt = text(question?.prompt);
     const normalizedAnswer = normalizeSemantic(question?.answer);
     if (
@@ -2475,6 +2535,7 @@ function auditV4Mission(findings, chapter, mission, lessonMap, conceptMap, skill
       conceptMap
     );
     if (question.phase === "use") {
+      auditA1UseScenarioProvenance(findings, chapter, mission, question);
       const normalizedAnswer = normalizeSemantic(question.answer);
       if (
         normalizedAnswer
@@ -2638,7 +2699,10 @@ function auditV4Course(course, chapters, visuals) {
           rule,
           `Concept-specific ${label} cannot be one generator template with only the quoted target changed.`,
           `${records.length}: ${records.slice(0, 8).map((concept) => concept.id).join(", ")} / ${fingerprint}`,
-          chapter
+          chapter,
+          null,
+          null,
+          records.map((concept) => concept.id)
         );
       }
       const repeatedConceptCount = repeatedGroups.reduce((sum, [, records]) => sum + records.length, 0);

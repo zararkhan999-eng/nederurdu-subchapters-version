@@ -5101,6 +5101,796 @@ if (a0ShortAnswersLessonV4) {
   a0ShortAnswersLessonV4.description = "ہاں، نہیں، اچھا، اور اچھا نہیں: روزمرہ کے سب سے چھوٹے جواب۔";
 }
 
+/*
+ * A1 authoring is deliberately kept in one stable-ID registry.  Unit records
+ * can be added here in the mandatory chapter order without teaching text,
+ * scenarios, documents, patterns, or dependencies being inferred from a
+ * question's position in the legacy bank.
+ */
+const a1AuthoredCurriculumV4 = {
+  version: "a1-authored-v2",
+  chapterPrerequisiteRefs: [
+    ["a0-greetings-courtesy", "hallo"],
+    ["a0-understanding-help", "kunt u herhalen"],
+    ["a0-ik-jij-u", "u"],
+    ["a0-name-land-city", "mijn naam is Ali"],
+    ["a0-spelling-personal-details", "hoe heet u?"],
+    ["a0-address-phone", "adres"],
+    ["a0-address-phone", "telefoonnummer"],
+    ["a0-numbers-0-10", "nul"],
+    ["a0-time-days", "om acht uur"]
+  ],
+  units: {
+    "a1-family-people": {
+      outcomeUrdu: "خاندان کی تصویر یا opvang کی گفتگو میں رشتہ پہچاننا، اپنے خاندان کے بارے میں مکمل جملے کہنا، اور بچے کے لانے یا لینے کا وقت واضح کرنا۔",
+      practiceUrdu: "پہلے رشتے اور مکمل جملے سمجھیں، پھر خاندان کی مختصر گفتگو اور opvang کی حوالگی میں وہی سیکھی ہوئی باتیں استعمال کریں۔"
+    }
+  },
+  lessons: {
+    "a1-greetings-personal-info": {
+      outcomeUrdu: "سلام کے بعد اپنا نام مکمل جملے میں بتانا اور بنیادی رابطے کی معلومات پہچاننا۔",
+      seedConcepts: [
+        ["hallo", "سلام"],
+        ["goedemorgen", "صبح بخیر"],
+        ["mijn naam is Zarar", "میرا نام ضرار ہے"],
+        ["mijn naam is Ali", "میرا نام علی ہے"],
+        ["dank u wel", "آپ کا شکریہ"],
+        ["tot ziens", "خدا حافظ / پھر ملیں گے"],
+        ["naam", "نام"],
+        ["mijn", "میرا / میری"],
+        ["adres", "پتہ"],
+        ["telefoonnummer", "فون نمبر"],
+        ["land", "ملک"]
+      ],
+      teaching: {
+        "mijn naam is zarar": {
+          usageUrdu: "پہلی ملاقات، استقبالی کاؤنٹر، یا رجسٹریشن میں اپنا نام بتانے کے لیے پورا جملہ “mijn naam is Zarar” کہیں۔",
+          usageBoundaryUrdu: "یہ اپنے نام کا مکمل تعارف ہے؛ صرف “mijn naam” کہنا نام ہے والا ضروری فعل چھوڑ دیتا ہے۔",
+          commonConfusionUrdu: "“mijn naam is Zarar” میں mijn نام سے پہلے اور is نام کے بعد رہتا ہے؛ “ik naam Zarar” درست تعارف نہیں۔",
+          exampleDutch: "Mijn naam is Zarar.",
+          exampleUrdu: "میرا نام ضرار ہے۔",
+          pronunciationUrdu: "مَین نام اِس زَرار"
+        }
+      },
+      pattern: {
+        modelDutch: "mijn naam is Zarar",
+        titleUrdu: "اپنا نام مکمل تعارف میں بتانا",
+        highlight: "mijn naam is …",
+        explanationUrdu: "اپنا نام بتاتے وقت پہلے mijn naam is کہیں اور آخر میں اپنا نام رکھیں: mijn naam is Zarar۔",
+        contrastUrdu: "سوال hoe heet u? نام پوچھتا ہے؛ جواب mijn naam is … اپنے نام کی مکمل بات دیتا ہے۔",
+        commonMistakeUrdu: "صرف mijn naam پر نہ رکیں اور ik naam نہ کہیں؛ مکمل نمونہ mijn naam is … استعمال کریں۔"
+      },
+      prerequisiteLessonIds: [
+        "a0-greetings-courtesy",
+        "a0-understanding-help",
+        "a0-ik-jij-u",
+        "a0-name-land-city",
+        "a0-spelling-personal-details",
+        "a0-address-phone"
+      ],
+      prerequisiteRefs: [
+        ["a0-greetings-courtesy", "hallo"],
+        ["a0-greetings-courtesy", "goedemorgen"],
+        ["a0-greetings-courtesy", "dank u wel"],
+        ["a0-greetings-courtesy", "tot ziens"],
+        ["a0-understanding-help", "kunt u herhalen"],
+        ["a0-ik-jij-u", "ik"],
+        ["a0-name-land-city", "mijn naam is Ali"],
+        ["a0-name-land-city", "land"],
+        ["a0-spelling-personal-details", "hoe heet u?"],
+        ["a0-address-phone", "adres"],
+        ["a0-address-phone", "telefoonnummer"]
+      ],
+      scenarios: {
+        hallo: ["intro-meeting-hallo", "کمیونٹی مرکز میں ایک نئے شخص سے پہلی بار ملتے ہیں۔ بات شروع کرنے کے لیے مناسب سلام کہیں۔"],
+        goedemorgen: ["intro-morning-reception", "صبح استقبالی کاؤنٹر پر پہنچتے ہیں۔ وقت کے مطابق سلام کہیں۔"],
+        "mijn naam is zarar": ["intro-give-name-zarar", "ملازم آپ سے نام پوچھتا ہے۔ اپنا نام ضرار مکمل جملے میں بتائیں۔"],
+        "mijn naam is ali": ["intro-give-name-ali", "نئے پڑوسی کو اپنا نام علی بتانا ہے۔ مکمل تعارف چنیں۔"],
+        "dank u wel": ["intro-thank-clerk", "ملازم نے آپ کی معلومات لکھ دی ہیں۔ ادب سے شکریہ کہیں۔"],
+        "tot ziens": ["intro-leave-reception", "تعارف مکمل ہو گیا ہے اور آپ رخصت ہو رہے ہیں۔ مناسب بات کہیں۔"],
+        naam: ["intro-recognise-name-field", "تعارف کارڈ پر نام والا خانہ ڈھونڈنا ہے۔ نام کے لیے درست ڈچ لفظ چنیں۔"],
+        mijn: ["intro-own-detail", "اپنی معلومات بتاتے وقت میرا یا میری کہنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        adres: ["intro-recognise-address", "رابطہ کارڈ پر پتہ والا خانہ نشان زد کرنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        telefoonnummer: ["intro-recognise-phone", "رابطہ کارڈ پر فون نمبر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        land: ["intro-recognise-country", "تعارف میں اپنے ملک کی معلومات دینی ہیں۔ ملک کے لیے درست ڈچ لفظ چنیں۔"]
+      }
+    },
+    "a1-details-forms": {
+      outcomeUrdu: "ایک حقیقی ذاتی معلومات کا فارم پڑھنا اور نام، تاریخ پیدائش، پتہ، پوسٹ کوڈ، شہر، فون، اور ای میل صحیح خانے میں دینا۔",
+      seedConcepts: [
+        ["voornaam", "پہلا نام"],
+        ["achternaam", "خاندانی نام"],
+        ["mijn voornaam is Sara", "میرا پہلا نام Sara ہے"],
+        ["mijn achternaam is Khan", "میرا خاندانی نام Khan ہے"],
+        ["geboortedatum", "تاریخ پیدائش"],
+        ["mijn geboortedatum is 12 mei", "میری تاریخ پیدائش 12 مئی ہے"],
+        ["adres", "پتہ"],
+        ["ik woon op Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
+        ["postcode", "پوسٹ کوڈ"],
+        ["mijn postcode is 1234 AB", "میرا پوسٹ کوڈ 1234 AB ہے"],
+        ["woonplaats", "رہنے کا شہر"],
+        ["mijn woonplaats is Utrecht", "میرا رہنے کا شہر Utrecht ہے"],
+        ["telefoonnummer", "فون نمبر"],
+        ["mijn telefoonnummer is nul zes", "میرا فون نمبر صفر چھ سے شروع ہوتا ہے"],
+        ["e-mailadres", "ای میل پتہ"],
+        ["ik heb geen e-mailadres", "میرے پاس ای میل پتہ نہیں ہے"]
+      ],
+      teaching: {
+        geboortedatum: {
+          usageUrdu: "فارم میں geboortedatum والے خانے میں وہ تاریخ لکھیں جس دن آپ پیدا ہوئے تھے۔",
+          usageBoundaryUrdu: "geboortedatum پیدائش کی تاریخ ہے؛ آج کی datum یا ملاقات کی تاریخ اس خانے میں نہیں آتی۔",
+          commonConfusionUrdu: "geboortedatum کو صرف عمر نہ سمجھیں؛ یہاں دن، مہینہ، اور سال والی پیدائش کی تاریخ درکار ہوتی ہے۔",
+          exampleDutch: "geboortedatum: 12-05-1990",
+          exampleUrdu: "تاریخ پیدائش: 12-05-1990۔",
+          pronunciationUrdu: "خَ بور تَ دا تُم"
+        },
+        "mijn voornaam is sara": {
+          usageUrdu: "ملازم پہلا نام پوچھے یا voornaam کا خانہ دکھائے تو “mijn voornaam is Sara” کہیں۔",
+          usageBoundaryUrdu: "voornaam صرف پہلا نام ہے؛ خاندانی نام achternaam کے الگ خانے میں جاتا ہے۔",
+          commonConfusionUrdu: "پہلے نام کے جواب میں achternaam نہ دیں؛ “mijn voornaam is Sara” میں voornaam ہی رکھیں۔",
+          exampleDutch: "voornaam — mijn voornaam is Sara",
+          exampleUrdu: "پہلا نام — میرا پہلا نام Sara ہے۔",
+          pronunciationUrdu: "مَین فور نام اِس سا را"
+        },
+        "mijn achternaam is khan": {
+          usageUrdu: "فارم کے achternaam خانے یا ملازم کے سوال پر اپنا خاندانی نام مکمل جملے میں بتائیں۔",
+          usageBoundaryUrdu: "achternaam خاندانی نام ہے؛ اسے پہلے نام والے voornaam خانے میں نہ لکھیں۔",
+          commonConfusionUrdu: "“mijn achternaam is Khan” خاندانی نام دیتا ہے؛ voornaam والے پہلے نام کے جواب سے اسے نہ ملائیں۔",
+          exampleDutch: "mijn achternaam is Khan",
+          exampleUrdu: "میرا خاندانی نام Khan ہے۔",
+          pronunciationUrdu: "مَین آخ تَر نام اِس خان"
+        },
+        "mijn geboortedatum is 12 mei": {
+          usageUrdu: "رجسٹریشن میں پیدائش کی تاریخ بول کر دینی ہو تو “mijn geboortedatum is 12 mei” کہیں۔",
+          usageBoundaryUrdu: "یہ پیدائش کی تاریخ بتاتا ہے؛ ملاقات کی تاریخ یا آج کی تاریخ بتانے کے لیے نہیں۔",
+          commonConfusionUrdu: "تاریخ سے پہلے mijn geboortedatum is پورا رکھیں؛ صرف 12 mei کہنے سے فارم کا مطلوبہ خانہ واضح نہیں ہوتا۔",
+          exampleDutch: "geboortedatum — mijn geboortedatum is 12 mei",
+          exampleUrdu: "تاریخ پیدائش — میری تاریخ پیدائش 12 مئی ہے۔",
+          pronunciationUrdu: "مَین خَ بور تَ دا تُم اِس توا لف مَے"
+        },
+        "mijn postcode is 1234 ab": {
+          usageUrdu: "پتے کی تصدیق میں پوسٹ کوڈ مانگا جائے تو حروف سمیت “mijn postcode is 1234 AB” کہیں۔",
+          usageBoundaryUrdu: "postcode صرف علاقے کا عدد اور حرف والا کوڈ ہے؛ سڑک اور گھر نمبر پورا adres ہوتے ہیں۔",
+          commonConfusionUrdu: "1234 کے بعد AB چھوڑنے سے پوسٹ کوڈ نامکمل رہتا ہے؛ عدد اور حروف دونوں دیں۔",
+          exampleDutch: "postcode — mijn postcode is 1234 AB",
+          exampleUrdu: "پوسٹ کوڈ — میرا پوسٹ کوڈ 1234 AB ہے۔",
+          pronunciationUrdu: "مَین پوسٹ کو دا اِس ٹوالف دَر تیخ فیر آ بے"
+        },
+        "mijn woonplaats is utrecht": {
+          usageUrdu: "فارم میں woonplaats مانگی جائے تو جس شہر میں رہتے ہیں وہ “mijn woonplaats is Utrecht” سے بتائیں۔",
+          usageBoundaryUrdu: "woonplaats رہنے کا شہر ہے؛ land ملک اور adres مکمل گلی اور گھر نمبر ہے۔",
+          commonConfusionUrdu: "woonplaats کے خانے میں ملک نہ لکھیں؛ یہاں Utrecht جیسے رہنے کے شہر کا نام درکار ہے۔",
+          exampleDutch: "woonplaats — mijn woonplaats is Utrecht",
+          exampleUrdu: "رہنے کا شہر — میرا رہنے کا شہر Utrecht ہے۔",
+          pronunciationUrdu: "مَین وون پلاتس اِس یو ترَخت"
+        },
+        "mijn telefoonnummer is nul zes": {
+          usageUrdu: "رابطے کے لیے فون نمبر مانگا جائے تو آغاز واضح کرکے “mijn telefoonnummer is nul zes” کہیں۔",
+          usageBoundaryUrdu: "telefoonnummer فون کے لیے ہے؛ postcode یا huisnummer اس کا جواب نہیں۔",
+          commonConfusionUrdu: "فون نمبر میں nul کو zes نہ سمجھیں؛ صفر چھ کی ترتیب “nul zes” صاف اور آہستہ کہیں۔",
+          exampleDutch: "telefoonnummer — mijn telefoonnummer is nul zes",
+          exampleUrdu: "فون نمبر — میرا فون نمبر صفر چھ سے شروع ہوتا ہے۔",
+          pronunciationUrdu: "مَین تے لے فون نُمَر اِس نُل زَس"
+        },
+        "ik heb geen e-mailadres": {
+          usageUrdu: "اگر آپ کے پاس ای میل نہیں ہے تو فارم کے ملازم کو صاف کہیں: “ik heb geen e-mailadres”۔",
+          usageBoundaryUrdu: "یہ ای میل نہ ہونے کی بات ہے؛ فون نمبر یا ڈاک کا پتہ نہ ہونے کا جواب نہیں۔",
+          commonConfusionUrdu: "اسم e-mailadres کی نفی میں geen آتا ہے؛ “ik heb niet e-mailadres” نہ کہیں۔",
+          exampleDutch: "e-mailadres — ik heb geen e-mailadres",
+          exampleUrdu: "ای میل پتہ — میرے پاس ای میل پتہ نہیں ہے۔",
+          pronunciationUrdu: "اِک ہَپ خین اے میل آد رَس"
+        }
+      },
+      pattern: {
+        modelDutch: "mijn voornaam is Sara",
+        titleUrdu: "فارم کا خانہ مکمل جملے میں بتانا",
+        highlight: "mijn … is …",
+        explanationUrdu: "mijn کے بعد مطلوبہ خانے کا لفظ رکھیں، پھر is اور اپنی معلومات کہیں: mijn voornaam is Sara۔",
+        contrastUrdu: "voornaam پہلا نام ہے اور achternaam خاندانی نام؛ جملے کا ڈھانچا ایک رہتا ہے مگر خانے کا لفظ بدلتا ہے۔",
+        commonMistakeUrdu: "خانے کا لفظ چھوڑ کر صرف mijn is Sara نہ کہیں؛ mijn + خانہ + is + معلومات پورا رکھیں۔"
+      },
+      prerequisiteLessonIds: [
+        "a0-name-land-city",
+        "a0-spelling-personal-details",
+        "a0-address-phone",
+        "a0-numbers-0-10",
+        "a0-ja-nee-goed-niet"
+      ],
+      prerequisiteRefs: [
+        ["a0-name-land-city", "naam"],
+        ["a0-spelling-personal-details", "voornaam"],
+        ["a0-spelling-personal-details", "achternaam"],
+        ["a0-address-phone", "adres"],
+        ["a0-address-phone", "postcode"],
+        ["a0-address-phone", "woonplaats"],
+        ["a0-address-phone", "telefoonnummer"],
+        ["a0-address-phone", "e-mailadres"],
+        ["a0-address-phone", "ik woon op Marktstraat 12"],
+        ["a0-numbers-0-10", "nul"],
+        ["a0-ja-nee-goed-niet", "niet"]
+      ],
+      scenarios: {
+        voornaam: ["details-find-first-name", "کمیونٹی مرکز کے فارم میں پہلا نام والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        achternaam: ["details-find-family-name", "فارم میں خاندانی نام والا خانہ نشان زد کرنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        "mijn voornaam is sara": ["details-give-first-name", "ملازم voornaam پوچھتا ہے۔ اپنا پہلا نام Sara مکمل جملے میں بتائیں۔"],
+        "mijn achternaam is khan": ["details-give-family-name", "ملازم achternaam پوچھتا ہے۔ اپنا خاندانی نام Khan مکمل جملے میں بتائیں۔"],
+        geboortedatum: ["details-find-birth-date", "رجسٹریشن فارم میں پیدائش کی تاریخ والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        "mijn geboortedatum is 12 mei": ["details-give-birth-date", "ملازم پیدائش کی تاریخ پوچھتا ہے۔ 12 مئی مکمل جملے میں بتائیں۔"],
+        adres: ["details-find-address", "فارم میں سڑک اور گھر نمبر والی مکمل معلومات کا خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
+        "ik woon op marktstraat 12": ["details-give-address", "ملازم پوچھتا ہے کہ آپ کہاں رہتے ہیں۔ Marktstraat 12 کا مکمل جواب دیں۔"],
+        postcode: ["details-find-postcode", "پتے کے حصے میں عدد اور حروف والا پوسٹ کوڈ خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
+        "mijn postcode is 1234 ab": ["details-give-postcode", "ملازم پوسٹ کوڈ پوچھتا ہے۔ 1234 AB حروف سمیت مکمل جواب دیں۔"],
+        woonplaats: ["details-find-city", "فارم میں رہنے کے شہر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        "mijn woonplaats is utrecht": ["details-give-city", "ملازم رہنے کا شہر پوچھتا ہے۔ Utrecht مکمل جملے میں بتائیں۔"],
+        telefoonnummer: ["details-find-phone", "رابطے کے حصے میں فون نمبر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
+        "mijn telefoonnummer is nul zes": ["details-give-phone", "ملازم رابطے کا فون نمبر پوچھتا ہے۔ صفر چھ سے شروع ہونے والا جواب صاف کہیں۔"],
+        "e-mailadres": ["details-find-email", "رابطہ فارم میں ای میل پتہ والا خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
+        "ik heb geen e-mailadres": ["details-no-email", "ملازم ای میل پتہ پوچھتا ہے مگر آپ کے پاس ای میل نہیں۔ مکمل جواب دیں۔"]
+      },
+      document: {
+        stableId: "details-form-read-fields",
+        targetDutch: "telefoonnummer",
+        title: "Telefoonnummer",
+        rows: [
+          { label: "Telefoonnummer", value: "06 12345678" },
+          { label: "E-mailadres", value: "-" },
+          { label: "Postcode", value: "1234 AB" }
+        ]
+      }
+    },
+    "a1-people-family-articles": {
+      title: "Familie herkennen: de, het en mijn",
+      unitLabel: "A1: خاندان اور لوگ",
+      outcomeUrdu: "خاندان کی تصویر میں والد، والدہ، بھائی، بہن، اور بچے کو درست de یا het کے ساتھ پہچاننا اور dit is mijn … سے تعارف کرانا۔",
+      seedConcepts: [
+        ["de vader", "والد / باپ"],
+        ["de moeder", "والدہ / ماں"],
+        ["dit is mijn vader", "یہ میرے والد ہیں"],
+        ["het kind", "بچہ"],
+        ["de broer", "بھائی"],
+        ["de zus", "بہن"]
+      ],
+      teaching: {
+        "de vader": {
+          usageUrdu: "خاندان کی تصویر، فارم، یا گفتگو میں والد کا ذکر ہو تو اسم کو اس کے چھوٹے لفظ کے ساتھ “de vader” کی صورت میں پہچانیں۔",
+          usageBoundaryUrdu: "de vader معلوم یا زیرِ گفتگو والد کو نام دیتا ہے؛ کسی ایک غیر متعین والد کے لیے een vader آ سکتا ہے۔",
+          commonConfusionUrdu: "vader کے ساتھ de یاد رکھیں؛ اسے het vader نہ کہیں۔",
+          exampleDutch: "Dit is mijn vader.",
+          exampleUrdu: "یہ میرے والد ہیں۔",
+          pronunciationUrdu: "دَ فا دَر"
+        },
+        "de moeder": {
+          usageUrdu: "والدہ کو تصویر یا خاندان کی معلومات میں پہچانتے وقت مکمل لفظی جوڑی “de moeder” دیکھیں اور سنیں۔",
+          usageBoundaryUrdu: "de moeder والدہ کا نام ہے؛ اپنی والدہ کہتے وقت چھوٹا لفظ ہٹ جاتا ہے اور mijn moeder آتا ہے۔",
+          commonConfusionUrdu: "de moeder درست ہے، لیکن mijn کے ساتھ de نہ ملائیں: de mijn moeder غلط ہے۔",
+          exampleDutch: "De moeder.",
+          exampleUrdu: "والدہ۔",
+          pronunciationUrdu: "دَ مو دَر"
+        },
+        "dit is mijn vader": {
+          usageUrdu: "کسی کو خاندان کی تصویر دکھاتے ہوئے اپنے والد کا تعارف مکمل جملے “dit is mijn vader” سے کرائیں۔",
+          usageBoundaryUrdu: "یہ اپنے والد کا تعارف ہے؛ صرف de vader رشتہ نام کرتا ہے مگر یہ مکمل تعارف نہیں۔",
+          commonConfusionUrdu: "mijn سے پہلے de نہ لگائیں اور is نہ چھوڑیں؛ درست ترتیب dit is mijn vader ہے۔",
+          exampleDutch: "Dit is mijn vader, Ahmed.",
+          exampleUrdu: "یہ میرے والد احمد ہیں۔",
+          pronunciationUrdu: "دِت اِس مَین فا دَر"
+        },
+        "het kind": {
+          usageUrdu: "بچے کا ذکر کسی فہرست، تصویر، یا اطلاع میں ہو تو kind کو اس کے مقرر چھوٹے لفظ کے ساتھ “het kind” یاد کریں۔",
+          usageBoundaryUrdu: "het kind ایک بچے کے لیے ہے؛ جمع بچوں کے ساتھ دوسرا چھوٹا لفظ آتا ہے۔",
+          commonConfusionUrdu: "kind ان عام الفاظ میں ہے جن کے ساتھ het آتا ہے؛ de kind نہ کہیں۔",
+          exampleDutch: "Het kind.",
+          exampleUrdu: "بچہ۔",
+          pronunciationUrdu: "ہَت کِنٹ"
+        },
+        "de broer": {
+          usageUrdu: "بھائی کا رشتہ پہچاننے یا خاندان کی فہرست پڑھنے میں “de broer” استعمال ہوتا ہے۔",
+          usageBoundaryUrdu: "de broer بھائی ہے؛ zus بہن کے لیے الگ لفظ ہے۔",
+          commonConfusionUrdu: "broer کے ساتھ de آتا ہے؛ اسے het broer نہ کہیں۔",
+          exampleDutch: "De broer.",
+          exampleUrdu: "بھائی۔",
+          pronunciationUrdu: "دَ برور"
+        },
+        "de zus": {
+          usageUrdu: "خاندان کی معلومات میں بہن کو چھوٹے لفظ سمیت “de zus” کی صورت میں پہچانیں۔",
+          usageBoundaryUrdu: "de zus بہن ہے؛ broer بھائی کے لیے ہے۔",
+          commonConfusionUrdu: "zus کے ساتھ de یاد رکھیں؛ het zus درست نہیں۔",
+          exampleDutch: "De zus.",
+          exampleUrdu: "بہن۔",
+          pronunciationUrdu: "دَ زُس"
+        }
+      },
+      pattern: {
+        modelDutch: "dit is mijn vader",
+        titleUrdu: "خاندان کے فرد کا تعارف کرانا",
+        highlight: "dit is mijn …",
+        explanationUrdu: "تصویر میں اپنے خاندان کے فرد کا تعارف دیتے وقت dit is mijn کے بعد رشتہ رکھیں: dit is mijn vader۔",
+        contrastUrdu: "een vader کسی ایک والد، de vader معلوم والد، اور mijn vader اپنے والد کو بتاتا ہے؛ mijn کے ساتھ de یا het نہیں آتا۔",
+        commonMistakeUrdu: "dit mijn vader یا dit is de mijn vader نہ کہیں؛ مکمل ترتیب dit is mijn vader رکھیں۔"
+      },
+      independentCheckLeadUrdu: "خاندان کی پہلی مدد والی تصویر کے بعد دوسری تصویر میں",
+      prerequisiteLessonIds: [
+        "a0-people-nouns",
+        "a0-een-de-het",
+        "a0-dit-dat-questions",
+        "a0-possessive"
+      ],
+      prerequisiteRefs: [
+        ["a0-people-nouns", "vader"],
+        ["a0-people-nouns", "moeder"],
+        ["a0-people-nouns", "broer"],
+        ["a0-people-nouns", "zus"],
+        ["a0-people-nouns", "kind"],
+        ["a0-een-de-het", "de man"],
+        ["a0-een-de-het", "het boek"],
+        ["a0-dit-dat-questions", "dit"],
+        ["a0-possessive", "mijn"]
+      ],
+      scenarios: {
+        "de vader": ["family-photo-father-label", "خاندان کی تصویری فہرست میں والد کے لیے چھوٹے لفظ سمیت درست ڈچ نام منتخب کریں۔"],
+        "de moeder": ["family-photo-mother-label", "خاندان کی تصویری فہرست میں والدہ کے لیے چھوٹے لفظ سمیت درست ڈچ نام منتخب کریں۔"],
+        "dit is mijn vader": ["family-introduce-father", "ایک نئے پڑوسی کو تصویر دکھا کر اپنے والد کا مکمل تعارف کرائیں۔"],
+        "het kind": ["family-form-child-label", "خاندان کے فارم میں ایک بچے والے خانے کے لیے درست چھوٹا لفظ اور اسم منتخب کریں۔"],
+        "de broer": ["family-list-brother-label", "خاندان کی فہرست میں بھائی کے رشتے کو چھوٹے لفظ سمیت نشان زد کریں۔"],
+        "de zus": ["family-list-sister-label", "خاندان کی فہرست میں بہن کے رشتے کو چھوٹے لفظ سمیت نشان زد کریں۔"]
+      }
+    },
+    "a1-hebben-family": {
+      title: "Vertellen over mijn gezin",
+      unitLabel: "A1: خاندان اور لوگ",
+      outcomeUrdu: "heeft u kinderen? سمجھنا اور مکمل جملے میں بتانا کہ بچے یا بہن بھائی ہیں، کتنے ہیں، یا نہیں ہیں۔",
+      seedConcepts: [
+        ["zoon", "بیٹا"],
+        ["dochter", "بیٹی"],
+        ["kinderen", "بچے"],
+        ["ik heb twee kinderen", "میرے دو بچے ہیں"],
+        ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟"],
+        ["ouders", "والدین"],
+        ["geen", "کوئی نہیں / کوئی … نہیں"],
+        ["ik heb geen kinderen", "میرے بچے نہیں ہیں"],
+        ["ik heb een broer", "میرا ایک بھائی ہے"]
+      ],
+      teaching: {
+        zoon: {
+          usageUrdu: "اپنے یا کسی دوسرے شخص کے بیٹے کا رشتہ بتانے کے لیے zoon استعمال کریں۔",
+          usageBoundaryUrdu: "zoon بیٹا ہے؛ dochter بیٹی کے لیے الگ لفظ ہے۔",
+          commonConfusionUrdu: "اس لفظ کی درمیانی آواز لمبی ہے؛ اسے مختصر آواز کے ساتھ نہ پڑھیں۔",
+          exampleDutch: "Heeft u een zoon?",
+          exampleUrdu: "کیا آپ کا ایک بیٹا ہے؟",
+          pronunciationUrdu: "زون"
+        },
+        dochter: {
+          usageUrdu: "خاندان کی گفتگو یا فارم میں بیٹی کے لیے dochter کہیں۔",
+          usageBoundaryUrdu: "dochter بیٹی ہے؛ zus بہن اور zoon بیٹا ہیں۔",
+          commonConfusionUrdu: "اس لفظ کا مطلب بیٹی ہے؛ اسے بہن یا بیٹے کے رشتے سے نہ ملائیں۔",
+          exampleDutch: "Heeft u een dochter?",
+          exampleUrdu: "کیا آپ کی ایک بیٹی ہے؟",
+          pronunciationUrdu: "دوخ تَر"
+        },
+        kinderen: {
+          usageUrdu: "ایک سے زیادہ بچوں کی عمومی بات میں جمع لفظ kinderen استعمال ہوتا ہے۔",
+          usageBoundaryUrdu: "kind ایک بچہ ہے اور kinderen کئی بچے ہیں۔",
+          commonConfusionUrdu: "جمع بناتے وقت اپنی طرف سے آخر نہ بدلیں؛ درست مکمل جمع kinderen یاد رکھیں۔",
+          exampleDutch: "Heeft u kinderen?",
+          exampleUrdu: "کیا آپ کے بچے ہیں؟",
+          pronunciationUrdu: "کِن دَرَن"
+        },
+        "ik heb twee kinderen": {
+          usageUrdu: "رجسٹریشن یا تعارف میں بچوں کی تعداد پوچھے جانے پر “ik heb twee kinderen” سے مکمل جواب دیں۔",
+          usageBoundaryUrdu: "یہ دو بچوں کی موجودگی بتاتا ہے؛ بچے نہ ہوں تو ik heb geen kinderen کہیں۔",
+          commonConfusionUrdu: "اپنے خاندان کے بارے میں بتاتے وقت heb والا مکمل نمونہ رکھیں؛ ہونا والا نمونہ اس معنی کے لیے درست نہیں۔",
+          exampleDutch: "Ik heb twee kinderen.",
+          exampleUrdu: "میرے دو بچے ہیں۔",
+          pronunciationUrdu: "اِک ہَپ توے کِن دَرَن"
+        },
+        "heeft u kinderen": {
+          usageUrdu: "فارم یا بچوں کی نگہداشت کی گفتگو میں “heeft u kinderen?” سنیں تو سمجھیں کہ آپ سے بچوں کے بارے میں پوچھا جا رہا ہے۔",
+          usageBoundaryUrdu: "یہ رسمی u والا سوال ہے؛ دوست سے غیر رسمی بات میں heb je kinderen? آ سکتا ہے۔",
+          commonConfusionUrdu: "سوال میں heeft پہلے اور u بعد میں آتا ہے؛ u heeft kinderen? بیان ہے، یہی سوالی ترتیب نہیں۔",
+          exampleDutch: "Heeft u kinderen?",
+          exampleUrdu: "کیا آپ کے بچے ہیں؟",
+          pronunciationUrdu: "ہیفٹ او کِن دَرَن"
+        },
+        ouders: {
+          usageUrdu: "والد اور والدہ دونوں یا کسی بچے کے والدین کی مشترک بات میں جمع لفظ ouders آتا ہے۔",
+          usageBoundaryUrdu: "ouder ایک والد یا والدہ ہے؛ ouders جمع والدین ہیں۔",
+          commonConfusionUrdu: "ouders کو صرف والد نہ سمجھیں؛ یہ دونوں والدین کے لیے جمع ہے۔",
+          exampleDutch: "mijn ouders",
+          exampleUrdu: "میرے والدین۔",
+          pronunciationUrdu: "آو دَرس"
+        },
+        geen: {
+          usageUrdu: "جب کوئی شخص یا چیز موجود نہ ہو تو اسم سے پہلے geen رکھیں، جیسے geen kinderen۔",
+          usageBoundaryUrdu: "geen اسم یا مقدار کی نفی کرتا ہے؛ کیفیت یا پوری بات کی نفی میں niet آتا ہے۔",
+          commonConfusionUrdu: "ik heb niet kinderen نہ کہیں؛ kinderen جیسے اسم سے پہلے geen رکھیں۔",
+          exampleDutch: "geen kinderen",
+          exampleUrdu: "کوئی بچے نہیں۔",
+          pronunciationUrdu: "خین"
+        },
+        "ik heb geen kinderen": {
+          usageUrdu: "بچوں کے سوال کا منفی مگر صاف جواب دینے کے لیے “ik heb geen kinderen” کہیں۔",
+          usageBoundaryUrdu: "یہ بچوں کے نہ ہونے کی بات ہے؛ niet goed کسی کیفیت کے اچھا نہ ہونے کی بات ہے۔",
+          commonConfusionUrdu: "اسم kinderen سے پہلے geen آتا ہے؛ ik heb niet kinderen درست نہیں۔",
+          exampleDutch: "Ik heb geen kinderen.",
+          exampleUrdu: "میرے بچے نہیں ہیں۔",
+          pronunciationUrdu: "اِک ہَپ خین کِن دَرَن"
+        },
+        "ik heb een broer": {
+          usageUrdu: "اپنے بہن بھائی بتاتے وقت ایک بھائی کے لیے مکمل جملہ “ik heb een broer” کہیں۔",
+          usageBoundaryUrdu: "یہ اپنے خاندان میں بھائی موجود ہونے کی بات ہے؛ اپنی ذاتی شناخت بتانا ایک مختلف معنی ہے۔",
+          commonConfusionUrdu: "رشتہ موجود ہونے کے معنی میں ik heb een broer کا مکمل نمونہ رکھیں۔",
+          exampleDutch: "Ik heb een broer.",
+          exampleUrdu: "میرا ایک بھائی ہے۔",
+          pronunciationUrdu: "اِک ہَپ اَن برور"
+        }
+      },
+      pattern: {
+        modelDutch: "ik heb twee kinderen",
+        titleUrdu: "اپنے خاندان کے بارے میں مکمل جواب دینا",
+        highlight: "ik heb …",
+        explanationUrdu: "اپنے پاس موجود رشتہ یا تعداد بتانے کے لیے ik heb کے بعد معلومات رکھیں: ik heb twee kinderen۔",
+        contrastUrdu: "اسم یا مقدار نہ ہو تو geen کہیں: ik heb geen kinderen؛ کیفیت کی نفی میں niet آتا ہے، جیسے ik ben niet goed۔",
+        commonMistakeUrdu: "ik ben twee kinderen یا ik heb niet kinderen نہ کہیں؛ مثبت میں ik heb … اور اسم کی نفی میں ik heb geen … رکھیں۔"
+      },
+      independentCheckLeadUrdu: "خاندان کے پہلے مدد والے سوال کے بعد نئی رجسٹریشن میں",
+      prerequisiteLessonIds: [
+        "a0-ik-jij-u",
+        "a0-numbers-0-10",
+        "a0-een-de-het",
+        "a0-geen",
+        "a0-ja-nee-goed-niet",
+        "a0-people-nouns",
+        "a1-people-family-articles"
+      ],
+      prerequisiteRefs: [
+        ["a0-ik-jij-u", "ik"],
+        ["a0-ik-jij-u", "u"],
+        ["a0-een-de-het", "een"],
+        ["a0-numbers-0-10", "twee"],
+        ["a0-geen", "ik heb geen boek"],
+        ["a0-ja-nee-goed-niet", "niet"],
+        ["a0-people-nouns", "broer"],
+        ["a1-people-family-articles", "dit is mijn vader"]
+      ],
+      scenarios: {
+        zoon: ["family-intake-son", "خاندان کے فارم میں بیٹے کا رشتہ درج کرنا ہے۔ درست ڈچ لفظ منتخب کریں۔"],
+        dochter: ["family-intake-daughter", "بچوں کی نگہداشت کے تعارف میں اپنی بیٹی کا رشتہ بتانا ہے۔ درست ڈچ لفظ منتخب کریں۔"],
+        kinderen: ["family-intake-children", "رجسٹریشن فارم میں ایک سے زیادہ بچوں کے لیے درست جمع لفظ منتخب کریں۔"],
+        "ik heb twee kinderen": ["family-answer-two-children", "ملازم بچوں کی تعداد پوچھتا ہے۔ اپنے دو بچوں کا مکمل جواب دیں۔"],
+        "heeft u kinderen": ["family-understand-children-question", "آپ بچوں کی نگہداشت کے مرکز میں نئے والد یا والدہ سے رسمی طور پر پوچھتے ہیں کہ کیا ان کے بچے ہیں۔ مکمل سوال منتخب کریں۔"],
+        ouders: ["family-school-parents", "اسکول کی اطلاع میں بچے کے والدین کے لیے درست جمع لفظ پہچانیں۔"],
+        geen: ["family-no-children-word", "فارم میں بچے نہ ہونے کی بات اسم سے پہلے ایک ڈچ نفی لفظ سے کرنی ہے۔ درست لفظ منتخب کریں۔"],
+        "ik heb geen kinderen": ["family-answer-no-children", "ملازم پوچھتا ہے کہ کیا آپ کے بچے ہیں، مگر آپ کے بچے نہیں ہیں۔ مکمل جواب دیں۔"],
+        "ik heb een broer": ["family-answer-one-brother", "ایک نئے ہم جماعت کو بتانا ہے کہ آپ کا ایک بھائی ہے۔ مکمل جملہ منتخب کریں۔"]
+      }
+    },
+    "a1-family-routine-extra": {
+      title: "Mijn familie kort beschrijven",
+      unitLabel: "A1: خاندان اور لوگ",
+      outcomeUrdu: "خاندان کے ایک فرد کی عمر، اسکول، اور رہنے کی جگہ تین مختصر مکمل جملوں میں بتانا۔",
+      seedConcepts: [
+        ["leeftijd", "عمر"],
+        ["mijn dochter is vijf jaar", "میری بیٹی پانچ سال کی ہے"],
+        ["mijn zoon gaat naar school", "میرا بیٹا اسکول جاتا ہے"],
+        ["mijn familie woont in Nederland", "میرا خاندان نیدرلینڈز میں رہتا ہے"]
+      ],
+      teaching: {
+        leeftijd: {
+          usageUrdu: "فارم یا خاندان کی گفتگو میں کسی کی عمر پوچھی یا لکھی جائے تو label leeftijd پہچانیں۔",
+          usageBoundaryUrdu: "leeftijd عمر ہے؛ geboortedatum پیدائش کی مکمل تاریخ ہے۔",
+          commonConfusionUrdu: "leeftijd کے خانے میں تاریخ پیدائش نہ لکھیں؛ یہاں عمر مثلاً vijf jaar مطلوب ہوتی ہے۔",
+          exampleDutch: "Leeftijd: vijf jaar.",
+          exampleUrdu: "عمر: پانچ سال۔",
+          pronunciationUrdu: "لَےف ٹَیٹ"
+        },
+        "mijn dochter is vijf jaar": {
+          usageUrdu: "اپنی بیٹی کی عمر بتانے کے لیے مکمل جملہ “mijn dochter is vijf jaar” کہیں۔",
+          usageBoundaryUrdu: "یہ بیٹی کی عمر ہے؛ اپنی عمر بتانے کے لیے ik ben … jaar آتا ہے۔",
+          commonConfusionUrdu: "عمر بتاتے وقت فعل نہ چھوڑیں؛ مکمل حصہ is vijf jaar ایک ساتھ رکھیں۔",
+          exampleDutch: "Mijn dochter is vijf jaar.",
+          exampleUrdu: "میری بیٹی پانچ سال کی ہے۔",
+          pronunciationUrdu: "مَین دوخ تَر اِس فَیف یار"
+        },
+        "mijn zoon gaat naar school": {
+          usageUrdu: "اپنے بیٹے کے اسکول جانے کی بنیادی معلومات دیتے وقت “mijn zoon gaat naar school” کہیں۔",
+          usageBoundaryUrdu: "یہ اسکول جانے کی بات ہے؛ صرف mijn zoon کہنا رشتہ بتاتا ہے مگر عمل نہیں۔",
+          commonConfusionUrdu: "zoon کے ساتھ مکمل حصہ gaat naar school رکھیں؛ فعل کو ادھورا نہ کریں۔",
+          exampleDutch: "Mijn zoon gaat naar school.",
+          exampleUrdu: "میرا بیٹا اسکول جاتا ہے۔",
+          pronunciationUrdu: "مَین زون خات نار سخُول"
+        },
+        "mijn familie woont in nederland": {
+          usageUrdu: "اپنے خاندان کے رہنے کا ملک بتانے کے لیے “mijn familie woont in Nederland” استعمال کریں۔",
+          usageBoundaryUrdu: "یہ پورے خاندان کی رہائش بتاتا ہے؛ اپنی رہائش کے لیے ik woon in Nederland کہیں۔",
+          commonConfusionUrdu: "familie یہاں ایک گروہ کی طرح آتا ہے، اس لیے مکمل حصہ woont in Nederland یاد رکھیں۔",
+          exampleDutch: "Mijn familie woont in Nederland.",
+          exampleUrdu: "میرا خاندان نیدرلینڈز میں رہتا ہے۔",
+          pronunciationUrdu: "مَین فا می لی وونت اِن نے دَر لانت"
+        }
+      },
+      pattern: {
+        modelDutch: "mijn dochter is vijf jaar",
+        titleUrdu: "خاندان کے فرد کی عمر بتانا",
+        highlight: "mijn … is … jaar",
+        explanationUrdu: "رشتہ دار کی عمر بتاتے وقت mijn کے بعد رشتہ، پھر is، عدد، اور jaar رکھیں: mijn dochter is vijf jaar۔",
+        contrastUrdu: "اپنی عمر ik ben achttien jaar سے بتائیں؛ خاندان کے فرد کے لیے mijn dochter is vijf jaar جیسا جملہ آتا ہے۔",
+        commonMistakeUrdu: "is یا jaar نہ چھوڑیں اور عمر کے لیے heeft نہ لگائیں؛ مکمل نمونہ mijn … is … jaar رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی خاندانی گفتگو کے بعد دوسرے شخص کو خاندان بتاتے وقت",
+      prerequisiteLessonIds: [
+        "a0-numbers-0-10",
+        "a0-numbers-11-100",
+        "a0-naar-met",
+        "a0-name-land-city",
+        "a0-possessive",
+        "a0-people-nouns",
+        "a1-hebben-family"
+      ],
+      prerequisiteRefs: [
+        ["a0-numbers-0-10", "vijf"],
+        ["a0-numbers-11-100", "ik ben achttien jaar"],
+        ["a0-naar-met", "zij gaat naar school"],
+        ["a0-name-land-city", "ik woon in Nederland"],
+        ["a0-possessive", "mijn"],
+        ["a0-people-nouns", "familie"],
+        ["a1-hebben-family", "zoon"],
+        ["a1-hebben-family", "dochter"]
+      ],
+      scenarios: {
+        leeftijd: ["family-profile-age-label", "خاندان کے مختصر پروفائل میں عمر والا خانہ ڈھونڈنا ہے۔ درست ڈچ label منتخب کریں۔"],
+        "mijn dochter is vijf jaar": ["family-describe-daughter-age", "بچوں کی نگہداشت کے تعارف میں اپنی بیٹی کی عمر پانچ سال مکمل جملے میں بتائیں۔"],
+        "mijn zoon gaat naar school": ["family-describe-son-school", "نئے پڑوسی کو بتانا ہے کہ آپ کا بیٹا اسکول جاتا ہے۔ مکمل جملہ منتخب کریں۔"],
+        "mijn familie woont in nederland": ["family-describe-country", "کمیونٹی مرکز کی گفتگو میں بتانا ہے کہ آپ کا خاندان نیدرلینڈز میں رہتا ہے۔ مکمل جملہ منتخب کریں۔"]
+      }
+    },
+    "a1-child-care": {
+      title: "Brengen en ophalen bij de kinderopvang",
+      unitLabel: "A1: خاندان اور لوگ",
+      outcomeUrdu: "kinderopvang میں بچے کو چھوڑتے یا لیتے وقت وقت، ساتھ کا کھانا، پانی کی ضرورت، اور بچے کی تھکن واضح کرنا۔",
+      seedConcepts: [
+        ["de kinderopvang", "بچوں کی نگہداشت کا مرکز"],
+        ["ik breng mijn kind om acht uur naar de kinderopvang", "میں اپنے بچے کو آٹھ بجے بچوں کی نگہداشت کے مرکز چھوڑتا / چھوڑتی ہوں"],
+        ["ik haal mijn kind om vijf uur op", "میں اپنے بچے کو پانچ بجے لینے آتا / آتی ہوں"],
+        ["eten mee", "کھانا ساتھ"],
+        ["mijn kind heeft eten mee", "میرا بچہ کھانا ساتھ لایا ہے"],
+        ["mijn kind heeft water nodig", "میرے بچے کو پانی چاہیے"],
+        ["moe", "تھکا ہوا / تھکی ہوئی"],
+        ["mijn kind is moe", "میرا بچہ تھکا ہوا ہے"]
+      ],
+      teaching: {
+        "de kinderopvang": {
+          usageUrdu: "اس جگہ کے لیے جہاں دن کے حصے میں بچوں کی دیکھ بھال ہوتی ہے، مکمل نام “de kinderopvang” استعمال کریں۔",
+          usageBoundaryUrdu: "kinderopvang بچوں کی نگہداشت ہے؛ school باقاعدہ اسکول اور opvang اکیلا زیادہ وسیع معنی رکھ سکتا ہے۔",
+          commonConfusionUrdu: "اس عملی سبق میں جگہ کا پورا نام de kinderopvang یاد رکھیں؛ اسے school کے خانے میں نہ ملائیں۔",
+          exampleDutch: "De kinderopvang.",
+          exampleUrdu: "بچوں کی نگہداشت کا مرکز۔",
+          pronunciationUrdu: "دَ کِن دَر اوپ فانگ"
+        },
+        "ik breng mijn kind om acht uur naar de kinderopvang": {
+          usageUrdu: "صبح بچے کو چھوڑنے کا وقت بتاتے ہوئے کہیں: “ik breng mijn kind om acht uur naar de kinderopvang”۔",
+          usageBoundaryUrdu: "brengen بچے کو وہاں چھوڑنے یا لے جانے کی طرف ہے؛ ophalen بچے کو واپس لینے کے لیے ہے۔",
+          commonConfusionUrdu: "چھوڑنے کے وقت haal … op نہ کہیں؛ breng کے ساتھ منزل naar de kinderopvang رکھیں۔",
+          exampleDutch: "Ik breng mijn kind om acht uur naar de kinderopvang.",
+          exampleUrdu: "میں اپنے بچے کو آٹھ بجے بچوں کی نگہداشت کے مرکز چھوڑتا یا چھوڑتی ہوں۔",
+          pronunciationUrdu: "اِک برَینگ مَین کِنٹ اوم آخت اور نار دَ کِن دَر اوپ فانگ"
+        },
+        "ik haal mijn kind om vijf uur op": {
+          usageUrdu: "شام بچے کو لینے کا وقت بتاتے ہوئے مکمل جملہ “ik haal mijn kind om vijf uur op” کہیں۔",
+          usageBoundaryUrdu: "ophalen واپس لینے کے لیے ہے؛ صبح چھوڑنے کے لیے brengen استعمال ہوتا ہے۔",
+          commonConfusionUrdu: "اس جملے میں haal کے ساتھ op آخر میں جاتا ہے؛ ik ophalen mijn kind نہ کہیں۔",
+          exampleDutch: "Ik haal mijn kind om vijf uur op.",
+          exampleUrdu: "میں اپنے بچے کو پانچ بجے لینے آتا یا آتی ہوں۔",
+          pronunciationUrdu: "اِک ہال مَین کِنٹ اوم فَیف اور اوپ"
+        },
+        "eten mee": {
+          usageUrdu: "kinderopvang کی فہرست یا حوالگی نوٹ میں eten mee کا مطلب ہے کہ بچے کے پاس کھانا ساتھ ہے۔",
+          usageBoundaryUrdu: "eten mee ساتھ لایا ہوا کھانا ہے؛ مرکز میں ملنے والے کھانے کی ضمانت نہیں۔",
+          commonConfusionUrdu: "mee کو کھانے کی قسم نہ سمجھیں؛ یہ بتاتا ہے کہ کھانا ساتھ لایا گیا ہے۔",
+          exampleDutch: "eten mee",
+          exampleUrdu: "کھانا ساتھ۔",
+          pronunciationUrdu: "اے تَن مے"
+        },
+        "mijn kind heeft eten mee": {
+          usageUrdu: "صبح حوالگی کے وقت عملے کو بتائیں کہ بچے کے پاس کھانا ہے: “mijn kind heeft eten mee”۔",
+          usageBoundaryUrdu: "یہ ساتھ لائے کھانے کی بات ہے؛ پانی یا دوا کی ضرورت الگ بتانی ہوگی۔",
+          commonConfusionUrdu: "بچے کے بارے میں مکمل جملہ mijn kind heeft eten mee رکھیں؛ فعل کو ادھورا نہ کریں۔",
+          exampleDutch: "Mijn kind heeft eten mee.",
+          exampleUrdu: "میرا بچہ کھانا ساتھ لایا ہے۔",
+          pronunciationUrdu: "مَین کِنٹ ہےفٹ اے تَن مے"
+        },
+        "mijn kind heeft water nodig": {
+          usageUrdu: "اگر بچے کو پانی درکار ہو تو حوالگی میں صاف کہیں: “mijn kind heeft water nodig”۔",
+          usageBoundaryUrdu: "یہ پانی کی ضرورت بتاتا ہے؛ صرف dorst کہنا بچے کی کیفیت ہے مگر عملے کے لیے درخواست اتنی واضح نہیں۔",
+          commonConfusionUrdu: "nodig جملے کے آخر میں رکھیں؛ mijn kind nodig water درست ترتیب نہیں۔",
+          exampleDutch: "Mijn kind heeft water nodig.",
+          exampleUrdu: "میرے بچے کو پانی چاہیے۔",
+          pronunciationUrdu: "مَین کِنٹ ہےفٹ وا تَر نو دَخ"
+        },
+        moe: {
+          usageUrdu: "بچے کی موجودہ حالت بتانے کے لیے moe کا مطلب تھکا ہوا یا تھکی ہوئی ہے۔",
+          usageBoundaryUrdu: "moe تھکن ہے؛ بیماری اور نیند کے لیے الگ الفاظ آتے ہیں۔",
+          commonConfusionUrdu: "moe کو بیماری نہ سمجھیں؛ یہ صرف تھکا ہونے کی کیفیت بتاتا ہے۔",
+          exampleDutch: "Mijn kind is moe.",
+          exampleUrdu: "میرا بچہ تھکا ہوا ہے۔",
+          pronunciationUrdu: "مو"
+        },
+        "mijn kind is moe": {
+          usageUrdu: "حوالگی کے وقت بچے کی تھکن بتانے کے لیے مکمل جملہ “mijn kind is moe” کہیں۔",
+          usageBoundaryUrdu: "یہ موجودہ تھکن بتاتا ہے؛ بچے کی بیماری یا غیر حاضری کے لیے الگ جملہ چاہیے۔",
+          commonConfusionUrdu: "کیفیت کے ساتھ is آتا ہے؛ mijn kind heeft moe نہ کہیں۔",
+          exampleDutch: "Mijn kind is moe.",
+          exampleUrdu: "میرا بچہ تھکا ہوا ہے۔",
+          pronunciationUrdu: "مَین کِنٹ اِس مو"
+        }
+      },
+      pattern: {
+        modelDutch: "ik haal mijn kind om vijf uur op",
+        titleUrdu: "بچے کو لینے کا وقت بتانا",
+        highlight: "ik haal … om … op",
+        explanationUrdu: "ophalen اس مکمل جملے میں الگ ہوتا ہے: ik haal، پھر بچہ اور وقت، اور آخر میں op۔",
+        contrastUrdu: "brengen بچے کو مرکز چھوڑنے کے لیے ہے؛ ophalen بچے کو واپس لینے کے لیے ہے۔",
+        commonMistakeUrdu: "op کو haal کے ساتھ شروع میں نہ چپکائیں؛ مکمل جملے میں op آخر میں رکھیں: ik haal mijn kind om vijf uur op۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی حوالگی کے بعد اگلے دن بچوں کی نگہداشت کے مرکز میں",
+      prerequisiteLessonIds: [
+        "a0-child-school",
+        "a0-time-days",
+        "a0-numbers-0-10",
+        "a0-ja-nee-goed-niet",
+        "a0-spelling-personal-details",
+        "a0-daily-actions",
+        "a0-letters-3",
+        "a1-family-routine-extra"
+      ],
+      prerequisiteRefs: [
+        ["a0-child-school", "brengen"],
+        ["a0-child-school", "ophalen"],
+        ["a0-child-school", "mijn kind komt vandaag niet"],
+        ["a0-child-school", "ik breng mijn kind naar school"],
+        ["a0-child-school", "ik haal mijn kind om drie uur op"],
+        ["a0-time-days", "om acht uur"],
+        ["a0-numbers-0-10", "vijf"],
+        ["a0-numbers-0-10", "acht"],
+        ["a0-ja-nee-goed-niet", "ja"],
+        ["a0-spelling-personal-details", "leeftijd"],
+        ["a0-daily-actions", "eten"],
+        ["a0-letters-3", "water"],
+        ["a1-family-routine-extra", "mijn dochter is vijf jaar"]
+      ],
+      scenarios: {
+        "de kinderopvang": ["childcare-recognise-place", "بچے کی روزانہ نگہداشت کے مرکز کا درست مکمل ڈچ نام منتخب کریں۔"],
+        "ik breng mijn kind om acht uur naar de kinderopvang": ["childcare-morning-dropoff", "صبح عملے کو بتانا ہے کہ آپ بچے کو آٹھ بجے kinderopvang چھوڑتے ہیں۔ مکمل جملہ منتخب کریں۔"],
+        "ik haal mijn kind om vijf uur op": ["childcare-evening-pickup", "عملے کو واضح کرنا ہے کہ آپ بچے کو پانچ بجے لینے آئیں گے۔ مکمل جملہ منتخب کریں۔"],
+        "eten mee": ["childcare-card-food-label", "بچے کی حوالگی فہرست میں کھانا ساتھ ہونے والا مختصر خانہ منتخب کریں۔"],
+        "mijn kind heeft eten mee": ["childcare-tell-food", "صبح عملے کو بتانا ہے کہ بچے کے پاس کھانا ساتھ ہے۔ مکمل جملہ منتخب کریں۔"],
+        "mijn kind heeft water nodig": ["childcare-tell-water", "بچے کو پانی چاہیے، اس لیے عملے کو یہ ضرورت مکمل جملے میں بتائیں۔"],
+        moe: ["childcare-recognise-tired", "عملہ بچے کی حالت پوچھتا ہے۔ تھکا ہوا کے لیے درست ڈچ لفظ منتخب کریں۔"],
+        "mijn kind is moe": ["childcare-tell-tired", "شام حوالگی میں عملے کو بتانا ہے کہ بچہ تھکا ہوا ہے۔ مکمل جملہ منتخب کریں۔"]
+      },
+      document: {
+        stableId: "child-care-handover-card",
+        sourceKey: "child-care-handover",
+        documentKind: "child-care-handover-card",
+        targetDutch: "ik haal mijn kind om vijf uur op",
+        title: "Kinderopvang",
+        labelUrdu: "kinderopvang کی حوالگی نوٹ پڑھیں",
+        promptUrdu: "حوالگی نوٹ میں Ophalen: 17:00 پڑھیں اور بچے کو پانچ بجے لینے والے سکھائے ہوئے ڈچ جملے کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "Kinderopvang کی نوٹ میں Brengen اور Ophalen کے وقت الگ دیکھیں، پھر پانچ بجے بچے کو لینے والے جملے کا درست اردو مطلب منتخب کریں۔",
+        correctUrdu: "درست۔ Ophalen: 17:00 کا مطلب ہے کہ بچے کو پانچ بجے لینا ہے، اس لیے ik haal mijn kind om vijf uur op درست ہے۔",
+        wrongUrdu: "یہ چھوڑنے یا دوسری معلومات کی بات ہے۔ Ophalen: 17:00 کے لیے ik haal mijn kind om vijf uur op منتخب کریں۔",
+        rows: [
+          { label: "Leeftijd", value: "5 jaar" },
+          { label: "Brengen", value: "08:00" },
+          { label: "Ophalen", value: "17:00" },
+          { label: "Eten mee", value: "ja" }
+        ]
+      }
+    }
+  },
+  missions: {
+    "a1-personal-info-mission": {
+      scenarioTitleUrdu: "استقبالی کاؤنٹر پر تعارف اور فارم",
+      prerequisiteLessonIds: ["a1-greetings-personal-info", "a1-details-forms"],
+      variantTitles: [
+        "کمیونٹی مرکز میں پہلی رجسٹریشن",
+        "لائبریری کارڈ کے لیے ذاتی معلومات",
+        "اسکول کے استقبالی کمرے میں رابطہ فارم"
+      ],
+      variantContexts: [
+        "کمیونٹی مرکز کے ملازم سے سلام کے بعد اپنا تعارف اور فارم مکمل کریں",
+        "لائبریری کے کاؤنٹر پر کارڈ بنواتے ہوئے اپنی معلومات دیں",
+        "اسکول کے استقبالی کمرے میں رابطے کی معلومات کی تصدیق کریں"
+      ],
+      targets: [
+        { lessonId: "a1-details-forms", dutch: "mijn achternaam is Khan" },
+        {
+          lessonId: "a1-greetings-personal-info",
+          dutch: "mijn naam is Zarar",
+          patternLessonId: "a1-greetings-personal-info",
+          includeConceptSkill: true
+        },
+        { lessonId: "a1-details-forms", dutch: "mijn voornaam is Sara", patternLessonId: "a1-details-forms" },
+        { lessonId: "a1-details-forms", dutch: "mijn geboortedatum is 12 mei" },
+        { lessonId: "a1-details-forms", dutch: "mijn telefoonnummer is nul zes" }
+      ]
+    },
+    "a1-family-people-mission": {
+      sourceKey: "family-people-mission",
+      scenarioTitleUrdu: "خاندان کا تعارف اور kinderopvang میں حوالگی",
+      speakerUrdu: "kinderopvang کے ملازم",
+      prerequisiteLessonIds: [
+        "a1-people-family-articles",
+        "a1-hebben-family",
+        "a1-family-routine-extra",
+        "a1-child-care"
+      ],
+      variantTitles: [
+        "kinderopvang میں پہلی رجسٹریشن",
+        "صبح بچے کو چھوڑنا",
+        "شام بچے کو لینا"
+      ],
+      variantContexts: [
+        "Kinderopvang کے ملازم کو خاندان کا مختصر تعارف دیں اور بچے کی بنیادی معلومات مکمل کریں",
+        "صبح بچے کو چھوڑتے وقت خاندان، عمر، اور لانے کے وقت کی تصدیق کریں",
+        "شام بچے کو لیتے وقت حوالگی نوٹ پڑھیں اور مکمل جواب دیں"
+      ],
+      targets: [
+        { lessonId: "a1-people-family-articles", dutch: "dit is mijn vader", patternLessonId: "a1-people-family-articles" },
+        { lessonId: "a1-hebben-family", dutch: "heeft u kinderen?" },
+        { lessonId: "a1-hebben-family", dutch: "ik heb twee kinderen", patternLessonId: "a1-hebben-family" },
+        { lessonId: "a1-family-routine-extra", dutch: "mijn dochter is vijf jaar", patternLessonId: "a1-family-routine-extra" },
+        { lessonId: "a1-child-care", dutch: "ik breng mijn kind om acht uur naar de kinderopvang" },
+        { lessonId: "a1-child-care", dutch: "ik haal mijn kind om vijf uur op", patternLessonId: "a1-child-care" }
+      ],
+      prerequisiteRefs: [
+        ["a0-child-school", "brengen"],
+        ["a0-child-school", "ophalen"],
+        ["a0-numbers-0-10", "vijf"],
+        ["a0-numbers-0-10", "acht"],
+        ["a0-ja-nee-goed-niet", "ja"],
+        ["a0-spelling-personal-details", "leeftijd"],
+        ["a1-child-care", "eten mee"]
+      ],
+      useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "reverse", "build", "situation", "document-choice"],
+      document: {
+        documentKind: "child-care-handover-card",
+        title: "Kinderopvang",
+        labelUrdu: "kinderopvang کی حوالگی نوٹ پڑھیں",
+        promptUrdu: "حوالگی نوٹ میں Ophalen: 17:00 پڑھیں اور بچے کو پانچ بجے لینے والی مکمل سیکھی ہوئی ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "حوالگی نوٹ میں Brengen اور Ophalen کے اوقات الگ دیکھیں، پھر Ophalen: 17:00 کے مطابق مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        rows: [
+          { label: "Leeftijd", value: "5 jaar" },
+          { label: "Brengen", value: "08:00" },
+          { label: "Ophalen", value: "17:00" },
+          { label: "Eten mee", value: "ja" }
+        ]
+      }
+    }
+  }
+};
+
+for (const [unitId, spec] of Object.entries(a1AuthoredCurriculumV4.units || {})) {
+  const unit = a1Subchapters.find((item) => item.id === unitId);
+  if (!unit) continue;
+  unit.goal = spec.outcomeUrdu;
+  unit.practice = spec.practiceUrdu;
+}
+
+for (const [lessonId, spec] of Object.entries(a1AuthoredCurriculumV4.lessons)) {
+  const lesson = a1Lessons.find((item) => item.id === lessonId);
+  if (!lesson) continue;
+  if (spec.title) lesson.title = spec.title;
+  if (spec.unitLabel) lesson.unit = spec.unitLabel;
+  lesson.description = spec.outcomeUrdu;
+  lesson.concepts = [];
+  lesson.seedConcepts = spec.seedConcepts.map(([dutch, urdu]) => ({
+    dutch,
+    urdu,
+    visualId: fallbackVisualIdForDutch(dutch) || ""
+  }));
+}
+
 const retiredA2GrammarUnitIdsV4 = new Set(["a2-past-plans", "a2-routine-word-order"]);
 for (let index = a2Subchapters.length - 1; index >= 0; index -= 1) {
   if (retiredA2GrammarUnitIdsV4.has(a2Subchapters[index].id)) a2Subchapters.splice(index, 1);
@@ -5174,6 +5964,7 @@ function unitMissionSeedConceptsV4(subchapter, lessons) {
     if (!lesson) continue;
     for (const raw of [
       ...(lesson.concepts || []),
+      ...(lesson.seedConcepts || []),
       ...lessonConcepts(lesson.questions)
     ]) {
       if (!isDutchOnlyText(raw.dutch) || !isUrduText(raw.urdu)) continue;
@@ -6935,11 +7726,42 @@ function applyA0StartSpeakingTeachingV4(concept) {
   }
 }
 
+function a1AuthoredTeachingRecordV4(concept) {
+  const lessonSpec = a1AuthoredCurriculumV4.lessons[concept.introducedInLessonId];
+  return lessonSpec?.teaching?.[normalizedTextV4(concept.dutch)] || null;
+}
+
+function applyA1AuthoredTeachingV4(concept, record) {
+  Object.assign(concept, {
+    usageUrdu: record.usageUrdu,
+    usageBoundaryUrdu: record.usageBoundaryUrdu,
+    commonConfusionUrdu: record.commonConfusionUrdu,
+    exampleDutch: record.exampleDutch,
+    exampleUrdu: record.exampleUrdu,
+    pronunciationUrdu: record.pronunciationUrdu,
+    pronunciationReview: "a1-authored-manual-v1",
+    guidanceSource: `a1-authored:${semanticSlugV4(concept.introducedInLessonId)}:${semanticSlugV4(concept.dutch)}`,
+    exampleSource: "a1-authored-manual"
+  });
+  concept.examples = [{ dutch: record.exampleDutch, urdu: record.exampleUrdu }];
+  if (concept.visual?.kind === "context") {
+    concept.visual.descriptionUrdu = record.usageUrdu;
+  }
+}
+
 for (const concept of conceptByIdV4.values()) {
   const lesson = chaptersV4
     .flatMap((chapter) => chapter.lessons)
     .find((item) => item.id === concept.introducedInLessonId);
   if (!lesson) continue;
+  const a1AuthoredRecord = a1AuthoredTeachingRecordV4(concept);
+  if (a1AuthoredRecord) {
+    // Manual A1 records are the teaching source of truth.  The shared
+    // practical-template pass must never replace their authored usage,
+    // boundary, confusion, example, or reviewed pronunciation.
+    applyA1AuthoredTeachingV4(concept, a1AuthoredRecord);
+    continue;
+  }
   improveConceptExampleV4(concept, lesson);
   const allowedConceptIds = teachingConceptIdsForV4(concept, lesson);
   concept.usageUrdu = practicalSituationV4(concept, lesson).prompt
@@ -7332,7 +8154,9 @@ const a0AuthoredPatternSpecsV4 = {
 
 function makePatternV4(lesson, chapterId, conceptIds) {
   const explanation = lesson.questions.find((question) => question.type === "uitleg");
-  const authoredSpec = a0AuthoredPatternSpecsV4[lesson.id] || null;
+  const authoredSpec = a0AuthoredPatternSpecsV4[lesson.id]
+    || a1AuthoredCurriculumV4.lessons[lesson.id]?.pattern
+    || null;
   if (!explanation && !authoredSpec) return null;
   const firstRunCap = chapterId === "a0" ? 3 : chapterId === "a1" ? 5 : 4;
   const firstRunConceptIds = conceptIds.slice(0, firstRunCap);
@@ -7340,7 +8164,7 @@ function makePatternV4(lesson, chapterId, conceptIds) {
     .map((conceptId) => conceptByIdV4.get(conceptId))
     .find((concept) => isCompletePatternModelV4(concept?.dutch));
   const authoredModelConcept = authoredSpec
-    ? firstRunConceptIds
+    ? (chapterId === "a1" ? conceptIds : firstRunConceptIds)
       .map((conceptId) => conceptByIdV4.get(conceptId))
       .find((concept) => (
         normalizedTextV4(concept?.dutch) === normalizedTextV4(authoredSpec.modelDutch)
@@ -7407,7 +8231,10 @@ function makePatternV4(lesson, chapterId, conceptIds) {
   skillByIdV4.set(skillId, {
     id: skillId,
     conceptId: null,
-    conceptIds: [modelConcept.id],
+    // A1 keeps the reusable sentence pattern as a distinct mastery target.
+    // The model concept is already owned by its concept skill; duplicating it
+    // here makes prerequisite previews show the same Dutch answer twice.
+    conceptIds: chapterId === "a1" ? [] : [modelConcept.id],
     patternId: id,
     targetId: id,
     chapterId,
@@ -8835,6 +9662,154 @@ function applyA0StartUseScenesV4(lesson) {
   }
 }
 
+function resolveA1AuthoredSkillRefsV4(refs) {
+  return uniqueV4((refs || []).map(([lessonId, dutch]) => {
+    const concept = [...conceptByIdV4.values()].find((candidate) => (
+      candidate.introducedInLessonId === lessonId
+      && normalizedTextV4(candidate.dutch) === normalizedTextV4(dutch)
+    ));
+    return concept ? skillIdByConceptIdV4.get(concept.id) : null;
+  }).filter(Boolean));
+}
+
+function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId, suffix = "") {
+  if (!question || !concept || !scenario) return;
+  const [stableId, prompt] = scenario;
+  const sourceSuffix = suffix ? `:${suffix}` : "";
+  const source = `a1-authored:${semanticSlugV4(lessonId)}:${stableId}${sourceSuffix}`;
+  const instruction = "حقیقی صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں۔";
+  const correct = `درست۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے اور یہی اس موقع کی مناسب بات ہے۔`;
+  const wrong = `یہ جواب اس صورت کے مطلوبہ معنی سے مختلف ہے۔ یہاں “${concept.dutch}” استعمال کریں؛ اس کا مطلب “${concept.urdu}” ہے۔`;
+  const lessonSpec = a1AuthoredCurriculumV4.lessons[lessonId] || {};
+  const authoredPrompt = suffix === "independent-check"
+    ? lessonId === "a1-details-forms"
+      ? `فارم جمع کرنے سے پہلے دوسرا ملازم ${prompt.replace(/[۔؟]+$/u, "")} دوبارہ خود جواب دیں۔`
+      : lessonSpec.independentCheckLeadUrdu
+        ? `${lessonSpec.independentCheckLeadUrdu} ${prompt.replace(/[۔؟]+$/u, "")} اب مدد کے بغیر جواب دیں۔`
+        : `پہلا تعارف مکمل ہونے کے بعد دوسرے کاؤنٹر پر ${prompt.replace(/[۔؟]+$/u, "")} اب مدد کے بغیر جواب دیں۔`
+    : prompt;
+  Object.assign(question, {
+    prompt: `حال: ${authoredPrompt}`,
+    scenarioId: `${lessonId}:${stableId}${sourceSuffix}`,
+    scenarioSource: source,
+    authenticUse: true,
+    instructionUrdu: instruction,
+    instruction,
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong
+  });
+}
+
+function applyA1AuthoredLessonExperienceV4(lesson) {
+  const spec = a1AuthoredCurriculumV4.lessons[lesson.id];
+  if (!spec) return;
+  const questionById = new Map(lesson.questions.map((question) => [question.id, question]));
+  for (const run of lesson.learning?.runs || []) {
+    for (const questionId of run.phases?.use?.exerciseIds || []) {
+      const question = questionById.get(questionId);
+      if (question?.scored === false) continue;
+      const concept = (question?.conceptIds || [])
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .find(Boolean);
+      const scenario = concept ? spec.scenarios[normalizedTextV4(concept.dutch)] : null;
+      applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lesson.id);
+    }
+    for (const questionId of run.phases?.independentCheck?.exerciseIds || []) {
+      const question = questionById.get(questionId);
+      if (question?.type !== "situation") continue;
+      const concept = (question.conceptIds || [])
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .find(Boolean);
+      const scenario = concept ? spec.scenarios[normalizedTextV4(concept.dutch)] : null;
+      applyA1AuthoredQuestionFeedbackV4(
+        question,
+        concept,
+        scenario,
+        lesson.id,
+        "independent-check"
+      );
+    }
+  }
+
+  if (!spec.document) return;
+  const targetConcept = lesson.conceptIds
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .find((concept) => (
+      normalizedTextV4(concept?.dutch) === normalizedTextV4(spec.document.targetDutch)
+    ));
+  const run = lesson.learning.runs.find((candidate) => (
+    candidate.conceptIds.includes(targetConcept?.id)
+  ));
+  const targetSkillId = targetConcept ? skillIdByConceptIdV4.get(targetConcept.id) : null;
+  if (!targetConcept || !targetSkillId || !run) return;
+  const patternSkillId = lesson.pattern?.skillId || null;
+  if (patternSkillId) {
+    // The late form-reading task deliberately reuses the already taught form
+    // pattern.  Keep that reused pattern inside the run's declared evidence
+    // and attach it to one practical Use and one Check item.
+    run.skillIds = uniqueV4([...run.skillIds, patternSkillId]);
+    run.prerequisiteSkillIds = uniqueV4([...run.prerequisiteSkillIds, patternSkillId]);
+    const useEvidence = (run.phases?.use?.exerciseIds || [])
+      .map((id) => lesson.questions.find((question) => question.id === id))
+      .find(Boolean);
+    const checkEvidence = (run.phases?.independentCheck?.exerciseIds || [])
+      .map((id) => lesson.questions.find((question) => question.id === id))
+      .find(Boolean);
+    if (useEvidence) useEvidence.skillIds = uniqueV4([...useEvidence.skillIds, patternSkillId]);
+    if (checkEvidence) checkEvidence.skillIds = uniqueV4([...checkEvidence.skillIds, patternSkillId]);
+  }
+  const documentSpec = spec.document;
+  const answer = canonicalUrduForDutchV4(lesson, targetConcept.dutch, targetConcept.urdu);
+  const documentQuestion = addSyntheticExerciseV4({
+    lesson,
+    run,
+    question: {
+      type: "document-choice",
+      label: documentSpec.labelUrdu || "ذاتی معلومات کا فارم پڑھیں",
+      prompt: documentSpec.promptUrdu || "فارم میں 06 12345678 کے سامنے لکھے ڈچ خانے کا درست اردو مطلب منتخب کریں۔",
+      document: {
+        documentKind: documentSpec.documentKind || "personal-details-form",
+        title: documentSpec.title,
+        rows: documentSpec.rows.map((row) => ({ ...row }))
+      },
+      options: conceptOptionsForRunV4(
+        lesson,
+        targetConcept,
+        "urdu",
+        runOptionConceptIdsV4(run)
+      ),
+      answer,
+      explain: `${targetConcept.dutch} = ${answer}۔`,
+      semanticKey: `a1-authored:${documentSpec.stableId}`
+    },
+    phase: "understand",
+    conceptIds: [targetConcept.id],
+    skillIds: uniqueV4([targetSkillId, patternSkillId]),
+    scope: `understand:authored-document:${documentSpec.stableId}`
+  });
+  const instruction = documentSpec.instructionUrdu
+    || "ڈچ فارم کے خانوں کے نام پڑھیں، 06 12345678 کے سامنے والا خانہ دیکھیں، پھر اس کا درست اردو مطلب منتخب کریں۔";
+  const correct = documentSpec.correctUrdu
+    || "درست۔ Telefoonnummer فون نمبر کا خانہ ہے، اور اس فارم میں اس کے سامنے 06 12345678 لکھا ہے۔";
+  const wrong = documentSpec.wrongUrdu
+    || "یہ دوسرا خانہ ہے۔ 06 12345678 کے سامنے Telefoonnummer لکھا ہے، اس لیے درست مطلب فون نمبر ہے۔";
+  const documentSourceKey = documentSpec.sourceKey || "details-form";
+  Object.assign(documentQuestion, {
+    scenarioId: `${lesson.id}:${documentSpec.stableId}`,
+    scenarioSource: `a1-authored:${documentSourceKey}:${documentSpec.stableId}`,
+    authenticDocument: true,
+    instructionUrdu: instruction,
+    instruction,
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong
+  });
+  run.phases.understand.exerciseIds.push(documentQuestion.id);
+}
+
 let previousChapterLastLessonV4 = null;
 for (const chapter of chaptersV4) {
   let previousNormalLesson = null;
@@ -8843,10 +9818,15 @@ for (const chapter of chaptersV4) {
     const unit = unitForLessonV4(chapter, lesson.id);
     const conceptIds = lessonConceptIdsV4.get(lesson.id) || [];
     const pattern = makePatternV4(lesson, chapter.id, conceptIds);
+    const a1AuthoredSpec = chapter.id === "a1"
+      ? a1AuthoredCurriculumV4.lessons[lesson.id]
+      : null;
     const prerequisiteLesson = previousNormalLesson || previousChapterLastLessonV4;
-    const prerequisiteSkillIds = prerequisiteLesson
-      ? prerequisiteLesson.skillIds.slice(-5)
-      : [];
+    const prerequisiteSkillIds = a1AuthoredSpec
+      ? resolveA1AuthoredSkillRefsV4(a1AuthoredSpec.prerequisiteRefs)
+      : prerequisiteLesson
+        ? prerequisiteLesson.skillIds.slice(-5)
+        : [];
     const newConceptIds = conceptIds.filter((conceptId) => (
       conceptByIdV4.get(conceptId)?.introducedInLessonId === lesson.id
     ));
@@ -8859,6 +9839,11 @@ for (const chapter of chaptersV4) {
       ...conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)),
       pattern?.skillId
     ]);
+    const prerequisiteLessonIds = a1AuthoredSpec
+      ? [...a1AuthoredSpec.prerequisiteLessonIds]
+      : prerequisiteLesson
+        ? [prerequisiteLesson.id]
+        : [];
 
     Object.assign(lesson, {
       kind: "lesson",
@@ -8868,7 +9853,7 @@ for (const chapter of chaptersV4) {
         ? lesson.description
         : `${lesson.title} کے متعلق Nederlands سمجھنا اور مناسب موقع میں استعمال کرنا۔`,
       prerequisites: {
-        lessonIds: prerequisiteLesson ? [prerequisiteLesson.id] : [],
+        lessonIds: prerequisiteLessonIds,
         skillIds: effectivePrerequisiteSkillIds,
         recommended: true
       },
@@ -8908,6 +9893,7 @@ for (const chapter of chaptersV4) {
       estimatedMinutes: Math.max(8, runs.length * 8),
       runs
     };
+    applyA1AuthoredLessonExperienceV4(lesson);
     previousNormalLesson = lesson;
   }
   previousChapterLastLessonV4 = normalLessons[normalLessons.length - 1] || previousChapterLastLessonV4;
@@ -9439,11 +10425,11 @@ const a0MissionPlansV4 = {
         "مرمت کے پیغام میں پہلے میرا گھر کہیں، پھر ہیٹنگ کی خرابی بتائیں۔",
         "رخصت ہونے سے پہلے اپنے گھر اور ہیٹنگ کی خرابی کی دو باتیں درست ترتیب سے کہیں۔"
       ], [{ lessonId: "a0-home-needs", dutch: "de verwarming doet het niet" }]),
-      a0MissionTargetV4("a0-shopping-payment", "ik betaal met pin", [
+      a0MissionTargetV4("a0-transport-directions", "ik wil een kaartje", [
         "فارمیسی جانے کے سفر میں پہلے ٹکٹ مانگیں، پھر پن سے ادائیگی بتائیں۔",
         "صبح کے سفر میں ٹکٹ کی درخواست اور پن سے ادائیگی کی بات درست ترتیب سے کہیں۔",
         "محفوظ روانگی سے پہلے ٹکٹ مانگنے اور پن سے ادا کرنے کی بات ترتیب دیں۔"
-      ], [{ lessonId: "a0-transport-directions", dutch: "ik wil een kaartje" }]),
+      ], [{ lessonId: "a0-shopping-payment", dutch: "ik betaal met pin" }]),
       a0MissionTargetV4("a0-child-school", "mijn kind komt vandaag niet", [
         "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
         "صبح پہلے اسکول، پھر کام کو درست پیغام دیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
@@ -9986,6 +10972,262 @@ for (const chapter of chaptersV4) {
   }
 }
 
+function resolveA1MissionTargetV4(target) {
+  const concept = (lessonConceptIdsV4.get(target.lessonId) || [])
+    .map((conceptId) => conceptByIdV4.get(conceptId))
+    .find((candidate) => (
+      normalizedTextV4(candidate?.dutch) === normalizedTextV4(target.dutch)
+    ));
+  if (!concept) return null;
+  const pattern = target.patternLessonId
+    ? patternsV4.find((candidate) => candidate.lessonId === target.patternLessonId)
+    : null;
+  const conceptSkillId = skillIdByConceptIdV4.get(concept.id);
+  const skillIds = uniqueV4([
+    pattern?.skillId || conceptSkillId,
+    ...(target.includeConceptSkill && pattern?.skillId ? [conceptSkillId] : [])
+  ].filter(Boolean));
+  return {
+    concept,
+    skillIds
+  };
+}
+
+function a1MissionDocumentV4(plan = {}) {
+  const document = plan.document;
+  if (document) {
+    return {
+      documentKind: document.documentKind || "practical-document",
+      title: document.title,
+      rows: document.rows.map((row) => ({ ...row }))
+    };
+  }
+  return {
+    documentKind: "personal-details-form",
+    title: "Voornaam",
+    rows: [
+      { label: "Voornaam", value: "Sara" },
+      { label: "Geboortedatum", value: "12 mei" },
+      { label: "Telefoonnummer", value: "nul zes" }
+    ]
+  };
+}
+
+function makeA1AuthoredMissionQuestionV4({
+  mission,
+  conceptIds,
+  target,
+  variantIndex,
+  slotIndex,
+  phase,
+  type,
+  context,
+  plan
+}) {
+  const { concept, skillIds } = target;
+  const canonicalUrdu = canonicalUrduForDutchV4(mission, concept.dutch, concept.urdu);
+  const sourceKey = plan.sourceKey || "personal-info-mission";
+  const speakerUrdu = plan.speakerUrdu || "ملازم";
+  const source = `a1-authored:${sourceKey}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`;
+  const semanticKey = source.replace(/^a1-authored:/, "a1-authored-mission:");
+  let question;
+  if (type === "situation") {
+    question = situation(
+      `حال: ${context} اب “${canonicalUrdu}” والی مناسب بات منتخب کریں۔`,
+      missionConceptOptionsV4(conceptIds, concept.id, "dutch"),
+      concept.dutch,
+      `اس موقع میں کہیں: ${concept.dutch}۔`
+    );
+  } else if (type === "listen-choice") {
+    question = listenChoice(
+      concept.audioText || concept.dutch,
+      missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      canonicalUrdu,
+      `${concept.dutch} = ${canonicalUrdu}۔`
+    );
+    question.prompt = `${context} ${speakerUrdu} کی ڈچ بات سنیں اور درست اردو مطلب منتخب کریں۔`;
+  } else if (type === "document-choice") {
+    question = {
+      type: "document-choice",
+      label: plan.document?.labelUrdu || "ذاتی معلومات کا فارم پڑھیں",
+      prompt: plan.document?.promptUrdu
+        ? `${context} ${plan.document.promptUrdu}`
+        : `${context} بھرے ہوئے فارم میں Voornaam: Sara پڑھیں اور درست اردو مطلب منتخب کریں۔`,
+      document: a1MissionDocumentV4(plan),
+      options: missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      answer: canonicalUrdu,
+      explain: `${concept.dutch} = ${canonicalUrdu}۔`
+    };
+  } else if (type === "build") {
+    question = build(
+      `${context} ${canonicalUrdu}`,
+      concept.dutch.split(/\s+/).filter(Boolean),
+      concept.dutch,
+      `صحیح ترتیب: ${concept.dutch}۔`
+    );
+  } else if (type === "meaning") {
+    question = meaning(
+      concept.dutch,
+      missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      canonicalUrdu,
+      `${concept.dutch} = ${canonicalUrdu}۔`
+    );
+    question.prompt = phase === "use"
+      ? `${context} ${speakerUrdu} لکھتا ہے: “${concept.dutch}”۔ اس مکمل بات کا درست مطلب منتخب کریں۔`
+      : concept.dutch;
+  } else {
+    question = reverse(
+      canonicalUrdu,
+      missionConceptOptionsV4(conceptIds, concept.id, "dutch"),
+      concept.dutch,
+      `${canonicalUrdu} = ${concept.dutch}۔`
+    );
+    question.prompt = phase === "use"
+      ? `${context} ${speakerUrdu} یہ بات مانگتا ہے: “${canonicalUrdu}”۔ درست مکمل ڈچ بات منتخب کریں۔`
+      : canonicalUrdu;
+  }
+  question.generatedConceptId = concept.id;
+  question.semanticKey = semanticKey;
+  annotateQuestionV4({
+    lesson: mission,
+    question,
+    conceptIds,
+    pattern: null,
+    scopeId: `${mission.id}-variant-${variantIndex + 1}`,
+    allowedSkillIds: mission.assessmentSkillIds
+  });
+  const instructions = {
+    situation: "عملی صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں۔",
+    "listen-choice": `${speakerUrdu} کی ڈچ بات سنیں اور اسی سنی ہوئی بات کا درست اردو مطلب منتخب کریں۔`,
+    "document-choice": plan.document?.instructionUrdu
+      || "ڈچ فارم کے خانوں اور ان کے سامنے لکھی معلومات کو پڑھیں، پھر نشان زدہ معلومات کا درست اردو مطلب منتخب کریں۔",
+    build: "اردو ضرورت پڑھیں اور دیے گئے سکھائے ہوئے الفاظ سے مکمل ڈچ جملہ بنائیں۔",
+    meaning: "لکھی ہوئی مکمل ڈچ بات پڑھیں اور اس کا درست اردو مطلب منتخب کریں۔",
+    reverse: "اردو معلومات پڑھیں اور اس کے لیے درست مکمل ڈچ بات منتخب کریں۔"
+  };
+  const correct = `درست۔ “${concept.dutch}” کا مطلب “${canonicalUrdu}” ہے اور یہی اس مرحلے کی مطلوبہ معلومات ہے۔`;
+  const wrong = `یہ جواب مطلوبہ خانے یا بات سے مختلف ہے۔ دوبارہ دیکھیں: “${concept.dutch}” = “${canonicalUrdu}”۔`;
+  Object.assign(question, {
+    phase,
+    conceptIds: [concept.id],
+    skillIds: [...skillIds],
+    scenarioId: `${mission.id}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`,
+    scenarioSource: source,
+    authenticUse: true,
+    instructionUrdu: instructions[type],
+    instruction: instructions[type],
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong
+  });
+  if (phase === "independent-check") {
+    question.automaticHint = false;
+    question.hintMode = "after-attempt";
+  }
+  return question;
+}
+
+function applyA1AuthoredMissionV4(mission, plan) {
+  const targets = plan.targets.map(resolveA1MissionTargetV4).filter(Boolean);
+  if (targets.length !== plan.targets.length) return;
+  const conceptIds = uniqueV4(targets.map((target) => target.concept.id));
+  const assessmentSkillIds = uniqueV4(targets.flatMap((target) => target.skillIds));
+  const supportingPrerequisiteSkillIds = resolveA1AuthoredSkillRefsV4(plan.prerequisiteRefs);
+  const prerequisiteSkillIds = uniqueV4([
+    ...assessmentSkillIds,
+    ...supportingPrerequisiteSkillIds
+  ]);
+  const sourceKey = plan.sourceKey || "personal-info-mission";
+  Object.assign(mission, {
+    scenarioTitleUrdu: plan.scenarioTitleUrdu,
+    scenarioId: `${mission.id}:a1-authored-capstone`,
+    scenarioSource: `a1-authored:${sourceKey}`,
+    conceptIds,
+    assessmentSkillIds,
+    prerequisiteSkillIds,
+    prerequisites: {
+      lessonIds: [...plan.prerequisiteLessonIds],
+      skillIds: prerequisiteSkillIds,
+      recommended: true
+    },
+    introducesNewSkills: false,
+    requiresMastery: "practiced-or-secure"
+  });
+  const useTypes = plan.useTypes || ["situation", "situation", "document-choice", "build", "build"];
+  const checkTypes = plan.checkTypes || ["meaning", "listen-choice", "document-choice", "reverse", "build"];
+  if (useTypes.length !== targets.length || checkTypes.length !== targets.length) return;
+  mission.variants = plan.variantTitles.map((title, variantIndex) => {
+    const context = plan.variantContexts[variantIndex];
+    const use = targets.map((target, slotIndex) => makeA1AuthoredMissionQuestionV4({
+      mission,
+      conceptIds,
+      target,
+      variantIndex,
+      slotIndex,
+      phase: "use",
+      type: useTypes[slotIndex],
+      context,
+      plan
+    }));
+    const checks = targets.map((target, slotIndex) => makeA1AuthoredMissionQuestionV4({
+      mission,
+      conceptIds,
+      target,
+      variantIndex,
+      slotIndex,
+      phase: "independent-check",
+      type: checkTypes[slotIndex],
+      context,
+      plan
+    }));
+    const questions = [...use, ...checks];
+    const id = `${mission.id}-variant-${variantIndex + 1}`;
+    return {
+      id,
+      title,
+      scenarioId: `${mission.id}:authored-variant-${variantIndex + 1}`,
+      scenarioSource: `a1-authored:${sourceKey}:variant-${variantIndex + 1}`,
+      questions,
+      phases: {
+        preview: { exerciseIds: [], scored: false },
+        use: { exerciseIds: use.map((question) => question.id) },
+        independentCheck: {
+          exerciseIds: checks.map((question) => question.id),
+          minimumScore: 0.8,
+          automaticHints: false
+        },
+        correction: {
+          mode: "retry-missed",
+          required: true,
+          requiresSupportedRetry: true
+        }
+      }
+    };
+  });
+  mission.questions = mission.variants.flatMap((variant) => variant.questions);
+  mission.learning = {
+    outcomeUrdu: mission.outcomeUrdu,
+    prerequisiteSkillIds,
+    assessmentSkillIds,
+    conceptIds,
+    phaseOrder: ["preview", "use", "independent-check", "correction"],
+    variants: mission.variants.map((variant) => ({
+      id: variant.id,
+      title: variant.title,
+      exerciseIds: variant.questions.map((question) => question.id),
+      phases: variant.phases
+    }))
+  };
+}
+
+for (const [missionId, plan] of Object.entries(a1AuthoredCurriculumV4.missions)) {
+  const mission = chaptersV4
+    .flatMap((chapter) => chapter.lessons)
+    .find((lesson) => lesson.id === missionId && lesson.kind === "mission");
+  if (mission) applyA1AuthoredMissionV4(mission, plan);
+}
+
 for (const chapter of chaptersV4) {
   for (const subchapter of chapter.subchapters) {
     const normalLessonIds = subchapter.lessonIds.filter((lessonId) => {
@@ -10031,12 +11273,14 @@ for (let chapterIndex = 0; chapterIndex < chaptersV4.length; chapterIndex += 1) 
   const previousChapter = chaptersV4[chapterIndex - 1] || null;
   const normalLessons = chapter.lessons.filter((lesson) => lesson.kind !== "mission");
   const missions = chapter.lessons.filter((lesson) => lesson.kind === "mission");
-  const prerequisiteSkillIds = previousChapter
-    ? previousChapter.lessons
-      .filter((lesson) => lesson.kind !== "mission")
-      .slice(-1)
-      .flatMap((lesson) => lesson.skillIds.slice(-5))
-    : [];
+  const prerequisiteSkillIds = chapter.id === "a1"
+    ? resolveA1AuthoredSkillRefsV4(a1AuthoredCurriculumV4.chapterPrerequisiteRefs)
+    : previousChapter
+      ? previousChapter.lessons
+        .filter((lesson) => lesson.kind !== "mission")
+        .slice(-1)
+        .flatMap((lesson) => lesson.skillIds.slice(-5))
+      : [];
   const newConceptIds = uniqueV4(normalLessons.flatMap((lesson) => lesson.newConceptIds));
   const patternIds = normalLessons.map((lesson) => lesson.pattern?.id).filter(Boolean);
   const dependencyMap = normalLessons.map((lesson) => ({
