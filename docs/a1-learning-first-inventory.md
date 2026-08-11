@@ -40,15 +40,15 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, and Unit 3 have since been authored and each passes its exact audit
-slice with **0 findings**. The current complete A1 result is **859 errors and 0
-review flags**; all of those findings belong to Units 4–9 or the future chapter
+1, Unit 2, Unit 3, and Unit 4 have since been authored and each passes its
+exact audit slice with **0 findings**. The current complete A1 result is **727
+errors and 0 review flags**; all of those findings belong to Units 5–9 or the future chapter
 completion mission.
 
-After the Unit 3 rewrite replaced its generated routine material with focused
-authored records, the current A1 totals are 380 chapter-owned concepts, 390
-chapter-owned skills, 10 patterns, 156 runs, 653 teaching blocks, 2,837
-normal-lesson exercises, and 246 mission records. The chapter still has 43
+After the Unit 4 rewrite retired the duplicate question-review node and moved
+short messages to Unit 9, the current A1 totals are 353 chapter-owned concepts,
+368 chapter-owned skills, 15 patterns, 145 runs, 612 teaching blocks, 2,657
+normal-lesson exercises, and 258 mission records. The chapter now has 42
 normal path lessons until the later binding merge, split, move, and retire
 decisions are applied.
 
@@ -173,6 +173,17 @@ appointments.
 | `a1-questions-revision` | **Retire as a path lesson**; transfer its genuinely new `welke` examples to questions, appointments, and transport. |
 | `a1-mission-phone-internet` | **Keep stable ID but fully author** as the unit call/message/appointment capstone. |
 
+Implementation checkpoint: **completed and locally clean**. The unit now has
+five lessons in the required order and 36 manually reviewed new targets across
+12 capped runs, with five complete reusable patterns. `a1-questions-revision`
+is retired from the path, while `a1-short-messages` now appears first in Unit 9.
+Phone callback notes and appointment confirmation cards are taught in
+Understand before document checks. The mission has three authored variants,
+each with six Use and six Independent Check tasks covering all five lesson
+strands. The exact Unit 4 audit slice has 0 findings, its focused
+desktop/mobile gate passes 12/12, the combined Unit 1–3 regression gate passes
+34/34, and the frozen A0 matrix remains 96/96.
+
 ### Unit 5 — Home, neighbours, and housing
 
 | Lesson | Decision |
@@ -269,9 +280,9 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–3 are complete through Unit 3. Unit 4 is the next
-permitted authoring batch; Units 5–9 and the completion mission remain blocked
-behind that sequence.
+Current checkpoint: steps 1–3 and the Unit 4 portion of step 4 are complete.
+Unit 5 is the next permitted authoring batch; Units 6–9 and the completion
+mission remain blocked behind that sequence.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

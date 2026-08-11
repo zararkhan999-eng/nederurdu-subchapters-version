@@ -8,6 +8,7 @@
     "test:a1:unit1": "playwright test --workers=1 --grep \"A1 Unit 1\"",
     "test:a1:unit2": "playwright test --workers=1 --grep \"A1 Unit 2\"",
     "test:a1:unit3": "playwright test --workers=1 --grep \"A1 Unit 3\"",
+    "test:a1:unit4": "playwright test --workers=1 --grep \"A1 Unit 4\"",
     "test:ui": "playwright test --ui",
     "android:debug": "./gradlew :app:assembleDebug",
     "android:bundle": "./gradlew :app:bundleRelease",

@@ -4199,7 +4199,7 @@ const a1Subchapters = [
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-plans-invitations", ...a1Expanded("a1-phone-calls", "a1-short-messages", "a1-appointments", "a1-questions-revision", "a1-polite-chunks"), "a1-mission-phone-internet"]
+    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-plans-invitations", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
   },
   {
     id: "a1-home-objects",
@@ -4234,7 +4234,7 @@ const a1Subchapters = [
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
+    lessonIds: ["a1-short-messages", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
   }
 ];
 
@@ -4703,6 +4703,7 @@ retirePathLessonV4(a1Lessons, "a1-zero-tiny-words");
 retirePathLessonV4(a1Lessons, "a1-zijn-first-sentences");
 retirePathLessonV4(a1Lessons, "a1-daily-review-one");
 retirePathLessonV4(a1Lessons, "a1-daily-review-two");
+retirePathLessonV4(a1Lessons, "a1-questions-revision");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -4713,7 +4714,8 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-zero-tiny-words",
       "a1-zijn-first-sentences",
       "a1-daily-review-one",
-      "a1-daily-review-two"
+      "a1-daily-review-two",
+      "a1-questions-revision"
     ].includes(lessonId)
   ));
 }
@@ -5108,7 +5110,7 @@ if (a0ShortAnswersLessonV4) {
  * question's position in the legacy bank.
  */
 const a1AuthoredCurriculumV4 = {
-  version: "a1-authored-v3",
+  version: "a1-authored-v4",
   chapterPrerequisiteRefs: [
     ["a0-greetings-courtesy", "hallo"],
     ["a0-understanding-help", "kunt u herhalen"],
@@ -5128,6 +5130,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-daily-routine": {
       outcomeUrdu: "کام یا اسکول کے عام دن کا وقت بتانا، سادہ ہفتہ وار شیڈول پڑھنا، دیر کی اطلاع دینا، اور موسم کے مطابق روزمرہ فیصلہ واضح کرنا۔",
       practiceUrdu: "پہلے آج کے مکمل جملے اور روزمرہ ترتیب سمجھیں، پھر شیڈول، تاخیر کے پیغام، اور موسم والے منصوبے میں وہی سیکھی ہوئی باتیں استعمال کریں۔"
+    },
+    "a1-questions-help": {
+      outcomeUrdu: "روزمرہ جگہ پر واضح سوال پوچھنا، ادب سے مدد مانگنا، دعوت قبول یا رد کرنا، فون سنبھالنا، اور ملاقات بنانا یا بدلنا۔",
+      practiceUrdu: "پہلے سوال کی ترتیب اور مؤدبانہ مکمل باتیں سمجھیں، پھر دعوت، فون نوٹ، اور ملاقات کی تصدیق میں وہی سیکھی ہوئی زبان استعمال کریں۔"
     }
   },
   lessons: {
@@ -6176,6 +6182,582 @@ const a1AuthoredCurriculumV4 = {
         "neem een paraplu mee": ["weather-take-umbrella", "گھر والا باہر جا رہا ہے اور بارش ہو رہی ہے۔ چھتری ساتھ لینے کا واضح مشورہ دیں۔"],
         "ik ga niet naar buiten": ["weather-stay-inside", "بارش بہت تیز ہے، اس لیے آپ باہر نہ جانے کا فیصلہ بتاتے ہیں۔ مکمل جملہ منتخب کریں۔"]
       }
+    },
+    "a1-questions": {
+      title: "Duidelijke vragen stellen",
+      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      outcomeUrdu: "کون، کیا، کہاں، کب، کتنا، کیوں، اور کون سا دن والے سوال سمجھنا اور سوال لفظ کے بعد فعل اور شخص درست ترتیب میں رکھنا۔",
+      seedConcepts: [
+        ["waar woont u?", "آپ کہاں رہتے ہیں؟"],
+        ["wie", "کون"],
+        ["wat", "کیا"],
+        ["waar", "کہاں"],
+        ["hoe", "کیسے"],
+        ["wanneer", "کب"],
+        ["hoeveel", "کتنا / کتنے"],
+        ["waarom komt u niet?", "آپ کیوں نہیں آ رہے؟"],
+        ["welke dag?", "کون سا دن؟"],
+        ["wat is uw naam?", "آپ کا نام کیا ہے؟"],
+        ["wanneer komt u?", "آپ کب آئیں گے؟"],
+        ["komt u morgen?", "کیا آپ کل آئیں گے؟"]
+      ],
+      teaching: {
+        wanneer: {
+          usageUrdu: "کسی کے آنے، کھلنے، یا ملاقات کے وقت کے بارے میں کب پوچھنا ہو تو سوال کے شروع میں wanneer رکھیں۔",
+          usageBoundaryUrdu: "wanneer دن یا وقت پوچھتا ہے؛ جگہ پوچھنے کے لیے waar استعمال ہوتا ہے۔",
+          commonConfusionUrdu: "wanneer کو waar نہ سمجھیں: wanneer وقت ہے، waar جگہ ہے۔",
+          exampleDutch: "Wanneer komt u?",
+          exampleUrdu: "آپ کب آئیں گے؟",
+          pronunciationUrdu: "وَ نیر"
+        },
+        hoeveel: {
+          usageUrdu: "تعداد، قیمت، یا مقدار پوچھنے کے لیے hoeveel استعمال کریں۔",
+          usageBoundaryUrdu: "hoeveel کتنے یا کتنا پوچھتا ہے؛ hoe طریقہ یا کیفیت پوچھتا ہے۔",
+          commonConfusionUrdu: "قیمت یا تعداد میں hoeveel کہیں؛ صرف hoe کہنے سے کتنی مقدار واضح نہیں ہوتی۔",
+          exampleDutch: "Hoeveel kost dit?",
+          exampleUrdu: "یہ کتنے کا ہے؟",
+          pronunciationUrdu: "ہو فیل"
+        },
+        "waarom komt u niet": {
+          usageUrdu: "کسی شخص کے نہ آنے کی وجہ مؤدبانہ طور پر پوچھنے کے لیے یہ مکمل سوال کہیں۔",
+          usageBoundaryUrdu: "waarom وجہ پوچھتا ہے؛ wanneer وقت اور waar جگہ پوچھتا ہے۔",
+          commonConfusionUrdu: "waarom کو waar نہ بنائیں؛ آخری حصہ وجہ والے سوال کے لیے ضروری ہے۔",
+          exampleDutch: "Waarom komt u niet?",
+          exampleUrdu: "آپ کیوں نہیں آ رہے؟",
+          pronunciationUrdu: "وا روم کومت یو نیت"
+        },
+        "welke dag": {
+          usageUrdu: "کئی دنوں میں سے ایک دن منتخب کرانا ہو تو مکمل مختصر سوال “welke dag?” کہیں۔",
+          usageBoundaryUrdu: "welke dag انتخاب پوچھتا ہے؛ wanneer کھلا وقت پوچھتا ہے۔",
+          commonConfusionUrdu: "دن کا انتخاب پوچھتے وقت welke کے بعد dag رکھیں؛ صرف wat dag نہ کہیں۔",
+          exampleDutch: "Welke dag?",
+          exampleUrdu: "کون سا دن؟",
+          pronunciationUrdu: "وَیل کَ داخ"
+        },
+        "waar woont u": {
+          usageUrdu: "کسی بالغ یا نامعلوم شخص سے مؤدبانہ طور پر رہنے کی جگہ پوچھیں: “waar woont u?”۔",
+          usageBoundaryUrdu: "یہ رہنے کی جگہ پوچھتا ہے؛ نام پوچھنے کے لیے wat is uw naam? کہیں۔",
+          commonConfusionUrdu: "سوال لفظ کے بعد فعل رکھیں: waar woont u، نہ کہ waar u woont۔",
+          exampleDutch: "Waar woont u?",
+          exampleUrdu: "آپ کہاں رہتے ہیں؟",
+          pronunciationUrdu: "وار وونٹ یو"
+        },
+        "wat is uw naam": {
+          usageUrdu: "فارم یا رسمی تعارف میں کسی شخص کا نام پوچھنے کے لیے “wat is uw naam?” کہیں۔",
+          usageBoundaryUrdu: "یہ نام پوچھتا ہے؛ پتہ پوچھنے کے لیے waar woont u? استعمال کریں۔",
+          commonConfusionUrdu: "رسمی سوال میں uw naam ایک ساتھ رکھیں؛ wat uw naam is والا بیان نہ بنائیں۔",
+          exampleDutch: "Wat is uw naam?",
+          exampleUrdu: "آپ کا نام کیا ہے؟",
+          pronunciationUrdu: "وات اِس او نام"
+        },
+        "wanneer komt u": {
+          usageUrdu: "کسی آمد کا دن یا وقت مؤدبانہ طور پر پوچھنے کے لیے “wanneer komt u?” کہیں۔",
+          usageBoundaryUrdu: "یہ کھلا کب والا سوال ہے؛ komt u morgen? صرف کل کی تصدیق پوچھتا ہے۔",
+          commonConfusionUrdu: "wanneer کے فوراً بعد فعل komt اور پھر u رکھیں۔",
+          exampleDutch: "Wanneer komt u?",
+          exampleUrdu: "آپ کب آئیں گے؟",
+          pronunciationUrdu: "وَ نیر کومت یو"
+        },
+        "komt u morgen": {
+          usageUrdu: "جب صرف یہ تصدیق چاہیے کہ شخص کل آئے گا یا نہیں تو “komt u morgen?” پوچھیں۔",
+          usageBoundaryUrdu: "یہ ہاں یا نہیں والا سوال ہے؛ wanneer komt u? کئی ممکنہ وقت پوچھتا ہے۔",
+          commonConfusionUrdu: "ہاں یا نہیں سوال میں فعل پہلے آتا ہے: komt u، نہ کہ u komt۔",
+          exampleDutch: "Komt u morgen?",
+          exampleUrdu: "کیا آپ کل آئیں گے؟",
+          pronunciationUrdu: "کومت یو مور خَن"
+        }
+      },
+      pattern: {
+        modelDutch: "waar woont u?",
+        titleUrdu: "سوال لفظ کے بعد فعل اور پھر شخص",
+        highlight: "waar + woont + u",
+        explanationUrdu: "waar، wat، یا wanneer کے بعد بدلا ہوا فعل اور پھر شخص رکھیں: waar woont u?۔",
+        contrastUrdu: "سوال لفظ نہ ہو تو فعل پہلے آتا ہے: komt u morgen?؛ سوال لفظ ہو تو وہ سب سے پہلے رہتا ہے۔",
+        commonMistakeUrdu: "waar u woont یا u komt morgen? کو سوال نہ بنائیں؛ سوال میں فعل کی جگہ واضح رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی گفتگو کے بعد دوسرے استقبالی کاؤنٹر پر",
+      prerequisiteLessonIds: ["a0-dit-dat-questions", "a0-time-days", "a0-shopping-payment", "a1-details-forms", "a1-calendar-time"],
+      prerequisiteRefs: [
+        ["a0-dit-dat-questions", "wie"],
+        ["a0-dit-dat-questions", "wat"],
+        ["a0-dit-dat-questions", "waar"],
+        ["a0-dit-dat-questions", "hoe"],
+        ["a0-time-days", "morgen"],
+        ["a0-date-appointment", "afspraak"],
+        ["a0-shopping-payment", "hoeveel kost dit"],
+        ["a1-details-forms", "mijn naam is Zarar"],
+        ["a1-calendar-time", "ik kom op maandag"]
+      ],
+      scenarios: {
+        wie: ["questions-ask-person", "انتظار گاہ میں نام سنائی دیا مگر شخص معلوم نہیں۔ کون پوچھنے کے لیے درست سوال لفظ چنیں۔"],
+        wat: ["questions-ask-thing", "فارم پر ایک خانہ سمجھ نہیں آیا۔ کیا پوچھنے کے لیے درست سوال لفظ چنیں۔"],
+        waar: ["questions-ask-place", "ملاقات کی جگہ معلوم نہیں۔ کہاں پوچھنے کے لیے درست سوال لفظ چنیں۔"],
+        hoe: ["questions-ask-how", "ملازم سے طریقہ پوچھنا ہے۔ کیسے کے لیے درست سوال لفظ چنیں۔"],
+        wanneer: ["questions-ask-when", "کلاس شروع ہونے کا وقت معلوم نہیں۔ کب پوچھنے کے لیے درست لفظ چنیں۔"],
+        hoeveel: ["questions-ask-amount", "ٹکٹ کی قیمت معلوم کرنی ہے۔ کتنے یا کتنا پوچھنے کا درست لفظ چنیں۔"],
+        "waarom komt u niet": ["questions-ask-reason", "شخص ملاقات پر نہیں آ رہا۔ مؤدبانہ طور پر وجہ پوچھیں۔"],
+        "welke dag": ["questions-choose-day", "ملازم دو ممکنہ دن بتاتا ہے۔ کون سا دن پوچھنے کا مختصر سوال چنیں۔"],
+        "waar woont u": ["questions-form-address", "رجسٹریشن میں رہنے کی جگہ مؤدبانہ طور پر پوچھیں۔"],
+        "wat is uw naam": ["questions-form-name", "استقبالی ملازم کو آنے والے شخص کا نام پوچھنا ہے۔ مکمل رسمی سوال چنیں۔"],
+        "wanneer komt u": ["questions-open-arrival", "ملاقات کے لیے شخص کی آمد کا دن ابھی کھلا ہے۔ کب آئیں گے پوچھیں۔"],
+        "komt u morgen": ["questions-confirm-tomorrow", "صرف کل آنے کی ہاں یا نہیں میں تصدیق کرنی ہے۔ مکمل سوال چنیں۔"]
+      }
+    },
+    "a1-polite-chunks": {
+      title: "Beleefd om hulp vragen",
+      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      outcomeUrdu: "مدد یا سوال مؤدبانہ طور پر مانگنا، نہ سمجھ آنے کی بات کہنا، اور مدد کے بعد مناسب شکریہ یا انکار دینا۔",
+      seedConcepts: [
+        ["alstublieft", "براہ مہربانی / لیجیے"],
+        ["dank u wel", "آپ کا شکریہ"],
+        ["sorry", "معاف کیجیے"],
+        ["graag", "خوشی سے / پسند سے"],
+        ["kunt u mij helpen alstublieft?", "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟"],
+        ["mag ik iets vragen?", "کیا میں کچھ پوچھ سکتا / سکتی ہوں؟"],
+        ["sorry ik begrijp het niet", "معاف کیجیے، مجھے یہ سمجھ نہیں آیا"],
+        ["dank u wel voor uw hulp", "آپ کی مدد کا شکریہ"],
+        ["nee dank u", "نہیں، شکریہ"]
+      ],
+      teaching: {
+        "kunt u mij helpen alstublieft": {
+          usageUrdu: "کاؤنٹر، اسکول، یا دکان میں مؤدبانہ مدد مانگنے کے لیے مکمل سوال کہیں۔",
+          usageBoundaryUrdu: "یہ مدد مانگتا ہے؛ mag ik iets vragen? صرف سوال کرنے کی اجازت مانگتا ہے۔",
+          commonConfusionUrdu: "رسمی شخص کے لیے kunt u رکھیں اور alstublieft آخر میں رکھ سکتے ہیں۔",
+          exampleDutch: "Kunt u mij helpen alstublieft?",
+          exampleUrdu: "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟",
+          pronunciationUrdu: "کُنت یو مَے ہَیل پَن آل سٹو بلیفٹ"
+        },
+        "mag ik iets vragen": {
+          usageUrdu: "کسی کی گفتگو روکنے سے پہلے ادب سے سوال کرنے کی اجازت مانگیں۔",
+          usageBoundaryUrdu: "یہ سوال شروع کرنے کی اجازت ہے؛ خود مدد کی درخواست نہیں۔",
+          commonConfusionUrdu: "اجازت میں mag ik آتا ہے؛ kunt u سامنے والے سے کام کرنے کی درخواست ہے۔",
+          exampleDutch: "Mag ik iets vragen?",
+          exampleUrdu: "کیا میں کچھ پوچھ سکتا یا سکتی ہوں؟",
+          pronunciationUrdu: "ماخ اِک اِٹس فرا خَن"
+        },
+        "sorry ik begrijp het niet": {
+          usageUrdu: "سامنے والے کی بات سمجھ نہ آئے تو معذرت کے ساتھ اپنی مشکل صاف کہیں۔",
+          usageBoundaryUrdu: "یہ نہ سمجھ آنے کی اطلاع ہے؛ دوبارہ کہنے کی درخواست الگ جملہ ہے۔",
+          commonConfusionUrdu: "اپنی حالت بتائیں؛ اسے دوسرے شخص کی سمجھ کے بارے میں سوال نہ بنائیں۔",
+          exampleDutch: "Sorry, ik begrijp het niet.",
+          exampleUrdu: "معاف کیجیے، مجھے یہ سمجھ نہیں آیا۔",
+          pronunciationUrdu: "سو ری اِک بَخرَیپ ہَت نیت"
+        },
+        "dank u wel voor uw hulp": {
+          usageUrdu: "کسی نے واقعی مدد کی ہو تو مدد کو نام لے کر مکمل شکریہ دیں۔",
+          usageBoundaryUrdu: "یہ مدد کے بعد کہا جاتا ہے؛ مدد مانگنے سے پہلے درخواست درکار ہے۔",
+          commonConfusionUrdu: "voor uw hulp حصہ مدد کی وجہ بتاتا ہے؛ اسے درخواست نہ سمجھیں۔",
+          exampleDutch: "Dank u wel voor uw hulp.",
+          exampleUrdu: "آپ کی مدد کا شکریہ۔",
+          pronunciationUrdu: "دانک یو وَل فور او ہُلپ"
+        },
+        "nee dank u": {
+          usageUrdu: "پیشکش قبول نہ کرنی ہو تو سخت انکار کے بجائے “nee, dank u” کہیں۔",
+          usageBoundaryUrdu: "یہ مؤدبانہ انکار ہے؛ قبول کرنے کے لیے ja graag کہیں۔",
+          commonConfusionUrdu: "nee کے بعد dank u رکھنے سے جواب مؤدبانہ رہتا ہے؛ اسے رضامندی نہ سمجھیں۔",
+          exampleDutch: "Nee, dank u.",
+          exampleUrdu: "نہیں، شکریہ۔",
+          pronunciationUrdu: "نے دانک یو"
+        }
+      },
+      pattern: {
+        modelDutch: "kunt u mij helpen alstublieft?",
+        titleUrdu: "مؤدبانہ درخواست کا مکمل نمونہ",
+        highlight: "kunt u mij helpen",
+        explanationUrdu: "رسمی مدد مانگتے وقت kunt u سے شروع کریں، پھر mij helpen اور آخر میں alstublieft رکھیں۔",
+        contrastUrdu: "mag ik … اپنی اجازت پوچھتا ہے؛ kunt u … سامنے والے سے مؤدبانہ کام مانگتا ہے۔",
+        commonMistakeUrdu: "صرف helpen نہ کہیں؛ kunt u mij helpen والا مکمل سوال استعمال کریں۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی صورت کے بعد دوسری عوامی جگہ پر",
+      prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-questions"],
+      prerequisiteRefs: [
+        ["a0-greetings-courtesy", "alstublieft"],
+        ["a0-greetings-courtesy", "dank u wel"],
+        ["a0-greetings-courtesy", "sorry"],
+        ["a0-greetings-courtesy", "graag"],
+        ["a0-understanding-help", "ik begrijp het niet"],
+        ["a1-questions", "waar woont u?"]
+      ],
+      scenarios: {
+        alstublieft: ["polite-please", "ملازم سے مؤدبانہ درخواست کے آخر میں براہ مہربانی کہنا ہے۔ درست لفظ چنیں۔"],
+        "dank u wel": ["polite-thanks", "ملازم نے راستہ سمجھا دیا ہے۔ مناسب شکریہ چنیں۔"],
+        sorry: ["polite-sorry", "آپ کو گفتگو روکنی ہے۔ پہلے مناسب معذرت کہیں۔"],
+        graag: ["polite-gladly", "پیشکش قبول کرتے ہوئے خوشی سے کہنا ہے۔ درست لفظ چنیں۔"],
+        "kunt u mij helpen alstublieft": ["polite-ask-help", "بلدیہ کے کاؤنٹر پر فارم سمجھ نہیں آیا۔ مکمل مؤدبانہ مدد مانگیں۔"],
+        "mag ik iets vragen": ["polite-ask-permission", "استقبالی ملازم مصروف ہے۔ اپنا سوال شروع کرنے سے پہلے اجازت مانگیں۔"],
+        "sorry ik begrijp het niet": ["polite-not-understand", "ملازم کی بات سمجھ نہیں آئی۔ معذرت کے ساتھ اپنی مشکل بتائیں۔"],
+        "dank u wel voor uw hulp": ["polite-thank-help", "ملازم نے فارم مکمل کروا دیا۔ مدد کے لیے پورا شکریہ دیں۔"],
+        "nee dank u": ["polite-decline", "دکاندار اضافی چیز پیش کرتا ہے مگر آپ نہیں چاہتے۔ مؤدبانہ انکار کریں۔"]
+      }
+    },
+    "a1-plans-invitations": {
+      title: "Uitnodigen en afspreken",
+      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      outcomeUrdu: "کسی کو کافی کی دعوت دینا، قبول یا معذرت کے ساتھ انکار کرنا، وقت تجویز کرنا، اور ملنے کی جگہ پوچھنا۔",
+      seedConcepts: [
+        ["zullen we om drie uur afspreken?", "کیا ہم تین بجے ملیں؟"],
+        ["koffie", "کافی"],
+        ["morgen", "کل / آنے والا دن"],
+        ["avond", "شام"],
+        ["wil je koffie drinken?", "کیا تم کافی پینا چاہتے ہو؟"],
+        ["ja graag", "جی ہاں، خوشی سے"],
+        ["sorry ik kan niet", "معاف کیجیے، میں نہیں آ سکتا / سکتی"],
+        ["waar spreken we af?", "ہم کہاں ملیں گے؟"],
+        ["tot morgen", "کل ملیں گے"]
+      ],
+      teaching: {
+        "wil je koffie drinken": {
+          usageUrdu: "جان پہچان والے شخص کو سادہ کافی کی دعوت دینے کے لیے یہ مکمل سوال کہیں۔",
+          usageBoundaryUrdu: "یہ غیر رسمی je والی دعوت ہے؛ رسمی کاؤنٹر کی درخواست نہیں۔",
+          commonConfusionUrdu: "دعوت میں wil je کے بعد کافی پینے کا عمل رکھیں؛ اسے سیدھا بیان نہ بنائیں۔",
+          exampleDutch: "Wil je koffie drinken?",
+          exampleUrdu: "کیا تم کافی پینا چاہتے ہو؟",
+          pronunciationUrdu: "وِل یَے کو فی دِرن کَن"
+        },
+        "ja graag": {
+          usageUrdu: "دعوت یا پیشکش خوشی سے قبول کرنے کے لیے مختصر جواب “ja graag” دیں۔",
+          usageBoundaryUrdu: "یہ قبول کرنا ہے؛ مؤدبانہ انکار nee dank u یا sorry ik kan niet سے ہوتا ہے۔",
+          commonConfusionUrdu: "graag قبول کرنے کی خوشی دکھاتا ہے؛ اسے انکار کے ساتھ نہ ملائیں۔",
+          exampleDutch: "Ja, graag.",
+          exampleUrdu: "جی ہاں، خوشی سے۔",
+          pronunciationUrdu: "یا خراخ"
+        },
+        "sorry ik kan niet": {
+          usageUrdu: "دعوت قبول نہ کر سکیں تو معذرت کے ساتھ اپنی عدم دستیابی بتائیں۔",
+          usageBoundaryUrdu: "یہ آنے سے معذوری ہے؛ صرف nee dank u کسی پیشکش کا مختصر انکار ہے۔",
+          commonConfusionUrdu: "kan کے بعد niet رکھیں؛ ik niet kan والی تابع جملے کی ترتیب یہاں نہ بنائیں۔",
+          exampleDutch: "Sorry, ik kan niet.",
+          exampleUrdu: "معاف کیجیے، میں نہیں آ سکتا یا سکتی۔",
+          pronunciationUrdu: "سو ری اِک کان نیت"
+        },
+        "zullen we om drie uur afspreken": {
+          usageUrdu: "دونوں کے لیے تین بجے ملنے کی تجویز مؤدبانہ طور پر دینے کے لیے یہ سوال کہیں۔",
+          usageBoundaryUrdu: "یہ نیا وقت تجویز کرتا ہے؛ waar spreken we af? جگہ پوچھتا ہے۔",
+          commonConfusionUrdu: "گھڑی کے وقت سے پہلے om رکھیں اور afspreken آخر میں رکھیں۔",
+          exampleDutch: "Zullen we om drie uur afspreken?",
+          exampleUrdu: "کیا ہم تین بجے ملیں؟",
+          pronunciationUrdu: "زُ لَن وَے اوم دری اُور آف سپرے کَن"
+        },
+        "waar spreken we af": {
+          usageUrdu: "وقت طے ہونے کے بعد ملنے کی جگہ پوچھنے کے لیے “waar spreken we af?” کہیں۔",
+          usageBoundaryUrdu: "یہ جگہ پوچھتا ہے؛ zullen we om drie uur afspreken? وقت تجویز کرتا ہے۔",
+          commonConfusionUrdu: "waar کے بعد spreken اور پھر we رکھیں؛ waar we spreken af نہ کہیں۔",
+          exampleDutch: "Waar spreken we af?",
+          exampleUrdu: "ہم کہاں ملیں گے؟",
+          pronunciationUrdu: "وار سپرے کَن وَے آف"
+        },
+        "tot morgen": {
+          usageUrdu: "کل کی ملاقات طے ہو جانے کے بعد رخصت ہوتے ہوئے “tot morgen” کہیں۔",
+          usageBoundaryUrdu: "یہ کل ملنے کی رخصتی ہے؛ uitnodiging یا وقت پوچھنے کا سوال نہیں۔",
+          commonConfusionUrdu: "tot morgen کل تک یا کل ملیں گے ہے؛ morgen اکیلا صرف کل کا لفظ ہے۔",
+          exampleDutch: "Tot morgen.",
+          exampleUrdu: "کل ملیں گے۔",
+          pronunciationUrdu: "توت مور خَن"
+        }
+      },
+      pattern: {
+        modelDutch: "zullen we om drie uur afspreken?",
+        titleUrdu: "ملنے کا وقت تجویز کرنا",
+        highlight: "zullen we + om drie uur + afspreken",
+        explanationUrdu: "مشترک تجویز کے لیے zullen we سے شروع کریں، پھر وقت اور آخر میں afspreken رکھیں۔",
+        contrastUrdu: "zullen we … وقت تجویز کرتا ہے؛ waar spreken we af? جگہ پوچھتا ہے۔",
+        commonMistakeUrdu: "afspreken کو درمیان میں نہ توڑیں؛ سوال کے آخر میں پورا رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی دعوت کے بعد دوسرے جان پہچان والے شخص کے ساتھ",
+      prerequisiteLessonIds: ["a0-food-drink", "a0-time-days", "a0-numbers-0-10", "a1-polite-chunks"],
+      prerequisiteRefs: [
+        ["a0-food-drink", "koffie"],
+        ["a0-time-days", "morgen"],
+        ["a0-time-days", "avond"],
+        ["a0-numbers-0-10", "drie"],
+        ["a1-polite-chunks", "sorry ik begrijp het niet"]
+      ],
+      scenarios: {
+        koffie: ["invite-coffee", "دعوت میں پینے کے لیے کافی کا درست ڈچ لفظ چنیں۔"],
+        morgen: ["invite-tomorrow", "ملاقات اگلے دن ہے۔ کل کے لیے درست ڈچ لفظ چنیں۔"],
+        avond: ["invite-evening", "ملاقات شام میں ہے۔ شام کے لیے درست ڈچ لفظ چنیں۔"],
+        "wil je koffie drinken": ["invite-offer-coffee", "جان پہچان والے پڑوسی کو کافی کی مکمل دعوت دیں۔"],
+        "ja graag": ["invite-accept", "آپ کافی کی دعوت خوشی سے قبول کرنا چاہتے ہیں۔ مختصر مناسب جواب دیں۔"],
+        "sorry ik kan niet": ["invite-decline", "آپ اس وقت نہیں آ سکتے۔ معذرت کے ساتھ مکمل انکار کریں۔"],
+        "zullen we om drie uur afspreken": ["invite-propose-time", "آپ دونوں کو ملنے کا وقت تجویز کرنا ہے۔ تین بجے کی مکمل بات کہیں۔"],
+        "waar spreken we af": ["invite-ask-place", "وقت طے ہے مگر جگہ معلوم نہیں۔ ملنے کی جگہ پوچھیں۔"],
+        "tot morgen": ["invite-goodbye", "کل کی ملاقات طے ہو گئی ہے۔ رخصت ہوتے ہوئے مناسب بات کہیں۔"]
+      }
+    },
+    "a1-phone-calls": {
+      title: "Een telefoongesprek voeren",
+      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      outcomeUrdu: "فون پر اپنا نام بتانا، بولنے والے کی شناخت پوچھنا، واپس فون کا وقت دینا، غلط نمبر واضح کرنا، نمبر دہرانا، اور voicemail پر پیغام چھوڑنا۔",
+      seedConcepts: [
+        ["ik bel u vanavond terug", "میں آپ کو آج شام واپس فون کروں گا / گی"],
+        ["telefoon", "فون"],
+        ["nummer", "نمبر"],
+        ["voicemail", "وائس میل"],
+        ["met Sara", "Sara بول رہی ہوں"],
+        ["wie spreekt er?", "کون بول رہا ہے؟"],
+        ["kunt u later terugbellen?", "کیا آپ بعد میں واپس فون کر سکتے ہیں؟"],
+        ["u heeft het verkeerde nummer", "آپ نے غلط نمبر ملایا ہے"],
+        ["kunt u het nummer herhalen?", "کیا آپ نمبر دہرا سکتے ہیں؟"],
+        ["spreek een bericht in", "وائس میل پر پیغام بول دیں"]
+      ],
+      teaching: {
+        telefoon: {
+          usageUrdu: "فون آلہ یا فون رابطے کی بات میں telefoon استعمال کریں۔",
+          usageBoundaryUrdu: "telefoon آلہ ہے؛ nummer وہ ہندسے ہیں جن پر کال ہوتی ہے۔",
+          commonConfusionUrdu: "telefoon کو نمبر نہ سمجھیں؛ نمبر کے لیے nummer الگ لفظ ہے۔",
+          exampleDutch: "telefoon — nummer",
+          exampleUrdu: "فون — نمبر۔",
+          pronunciationUrdu: "تے لے فون"
+        },
+        nummer: {
+          usageUrdu: "فون کے ہندسوں یا رابطہ نمبر کی بات میں nummer استعمال کریں۔",
+          usageBoundaryUrdu: "nummer ہندسے ہیں؛ telefoon آلہ ہے۔",
+          commonConfusionUrdu: "نمبر دہرانا ہو تو nummer کہیں، telefoon نہیں۔",
+          exampleDutch: "nummer — telefoon",
+          exampleUrdu: "نمبر — فون۔",
+          pronunciationUrdu: "نُمَر"
+        },
+        voicemail: {
+          usageUrdu: "شخص فون نہ اٹھائے اور ریکارڈ شدہ پیغام سنائی دے تو اسے voicemail کہیں۔",
+          usageBoundaryUrdu: "voicemail ریکارڈ شدہ فون پیغام ہے؛ براہ راست گفتگو نہیں۔",
+          commonConfusionUrdu: "voicemail کو عام فون یا نمبر نہ سمجھیں؛ یہاں پیغام ریکارڈ ہوتا ہے۔",
+          exampleDutch: "telefoon — voicemail",
+          exampleUrdu: "فون — وائس میل۔",
+          pronunciationUrdu: "وائس میل"
+        },
+        "met sara": {
+          usageUrdu: "فون اٹھاتے وقت مختصر طور پر اپنی شناخت دینے کے لیے “met Sara” کہیں۔",
+          usageBoundaryUrdu: "یہ بولنے والے کی شناخت ہے؛ wie spreekt er? دوسرے شخص کی شناخت پوچھتا ہے۔",
+          commonConfusionUrdu: "فون پر met کے بعد اپنا نام دیں؛ سامنے والے کا نام نہیں۔",
+          exampleDutch: "Met Sara.",
+          exampleUrdu: "Sara بول رہی ہوں۔",
+          pronunciationUrdu: "مَت سا را"
+        },
+        "wie spreekt er": {
+          usageUrdu: "فون کرنے والے کی شناخت معلوم نہ ہو تو مؤدبانہ طور پر پوچھیں کون بول رہا ہے۔",
+          usageBoundaryUrdu: "یہ بولنے والے کا نام پوچھتا ہے؛ نمبر یا وقت نہیں۔",
+          commonConfusionUrdu: "فون پر spreekt استعمال کریں؛ عام شناخت والے لفظی ترجمے سے سوال نہ بنائیں۔",
+          exampleDutch: "Wie spreekt er?",
+          exampleUrdu: "کون بول رہا ہے؟",
+          pronunciationUrdu: "وی سپرے کٹ اَر"
+        },
+        "kunt u later terugbellen": {
+          usageUrdu: "ابھی بات ممکن نہ ہو تو سامنے والے سے بعد میں واپس فون کرنے کی درخواست کریں۔",
+          usageBoundaryUrdu: "یہ سامنے والے سے واپسی کال مانگتا ہے؛ ik bel u vanavond terug اپنی کال کا وعدہ ہے۔",
+          commonConfusionUrdu: "سوال میں kunt u پہلے اور terugbellen آخر میں رکھیں۔",
+          exampleDutch: "Kunt u later terugbellen?",
+          exampleUrdu: "کیا آپ بعد میں واپس فون کر سکتے ہیں؟",
+          pronunciationUrdu: "کُنت یو لا تَر تَروخ بَ لَن"
+        },
+        "ik bel u vanavond terug": {
+          usageUrdu: "خود آج شام واپس فون کرنے کا وعدہ دینا ہو تو یہ مکمل جملہ کہیں۔",
+          usageBoundaryUrdu: "یہ اپنی آئندہ کال بتاتا ہے؛ سامنے والے سے درخواست نہیں۔",
+          commonConfusionUrdu: "الگ ہونے والے فعل میں bel جملے کے اندر اور terug آخر میں رہتا ہے۔",
+          exampleDutch: "Ik bel u vanavond terug.",
+          exampleUrdu: "میں آپ کو آج شام واپس فون کروں گا یا گی۔",
+          pronunciationUrdu: "اِک بَل یو فان آ وُنت تَروخ"
+        },
+        "u heeft het verkeerde nummer": {
+          usageUrdu: "غلط نمبر پر کال آنے پر مؤدبانہ طور پر واضح کریں کہ نمبر غلط ہے۔",
+          usageBoundaryUrdu: "یہ غلط نمبر بتاتا ہے؛ نمبر دہرانے کی درخواست نہیں۔",
+          commonConfusionUrdu: "verkeerde نمبر کی صفت ہے؛ اسے telefoon کے بعد نہ رکھیں۔",
+          exampleDutch: "U heeft het verkeerde nummer.",
+          exampleUrdu: "آپ نے غلط نمبر ملایا ہے۔",
+          pronunciationUrdu: "یو ہیفٹ ہَت فَر کیر دَ نُمَر"
+        },
+        "kunt u het nummer herhalen": {
+          usageUrdu: "فون نمبر صاف سنائی نہ دے تو پورا نمبر دوبارہ کہنے کی درخواست کریں۔",
+          usageBoundaryUrdu: "یہ نمبر دہرانے کے لیے ہے؛ پوری گفتگو دوبارہ مانگنے کا عمومی جملہ الگ ہے۔",
+          commonConfusionUrdu: "het nummer herhalen پورا رکھیں تاکہ واضح ہو کہ نمبر دہرانا ہے۔",
+          exampleDutch: "Kunt u het nummer herhalen?",
+          exampleUrdu: "کیا آپ نمبر دہرا سکتے ہیں؟",
+          pronunciationUrdu: "کُنت یو ہَت نُمَر ہیر ہا لَن"
+        },
+        "spreek een bericht in": {
+          usageUrdu: "voicemail کی آواز کے بعد مختصر پیغام ریکارڈ کرنے کی ہدایت میں یہ بات سنائی دیتی ہے۔",
+          usageBoundaryUrdu: "یہ پیغام بول کر ریکارڈ کرنے کی ہدایت ہے؛ زندہ شخص سے گفتگو نہیں۔",
+          commonConfusionUrdu: "اس فون ہدایت میں spreek شروع میں اور in آخر میں آتا ہے۔",
+          exampleDutch: "Spreek een bericht in.",
+          exampleUrdu: "وائس میل پر پیغام بول دیں۔",
+          pronunciationUrdu: "سپریک اَن بَ رِخت اِن"
+        }
+      },
+      pattern: {
+        modelDutch: "ik bel u vanavond terug",
+        titleUrdu: "واپس فون والے الگ ہونے والے فعل کی ترتیب",
+        highlight: "bel … terug",
+        explanationUrdu: "terugbellen کے عام جملے میں bel شخص کے بعد آتا ہے اور terug آخر میں جاتا ہے: ik bel u vanavond terug۔",
+        contrastUrdu: "سوال kunt u later terugbellen? میں پورا terugbellen آخر میں رہتا ہے؛ سیدھے جملے میں bel اور terug الگ ہوتے ہیں۔",
+        commonMistakeUrdu: "ik terugbel u نہ کہیں؛ سیدھے جملے میں bel اندر اور terug آخر میں رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی فون کال کے بعد دوسری کال میں",
+      prerequisiteLessonIds: ["a0-understanding-help", "a0-address-phone", "a0-time-days", "a1-polite-chunks", "a1-plans-invitations"],
+      prerequisiteRefs: [
+        ["a0-understanding-help", "kunt u herhalen"],
+        ["a0-address-phone", "telefoonnummer"],
+        ["a0-time-days", "avond"],
+        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+        ["a1-plans-invitations", "sorry ik kan niet"]
+      ],
+      scenarios: {
+        telefoon: ["phone-device", "رابطے کے آلے کا ڈچ لفظ پہچانیں۔"],
+        nummer: ["phone-number", "فون کے ہندسوں کے لیے درست ڈچ لفظ پہچانیں۔"],
+        voicemail: ["phone-voicemail", "فون نہیں اٹھا اور ریکارڈ شدہ آواز آئی۔ اس نظام کا درست لفظ چنیں۔"],
+        "met sara": ["phone-answer-name", "Sara فون اٹھاتی ہیں۔ مختصر درست تعارف دیں۔"],
+        "wie spreekt er": ["phone-ask-caller", "کال کرنے والے کی شناخت معلوم نہیں۔ کون بول رہا ہے پوچھیں۔"],
+        "kunt u later terugbellen": ["phone-request-callback", "آپ ابھی بات نہیں کر سکتے۔ سامنے والے سے بعد میں واپس فون مانگیں۔"],
+        "ik bel u vanavond terug": ["phone-promise-callback", "آپ خود آج شام واپس فون کریں گے۔ مکمل وعدہ کہیں۔"],
+        "u heeft het verkeerde nummer": ["phone-wrong-number", "کال کسی اور شخص کے لیے ہے۔ مؤدبانہ طور پر غلط نمبر واضح کریں۔"],
+        "kunt u het nummer herhalen": ["phone-repeat-number", "فون نمبر صاف سنائی نہیں دیا۔ صرف نمبر دوبارہ مانگیں۔"],
+        "spreek een bericht in": ["phone-leave-voicemail", "voicemail پر ریکارڈ شدہ ہدایت پیغام بولنے کو کہتی ہے۔ درست بات چنیں۔"]
+      },
+      document: {
+        stableId: "phone-read-callback-note",
+        sourceKey: "phone-callback-note",
+        documentKind: "phone-callback-note",
+        targetDutch: "kunt u later terugbellen?",
+        title: "Telefoon",
+        labelUrdu: "فون واپس کرنے کا نوٹ پڑھیں",
+        promptUrdu: "فون نوٹ میں “kunt u later terugbellen?” کے سامنے vanavond دیکھیں اور اس مکمل سوال کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "فون نوٹ میں بولنے والے کا نام اور vanavond الگ دیکھیں، پھر لکھی ہوئی واپسی کال کی درخواست کا درست مطلب منتخب کریں۔",
+        correctUrdu: "درست۔ “Kunt u later terugbellen?” بعد میں واپس فون کرنے کی مؤدبانہ درخواست ہے۔",
+        wrongUrdu: "یہ دوسری فون بات ہے۔ نوٹ میں later terugbellen سامنے والے سے واپسی کال مانگتا ہے۔",
+        rows: [
+          { label: "met Sara", value: "voicemail" },
+          { label: "kunt u later terugbellen?", value: "vanavond" }
+        ]
+      }
+    },
+    "a1-appointments": {
+      title: "Een afspraak maken of veranderen",
+      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      outcomeUrdu: "ملاقات بنانا، دستیابی پوچھنا، دوسرا وقت تجویز کرنا، نہ آ سکنے کی اطلاع دینا، ملاقات بدلنا یا منسوخ کرنا، اور تصدیقی کارڈ پڑھنا۔",
+      seedConcepts: [
+        ["ik wil een afspraak maken", "میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں"],
+        ["afspraak", "ملاقات کا وقت"],
+        ["datum", "تاریخ"],
+        ["maandag", "پیر"],
+        ["ochtend", "صبح"],
+        ["middag", "دوپہر"],
+        ["ik wil de afspraak veranderen", "میں ملاقات کا وقت بدلنا چاہتا / چاہتی ہوں"],
+        ["heeft u vandaag tijd?", "کیا آج آپ کے پاس وقت ہے؟"],
+        ["kan het morgen in de ochtend?", "کیا کل صبح ہو سکتا ہے؟"],
+        ["ik kan maandag niet komen", "میں پیر کو نہیں آ سکتا / سکتی"],
+        ["ik moet de afspraak annuleren", "مجھے ملاقات منسوخ کرنی ہے"],
+        ["hoe laat is de afspraak?", "ملاقات کتنے بجے ہے؟"],
+        ["kunt u de afspraak bevestigen?", "کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟"]
+      ],
+      teaching: {
+        "ik wil een afspraak maken": {
+          usageUrdu: "ڈاکٹر، بلدیہ، یا اسکول سے نئی ملاقات لینے کی بات شروع کرنے کے لیے یہ مکمل جملہ کہیں۔",
+          usageBoundaryUrdu: "یہ نئی ملاقات بناتا ہے؛ bestaande ملاقات بدلنے کے لیے veranderen والا جملہ ہے۔",
+          commonConfusionUrdu: "نئی ملاقات کے لیے een afspraak maken کہیں؛ de afspraak veranderen موجود ملاقات ہے۔",
+          exampleDutch: "Ik wil een afspraak maken.",
+          exampleUrdu: "میں ملاقات کا وقت لینا چاہتا یا چاہتی ہوں۔",
+          pronunciationUrdu: "اِک وِل اَن آف سپراک ما کَن"
+        },
+        "heeft u vandaag tijd": {
+          usageUrdu: "ملازم سے آج کی دستیابی مؤدبانہ طور پر پوچھنے کے لیے یہ سوال کہیں۔",
+          usageBoundaryUrdu: "یہ آج وقت ہونے کی تصدیق ہے؛ hoe laat is de afspraak? پہلے سے طے وقت پوچھتا ہے۔",
+          commonConfusionUrdu: "ہاں یا نہیں سوال میں heeft پہلے اور u بعد میں رکھیں۔",
+          exampleDutch: "Heeft u vandaag tijd?",
+          exampleUrdu: "کیا آج آپ کے پاس وقت ہے؟",
+          pronunciationUrdu: "ہیفٹ یو فان داخ ٹَیٹ"
+        },
+        "kan het morgen in de ochtend": {
+          usageUrdu: "پیش کیا گیا وقت مناسب نہ ہو تو کل صبح کا متبادل وقت پوچھیں۔",
+          usageBoundaryUrdu: "یہ متبادل تجویز ہے؛ ik kan maandag niet komen صرف عدم دستیابی بتاتا ہے۔",
+          commonConfusionUrdu: "دن کے حصے کے لیے in de ochtend پورا رکھیں۔",
+          exampleDutch: "Kan het morgen in de ochtend?",
+          exampleUrdu: "کیا کل صبح ہو سکتا ہے؟",
+          pronunciationUrdu: "کان ہَت مور خَن اِن دَ او ختَنت"
+        },
+        "ik kan maandag niet komen": {
+          usageUrdu: "پیر کی ملاقات میں نہ آ سکیں تو دن سمیت اپنی عدم دستیابی واضح کریں۔",
+          usageBoundaryUrdu: "یہ نہ آ سکنے کی اطلاع ہے؛ ملاقات خود بخود منسوخ نہیں ہوتی۔",
+          commonConfusionUrdu: "niet کو komen سے پہلے رکھیں: maandag niet komen۔",
+          exampleDutch: "Ik kan maandag niet komen.",
+          exampleUrdu: "میں پیر کو نہیں آ سکتا یا سکتی۔",
+          pronunciationUrdu: "اِک کان مان داخ نیت کو مَن"
+        },
+        "ik moet de afspraak annuleren": {
+          usageUrdu: "جب ملاقات مکمل طور پر ختم کرنی ہو تو صاف کہیں کہ اسے منسوخ کرنا ضروری ہے۔",
+          usageBoundaryUrdu: "annuleren ملاقات ختم کرتا ہے؛ veranderen صرف وقت یا دن بدلتا ہے۔",
+          commonConfusionUrdu: "منسوخی میں de afspraak annuleren کہیں؛ maken نئی ملاقات بناتا ہے۔",
+          exampleDutch: "Ik moet de afspraak annuleren.",
+          exampleUrdu: "مجھے ملاقات منسوخ کرنی ہے۔",
+          pronunciationUrdu: "اِک موت دَ آف سپراک آ نو لے رَن"
+        },
+        "hoe laat is de afspraak": {
+          usageUrdu: "تاریخ معلوم ہو مگر گھڑی کا وقت بھول گئے ہوں تو ملاقات کا وقت پوچھیں۔",
+          usageBoundaryUrdu: "hoe laat گھڑی کا وقت پوچھتا ہے؛ welke dag دن کا انتخاب پوچھتا ہے۔",
+          commonConfusionUrdu: "گھڑی کا وقت پوچھنے والا سوال استعمال کریں؛ اسے مقدار یا قیمت والے سوال سے نہ ملائیں۔",
+          exampleDutch: "Hoe laat is de afspraak?",
+          exampleUrdu: "ملاقات کتنے بجے ہے؟",
+          pronunciationUrdu: "ہو لات اِس دَ آف سپراک"
+        },
+        "kunt u de afspraak bevestigen": {
+          usageUrdu: "فون یا کاؤنٹر پر ملاقات واقعی درج ہونے کی مؤدبانہ تصدیق مانگیں۔",
+          usageBoundaryUrdu: "bevestigen موجود ملاقات کی تصدیق ہے؛ نئی ملاقات بنانا یا منسوخ کرنا نہیں۔",
+          commonConfusionUrdu: "درخواست میں kunt u پہلے اور bevestigen آخر میں رکھیں۔",
+          exampleDutch: "Kunt u de afspraak bevestigen?",
+          exampleUrdu: "کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟",
+          pronunciationUrdu: "کُنت یو دَ آف سپراک بَ فَس تِ خَن"
+        }
+      },
+      pattern: {
+        modelDutch: "ik wil een afspraak maken",
+        titleUrdu: "ملاقات کے مقصد کو مکمل جملے میں کہنا",
+        highlight: "ik wil + een afspraak + maken",
+        explanationUrdu: "نئی ملاقات لینے کے لیے ik wil کے بعد een afspraak اور آخر میں maken رکھیں۔",
+        contrastUrdu: "maken نئی ملاقات بناتا ہے، veranderen موجود ملاقات بدلتا ہے، اور annuleren اسے ختم کرتا ہے۔",
+        commonMistakeUrdu: "نئی ملاقات کے لیے de afspraak نہ کہیں؛ اس نمونے میں een afspraak maken رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی ملاقات کے بعد دوسرے ادارے سے بات کرتے وقت",
+      prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-questions", "a1-polite-chunks", "a1-phone-calls"],
+      prerequisiteRefs: [
+        ["a0-date-appointment", "afspraak"],
+        ["a0-date-appointment", "datum"],
+        ["a0-date-appointment", "ik wil de afspraak veranderen"],
+        ["a0-time-days", "maandag"],
+        ["a0-time-days", "ochtend"],
+        ["a0-time-days", "middag"],
+        ["a1-questions", "wanneer komt u?"],
+        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+        ["a1-phone-calls", "kunt u later terugbellen?"]
+      ],
+      scenarios: {
+        afspraak: ["appointment-word", "استقبالی کارڈ پر ملاقات کے وقت والا لفظ پہچانیں۔"],
+        datum: ["appointment-date", "تصدیقی کارڈ پر تاریخ والا خانہ پہچانیں۔"],
+        maandag: ["appointment-monday", "کارڈ میں پیر کا دن پہچانیں۔"],
+        ochtend: ["appointment-morning", "صبح کے دستیاب وقت کو درست ڈچ لفظ سے پہچانیں۔"],
+        middag: ["appointment-afternoon", "دوپہر کے دستیاب وقت کو درست ڈچ لفظ سے پہچانیں۔"],
+        "ik wil de afspraak veranderen": ["appointment-change", "موجود ملاقات کا وقت مناسب نہیں۔ اسے بدلنے کی سیکھی ہوئی مکمل بات کہیں۔"],
+        "ik wil een afspraak maken": ["appointment-make", "ڈاکٹر کے استقبالی کاؤنٹر سے نئی ملاقات لینی ہے۔ مکمل آغاز کریں۔"],
+        "heeft u vandaag tijd": ["appointment-today", "ملازم سے آج کی دستیابی مؤدبانہ طور پر پوچھیں۔"],
+        "kan het morgen in de ochtend": ["appointment-alternative", "آج کا وقت مناسب نہیں۔ کل صبح کا متبادل پوچھیں۔"],
+        "ik kan maandag niet komen": ["appointment-cannot-come", "پیر کو آنا ممکن نہیں۔ دن سمیت مکمل اطلاع دیں۔"],
+        "ik moet de afspraak annuleren": ["appointment-cancel", "ملاقات مکمل طور پر ختم کرنی ہے۔ واضح منسوخی کہیں۔"],
+        "hoe laat is de afspraak": ["appointment-ask-time", "تاریخ معلوم ہے مگر گھڑی کا وقت بھول گئے ہیں۔ وقت پوچھیں۔"],
+        "kunt u de afspraak bevestigen": ["appointment-confirm", "فون بند کرنے سے پہلے ملاقات درج ہونے کی تصدیق مانگیں۔"]
+      },
+      document: {
+        stableId: "appointment-read-confirmation",
+        sourceKey: "appointment-confirmation-card",
+        documentKind: "appointment-confirmation-card",
+        targetDutch: "hoe laat is de afspraak?",
+        title: "Afspraak",
+        labelUrdu: "ملاقات کا تصدیقی کارڈ پڑھیں",
+        promptUrdu: "کارڈ میں maandag اور 09:00 دیکھیں، پھر گھڑی کا وقت پوچھنے والی سیکھی ہوئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "تصدیقی کارڈ میں datum اور tijd الگ پڑھیں، پھر وقت پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",
+        correctUrdu: "درست۔ “Hoe laat is de afspraak?” ملاقات کا گھڑی والا وقت پوچھتا ہے۔",
+        wrongUrdu: "یہ دوسری ملاقات کی بات ہے۔ hoe laat والا سوال 09:00 جیسے گھڑی کے وقت کے بارے میں ہے۔",
+        rows: [
+          { label: "datum", value: "maandag" },
+          { label: "tijd", value: "09:00" },
+          { label: "hoe laat is de afspraak?", value: "09:00" }
+        ]
+      }
     }
   },
   missions: {
@@ -6306,6 +6888,60 @@ const a1AuthoredCurriculumV4 = {
           { label: "ik kom op maandag", value: "09:00" },
           { label: "ik ben op tijd", value: "09:00" },
           { label: "sorry ik ben te laat", value: "09:15" }
+        ]
+      }
+    },
+    "a1-mission-phone-internet": {
+      sourceKey: "questions-calls-appointments-mission",
+      scenarioTitleUrdu: "سوال، مدد، فون کال، اور ملاقات کی عملی گفتگو",
+      speakerUrdu: "استقبالی ملازم یا فون کرنے والا شخص",
+      prerequisiteLessonIds: [
+        "a1-questions",
+        "a1-polite-chunks",
+        "a1-plans-invitations",
+        "a1-phone-calls",
+        "a1-appointments"
+      ],
+      variantTitles: [
+        "کمیونٹی مرکز کو فون اور ملاقات",
+        "huisarts سے وقت کی تصدیق",
+        "کورس کے لیے سوال اور نئی afspraak"
+      ],
+      variantContexts: [
+        "کمیونٹی مرکز سے صحیح معلومات پوچھیں، مدد مانگیں، واپسی کال کا نوٹ سمجھیں، اور ملاقات کا وقت طے کریں",
+        "ڈاکٹر کے استقبالی ملازم سے مؤدبانہ فون گفتگو کریں اور تصدیقی کارڈ کا دن اور وقت سمجھیں",
+        "کورس کے ملازم سے سوال کریں، ایک دعوت کا جواب دیں، اور نئی ملاقات کی تصدیق مکمل کریں"
+      ],
+      targets: [
+        { lessonId: "a1-questions", dutch: "wanneer komt u?", patternLessonId: "a1-questions" },
+        { lessonId: "a1-polite-chunks", dutch: "kunt u mij helpen alstublieft?", patternLessonId: "a1-polite-chunks" },
+        { lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?", patternLessonId: "a1-plans-invitations" },
+        { lessonId: "a1-phone-calls", dutch: "kunt u later terugbellen?" },
+        { lessonId: "a1-appointments", dutch: "ik wil een afspraak maken", patternLessonId: "a1-appointments" },
+        { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
+      ],
+      prerequisiteRefs: [
+        ["a0-greetings-courtesy", "sorry"],
+        ["a0-understanding-help", "kunt u herhalen"],
+        ["a0-date-appointment", "afspraak"],
+        ["a0-time-days", "maandag"],
+        ["a0-time-days", "avond"],
+        ["a1-phone-calls", "met Sara"],
+        ["a1-appointments", "kunt u de afspraak bevestigen?"]
+      ],
+      useTypes: ["situation", "situation", "build", "listen-choice", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "build", "listen-choice", "reverse", "document-choice"],
+      document: {
+        documentKind: "appointment-callback-card",
+        title: "Afspraak",
+        labelUrdu: "فون نوٹ اور ملاقات کی تصدیق پڑھیں",
+        promptUrdu: "کارڈ میں maandag اور 09:00 دیکھیں، پھر ملاقات کا گھڑی والا وقت پوچھنے والی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "واپسی کال اور ملاقات کے حصے الگ پڑھیں، پھر 09:00 کے بارے میں پوچھنے والے سیکھی ہوئی سوال کا درست مطلب منتخب کریں۔",
+        rows: [
+          { label: "met Sara", value: "hoe laat is de afspraak?" },
+          { label: "kunt u later terugbellen?", value: "avond" },
+          { label: "maandag", value: "09:00" },
+          { label: "afspraak", value: "09:00" }
         ]
       }
     }
