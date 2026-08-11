@@ -5,7 +5,7 @@ Status: **v4 foundation implemented; A0 accepted and frozen; A1 is the active re
 Authority:
 [`docs/learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
-Snapshot date: **2026-08-05**
+Snapshot date: **2026-08-11**
 
 Canonical data: `window.NEDERURDU_COURSE`, schema version `4`
 
@@ -50,14 +50,14 @@ authored replay variants.
 | Normal lessons | 97 |
 | Missions | 25 |
 | Adaptive unit reviews | 25 |
-| Concepts | 941 |
-| Skills | 961 |
-| Reusable patterns | 20 |
-| Internal learning runs | 352 |
-| Teaching blocks | 1,354 |
-| Active normal-lesson exercises | 6,273 |
+| Concepts | 924 |
+| Skills | 948 |
+| Reusable patterns | 24 |
+| Internal learning runs | 342 |
+| Teaching blocks | 1,317 |
+| Active normal-lesson exercises | 6,105 |
 | Retired v3 compatibility records | 5,820 |
-| Mission records across all variants | 723 |
+| Mission records across all variants | 735 |
 
 ### Per-chapter inventory
 
@@ -67,14 +67,14 @@ authored replay variants.
 | Normal lessons | 36 | 43 | 18 |
 | Missions | 9 | 9 | 7 |
 | Adaptive reviews | 9 | 9 | 7 |
-| Chapter-owned concepts | 345 | 397 | 199 |
-| Chapter-owned skills | 353 | 403 | 205 |
-| Patterns | 8 | 6 | 6 |
-| Learning runs | 107 | 166 | 79 |
-| Teaching blocks | 376 | 690 | 288 |
-| Active normal-lesson exercises | 1,800 | 3,005 | 1,468 |
+| Chapter-owned concepts | 345 | 380 | 199 |
+| Chapter-owned skills | 353 | 390 | 205 |
+| Patterns | 8 | 10 | 6 |
+| Learning runs | 107 | 156 | 79 |
+| Teaching blocks | 376 | 653 | 288 |
+| Active normal-lesson exercises | 1,800 | 2,837 | 1,468 |
 | Retired v3 records | 2,160 | 2,580 | 1,080 |
-| Mission records across all variants | 321 | 234 | 168 |
+| Mission records across all variants | 321 | 246 | 168 |
 
 ## 3. Sequential chapter status
 
@@ -133,8 +133,8 @@ inventory and binding remain/split/move/merge/retire decisions are recorded in
 
 The audit now requires stable authored provenance on every selected scored A1
 Use task. That deliberate strengthening raised the pre-authoring baseline from
-671 to **1,092 errors** by exposing 421 generated Use tasks. Units 1 and 2 are
-the completed authoring batches. Unit 1, personal information, provides the
+671 to **1,092 errors** by exposing 421 generated Use tasks. Units 1, 2, and 3
+are the completed authoring batches. Unit 1, personal information, provides the
 bridge from A0:
 
 - `a1-greetings-personal-info` and `a1-details-forms` use individual authored
@@ -167,8 +167,23 @@ Unit 2, family and people, now follows the same binding contract:
   passes **12/12** across desktop and mobile; the earlier Unit 1 gate still
   passes **10/10** after the shared authoring helpers changed.
 
-The current full A1 result is **935 errors and 0 review flags**, down by 121
-from the post-Unit-1 result. Every
+Unit 3, daily routine, now completes the next mandatory batch:
+
+- `a1-present-time`, `a1-daily-routine`, `a1-calendar-time`, and
+  `a1-weather-clothes` teach 22 new targets across six capped runs, with four
+  complete sentence patterns and only genuine earlier prerequisites;
+- the calendar lesson teaches and recognises a weekly schedule plus a
+  late-arrival change before that document format appears in a check or
+  mission;
+- `a1-daily-routine-mission` has three authored schedule variants, each with
+  six Use and six Independent Check tasks covering all four lesson strands;
+- the exact Unit 3 audit slice reports **0 findings**, and its focused browser
+  gate passes **12/12** across desktop and mobile; and
+- the combined Unit 1–2 regression gate passes **22/22**, while the frozen A0
+  matrix remains **96/96**.
+
+The current full A1 result is **859 errors and 0 review flags**, down by 76
+from the post-Unit-2 result. Every
 remaining finding belongs to later units or the still-unwritten chapter
 completion mission. A1 as a whole is not accepted or frozen.
 
@@ -217,6 +232,12 @@ Manual browser review confirmed:
   unit mission Preview. The handover card and mission remained readable without
   horizontal overflow at phone, tablet, and desktop sizes, and the final
   browser console review contained no warnings or errors.
+- A1 Unit 3 was manually reviewed from the chapter map through the schedule
+  lesson's Preview, both learning runs, Urdu-first teaching and pattern cards,
+  supported recognition, word-bank production, unscored speaking, Use,
+  Independent Check, and the next-run transition. The weekly schedule/change
+  document and unit mission Preview remained readable at phone, tablet, and
+  desktop sizes. The final console review contained no warnings or errors.
 
 Focused automated checks cover migration, run prerequisites, adaptive-review
 filtering, selected-distractor explanations, correction loops, mastery
@@ -240,23 +261,24 @@ gate until those chapters reach their own permitted acceptance cycles.
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public` after the A1 Unit 2 authoring batch. The
-  packaged APK contains the same course and service-worker hashes as the web
-  source.
-- The offline cache is `nederurdu-v62-learning-first-a1-unit2`.
-- A fresh native debug build completed successfully (31 tasks).
-- Current APK:
+  `android/app/src/main/assets/public` after the A1 Unit 3 authoring batch. The
+  Android source assets have the same course, app-runtime, and service-worker
+  hashes as the web source.
+- The offline cache is `nederurdu-v63-learning-first-a1-unit3`.
+- The Unit 3 native build is pending. Java 17 and Android command-line tools
+  were restored, but Google requires the SDK license to be accepted by the
+  user before API 35 and its build tools can be installed.
+- Last successfully built APK (Unit 2, not the current Unit 3 package):
   `android/app/build/outputs/apk/debug/app-debug.apk`
-- Current APK SHA-256:
+- Last APK SHA-256:
   `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
-- Packaged course-data SHA-256:
-  `51e28110809395e170ac452209564a65c80b0ee878c06ad164563038e30ee622`
-- Packaged app runtime SHA-256:
+- Synchronized Unit 3 course-data SHA-256:
+  `dd08086d6ac708dc0d4189911a9958100b81bfc58be07396f196af41222e1b65`
+- Synchronized Unit 3 app runtime SHA-256:
   `bb3c8cc20b87c855fa26ad8d834fdad216b9c564714ad0b70f17e29e2a4dcbd4`
-- Packaged service-worker SHA-256:
-  `f853fee9ca8bacad3ec56ef0f9198183083bd53ac16eac2871d614886898daab`
-- The APK installed with `-r`, preserving existing app data.
-- On the installed app, both `nederurdu-progress-v3` and
+- Synchronized Unit 3 service-worker SHA-256:
+  `83a0a62fcda7f14c0864797607cbbbe07e5f30ba60f2e56d5ba11f59e42d32bd`
+- In the last installed acceptance build, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
   `migratedFrom: nederurdu-progress-v3`, retained XP, practice day, settings,
   and mission history, and mapped the old completed A0 lesson to `practiced`.
@@ -276,25 +298,25 @@ gate until those chapters reach their own permitted acceptance cycles.
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
 | Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Units 1–2 passed; Units 3–9 pending | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–2: 0 local findings; full A1: 935 errors / 0 flags** | 379 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Units 1–2 content passed; later units blocked | Blocked |
-| Browser phase journey | Representative path passed | Unit 1 **10/10** and Unit 2 **12/12**; later units blocked | Blocked |
+| Urdu-first teaching records | Passed semantic review | Units 1–3 passed; Units 4–9 pending | Not accepted |
+| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–3: 0 local findings; full A1: 859 errors / 0 flags** | 379 errors / 1 flag |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–3 content passed; later units blocked | Blocked |
+| Browser phase journey | Representative path passed | Unit 3 **12/12**; Units 1–2 regression **22/22**; later units blocked | Blocked |
 | Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
-| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–2 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–3 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
 | Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
 | Regular and slow audio | Android native requests passed | Blocked | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Unit 2 web/package hashes match | Shared package |
-| Native debug build | Passed | Passed after Unit 2 sync | Shared package |
+| Android asset parity | Passed | Unit 3 web/source-asset hashes match; APK pending | Shared package |
+| Native debug build | Passed | Pending user acceptance of the Google SDK license | Shared package |
 | Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. Rebuild A1 Unit 3, daily routine, using the same authored teaching,
-   dependency, schedule/message, mission, and focused-test gate now proven by
-   Units 1 and 2.
-2. Continue Units 4–9 strictly in the recorded inventory order.
+1. Rebuild A1 Unit 4, questions, help, calls, and appointments, using the same
+   authored teaching, dependency, document, mission, and focused-test gate now
+   proven by Units 1–3.
+2. Continue Units 5–9 strictly in the recorded inventory order.
 3. Add the separate chapter-wide A1 completion mission after all unit missions.
 4. Audit the complete generated A1 chapter to zero errors and zero review flags,
    then

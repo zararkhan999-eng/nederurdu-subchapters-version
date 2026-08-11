@@ -5108,7 +5108,7 @@ if (a0ShortAnswersLessonV4) {
  * question's position in the legacy bank.
  */
 const a1AuthoredCurriculumV4 = {
-  version: "a1-authored-v2",
+  version: "a1-authored-v3",
   chapterPrerequisiteRefs: [
     ["a0-greetings-courtesy", "hallo"],
     ["a0-understanding-help", "kunt u herhalen"],
@@ -5124,6 +5124,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-family-people": {
       outcomeUrdu: "خاندان کی تصویر یا opvang کی گفتگو میں رشتہ پہچاننا، اپنے خاندان کے بارے میں مکمل جملے کہنا، اور بچے کے لانے یا لینے کا وقت واضح کرنا۔",
       practiceUrdu: "پہلے رشتے اور مکمل جملے سمجھیں، پھر خاندان کی مختصر گفتگو اور opvang کی حوالگی میں وہی سیکھی ہوئی باتیں استعمال کریں۔"
+    },
+    "a1-daily-routine": {
+      outcomeUrdu: "کام یا اسکول کے عام دن کا وقت بتانا، سادہ ہفتہ وار شیڈول پڑھنا، دیر کی اطلاع دینا، اور موسم کے مطابق روزمرہ فیصلہ واضح کرنا۔",
+      practiceUrdu: "پہلے آج کے مکمل جملے اور روزمرہ ترتیب سمجھیں، پھر شیڈول، تاخیر کے پیغام، اور موسم والے منصوبے میں وہی سیکھی ہوئی باتیں استعمال کریں۔"
     }
   },
   lessons: {
@@ -5785,6 +5789,393 @@ const a1AuthoredCurriculumV4 = {
           { label: "Eten mee", value: "ja" }
         ]
       }
+    },
+    "a1-present-time": {
+      title: "Vandaag werk ik",
+      unitLabel: "A1: روزمرہ معمول",
+      outcomeUrdu: "آج کے کام، رہائش، اور Nederlands سیکھنے کی بات مکمل حال کے جملے میں کہنا، اور وقت پہلے آئے تو فعل کی جگہ پہچاننا۔",
+      seedConcepts: [
+        ["ik werk vandaag", "میں آج کام کرتا / کرتی ہوں"],
+        ["ik woon in Nederland", "میں نیدرلینڈز میں رہتا / رہتی ہوں"],
+        ["ik leer nu Nederlands", "میں ابھی Nederlands سیکھتا / سیکھتی ہوں"],
+        ["wij leren Nederlands", "ہم Nederlands سیکھتے ہیں"],
+        ["vandaag werk ik", "آج میں کام کرتا / کرتی ہوں"]
+      ],
+      teaching: {
+        "ik leer nu nederlands": {
+          usageUrdu: "کلاس یا تعارف میں اپنی موجودہ پڑھائی بتانے کے لیے مکمل جملہ “ik leer nu Nederlands” کہیں۔",
+          usageBoundaryUrdu: "nu ابھی کے وقت کو واضح کرتا ہے؛ vandaag پورے آج کے دن کی بات کرتا ہے۔",
+          commonConfusionUrdu: "nu کو شخص اور فعل کے درمیان نہ رکھیں؛ بنیادی ترتیب ik leer nu Nederlands رکھیں۔",
+          exampleDutch: "Ik leer nu Nederlands.",
+          exampleUrdu: "میں ابھی Nederlands سیکھتا یا سیکھتی ہوں۔",
+          pronunciationUrdu: "اِک لیر نو نے دَر لانتس"
+        },
+        "wij leren nederlands": {
+          usageUrdu: "جب آپ اپنے ساتھ دوسرے سیکھنے والوں کی مشترک بات کریں تو “wij leren Nederlands” کہیں۔",
+          usageBoundaryUrdu: "wij ہم سب کے لیے ہے؛ اپنی اکیلی بات میں ik leer Nederlands آتا ہے۔",
+          commonConfusionUrdu: "wij کے ساتھ leren آتا ہے؛ wij leer Nederlands نہ کہیں۔",
+          exampleDutch: "Wij leren Nederlands.",
+          exampleUrdu: "ہم Nederlands سیکھتے ہیں۔",
+          pronunciationUrdu: "وَے لیرَن نے دَر لانتس"
+        },
+        "vandaag werk ik": {
+          usageUrdu: "جب آج کے وقت کو خاص طور پر پہلے رکھنا ہو تو “vandaag werk ik” سے بات شروع کریں۔",
+          usageBoundaryUrdu: "ik werk vandaag بھی آج کام کرنے کی بات ہے؛ vandaag پہلے آئے تو فعل werk دوسرے نمبر پر رہتا ہے۔",
+          commonConfusionUrdu: "vandaag ik werk نہ کہیں؛ وقت پہلے ہو تو ترتیب vandaag + werk + ik ہے۔",
+          exampleDutch: "Vandaag werk ik.",
+          exampleUrdu: "آج میں کام کرتا یا کرتی ہوں۔",
+          pronunciationUrdu: "فان داخ وَیرک اِک"
+        }
+      },
+      pattern: {
+        modelDutch: "vandaag werk ik",
+        titleUrdu: "وقت پہلے ہو تو فعل دوسرے نمبر پر",
+        highlight: "vandaag + werk + ik",
+        explanationUrdu: "سادہ جملہ ik werk vandaag ہے۔ vandaag کو پہلے لائیں تو فعل werk دوسرے نمبر پر اور شخص ik اس کے بعد آتا ہے: vandaag werk ik۔",
+        contrastUrdu: "ik werk vandaag میں شخص پہلے ہے؛ vandaag werk ik میں وقت پہلے ہے، مگر دونوں میں فعل اپنی درست جگہ پر رہتا ہے۔",
+        commonMistakeUrdu: "vandaag ik werk نہ کہیں؛ وقت پہلے آنے کے بعد فوراً فعل رکھیں: vandaag werk ik۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی گفتگو کے بعد دوسرے دن کا منصوبہ بتاتے وقت",
+      prerequisiteLessonIds: [
+        "a0-ik-jij-u",
+        "a0-time-days",
+        "a0-name-land-city",
+        "a0-work-basics"
+      ],
+      prerequisiteRefs: [
+        ["a0-ik-jij-u", "ik"],
+        ["a0-ik-jij-u", "wij"],
+        ["a0-time-days", "vandaag"],
+        ["a0-time-days", "nu"],
+        ["a0-time-days", "ik werk vandaag"],
+        ["a0-name-land-city", "ik woon in Nederland"],
+        ["a0-work-basics", "werk"]
+      ],
+      scenarios: {
+        "ik werk vandaag": ["present-tell-work-today", "ساتھی پوچھتا ہے کہ آپ آج کیا کرتے ہیں۔ اپنے آج کے کام کی مکمل بات منتخب کریں۔"],
+        "ik woon in nederland": ["present-tell-country", "کلاس میں مختصر تعارف دیتے ہوئے بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔"],
+        "ik leer nu nederlands": ["present-tell-current-study", "زبان کے استاد کو بتانا ہے کہ آپ ابھی Nederlands سیکھ رہے ہیں۔ مکمل جملہ منتخب کریں۔"],
+        "wij leren nederlands": ["present-tell-group-study", "کلاس کی مشترک سرگرمی بتاتے ہوئے کہیں کہ ہم Nederlands سیکھتے ہیں۔"],
+        "vandaag werk ik": ["present-time-first-work", "ہفتہ وار منصوبے میں آج کو نمایاں کرکے بتانا ہے کہ آج آپ کام کرتے ہیں۔ درست ترتیب منتخب کریں۔"]
+      }
+    },
+    "a1-daily-routine": {
+      title: "Mijn werkdag stap voor stap",
+      unitLabel: "A1: روزمرہ معمول",
+      outcomeUrdu: "اٹھنے، ناشتہ، سفر، کام، بچے کو اسکول چھوڑنے، گھر واپس آنے، اور سونے کا سادہ روزمرہ سلسلہ وقت کے ساتھ بتانا۔",
+      seedConcepts: [
+        ["ik sta om zeven uur op", "میں سات بجے اٹھتا / اٹھتی ہوں"],
+        ["ik ontbijt om half acht", "میں ساڑھے سات بجے ناشتہ کرتا / کرتی ہوں"],
+        ["ik ga met de bus naar werk", "میں بس سے کام پر جاتا / جاتی ہوں"],
+        ["ik begin om negen uur", "میں نو بجے شروع کرتا / کرتی ہوں"],
+        ["ik heb om twaalf uur pauze", "میرا بارہ بجے وقفہ ہے"],
+        ["ik stop om vijf uur", "میں پانچ بجے کام ختم کرتا / کرتی ہوں"],
+        ["daarna ga ik naar huis", "اس کے بعد میں گھر جاتا / جاتی ہوں"],
+        ["eerst breng ik mijn kind naar school", "پہلے میں اپنے بچے کو اسکول چھوڑتا / چھوڑتی ہوں"],
+        ["vandaag werk ik niet", "آج میں کام نہیں کرتا / کرتی"],
+        ["ik ga om elf uur slapen", "میں گیارہ بجے سونے جاتا / جاتی ہوں"]
+      ],
+      teaching: {
+        "ik sta om zeven uur op": {
+          usageUrdu: "اپنے دن کے شروع ہونے کا وقت بتاتے ہوئے کہیں: “ik sta om zeven uur op”۔",
+          usageBoundaryUrdu: "opstaan بستر سے اٹھنے کا فعل ہے؛ کام شروع کرنے کے لیے beginnen استعمال ہوتا ہے۔",
+          commonConfusionUrdu: "جملے میں sta کے ساتھ op آخر میں جاتا ہے؛ دونوں حصوں کو ایک جگہ جوڑ کر نہ رکھیں۔",
+          exampleDutch: "Ik sta om zeven uur op.",
+          exampleUrdu: "میں سات بجے اٹھتا یا اٹھتی ہوں۔",
+          pronunciationUrdu: "اِک ستا اوم زے فَن اور اوپ"
+        },
+        "ik ontbijt om half acht": {
+          usageUrdu: "صبح کے معمول میں ناشتہ اور اس کا وقت بتانے کے لیے “ik ontbijt om half acht” کہیں۔",
+          usageBoundaryUrdu: "half acht ڈچ وقت میں ساڑھے سات ہے؛ آٹھ بج کر تیس منٹ نہیں۔",
+          commonConfusionUrdu: "half acht کو ساڑھے آٹھ نہ سمجھیں؛ یہ آٹھ سے آدھا گھنٹہ پہلے یعنی 07:30 ہے۔",
+          exampleDutch: "Ik ontbijt om half acht.",
+          exampleUrdu: "میں ساڑھے سات بجے ناشتہ کرتا یا کرتی ہوں۔",
+          pronunciationUrdu: "اِک اونت بَیت اوم ہالف آخت"
+        },
+        "ik ga met de bus naar werk": {
+          usageUrdu: "کام تک روزانہ کا سفر بتانے کے لیے مکمل جملہ “ik ga met de bus naar werk” استعمال کریں۔",
+          usageBoundaryUrdu: "met de bus ذریعے کو بتاتا ہے؛ naar werk منزل کو بتاتا ہے۔",
+          commonConfusionUrdu: "بس کے بعد منزل مت چھوڑیں؛ مکمل ترتیب met de bus naar werk رکھیں۔",
+          exampleDutch: "Ik ga met de bus naar werk.",
+          exampleUrdu: "میں بس سے کام پر جاتا یا جاتی ہوں۔",
+          pronunciationUrdu: "اِک خا مَت دَ بُس نار وَیرک"
+        },
+        "ik heb om twaalf uur pauze": {
+          usageUrdu: "کام یا کورس میں وقفے کا وقت بتاتے ہوئے “ik heb om twaalf uur pauze” کہیں۔",
+          usageBoundaryUrdu: "pauze وقفہ ہے؛ stop کام کے مکمل ختم ہونے کی بات ہے۔",
+          commonConfusionUrdu: "وقفے کے لیے heb اور pauze کا یہی مکمل جملہ رکھیں؛ حالت والا فعل استعمال نہ کریں۔",
+          exampleDutch: "Ik heb om twaalf uur pauze.",
+          exampleUrdu: "میرا بارہ بجے وقفہ ہے۔",
+          pronunciationUrdu: "اِک ہَپ اوم توالف اور پاؤ زَ"
+        },
+        "ik stop om vijf uur": {
+          usageUrdu: "اپنے کام کے ختم ہونے کا وقت بتانے کے لیے “ik stop om vijf uur” کہیں۔",
+          usageBoundaryUrdu: "stop کام ختم ہونے کی بات ہے؛ pauze صرف عارضی وقفہ ہے۔",
+          commonConfusionUrdu: "وقت سے پہلے om رکھیں؛ ik stop vijf uur نامکمل ہے۔",
+          exampleDutch: "Ik stop om vijf uur.",
+          exampleUrdu: "میں پانچ بجے کام ختم کرتا یا کرتی ہوں۔",
+          pronunciationUrdu: "اِک ستوپ اوم فَیف اور"
+        },
+        "daarna ga ik naar huis": {
+          usageUrdu: "ایک کام کے بعد اگلا قدم بتانے کے لیے “daarna ga ik naar huis” سے گھر واپسی جوڑیں۔",
+          usageBoundaryUrdu: "daarna اس کے بعد ہے؛ eerst پہلے قدم کو بتاتا ہے۔",
+          commonConfusionUrdu: "daarna پہلے آئے تو فعل ga دوسرے نمبر پر ہے؛ daarna ik ga نہ کہیں۔",
+          exampleDutch: "Ik stop om vijf uur. Daarna ga ik naar huis.",
+          exampleUrdu: "میں پانچ بجے کام ختم کرتا ہوں۔ اس کے بعد گھر جاتا ہوں۔",
+          pronunciationUrdu: "دار نا خا اِک نار ہاؤس"
+        },
+        "eerst breng ik mijn kind naar school": {
+          usageUrdu: "صبح کا پہلا قدم بتاتے ہوئے کہیں: “eerst breng ik mijn kind naar school”۔",
+          usageBoundaryUrdu: "eerst پہلے قدم کو بتاتا ہے؛ daarna بعد والا قدم جوڑتا ہے۔",
+          commonConfusionUrdu: "eerst کے بعد فعل breng دوسرے نمبر پر رکھیں؛ eerst ik breng درست ترتیب نہیں۔",
+          exampleDutch: "Eerst breng ik mijn kind naar school.",
+          exampleUrdu: "پہلے میں اپنے بچے کو اسکول چھوڑتا یا چھوڑتی ہوں۔",
+          pronunciationUrdu: "ایرست برَینگ اِک مَین کِنٹ نار سخُول"
+        },
+        "vandaag werk ik niet": {
+          usageUrdu: "آج کام نہ کرنے کی تبدیلی بتاتے ہوئے مکمل جملہ “vandaag werk ik niet” کہیں۔",
+          usageBoundaryUrdu: "niet کام کرنے کی پوری بات کو منفی کرتا ہے؛ geen کسی اسم کی غیر موجودگی کے لیے آتا ہے۔",
+          commonConfusionUrdu: "vandaag کے بعد werk پھر ik آتا ہے، اور niet آخر میں؛ vandaag ik niet werk نہ کہیں۔",
+          exampleDutch: "Vandaag werk ik niet.",
+          exampleUrdu: "آج میں کام نہیں کرتا یا کرتی۔",
+          pronunciationUrdu: "فان داخ وَیرک اِک نیت"
+        },
+        "ik ga om elf uur slapen": {
+          usageUrdu: "اپنے دن کے آخر میں سونے کا وقت بتانے کے لیے “ik ga om elf uur slapen” کہیں۔",
+          usageBoundaryUrdu: "slapen سونے کا عمل ہے؛ opstaan دن کے شروع میں اٹھنا ہے۔",
+          commonConfusionUrdu: "ga کے بعد وقت اور آخر میں slapen رکھیں؛ دونوں فعل کی ترتیب الٹ نہ کریں۔",
+          exampleDutch: "Ik ga om elf uur slapen.",
+          exampleUrdu: "میں گیارہ بجے سونے جاتا یا جاتی ہوں۔",
+          pronunciationUrdu: "اِک خا اوم اَلف اور سلا پَن"
+        }
+      },
+      pattern: {
+        modelDutch: "ik sta om zeven uur op",
+        titleUrdu: "الگ ہونے والا فعل روزمرہ جملے میں",
+        highlight: "ik sta … op",
+        explanationUrdu: "لغت میں فعل opstaan ہے۔ سادہ جملے میں sta شخص کے بعد آتا ہے، وقت درمیان میں، اور op آخر میں جاتا ہے: ik sta om zeven uur op۔",
+        contrastUrdu: "opstaan فعل کا بنیادی نام ہے؛ مکمل جملے میں ik sta … op بنتا ہے۔ beginnen الگ فعل ہے اور کام شروع کرنے کے لیے آتا ہے۔",
+        commonMistakeUrdu: "ik opsta om zeven uur نہ کہیں؛ sta کو شخص کے بعد اور op کو آخر میں رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلے مدد والے روزمرہ منصوبے کے بعد اگلے کام والے دن میں",
+      prerequisiteLessonIds: [
+        "a0-time-days",
+        "a0-daily-actions",
+        "a0-transport-directions",
+        "a0-child-school",
+        "a0-work-basics",
+        "a1-present-time"
+      ],
+      prerequisiteRefs: [
+        ["a0-time-days", "om acht uur"],
+        ["a0-daily-actions", "slapen"],
+        ["a0-transport-directions", "bus"],
+        ["a0-child-school", "ik breng mijn kind naar school"],
+        ["a0-work-basics", "ik begin om negen uur"],
+        ["a1-present-time", "vandaag werk ik"]
+      ],
+      scenarios: {
+        "ik sta om zeven uur op": ["routine-wake-time", "کام کے دن کا منصوبہ بناتے ہوئے بتائیں کہ آپ سات بجے اٹھتے ہیں۔"],
+        "ik ontbijt om half acht": ["routine-breakfast-time", "گھر کے صبح والے معمول میں ساڑھے سات بجے ناشتے کی بات مکمل کریں۔"],
+        "ik ga met de bus naar werk": ["routine-travel-to-work", "ساتھی پوچھتا ہے کہ آپ کام تک کیسے جاتے ہیں۔ بس والا مکمل جواب منتخب کریں۔"],
+        "ik begin om negen uur": ["routine-work-start", "نئے کام کے پہلے دن ملازم کو اپنے شروع ہونے کا وقت نو بجے بتائیں۔"],
+        "ik heb om twaalf uur pauze": ["routine-lunch-break", "ساتھی کے ساتھ ملاقات طے کرتے ہوئے بتائیں کہ بارہ بجے آپ کا وقفہ ہے۔"],
+        "ik stop om vijf uur": ["routine-work-finish", "گھر والوں کو بتانا ہے کہ آپ پانچ بجے کام ختم کرتے ہیں۔"],
+        "daarna ga ik naar huis": ["routine-after-work-home", "کام ختم ہونے کے بعد اگلا قدم گھر جانا ہے۔ ترتیب والا مکمل جملہ چنیں۔"],
+        "eerst breng ik mijn kind naar school": ["routine-first-school-dropoff", "صبح کے منصوبے میں سب سے پہلے بچے کو اسکول چھوڑنے کی بات کہیں۔"],
+        "vandaag werk ik niet": ["routine-day-off-change", "آج کے معمول میں تبدیلی ہے اور آپ کام نہیں کرتے۔ مکمل اطلاع منتخب کریں۔"],
+        "ik ga om elf uur slapen": ["routine-bedtime", "روزمرہ دن کے آخر میں گیارہ بجے سونے کا وقت بتائیں۔"]
+      }
+    },
+    "a1-calendar-time": {
+      title: "Mijn week en een verandering",
+      unitLabel: "A1: روزمرہ معمول",
+      outcomeUrdu: "ہفتے کے دن یا دن کے حصے میں اپنی دستیابی بتانا، سادہ کام کا شیڈول پڑھنا، اور وقت پر یا دیر سے ہونے کی اطلاع دینا۔",
+      seedConcepts: [
+        ["ik kom op maandag", "میں پیر کو آتا / آتی ہوں"],
+        ["ik werk op vrijdag", "میں جمعہ کو کام کرتا / کرتی ہوں"],
+        ["in het weekend ben ik thuis", "ہفتہ وار چھٹی میں میں گھر پر ہوں"],
+        ["ik heb tijd in de middag", "دوپہر میں میرے پاس وقت ہے"],
+        ["ik ben op tijd", "میں وقت پر ہوں"],
+        ["sorry ik ben te laat", "معاف کیجیے، میں دیر سے ہوں"]
+      ],
+      teaching: {
+        "ik kom op maandag": {
+          usageUrdu: "کسی ملاقات یا کلاس کے لیے پیر کی دستیابی بتاتے ہوئے کہیں: “ik kom op maandag”۔",
+          usageBoundaryUrdu: "ہفتے کے دن سے پہلے op آتا ہے؛ دن کے حصے کے ساتھ in آتا ہے۔",
+          commonConfusionUrdu: "maandag سے پہلے in نہ رکھیں؛ درست حصہ op maandag ہے۔",
+          exampleDutch: "Ik kom op maandag.",
+          exampleUrdu: "میں پیر کو آتا یا آتی ہوں۔",
+          pronunciationUrdu: "اِک کوم اوپ مان داخ"
+        },
+        "ik werk op vrijdag": {
+          usageUrdu: "اپنے ہفتہ وار کام کے شیڈول میں جمعہ کا دن بتانے کے لیے “ik werk op vrijdag” کہیں۔",
+          usageBoundaryUrdu: "op vrijdag جمعہ کے دن کو بتاتا ہے؛ vrijdag om negen uur زیادہ خاص وقت جوڑ سکتا ہے۔",
+          commonConfusionUrdu: "دن کے نام سے پہلے op رکھیں؛ ik werk in vrijdag نہ کہیں۔",
+          exampleDutch: "Ik werk op vrijdag.",
+          exampleUrdu: "میں جمعہ کو کام کرتا یا کرتی ہوں۔",
+          pronunciationUrdu: "اِک وَیرک اوپ فرَے داخ"
+        },
+        "in het weekend ben ik thuis": {
+          usageUrdu: "ہفتہ وار چھٹی کا عمومی منصوبہ بتانے کے لیے “in het weekend ben ik thuis” کہیں۔",
+          usageBoundaryUrdu: "in het weekend پورے ہفتہ وار وقفے کی بات ہے؛ op zaterdag صرف ہفتے کے دن کی بات ہے۔",
+          commonConfusionUrdu: "weekend کے ساتھ het نہ چھوڑیں؛ مکمل حصہ in het weekend رکھیں۔",
+          exampleDutch: "In het weekend ben ik thuis.",
+          exampleUrdu: "ہفتہ وار چھٹی میں میں گھر پر ہوں۔",
+          pronunciationUrdu: "اِن ہَت ویک اَنت بَین اِک تھاؤس"
+        },
+        "ik heb tijd in de middag": {
+          usageUrdu: "ملاقات طے کرتے ہوئے دوپہر کی دستیابی بتانے کے لیے “ik heb tijd in de middag” کہیں۔",
+          usageBoundaryUrdu: "in de middag دن کا حصہ ہے؛ op maandag ہفتے کا دن ہے۔",
+          commonConfusionUrdu: "دستیابی کے لیے heb tijd آتا ہے؛ ik ben tijd نہ کہیں۔",
+          exampleDutch: "Ik heb tijd in de middag.",
+          exampleUrdu: "دوپہر میں میرے پاس وقت ہے۔",
+          pronunciationUrdu: "اِک ہَپ ٹَیٹ اِن دَ مِداخ"
+        },
+        "ik ben op tijd": {
+          usageUrdu: "جب آپ مقررہ وقت پر پہنچ گئے ہوں تو مختصر مکمل اطلاع “ik ben op tijd” دیں۔",
+          usageBoundaryUrdu: "op tijd وقت پر ہے؛ te vroeg وقت سے پہلے اور te laat دیر سے ہے۔",
+          commonConfusionUrdu: "وقت پر کے لیے op tijd ایک ساتھ رکھیں؛ ik ben tijd نامکمل ہے۔",
+          exampleDutch: "Ik ben op tijd.",
+          exampleUrdu: "میں وقت پر ہوں۔",
+          pronunciationUrdu: "اِک بَین اوپ ٹَیٹ"
+        },
+        "sorry ik ben te laat": {
+          usageUrdu: "بس یا ٹرین کی وجہ سے دیر ہو تو انتظار کرنے والے کو فوراً کہیں: “sorry, ik ben te laat”۔",
+          usageBoundaryUrdu: "te laat اپنی تاخیر بتاتا ہے؛ ik kom op maandag صرف آنے کا دن بتاتا ہے۔",
+          commonConfusionUrdu: "معذرت کے بعد مکمل حالت ik ben te laat رکھیں؛ صرف sorry laat نہ کہیں۔",
+          exampleDutch: "Sorry, ik ben te laat.",
+          exampleUrdu: "معاف کیجیے، میں دیر سے ہوں۔",
+          pronunciationUrdu: "سو ری اِک بَین تَ لات"
+        }
+      },
+      pattern: {
+        modelDutch: "ik kom op maandag",
+        titleUrdu: "دن اور دن کے حصے کے ساتھ وقت",
+        highlight: "op maandag",
+        explanationUrdu: "ہفتے کے دن سے پہلے op رکھیں: op maandag۔ دن کے حصے سے پہلے in de رکھیں: in de middag۔",
+        contrastUrdu: "op maandag ایک دن بتاتا ہے؛ in de middag دن کا حصہ بتاتا ہے؛ om negen uur گھڑی کا خاص وقت بتاتا ہے۔",
+        commonMistakeUrdu: "in maandag یا op de middag نہ کہیں؛ op + دن اور in de + دن کا حصہ یاد رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلا مدد والا شیڈول دیکھنے کے بعد نئی ہفتہ وار تبدیلی میں",
+      prerequisiteLessonIds: [
+        "a0-time-days",
+        "a0-date-appointment",
+        "a1-present-time",
+        "a1-daily-routine"
+      ],
+      prerequisiteRefs: [
+        ["a0-time-days", "maandag"],
+        ["a0-time-days", "vrijdag"],
+        ["a0-time-days", "middag"],
+        ["a0-date-appointment", "op tijd"],
+        ["a0-date-appointment", "te laat"],
+        ["a1-present-time", "vandaag werk ik"],
+        ["a1-daily-routine", "ik begin om negen uur"]
+      ],
+      scenarios: {
+        "ik kom op maandag": ["calendar-monday-availability", "کورس کا ملازم پوچھتا ہے کہ آپ کس دن آتے ہیں۔ پیر کی مکمل بات منتخب کریں۔"],
+        "ik werk op vrijdag": ["calendar-friday-work", "ہفتہ وار کام کے شیڈول میں جمعہ کے کام کی مکمل بات بتائیں۔"],
+        "in het weekend ben ik thuis": ["calendar-weekend-home", "پڑوسی ہفتہ وار چھٹی کا منصوبہ پوچھتا ہے۔ گھر پر ہونے کی مکمل بات کہیں۔"],
+        "ik heb tijd in de middag": ["calendar-afternoon-free", "ملاقات طے کرتے ہوئے بتائیں کہ دوپہر میں آپ کے پاس وقت ہے۔"],
+        "ik ben op tijd": ["calendar-arrive-on-time", "کام کی جگہ پہنچ کر ساتھی کو بتائیں کہ آپ وقت پر ہیں۔"],
+        "sorry ik ben te laat": ["calendar-delay-message", "بس دیر سے آئی ہے اور آپ کام پر تاخیر سے پہنچیں گے۔ معذرت اور تاخیر کی مکمل اطلاع دیں۔"]
+      },
+      document: {
+        stableId: "calendar-read-delay-message",
+        sourceKey: "calendar-week-plan",
+        documentKind: "weekly-schedule-message",
+        targetDutch: "sorry ik ben te laat",
+        title: "maandag",
+        labelUrdu: "کام کا شیڈول اور تاخیر کا پیغام پڑھیں",
+        promptUrdu: "شیڈول میں “sorry ik ben te laat” کے سامنے 09:15 دیکھیں اور اس مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "پہلے پیر کے دو اوقات الگ دیکھیں، پھر 09:15 کے ساتھ لکھی “sorry ik ben te laat” کا درست اردو مطلب منتخب کریں۔",
+        correctUrdu: "درست۔ “Sorry, ik ben te laat” کا مطلب معاف کیجیے، میں دیر سے ہوں۔",
+        wrongUrdu: "یہ دوسری سیکھی ہوئی بات ہے۔ 09:15 کے ساتھ “Sorry, ik ben te laat” تاخیر کی اطلاع ہے۔",
+        rows: [
+          { label: "ik kom op maandag", value: "09:00" },
+          { label: "ik ben op tijd", value: "09:00" },
+          { label: "sorry ik ben te laat", value: "09:15" }
+        ]
+      }
+    },
+    "a1-weather-clothes": {
+      title: "Weer bekijken en een plan kiezen",
+      unitLabel: "A1: روزمرہ معمول",
+      outcomeUrdu: "آج کا موسم سمجھنا، سردی یا بارش کے مطابق جیکٹ اور چھتری کی ضرورت بتانا، اور باہر جانے کا فیصلہ واضح کرنا۔",
+      seedConcepts: [
+        ["het regent vandaag", "آج بارش ہو رہی ہے"],
+        ["het is koud buiten", "باہر سردی ہے"],
+        ["ik heb een jas nodig", "مجھے جیکٹ چاہیے"],
+        ["neem een paraplu mee", "چھتری ساتھ لیں"],
+        ["ik ga niet naar buiten", "میں باہر نہیں جا رہا / رہی"]
+      ],
+      teaching: {
+        "het regent vandaag": {
+          usageUrdu: "صبح باہر جانے سے پہلے آج کی بارش بتانے کے لیے کہیں: “het regent vandaag”۔",
+          usageBoundaryUrdu: "regent بارش ہونے کا فعل ہے؛ regen اکیلا بارش کا اسم ہے۔",
+          commonConfusionUrdu: "موسم کے جملے میں het نہ چھوڑیں؛ regent vandaag اکیلا مکمل A1 نمونہ نہیں۔",
+          exampleDutch: "Het regent vandaag.",
+          exampleUrdu: "آج بارش ہو رہی ہے۔",
+          pronunciationUrdu: "ہَت رے خَنت فان داخ"
+        },
+        "het is koud buiten": {
+          usageUrdu: "باہر کی سردی بتا کر لباس کا فیصلہ واضح کرنے کے لیے “het is koud buiten” کہیں۔",
+          usageBoundaryUrdu: "koud سرد کیفیت ہے؛ regen بارش کا نام اور regent بارش ہونے کا فعل ہے۔",
+          commonConfusionUrdu: "سردی کی کیفیت کے ساتھ is آتا ہے؛ het koud buiten نہ کہیں۔",
+          exampleDutch: "Het is koud buiten.",
+          exampleUrdu: "باہر سردی ہے۔",
+          pronunciationUrdu: "ہَت اِس کاؤت باؤ تَن"
+        },
+        "neem een paraplu mee": {
+          usageUrdu: "بارش کی پیش گوئی کے بعد کسی کو عملی مشورہ دیتے ہوئے کہیں: “neem een paraplu mee”۔",
+          usageBoundaryUrdu: "یہ چھتری ساتھ لینے کی ہدایت ہے؛ ik heb een paraplu اپنی ملکیت کی بات ہے۔",
+          commonConfusionUrdu: "اس ہدایت میں neem شروع میں اور mee آخر میں رکھیں؛ دونوں حصوں کو غلط جگہ نہ ملائیں۔",
+          exampleDutch: "Het regent. Neem een paraplu mee.",
+          exampleUrdu: "بارش ہو رہی ہے۔ چھتری ساتھ لیں۔",
+          pronunciationUrdu: "نیم اَن پا را پلو مے"
+        },
+        "ik ga niet naar buiten": {
+          usageUrdu: "موسم کی وجہ سے باہر نہ جانے کا فیصلہ بتانے کے لیے “ik ga niet naar buiten” کہیں۔",
+          usageBoundaryUrdu: "niet پورے جانے کے عمل کو منفی کرتا ہے؛ geen کسی اسم کی غیر موجودگی کے لیے ہے۔",
+          commonConfusionUrdu: "سمت کے لیے naar buiten پورا رکھیں؛ ik ga buiten niet نہ کہیں۔",
+          exampleDutch: "Ik ga niet naar buiten.",
+          exampleUrdu: "میں باہر نہیں جا رہا یا رہی۔",
+          pronunciationUrdu: "اِک خا نیت نار باؤ تَن"
+        }
+      },
+      pattern: {
+        modelDutch: "het is koud buiten",
+        titleUrdu: "موسم کی کیفیت مکمل جملے میں",
+        highlight: "het is koud buiten",
+        explanationUrdu: "سردی یا گرمی کی کیفیت بتاتے وقت het is کے بعد کیفیت اور پھر جگہ یا وقت رکھیں: het is koud buiten۔",
+        contrastUrdu: "het is koud کیفیت بتاتا ہے؛ het regent میں regent خود موسم کا فعل ہے، اس لیے وہاں is نہیں آتا۔",
+        commonMistakeUrdu: "het is regent یا het koud buiten نہ کہیں؛ کیفیت کے ساتھ het is، اور بارش کے فعل کے ساتھ het regent رکھیں۔"
+      },
+      independentCheckLeadUrdu: "پہلی مدد والی موسم کی تیاری کے بعد دوسرے دن باہر جانے کا فیصلہ کرتے وقت",
+      prerequisiteLessonIds: [
+        "a0-weather-clothing-safety",
+        "a0-home-needs",
+        "a0-ja-nee-goed-niet",
+        "a1-present-time",
+        "a1-calendar-time"
+      ],
+      prerequisiteRefs: [
+        ["a0-weather-clothing-safety", "regen"],
+        ["a0-weather-clothing-safety", "paraplu"],
+        ["a0-weather-clothing-safety", "ik heb een jas nodig"],
+        ["a0-home-needs", "koud"],
+        ["a0-ja-nee-goed-niet", "niet"],
+        ["a1-present-time", "vandaag werk ik"],
+        ["a1-calendar-time", "ik kom op maandag"]
+      ],
+      scenarios: {
+        "het regent vandaag": ["weather-today-rain", "گھر سے نکلنے سے پہلے موسم دیکھ کر ساتھی کو بتائیں کہ آج بارش ہو رہی ہے۔"],
+        "het is koud buiten": ["weather-cold-outside", "بچے کو تیار کرتے ہوئے بتائیں کہ باہر سردی ہے۔"],
+        "ik heb een jas nodig": ["weather-need-coat", "باہر سردی ہے اور آپ کو جیکٹ کی ضرورت بتانی ہے۔ مکمل بات منتخب کریں۔"],
+        "neem een paraplu mee": ["weather-take-umbrella", "گھر والا باہر جا رہا ہے اور بارش ہو رہی ہے۔ چھتری ساتھ لینے کا واضح مشورہ دیں۔"],
+        "ik ga niet naar buiten": ["weather-stay-inside", "بارش بہت تیز ہے، اس لیے آپ باہر نہ جانے کا فیصلہ بتاتے ہیں۔ مکمل جملہ منتخب کریں۔"]
+      }
     }
   },
   missions: {
@@ -5864,6 +6255,57 @@ const a1AuthoredCurriculumV4 = {
           { label: "Brengen", value: "08:00" },
           { label: "Ophalen", value: "17:00" },
           { label: "Eten mee", value: "ja" }
+        ]
+      }
+    },
+    "a1-daily-routine-mission": {
+      sourceKey: "daily-routine-mission",
+      scenarioTitleUrdu: "کام کے دن، بدلے ہوئے شیڈول، اور موسم کا منصوبہ",
+      speakerUrdu: "ساتھی یا منصوبہ بنانے والا شخص",
+      prerequisiteLessonIds: [
+        "a1-present-time",
+        "a1-daily-routine",
+        "a1-calendar-time",
+        "a1-weather-clothes"
+      ],
+      variantTitles: [
+        "کام والے دن کی صبح",
+        "شیڈول بدلا اور دیر ہو گئی",
+        "بارش والے دن کا منصوبہ"
+      ],
+      variantContexts: [
+        "ساتھی کو آج کے کام، اٹھنے کے وقت، بچے کو اسکول چھوڑنے، اور پہنچنے کا منصوبہ ترتیب سے بتائیں",
+        "کام کے شیڈول میں تبدیلی اور بس کی تاخیر کے بعد وقت اور معذرت کی واضح اطلاع دیں",
+        "بارش والے دن گھر سے نکلنے سے پہلے موسم، چھتری، اور روزمرہ منصوبے کا فیصلہ مکمل کریں"
+      ],
+      targets: [
+        { lessonId: "a1-present-time", dutch: "vandaag werk ik", patternLessonId: "a1-present-time" },
+        { lessonId: "a1-daily-routine", dutch: "ik sta om zeven uur op", patternLessonId: "a1-daily-routine" },
+        { lessonId: "a1-daily-routine", dutch: "eerst breng ik mijn kind naar school" },
+        { lessonId: "a1-calendar-time", dutch: "sorry ik ben te laat", patternLessonId: "a1-calendar-time" },
+        { lessonId: "a1-weather-clothes", dutch: "het regent vandaag" },
+        { lessonId: "a1-weather-clothes", dutch: "neem een paraplu mee" }
+      ],
+      prerequisiteRefs: [
+        ["a0-time-days", "vandaag"],
+        ["a0-time-days", "maandag"],
+        ["a0-child-school", "ik breng mijn kind naar school"],
+        ["a0-weather-clothing-safety", "paraplu"],
+        ["a1-calendar-time", "ik kom op maandag"],
+        ["a1-calendar-time", "ik ben op tijd"]
+      ],
+      useTypes: ["situation", "build", "situation", "document-choice", "listen-choice", "situation"],
+      checkTypes: ["meaning", "reverse", "build", "document-choice", "listen-choice", "situation"],
+      document: {
+        documentKind: "weekly-schedule-message",
+        title: "maandag",
+        labelUrdu: "کام کا شیڈول اور تاخیر کا پیغام پڑھیں",
+        promptUrdu: "شیڈول میں “sorry ik ben te laat” کے سامنے 09:15 دیکھیں اور اس کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "پیر کے دو اوقات الگ پڑھیں، پھر 09:15 کے ساتھ لکھی مکمل تاخیر کی اطلاع کا درست اردو مطلب منتخب کریں۔",
+        rows: [
+          { label: "ik kom op maandag", value: "09:00" },
+          { label: "ik ben op tijd", value: "09:00" },
+          { label: "sorry ik ben te laat", value: "09:15" }
         ]
       }
     }

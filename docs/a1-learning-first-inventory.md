@@ -4,7 +4,7 @@ Status: **active authoring chapter; not accepted and not frozen**
 
 Authority: [`learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
-Inventory date: **2026-08-05**
+Inventory date: **2026-08-11**
 
 This document completes step 1 and records the binding structural decisions for
 step 2 of the A1 chapter cycle. A1 content work must follow this inventory. A2
@@ -40,16 +40,17 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1 and Unit 2 have since been authored and each passes its exact audit slice
-with **0 findings**. The current complete A1 result is **935 errors and 0 review
-flags**; all of those findings belong to Units 3–9 or the future chapter
+1, Unit 2, and Unit 3 have since been authored and each passes its exact audit
+slice with **0 findings**. The current complete A1 result is **859 errors and 0
+review flags**; all of those findings belong to Units 4–9 or the future chapter
 completion mission.
 
-After the Unit 2 split moved unrelated work/time material out of family work,
-the current A1 totals are 397 chapter-owned concepts, 403 chapter-owned skills,
-6 patterns, 166 runs, 690 teaching blocks, 3,005 normal-lesson exercises, and
-234 mission records. The chapter still has 43 normal path lessons until the
-later binding merge, split, move, and retire decisions are applied.
+After the Unit 3 rewrite replaced its generated routine material with focused
+authored records, the current A1 totals are 380 chapter-owned concepts, 390
+chapter-owned skills, 10 patterns, 156 runs, 653 teaching blocks, 2,837
+normal-lesson exercises, and 246 mission records. The chapter still has 43
+normal path lessons until the later binding merge, split, move, and retire
+decisions are applied.
 
 ### Baseline audit error taxonomy
 
@@ -145,6 +146,16 @@ the Unit 1 regression gate remains 10/10.
 | `a1-calendar-time` | **Remain** for concrete planning and availability. |
 | `a1-weather-clothes` | **Remain** as an A1 application of secure A0 weather skills. |
 | `a1-daily-routine-mission` | **Remain but fully author** around a daily schedule and a change/delay message. |
+
+Implementation checkpoint: **completed and locally clean**. The four lessons
+now use 22 individually reviewed new teaching targets across six capped runs,
+with four complete reusable patterns. `a1-calendar-time` teaches and recognises
+a weekly schedule and late-arrival change before the same document format can
+appear in Independent Check or the mission. The mission has three authored
+variants, each with six Use and six Independent Check tasks covering all four
+lesson strands. The exact Unit 3 audit slice has 0 findings, its focused
+desktop/mobile gate passes 12/12, and the combined Unit 1–2 regression gate
+passes 22/22. The frozen A0 matrix also remains 96/96.
 
 ### Unit 4 — Questions, help, calls, and appointments
 
@@ -258,8 +269,8 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–3 are complete through Unit 2. Unit 3 is the next
-permitted authoring batch; Units 4–9 and the completion mission remain blocked
+Current checkpoint: steps 1–3 are complete through Unit 3. Unit 4 is the next
+permitted authoring batch; Units 5–9 and the completion mission remain blocked
 behind that sequence.
 
 This document is an inventory and decision record, not an A1 completion
