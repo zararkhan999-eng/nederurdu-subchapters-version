@@ -3543,6 +3543,289 @@ test("A1 Unit 4 appointment teaching documents and mission fit all target widths
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
 });
 
+test("A1 Unit 5 has five focused lessons and retires the duplicated home path node", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const unit = course.units.find((candidate) => candidate.id === "a1-home-objects");
+    const lessons = unit.lessonIds.map((lessonId) => (
+      course.lessons.find((candidate) => candidate.id === lessonId)
+    )).filter(Boolean);
+    return {
+      lessonIds: lessons.map((lesson) => lesson.id),
+      conceptCounts: lessons.map((lesson) => lesson.conceptIds.length),
+      retiredDuplicatePresent: course.lessons.some((lesson) => lesson.id === "a1-home-neighbours"),
+      foodStillHidden: lessons[0].conceptIds.map((id) => course.concepts.find((concept) => concept.id === id)?.dutch)
+        .some((dutch) => ["brood", "kaas", "groente", "fruit"].includes(dutch)),
+      lessons: lessons.map((lesson) => ({
+        id: lesson.id,
+        unitLabel: lesson.unit,
+        outcomeUrdu: lesson.outcomeUrdu,
+        runs: lesson.learning.runs.map((run) => {
+          const generated = buildLearningFirstSession(lesson, run);
+          return {
+            newConceptCount: run.newConceptIds.length,
+            phases: [...new Set(generated.map(getQuestionPhase))],
+            checkCount: generated.filter((question) => getQuestionPhase(question) === "check").length
+          };
+        })
+      }))
+    };
+  });
+
+  expect(audit.lessonIds).toEqual([
+    "a1-house-food-plurals",
+    "a1-neighbour-talk",
+    "a1-home-repairs",
+    "a1-cleaning-house",
+    "a1-house-search-extra"
+  ]);
+  expect(audit.conceptCounts).toEqual([10, 8, 9, 7, 10]);
+  expect(audit.retiredDuplicatePresent).toBe(false);
+  expect(audit.foodStillHidden).toBe(false);
+  for (const lesson of audit.lessons) {
+    expect(lesson.unitLabel, lesson.id).toBe("A1: گھر، پڑوسی، مرمت اور مکان");
+    expect(lesson.outcomeUrdu, lesson.id).toMatch(/[\u0600-\u06ff]/u);
+    for (const run of lesson.runs) {
+      expect(run.newConceptCount, lesson.id).toBeGreaterThan(0);
+      expect(run.newConceptCount, lesson.id).toBeLessThanOrEqual(5);
+      expect(run.phases, lesson.id).toEqual(["learn", "understand", "guided", "use", "check"]);
+      expect(run.checkCount, lesson.id).toBeGreaterThanOrEqual(4);
+      expect(run.checkCount, lesson.id).toBeLessThanOrEqual(6);
+    }
+  }
+});
+
+test("A1 Unit 5 Use tasks and housing mission keep authored practical provenance", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const unit = course.units.find((candidate) => candidate.id === "a1-home-objects");
+    const lessons = unit.lessonIds.map((id) => course.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
+    const lessonRows = lessons.map((lesson) => {
+      const byId = new Map(lesson.exercises.map((question) => [question.id, question]));
+      const use = lesson.learning.runs.flatMap((run) => run.phases.use.exerciseIds
+        .map((id) => byId.get(id)).filter(Boolean));
+      return {
+        id: lesson.id,
+        count: use.length,
+        invalid: use.filter((question) => question.scored !== false && !isInfoQuestion(question))
+          .filter((question) => !/^a1-authored:[a-z0-9][a-z0-9:-]*$/i.test(String(question.scenarioSource || "")))
+          .map((question) => question.id)
+      };
+    });
+    const mission = course.missions.find((candidate) => candidate.id === "a1-mission-house-search");
+    return {
+      lessonRows,
+      variants: mission.variants.map((variant) => ({
+        id: variant.id,
+        useCount: variant.questions.filter((question) => question.phase === "use").length,
+        checkCount: variant.questions.filter((question) => question.phase === "independent-check").length,
+        invalid: variant.questions.filter((question) => (
+          !/^a1-authored:home-neighbours-repairs-housing-mission:[a-z0-9:-]+$/i
+            .test(String(question.scenarioSource || ""))
+        )).map((question) => question.id)
+      }))
+    };
+  });
+
+  for (const lesson of audit.lessonRows) {
+    expect(lesson.count, lesson.id).toBeGreaterThan(0);
+    expect(lesson.invalid, lesson.id).toEqual([]);
+  }
+  expect(audit.variants).toHaveLength(3);
+  for (const variant of audit.variants) {
+    expect(variant.useCount, variant.id).toBe(6);
+    expect(variant.checkCount, variant.id).toBe(6);
+    expect(variant.invalid, variant.id).toEqual([]);
+  }
+});
+
+test("A1 Unit 5 manually teaches every new home repair and housing target", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const unit = course.units.find((candidate) => candidate.id === "a1-home-objects");
+    const conceptById = new Map(course.concepts.map((concept) => [concept.id, concept]));
+    const lessons = unit.lessonIds.map((id) => course.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
+    const dutchTokens = (value) => String(value || "").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]*/g) || [];
+    return {
+      concepts: lessons.flatMap((lesson) => lesson.newConceptIds.map((id) => {
+        const concept = conceptById.get(id);
+        return {
+          lessonId: lesson.id,
+          dutch: concept?.dutch || "",
+          manual: String(concept?.guidanceSource || "").startsWith("a1-authored:"),
+          pronunciation: concept?.pronunciationReview === "a1-authored-manual-v1",
+          complete: [concept?.usageUrdu, concept?.usageBoundaryUrdu, concept?.commonConfusionUrdu,
+            concept?.exampleDutch, concept?.exampleUrdu, concept?.pronunciationUrdu]
+            .every((value) => String(value || "").trim().length > 0)
+        };
+      })),
+      patterns: lessons.map((lesson) => {
+        const pattern = course.patterns.find((candidate) => candidate.id === lesson.pattern?.id);
+        const modelTokens = new Set(dutchTokens(pattern?.modelDutch));
+        return {
+          lessonId: lesson.id,
+          id: pattern?.id || "",
+          highlightOwned: dutchTokens(pattern?.highlight).every((token) => modelTokens.has(token)),
+          complete: [pattern?.titleUrdu, pattern?.modelUrdu, pattern?.explanationUrdu,
+            pattern?.contrastUrdu, pattern?.commonMistakeUrdu]
+            .every((value) => /[\u0600-\u06ff]/u.test(String(value || "")))
+        };
+      })
+    };
+  });
+
+  expect(audit.concepts).toHaveLength(35);
+  for (const concept of audit.concepts) {
+    expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
+    expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
+    expect(concept.complete, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
+  }
+  expect(audit.patterns).toHaveLength(5);
+  for (const pattern of audit.patterns) {
+    expect(pattern.id, pattern.lessonId).not.toBe("");
+    expect(pattern.highlightOwned, pattern.lessonId).toBe(true);
+    expect(pattern.complete, pattern.lessonId).toBe(true);
+  }
+});
+
+test("A1 Unit 5 teaches a housing listing before document checks", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const unit = course.units.find((candidate) => candidate.id === "a1-home-objects");
+    const lessons = unit.lessonIds.map((id) => course.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
+    const documents = [];
+    const formatFailures = [];
+    const practicedTypes = new Set();
+    for (const lesson of lessons) {
+      const byId = new Map(lesson.exercises.map((question) => [question.id, question]));
+      for (const run of lesson.learning.runs) {
+        const earlier = ["understand", "guidedPractice", "use"].flatMap((phase) => (
+          run.phases[phase].exerciseIds.map((id) => byId.get(id)).filter(Boolean)
+        ));
+        const check = run.phases.independentCheck.exerciseIds.map((id) => byId.get(id)).filter(Boolean);
+        const earlierTypes = new Set(earlier.map((question) => question.type));
+        earlier.forEach((question) => practicedTypes.add(question.type));
+        const newTypes = [...new Set(check.filter((question) => !earlierTypes.has(question.type))
+          .map((question) => question.type))];
+        if (newTypes.length) formatFailures.push({ lessonId: lesson.id, runId: run.id, newTypes });
+        for (const question of earlier.filter((candidate) => candidate.type === "document-choice")) {
+          documents.push({
+            lessonId: lesson.id,
+            kind: question.document?.documentKind || "",
+            rows: question.document?.rows || [],
+            owned: Boolean(question.conceptIds?.length && question.skillIds?.length),
+            authentic: question.authenticDocument === true
+          });
+        }
+      }
+    }
+    const mission = course.missions.find((candidate) => candidate.id === "a1-mission-house-search");
+    const missionFormatFailures = mission.variants.flatMap((variant) => {
+      const useTypes = new Set(variant.questions.filter((question) => question.phase === "use")
+        .map((question) => question.type));
+      return [...new Set(variant.questions.filter((question) => question.phase === "independent-check")
+        .filter((question) => !useTypes.has(question.type) && !practicedTypes.has(question.type))
+        .map((question) => question.type))];
+    });
+    return { documents, formatFailures, missionFormatFailures };
+  });
+
+  expect(audit.documents.map((item) => [item.lessonId, item.kind])).toEqual([
+    ["a1-house-search-extra", "housing-listing-card"]
+  ]);
+  expect(audit.documents[0].rows.length).toBeGreaterThanOrEqual(3);
+  expect(audit.documents[0].owned).toBe(true);
+  expect(audit.documents[0].authentic).toBe(true);
+  expect(audit.formatFailures).toEqual([]);
+  expect(audit.missionFormatFailures).toEqual([]);
+});
+
+test("A1 Unit 5 prerequisites and mission cover every lesson strand", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const chapter = course.chapters.find((candidate) => candidate.id === "a1");
+    const unit = course.units.find((candidate) => candidate.id === "a1-home-objects");
+    const lessonById = new Map(course.lessons.map((lesson) => [lesson.id, lesson]));
+    const skillById = new Map(course.skills.map((skill) => [skill.id, skill]));
+    const chapterOrder = new Map(chapter.lessonIds.map((id, index) => [id, index]));
+    const lessons = unit.lessonIds.map((id) => lessonById.get(id)).filter(Boolean);
+    const chronologyFailures = lessons.flatMap((lesson) => {
+      const sources = new Set([...(lesson.prerequisites?.lessonIds || []),
+        ...(lesson.prerequisiteSkillIds || []).map((id) => skillById.get(id)?.introducedInLessonId)]
+        .filter(Boolean));
+      return [...sources].filter((sourceId) => !sourceId.startsWith("a0-")
+        && (!chapterOrder.has(sourceId) || chapterOrder.get(sourceId) >= chapterOrder.get(lesson.id)))
+        .map((sourceId) => ({ lessonId: lesson.id, sourceId }));
+    });
+    const mission = course.missions.find((candidate) => candidate.id === "a1-mission-house-search");
+    const represented = new Set(mission.assessmentSkillIds
+      .map((id) => skillById.get(id)?.introducedInLessonId).filter(Boolean));
+    return {
+      lessonIds: lessons.map((lesson) => lesson.id),
+      chronologyFailures,
+      missionPrerequisites: mission.prerequisites.lessonIds,
+      assessmentSkillCount: mission.assessmentSkillIds.length,
+      missingLessons: lessons.map((lesson) => lesson.id).filter((id) => !represented.has(id)),
+      variants: mission.variants.map((variant) => {
+        const useSkills = new Set(variant.questions.filter((question) => question.phase === "use")
+          .flatMap(getQuestionSkillIds));
+        const check = variant.questions.filter((question) => question.phase === "independent-check");
+        const checkSkills = new Set(check.flatMap(getQuestionSkillIds));
+        return {
+          id: variant.id,
+          missingUse: mission.assessmentSkillIds.filter((id) => !useSkills.has(id)),
+          missingCheck: mission.assessmentSkillIds.filter((id) => !checkSkills.has(id)),
+          missingHelp: check.filter((question) => !question.hintUrdu
+            || !question.explainCorrectUrdu || !question.explainWrongUrdu).map((question) => question.id)
+        };
+      })
+    };
+  });
+
+  expect(audit.chronologyFailures).toEqual([]);
+  expect(audit.missionPrerequisites).toEqual(audit.lessonIds);
+  expect(audit.assessmentSkillCount).toBe(6);
+  expect(audit.missingLessons).toEqual([]);
+  for (const variant of audit.variants) {
+    expect(variant.missingUse, variant.id).toEqual([]);
+    expect(variant.missingCheck, variant.id).toEqual([]);
+    expect(variant.missingHelp, variant.id).toEqual([]);
+  }
+});
+
+test("A1 Unit 5 housing teaching and mission fit phone tablet and desktop", async ({ page }) => {
+  await openCleanApp(page, { selectedChapterId: "a1" });
+  await page.evaluate(() => finishLaunch());
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.evaluate(() => showLessonPreview("a1-house-search-extra"));
+    await expect(page.locator(".learning-preview")).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1),
+      `${viewport.width}px housing preview`).toBe(false);
+
+    await page.evaluate(() => showLessonPreview("a1-mission-house-search"));
+    await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1),
+      `${viewport.width}px mission preview`).toBe(false);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => showLessonPreview("a1-home-repairs"));
+  await page.locator('.learning-preview [data-action="start"]').click();
+  await expect(page.locator(".learning-teaching-card")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
+});
+
 test("repeating a lesson selects incomplete runs before non-secure runs", async ({ page }) => {
   await openCleanApp(page);
   const selection = await page.evaluate(() => {

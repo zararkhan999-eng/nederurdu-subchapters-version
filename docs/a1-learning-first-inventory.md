@@ -4,7 +4,7 @@ Status: **active authoring chapter; not accepted and not frozen**
 
 Authority: [`learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
-Inventory date: **2026-08-11**
+Inventory date: **2026-08-12**
 
 This document completes step 1 and records the binding structural decisions for
 step 2 of the A1 chapter cycle. A1 content work must follow this inventory. A2
@@ -40,17 +40,18 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, Unit 3, and Unit 4 have since been authored and each passes its
+1, Unit 2, Unit 3, Unit 4, and Unit 5 have since been authored and each passes its
 exact audit slice with **0 findings**. The current complete A1 result is **727
-errors and 0 review flags**; all of those findings belong to Units 5–9 or the future chapter
+errors and 0 review flags** before Unit 5, and **586 errors and 0 review flags**
+after Unit 5. All remaining findings belong to Units 6–9 or the future chapter
 completion mission.
 
-After the Unit 4 rewrite retired the duplicate question-review node and moved
-short messages to Unit 9, the current A1 totals are 353 chapter-owned concepts,
-368 chapter-owned skills, 15 patterns, 145 runs, 612 teaching blocks, 2,657
-normal-lesson exercises, and 258 mission records. The chapter now has 42
-normal path lessons until the later binding merge, split, move, and retire
-decisions are applied.
+After the Unit 5 rewrite also retired the duplicate home/neighbour node and
+separated food from home vocabulary, the current A1 totals are 330
+chapter-owned concepts, 350 chapter-owned skills, 20 patterns, 130 runs, 559
+teaching blocks, 2,395 normal-lesson exercises, and 270 mission records. The
+chapter now has 41 normal path lessons until the later binding merge, split,
+move, and retire decisions are applied.
 
 ### Baseline audit error taxonomy
 
@@ -196,6 +197,20 @@ desktop/mobile gate passes 12/12, the combined Unit 1–3 regression gate passes
 | `a1-house-search-extra` | **Remain** around a listing and viewing appointment. |
 | `a1-mission-house-search` | **Remain but fully author**; include objects/location and a neighbour/repair step before house search. |
 
+Implementation checkpoint: **completed and locally clean**. Food words were
+removed from the home lesson for Unit 6, `a1-home-neighbours` is retired, and
+the path now contains five focused lessons in the binding order. They contain
+44 owned targets, of which 35 are genuinely new and nine are valid A0 or
+earlier-A1 prerequisites, across ten capped runs with five complete reusable
+patterns. The housing lesson teaches and recognises a three-row listing before
+document reading appears in Independent Check or the mission. The mission has
+three authored variants, each with six Use and six Independent Check tasks
+covering all five lesson strands. The exact Unit 5 audit slice has 0 findings,
+its focused desktop/mobile gate passes 12/12, the combined Unit 1–5 regression
+gate passes 58/58, and the frozen A0 matrix remains 96/96. A manual phone,
+tablet, and desktop journey found no horizontal overflow or browser-console
+errors.
+
 ### Unit 6 — Food, shopping, returns, and payment
 
 Required order: supermarket → café → dietary needs/problems → clothes →
@@ -280,9 +295,9 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–3 and the Unit 4 portion of step 4 are complete.
-Unit 5 is the next permitted authoring batch; Units 6–9 and the completion
-mission remain blocked behind that sequence.
+Current checkpoint: steps 1–4 are complete. Unit 6 is the next permitted
+authoring batch; Units 7–9 and the completion mission remain blocked behind
+that sequence.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

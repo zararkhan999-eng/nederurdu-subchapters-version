@@ -4206,7 +4206,7 @@ const a1Subchapters = [
     title: "گھر اور چیزیں",
     goal: "گھر، کمرہ، فرنیچر، اور چیز کہاں ہے بتانا۔",
     practice: "het boek is in huis جیسے جگہ جملے۔",
-    lessonIds: ["a1-house-food-plurals", "a1-home-neighbours", ...a1Expanded("a1-neighbour-talk", "a1-home-repairs", "a1-cleaning-house", "a1-house-search-extra"), "a1-mission-house-search"]
+    lessonIds: ["a1-house-food-plurals", ...a1Expanded("a1-neighbour-talk", "a1-home-repairs", "a1-cleaning-house", "a1-house-search-extra"), "a1-mission-house-search"]
   },
   {
     id: "a1-food-shopping",
@@ -4704,6 +4704,7 @@ retirePathLessonV4(a1Lessons, "a1-zijn-first-sentences");
 retirePathLessonV4(a1Lessons, "a1-daily-review-one");
 retirePathLessonV4(a1Lessons, "a1-daily-review-two");
 retirePathLessonV4(a1Lessons, "a1-questions-revision");
+retirePathLessonV4(a1Lessons, "a1-home-neighbours");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -4715,7 +4716,8 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-zijn-first-sentences",
       "a1-daily-review-one",
       "a1-daily-review-two",
-      "a1-questions-revision"
+      "a1-questions-revision",
+      "a1-home-neighbours"
     ].includes(lessonId)
   ));
 }
@@ -5109,6 +5111,25 @@ if (a0ShortAnswersLessonV4) {
  * scenarios, documents, patterns, or dependencies being inferred from a
  * question's position in the legacy bank.
  */
+function authoredA1TeachingV4(rows) {
+  return Object.fromEntries(rows.map(([
+    dutch,
+    usageUrdu,
+    usageBoundaryUrdu,
+    commonConfusionUrdu,
+    exampleDutch,
+    exampleUrdu,
+    pronunciationUrdu
+  ]) => [normalizedTextV4(dutch), {
+    usageUrdu,
+    usageBoundaryUrdu,
+    commonConfusionUrdu,
+    exampleDutch,
+    exampleUrdu,
+    pronunciationUrdu
+  }]));
+}
+
 const a1AuthoredCurriculumV4 = {
   version: "a1-authored-v4",
   chapterPrerequisiteRefs: [
@@ -5134,6 +5155,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-questions-help": {
       outcomeUrdu: "روزمرہ جگہ پر واضح سوال پوچھنا، ادب سے مدد مانگنا، دعوت قبول یا رد کرنا، فون سنبھالنا، اور ملاقات بنانا یا بدلنا۔",
       practiceUrdu: "پہلے سوال کی ترتیب اور مؤدبانہ مکمل باتیں سمجھیں، پھر دعوت، فون نوٹ، اور ملاقات کی تصدیق میں وہی سیکھی ہوئی زبان استعمال کریں۔"
+    },
+    "a1-home-objects": {
+      outcomeUrdu: "گھر کے کمرے اور چیزیں پہچاننا، پڑوسی سے مؤدبانہ بات کرنا، خرابی بتانا، گھر کے کام بیان کرنا، اور مکان کا اشتہار سمجھ کر دیکھنے کا وقت مانگنا۔",
+      practiceUrdu: "پہلے گھر، پڑوسی، مرمت، اور صفائی کی مکمل باتیں سمجھیں، پھر مکان کے اشتہار اور گھر دیکھنے کی عملی گفتگو میں صرف وہی سیکھی ہوئی زبان استعمال کریں۔"
     }
   },
   lessons: {
@@ -6628,6 +6653,288 @@ const a1AuthoredCurriculumV4 = {
         ]
       }
     },
+    "a1-house-food-plurals": {
+      title: "Kamers en dingen in huis",
+      unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
+      outcomeUrdu: "گھر کے بنیادی کمرے اور چیزیں پہچاننا، ایک اور کئی چیزوں میں فرق سمجھنا، اور کسی چیز کی جگہ پوچھنا یا بتانا۔",
+      seedConcepts: [
+        ["het huis", "گھر"],
+        ["kamer", "کمرہ"],
+        ["het boek is in huis", "کتاب گھر میں ہے"],
+        ["keuken", "کچن"],
+        ["badkamer", "باتھ روم"],
+        ["tafel", "میز"],
+        ["stoel", "کرسی"],
+        ["boek", "کتاب"],
+        ["boeken", "کتابیں"],
+        ["waar is de tas?", "بیگ کہاں ہے؟"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["het huis", "اپنے یا کسی معلوم گھر کی بات میں het huis استعمال کریں۔", "یہ پورا گھر ہے؛ kamer گھر کے اندر ایک کمرہ ہے۔", "huis کے ساتھ het آتا ہے، de نہیں۔", "Dit is het huis.", "یہ گھر ہے۔", "ہَت ہاؤس"],
+        ["kamer", "گھر کے اندر ایک کمرہ پہچاننے یا بتانے کے لیے kamer کہیں۔", "kamer ایک حصہ ہے؛ پورے گھر کے لیے huis کہیں۔", "اس سبق میں ایک کمرے کے لیے kamer ہے؛ کئی کمروں کی شکل ابھی جواب میں نہ بنائیں۔", "Dit is een kamer.", "یہ ایک کمرہ ہے۔", "کا مَر"],
+        ["het boek is in huis", "کتاب گھر کے اندر ہونے کی جگہ مکمل جملے میں بتائیں۔", "in huis اندر کی جگہ بتاتا ہے؛ گھر کی طرف حرکت نہیں۔", "is کو چھوڑ کر صرف het boek in huis نہ کہیں؛ مکمل جملے میں is ضروری ہے۔", "Het boek is in huis.", "کتاب گھر میں ہے۔", "ہَت بوک اِس اِن ہاؤس"],
+        ["keuken", "کھانا بنانے والی جگہ پہچاننے کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "De tafel staat in de keuken.", "میز کچن میں ہے۔", "کو کَن"],
+        ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "badkamer کو toilet کے عین برابر نہ سمجھیں؛ یہ پورا باتھ روم ہے۔", "De badkamer is hier.", "باتھ روم یہاں ہے۔", "بات کا مَر"],
+        ["tafel", "گھر میں میز کی چیز پہچاننے کے لیے tafel کہیں۔", "یہ فرنیچر ہے؛ stoel بیٹھنے کی کرسی ہے۔", "tafel اور stoel کو نہ ملائیں: tafel میز، stoel کرسی ہے۔", "Het boek ligt op de tafel.", "کتاب میز پر ہے۔", "تا فَل"],
+        ["stoel", "بیٹھنے والی کرسی پہچاننے کے لیے stoel کہیں۔", "یہ ایک کرسی ہے؛ میز کے لیے tafel کہیں۔", "stoel کی آواز کے شروع کو سٹول جیسا پڑھیں، سٹیل نہیں۔", "De stoel staat in de kamer.", "کرسی کمرے میں ہے۔", "ستول"],
+        ["boek", "ایک کتاب کی بات میں boek کہیں۔", "یہ ایک چیز ہے؛ boeken ایک سے زیادہ کتابیں ہیں۔", "ایک کتاب کے جواب میں boeken نہ کہیں۔", "Dit is een boek.", "یہ ایک کتاب ہے۔", "بوک"],
+        ["boeken", "ایک سے زیادہ کتابوں کی بات میں boeken کہیں۔", "یہ جمع ہے؛ ایک کتاب کے لیے boek کہیں۔", "آخر کی en جمع کا حصہ ہے؛ اسے چھوڑنے سے معنی ایک کتاب ہو جاتا ہے۔", "Twee boeken liggen op de tafel.", "دو کتابیں میز پر ہیں۔", "بو کَن"],
+        ["waar is de tas", "بیگ نہ ملے تو اس کی جگہ پوچھنے کے لیے مکمل سوال کہیں۔", "یہ جگہ پوچھتا ہے؛ بیگ کی ملکیت یا تعداد نہیں۔", "سوال میں waar پہلے اور is اس کے بعد رکھیں۔", "Waar is de tas?", "بیگ کہاں ہے؟", "وار اِس دَ تاس"]
+      ]),
+      pattern: {
+        modelDutch: "het boek is in huis",
+        titleUrdu: "چیز کی جگہ بتانے والا مکمل جملہ",
+        highlight: "het boek is in huis",
+        explanationUrdu: "پہلے چیز، پھر is، اور آخر میں جگہ رکھیں: het boek is in huis۔",
+        contrastUrdu: "waar is de tas? جگہ پوچھتا ہے؛ het boek is in huis جگہ کا جواب دیتا ہے۔",
+        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in huis مکمل ڈچ جملہ نہیں۔"
+      },
+      prerequisiteLessonIds: ["a0-een-de-het", "a0-numbers-0-10", "a0-dit-dat-questions", "a0-place-1", "a0-home-needs"],
+      prerequisiteRefs: [
+        ["a0-een-de-het", "het huis"],
+        ["a0-numbers-0-10", "twee boeken"],
+        ["a0-dit-dat-questions", "waar"],
+        ["a0-place-1", "in huis"],
+        ["a0-home-needs", "kamer"]
+      ],
+      scenarios: {
+        "het huis": ["home-recognise-house", "تصویر میں پورا گھر پہچانیں، اندر کا ایک کمرہ نہیں۔"],
+        kamer: ["home-recognise-room", "گھر کے نقشے میں ایک کمرہ نشان زد ہے۔ درست لفظ چنیں۔"],
+        "het boek is in huis": ["home-locate-book", "کتاب گھر کے اندر ہے۔ مکمل جگہ والا جملہ کہیں۔"],
+        keuken: ["home-recognise-kitchen", "گھر کے نقشے میں کھانا بنانے والی جگہ پہچانیں۔"],
+        badkamer: ["home-recognise-bathroom", "گھر کے نقشے میں نہانے والی جگہ پہچانیں۔"],
+        tafel: ["home-recognise-table", "کتاب جس میز پر ہے اس چیز کا درست لفظ چنیں۔"],
+        stoel: ["home-recognise-chair", "بیٹھنے والی چیز کا درست ڈچ لفظ چنیں۔"],
+        boek: ["home-one-book", "تصویر میں ایک کتاب ہے۔ ایک والی شکل چنیں۔"],
+        boeken: ["home-many-books", "تصویر میں دو کتابیں ہیں۔ جمع والی شکل چنیں۔"],
+        "waar is de tas": ["home-ask-bag-location", "بیگ نظر نہیں آ رہا۔ اس کی جگہ مکمل سوال میں پوچھیں۔"]
+      }
+    },
+    "a1-neighbour-talk": {
+      title: "Met de buren praten",
+      unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
+      outcomeUrdu: "پڑوسن کو سلام کہنا، مدد مانگنا، شور کے بارے میں مؤدبانہ بات کرنا، اور پارسل یا کچرے کی مختصر اطلاع سمجھنا۔",
+      seedConcepts: [
+        ["buurvrouw", "پڑوسن"],
+        ["lawaai", "شور"],
+        ["kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟"],
+        ["pakket", "پارسل"],
+        ["vuilnis", "کچرا"],
+        ["ik heb last van lawaai", "مجھے شور سے پریشانی ہے"],
+        ["kunt u zachter zijn?", "کیا آپ آواز کم کر سکتے ہیں؟"],
+        ["er ligt een pakket voor u", "آپ کے لیے ایک پارسل رکھا ہے"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["buurvrouw", "اپنے پاس رہنے والی عورت کی بات میں buurvrouw کہیں۔", "یہ عورت پڑوسی ہے؛ مرد پڑوسی کے لیے buurman ہے۔", "buurvrouw کو عام دوست یا گھر کی عورت کے معنی میں استعمال نہ کریں۔", "Goedemorgen, buurvrouw.", "صبح بخیر، پڑوسن۔", "بیور فراؤ"],
+        ["lawaai", "تیز یا پریشان کرنے والی آواز کو lawaai کہیں۔", "یہ شور کا نام ہے؛ آواز کم کرنے کی درخواست الگ مکمل جملہ ہے۔", "lawaai کو خاموشی کے معنی میں نہ سمجھیں۔", "Er is veel lawaai.", "بہت شور ہے۔", "لا واے"],
+        ["kunt u mij helpen", "پڑوسی سے مؤدبانہ مدد مانگنے کے لیے یہ مکمل سوال کہیں۔", "یہ مدد کی درخواست ہے؛ کسی خرابی کی تفصیل ابھی الگ بتانی ہوگی۔", "سوال میں kunt u پہلے اور helpen آخر میں رکھیں۔", "Kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟", "کُنت یو مَے ہَیل پَن"],
+        ["pakket", "ڈاک یا ترسیل سے آنے والے پارسل کے لیے pakket کہیں۔", "یہ بند چیز ہے؛ عام خط یا کچرا نہیں۔", "pakket کو vuilnis کے ساتھ نہ ملائیں۔", "Dit pakket is voor u.", "یہ پارسل آپ کے لیے ہے۔", "پا کَت"],
+        ["vuilnis", "گھر سے باہر رکھنے والے کچرے کے لیے vuilnis کہیں۔", "یہ پھینکنے والی چیز ہے؛ پہنچایا ہوا pakket نہیں۔", "vuilnis کو صفائی کرنے کے عمل کے معنی میں نہ استعمال کریں۔", "Het vuilnis staat buiten.", "کچرا باہر رکھا ہے۔", "فَؤل نِس"],
+        ["ik heb last van lawaai", "شور آپ کو پریشان کرے تو الزام کے بغیر اپنی مشکل یہ مکمل جملہ کہہ کر بتائیں۔", "یہ اپنی پریشانی بتاتا ہے؛ آواز کم کرنے کی درخواست اگلا الگ جملہ ہے۔", "last van کو ساتھ رکھیں؛ صرف ik heb lawaai مطلوبہ معنی نہیں دیتا۔", "Ik heb last van lawaai.", "مجھے شور سے پریشانی ہے۔", "اِک ہَپ لاسٹ فان لا واے"],
+        ["kunt u zachter zijn", "پڑوسی سے آواز کم کرنے کی مؤدبانہ درخواست کریں۔", "یہ آواز کم کرنے کو کہتا ہے؛ مکمل خاموشی یا مدد کا عمومی سوال نہیں۔", "zachter کو سوال کے آخر کے قریب رکھیں اور kunt u سے آغاز کریں۔", "Kunt u zachter zijn?", "کیا آپ آواز کم کر سکتے ہیں؟", "کُنت یو زاخ تَر زَین"],
+        ["er ligt een pakket voor u", "پڑوسی کو بتائیں کہ ان کے لیے ایک پارسل رکھا ہے۔", "یہ موجود پارسل کی اطلاع ہے؛ پارسل مانگنے یا بھیجنے کی درخواست نہیں۔", "voor u پارسل کس کے لیے ہے بتاتا ہے؛ اسے شروع میں نہ رکھیں۔", "Er ligt een pakket voor u.", "آپ کے لیے ایک پارسل رکھا ہے۔", "اَر لِخت اَن پا کَت فور یو"]
+      ]),
+      pattern: {
+        modelDutch: "kunt u mij helpen?",
+        titleUrdu: "پڑوسی سے مؤدبانہ مدد مانگنا",
+        highlight: "kunt u mij helpen",
+        explanationUrdu: "ادب سے مدد مانگنے کے لیے kunt u سے شروع کریں، پھر mij اور آخر میں helpen رکھیں۔",
+        contrastUrdu: "kunt u mij helpen? عمومی مدد مانگتا ہے؛ kunt u zachter zijn? شور کے بارے میں خاص درخواست ہے۔",
+        commonMistakeUrdu: "سیدھے جملے جیسی ترتیب u kunt سے سوال شروع نہ کریں؛ یہاں kunt u کہیں۔"
+      },
+      prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-polite-chunks"],
+      prerequisiteRefs: [
+        ["a0-greetings-courtesy", "goedemorgen"],
+        ["a0-greetings-courtesy", "dank u wel"],
+        ["a0-understanding-help", "kunt u mij helpen"],
+        ["a1-polite-chunks", "alstublieft"]
+      ],
+      scenarios: {
+        buurvrouw: ["neighbour-recognise-woman", "ساتھ والے گھر میں رہنے والی عورت کا درست لفظ چنیں۔"],
+        lawaai: ["neighbour-recognise-noise", "رات کو تیز آواز آ رہی ہے۔ شور کا درست لفظ پہچانیں۔"],
+        "kunt u mij helpen": ["neighbour-ask-help", "پڑوسن سے مؤدبانہ مدد مانگیں۔"],
+        pakket: ["neighbour-recognise-package", "دروازے پر پہنچایا ہوا بند پارسل پہچانیں۔"],
+        vuilnis: ["neighbour-recognise-rubbish", "باہر رکھنے والے گھر کے کچرے کا لفظ چنیں۔"],
+        "ik heb last van lawaai": ["neighbour-report-noise", "رات کے شور سے پریشانی ہے۔ اپنی مشکل نرم انداز میں بتائیں۔"],
+        "kunt u zachter zijn": ["neighbour-request-quiet", "پڑوسی سے مؤدبانہ طور پر آواز کم کرنے کو کہیں۔"],
+        "er ligt een pakket voor u": ["neighbour-package-message", "پڑوسی کے لیے پارسل آپ کے پاس رکھا ہے۔ مختصر اطلاع دیں۔"]
+      }
+    },
+    "a1-home-repairs": {
+      title: "Een reparatie melden",
+      unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
+      outcomeUrdu: "گھر کی خرابی واضح کرنا، مرمت کرنے والا شخص مانگنا، اس کے آنے کا وقت پوچھنا، اور مسئلہ حل ہونے کی تصدیق کرنا۔",
+      seedConcepts: [
+        ["verwarming", "ہیٹنگ"],
+        ["kapot", "خراب"],
+        ["de verwarming doet het niet", "ہیٹنگ کام نہیں کر رہی"],
+        ["warm water", "گرم پانی"],
+        ["monteur", "مرمت کرنے والا"],
+        ["de lamp is kapot", "بتی خراب ہے"],
+        ["kunt u iemand sturen?", "کیا آپ کسی کو بھیج سکتے ہیں؟"],
+        ["wanneer komt de monteur?", "مرمت کرنے والا کب آئے گا؟"],
+        ["het probleem is opgelost", "مسئلہ حل ہو گیا ہے"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["verwarming", "گھر گرم کرنے والے نظام کے لیے verwarming کہیں۔", "یہ پورا حرارتی نظام ہے؛ warm water صرف گرم پانی ہے۔", "verwarming کو عام گرمی یا موسم کے معنی میں نہ لیں۔", "De verwarming is aan.", "ہیٹنگ چل رہی ہے۔", "فَر وار مِنگ"],
+        ["kapot", "کوئی چیز کام نہ کرے یا ٹوٹی ہو تو kapot کہیں۔", "یہ خرابی کی کیفیت ہے؛ مسئلہ حل ہونے کے لیے opgelost آتا ہے۔", "kapot کو چیز کے نام کے بدلے نہ کہیں؛ چیز بھی واضح کریں۔", "De lamp is kapot.", "بتی خراب ہے۔", "کا پوت"],
+        ["de verwarming doet het niet", "ہیٹنگ کام نہ کرے تو مالک مکان یا مرمت والے کو یہ مکمل خرابی بتائیں۔", "یہ خاص طور پر ہیٹنگ کے کام نہ کرنے کی اطلاع ہے؛ گرم پانی الگ مسئلہ ہو سکتا ہے۔", "niet کو آخر میں رکھیں؛ de verwarming niet doet het غلط ترتیب ہے۔", "De verwarming doet het niet.", "ہیٹنگ کام نہیں کر رہی۔", "دَ فَر وار مِنگ دوت ہَت نیت"],
+        ["warm water", "نل یا غسل کے پانی کے گرم ہونے کی بات میں warm water کہیں۔", "یہ پانی کی کیفیت ہے؛ verwarming گھر گرم کرنے کا نظام ہے۔", "warm اور water کو الگ مفہوم سمجھ کر ترتیب نہ بدلیں۔", "Er is geen warm water.", "گرم پانی نہیں ہے۔", "وارم وا تَر"],
+        ["monteur", "خرابی دیکھنے یا مرمت کرنے والے شخص کے لیے monteur کہیں۔", "یہ کام کرنے والا شخص ہے؛ reparatie کام کا نام ہے۔", "monteur کو مالک مکان کے معنی میں نہ استعمال کریں۔", "De monteur komt morgen.", "مرمت کرنے والا کل آئے گا۔", "مون تَور"],
+        ["de lamp is kapot", "روشنی والی بتی خراب ہو تو چیز اور کیفیت دونوں مکمل جملے میں بتائیں۔", "یہ بتی کی خرابی ہے؛ ہیٹنگ کے لیے الگ جملہ ہے۔", "is کو نہ چھوڑیں؛ de lamp kapot مکمل جملہ نہیں۔", "De lamp is kapot.", "بتی خراب ہے۔", "دَ لامپ اِس کا پوت"],
+        ["kunt u iemand sturen", "خرابی بتانے کے بعد کسی مرمت والے کو بھیجنے کی مؤدبانہ درخواست کریں۔", "یہ کسی شخص کو بھیجنے کی درخواست ہے؛ آنے کا وقت نہیں پوچھتا۔", "سوال میں kunt u پہلے اور sturen آخر میں رکھیں۔", "Kunt u iemand sturen?", "کیا آپ کسی کو بھیج سکتے ہیں؟", "کُنت یو ایمانٹ ستیورَن"],
+        ["wanneer komt de monteur", "مرمت والا کس وقت یا دن آئے گا یہ پوچھنے کے لیے سوال کہیں۔", "یہ آنے کا وقت پوچھتا ہے؛ کسی کو بھیجنے کی درخواست پہلے الگ ہو سکتی ہے۔", "wanneer سوال کے شروع میں رکھیں اور komt اس کے بعد۔", "Wanneer komt de monteur?", "مرمت کرنے والا کب آئے گا؟", "وا نیر کومت دَ مون تَور"],
+        ["het probleem is opgelost", "مرمت کے بعد مسئلہ ختم ہو جائے تو اس کی مکمل تصدیق کریں۔", "یہ حل ہونے کی حالت ہے؛ kapot ابھی خراب ہونے کی حالت ہے۔", "opgelost کو مرمت والے شخص کے نام کے طور پر نہ لیں۔", "Het probleem is opgelost.", "مسئلہ حل ہو گیا ہے۔", "ہَت پرو بلیم اِس اوپ خَ لوست"]
+      ]),
+      pattern: {
+        modelDutch: "de verwarming doet het niet",
+        titleUrdu: "کسی نظام کے کام نہ کرنے کی اطلاع",
+        highlight: "doet het niet",
+        explanationUrdu: "چیز کے نام کے بعد doet het niet رکھ کر کہیں کہ وہ کام نہیں کر رہی: de verwarming doet het niet۔",
+        contrastUrdu: "de lamp is kapot چیز کی خراب حالت بتاتا ہے؛ de verwarming doet het niet کام نہ کرنے کی مکمل اطلاع ہے۔",
+        commonMistakeUrdu: "niet کو doet سے پہلے نہ رکھیں؛ مکمل حصہ doet het niet اسی ترتیب میں کہیں۔"
+      },
+      prerequisiteLessonIds: ["a0-home-needs", "a0-understanding-help", "a1-neighbour-talk"],
+      prerequisiteRefs: [
+        ["a0-home-needs", "deur"],
+        ["a0-home-needs", "de kamer is koud"],
+        ["a0-understanding-help", "kunt u mij helpen"],
+        ["a1-neighbour-talk", "kunt u mij helpen?"]
+      ],
+      scenarios: {
+        verwarming: ["repair-recognise-heating", "گھر گرم کرنے والا نظام پہچانیں۔"],
+        kapot: ["repair-recognise-broken", "چیز کام نہیں کر رہی۔ خراب کیفیت کا لفظ چنیں۔"],
+        "de verwarming doet het niet": ["repair-report-heating", "گھر ٹھنڈا ہے اور ہیٹنگ نہیں چلتی۔ مکمل خرابی بتائیں۔"],
+        "warm water": ["repair-recognise-hot-water", "نل سے صرف ٹھنڈا پانی آتا ہے۔ مطلوبہ گرم پانی کی بات پہچانیں۔"],
+        monteur: ["repair-recognise-worker", "خرابی دیکھنے آنے والے شخص کا درست لفظ چنیں۔"],
+        "de lamp is kapot": ["repair-report-lamp", "کمرے کی بتی نہیں جلتی۔ مکمل خرابی بتائیں۔"],
+        "kunt u iemand sturen": ["repair-request-worker", "مالک مکان سے کسی مرمت والے کو بھیجنے کی درخواست کریں۔"],
+        "wanneer komt de monteur": ["repair-ask-arrival", "مرمت والا مقرر ہے مگر وقت معلوم نہیں۔ آنے کا وقت پوچھیں۔"],
+        "het probleem is opgelost": ["repair-confirm-solved", "مرمت کے بعد سب کام کر رہا ہے۔ مسئلہ حل ہونے کی تصدیق کریں۔"]
+      }
+    },
+    "a1-cleaning-house": {
+      title: "Schoonmaken thuis",
+      unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
+      outcomeUrdu: "گھر کے ضروری صفائی کام پہچاننا اور آج کمرہ صاف کرنے، کپڑے دھونے، یا کسی جگہ کے صاف یا گندا ہونے کی مختصر بات کہنا۔",
+      seedConcepts: [
+        ["schoonmaken", "صفائی کرنا"],
+        ["was", "دھلائی"],
+        ["ik moet de kamer schoonmaken", "مجھے کمرہ صاف کرنا ہے"],
+        ["stofzuiger", "ویکیوم"],
+        ["ik doe vandaag de was", "میں آج کپڑے دھوتا یا دھوتی ہوں"],
+        ["de keuken is schoon", "کچن صاف ہے"],
+        ["de badkamer is vies", "باتھ روم گندا ہے"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["schoonmaken", "کمرہ، کچن، یا گھر صاف کرنے کے عمل کے لیے schoonmaken کہیں۔", "یہ کام کا نام ہے؛ schoon صاف حالت کی صفت ہے۔", "schoonmaken اور schoon کو ایک ہی جگہ استعمال نہ کریں۔", "Ik ga schoonmaken.", "میں صفائی کرنے جا رہا یا رہی ہوں۔", "سخون ما کَن"],
+        ["was", "دھونے والے کپڑوں یا کپڑے دھونے کے کام کے لیے de was کہیں۔", "یہ کپڑوں کی دھلائی ہے؛ گھر کی عمومی صفائی نہیں۔", "was کو ماضی والے فعل کے طور پر نہ پڑھیں؛ اس صورت حال میں دھلائی مراد ہے۔", "Ik doe de was.", "میں کپڑے دھوتا یا دھوتی ہوں۔", "واس"],
+        ["ik moet de kamer schoonmaken", "کمرہ صاف کرنا ضروری ہو تو اپنی ذمہ داری مکمل جملے میں کہیں۔", "moet ضرورت بتاتا ہے؛ کام مکمل ہو چکا ہو یہ نہیں کہتا۔", "schoonmaken کو آخر میں رکھیں؛ ik moet schoonmaken de kamer نہ کہیں۔", "Ik moet de kamer schoonmaken.", "مجھے کمرہ صاف کرنا ہے۔", "اِک موت دَ کا مَر سخون ما کَن"],
+        ["stofzuiger", "فرش صاف کرنے والی ویکیوم مشین کے لیے stofzuiger کہیں۔", "یہ صفائی کا آلہ ہے؛ schoonmaken پورا کام ہے۔", "stofzuiger کو جھاڑو یا کپڑے دھونے کے آلے کے معنی میں نہ لیں۔", "Ik gebruik de stofzuiger.", "میں ویکیوم استعمال کرتا یا کرتی ہوں۔", "ستوف زاؤ خَر"],
+        ["ik doe vandaag de was", "آج کپڑے دھونے کا منصوبہ یا کام بتانے کے لیے یہ مکمل جملہ کہیں۔", "یہ آج کا دھلائی کام ہے؛ کمرہ صاف کرنے کی بات الگ ہے۔", "vandaag کو doe اور de was کے درمیان رکھیں۔", "Ik doe vandaag de was.", "میں آج کپڑے دھوتا یا دھوتی ہوں۔", "اِک دو فان داخ دَ واس"],
+        ["de keuken is schoon", "صفائی کے بعد کچن کی صاف حالت مکمل جملے میں بتائیں۔", "schoon صاف حالت ہے؛ schoonmaken صفائی کا عمل ہے۔", "is کو نہ چھوڑیں؛ de keuken schoon مکمل جملہ نہیں۔", "De keuken is schoon.", "کچن صاف ہے۔", "دَ کو کَن اِس سخون"],
+        ["de badkamer is vies", "باتھ روم گندا ہو تو اس کی حالت مکمل جملے میں بتائیں۔", "vies گندی حالت ہے؛ schoon اس کا صاف مقابل ہے۔", "schoon اور vies کے معنی الٹ نہ کریں۔", "De badkamer is vies.", "باتھ روم گندا ہے۔", "دَ بات کا مَر اِس فیس"]
+      ]),
+      pattern: {
+        modelDutch: "ik moet de kamer schoonmaken",
+        titleUrdu: "ضروری گھر کا کام بتانا",
+        highlight: "ik moet de kamer schoonmaken",
+        explanationUrdu: "ضرورت بتانے کے لیے ik moet سے شروع کریں، پھر چیز یا جگہ اور آخر میں کام رکھیں۔",
+        contrastUrdu: "ik moet de kamer schoonmaken ضروری کام بتاتا ہے؛ de keuken is schoon مکمل صاف حالت بتاتا ہے۔",
+        commonMistakeUrdu: "کام schoonmaken کو kamer سے پہلے نہ رکھیں؛ اس نمونے میں یہ آخر میں آتا ہے۔"
+      },
+      prerequisiteLessonIds: ["a0-time-days", "a1-house-food-plurals", "a1-home-repairs"],
+      prerequisiteRefs: [
+        ["a0-time-days", "vandaag"],
+        ["a1-house-food-plurals", "kamer"],
+        ["a1-house-food-plurals", "keuken"],
+        ["a1-house-food-plurals", "badkamer"],
+        ["a1-home-repairs", "het probleem is opgelost"]
+      ],
+      scenarios: {
+        schoonmaken: ["cleaning-recognise-task", "گھر صاف کرنے کے عمل کا درست لفظ چنیں۔"],
+        was: ["cleaning-recognise-laundry", "کپڑے دھونے والے کام کا مختصر لفظ پہچانیں۔"],
+        "ik moet de kamer schoonmaken": ["cleaning-room-duty", "کمرہ گندا ہے اور آج اسے صاف کرنا ضروری ہے۔ مکمل ذمہ داری کہیں۔"],
+        stofzuiger: ["cleaning-recognise-vacuum", "فرش صاف کرنے والی مشین پہچانیں۔"],
+        "ik doe vandaag de was": ["cleaning-laundry-today", "آج کپڑے دھونے کا کام ہے۔ مکمل روزمرہ جملہ کہیں۔"],
+        "de keuken is schoon": ["cleaning-kitchen-clean", "صفائی کے بعد کچن کی حالت بتائیں۔"],
+        "de badkamer is vies": ["cleaning-bathroom-dirty", "باتھ روم ابھی گندا ہے۔ مکمل حالت بتائیں۔"]
+      }
+    },
+    "a1-house-search-extra": {
+      title: "Een woning zoeken en bekijken",
+      unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
+      outcomeUrdu: "مکان کا مختصر اشتہار پڑھنا، کرایہ، کمروں اور دستیابی کے بارے میں پوچھنا، اور گھر دیکھنے کا وقت مانگنا۔",
+      seedConcepts: [
+        ["woning", "مکان"],
+        ["huur", "کرایہ"],
+        ["ik zoek een woning", "میں مکان تلاش کر رہا یا رہی ہوں"],
+        ["beschikbaar", "دستیاب"],
+        ["bezichtiging", "گھر دیکھنے کا وقت"],
+        ["hoeveel is de huur?", "کرایہ کتنا ہے؟"],
+        ["heeft de woning twee kamers?", "کیا مکان میں دو کمرے ہیں؟"],
+        ["wanneer is de woning beschikbaar?", "مکان کب دستیاب ہے؟"],
+        ["kan ik de woning bekijken?", "کیا میں مکان دیکھ سکتا یا سکتی ہوں؟"],
+        ["is er een tuin?", "کیا باغ ہے؟"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["woning", "اشتہار یا کرایے کی گفتگو میں رہنے کی جگہ کے لیے woning کہیں۔", "یہ رہائش کا مکان ہے؛ صرف ایک kamer نہیں۔", "woning اور kamer کو ایک ہی معنی نہ دیں۔", "De woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔", "وو نِنگ"],
+        ["huur", "ہر ماہ مکان کے لیے ادا کی جانے والی رقم کو huur کہیں۔", "یہ کرایہ ہے؛ مکان کی خرید قیمت نہیں۔", "huur کو گھر دیکھنے کے وقت bezichtiging کے معنی میں نہ لیں۔", "De huur is achthonderd euro.", "کرایہ آٹھ سو یورو ہے۔", "ہیور"],
+        ["ik zoek een woning", "اپنی رہائش کی ضرورت بتانے کے لیے یہ مکمل جملہ کہیں۔", "یہ تلاش بتاتا ہے؛ کوئی خاص مکان پسند ہونے یا دیکھنے کا وقت نہیں۔", "zoek کے بعد een woning رکھیں؛ ik een woning zoek اس سبق کی سیدھی ترتیب نہیں۔", "Ik zoek een woning.", "میں مکان تلاش کر رہا یا رہی ہوں۔", "اِک زوک اَن وو نِنگ"],
+        ["beschikbaar", "جو مکان ابھی یا کسی تاریخ سے مل سکتا ہو اسے beschikbaar کہیں۔", "یہ دستیابی ہے؛ خالی کمروں کی تعداد نہیں۔", "beschikbaar کو سستا یا مناسب کے معنی میں نہ سمجھیں۔", "De woning is beschikbaar.", "مکان دستیاب ہے۔", "بَس خِک بار"],
+        ["bezichtiging", "مکان اندر سے دیکھنے کے مقرر وقت کو bezichtiging کہیں۔", "یہ گھر دیکھنے کی ملاقات ہے؛ کرایہ یا مرمت نہیں۔", "bezichtiging کو عام تصویر دیکھنے کے معنی میں نہ لیں۔", "De bezichtiging is maandag.", "گھر دیکھنے کا وقت پیر کو ہے۔", "بَ زِخ تِ خِنگ"],
+        ["hoeveel is de huur", "اشتہار میں رقم واضح نہ ہو تو کرایہ پوچھنے کے لیے یہ سوال کہیں۔", "hoeveel رقم پوچھتا ہے؛ wanneer دستیابی کا وقت پوچھتا ہے۔", "قیمت کے سوال میں hoeveel پہلے رکھیں۔", "Hoeveel is de huur?", "کرایہ کتنا ہے؟", "ہو فیل اِس دَ ہیور"],
+        ["heeft de woning twee kamers", "مکان میں دو کمرے ہونے کی تصدیق کے لیے یہ سوال پوچھیں۔", "یہ کمروں کی تعداد پوچھتا ہے؛ باغ یا کرایہ نہیں۔", "ہاں یا نہیں سوال میں heeft پہلے اور de woning بعد میں رکھیں۔", "Heeft de woning twee kamers?", "کیا مکان میں دو کمرے ہیں؟", "ہیفٹ دَ وو نِنگ توے کا مَرس"],
+        ["wanneer is de woning beschikbaar", "مکان کس دن یا وقت سے مل سکتا ہے یہ پوچھیں۔", "یہ دستیابی کا وقت ہے؛ گھر دیکھنے کی اجازت الگ سوال ہے۔", "wanneer کو شروع میں اور beschikbaar کو آخر میں رکھیں۔", "Wanneer is de woning beschikbaar?", "مکان کب دستیاب ہے؟", "وا نیر اِس دَ وو نِنگ بَس خِک بار"],
+        ["kan ik de woning bekijken", "اشتہار پسند آنے کے بعد مکان اندر سے دیکھنے کی اجازت مانگیں۔", "یہ دیکھنے کی درخواست ہے؛ bezichtiging مقرر ہونے کی تصدیق نہیں۔", "سوال میں kan ik سے شروع کریں اور bekijken آخر میں رکھیں۔", "Kan ik de woning bekijken?", "کیا میں مکان دیکھ سکتا یا سکتی ہوں؟", "کان اِک دَ وو نِنگ بَ کَی کَن"],
+        ["is er een tuin", "مکان کے ساتھ باغ ہونے کی تصدیق کے لیے مختصر سوال پوچھیں۔", "یہ باغ کی موجودگی پوچھتا ہے؛ کمروں کی تعداد نہیں۔", "وجود کے سوال میں is er سے شروع کریں۔", "Is er een tuin?", "کیا باغ ہے؟", "اِس اَر اَن تاؤن"]
+      ]),
+      pattern: {
+        modelDutch: "ik zoek een woning",
+        titleUrdu: "اپنی رہائش کی ضرورت واضح کرنا",
+        highlight: "ik zoek een woning",
+        explanationUrdu: "تلاش بتانے کے لیے ik کے بعد zoek اور آخر میں ایک woning رکھیں۔",
+        contrastUrdu: "ik zoek een woning اپنی ضرورت بتاتا ہے؛ kan ik de woning bekijken? کسی خاص مکان کو دیکھنے کی اجازت مانگتا ہے۔",
+        commonMistakeUrdu: "zoek کو جملے کے آخر میں نہ بھیجیں؛ سیدھی بات میں ik zoek سے آغاز کریں۔"
+      },
+      prerequisiteLessonIds: ["a0-numbers-0-10", "a0-date-appointment", "a1-house-food-plurals", "a1-appointments"],
+      prerequisiteRefs: [
+        ["a0-numbers-0-10", "twee"],
+        ["a0-date-appointment", "afspraak"],
+        ["a1-house-food-plurals", "kamer"],
+        ["a1-house-food-plurals", "het huis"],
+        ["a1-appointments", "heeft u vandaag tijd?"]
+      ],
+      scenarios: {
+        woning: ["housing-recognise-home", "کرایے کے اشتہار میں رہنے کے مکان کا لفظ پہچانیں۔"],
+        huur: ["housing-recognise-rent", "اشتہار میں ہر ماہ ادا ہونے والی رقم کا لفظ چنیں۔"],
+        "ik zoek een woning": ["housing-state-search", "رہائش کے دفتر میں اپنی ضرورت مکمل جملے میں بتائیں۔"],
+        beschikbaar: ["housing-recognise-available", "اشتہار بتاتا ہے کہ مکان اگلے ماہ سے مل سکتا ہے۔ دستیابی کا لفظ چنیں۔"],
+        bezichtiging: ["housing-recognise-viewing", "مکان اندر سے دیکھنے کے مقرر وقت کا لفظ پہچانیں۔"],
+        "hoeveel is de huur": ["housing-ask-rent", "اشتہار میں رقم واضح نہیں۔ ماہانہ کرایہ پوچھیں۔"],
+        "heeft de woning twee kamers": ["housing-ask-rooms", "خاندان کے لیے دو کمروں کی ضرورت ہے۔ تعداد کی تصدیق کریں۔"],
+        "wanneer is de woning beschikbaar": ["housing-ask-availability", "نیا مکان کس تاریخ سے مل سکتا ہے یہ پوچھیں۔"],
+        "kan ik de woning bekijken": ["housing-request-viewing", "اشتہار مناسب لگتا ہے۔ مکان دیکھنے کی اجازت مانگیں۔"],
+        "is er een tuin": ["housing-ask-garden", "مکان کے ساتھ باغ ہونے کی تصدیق کریں۔"]
+      },
+      document: {
+        stableId: "housing-read-listing",
+        sourceKey: "housing-listing-card",
+        documentKind: "housing-listing-card",
+        targetDutch: "wanneer is de woning beschikbaar?",
+        title: "Woning",
+        labelUrdu: "مکان کا مختصر اشتہار پڑھیں",
+        promptUrdu: "اشتہار میں beschikbaar اور maandag دیکھیں، پھر مکان کی دستیابی کا وقت پوچھنے والے مکمل سوال کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "اشتہار میں huur، kamers، اور beschikbaar کی قطاریں الگ پڑھیں، پھر دستیابی پوچھنے والے سیکھی ہوئی سوال کا مطلب منتخب کریں۔",
+        correctUrdu: "درست۔ “Wanneer is de woning beschikbaar?” پوچھتا ہے کہ مکان کب دستیاب ہے۔",
+        wrongUrdu: "یہ دوسری مکان والی بات ہے۔ wanneer اور beschikbaar مل کر دستیابی کا وقت پوچھتے ہیں۔",
+        rows: [
+          { label: "huur", value: "hoeveel is de huur?" },
+          { label: "kamers", value: "heeft de woning twee kamers?" },
+          { label: "beschikbaar", value: "wanneer is de woning beschikbaar?" }
+        ]
+      }
+    },
     "a1-appointments": {
       title: "Een afspraak maken of veranderen",
       unitLabel: "A1: سوال، مدد، فون اور ملاقات",
@@ -6761,6 +7068,60 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   missions: {
+    "a1-mission-house-search": {
+      sourceKey: "home-neighbours-repairs-housing-mission",
+      scenarioTitleUrdu: "گھر میں رہنا، مسئلہ سنبھالنا، اور نیا مکان دیکھنا",
+      speakerUrdu: "پڑوسی، مالک مکان، یا رہائش کا ملازم",
+      prerequisiteLessonIds: [
+        "a1-house-food-plurals",
+        "a1-neighbour-talk",
+        "a1-home-repairs",
+        "a1-cleaning-house",
+        "a1-house-search-extra"
+      ],
+      variantTitles: [
+        "نئے گھر میں پڑوسی اور چیزوں کی جگہ",
+        "ہیٹنگ کی خرابی اور گھر کی صفائی",
+        "مکان کا اشتہار اور دیکھنے کا وقت"
+      ],
+      variantContexts: [
+        "گھر کی چیز کی جگہ بتائیں، پڑوسن سے مدد مانگیں، اور گھر کے بارے میں مختصر بات مکمل کریں",
+        "ہیٹنگ کی خرابی واضح کریں، مرمت مانگیں، اور ضروری صفائی کام بتائیں",
+        "مکان کا اشتہار پڑھیں، کرایہ اور دستیابی سمجھیں، اور گھر دیکھنے کی گفتگو مکمل کریں"
+      ],
+      targets: [
+        { lessonId: "a1-house-food-plurals", dutch: "het boek is in huis", patternLessonId: "a1-house-food-plurals" },
+        { lessonId: "a1-neighbour-talk", dutch: "kunt u mij helpen?", patternLessonId: "a1-neighbour-talk" },
+        { lessonId: "a1-home-repairs", dutch: "de verwarming doet het niet", patternLessonId: "a1-home-repairs" },
+        { lessonId: "a1-cleaning-house", dutch: "ik moet de kamer schoonmaken", patternLessonId: "a1-cleaning-house" },
+        { lessonId: "a1-house-search-extra", dutch: "hoeveel is de huur?" },
+        { lessonId: "a1-house-search-extra", dutch: "wanneer is de woning beschikbaar?" }
+      ],
+      prerequisiteRefs: [
+        ["a0-understanding-help", "kunt u mij helpen"],
+        ["a0-numbers-0-10", "twee"],
+        ["a0-time-days", "maandag"],
+        ["a1-house-food-plurals", "kamer"],
+        ["a1-neighbour-talk", "kunt u zachter zijn?"],
+        ["a1-home-repairs", "kunt u iemand sturen?"],
+        ["a1-cleaning-house", "de keuken is schoon"],
+        ["a1-house-search-extra", "kan ik de woning bekijken?"]
+      ],
+      useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "reverse", "build", "situation", "document-choice"],
+      document: {
+        documentKind: "housing-listing-and-viewing-card",
+        title: "Woning",
+        labelUrdu: "مکان کا اشتہار اور دستیابی پڑھیں",
+        promptUrdu: "کارڈ میں beschikbaar اور maandag دیکھیں، پھر مکان کب دستیاب ہے پوچھنے والے مکمل سوال کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "گھر کی قطاروں میں huur، kamers، اور beschikbaar الگ پڑھیں، پھر دستیابی والے سیکھی ہوئی مکمل سوال کا مطلب منتخب کریں۔",
+        rows: [
+          { label: "huur", value: "hoeveel is de huur?" },
+          { label: "kamers", value: "heeft de woning twee kamers?" },
+          { label: "beschikbaar", value: "wanneer is de woning beschikbaar?" }
+        ]
+      }
+    },
     "a1-personal-info-mission": {
       scenarioTitleUrdu: "استقبالی کاؤنٹر پر تعارف اور فارم",
       prerequisiteLessonIds: ["a1-greetings-personal-info", "a1-details-forms"],
