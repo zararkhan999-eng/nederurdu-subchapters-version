@@ -40,19 +40,19 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, Unit 3, Unit 4, Unit 5, and Unit 6 have since been authored and each passes its
-exact audit slice with **0 findings**. The current complete A1 result is **727
-errors and 0 review flags** before Unit 5, and **586 errors and 0 review flags**
-after Unit 5, and **398 errors and 0 review flags** after Unit 6. All remaining
-findings belong to Units 7–9 or the future chapter
-completion mission.
+1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, and Unit 7 have since been authored,
+and each passes its exact audit slice with **0 findings**. The current complete
+A1 result is **193 errors and 0 review flags**, down from 398 after Unit 6. All
+remaining findings belong to Units 8–9 or the future chapter completion
+mission.
 
-After the Unit 6 rewrite separated supermarket, café, dietary needs, clothing,
-returns, and payment responsibilities, the current A1 totals are 312
-chapter-owned concepts, 338 chapter-owned skills, 26 patterns, 116 runs, 504
-teaching blocks, 2,149 normal-lesson exercises, and 282 mission records. The
-chapter now has 41 normal path lessons until the later binding merge, split,
-move, and retire decisions are applied.
+After Unit 7 merged and retired the two duplicate transport nodes, the current
+A1 totals are 288 chapter-owned concepts, 319 chapter-owned skills, 31
+patterns, 97 runs, 433 teaching blocks, 1,819 normal-lesson exercises, and 294
+mission records. The chapter path now has **39 normal lessons and 9 unit
+missions**. Unit 7 contributes five focused lessons, one connected capstone,
+42 manually reviewed new targets, ten capped runs, five practical patterns,
+and four taught document formats.
 
 ### Baseline audit error taxonomy
 
@@ -253,6 +253,21 @@ mission prerequisites, no responsive overflow, and an empty browser console.
 | `a1-safety-rules` | **Remain** around authentic signs and announcements. |
 | `a1-mission-post-parcel` | **Keep stable ID but fully author** as one connected town journey. |
 
+Implementation checkpoint: **completed and locally clean**. The path now
+follows public transport → map directions → parcel pickup → library/community
+services → public safety, followed by one connected town mission.
+`a1-shopping-transport` and `a1-bus-train-extra` are retired; their useful
+station, platform, delay, destination, and question material is owned by
+`a1-public-transport`. Five focused lessons teach 42 genuinely new targets
+across ten capped runs with five complete practical patterns. Departure-board,
+parcel-notice, opening-hours, and public-safety-sign documents are taught and
+recognised before they appear in checks or the mission. The mission has three
+authored variants, each with six Use and six Independent Check tasks covering
+all five lesson strands. The exact Unit 7 audit slice has 0 findings, its
+focused desktop/mobile gate passes 12/12, and the combined Units 1–7 regression
+gate passes 82/82. Manual review confirmed the six-node map order, Urdu-first
+parcel teaching, mission prerequisites, and no desktop-width overflow.
+
 ### Unit 8 — Body and health
 
 Required order: appointment → symptoms → medicine instructions.
@@ -309,9 +324,9 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–5 are complete. Unit 7 is the next permitted
-authoring batch; Units 8–9 and the completion mission remain blocked behind
-that sequence.
+Current checkpoint: steps 1–5 are complete, including Unit 7. Unit 8 is the
+next permitted authoring batch; Unit 9 and the completion mission remain
+blocked behind that sequence.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

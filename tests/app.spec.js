@@ -3987,6 +3987,79 @@ test("A1 Unit 6 documents teaching and mission fit phone tablet and desktop", as
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
 });
 
+test("A1 Unit 7 has five focused town lessons and retires duplicate transport nodes", async ({ page }) => {
+  await openCleanApp(page);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE, unit = course.units.find((candidate) => candidate.id === "a1-going-out-transport");
+    const lessons = unit.lessonIds.map((id) => course.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
+    return { lessonIds: lessons.map((lesson) => lesson.id), conceptCounts: lessons.map((lesson) => lesson.conceptIds.length),
+      retired: ["a1-shopping-transport", "a1-bus-train-extra"].filter((id) => course.lessons.some((lesson) => lesson.id === id)),
+      lessons: lessons.map((lesson) => ({ id:lesson.id, unitLabel:lesson.unit, outcomeUrdu:lesson.outcomeUrdu,
+        runs:lesson.learning.runs.map((run) => { const generated=buildLearningFirstSession(lesson,run); return { count:run.newConceptIds.length,
+          phases:[...new Set(generated.map(getQuestionPhase))], checks:generated.filter((question)=>getQuestionPhase(question)==="check").length }; }) })) };
+  });
+  expect(audit.lessonIds).toEqual(["a1-public-transport","a1-directions-town","a1-post-parcel-extra","a1-library-community","a1-safety-rules"]);
+  expect(audit.conceptCounts).toEqual([10,8,8,8,8]); expect(audit.retired).toEqual([]);
+  for (const lesson of audit.lessons) { expect(lesson.unitLabel,lesson.id).toBe("A1: سفر، شہر کی جگہیں اور حفاظت"); expect(lesson.outcomeUrdu).toMatch(/[\u0600-\u06ff]/u);
+    for (const run of lesson.runs) { expect(run.count).toBeGreaterThan(0); expect(run.count).toBeLessThanOrEqual(5);
+      expect(run.phases).toEqual(["learn","understand","guided","use","check"]); expect(run.checks).toBeGreaterThanOrEqual(4); expect(run.checks).toBeLessThanOrEqual(6); } }
+});
+
+test("A1 Unit 7 Use tasks and connected town mission keep authored provenance", async ({ page }) => {
+  await openCleanApp(page);
+  const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((candidate)=>candidate.id==="a1-going-out-transport");
+    const lessonRows=unit.lessonIds.map((id)=>course.lessons.find((lesson)=>lesson.id===id)).filter(Boolean).map((lesson)=>{const byId=new Map(lesson.exercises.map((question)=>[question.id,question]));
+      const use=lesson.learning.runs.flatMap((run)=>run.phases.use.exerciseIds.map((id)=>byId.get(id)).filter(Boolean));return{id:lesson.id,count:use.length,
+        invalid:use.filter((question)=>question.scored!==false&&!isInfoQuestion(question)).filter((question)=>!/^a1-authored:[a-z0-9][a-z0-9:-]*$/i.test(String(question.scenarioSource||""))).map((question)=>question.id)};});
+    const mission=course.missions.find((candidate)=>candidate.id==="a1-mission-post-parcel");return{lessonRows,variants:mission.variants.map((variant)=>({id:variant.id,
+      use:variant.questions.filter((question)=>question.phase==="use").length,check:variant.questions.filter((question)=>question.phase==="independent-check").length,
+      invalid:variant.questions.filter((question)=>!/^a1-authored:town-transport-parcel-library-safety-mission:[a-z0-9:-]+$/i.test(String(question.scenarioSource||""))).map((question)=>question.id)}))};});
+  for(const lesson of audit.lessonRows){expect(lesson.count,lesson.id).toBeGreaterThan(0);expect(lesson.invalid,lesson.id).toEqual([]);}expect(audit.variants).toHaveLength(3);
+  for(const variant of audit.variants){expect(variant.use).toBe(6);expect(variant.check).toBe(6);expect(variant.invalid).toEqual([]);}
+});
+
+test("A1 Unit 7 manually teaches every new travel town and safety target", async ({ page }) => {
+  await openCleanApp(page);
+  const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((candidate)=>candidate.id==="a1-going-out-transport"),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept]));
+    const lessons=unit.lessonIds.map((id)=>course.lessons.find((lesson)=>lesson.id===id)).filter(Boolean),words=(value)=>String(value||"").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]*/g)||[];
+    return{concepts:lessons.flatMap((lesson)=>lesson.newConceptIds.map((id)=>{const concept=conceptById.get(id);return{lessonId:lesson.id,dutch:concept?.dutch||"",
+      manual:String(concept?.guidanceSource||"").startsWith("a1-authored:"),pronunciation:concept?.pronunciationReview==="a1-authored-manual-v1",
+      complete:[concept?.usageUrdu,concept?.usageBoundaryUrdu,concept?.commonConfusionUrdu,concept?.exampleDutch,concept?.exampleUrdu,concept?.pronunciationUrdu].every((value)=>String(value||"").trim())};})),
+      patterns:lessons.map((lesson)=>{const pattern=course.patterns.find((candidate)=>candidate.id===lesson.pattern?.id),model=new Set(words(pattern?.modelDutch));return{id:pattern?.id||"",lessonId:lesson.id,
+        owned:words(pattern?.highlight).every((word)=>model.has(word)),complete:[pattern?.titleUrdu,pattern?.modelUrdu,pattern?.explanationUrdu,pattern?.contrastUrdu,pattern?.commonMistakeUrdu].every((value)=>/[\u0600-\u06ff]/u.test(String(value||"")))};})};});
+  expect(audit.concepts).toHaveLength(42);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBeTruthy();}
+  expect(audit.patterns).toHaveLength(5);for(const pattern of audit.patterns){expect(pattern.id).not.toBe("");expect(pattern.owned).toBe(true);expect(pattern.complete).toBe(true);}
+});
+
+test("A1 Unit 7 teaches boards notices hours and signs before document checks", async ({ page }) => {
+  await openCleanApp(page);
+  const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((candidate)=>candidate.id==="a1-going-out-transport"),documents=[],failures=[],practiced=new Set();
+    for(const lesson of unit.lessonIds.map((id)=>course.lessons.find((candidate)=>candidate.id===id)).filter(Boolean)){const byId=new Map(lesson.exercises.map((question)=>[question.id,question]));
+      for(const run of lesson.learning.runs){const earlier=["understand","guidedPractice","use"].flatMap((phase)=>run.phases[phase].exerciseIds.map((id)=>byId.get(id)).filter(Boolean)),check=run.phases.independentCheck.exerciseIds.map((id)=>byId.get(id)).filter(Boolean),types=new Set(earlier.map((question)=>question.type));earlier.forEach((question)=>practiced.add(question.type));
+        const unseen=[...new Set(check.filter((question)=>!types.has(question.type)).map((question)=>question.type))];if(unseen.length)failures.push({lessonId:lesson.id,unseen});
+        for(const question of earlier.filter((candidate)=>candidate.type==="document-choice"))documents.push({lessonId:lesson.id,kind:question.document?.documentKind||"",rows:question.document?.rows||[],owned:Boolean(question.conceptIds?.length&&question.skillIds?.length),authentic:question.authenticDocument===true});}}
+    const mission=course.missions.find((candidate)=>candidate.id==="a1-mission-post-parcel"),missionFailures=mission.variants.flatMap((variant)=>{const use=new Set(variant.questions.filter((question)=>question.phase==="use").map((question)=>question.type));return variant.questions.filter((question)=>question.phase==="independent-check").filter((question)=>!use.has(question.type)&&!practiced.has(question.type)).map((question)=>question.type);});
+    return{documents,failures,missionFailures};});
+  expect(audit.documents.map((item)=>[item.lessonId,item.kind])).toEqual([["a1-public-transport","departure-board"],["a1-post-parcel-extra","parcel-pickup-notice"],["a1-library-community","opening-hours-card"],["a1-safety-rules","public-safety-signs"]]);
+  for(const doc of audit.documents){expect(doc.rows.length).toBeGreaterThanOrEqual(3);expect(doc.owned).toBe(true);expect(doc.authentic).toBe(true);}expect(audit.failures).toEqual([]);expect(audit.missionFailures).toEqual([]);
+});
+
+test("A1 Unit 7 prerequisites and mission cover every focused lesson", async ({ page }) => {
+  await openCleanApp(page);
+  const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((candidate)=>candidate.id==="a1"),unit=course.units.find((candidate)=>candidate.id==="a1-going-out-transport"),lessonById=new Map(course.lessons.map((lesson)=>[lesson.id,lesson])),skillById=new Map(course.skills.map((skill)=>[skill.id,skill])),order=new Map(chapter.lessonIds.map((id,index)=>[id,index]));
+    const lessons=unit.lessonIds.map((id)=>lessonById.get(id)).filter(Boolean),chronology=lessons.flatMap((lesson)=>[...new Set([...(lesson.prerequisites?.lessonIds||[]),...(lesson.prerequisiteSkillIds||[]).map((id)=>skillById.get(id)?.introducedInLessonId)].filter(Boolean))].filter((source)=>!source.startsWith("a0-")&&(!order.has(source)||order.get(source)>=order.get(lesson.id))).map((source)=>({lessonId:lesson.id,source})));
+    const mission=course.missions.find((candidate)=>candidate.id==="a1-mission-post-parcel"),represented=new Set(mission.assessmentSkillIds.map((id)=>skillById.get(id)?.introducedInLessonId).filter(Boolean));return{lessonIds:lessons.map((lesson)=>lesson.id),chronology,missionPrerequisites:mission.prerequisites.lessonIds,skillCount:mission.assessmentSkillIds.length,
+      missingLessons:lessons.map((lesson)=>lesson.id).filter((id)=>!represented.has(id)),variants:mission.variants.map((variant)=>{const use=new Set(variant.questions.filter((question)=>question.phase==="use").flatMap(getQuestionSkillIds)),checks=variant.questions.filter((question)=>question.phase==="independent-check"),check=new Set(checks.flatMap(getQuestionSkillIds));return{missingUse:mission.assessmentSkillIds.filter((id)=>!use.has(id)),missingCheck:mission.assessmentSkillIds.filter((id)=>!check.has(id)),missingHelp:checks.filter((question)=>!question.hintUrdu||!question.explainCorrectUrdu||!question.explainWrongUrdu).map((question)=>question.id)};})};});
+  expect(audit.chronology).toEqual([]);expect(audit.missionPrerequisites).toEqual(audit.lessonIds);expect(audit.skillCount).toBe(6);expect(audit.missingLessons).toEqual([]);for(const variant of audit.variants){expect(variant.missingUse).toEqual([]);expect(variant.missingCheck).toEqual([]);expect(variant.missingHelp).toEqual([]);}
+});
+
+test("A1 Unit 7 travel documents teaching and mission fit all target widths", async ({ page }) => {
+  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){await page.setViewportSize(viewport);
+    await page.evaluate(()=>showLessonPreview("a1-post-parcel-extra"));await expect(page.locator(".learning-preview")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),`${viewport.width}px parcel preview`).toBe(false);
+    await page.evaluate(()=>showLessonPreview("a1-mission-post-parcel"));await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),`${viewport.width}px mission preview`).toBe(false);}
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>showLessonPreview("a1-public-transport"));await page.locator('.learning-preview [data-action="start"]').click();await expect(page.locator(".learning-teaching-card")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);
+});
+
 test("repeating a lesson selects incomplete runs before non-secure runs", async ({ page }) => {
   await openCleanApp(page);
   const selection = await page.evaluate(() => {

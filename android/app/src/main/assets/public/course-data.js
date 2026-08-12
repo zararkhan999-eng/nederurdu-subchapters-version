@@ -4220,7 +4220,7 @@ const a1Subchapters = [
     title: "باہر جانا اور سفر",
     goal: "station، bus، trein، ٹکٹ، کہیں جانا۔",
     practice: "ik ga naar het station جیسے حرکت جملے۔",
-    lessonIds: ["a1-shopping-transport", "a1-public-transport", ...a1Expanded("a1-directions-town", "a1-bus-train-extra", "a1-post-parcel-extra", "a1-library-community", "a1-safety-rules"), "a1-mission-post-parcel"]
+    lessonIds: ["a1-public-transport", "a1-directions-town", "a1-post-parcel-extra", "a1-library-community", "a1-safety-rules", "a1-mission-post-parcel"]
   },
   {
     id: "a1-body-health",
@@ -4705,6 +4705,8 @@ retirePathLessonV4(a1Lessons, "a1-daily-review-one");
 retirePathLessonV4(a1Lessons, "a1-daily-review-two");
 retirePathLessonV4(a1Lessons, "a1-questions-revision");
 retirePathLessonV4(a1Lessons, "a1-home-neighbours");
+retirePathLessonV4(a1Lessons, "a1-shopping-transport");
+retirePathLessonV4(a1Lessons, "a1-bus-train-extra");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -4717,7 +4719,9 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-daily-review-one",
       "a1-daily-review-two",
       "a1-questions-revision",
-      "a1-home-neighbours"
+      "a1-home-neighbours",
+      "a1-shopping-transport",
+      "a1-bus-train-extra"
     ].includes(lessonId)
   ));
 }
@@ -5163,6 +5167,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-food-shopping": {
       outcomeUrdu: "خریداری کی فہرست اور قیمت پڑھنا، کیفے میں آرڈر دینا، کھانے کی ضرورت واضح کرنا، کپڑا چننا، چیز واپس کرنا، اور ادائیگی کا مسئلہ حل کرنا۔",
       practiceUrdu: "پہلے سپر مارکیٹ، مینو، کپڑے، رسید، اور ادائیگی کی مکمل باتیں سمجھیں، پھر دکان اور کیفے کی عملی صورتوں میں صرف سیکھی ہوئی زبان استعمال کریں۔"
+    },
+    "a1-going-out-transport": {
+      outcomeUrdu: "بس یا ٹرین کا سفر سمجھنا، نقشے سے راستہ پوچھنا، پارسل لینا، لائبریری کی معلومات پڑھنا، اور عوامی جگہ کے حفاظتی نشان سمجھنا۔",
+      practiceUrdu: "پہلے روانگی بورڈ، نقشہ، پارسل نوٹس، اوقات، اور حفاظتی نشان سمجھیں، پھر شہر کے ایک مسلسل سفر میں وہی سیکھی ہوئی زبان استعمال کریں۔"
     }
   },
   lessons: {
@@ -7077,6 +7085,98 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteLessonIds:["a0-shopping-payment","a1-cafe-ordering","a1-shopping-returns"],prerequisiteRefs:[["a0-shopping-payment","ik betaal met pin"],["a0-shopping-payment","contant"],["a0-shopping-payment","bon"],["a1-cafe-ordering","rekening"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"]],
       scenarios:{pinpas:["payment-recognise-card","ادائیگی کے بینک کارڈ کو پہچانیں۔"],bedrag:["payment-recognise-amount","اسکرین پر کل رقم پہچانیں۔"],"ik betaal contant":["payment-choose-cash","کیش سے ادائیگی کا طریقہ بتائیں۔"],"mijn pinpas werkt niet":["payment-card-fails","مشین کارڈ قبول نہیں کرتی۔ مسئلہ بتائیں۔"],"het bedrag klopt niet":["payment-wrong-amount","اسکرین کی رقم غلط ہے۔ اعتراض کریں۔"],"ik heb niet genoeg geld":["payment-not-enough","رقم پوری نہیں۔ اپنی حالت بتائیں۔"],"mag ik de bon":["payment-request-receipt","ادائیگی کے بعد رسید مانگیں۔"]}
     },
+    "a1-public-transport": {
+      title: "Reizen met bus en trein", unitLabel: "A1: سفر، شہر کی جگہیں اور حفاظت",
+      outcomeUrdu: "ٹکٹ مانگنا، روانگی بورڈ پڑھنا، پلیٹ فارم یا وقت پوچھنا، تاخیر سمجھنا، اور بس یا ٹرین بدلنے کی بات کرنا۔",
+      seedConcepts: [["spoor","پلیٹ فارم"],["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے"],["vertraging","تاخیر"],["ik ga naar het station","میں اسٹیشن جا رہا یا رہی ہوں"],["hoe laat vertrekt de trein?","ٹرین کتنے بجے روانہ ہوتی ہے؟"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟"],["de trein heeft vertraging","ٹرین دیر سے ہے"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے"]],
+      teaching:authoredA1TeachingV4([
+        ["spoor","اسٹیشن کے بورڈ پر ٹرین کے پلیٹ فارم کو spoor کہیں۔","یہ پلیٹ فارم ہے؛ halte بس کا اسٹاپ ہے۔","spoor کو ٹرین کے روانگی وقت کے معنی میں نہ لیں۔","spoor — station","پلیٹ فارم — اسٹیشن۔","سپور"],
+        ["ik wil een kaartje naar utrecht","ٹکٹ کاؤنٹر پر Utrecht جانے کا ٹکٹ مکمل جملے میں مانگیں۔","naar منزل بتاتا ہے؛ روانگی کا وقت الگ سوال ہے۔","kaartje کے بعد naar اور پھر شہر رکھیں۔","Ik wil een kaartje naar Utrecht.","مجھے Utrecht کا ٹکٹ چاہیے۔","اِک وِل اَن کارت یَ نار یو تریخت"],
+        ["vertraging","روانگی بورڈ پر تاخیر کے لیے vertraging پہچانیں۔","یہ دیر ہے؛ spoor پلیٹ فارم ہے۔","vertraging کو منسوخی کے معنی میں نہ سمجھیں۔","vertraging — spoor","تاخیر — پلیٹ فارم۔","فَر ترا خِنگ"],
+        ["ik ga naar het station","اپنی منزل اسٹیشن ہو تو یہ مکمل حرکت والا جملہ کہیں۔","یہ اسٹیشن جانے کی اطلاع ہے؛ ٹکٹ مانگنے کی درخواست نہیں۔","ga کے بعد naar het station رکھیں۔","Ik ga naar het station.","میں اسٹیشن جا رہا یا رہی ہوں۔","اِک خا نار ہَت ستا سیون"],
+        ["hoe laat vertrekt de trein","ٹرین کا گھڑی والا روانگی وقت پوچھیں۔","hoe laat وقت پوچھتا ہے؛ welk spoor پلیٹ فارم پوچھتا ہے۔","سوال میں hoe laat پہلے اور vertrekt اس کے بعد رکھیں۔","Hoe laat vertrekt de trein?","ٹرین کتنے بجے روانہ ہوتی ہے؟","ہو لات فَر تریکٹ دَ ٹرَین"],
+        ["van welk spoor vertrekt de trein","بورڈ واضح نہ ہو تو ٹرین کا پلیٹ فارم پوچھیں۔","یہ spoor پوچھتا ہے؛ گھڑی کا وقت نہیں۔","van welk spoor کو سوال کے شروع میں ساتھ رکھیں۔","Van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟","فان وِلک سپور فَر تریکٹ دَ ٹرَین"],
+        ["de trein heeft vertraging","اعلان یا بورڈ سے معلوم ہو کہ ٹرین دیر سے ہے تو مکمل اطلاع سمجھیں۔","یہ تاخیر ہے؛ پلیٹ فارم کی تبدیلی نہیں۔","heeft کو trein کے بعد اور vertraging آخر میں رکھیں۔","De trein heeft vertraging.","ٹرین دیر سے ہے۔","دَ ٹرَین ہیفٹ فَر ترا خِنگ"],
+        ["gaat deze bus naar het centrum","بس میں چڑھنے سے پہلے مرکز جانے کی تصدیق کریں۔","یہ بس کی منزل پوچھتا ہے؛ اگلا اسٹاپ الگ اعلان ہے۔","ہاں یا نہیں سوال میں gaat پہلے رکھیں۔","Gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟","خات دے زَ بُس نار ہَت سَین ترُم"],
+        ["waar moet ik overstappen","سفر میں گاڑی کہاں بدلنی ہے یہ پوچھیں۔","overstappen گاڑی بدلنا ہے؛ uitstappen سفر ختم کر کے اترنا ہے۔","waar سے شروع کریں اور overstappen آخر میں رکھیں۔","Waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟","وار موت اِک او فَر ستا پَن"],
+        ["de volgende halte is centrum","بس کے اعلان میں اگلا اسٹاپ مرکز ہو تو اس مکمل اطلاع کو سمجھیں۔","volgende halte اگلا اسٹاپ ہے؛ موجودہ جگہ نہیں۔","is کو نہ چھوڑیں؛ اعلان مکمل جملہ ہے۔","De volgende halte is centrum.","اگلا اسٹاپ مرکز ہے۔","دَ فول خَن دَ ہال تَ اِس سَین ترُم"]
+      ]),
+      pattern:{modelDutch:"ik wil een kaartje naar Utrecht",titleUrdu:"منزل کے ساتھ ٹکٹ مانگنا",highlight:"ik wil een kaartje naar Utrecht",explanationUrdu:"ٹکٹ مانگنے کے لیے ik wil een kaartje naar کے بعد منزل رکھیں۔",contrastUrdu:"kaartje naar Utrecht منزل والا ٹکٹ ہے؛ hoe laat vertrekt وقت پوچھتا ہے۔",commonMistakeUrdu:"naar کو شہر کے بعد نہ رکھیں؛ kaartje naar کے بعد منزل کہیں۔"},
+      prerequisiteLessonIds:["a0-transport-directions","a0-time-days","a1-questions"],prerequisiteRefs:[["a0-transport-directions","bus"],["a0-transport-directions","trein"],["a0-transport-directions","station"],["a0-transport-directions","halte"],["a0-transport-directions","kaartje"],["a0-time-days","hoe laat"],["a1-questions","waar"]],
+      scenarios:{spoor:["transport-recognise-platform","روانگی بورڈ پر پلیٹ فارم پہچانیں۔"],"ik wil een kaartje naar utrecht":["transport-buy-ticket","کاؤنٹر پر Utrecht کا ٹکٹ مانگیں۔"],vertraging:["transport-recognise-delay","بورڈ پر تاخیر پہچانیں۔"],"ik ga naar het station":["transport-state-destination","اپنی اسٹیشن والی منزل بتائیں۔"],"hoe laat vertrekt de trein":["transport-ask-departure","ٹرین کا روانگی وقت پوچھیں۔"],"van welk spoor vertrekt de trein":["transport-ask-platform","ٹرین کا پلیٹ فارم پوچھیں۔"],"de trein heeft vertraging":["transport-hear-delay","اعلان میں ٹرین کی تاخیر سمجھیں۔"],"gaat deze bus naar het centrum":["transport-check-bus","مرکز جانے والی بس کی تصدیق کریں۔"],"waar moet ik overstappen":["transport-ask-transfer","گاڑی بدلنے کی جگہ پوچھیں۔"],"de volgende halte is centrum":["transport-hear-stop","اگلے اسٹاپ کا اعلان سمجھیں۔"]},
+      document:{stableId:"transport-departure-board",sourceKey:"transport-departure-board",documentKind:"departure-board",targetDutch:"van welk spoor vertrekt de trein?",title:"spoor",labelUrdu:"ٹرین کا روانگی بورڈ پڑھیں",promptUrdu:"بورڈ میں trein اور spoor دیکھیں، پھر پلیٹ فارم پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"روانگی بورڈ میں وقت، spoor، اور vertraging الگ دیکھیں، پھر ٹرین کے پلیٹ فارم والا سیکھی ہوئی سوال چنیں۔",correctUrdu:"درست۔ van welk spoor ٹرین کا پلیٹ فارم پوچھتا ہے۔",wrongUrdu:"یہ دوسری سفر کی بات ہے۔ welk spoor پلیٹ فارم کے بارے میں ہے۔",rows:[{label:"trein",value:"de trein heeft vertraging"},{label:"spoor",value:"van welk spoor vertrekt de trein?"},{label:"vertraging",value:"vertraging"}]}
+    },
+    "a1-directions-town": {
+      title:"De weg vragen met een kaart",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"نقشے پر جگہ پہچاننا، دواخانے کا راستہ پوچھنا، سیدھا یا دائیں مڑنے کی ہدایت سمجھنا، اور قریب یا دور بتانا۔",
+      seedConcepts:[["kaart","نقشہ"],["hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟"],["het is dichtbij","یہ قریب ہے"],["dichtbij","قریب"],["plein","چوک"],["sla rechts af","دائیں مڑیں"],["het is ver weg","یہ دور ہے"],["kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟"]],
+      teaching:authoredA1TeachingV4([
+        ["kaart","شہر میں راستہ دیکھنے والے نقشے کو kaart کہیں۔","یہ نقشہ ہے؛ ٹکٹ کے لیے kaartje الگ ہے۔","kaart اور kaartje کی ملتی آواز سے معنی نہ بدلیں۔","kaart — kaartje","نقشہ — ٹکٹ۔","کارت"],
+        ["hoe kom ik bij de apotheek","دواخانے تک پہنچنے کا راستہ مکمل سوال میں پوچھیں۔","hoe kom ik bij راستہ پوچھتا ہے؛ waar صرف جگہ پوچھ سکتا ہے۔","hoe سے شروع کریں اور منزل آخر میں رکھیں۔","Hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟","ہو کوم اِک بَے دَ آ پو تیک"],
+        ["plein","شہر کے کھلے چوک یا نقشے کی جگہ کو plein کہیں۔","یہ چوک ہے؛ straat سڑک ہے۔","plein کو پارک یا اسٹیشن کے معنی میں نہ لیں۔","plein — kaart","چوک — نقشہ۔","پلَین"],
+        ["dichtbij","کوئی جگہ قریب ہو تو dichtbij کہیں۔","یہ قریب فاصلے کی کیفیت ہے؛ het is dichtbij مکمل جواب ہے۔","dichtbij کو دائیں یا بائیں سمت نہ سمجھیں۔","dichtbij — het is dichtbij","قریب — یہ قریب ہے۔","دِخت بَے"],
+        ["sla rechts af","راستہ بتاتے وقت دائیں مڑنے کی ہدایت دیں یا سمجھیں۔","rechts دائیں ہے؛ links بائیں ہے۔","sla اور af دونوں رکھیں؛ یہ الگ ہونے والا فعل ہے۔","Sla rechts af.","دائیں مڑیں۔","سلا رَختس آف"],
+        ["het is dichtbij","جگہ قریب ہو تو مکمل جواب دیں۔","یہ فاصلے کا جواب ہے؛ سمت کی ہدایت نہیں۔","is کو نہ چھوڑیں؛ het is dichtbij مکمل جملہ ہے۔","Het is dichtbij.","یہ قریب ہے۔","ہَت اِس دِخت بَے"],
+        ["het is ver weg","جگہ کافی دور ہو تو مکمل جواب دیں۔","ver weg دور ہے؛ dichtbij قریب ہے۔","ver weg کو دو الگ جواب نہ سمجھیں؛ دونوں مل کر دور کہتے ہیں۔","Het is ver weg.","یہ دور ہے۔","ہَت اِس فَیر وِخ"],
+        ["kunt u het op de kaart laten zien","زبانی ہدایت مشکل ہو تو نقشے پر دکھانے کی مؤدبانہ درخواست کریں۔","یہ نقشے پر دکھانے کو کہتا ہے؛ نیا نقشہ خریدنے کی درخواست نہیں۔","kunt u سے شروع کریں اور laten zien آخر میں رکھیں۔","Kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟","کُنت یو ہَت اوپ دَ کارت لا تَن زین"]
+      ]),
+      pattern:{modelDutch:"hoe kom ik bij de apotheek?",titleUrdu:"کسی جگہ تک راستہ پوچھنا",highlight:"hoe kom ik bij de apotheek",explanationUrdu:"راستہ پوچھنے کے لیے hoe kom ik bij کے بعد منزل رکھیں۔",contrastUrdu:"hoe kom ik bij راستہ پوچھتا ہے؛ het is dichtbij فاصلے کا جواب دیتا ہے۔",commonMistakeUrdu:"bij کو منزل کے بعد نہ رکھیں؛ bij کے بعد جگہ کا نام کہیں۔"},
+      prerequisiteLessonIds:["a0-transport-directions","a0-address-phone","a0-health-emergency","a1-public-transport"],prerequisiteRefs:[["a0-transport-directions","links"],["a0-transport-directions","rechts"],["a0-transport-directions","rechtdoor"],["a0-transport-directions","ga rechtdoor"],["a0-transport-directions","kaartje"],["a0-address-phone","straat"],["a0-health-emergency","apotheek"],["a1-public-transport","station"]],
+      scenarios:{kaart:["directions-recognise-map","شہر کا نقشہ پہچانیں۔"],"hoe kom ik bij de apotheek":["directions-ask-pharmacy","دواخانے تک راستہ پوچھیں۔"],plein:["directions-recognise-square","نقشے پر چوک پہچانیں۔"],dichtbij:["directions-recognise-near","قریب فاصلے کا لفظ پہچانیں۔"],"sla rechts af":["directions-turn-right","دائیں مڑنے کی ہدایت دیں۔"],"het is dichtbij":["directions-answer-near","جگہ قریب ہے۔ مکمل جواب دیں۔"],"het is ver weg":["directions-answer-far","جگہ دور ہے۔ مکمل جواب دیں۔"],"kunt u het op de kaart laten zien":["directions-request-map","راستہ نقشے پر دکھانے کی درخواست کریں۔"]}
+    },
+    "a1-post-parcel-extra": {
+      title:"Een pakket ophalen",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"پارسل نوٹس پڑھنا، وصولی کی جگہ پہچاننا، شناخت دکھانا، نہ پہنچا پارسل بتانا، اور دستخط کرنا۔",
+      seedConcepts:[["afhaalpunt","وصولی کی جگہ"],["ik wil mijn pakket ophalen","میں اپنا پارسل لینا چاہتا یا چاہتی ہوں"],["identiteitsbewijs","شناختی کاغذ"],["hier is mijn bericht","یہ میرا نوٹس ہے"],["heeft u een identiteitsbewijs?","کیا آپ کے پاس شناختی کاغذ ہے؟"],["het pakket is nog niet gekomen","پارسل ابھی نہیں آیا"],["op welk adres is het bezorgd?","یہ کس پتے پر پہنچایا گیا؟"],["ik moet hier tekenen","مجھے یہاں دستخط کرنے ہیں"]],
+      teaching:authoredA1TeachingV4([
+        ["afhaalpunt","پارسل لینے کی مقرر جگہ کو afhaalpunt کہیں۔","یہ وصولی کی جگہ ہے؛ گھر کا adres الگ ہے۔","afhaalpunt کو عام دکان یا ڈاک کے معنی میں نہ لیں۔","afhaalpunt — pakket","وصولی کی جگہ — پارسل۔","آف ہال پُنت"],
+        ["ik wil mijn pakket ophalen","کاؤنٹر پر اپنا پارسل لینے کا مقصد مکمل جملے میں بتائیں۔","ophalen وصول کرنا ہے؛ بھیجنا یا واپس کرنا نہیں۔","ophalen کو آخر میں رکھیں۔","Ik wil mijn pakket ophalen.","میں اپنا پارسل لینا چاہتا یا چاہتی ہوں۔","اِک وِل مَین پا کَت اوپ ہا لَن"],
+        ["identiteitsbewijs","پارسل لیتے وقت شناخت دکھانے والے کاغذ کو identiteitsbewijs کہیں۔","یہ شناخت ہے؛ پارسل نوٹس bericht الگ ہے۔","اس لمبے لفظ کو پتے یا عام رکنیت کارڈ کے معنی میں نہ لیں۔","identiteitsbewijs — bericht","شناختی کاغذ — نوٹس۔","اِدَنتی تَیٹس بَ وِیس"],
+        ["hier is mijn bericht","ملازم کو پارسل والا نوٹس پیش کرتے وقت یہ مکمل بات کہیں۔","یہ نوٹس دینا ہے؛ شناختی کاغذ دینا اگلا الگ قدم ہے۔","hier is ترتیب نہ بدلیں۔","Hier is mijn bericht.","یہ میرا نوٹس ہے۔","ہیر اِس مَین بَ رِخت"],
+        ["heeft u een identiteitsbewijs","ملازم کا شناختی کاغذ مانگنے والا سوال سمجھیں۔","یہ شناخت کی تصدیق ہے؛ پتے کا سوال نہیں۔","سوال میں heeft u پہلے رکھیں۔","Heeft u een identiteitsbewijs?","کیا آپ کے پاس شناختی کاغذ ہے؟","ہیفٹ یو اَن اِدَنتی تَیٹس بَ وِیس"],
+        ["het pakket is nog niet gekomen","پارسل مقرر وقت تک نہ پہنچے تو مسئلہ مکمل جملے میں بتائیں۔","یہ نہ پہنچنے کی بات ہے؛ غلط پتے کی تصدیق الگ ہے۔","nog niet کو gekomen سے پہلے رکھیں۔","Het pakket is nog niet gekomen.","پارسل ابھی نہیں آیا۔","ہَت پا کَت اِس نوخ نیت خَ کو مَن"],
+        ["op welk adres is het bezorgd","پارسل کس پتے پر پہنچا یہ پوچھیں۔","یہ ترسیل کا پتہ پوچھتا ہے؛ وصولی کی جگہ نہیں۔","op welk adres کو سوال کے شروع میں رکھیں۔","Op welk adres is het bezorgd?","یہ کس پتے پر پہنچایا گیا؟","اوپ وِلک آ درَس اِس ہَت بَ زورخت"],
+        ["ik moet hier tekenen","کاؤنٹر پر دستخط ضروری ہوں تو ہدایت سمجھیں یا اپنی ذمہ داری کہیں۔","tekenen دستخط کرنا ہے؛ شناخت دکھانا نہیں۔","tekenen کو آخر میں رکھیں۔","Ik moet hier tekenen.","مجھے یہاں دستخط کرنے ہیں۔","اِک موت ہیر تے کَ نَن"]
+      ]),
+      pattern:{modelDutch:"ik wil mijn pakket ophalen",titleUrdu:"پارسل لینے کا مقصد کہنا",highlight:"ik wil mijn pakket ophalen",explanationUrdu:"پارسل لینے کے لیے ik wil mijn pakket کے بعد ophalen رکھیں۔",contrastUrdu:"pakket ophalen وصول کرنا ہے؛ pakket is nog niet gekomen نہ پہنچنے کی شکایت ہے۔",commonMistakeUrdu:"ophalen کو pakket سے پہلے نہ رکھیں؛ اس نمونے میں فعل آخر میں ہے۔"},
+      prerequisiteLessonIds:["a0-address-phone","a1-neighbour-talk","a1-details-forms"],prerequisiteRefs:[["a0-address-phone","adres"],["a1-neighbour-talk","pakket"],["a1-details-forms","bericht"]],
+      scenarios:{afhaalpunt:["parcel-recognise-point","نوٹس میں وصولی کی جگہ پہچانیں۔"],"ik wil mijn pakket ophalen":["parcel-state-pickup","کاؤنٹر پر پارسل لینے کا مقصد کہیں۔"],identiteitsbewijs:["parcel-recognise-id","شناختی کاغذ پہچانیں۔"],"hier is mijn bericht":["parcel-show-notice","ملازم کو پارسل نوٹس دیں۔"],"heeft u een identiteitsbewijs":["parcel-hear-id-request","شناختی کاغذ مانگنے والا سوال سمجھیں۔"],"het pakket is nog niet gekomen":["parcel-report-missing","پارسل نہ پہنچنے کا مسئلہ بتائیں۔"],"op welk adres is het bezorgd":["parcel-ask-address","ترسیل کا پتہ پوچھیں۔"],"ik moet hier tekenen":["parcel-sign","دستخط کرنے کی ذمہ داری کہیں۔"]},
+      document:{stableId:"parcel-pickup-notice",sourceKey:"parcel-pickup-notice",documentKind:"parcel-pickup-notice",targetDutch:"ik wil mijn pakket ophalen",title:"afhaalpunt",labelUrdu:"پارسل وصولی کا نوٹس پڑھیں",promptUrdu:"نوٹس میں pakket اور afhaalpunt دیکھیں، پھر پارسل لینے کا مقصد بتانے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نوٹس میں afhaalpunt، bericht، اور identiteitsbewijs الگ پڑھیں، پھر کاؤنٹر پر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ ik wil mijn pakket ophalen پارسل لینے کا مقصد بتاتا ہے۔",wrongUrdu:"یہ دوسری پارسل کی بات ہے۔ ophalen یہاں پارسل وصول کرنا ہے۔",rows:[{label:"afhaalpunt",value:"afhaalpunt"},{label:"bericht",value:"hier is mijn bericht"},{label:"pakket",value:"ik wil mijn pakket ophalen"}]}
+    },
+    "a1-library-community": {
+      title:"Bibliotheek en buurthuis",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"لائبریری یا محلے کے مرکز کی جگہ، زبان کی کلاس، رکنیت، کارڈ، اور کھلنے یا بند ہونے کے اوقات پوچھنا۔",
+      seedConcepts:[["bibliotheek","لائبریری"],["ik wil Nederlands leren","میں Nederlands سیکھنا چاہتا یا چاہتی ہوں"],["buurthuis","محلے کا مرکز"],["taalles","زبان کی کلاس"],["heeft u taalles?","کیا آپ کے پاس زبان کی کلاس ہے؟"],["ik wil lid worden","میں رکن بننا چاہتا یا چاہتی ہوں"],["hoe laat is het open?","یہ کتنے بجے کھلتا ہے؟"],["vandaag is het gesloten","آج یہ بند ہے"]],
+      teaching:authoredA1TeachingV4([
+        ["bibliotheek","کتابیں لینے یا پڑھنے کی عوامی جگہ کو bibliotheek کہیں۔","یہ لائبریری ہے؛ buurthuis محلے کا مرکز ہے۔","bibliotheek کو کتاب boek کے معنی میں نہ لیں۔","bibliotheek — buurthuis","لائبریری — محلے کا مرکز۔","بی بلی او تیک"],
+        ["ik wil nederlands leren","زبان کی جگہ پر Nederlands سیکھنے کا مقصد مکمل جملے میں بتائیں۔","یہ سیکھنے کی خواہش ہے؛ کلاس کی دستیابی الگ سوال ہے۔","leren کو آخر میں رکھیں۔","Ik wil Nederlands leren.","میں Nederlands سیکھنا چاہتا یا چاہتی ہوں۔","اِک وِل نے دَر لانتس لیرَن"],
+        ["buurthuis","محلے کی کلاس یا سرگرمیوں کی جگہ کو buurthuis کہیں۔","یہ کمیونٹی مرکز ہے؛ bibliotheek کتابوں کی جگہ ہے۔","buurthuis کو پڑوسی کے گھر کے معنی میں نہ لیں۔","buurthuis — bibliotheek","محلے کا مرکز — لائبریری۔","بیورت ہاؤس"],
+        ["taalles","زبان سیکھنے کی کلاس کو taalles کہیں۔","یہ کلاس ہے؛ taal صرف زبان ہے۔","taalles کو عام کتاب یا کارڈ نہ سمجھیں۔","taalles — Nederlands leren","زبان کی کلاس — Nederlands سیکھنا۔","تال لَیس"],
+        ["heeft u taalles","ادارے سے زبان کی کلاس ہونے کی تصدیق پوچھیں۔","یہ کلاس کی دستیابی ہے؛ اوقات الگ سوال ہیں۔","ہاں یا نہیں سوال میں heeft u سے شروع کریں۔","Heeft u taalles?","کیا آپ کے پاس زبان کی کلاس ہے؟","ہیفٹ یو تال لَیس"],
+        ["ik wil lid worden","لائبریری کا رکن بننے کا مقصد مکمل جملے میں کہیں۔","lid worden رکن بننا ہے؛ صرف کارڈ لینا نہیں۔","worden کو آخر میں رکھیں۔","Ik wil lid worden.","میں رکن بننا چاہتا یا چاہتی ہوں۔","اِک وِل لِت وور دَن"],
+        ["hoe laat is het open","ادارہ کس وقت کھلتا ہے یہ پوچھیں۔","hoe laat گھڑی کا وقت پوچھتا ہے؛ vandaag is gesloten آج کی حالت ہے۔","open کو سوال کے آخر میں رکھیں۔","Hoe laat is het open?","یہ کتنے بجے کھلتا ہے؟","ہو لات اِس ہَت او پَن"],
+        ["vandaag is het gesloten","آج جگہ بند ہو تو مکمل اطلاع سمجھیں یا دیں۔","gesloten بند ہے؛ open کھلا ہے۔","vandaag کے بعد is het رکھیں۔","Vandaag is het gesloten.","آج یہ بند ہے۔","فان داخ اِس ہَت خَ سلو تَن"]
+      ]),
+      pattern:{modelDutch:"ik wil Nederlands leren",titleUrdu:"سیکھنے کا مقصد بتانا",highlight:"ik wil Nederlands leren",explanationUrdu:"زبان سیکھنے کا مقصد بتانے کے لیے ik wil کے بعد زبان اور آخر میں leren رکھیں۔",contrastUrdu:"ik wil Nederlands leren مقصد ہے؛ heeft u taalles? کلاس کی دستیابی پوچھتا ہے۔",commonMistakeUrdu:"leren کو زبان سے پہلے نہ رکھیں؛ اس سیدھے جملے میں یہ آخر میں آتا ہے۔"},
+      prerequisiteLessonIds:["a0-letters-1","a0-time-days","a1-questions","a1-directions-town"],prerequisiteRefs:[["a0-letters-1","boek"],["a0-time-days","vandaag"],["a1-questions","waar is het toilet?"],["a1-directions-town","dichtbij"]],
+      scenarios:{bibliotheek:["library-recognise-place","کتابوں کی عوامی جگہ پہچانیں۔"],"ik wil nederlands leren":["library-state-goal","زبان سیکھنے کا مقصد بتائیں۔"],buurthuis:["library-recognise-centre","محلے کا مرکز پہچانیں۔"],taalles:["library-recognise-class","زبان کی کلاس پہچانیں۔"],"heeft u taalles":["library-ask-class","زبان کی کلاس کی دستیابی پوچھیں۔"],"ik wil lid worden":["library-request-membership","رکن بننے کا مقصد کہیں۔"],"hoe laat is het open":["library-ask-hours","کھلنے کا وقت پوچھیں۔"],"vandaag is het gesloten":["library-read-closed","آج بند ہونے کی اطلاع سمجھیں۔"]},
+      document:{stableId:"library-hours-card",sourceKey:"library-hours-card",documentKind:"opening-hours-card",targetDutch:"hoe laat is het open?",title:"bibliotheek",labelUrdu:"لائبریری کے اوقات پڑھیں",promptUrdu:"کارڈ میں bibliotheek اور open دیکھیں، پھر کھلنے کا وقت پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"اوقات کارڈ میں vandaag، open، اور gesloten الگ دیکھیں، پھر مناسب سیکھی ہوئی سوال چنیں۔",correctUrdu:"درست۔ hoe laat is het open? کھلنے کا وقت پوچھتا ہے۔",wrongUrdu:"یہ دوسری ادارے کی بات ہے۔ hoe laat گھڑی کا وقت پوچھتا ہے۔",rows:[{label:"bibliotheek",value:"bibliotheek"},{label:"open",value:"hoe laat is het open?"},{label:"gesloten",value:"vandaag is het gesloten"}]}
+    },
+    "a1-safety-rules": {
+      title:"Borden en veilige plekken",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"منع، اجازت، خطرہ، محفوظ جگہ، انتظار، داخلہ، اور مدد کے عوامی نشان یا اعلان سمجھنا۔",
+      seedConcepts:[["toegestaan","اجازت ہے"],["mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا یا سکتی ہوں؟"],["gevaarlijk","خطرناک"],["veilig","محفوظ"],["het is hier verboden","یہاں منع ہے"],["u moet hier wachten","آپ کو یہاں انتظار کرنا ہے"],["de ingang is daar","داخلہ وہاں ہے"],["ik heb hulp nodig","مجھے مدد چاہیے"]],
+      teaching:authoredA1TeachingV4([
+        ["toegestaan","کسی کام کی اجازت والے نشان پر toegestaan پہچانیں۔","یہ اجازت ہے؛ verboden منع ہے۔","toegestaan کو محفوظ ہونے کے عمومی معنی میں نہ لیں۔","toegestaan — verboden","اجازت ہے — منع ہے۔","تو خَ ستان"],
+        ["mag ik hier wachten","عوامی جگہ پر یہاں انتظار کرنے کی اجازت پوچھیں۔","یہ اجازت کا سوال ہے؛ انتظار کی ہدایت نہیں۔","سوال میں mag ik پہلے اور wachten آخر میں رکھیں۔","Mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا یا سکتی ہوں؟","ماخ اِک ہیر واخ تَن"],
+        ["gevaarlijk","خطرے والے نشان یا جگہ کے لیے gevaarlijk کہیں۔","یہ خطرناک ہے؛ veilig محفوظ ہے۔","gevaarlijk کو صرف منع کے معنی میں نہ سمجھیں۔","gevaarlijk — veilig","خطرناک — محفوظ۔","خَ فار لَک"],
+        ["veilig","خطرہ نہ ہو یا جگہ محفوظ ہو تو veilig کہیں۔","یہ محفوظ ہے؛ toegestaan صرف اجازت بتاتا ہے۔","veilig کو آسان یا کھلا ہونے کے معنی میں نہ لیں۔","veilig — gevaarlijk","محفوظ — خطرناک۔","فَی لَخ"],
+        ["het is hier verboden","نشان بتائے کہ یہاں کوئی کام منع ہے تو مکمل اطلاع سمجھیں۔","یہ ممانعت ہے؛ خطرے کی وجہ ضروری نہیں۔","hier کو verboden سے پہلے رکھیں۔","Het is hier verboden.","یہاں منع ہے۔","ہَت اِس ہیر فَر بو دَن"],
+        ["u moet hier wachten","ملازم یا اعلان کی یہاں انتظار کرنے والی ہدایت سمجھیں۔","moet ضروری ہدایت ہے؛ mag ik اجازت کا سوال ہے۔","wachten کو آخر میں رکھیں۔","U moet hier wachten.","آپ کو یہاں انتظار کرنا ہے۔","یو موت ہیر واخ تَن"],
+        ["de ingang is daar","عمارت کے داخلے کی جگہ وہاں بتائیں یا سمجھیں۔","ingang داخلہ ہے؛ uitgang باہر جانے کا راستہ ہے۔","is کو نہ چھوڑیں؛ مکمل جگہ والا جملہ کہیں۔","De ingang is daar.","داخلہ وہاں ہے۔","دَ اِن خانخ اِس دار"],
+        ["ik heb hulp nodig","فوری مدد درکار ہو تو واضح مکمل جملہ کہیں۔","یہ مدد کی ضرورت ہے؛ صرف خطرے کی کیفیت نہیں۔","hulp nodig کو ساتھ رکھیں۔","Ik heb hulp nodig.","مجھے مدد چاہیے۔","اِک ہَپ ہُلپ نو دَخ"]
+      ]),
+      pattern:{modelDutch:"mag ik hier wachten?",titleUrdu:"عوامی جگہ پر اجازت پوچھنا",highlight:"mag ik hier wachten",explanationUrdu:"اجازت پوچھنے کے لیے mag ik سے شروع کریں، پھر جگہ اور آخر میں کام رکھیں۔",contrastUrdu:"mag ik اجازت پوچھتا ہے؛ u moet ضروری ہدایت دیتا ہے۔",commonMistakeUrdu:"اجازت کے سوال کو moet سے شروع نہ کریں؛ یہاں mag ik استعمال کریں۔"},
+      prerequisiteLessonIds:["a0-weather-clothing-safety","a0-transport-directions","a0-daily-actions","a1-polite-chunks"],prerequisiteRefs:[["a0-weather-clothing-safety","verboden"],["a0-weather-clothing-safety","waar is de uitgang"],["a0-transport-directions","ingang"],["a0-daily-actions","wachten"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
+      scenarios:{toegestaan:["safety-recognise-allowed","اجازت والا نشان پہچانیں۔"],"mag ik hier wachten":["safety-ask-wait","یہاں انتظار کی اجازت پوچھیں۔"],gevaarlijk:["safety-recognise-danger","خطرے والا نشان پہچانیں۔"],veilig:["safety-recognise-safe","محفوظ جگہ کا لفظ پہچانیں۔"],"het is hier verboden":["safety-read-forbidden","یہاں منع ہونے کی اطلاع سمجھیں۔"],"u moet hier wachten":["safety-follow-wait","یہاں انتظار کی ہدایت سمجھیں۔"],"de ingang is daar":["safety-locate-entrance","داخلے کی جگہ وہاں بتائیں۔"],"ik heb hulp nodig":["safety-request-help","فوری مدد کی ضرورت واضح کریں۔"]},
+      document:{stableId:"safety-signs-card",sourceKey:"safety-signs-card",documentKind:"public-safety-signs",targetDutch:"het is hier verboden",title:"verboden",labelUrdu:"عوامی جگہ کے حفاظتی نشان پڑھیں",promptUrdu:"نشان میں verboden دیکھیں، پھر یہاں منع ہونے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نشانوں میں toegestaan، gevaarlijk، veilig، اور verboden الگ پہچانیں، پھر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ het is hier verboden یہاں ممانعت بتاتا ہے۔",wrongUrdu:"یہ دوسری حفاظتی بات ہے۔ verboden کا مطلب منع ہے۔",rows:[{label:"toegestaan",value:"toegestaan"},{label:"gevaarlijk",value:"gevaarlijk"},{label:"verboden",value:"het is hier verboden"}]}
+    },
     "a1-appointments": {
       title: "Een afspraak maken of veranderen",
       unitLabel: "A1: سوال، مدد، فون اور ملاقات",
@@ -7210,6 +7310,23 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   missions: {
+    "a1-mission-post-parcel": {
+      sourceKey:"town-transport-parcel-library-safety-mission",scenarioTitleUrdu:"اسٹیشن سے شہر کے کام تک ایک مسلسل سفر",speakerUrdu:"ٹکٹ ملازم، راستہ بتانے والا، پارسل ملازم، یا لائبریری ملازم",
+      prerequisiteLessonIds:["a1-public-transport","a1-directions-town","a1-post-parcel-extra","a1-library-community","a1-safety-rules"],
+      variantTitles:["ٹرین سے پارسل لینے جانا","بس سے لائبریری اور محلے کے مرکز تک","شہر میں راستہ، اوقات، اور حفاظتی نشان"],
+      variantContexts:["روانگی بورڈ سمجھیں، راستہ پوچھیں، اور نوٹس کے ساتھ پارسل وصول کریں","بس کی منزل کی تصدیق کریں، نقشے سے لائبریری جائیں، اور کلاس کے اوقات سمجھیں","شہر میں سفر مکمل کرتے ہوئے پارسل، عوامی جگہ، اور حفاظتی ہدایت سنبھالیں"],
+      targets:[
+        {lessonId:"a1-public-transport",dutch:"ik wil een kaartje naar Utrecht",patternLessonId:"a1-public-transport"},
+        {lessonId:"a1-public-transport",dutch:"van welk spoor vertrekt de trein?"},
+        {lessonId:"a1-directions-town",dutch:"hoe kom ik bij de apotheek?",patternLessonId:"a1-directions-town"},
+        {lessonId:"a1-post-parcel-extra",dutch:"ik wil mijn pakket ophalen",patternLessonId:"a1-post-parcel-extra"},
+        {lessonId:"a1-library-community",dutch:"hoe laat is het open?"},
+        {lessonId:"a1-safety-rules",dutch:"mag ik hier wachten?",patternLessonId:"a1-safety-rules"}
+      ],
+      prerequisiteRefs:[["a0-transport-directions","station"],["a0-transport-directions","trein"],["a0-address-phone","adres"],["a1-public-transport","vertraging"],["a1-directions-town","kaart"],["a1-post-parcel-extra","afhaalpunt"],["a1-post-parcel-extra","identiteitsbewijs"],["a1-library-community","bibliotheek"],["a1-safety-rules","toegestaan"]],
+      useTypes:["situation","document-choice","build","situation","document-choice","listen-choice"],checkTypes:["meaning","document-choice","reverse","build","document-choice","listen-choice"],
+      document:{documentKind:"town-journey-card",title:"spoor",labelUrdu:"روانگی اور شہر کے کام کا کارڈ پڑھیں",promptUrdu:"کارڈ میں trein اور spoor دیکھیں، پھر پلیٹ فارم پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"سفر کارڈ میں spoor، afhaalpunt، اور bibliotheek الگ پڑھیں، پھر موجود کام کے لیے مناسب سیکھی ہوئی بات چنیں۔",rows:[{label:"spoor",value:"van welk spoor vertrekt de trein?"},{label:"afhaalpunt",value:"ik wil mijn pakket ophalen"},{label:"bibliotheek",value:"hoe laat is het open?"}]}
+    },
     "a1-food-shopping-mission": {
       sourceKey: "food-shopping-returns-payment-mission",
       scenarioTitleUrdu: "فہرست سے خریداری، کیفے، واپسی، اور ادائیگی",

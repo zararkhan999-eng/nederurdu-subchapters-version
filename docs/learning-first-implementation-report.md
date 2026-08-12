@@ -5,7 +5,7 @@ Status: **v4 foundation implemented; A0 accepted and frozen; A1 is the active re
 Authority:
 [`docs/learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
-Snapshot date: **2026-08-11**
+Snapshot date: **2026-08-12**
 
 Canonical data: `window.NEDERURDU_COURSE`, schema version `4`
 
@@ -47,34 +47,34 @@ authored replay variants.
 | --- | ---: |
 | Chapters | 3 |
 | Units | 25 |
-| Normal lessons | 96 |
+| Normal lessons | 93 |
 | Missions | 25 |
 | Adaptive unit reviews | 25 |
-| Concepts | 897 |
-| Skills | 926 |
-| Reusable patterns | 29 |
-| Internal learning runs | 331 |
-| Teaching blocks | 1,276 |
-| Active normal-lesson exercises | 5,925 |
-| Retired v3 compatibility records | 5,760 |
-| Mission records across all variants | 747 |
+| Concepts | 836 |
+| Skills | 881 |
+| Reusable patterns | 45 |
+| Internal learning runs | 283 |
+| Teaching blocks | 1,097 |
+| Active normal-lesson exercises | 5,090 |
+| Retired v3 compatibility records | 5,580 |
+| Mission records across all variants | 783 |
 
 ### Per-chapter inventory
 
 | Metric | A0 | A1 | A2 |
 | --- | ---: | ---: | ---: |
 | Units | 9 | 9 | 7 |
-| Normal lessons | 36 | 42 | 18 |
+| Normal lessons | 36 | 39 | 18 |
 | Missions | 9 | 9 | 7 |
 | Adaptive reviews | 9 | 9 | 7 |
-| Chapter-owned concepts | 345 | 353 | 199 |
-| Chapter-owned skills | 353 | 368 | 205 |
-| Patterns | 8 | 15 | 6 |
-| Learning runs | 107 | 145 | 79 |
-| Teaching blocks | 376 | 612 | 288 |
-| Active normal-lesson exercises | 1,800 | 2,657 | 1,468 |
-| Retired v3 records | 2,160 | 2,520 | 1,080 |
-| Mission records across all variants | 321 | 258 | 168 |
+| Chapter-owned concepts | 345 | 288 | 203 |
+| Chapter-owned skills | 353 | 319 | 209 |
+| Patterns | 8 | 31 | 6 |
+| Learning runs | 107 | 97 | 79 |
+| Teaching blocks | 376 | 433 | 288 |
+| Active normal-lesson exercises | 1,800 | 1,819 | 1,471 |
+| Retired v3 records | 2,160 | 2,340 | 1,080 |
+| Mission records across all variants | 321 | 294 | 168 |
 
 ## 3. Sequential chapter status
 
@@ -230,8 +230,24 @@ journey:
   browser gate passes **12/12**, the Units 1–6 regression gate passes **70/70**,
   and frozen A0 remains **96/96**.
 
-The current full A1 result is **398 errors and 0 review flags**, down by 188
-from the post-Unit-5 result. Every remaining finding belongs to Units 7–9 or
+Unit 7, transport and practical places in town, now follows one connected town
+journey:
+
+- the path is public transport → map directions → parcel pickup →
+  library/community services → public safety, followed by one unit mission;
+- duplicate `a1-shopping-transport` and `a1-bus-train-extra` nodes are retired,
+  while their useful station and train material is owned by public transport;
+- five lessons teach 42 manually reviewed new targets across ten capped runs,
+  with five complete practical patterns;
+- departure-board, parcel-notice, opening-hours, and safety-sign documents are
+  taught and recognised before their formats appear in checks or the mission;
+- `a1-mission-post-parcel` has three authored variants with six Use and six
+  Independent Check tasks covering every Unit 7 lesson strand; and
+- the exact Unit 7 audit slice reports **0 findings**, its focused browser gate
+  passes **12/12**, and the Units 1–7 regression gate passes **82/82**.
+
+The current full A1 result is **193 errors and 0 review flags**, down by 205
+from the post-Unit-6 result. Every remaining finding belongs to Units 8–9 or
 the still-unwritten chapter completion mission. A1 as a whole is not accepted
 or frozen.
 
@@ -242,7 +258,7 @@ seven adaptive reviews exist. Grammar lessons are placed under practical
 situations rather than a grammar-first opening.
 
 A2 has not entered its permitted authoring and acceptance cycle. A diagnostic
-strict audit currently reports **379 errors and 1 review flag**. Practical
+strict audit currently reports **387 errors and 1 review flag**. Practical
 documents, concept-specific guidance, Use situations, option explanations, and
 completion-mission evidence remain future A2 work after A1 is frozen.
 
@@ -305,6 +321,14 @@ Manual browser review confirmed:
   mission exposed one learned target from every strand and remained locked
   until practice, and phone, tablet, and desktop widths had no horizontal
   overflow. The final console review contained no warnings or errors.
+- A1 Unit 7 was manually reviewed from the expanded chapter map through the
+  parcel lesson Preview, unscored Urdu-first teaching and pattern cards,
+  supported recognition, and the connected mission Preview. The map showed
+  five focused lessons plus one mission in the binding order, both duplicate
+  transport nodes were absent, and the mission stayed locked until all five
+  lesson strands were practised. The reviewed desktop surfaces had no
+  horizontal overflow; the focused browser suite also verifies the same
+  teaching and mission surfaces at phone, tablet, and desktop widths.
 
 Focused automated checks cover migration, run prerequisites, adaptive-review
 filtering, selected-distractor explanations, correction loops, mastery
@@ -328,23 +352,23 @@ gate until those chapters reach their own permitted acceptance cycles.
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public` after the A1 Unit 6 authoring batch. The
+  `android/app/src/main/assets/public` after the A1 Unit 7 authoring batch. The
   Android source assets have the same course, app-runtime, and service-worker
   hashes as the web source.
-- The offline cache is `nederurdu-v66-learning-first-a1-unit6`.
-- The Unit 6 native build is pending. Java 17 and Android command-line tools
+- The offline cache is `nederurdu-v67-learning-first-a1-unit7`.
+- The Unit 7 native build is pending. Java 17 and Android command-line tools
   were restored, but Google requires the SDK license to be accepted by the
   user before API 35 and its build tools can be installed.
-- Last successfully built APK (Unit 2, not the current Unit 6 package):
+- Last successfully built APK (Unit 2, not the current Unit 7 package):
   `android/app/build/outputs/apk/debug/app-debug.apk`
 - Last APK SHA-256:
   `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
-- Synchronized Unit 6 course-data SHA-256:
-  `5039f998e52ae6e307b1c61d9b0b96097b0f2bd7833667f5529b5f4f3da18a5e`
-- Synchronized Unit 6 app runtime SHA-256:
+- Synchronized Unit 7 course-data SHA-256:
+  `480d30ac012dd04cdc66c24fbf4cd0ab2c4190aa92695c79b86d1ccabb16949d`
+- Synchronized Unit 7 app runtime SHA-256:
   `bb3c8cc20b87c855fa26ad8d834fdad216b9c564714ad0b70f17e29e2a4dcbd4`
-- Synchronized Unit 6 service-worker SHA-256:
-  `6c6fca5729475c99fe6df4099782a4923473f38be9b678f1741cd8398a75cf8e`
+- Synchronized Unit 7 service-worker SHA-256:
+  `40039c2e50a170842570663caca7b817c2285d2cd7b9d4372a9734bc70642232`
 - In the last installed acceptance build, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
   `migratedFrom: nederurdu-progress-v3`, retained XP, practice day, settings,
@@ -365,25 +389,25 @@ gate until those chapters reach their own permitted acceptance cycles.
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
 | Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Units 1–6 passed; Units 7–9 pending | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–6: 0 local findings; full A1: 398 errors / 0 flags** | 379 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Units 1–6 content passed; later units blocked | Blocked |
-| Browser phase journey | Representative path passed | Unit 6 **12/12**; Units 1–6 regression **70/70**; later units blocked | Blocked |
+| Urdu-first teaching records | Passed semantic review | Units 1–7 passed; Units 8–9 pending | Not accepted |
+| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–7: 0 local findings; full A1: 193 errors / 0 flags** | 387 errors / 1 flag |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–7 content passed; later units blocked | Blocked |
+| Browser phase journey | Representative path passed | Unit 7 **12/12**; Units 1–7 regression **82/82**; later units blocked | Blocked |
 | Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
-| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–6 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–7 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
 | Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
 | Regular and slow audio | Android native requests passed | Blocked | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Unit 6 web/source-asset hashes match; APK pending | Shared package |
+| Android asset parity | Passed | Unit 7 web/source-asset hashes match; APK pending | Shared package |
 | Native debug build | Passed | Pending user acceptance of the Google SDK license | Shared package |
 | Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. Rebuild A1 Unit 7, transport and practical places in town, using the same
-   authored teaching, dependency, document, mission, and focused-test gate now
-   proven by Units 1–6.
-2. Continue Units 8–9 strictly in the recorded inventory order.
+1. Rebuild A1 Unit 8, body and health, using the same authored teaching,
+   dependency, document, mission, and focused-test gate now proven by Units
+   1–7.
+2. Continue Unit 9 strictly in the recorded inventory order.
 3. Add the separate chapter-wide A1 completion mission after all unit missions.
 4. Audit the complete generated A1 chapter to zero errors and zero review flags,
    then

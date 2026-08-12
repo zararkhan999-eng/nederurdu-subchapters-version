@@ -11,6 +11,7 @@
     "test:a1:unit4": "playwright test --workers=1 --grep \"A1 Unit 4\"",
     "test:a1:unit5": "playwright test --workers=1 --grep \"A1 Unit 5\"",
     "test:a1:unit6": "playwright test --workers=1 --grep \"A1 Unit 6\"",
+    "test:a1:unit7": "playwright test --workers=1 --grep \"A1 Unit 7\"",
     "test:ui": "playwright test --ui",
     "android:debug": "./gradlew :app:assembleDebug",
     "android:bundle": "./gradlew :app:bundleRelease",
