@@ -40,19 +40,16 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, and Unit 7 have since been authored,
+1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, and Unit 8 have since been authored,
 and each passes its exact audit slice with **0 findings**. The current complete
-A1 result is **193 errors and 0 review flags**, down from 398 after Unit 6. All
-remaining findings belong to Units 8–9 or the future chapter completion
+A1 result is **135 errors and 0 review flags**, down from 193 after Unit 7. All
+remaining findings belong to Unit 9 or the future chapter completion
 mission.
 
-After Unit 7 merged and retired the two duplicate transport nodes, the current
-A1 totals are 288 chapter-owned concepts, 319 chapter-owned skills, 31
-patterns, 97 runs, 433 teaching blocks, 1,819 normal-lesson exercises, and 294
-mission records. The chapter path now has **39 normal lessons and 9 unit
-missions**. Unit 7 contributes five focused lessons, one connected capstone,
-42 manually reviewed new targets, ten capped runs, five practical patterns,
-and four taught document formats.
+After Unit 8 retired the mixed health/pharmacy node, the current A1 totals are
+271 chapter-owned concepts, 305 chapter-owned skills, 34 patterns, 88 runs,
+396 teaching blocks, 1,654 normal-lesson exercises, and 306 mission records.
+The chapter path now has **38 normal lessons and 9 unit missions**.
 
 ### Baseline audit error taxonomy
 
@@ -280,6 +277,17 @@ Required order: appointment → symptoms → medicine instructions.
 | `a1-pharmacy-medicine` | **Remain and absorb** medicine, dosage, and allergy material. |
 | `a1-mission-doctor` | **Remain but fully author** across appointment, symptom report, advice, and medicine-label reading. |
 
+Implementation checkpoint: **completed and locally clean**. The mixed
+`a1-health-pharmacy` node is retired, leaving huisarts appointment → symptoms
+→ pharmacy/medicine → mission. The three focused lessons contain 24 genuinely
+new, manually reviewed targets across seven capped runs with three complete
+practical patterns. A huisarts appointment card and medicine label are taught
+and recognised before document reading appears in checks or the mission. The
+mission has three authored variants, each with six Use and six Independent
+Check tasks covering all three lesson strands. The exact Unit 8 audit slice has
+0 findings, its focused desktop/mobile gate passes 12/12, and the combined
+Units 1–8 regression gate passes 94/94.
+
 ### Unit 9 — Work and school messages
 
 Required order: message basics → shared absence formula → school contact →
@@ -324,9 +332,9 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–5 are complete, including Unit 7. Unit 8 is the
-next permitted authoring batch; Unit 9 and the completion mission remain
-blocked behind that sequence.
+Current checkpoint: steps 1–6 are complete through Unit 8. Unit 9 is the next
+permitted authoring batch; the completion mission remains blocked behind that
+sequence.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

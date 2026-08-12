@@ -4227,7 +4227,7 @@ const a1Subchapters = [
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments", "a1-health-pharmacy", ...a1Expanded("a1-pharmacy-medicine", "a1-doctor-symptoms"), "a1-mission-doctor"]
+    lessonIds: ["a1-health-appointments", "a1-doctor-symptoms", "a1-pharmacy-medicine", "a1-mission-doctor"]
   },
   {
     id: "a1-work-school-messages",
@@ -4707,6 +4707,7 @@ retirePathLessonV4(a1Lessons, "a1-questions-revision");
 retirePathLessonV4(a1Lessons, "a1-home-neighbours");
 retirePathLessonV4(a1Lessons, "a1-shopping-transport");
 retirePathLessonV4(a1Lessons, "a1-bus-train-extra");
+retirePathLessonV4(a1Lessons, "a1-health-pharmacy");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -4721,7 +4722,8 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-questions-revision",
       "a1-home-neighbours",
       "a1-shopping-transport",
-      "a1-bus-train-extra"
+      "a1-bus-train-extra",
+      "a1-health-pharmacy"
     ].includes(lessonId)
   ));
 }
@@ -5171,6 +5173,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-going-out-transport": {
       outcomeUrdu: "بس یا ٹرین کا سفر سمجھنا، نقشے سے راستہ پوچھنا، پارسل لینا، لائبریری کی معلومات پڑھنا، اور عوامی جگہ کے حفاظتی نشان سمجھنا۔",
       practiceUrdu: "پہلے روانگی بورڈ، نقشہ، پارسل نوٹس، اوقات، اور حفاظتی نشان سمجھیں، پھر شہر کے ایک مسلسل سفر میں وہی سیکھی ہوئی زبان استعمال کریں۔"
+    },
+    "a1-body-health": {
+      outcomeUrdu: "huisarts سے ملاقات لینا، اپنی علامت اور مدت واضح کرنا، اور دوا کے لیبل سے مقدار اور استعمال سمجھنا۔",
+      practiceUrdu: "پہلے ملاقات، علامات، ڈاکٹر کے سوال، نسخے، اور دوا کی ہدایات سمجھیں، پھر ایک مسلسل صحت کی صورت میں صرف سیکھی ہوئی زبان استعمال کریں۔"
     }
   },
   lessons: {
@@ -7177,6 +7183,63 @@ const a1AuthoredCurriculumV4 = {
       scenarios:{toegestaan:["safety-recognise-allowed","اجازت والا نشان پہچانیں۔"],"mag ik hier wachten":["safety-ask-wait","یہاں انتظار کی اجازت پوچھیں۔"],gevaarlijk:["safety-recognise-danger","خطرے والا نشان پہچانیں۔"],veilig:["safety-recognise-safe","محفوظ جگہ کا لفظ پہچانیں۔"],"het is hier verboden":["safety-read-forbidden","یہاں منع ہونے کی اطلاع سمجھیں۔"],"u moet hier wachten":["safety-follow-wait","یہاں انتظار کی ہدایت سمجھیں۔"],"de ingang is daar":["safety-locate-entrance","داخلے کی جگہ وہاں بتائیں۔"],"ik heb hulp nodig":["safety-request-help","فوری مدد کی ضرورت واضح کریں۔"]},
       document:{stableId:"safety-signs-card",sourceKey:"safety-signs-card",documentKind:"public-safety-signs",targetDutch:"het is hier verboden",title:"verboden",labelUrdu:"عوامی جگہ کے حفاظتی نشان پڑھیں",promptUrdu:"نشان میں verboden دیکھیں، پھر یہاں منع ہونے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نشانوں میں toegestaan، gevaarlijk، veilig، اور verboden الگ پہچانیں، پھر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ het is hier verboden یہاں ممانعت بتاتا ہے۔",wrongUrdu:"یہ دوسری حفاظتی بات ہے۔ verboden کا مطلب منع ہے۔",rows:[{label:"toegestaan",value:"toegestaan"},{label:"gevaarlijk",value:"gevaarlijk"},{label:"verboden",value:"het is hier verboden"}]}
     },
+    "a1-health-appointments": {
+      title:"Een afspraak bij de huisarts",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"huisarts کے استقبالی ملازم سے ملاقات مانگنا، ذاتی معلومات کی تصدیق کرنا، فوری ضرورت بتانا، اور مناسب وقت یا واپسی کال طے کرنا۔",
+      seedConcepts:[["huisarts","گھر کا ڈاکٹر"],["assistente","ڈاکٹر کی استقبالی ملازمہ"],["ik wil een afspraak bij de huisarts","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں"],["wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟"],["wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟"],["ik kan morgen niet komen","میں کل نہیں آ سکتا یا سکتی"],["is het dringend?","کیا یہ فوری ہے؟"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟"]],
+      teaching:authoredA1TeachingV4([
+        ["huisarts","عام صحت کے مسئلے کے لیے پہلے گھر کے ڈاکٹر کو huisarts کہیں۔","یہ عام ڈاکٹر ہے؛ tandarts دانتوں کا ڈاکٹر ہے۔","huisarts کو ہسپتال یا دواخانے کے معنی میں نہ لیں۔","huisarts — dokter","گھر کا ڈاکٹر — ڈاکٹر۔","ہاؤس آرتس"],
+        ["assistente","huisarts کی کال سنبھالنے اور وقت دینے والی ملازمہ کو assistente کہیں۔","یہ استقبالی ملازمہ ہے؛ خود huisarts نہیں۔","assistente سے بات کرتے ہوئے اسے dokter نہ کہیں۔","assistente — huisarts","استقبالی ملازمہ — گھر کا ڈاکٹر۔","آ سِس تَنتَ"],
+        ["ik wil een afspraak bij de huisarts","فون پر huisarts سے ملاقات مانگنے کا مقصد مکمل جملے میں کہیں۔","bij de huisarts جگہ بتاتا ہے؛ صرف afspraak عام ملاقات ہو سکتی ہے۔","huisarts سے پہلے bij de رکھیں اور ملاقات کو een afspraak کہیں۔","Ik wil een afspraak bij de huisarts.","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں۔","اِک وِل اَن آف سپراک بَے دَ ہاؤس آرتس"],
+        ["wat is uw geboortedatum","استقبالی ملازم تاریخ پیدائش کی تصدیق کے لیے یہ سوال پوچھتا ہے۔","geboortedatum تاریخ پیدائش ہے؛ afspraak کی تاریخ نہیں۔","uw ذاتی معلومات کے احترام والا لفظ ہے؛ اسے دن کے نام سے نہ بدلیں۔","Wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟","وات اِس یو خَ بور تَ دا تُم"],
+        ["wanneer kan ik komen","ملاقات ملنے کا دن یا وقت پوچھنے کے لیے یہ مکمل سوال کہیں۔","wanneer وقت یا دن پوچھتا ہے؛ waar جگہ پوچھتا ہے۔","wanneer سے شروع کریں اور komen آخر میں رکھیں۔","Wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟","وا نیر کان اِک کو مَن"],
+        ["ik kan morgen niet komen","پیش کیا گیا کل کا وقت ممکن نہ ہو تو واضح اطلاع دیں۔","یہ عدم دستیابی ہے؛ ملاقات خود بخود منسوخ نہیں ہوتی۔","niet کو komen سے پہلے رکھیں۔","Ik kan morgen niet komen.","میں کل نہیں آ سکتا یا سکتی۔","اِک کان مور خَن نیت کو مَن"],
+        ["is het dringend","استقبالی ملازم پوچھتا ہے کہ مسئلہ فوری ہے یا انتظار کر سکتا ہے۔","dringend فوری ضرورت ہے؛ عام afspraak کا وقت نہیں۔","یہ ہاں یا نہیں سوال ہے؛ is پہلے رکھیں۔","Is het dringend?","کیا یہ فوری ہے؟","اِس ہَت درِن خَنت"],
+        ["kunt u mij terugbellen","فون پر جواب فوراً نہ ملے تو مؤدبانہ واپسی کال مانگیں۔","terugbellen واپس فون کرنا ہے؛ afspraak بنانا نہیں۔","kunt u سے شروع کریں اور terugbellen آخر میں رکھیں۔","Kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","کُنت یو مَے تَ رُخ بَ لَن"]
+      ]),
+      pattern:{modelDutch:"ik wil een afspraak bij de huisarts",titleUrdu:"ڈاکٹر سے ملاقات کا مقصد کہنا",highlight:"ik wil een afspraak bij de huisarts",explanationUrdu:"ملاقات مانگنے کے لیے ik wil een afspraak کے بعد bij de huisarts رکھیں۔",contrastUrdu:"یہ huisarts سے نئی ملاقات مانگتا ہے؛ wanneer kan ik komen? ممکن وقت پوچھتا ہے۔",commonMistakeUrdu:"huisarts سے پہلے bij de نہ چھوڑیں؛ مکمل جگہ والی بات کہیں۔"},
+      prerequisiteLessonIds:["a0-date-appointment","a0-health-emergency","a0-spelling-personal-details","a1-phone-calls","a1-appointments"],prerequisiteRefs:[["a0-date-appointment","afspraak"],["a0-health-emergency","dokter"],["a0-spelling-personal-details","geboortedatum"],["a1-phone-calls","kunt u later terugbellen?"],["a1-appointments","ik wil een afspraak maken"]],
+      scenarios:{huisarts:["health-appointment-recognise-gp","عام صحت کے مسئلے کے لیے درست ڈاکٹر پہچانیں۔"],assistente:["health-appointment-recognise-assistant","فون سنبھالنے والی huisarts کی ملازمہ پہچانیں۔"],"ik wil een afspraak bij de huisarts":["health-appointment-request","huisarts کو فون کر کے ملاقات کا مقصد کہیں۔"],"wat is uw geboortedatum":["health-appointment-hear-dob","استقبالی ملازم ذاتی معلومات کی تصدیق پوچھتا ہے۔ سوال سمجھیں۔"],"wanneer kan ik komen":["health-appointment-ask-when","ملاقات کے ممکن دن یا وقت کے بارے میں پوچھیں۔"],"ik kan morgen niet komen":["health-appointment-decline-tomorrow","کل کا پیش کیا وقت ممکن نہیں۔ واضح اطلاع دیں۔"],"is het dringend":["health-appointment-urgency","استقبالی ملازم پوچھتا ہے کہ مسئلہ فوری ہے۔ سوال پہچانیں۔"],"kunt u mij terugbellen":["health-appointment-callback","ڈاکٹر ابھی دستیاب نہیں۔ واپسی کال کی درخواست کریں۔"]},
+      document:{stableId:"health-appointment-confirmation",sourceKey:"health-appointment-card",documentKind:"doctor-appointment-card",targetDutch:"wanneer kan ik komen?",title:"Huisarts",labelUrdu:"huisarts کی ملاقات کا کارڈ پڑھیں",promptUrdu:"کارڈ میں huisarts، morgen، اور 10:30 دیکھیں، پھر آنے کا ممکن وقت پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"ملاقات کارڈ میں huisarts، afspraak، اور morgen الگ پڑھیں، پھر وقت پوچھنے والی سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ wanneer kan ik komen? آنے کا ممکن دن یا وقت پوچھتا ہے۔",wrongUrdu:"یہ دوسری ملاقات کی بات ہے۔ wanneer والا سوال ممکن وقت پوچھتا ہے۔",rows:[{label:"huisarts",value:"afspraak"},{label:"afspraak",value:"morgen"},{label:"wanneer kan ik komen?",value:"10:30"}]}
+    },
+    "a1-doctor-symptoms": {
+      title:"Klachten vertellen aan de huisarts",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"درد، بخار، کھانسی اور مدت واضح کرنا، ڈاکٹر کے بنیادی سوال سمجھنا، اور آرام کی ہدایت سننا۔",
+      seedConcepts:[["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے"],["hoofd","سر"],["buik","پیٹ"],["hoofdpijn","سر درد"],["buikpijn","پیٹ درد"],["koorts","بخار"],["hoesten","کھانسی کرنا"],["ik heb sinds gisteren koorts","مجھے کل سے بخار ہے"],["waar doet het pijn?","کہاں درد ہے؟"],["hoe lang bent u ziek?","آپ کب سے بیمار ہیں؟"],["u moet rust nemen","آپ کو آرام کرنا چاہیے"]],
+      teaching:authoredA1TeachingV4([
+        ["hoofd","جسم کے سر والے حصے کو hoofd کہیں۔","یہ سر ہے؛ buik پیٹ ہے۔","hoofd کو سر درد کی پوری علامت hoofdpijn نہ سمجھیں۔","hoofd — buik","سر — پیٹ۔","ہوفٹ"],
+        ["buik","جسم کے پیٹ والے حصے کو buik کہیں۔","یہ پیٹ ہے؛ hoofd سر ہے۔","buik کو پیٹ درد کی پوری علامت buikpijn نہ سمجھیں۔","buik — hoofd","پیٹ — سر۔","باؤک"],
+        ["hoofdpijn","سر میں درد ہو تو علامت کے نام کے طور پر hoofdpijn کہیں۔","یہ سر درد ہے؛ buikpijn پیٹ درد ہے۔","hoofdpijn کو عام تمام درد کے معنی میں نہ لیں۔","Ik heb hoofdpijn.","میرے سر میں درد ہے۔","ہوفٹ پَین"],
+        ["buikpijn","پیٹ میں درد ہو تو buikpijn کہیں۔","یہ پیٹ درد ہے؛ hoofdpijn سر درد ہے۔","buik اور hoofd کی جگہ نہ بدلیں۔","Ik heb buikpijn.","میرے پیٹ میں درد ہے۔","باؤک پَین"],
+        ["koorts","جسم کا درجہ حرارت زیادہ ہونے کی علامت کو koorts کہیں۔","یہ بخار ہے؛ hoesten کھانسی کا عمل ہے۔","koorts کو درد کی جگہ کے معنی میں نہ لیں۔","Ik heb koorts.","مجھے بخار ہے۔","کورتس"],
+        ["hoesten","کھانسی آنے کے عمل کے لیے hoesten کہیں۔","یہ عمل ہے؛ koorts بخار کی حالت ہے۔","hoesten کو دوا یا آرام کے معنی میں نہ لیں۔","hoesten — koorts","کھانسی کرنا — بخار۔","ہوس تَن"],
+        ["ik heb pijn in mijn buik","ڈاکٹر کو درد کی جگہ پیٹ بتانے کے لیے مکمل جملہ کہیں۔","pijn in mijn buik جگہ واضح کرتا ہے؛ صرف pijn مبہم ہے۔","in mijn buik کو pijn کے بعد رکھیں۔","Ik heb pijn in mijn buik.","میرے پیٹ میں درد ہے۔","اِک ہَپ پَین اِن مَین باؤک"],
+        ["ik heb sinds gisteren koorts","بخار کب سے ہے بتانے کے لیے sinds gisteren شامل کریں۔","یہ کل سے جاری بخار ہے؛ آج شروع ہونے کی بات نہیں۔","sinds gisteren کو koorts سے پہلے رکھیں۔","Ik heb sinds gisteren koorts.","مجھے کل سے بخار ہے۔","اِک ہَپ سِنتس خِس تَرَن کورتس"],
+        ["waar doet het pijn","ڈاکٹر درد کی جگہ پوچھنے کے لیے یہ سوال کہتا ہے۔","waar جگہ پوچھتا ہے؛ hoe lang مدت پوچھتا ہے۔","جواب میں جسم کی جگہ بتائیں، وقت نہیں۔","Waar doet het pijn?","کہاں درد ہے؟","وار دوت ہَت پَین"],
+        ["hoe lang bent u ziek","ڈاکٹر بیماری کی مدت پوچھنے کے لیے یہ سوال کہتا ہے۔","hoe lang مدت ہے؛ waar درد کی جگہ ہے۔","جواب میں sinds gisteren جیسی مدت دیں۔","Hoe lang bent u ziek?","آپ کب سے بیمار ہیں؟","ہو لانخ بَنت یو زیک"],
+        ["u moet rust nemen","ڈاکٹر آرام کرنے کی ضروری ہدایت اس مکمل جملے میں دیتا ہے۔","یہ مشورہ ہے؛ دوا کی مقدار نہیں۔","rust nemen کو آخر میں ساتھ رکھیں۔","U moet rust nemen.","آپ کو آرام کرنا چاہیے۔","یو موت رُست نے مَن"]
+      ]),
+      pattern:{modelDutch:"ik heb pijn in mijn buik",titleUrdu:"درد کی جگہ واضح کرنا",highlight:"ik heb pijn in mijn buik",explanationUrdu:"درد بتانے کے لیے ik heb pijn in mijn کے بعد جسم کی جگہ رکھیں۔",contrastUrdu:"pijn in mijn buik جگہ بتاتا ہے؛ sinds gisteren koorts مدت بتاتا ہے۔",commonMistakeUrdu:"جسم کی جگہ سے پہلے in mijn نہ چھوڑیں۔"},
+      prerequisiteLessonIds:["a0-health-emergency","a0-time-days","a1-health-appointments"],prerequisiteRefs:[["a0-health-emergency","ik ben ziek"],["a0-health-emergency","ik heb pijn"],["a0-time-days","gisteren"],["a1-health-appointments","huisarts"]],
+      scenarios:{hoofd:["symptom-recognise-head","جسم میں سر والا حصہ پہچانیں۔"],buik:["symptom-recognise-belly","جسم میں پیٹ والا حصہ پہچانیں۔"],hoofdpijn:["symptom-recognise-headache","علامت کی فہرست میں سر درد پہچانیں۔"],buikpijn:["symptom-recognise-stomachache","علامت کی فہرست میں پیٹ درد پہچانیں۔"],koorts:["symptom-recognise-fever","درجہ حرارت زیادہ ہے۔ بخار کا لفظ پہچانیں۔"],hoesten:["symptom-recognise-cough","بار بار کھانسی آنے کا عمل پہچانیں۔"],"ik heb pijn in mijn buik":["symptom-report-location","huisarts کو پیٹ میں درد کی جگہ واضح کریں۔"],"ik heb sinds gisteren koorts":["symptom-report-duration","huisarts کو کل سے بخار ہونے کی مدت بتائیں۔"],"waar doet het pijn":["symptom-hear-location-question","ڈاکٹر درد کی جگہ پوچھتا ہے۔ سوال سمجھیں۔"],"hoe lang bent u ziek":["symptom-hear-duration-question","ڈاکٹر بیماری کی مدت پوچھتا ہے۔ سوال سمجھیں۔"],"u moet rust nemen":["symptom-follow-rest","ڈاکٹر آرام کرنے کی ہدایت دیتا ہے۔ اسے سمجھیں۔"]}
+    },
+    "a1-pharmacy-medicine": {
+      title:"Medicijnen bij de apotheek",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"دواخانے میں دوا یا درد کی چیز مانگنا، نسخہ اور حساسیت بتانا، اور لیبل سے مقدار، وقت اور حفاظتی ہدایت سمجھنا۔",
+      seedConcepts:[["hoe vaak moet ik dit nemen?","مجھے یہ کتنی بار لینا ہے؟"],["apotheek","دواخانہ"],["medicijn","دوا"],["recept","نسخہ"],["allergisch","حساسیت ہونا"],["heeft u iets tegen de pijn?","کیا آپ کے پاس درد کی کوئی دوا ہے؟"],["twee keer per dag","دن میں دو بار"],["voor of na het eten?","کھانے سے پہلے یا بعد؟"],["lees de bijsluiter","دوا کی معلومات والا پرچہ پڑھیں"]],
+      teaching:authoredA1TeachingV4([
+        ["apotheek","دوا لینے یا نسخہ دینے والی جگہ کو apotheek کہیں۔","یہ دواخانہ ہے؛ huisarts ڈاکٹر ہے۔","apotheek کو ڈاکٹر کی ملاقات کے معنی میں نہ لیں۔","Ik ga naar de apotheek.","میں دواخانے جاتا یا جاتی ہوں۔","آ پو تیک"],
+        ["medicijn","بیماری یا درد کے علاج والی چیز کو medicijn کہیں۔","یہ دوا ہے؛ recept ڈاکٹر کا نسخہ ہے۔","medicijn کو ہدایت کے پرچے کے معنی میں نہ لیں۔","Dit medicijn is voor pijn.","یہ دوا درد کے لیے ہے۔","مے دِ سَین"],
+        ["recept","ڈاکٹر کی لکھی دوا کی پرچی کو recept کہیں۔","یہ نسخہ ہے؛ bon خریداری کی رسید ہے۔","recept کو کھانے کی ترکیب یا رسید کے معنی میں نہ لیں۔","recept — medicijn","نسخہ — دوا۔","رَ سَپٹ"],
+        ["allergisch","کسی دوا سے حساسیت ہو تو allergisch کہیں۔","یہ حساسیت ہے؛ عام درد یا بخار نہیں۔","دوا دینے سے پہلے allergisch کی بات واضح کریں۔","allergisch — medicijn","حساسیت — دوا۔","آ لَر خِس"],
+        ["heeft u iets tegen de pijn","دواخانے میں درد کے لیے کوئی دوا مؤدبانہ سوال میں مانگیں۔","tegen de pijn مقصد ہے؛ recept پیش کرنا الگ بات ہے۔","heeft u سے شروع کریں اور tegen de pijn آخر میں رکھیں۔","Heeft u iets tegen de pijn?","کیا آپ کے پاس درد کی کوئی دوا ہے؟","ہیفٹ یو ایتس تے خَن دَ پَین"],
+        ["hoe vaak moet ik dit nemen","دوا کتنی بار لینی ہے یہ واضح سوال میں پوچھیں۔","hoe vaak تعداد پوچھتا ہے؛ voor of na وقت پوچھتا ہے۔","nemen کو سوال کے آخر میں رکھیں۔","Hoe vaak moet ik dit nemen?","مجھے یہ کتنی بار لینا ہے؟","ہو فاک موت اِک دِت نے مَن"],
+        ["twee keer per dag","لیبل پر دن میں دو خوراکوں کی ہدایت کو یہ فقرہ بتاتا ہے۔","یہ تعداد ہے؛ کھانے سے پہلے یا بعد کا وقت نہیں۔","per dag کو ساتھ رکھیں؛ صرف twee keer مبہم ہے۔","Twee keer per dag.","دن میں دو بار۔","توے کیر پَر داخ"],
+        ["voor of na het eten","دوا کھانے سے پہلے یا بعد لینی ہے یہ پوچھیں۔","یہ خوراک کا وقت ہے؛ کتنی بار کے لیے hoe vaak ہے۔","voor اور na کو الٹ نہ سمجھیں۔","Voor of na het eten?","کھانے سے پہلے یا بعد؟","فور اوف نا ہَت اے تَن"],
+        ["lees de bijsluiter","دوا کے ساتھ معلومات اور احتیاط والا پرچہ پڑھنے کی ہدایت سمجھیں۔","bijsluiter معلومات کا پرچہ ہے؛ recept دوا کا نسخہ ہے۔","lees ہدایت ہے؛ اسے سوال نہ سمجھیں۔","Lees de bijsluiter.","دوا کی معلومات والا پرچہ پڑھیں۔","لےس دَ بَے سْلاؤ تَر"]
+      ]),
+      pattern:{modelDutch:"hoe vaak moet ik dit nemen?",titleUrdu:"دوا کی تعداد پوچھنا",highlight:"hoe vaak moet ik dit nemen",explanationUrdu:"کتنی بار پوچھنے کے لیے hoe vaak سے شروع کریں، پھر moet ik dit اور آخر میں nemen رکھیں۔",contrastUrdu:"hoe vaak تعداد پوچھتا ہے؛ voor of na het eten خوراک کا وقت پوچھتا ہے۔",commonMistakeUrdu:"hoe vaak کے جواب میں دن یا گھڑی نہیں؛ twee keer per dag جیسی تعداد دیں۔"},
+      prerequisiteLessonIds:["a0-health-emergency","a0-food-drink","a0-numbers-0-10","a1-doctor-symptoms"],prerequisiteRefs:[["a0-health-emergency","medicijn"],["a0-health-emergency","apotheek"],["a0-food-drink","eten"],["a0-numbers-0-10","twee"],["a1-doctor-symptoms","u moet rust nemen"]],
+      scenarios:{apotheek:["medicine-recognise-pharmacy","دوا لینے والی جگہ پہچانیں۔"],medicijn:["medicine-recognise-drug","درد کے علاج والی چیز پہچانیں۔"],recept:["medicine-present-prescription","ڈاکٹر کی لکھی دوا کی پرچی پہچانیں۔"],allergisch:["medicine-state-allergy","دوا دینے سے پہلے حساسیت کا لفظ پہچانیں۔"],"heeft u iets tegen de pijn":["medicine-request-pain-relief","دواخانے میں درد کے لیے دوا مانگیں۔"],"hoe vaak moet ik dit nemen":["medicine-ask-frequency","دوا کتنی بار لینی ہے پوچھیں۔"],"twee keer per dag":["medicine-read-frequency","لیبل پر دن میں دو بار کی مقدار سمجھیں۔"],"voor of na het eten":["medicine-ask-meal-time","دوا کھانے سے پہلے یا بعد لینی ہے پوچھیں۔"],"lees de bijsluiter":["medicine-follow-leaflet","دوا کی معلومات والا پرچہ پڑھنے کی ہدایت سمجھیں۔"]},
+      document:{stableId:"medicine-read-label",sourceKey:"medicine-dose-label",documentKind:"medicine-label",targetDutch:"twee keer per dag",title:"Medicijn",labelUrdu:"دوا کا لیبل پڑھیں",promptUrdu:"لیبل میں twee keer per dag دیکھیں، پھر خوراک کی درست اردو ہدایت منتخب کریں۔",instructionUrdu:"دوا کے لیبل میں twee keer per dag، voor of na het eten، اور lees de bijsluiter الگ پڑھیں، پھر مقدار والی سیکھی ہوئی بات کا مطلب چنیں۔",correctUrdu:"درست۔ twee keer per dag کا مطلب دن میں دو بار ہے۔",wrongUrdu:"یہ دوسری دوا کی ہدایت ہے۔ twee keer مقدار اور per dag روزانہ کی مدت بتاتا ہے۔",rows:[{label:"twee keer per dag",value:"twee keer per dag"},{label:"voor of na het eten?",value:"na het eten"},{label:"lees de bijsluiter",value:"lees de bijsluiter"}]}
+    },
     "a1-appointments": {
       title: "Een afspraak maken of veranderen",
       unitLabel: "A1: سوال، مدد، فون اور ملاقات",
@@ -7310,6 +7373,23 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   missions: {
+    "a1-mission-doctor": {
+      sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"huisarts کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"huisarts، dokter، یا apotheek کا ملازم",
+      prerequisiteLessonIds:["a1-health-appointments","a1-doctor-symptoms","a1-pharmacy-medicine"],
+      variantTitles:["huisarts کو فون اور ملاقات","ڈاکٹر کو علامت اور مدت بتانا","نسخہ، دوا، اور لیبل کی ہدایت"],
+      variantContexts:["assistente کو ملاقات کا مقصد بتائیں، فوری ضرورت کا سوال سمجھیں، اور وقت طے کریں","ڈاکٹر کے سوال سنیں، درد کی جگہ اور بخار کی مدت واضح کریں، اور آرام کی ہدایت سمجھیں","دواخانے میں نسخہ دیں، حساسیت بتائیں، اور لیبل سے مقدار اور کھانے کا وقت سمجھیں"],
+      targets:[
+        {lessonId:"a1-health-appointments",dutch:"ik wil een afspraak bij de huisarts",patternLessonId:"a1-health-appointments"},
+        {lessonId:"a1-health-appointments",dutch:"is het dringend?"},
+        {lessonId:"a1-doctor-symptoms",dutch:"ik heb pijn in mijn buik",patternLessonId:"a1-doctor-symptoms"},
+        {lessonId:"a1-doctor-symptoms",dutch:"ik heb sinds gisteren koorts"},
+        {lessonId:"a1-pharmacy-medicine",dutch:"hoe vaak moet ik dit nemen?",patternLessonId:"a1-pharmacy-medicine"},
+        {lessonId:"a1-pharmacy-medicine",dutch:"twee keer per dag"}
+      ],
+      prerequisiteRefs:[["a0-health-emergency","dokter"],["a0-health-emergency","ik ben ziek"],["a0-health-emergency","medicijn"],["a0-health-emergency","apotheek"],["a0-time-days","gisteren"],["a1-health-appointments","huisarts"],["a1-health-appointments","assistente"],["a1-doctor-symptoms","waar doet het pijn?"],["a1-doctor-symptoms","u moet rust nemen"],["a1-pharmacy-medicine","recept"],["a1-pharmacy-medicine","allergisch"],["a1-pharmacy-medicine","voor of na het eten?"]],
+      useTypes:["situation","listen-choice","situation","build","document-choice","listen-choice"],checkTypes:["meaning","listen-choice","reverse","build","document-choice","listen-choice"],
+      document:{documentKind:"doctor-and-medicine-card",title:"Medicijn",labelUrdu:"huisarts کی ہدایت اور دوا کا لیبل پڑھیں",promptUrdu:"کارڈ میں twee keer per dag دیکھیں، پھر روزانہ خوراک کی درست اردو ہدایت منتخب کریں۔",instructionUrdu:"صحت کارڈ میں ik heb sinds gisteren koorts، u moet rust nemen، اور twee keer per dag الگ پڑھیں، پھر مقدار والی سیکھی ہوئی بات کا مطلب چنیں۔",rows:[{label:"ik heb sinds gisteren koorts",value:"ik heb sinds gisteren koorts"},{label:"u moet rust nemen",value:"u moet rust nemen"},{label:"twee keer per dag",value:"twee keer per dag"}]}
+    },
     "a1-mission-post-parcel": {
       sourceKey:"town-transport-parcel-library-safety-mission",scenarioTitleUrdu:"اسٹیشن سے شہر کے کام تک ایک مسلسل سفر",speakerUrdu:"ٹکٹ ملازم، راستہ بتانے والا، پارسل ملازم، یا لائبریری ملازم",
       prerequisiteLessonIds:["a1-public-transport","a1-directions-town","a1-post-parcel-extra","a1-library-community","a1-safety-rules"],
