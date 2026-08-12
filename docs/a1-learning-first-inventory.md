@@ -39,16 +39,16 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 ```
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
-binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, and Unit 8 have since been authored,
-and each passes its exact audit slice with **0 findings**. The current complete
-A1 result is **135 errors and 0 review flags**, down from 193 after Unit 7. All
-remaining findings belong to Unit 9 or the future chapter completion
-mission.
+binding pre-authoring baseline became **1,092 errors and 0 review flags**. All
+nine units have now been authored, and each passes its exact audit slice with
+**0 findings**. The current complete A1 result is **39 errors and 0 review
+flags**, down from 135 after Unit 8. The remaining findings are the deliberately
+missing chapter completion mission plus final cross-generated Unit 5 lexical
+ownership and shared confusion-template cleanup.
 
-After Unit 8 retired the mixed health/pharmacy node, the current A1 totals are
-271 chapter-owned concepts, 305 chapter-owned skills, 34 patterns, 88 runs,
-396 teaching blocks, 1,654 normal-lesson exercises, and 306 mission records.
+After Unit 9 was rebuilt, the current A1 totals are 325 A1-associated concepts,
+302 chapter-owned skills, 38 patterns, 81 runs, 371 teaching blocks, 1,532
+normal-lesson exercises, and 318 mission records.
 The chapter path now has **38 normal lessons and 9 unit missions**.
 
 ### Baseline audit error taxonomy
@@ -302,6 +302,20 @@ work schedule.
 | `a1-mission-school-day` | **Remain as the unit mission only**; it cannot double as chapter completion. |
 | `a1-chapter-completion-mission` | **Add** after all nine unit missions; sample all unit outcomes and all required modalities. |
 
+Implementation checkpoint: **Unit 9 completed and locally clean**. The path
+now follows short-message basics → shared absence/delay formula → school
+contact → work schedule → unit mission. Its four focused lessons teach 29
+genuinely new targets across ten capped runs with four complete reusable
+patterns. A short-message card, school-app notice, and work-roster card are
+taught and recognised before their formats appear in checks or the mission.
+`a1-mission-school-day` is now explicitly a unit mission, never the chapter
+completion check; its three authored variants each contain six Use and six
+Independent Check tasks covering all four lesson strands. The exact Unit 9
+audit slice has 0 findings, its focused desktop/mobile gate passes 12/12, the
+combined Units 1–9 regression gate passes 106/106, and frozen A0 remains 96/96.
+Manual review confirmed the five-node order, Urdu-first school-contact teaching,
+mission prerequisites, and the six already-taught mission targets.
+
 ## 4. Replacement dependency contract
 
 - Replace the arbitrary five-skill A0 prerequisite with an explicit A1 bridge:
@@ -332,9 +346,9 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–6 are complete through Unit 8. Unit 9 is the next
-permitted authoring batch; the completion mission remains blocked behind that
-sequence.
+Current checkpoint: steps 1–6 are complete through Unit 9. Step 7, the separate
+A1 chapter completion mission, is now the next permitted authoring batch. The
+chapter remains unfrozen until step 8 is fully green.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.
