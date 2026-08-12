@@ -214,8 +214,24 @@ Unit 5, home, neighbours, repairs, and housing, is now learning-first as well:
   passes **12/12**, the Units 1–5 regression gate passes **58/58**, and frozen
   A0 remains **96/96**.
 
-The current full A1 result is **586 errors and 0 review flags**, down by 141
-from the post-Unit-4 result. Every remaining finding belongs to Units 6–9 or
+Unit 6, food, shopping, returns, and payment, now follows the binding practical
+journey:
+
+- the path is supermarket → café ordering → dietary needs/problems → clothes
+  → returns → payment problems, with no complaint or payment material hidden
+  inside the initial café lesson;
+- six focused lessons own 46 targets, including 41 genuinely new targets,
+  across 12 capped runs with six complete practical patterns;
+- the supermarket list/price card and return receipt are taught and recognised
+  before their document formats appear in checks or the mission;
+- `a1-food-shopping-mission` has three authored variants with six Use and six
+  Independent Check tasks covering all six lesson strands; and
+- the exact Unit 6 audit slice reports **0 findings**, its corrected focused
+  browser gate passes **12/12**, the Units 1–6 regression gate passes **70/70**,
+  and frozen A0 remains **96/96**.
+
+The current full A1 result is **398 errors and 0 review flags**, down by 188
+from the post-Unit-5 result. Every remaining finding belongs to Units 7–9 or
 the still-unwritten chapter completion mission. A1 as a whole is not accepted
 or frozen.
 
@@ -283,6 +299,12 @@ Manual browser review confirmed:
   mission exposed only its six learned targets, and phone, tablet, and desktop
   widths had no horizontal overflow. The final console review contained no
   warnings or errors.
+- A1 Unit 6 was manually reviewed from the expanded chapter map through the
+  dietary-needs Preview, authored allergy teaching card, returns Preview, and
+  unit mission Preview. The map showed the required six-lesson order, the
+  mission exposed one learned target from every strand and remained locked
+  until practice, and phone, tablet, and desktop widths had no horizontal
+  overflow. The final console review contained no warnings or errors.
 
 Focused automated checks cover migration, run prerequisites, adaptive-review
 filtering, selected-distractor explanations, correction loops, mastery
@@ -306,23 +328,23 @@ gate until those chapters reach their own permitted acceptance cycles.
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public` after the A1 Unit 5 authoring batch. The
+  `android/app/src/main/assets/public` after the A1 Unit 6 authoring batch. The
   Android source assets have the same course, app-runtime, and service-worker
   hashes as the web source.
-- The offline cache is `nederurdu-v65-learning-first-a1-unit5`.
-- The Unit 5 native build is pending. Java 17 and Android command-line tools
+- The offline cache is `nederurdu-v66-learning-first-a1-unit6`.
+- The Unit 6 native build is pending. Java 17 and Android command-line tools
   were restored, but Google requires the SDK license to be accepted by the
   user before API 35 and its build tools can be installed.
-- Last successfully built APK (Unit 2, not the current Unit 5 package):
+- Last successfully built APK (Unit 2, not the current Unit 6 package):
   `android/app/build/outputs/apk/debug/app-debug.apk`
 - Last APK SHA-256:
   `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
-- Synchronized Unit 5 course-data SHA-256:
-  `371f6e1254ac294f360aa6b4884054d8f21516165f350256d2257030880df851`
-- Synchronized Unit 5 app runtime SHA-256:
+- Synchronized Unit 6 course-data SHA-256:
+  `5039f998e52ae6e307b1c61d9b0b96097b0f2bd7833667f5529b5f4f3da18a5e`
+- Synchronized Unit 6 app runtime SHA-256:
   `bb3c8cc20b87c855fa26ad8d834fdad216b9c564714ad0b70f17e29e2a4dcbd4`
-- Synchronized Unit 5 service-worker SHA-256:
-  `1817348442a871ac036a2d9780a209c3fbd2ec9dbeb021ade98ad700aad46459`
+- Synchronized Unit 6 service-worker SHA-256:
+  `6c6fca5729475c99fe6df4099782a4923473f38be9b678f1741cd8398a75cf8e`
 - In the last installed acceptance build, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
   `migratedFrom: nederurdu-progress-v3`, retained XP, practice day, settings,
@@ -343,25 +365,25 @@ gate until those chapters reach their own permitted acceptance cycles.
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
 | Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Units 1–5 passed; Units 6–9 pending | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–5: 0 local findings; full A1: 586 errors / 0 flags** | 379 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Units 1–5 content passed; later units blocked | Blocked |
-| Browser phase journey | Representative path passed | Unit 5 **12/12**; Units 1–5 regression **58/58**; later units blocked | Blocked |
+| Urdu-first teaching records | Passed semantic review | Units 1–6 passed; Units 7–9 pending | Not accepted |
+| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–6: 0 local findings; full A1: 398 errors / 0 flags** | 379 errors / 1 flag |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–6 content passed; later units blocked | Blocked |
+| Browser phase journey | Representative path passed | Unit 6 **12/12**; Units 1–6 regression **70/70**; later units blocked | Blocked |
 | Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
-| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–5 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–6 passed at phone, tablet, and desktop sizes; later units blocked | Blocked |
 | Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
 | Regular and slow audio | Android native requests passed | Blocked | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Unit 5 web/source-asset hashes match; APK pending | Shared package |
+| Android asset parity | Passed | Unit 6 web/source-asset hashes match; APK pending | Shared package |
 | Native debug build | Passed | Pending user acceptance of the Google SDK license | Shared package |
 | Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. Rebuild A1 Unit 6, food, shopping, returns, and payment, using the same
+1. Rebuild A1 Unit 7, transport and practical places in town, using the same
    authored teaching, dependency, document, mission, and focused-test gate now
-   proven by Units 1–5.
-2. Continue Units 7–9 strictly in the recorded inventory order.
+   proven by Units 1–6.
+2. Continue Units 8–9 strictly in the recorded inventory order.
 3. Add the separate chapter-wide A1 completion mission after all unit missions.
 4. Audit the complete generated A1 chapter to zero errors and zero review flags,
    then

@@ -4213,7 +4213,7 @@ const a1Subchapters = [
     title: "کھانا اور خریداری",
     goal: "بنیادی کھانا، قیمتیں، خریدنا، اور قیمت پوچھنا۔",
     practice: "ik wil..., hoeveel kost...? جیسے روزمرہ فقرے۔",
-    lessonIds: ["a1-cafe-ordering", "a1-shopping-clothes", ...a1Expanded("a1-supermarket", "a1-cafe-food-needs", "a1-shopping-returns", "a1-money-bank")]
+    lessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"]
   },
   {
     id: "a1-going-out-transport",
@@ -5159,6 +5159,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-home-objects": {
       outcomeUrdu: "گھر کے کمرے اور چیزیں پہچاننا، پڑوسی سے مؤدبانہ بات کرنا، خرابی بتانا، گھر کے کام بیان کرنا، اور مکان کا اشتہار سمجھ کر دیکھنے کا وقت مانگنا۔",
       practiceUrdu: "پہلے گھر، پڑوسی، مرمت، اور صفائی کی مکمل باتیں سمجھیں، پھر مکان کے اشتہار اور گھر دیکھنے کی عملی گفتگو میں صرف وہی سیکھی ہوئی زبان استعمال کریں۔"
+    },
+    "a1-food-shopping": {
+      outcomeUrdu: "خریداری کی فہرست اور قیمت پڑھنا، کیفے میں آرڈر دینا، کھانے کی ضرورت واضح کرنا، کپڑا چننا، چیز واپس کرنا، اور ادائیگی کا مسئلہ حل کرنا۔",
+      practiceUrdu: "پہلے سپر مارکیٹ، مینو، کپڑے، رسید، اور ادائیگی کی مکمل باتیں سمجھیں، پھر دکان اور کیفے کی عملی صورتوں میں صرف سیکھی ہوئی زبان استعمال کریں۔"
     }
   },
   lessons: {
@@ -6935,6 +6939,144 @@ const a1AuthoredCurriculumV4 = {
         ]
       }
     },
+    "a1-supermarket": {
+      title: "Boodschappen doen",
+      unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "خریداری کی مختصر فہرست سمجھنا، چیز کی جگہ اور قیمت پوچھنا، اور کاؤنٹر پر بیگ یا رسید مانگنا۔",
+      seedConcepts: [
+        ["brood", "روٹی"], ["melk", "دودھ"], ["groente", "سبزیاں"], ["fruit", "پھل"],
+        ["ik zoek melk", "میں دودھ تلاش کر رہا یا رہی ہوں"],
+        ["waar ligt de rijst?", "چاول کہاں رکھے ہیں؟"],
+        ["hoeveel kost dit brood?", "یہ روٹی کتنے کی ہے؟"],
+        ["mag ik een tas?", "کیا مجھے ایک بیگ مل سکتا ہے؟"],
+        ["de kassa is daar", "کاؤنٹر وہاں ہے"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["brood", "فہرست یا دکان میں روٹی تلاش کرنے کے لیے brood پہچانیں۔", "یہ روٹی ہے؛ melk دودھ اور rijst چاول ہیں۔", "brood کو تمام کھانے کے عمومی لفظ کے طور پر نہ استعمال کریں۔", "Ik koop brood.", "میں روٹی خریدتا یا خریدتی ہوں۔", "بروت"],
+        ["melk", "دودھ کی بوتل یا پیکٹ ڈھونڈنے کے لیے melk کہیں۔", "یہ پینے کی سفید چیز ہے؛ water پانی ہے۔", "melk اور meel کی ملتی آواز سے معنی نہ بدلیں۔", "Ik zoek melk.", "میں دودھ تلاش کر رہا یا رہی ہوں۔", "مَیلک"],
+        ["groente", "سبزیوں والے حصے یا فہرست میں groente پہچانیں۔", "یہ سبزیوں کی قسم ہے؛ fruit پھل ہے۔", "groente اور fruit کو ایک ہی دکان والے حصے کے باوجود نہ ملائیں۔", "De groente is hier.", "سبزی یہاں ہے۔", "خُرون تَ"],
+        ["fruit", "پھلوں والے حصے یا خریداری کی فہرست میں fruit کہیں۔", "یہ پھل ہے؛ groente سبزی ہے۔", "fruit کی ڈچ آواز کو انگریزی تلفظ کے مطابق نہ پڑھیں۔", "Ik koop fruit.", "میں پھل خریدتا یا خریدتی ہوں۔", "فراؤٹ"],
+        ["ik zoek melk", "ملازم کو بتائیں کہ آپ دودھ تلاش کر رہے ہیں۔", "یہ تلاش کی اطلاع ہے؛ چیز کہاں ہے پوچھنے والا سوال الگ ہے۔", "zoek کو جملے کے آخر میں نہ بھیجیں؛ ik zoek سے شروع کریں۔", "Ik zoek melk.", "میں دودھ تلاش کر رہا یا رہی ہوں۔", "اِک زوک مَیلک"],
+        ["waar ligt de rijst", "چاول نہ ملیں تو ان کی جگہ مکمل سوال میں پوچھیں۔", "waar جگہ پوچھتا ہے؛ hoeveel قیمت پوچھتا ہے۔", "چیز کی جگہ پوچھتے وقت waar پہلے اور ligt اس کے بعد رکھیں۔", "Waar ligt de rijst?", "چاول کہاں رکھے ہیں؟", "وار لِخت دَ رَیسٹ"],
+        ["hoeveel kost dit brood", "روٹی کی قیمت معلوم نہ ہو تو یہ مکمل سوال کہیں۔", "hoeveel kost قیمت پوچھتا ہے؛ چیز کی جگہ نہیں۔", "قیمت کے سوال میں hoeveel پہلے اور kost اس کے بعد رکھیں۔", "Hoeveel kost dit brood?", "یہ روٹی کتنے کی ہے؟", "ہو فیل کوست دِت بروت"],
+        ["mag ik een tas", "کاؤنٹر پر سامان رکھنے کے لیے ایک بیگ مؤدبانہ طور پر مانگیں۔", "یہ بیگ کی درخواست ہے؛ رسید کے لیے bon مانگیں۔", "سوال میں mag ik سے شروع کریں اور een tas آخر میں رکھیں۔", "Mag ik een tas?", "کیا مجھے ایک بیگ مل سکتا ہے؟", "ماخ اِک اَن تاس"],
+        ["de kassa is daar", "ملازم کاؤنٹر کی جگہ بتائے تو اس مکمل جواب کو سمجھیں یا کہیں۔", "daar وہاں کی جگہ بتاتا ہے؛ hier یہاں بتاتا ہے۔", "is کو نہ چھوڑیں؛ de kassa daar مکمل جملہ نہیں۔", "De kassa is daar.", "کاؤنٹر وہاں ہے۔", "دَ کاسا اِس دار"]
+      ]),
+      pattern: {
+        modelDutch: "ik zoek melk", titleUrdu: "دکان میں مطلوبہ چیز بتانا", highlight: "ik zoek melk",
+        explanationUrdu: "دکان میں تلاش بتانے کے لیے ik کے بعد zoek اور آخر میں چیز رکھیں۔",
+        contrastUrdu: "ik zoek melk اپنی ضرورت بتاتا ہے؛ waar ligt de rijst? کسی چیز کی جگہ پوچھتا ہے۔",
+        commonMistakeUrdu: "سیدھی بات میں zoek کو آخر میں نہ رکھیں؛ ik zoek سے آغاز کریں۔"
+      },
+      prerequisiteLessonIds: ["a0-food-drink", "a0-shopping-payment", "a0-dit-dat-questions"],
+      prerequisiteRefs: [["a0-food-drink", "brood"], ["a0-food-drink", "melk"], ["a0-food-drink", "groente"], ["a0-food-drink", "fruit"], ["a0-shopping-payment", "kassa"], ["a0-dit-dat-questions", "waar"]],
+      scenarios: {
+        brood: ["market-list-bread", "خریداری کی فہرست میں روٹی پہچانیں۔"], melk: ["market-find-milk", "دودھ کا پیکٹ تلاش کریں۔"],
+        groente: ["market-find-vegetables", "سبزیوں والا حصہ پہچانیں۔"], fruit: ["market-find-fruit", "پھلوں والا حصہ پہچانیں۔"],
+        "ik zoek melk": ["market-tell-search", "ملازم کو بتائیں کہ آپ دودھ تلاش کر رہے ہیں۔"],
+        "waar ligt de rijst": ["market-ask-rice", "چاول نظر نہیں آ رہے۔ جگہ پوچھیں۔"],
+        "hoeveel kost dit brood": ["market-ask-bread-price", "روٹی پر قیمت نہیں لکھی۔ قیمت پوچھیں۔"],
+        "mag ik een tas": ["market-request-bag", "کاؤنٹر پر سامان کے لیے بیگ مانگیں۔"],
+        "de kassa is daar": ["market-locate-checkout", "ملازم کاؤنٹر کی جگہ وہاں بتاتا ہے۔ مکمل جواب چنیں۔"]
+      },
+      document: {
+        stableId: "supermarket-list-price-card", sourceKey: "supermarket-list-price-card", documentKind: "shopping-list-price-card",
+        targetDutch: "hoeveel kost dit brood?", title: "brood", labelUrdu: "خریداری کی فہرست اور قیمت پڑھیں",
+        promptUrdu: "فہرست میں brood اور قیمت کی خالی جگہ دیکھیں، پھر روٹی کی قیمت پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",
+        instructionUrdu: "فہرست میں brood، melk، groente، اور fruit الگ پڑھیں، پھر قیمت نہ لکھی ہونے پر مناسب سیکھی ہوئی سوال چنیں۔",
+        correctUrdu: "درست۔ hoeveel kost dit brood? روٹی کی قیمت پوچھتا ہے۔", wrongUrdu: "یہ دوسری خریداری کی بات ہے۔ hoeveel kost قیمت کے بارے میں پوچھتا ہے۔",
+        rows: [{ label: "brood", value: "hoeveel kost dit brood?" }, { label: "melk", value: "ik zoek melk" }, { label: "groente", value: "groente" }, { label: "fruit", value: "fruit" }]
+      }
+    },
+    "a1-cafe-ordering": {
+      title: "Kiezen en bestellen in een café", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "مینو مانگنا، مشروب یا کھانا چننا، ویٹر کا سوال سمجھنا، اور آخر میں بل مانگنا۔",
+      seedConcepts: [["menu", "کھانے کی فہرست"], ["voor mij een thee", "میرے لیے ایک چائے"], ["rekening", "بل"], ["mag ik de kaart alstublieft?", "کیا مجھے مینو مل سکتا ہے؟"], ["wat wilt u drinken?", "آپ کیا پینا چاہتے ہیں؟"], ["ik neem de soep", "میں سوپ لوں گا یا گی"], ["de rekening alstublieft", "بل، برائے مہربانی"]],
+      teaching: authoredA1TeachingV4([
+        ["menu", "کیفے میں دستیاب کھانے اور مشروبات کی فہرست کو menu کہیں۔", "یہ انتخاب کی فہرست ہے؛ rekening آخر کا بل ہے۔", "menu کو تیار آرڈر یا بل کے معنی میں نہ لیں۔", "menu — rekening", "کھانے کی فہرست — بل۔", "مَے نیو"],
+        ["rekening", "کھانے کے بعد ادا کرنے والی رقم کے کاغذ کو rekening کہیں۔", "یہ کیفے کا بل ہے؛ خریداری کی bon رسید ہے۔", "rekening کو مینو کے ساتھ نہ ملائیں۔", "menu — rekening", "کھانے کی فہرست — بل۔", "رے کَ نِنگ"],
+        ["mag ik de kaart alstublieft", "بیٹھنے کے بعد مینو مؤدبانہ طور پر مانگیں۔", "یہ مینو کی درخواست ہے؛ کھانے کا آرڈر ابھی نہیں۔", "اس کیفے جملے میں de kaart مینو ہے، شہر کا نقشہ نہیں۔", "Mag ik de kaart alstublieft?", "کیا مجھے مینو مل سکتا ہے؟", "ماخ اِک دَ کارت آلس تو بلیفٹ"],
+        ["wat wilt u drinken", "ویٹر کا مشروب پوچھنے والا سوال سمجھیں یا گاہک سے کہیں۔", "یہ پینے کی چیز پوچھتا ہے؛ کھانے کے انتخاب کا سوال الگ ہے۔", "جواب میں سوال نہ دہرائیں؛ مطلوبہ مشروب بتائیں۔", "Wat wilt u drinken?", "آپ کیا پینا چاہتے ہیں؟", "وات وِلت یو درِن کَن"],
+        ["voor mij een thee", "اپنے لیے ایک چائے مختصر مگر واضح آرڈر میں کہیں۔", "یہ ایک انتخاب ہے؛ بغیر چینی کی شرط الگ شامل ہوتی ہے۔", "voor mij کے بعد چیز رکھیں؛ صرف een thee بھی ممکن ہے مگر یہاں مکمل نمونہ سیکھیں۔", "Voor mij een thee.", "میرے لیے ایک چائے۔", "فور مَے اَن تے"],
+        ["ik neem de soep", "مینو دیکھ کر سوپ کا فیصلہ مکمل جملے میں بتائیں۔", "nemen یہاں انتخاب کرنا ہے؛ چیز اٹھانے کی ہدایت نہیں۔", "de soep سے پہلے neem رکھیں؛ ik de soep neem نہ کہیں۔", "Ik neem de soep.", "میں سوپ لوں گا یا گی۔", "اِک نیم دَ سوپ"],
+        ["de rekening alstublieft", "کھانا مکمل ہونے پر مؤدبانہ طور پر بل مانگیں۔", "یہ ادائیگی شروع کرتا ہے؛ مینو مانگنے کے لیے de kaart کہیں۔", "rekening اور menu کو الٹ نہ کریں۔", "De rekening alstublieft.", "بل، برائے مہربانی۔", "دَ رے کَ نِنگ آلس تو بلیفٹ"]
+      ]),
+      pattern: { modelDutch: "voor mij een thee", titleUrdu: "کیفے میں اپنا انتخاب کہنا", highlight: "voor mij een thee", explanationUrdu: "اپنا مختصر آرڈر دینے کے لیے voor mij کے بعد مطلوبہ چیز رکھیں۔", contrastUrdu: "wat wilt u drinken? ویٹر کا سوال ہے؛ voor mij een thee گاہک کا جواب ہے۔", commonMistakeUrdu: "سوال کو جواب کے طور پر نہ دہرائیں؛ voor mij کے بعد اپنا انتخاب کہیں۔" },
+      prerequisiteLessonIds: ["a0-food-drink", "a0-greetings-courtesy", "a1-polite-chunks"],
+      prerequisiteRefs: [["a0-food-drink", "thee"], ["a0-food-drink", "ik wil graag koffie"], ["a0-greetings-courtesy", "dank u wel"], ["a1-polite-chunks", "alstublieft"]],
+      scenarios: { menu:["cafe-recognise-menu","میز پر کھانے کی فہرست پہچانیں۔"], rekening:["cafe-recognise-bill","کھانے کے آخر کا بل پہچانیں۔"], "mag ik de kaart alstublieft":["cafe-request-menu","ویٹر سے مینو مؤدبانہ طور پر مانگیں۔"], "wat wilt u drinken":["cafe-hear-drink-question","ویٹر پوچھتا ہے آپ کیا پینا چاہتے ہیں۔"], "voor mij een thee":["cafe-order-tea","اپنے لیے ایک چائے آرڈر کریں۔"], "ik neem de soep":["cafe-choose-soup","مینو سے سوپ چن کر مکمل بات کہیں۔"], "de rekening alstublieft":["cafe-request-bill","کھانا مکمل ہے۔ بل مانگیں۔"] }
+    },
+    "a1-cafe-food-needs": {
+      title: "Eten, allergie en een probleem", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "گوشت کے بغیر کھانا مانگنا، الرجی واضح کرنا، غلط یا نہ پہنچا ہوا آرڈر بتانا، اور درست کھانا مانگنا۔",
+      seedConcepts: [["vlees", "گوشت"], ["bestelling", "آرڈر"], ["zonder vlees alstublieft", "گوشت کے بغیر، برائے مہربانی"], ["ik ben allergisch voor noten", "مجھے گری دار میوے سے الرجی ہے"], ["dit is niet mijn bestelling", "یہ میرا آرڈر نہیں ہے"], ["ik heb nog niets gekregen", "مجھے ابھی تک کچھ نہیں ملا"], ["kunt u dit controleren?", "کیا آپ اسے چیک کر سکتے ہیں؟"]],
+      teaching: authoredA1TeachingV4([
+        ["vlees", "مینو یا کھانے میں گوشت کی چیز پہچاننے کے لیے vlees کہیں۔", "یہ گوشت ہے؛ zonder vlees اس کے بغیر کھانا مانگتا ہے۔", "vlees کو تمام کھانے کے معنی میں نہ لیں۔", "vlees — zonder vlees alstublieft", "گوشت — گوشت کے بغیر، برائے مہربانی۔", "فلیس"],
+        ["bestelling", "کیفے میں آپ کے مانگے ہوئے پورے آرڈر کو bestelling کہیں۔", "یہ آرڈر ہے؛ menu انتخاب سے پہلے کی فہرست ہے۔", "bestelling کو بل rekening کے معنی میں نہ سمجھیں۔", "bestelling — vlees", "آرڈر — گوشت۔", "بَ ستَ لِنگ"],
+        ["zonder vlees alstublieft", "گوشت نہ کھاتے ہوں تو آرڈر کے ساتھ یہ شرط مؤدبانہ طور پر کہیں۔", "یہ گوشت کے بغیر مانگتا ہے؛ الرجی کی طبی اطلاع نہیں۔", "zonder کو vlees سے پہلے رکھیں۔", "Zonder vlees alstublieft.", "گوشت کے بغیر، برائے مہربانی۔", "زون دَر فلیس آلس تو بلیفٹ"],
+        ["ik ben allergisch voor noten", "گری دار میوے سے الرجی ہو تو کھانا آنے سے پہلے صاف طبی اطلاع دیں۔", "یہ الرجی ہے؛ صرف پسند نہ ہونے یا گوشت نہ کھانے کی بات نہیں۔", "allergisch voor کو ساتھ رکھیں اور آخر میں وجہ بتائیں۔", "Ik ben allergisch voor noten.", "مجھے گری دار میوے سے الرجی ہے۔", "اِک بَن آ لیر خِس فور نو تَن"],
+        ["dit is niet mijn bestelling", "غلط پلیٹ آئے تو واضح کریں کہ یہ آپ کا آرڈر نہیں۔", "یہ غلط آرڈر ہے؛ کچھ بھی نہ ملنے کی شکایت الگ ہے۔", "niet کو mijn bestelling سے پہلے رکھیں۔", "Dit is niet mijn bestelling.", "یہ میرا آرڈر نہیں ہے۔", "دِت اِس نیت مَین بَ ستَ لِنگ"],
+        ["ik heb nog niets gekregen", "کافی انتظار کے بعد بھی کچھ نہ ملے تو مکمل شکایت کہیں۔", "یہ نہ پہنچنے کی بات ہے؛ غلط چیز پہنچنے کی نہیں۔", "nog niets دونوں رکھیں تاکہ ابھی تک کچھ نہ ملنے کا معنی واضح ہو۔", "Ik heb nog niets gekregen.", "مجھے ابھی تک کچھ نہیں ملا۔", "اِک ہَپ نوخ نیتس خَ کرے خَن"],
+        ["kunt u dit controleren", "غلطی یا الرجی کے بعد ویٹر سے معاملہ چیک کرنے کی درخواست کریں۔", "یہ جانچ کی درخواست ہے؛ نیا آرڈر خود نہیں بناتا۔", "سوال میں kunt u پہلے اور controleren آخر میں رکھیں۔", "Kunt u dit controleren?", "کیا آپ اسے چیک کر سکتے ہیں؟", "کُنت یو دِت کون ترو لے رَن"]
+      ]),
+      pattern: { modelDutch:"ik ben allergisch voor noten", titleUrdu:"الرجی واضح کرنے والا محفوظ جملہ", highlight:"ik ben allergisch voor noten", explanationUrdu:"الرجی بتانے کے لیے ik ben allergisch voor کے بعد متعلقہ کھانا رکھیں۔", contrastUrdu:"zonder vlees ایک کھانے کی شرط ہے؛ allergisch voor صحت کی ضروری اطلاع ہے۔", commonMistakeUrdu:"صرف کھانا پسند نہ ہونے کے لیے allergisch نہ کہیں؛ اسے حقیقی الرجی کے لیے محفوظ رکھیں۔" },
+      prerequisiteLessonIds:["a0-food-drink","a1-cafe-ordering","a1-polite-chunks"], prerequisiteRefs:[["a0-food-drink","eten"],["a1-cafe-ordering","menu"],["a1-cafe-ordering","de rekening alstublieft"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
+      scenarios:{ vlees:["food-needs-recognise-meat","مینو میں گوشت والی چیز پہچانیں۔"], bestelling:["food-needs-recognise-order","اپنے پورے آرڈر کا لفظ پہچانیں۔"], "zonder vlees alstublieft":["food-needs-no-meat","گوشت کے بغیر کھانا مؤدبانہ طور پر مانگیں۔"], "ik ben allergisch voor noten":["food-needs-allergy","کھانا آنے سے پہلے اپنی الرجی واضح کریں۔"], "dit is niet mijn bestelling":["food-needs-wrong-order","غلط پلیٹ آئی ہے۔ مسئلہ بتائیں۔"], "ik heb nog niets gekregen":["food-needs-missing-order","انتظار کے بعد بھی کچھ نہیں ملا۔ شکایت کہیں۔"], "kunt u dit controleren":["food-needs-request-check","ویٹر سے غلطی چیک کرنے کی درخواست کریں۔"] }
+    },
+    "a1-shopping-clothes": {
+      title: "Kleding kiezen en passen", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "کپڑے کا سائز اور قیمت پوچھنا، پہن کر دیکھنے کی اجازت مانگنا، فٹنگ بتانا، اور اپنا انتخاب کرنا۔",
+      seedConcepts: [["maat", "سائز"], ["deze jas is te groot", "یہ جیکٹ بہت بڑی ہے"], ["hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟"], ["heeft u maat M?", "کیا آپ کے پاس سائز M ہے؟"], ["mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا یا سکتی ہوں؟"], ["waar is de paskamer?", "کپڑے پہن کر دیکھنے کا کمرہ کہاں ہے؟"], ["heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟"], ["ik neem deze", "میں یہ لوں گا یا گی"]],
+      teaching: authoredA1TeachingV4([
+        ["maat", "کپڑے یا جوتے کے سائز کے لیے maat کہیں۔", "یہ سائز ہے؛ prijs قیمت ہے۔", "maat کو تعداد یا رنگ کے معنی میں نہ لیں۔", "maat — heeft u maat M?", "سائز — کیا آپ کے پاس سائز M ہے؟", "مات"],
+        ["hoeveel kost deze jas", "کسی خاص جیکٹ کی قیمت پوچھنے کے لیے یہ مکمل سوال کہیں۔", "deze jas سامنے والی جیکٹ ہے؛ عام قیمت نہیں۔", "deze کو jas سے پہلے رکھیں۔", "Hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟", "ہو فیل کوست دے زَ یاس"],
+        ["heeft u maat m", "دکان کے ملازم سے سائز M کی دستیابی پوچھیں۔", "یہ سائز کی تصدیق ہے؛ فٹنگ روم کی جگہ نہیں۔", "ہاں یا نہیں سوال میں heeft u سے آغاز کریں۔", "Heeft u maat M?", "کیا آپ کے پاس سائز M ہے؟", "ہیفٹ یو مات ایم"],
+        ["mag ik dit passen", "کپڑا خریدنے سے پہلے پہن کر دیکھنے کی اجازت مانگیں۔", "passen پہن کر فٹنگ دیکھنا ہے؛ خریدنے کا فیصلہ نہیں۔", "سوال میں mag ik پہلے اور passen آخر میں رکھیں۔", "Mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا یا سکتی ہوں؟", "ماخ اِک دِت پا سَن"],
+        ["waar is de paskamer", "کپڑے پہن کر دیکھنے والے کمرے کی جگہ پوچھیں۔", "یہ جگہ پوچھتا ہے؛ کپڑا پہننے کی اجازت الگ سوال ہے۔", "paskamer پورا ایک لفظ ہے؛ اسے عام کمرے کے نام سے نہ ملائیں۔", "Waar is de paskamer?", "کپڑے پہن کر دیکھنے کا کمرہ کہاں ہے؟", "وار اِس دَ پاس کا مَر"],
+        ["deze jas is te groot", "جیکٹ ضرورت سے بڑی ہو تو فٹنگ مکمل جملے میں بتائیں۔", "te groot بہت بڑی ہے؛ صرف groot عام بڑی کیفیت ہے۔", "is کو نہ چھوڑیں اور te کو groot سے پہلے رکھیں۔", "Deze jas is te groot.", "یہ جیکٹ بہت بڑی ہے۔", "دے زَ یاس اِس تَ خروت"],
+        ["heeft u een andere kleur", "سائز درست ہو مگر رنگ نہ پسند ہو تو دوسرا رنگ پوچھیں۔", "یہ رنگ بدلتا ہے؛ سائز کے لیے andere maat کہیں۔", "andere کو kleur سے پہلے رکھیں۔", "Heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟", "ہیفٹ یو اَن آن دَ رَ کلیور"],
+        ["ik neem deze", "کپڑا پسند اور مناسب ہو تو خریدنے کا فیصلہ کہیں۔", "یہ حتمی انتخاب ہے؛ پہن کر دیکھنے کی درخواست نہیں۔", "deze سامنے والی چیز کی طرف اشارہ کرتا ہے؛ اسے فٹنگ کی کیفیت نہ سمجھیں۔", "Ik neem deze.", "میں یہ لوں گا یا گی۔", "اِک نیم دے زَ"]
+      ]),
+      pattern:{modelDutch:"deze jas is te groot",titleUrdu:"کپڑے کی فٹنگ بتانا",highlight:"deze jas is te groot",explanationUrdu:"سامنے والے کپڑے کے بعد is اور پھر te کے ساتھ فٹنگ کی کیفیت رکھیں۔",contrastUrdu:"te groot فٹنگ کا مسئلہ بتاتا ہے؛ andere kleur رنگ بدلنے کی درخواست ہے۔",commonMistakeUrdu:"te کو کیفیت کے بعد نہ رکھیں؛ te groot اسی ترتیب میں کہیں۔"},
+      prerequisiteLessonIds:["a0-shopping-payment","a0-letters-2","a1-questions","a1-house-food-plurals"], prerequisiteRefs:[["a0-shopping-payment","prijs"],["a0-shopping-payment","duur"],["a0-letters-2","jas"],["a1-questions","waar is het toilet?"],["a1-house-food-plurals","kamer"]],
+      scenarios:{maat:["clothes-recognise-size","کپڑے کے لیبل پر سائز پہچانیں۔"],"hoeveel kost deze jas":["clothes-ask-price","جیکٹ کی قیمت پوچھیں۔"],"heeft u maat m":["clothes-ask-size","سائز M کی دستیابی پوچھیں۔"],"mag ik dit passen":["clothes-request-try","جیکٹ پہن کر دیکھنے کی اجازت مانگیں۔"],"waar is de paskamer":["clothes-find-fitting-room","فٹنگ روم کی جگہ پوچھیں۔"],"deze jas is te groot":["clothes-report-large","جیکٹ بہت بڑی ہے۔ فٹنگ بتائیں۔"],"heeft u een andere kleur":["clothes-ask-colour","دوسرا رنگ مانگیں۔"],"ik neem deze":["clothes-choose-item","مناسب جیکٹ خریدنے کا فیصلہ کہیں۔"]}
+    },
+    "a1-shopping-returns": {
+      title: "Ruilen of terugbrengen", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "رسید کے ساتھ خراب یا غلط سائز کی چیز واپس لانا، بدلنے یا رقم واپس لینے کی درخواست کرنا۔",
+      seedConcepts:[["ruilen","بدلنا"],["terugbrengen","واپس لانا"],["ik wil dit terugbrengen","میں یہ واپس کرنا چاہتا یا چاہتی ہوں"],["hier is de bon","یہ رہی رسید"],["de maat is te klein","سائز بہت چھوٹا ہے"],["de jas is kapot","جیکٹ خراب ہے"],["heeft u een grotere maat?","کیا آپ کے پاس بڑا سائز ہے؟"],["kan ik mijn geld terugkrijgen?","کیا مجھے پیسے واپس مل سکتے ہیں؟"]],
+      teaching:authoredA1TeachingV4([
+        ["ruilen","خریدی ہوئی چیز کو دوسری چیز یا سائز سے بدلنے کے لیے ruilen کہیں۔","یہ تبادلہ ہے؛ terugbrengen صرف واپس لانا ہے۔","ruilen کو رقم واپس لینے کے یقینی معنی میں نہ سمجھیں۔","Ik wil dit ruilen.","میں یہ بدلنا چاہتا یا چاہتی ہوں۔","راؤ لَن"],
+        ["terugbrengen","خریدی ہوئی چیز دکان واپس لے جانے کے لیے terugbrengen کہیں۔","یہ واپسی کا عمل ہے؛ بدلنے یا رقم کا نتیجہ الگ مانگنا پڑتا ہے۔","اس پورے فعل کو واپسی کے معنی میں پہچانیں؛ حصے الگ کر کے ترتیب نہ بدلیں۔","ruilen — terugbrengen","بدلنا — واپس لانا۔","تَروخ برَنگَن"],
+        ["ik wil dit terugbrengen","کاؤنٹر پر صاف کہیں کہ آپ یہ چیز واپس کرنا چاہتے ہیں۔","یہ مقصد بتاتا ہے؛ وجہ ابھی اگلے جملے میں دیں۔","wil کے بعد dit اور آخر میں terugbrengen رکھیں۔","Ik wil dit terugbrengen.","میں یہ واپس کرنا چاہتا یا چاہتی ہوں۔","اِک وِل دِت تَروخ برَنگَن"],
+        ["hier is de bon","ملازم کو خریداری کا ثبوت دیتے وقت رسید پیش کریں۔","یہ رسید دینا ہے؛ نئی رسید مانگنا نہیں۔","hier is ترتیب نہ بدلیں؛ یہ رہی کے معنی دیتا ہے۔","Hier is de bon.","یہ رہی رسید۔","ہیر اِس دَ بون"],
+        ["de maat is te klein","واپسی کی وجہ میں سائز ضرورت سے چھوٹا بتائیں۔","یہ سائز کا مسئلہ ہے؛ خراب چیز کے لیے kapot کہیں۔","te کو klein سے پہلے رکھیں۔","De maat is te klein.","سائز بہت چھوٹا ہے۔","دَ مات اِس تَ کلَین"],
+        ["de jas is kapot","جیکٹ میں خرابی ہو تو چیز اور مسئلہ مکمل جملے میں بتائیں۔","یہ خرابی ہے؛ صرف غلط سائز نہیں۔","is کو نہ چھوڑیں؛ de jas kapot ادھورا ہے۔","De jas is kapot.","جیکٹ خراب ہے۔","دَ یاس اِس کا پوت"],
+        ["heeft u een grotere maat","اسی چیز کا بڑا سائز مانگنے کے لیے سوال کریں۔","یہ تبادلے کا حل ہے؛ رقم واپس لینے کی درخواست نہیں۔","grotere کو maat سے پہلے رکھیں۔","Heeft u een grotere maat?","کیا آپ کے پاس بڑا سائز ہے؟","ہیفٹ یو اَن خرو تَ رَ مات"],
+        ["kan ik mijn geld terugkrijgen","چیز نہ رکھنی ہو تو رقم واپس ملنے کی مؤدبانہ درخواست کریں۔","یہ رقم واپس مانگتا ہے؛ دوسری چیز سے بدلنا ruilen ہے۔","سوال میں kan ik پہلے اور terugkrijgen آخر میں رکھیں۔","Kan ik mijn geld terugkrijgen?","کیا مجھے پیسے واپس مل سکتے ہیں؟","کان اِک مَین خَیلٹ تَروخ کرَی خَن"]
+      ]),
+      pattern:{modelDutch:"ik wil dit terugbrengen",titleUrdu:"چیز واپس کرنے کا مقصد کہنا",highlight:"ik wil dit terugbrengen",explanationUrdu:"واپسی کا مقصد بتانے کے لیے ik wil کے بعد dit اور آخر میں terugbrengen رکھیں۔",contrastUrdu:"terugbrengen چیز واپس لانا ہے؛ ruilen اسے دوسری چیز سے بدلنا ہے۔",commonMistakeUrdu:"نتیجہ فرض نہ کریں؛ واپسی کے بعد بدلنا یا رقم الگ مانگیں۔"},
+      prerequisiteLessonIds:["a0-shopping-payment","a0-home-needs","a1-shopping-clothes"],prerequisiteRefs:[["a0-shopping-payment","bon"],["a0-home-needs","kapot"],["a1-shopping-clothes","maat"],["a1-shopping-clothes","deze jas is te groot"]],
+      scenarios:{ruilen:["returns-recognise-exchange","دوسری چیز یا سائز سے بدلنے کا عمل پہچانیں۔"],terugbrengen:["returns-recognise-return","چیز دکان واپس لانے کا عمل پہچانیں۔"],"ik wil dit terugbrengen":["returns-state-purpose","واپسی کاؤنٹر پر اپنا مقصد کہیں۔"],"hier is de bon":["returns-show-receipt","ملازم کو رسید دیں۔"],"de maat is te klein":["returns-size-reason","واپسی کی وجہ غلط سائز بتائیں۔"],"de jas is kapot":["returns-damage-reason","جیکٹ کی خرابی بتائیں۔"],"heeft u een grotere maat":["returns-request-larger","بڑا سائز مانگیں۔"],"kan ik mijn geld terugkrijgen":["returns-request-refund","رقم واپس ملنے کی درخواست کریں۔"]},
+      document:{stableId:"returns-receipt-card",sourceKey:"returns-receipt-card",documentKind:"shop-receipt-card",targetDutch:"hier is de bon",title:"bon",labelUrdu:"دکان کی رسید پڑھیں",promptUrdu:"رسید میں ruilen اور bon دیکھیں، پھر ملازم کو رسید پیش کرنے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"رسید میں واپسی اور رسید کی قطاریں الگ پڑھیں، پھر کاؤنٹر پر رسید دینے والی سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ hier is de bon رسید پیش کرتا ہے۔",wrongUrdu:"یہ دوسری واپسی کی بات ہے۔ hier is de bon کا مطلب یہ رہی رسید ہے۔",rows:[{label:"ruilen",value:"ruilen"},{label:"terugbrengen",value:"terugbrengen"},{label:"bon",value:"hier is de bon"}]}
+    },
+    "a1-money-bank": {
+      title: "Betalen en een betaalprobleem", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+      outcomeUrdu: "کارڈ یا نقد ادائیگی بتانا، ناکام کارڈ یا غلط رقم واضح کرنا، اور رسید مانگنا۔",
+      seedConcepts:[["pinpas","بینک کارڈ"],["bedrag","رقم"],["ik betaal contant","میں نقد ادائیگی کرتا یا کرتی ہوں"],["mijn pinpas werkt niet","میرا بینک کارڈ کام نہیں کر رہا"],["het bedrag klopt niet","رقم درست نہیں ہے"],["ik heb niet genoeg geld","میرے پاس کافی پیسے نہیں ہیں"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟"]],
+      teaching:authoredA1TeachingV4([
+        ["pinpas","دکان میں کارڈ سے ادائیگی کے لیے بینک کارڈ کو pinpas کہیں۔","یہ کارڈ ہے؛ contant نقد رقم ہے۔","pinpas کو کارڈ مشین کے معنی میں نہ لیں۔","Mijn pinpas werkt.","میرا بینک کارڈ کام کرتا ہے۔","پِن پاس"],
+        ["bedrag","اسکرین یا رسید پر ادا ہونے والی پوری رقم کو bedrag کہیں۔","یہ کل رقم ہے؛ ایک چیز کی prijs الگ ہو سکتی ہے۔","bedrag کو نقد یا کارڈ کے طریقے کے معنی میں نہ لیں۔","pinpas — bedrag","بینک کارڈ — رقم۔","بَ دراخ"],
+        ["ik betaal contant","کیش دینے کا فیصلہ مکمل جملے میں بتائیں۔","یہ نقد طریقہ ہے؛ met pin کارڈ کا طریقہ ہے۔","contant کو betaal سے پہلے نہ رکھیں۔","Ik betaal contant.","میں نقد ادائیگی کرتا یا کرتی ہوں۔","اِک بَ تال کون تانت"],
+        ["mijn pinpas werkt niet","کارڈ قبول نہ ہو تو مسئلہ صاف مکمل جملے میں بتائیں۔","یہ کارڈ کی خرابی ہے؛ غلط bedrag الگ مسئلہ ہے۔","niet کو آخر میں رکھیں؛ werkt niet ساتھ رہتا ہے۔","Mijn pinpas werkt niet.","میرا بینک کارڈ کام نہیں کر رہا۔","مَین پِن پاس ویرکٹ نیت"],
+        ["het bedrag klopt niet","مشین یا رسید کی رقم غلط ہو تو یہ مکمل اعتراض کہیں۔","یہ رقم کی غلطی ہے؛ کارڈ کام نہ کرنا نہیں۔","klopt niet کو ساتھ رکھیں؛ صرف niet کہنا مسئلہ واضح نہیں کرتا۔","Het bedrag klopt niet.","رقم درست نہیں ہے۔","ہَت بَ دراخ کلوپٹ نیت"],
+        ["ik heb niet genoeg geld","رقم پوری نہ ہو تو اپنی حالت واضح کریں۔","یہ ناکافی پیسے ہیں؛ ادائیگی مکمل ہونے کی بات نہیں۔","niet genoeg کو geld سے پہلے رکھیں۔","Ik heb niet genoeg geld.","میرے پاس کافی پیسے نہیں ہیں۔","اِک ہَپ نیت خَ نوخ خَیلٹ"],
+        ["mag ik de bon","ادائیگی کے بعد رسید مؤدبانہ طور پر مانگیں۔","یہ رسید کی درخواست ہے؛ رقم یا بل کی شکایت نہیں۔","سوال میں mag ik سے شروع کریں اور de bon آخر میں رکھیں۔","Mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","ماخ اِک دَ بون"]
+      ]),
+      pattern:{modelDutch:"mijn pinpas werkt niet",titleUrdu:"ادائیگی کی خرابی واضح کرنا",highlight:"mijn pinpas werkt niet",explanationUrdu:"کارڈ کا مسئلہ بتانے کے لیے mijn pinpas کے بعد werkt niet رکھیں۔",contrastUrdu:"pinpas werkt niet کارڈ کا مسئلہ ہے؛ bedrag klopt niet رقم کی غلطی ہے۔",commonMistakeUrdu:"صرف niet نہ کہیں؛ کون سی چیز کام نہیں کرتی مکمل بتائیں۔"},
+      prerequisiteLessonIds:["a0-shopping-payment","a1-cafe-ordering","a1-shopping-returns"],prerequisiteRefs:[["a0-shopping-payment","ik betaal met pin"],["a0-shopping-payment","contant"],["a0-shopping-payment","bon"],["a1-cafe-ordering","rekening"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"]],
+      scenarios:{pinpas:["payment-recognise-card","ادائیگی کے بینک کارڈ کو پہچانیں۔"],bedrag:["payment-recognise-amount","اسکرین پر کل رقم پہچانیں۔"],"ik betaal contant":["payment-choose-cash","کیش سے ادائیگی کا طریقہ بتائیں۔"],"mijn pinpas werkt niet":["payment-card-fails","مشین کارڈ قبول نہیں کرتی۔ مسئلہ بتائیں۔"],"het bedrag klopt niet":["payment-wrong-amount","اسکرین کی رقم غلط ہے۔ اعتراض کریں۔"],"ik heb niet genoeg geld":["payment-not-enough","رقم پوری نہیں۔ اپنی حالت بتائیں۔"],"mag ik de bon":["payment-request-receipt","ادائیگی کے بعد رسید مانگیں۔"]}
+    },
     "a1-appointments": {
       title: "Een afspraak maken of veranderen",
       unitLabel: "A1: سوال، مدد، فون اور ملاقات",
@@ -7068,6 +7210,26 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   missions: {
+    "a1-food-shopping-mission": {
+      sourceKey: "food-shopping-returns-payment-mission",
+      scenarioTitleUrdu: "فہرست سے خریداری، کیفے، واپسی، اور ادائیگی",
+      speakerUrdu: "دکان کا ملازم، ویٹر، یا کاؤنٹر کا ملازم",
+      prerequisiteLessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"],
+      variantTitles: ["فہرست کے ساتھ سپر مارکیٹ", "کیفے میں آرڈر اور کھانے کی ضرورت", "کپڑا خریدنا، واپس کرنا، اور ادائیگی"],
+      variantContexts: ["فہرست پڑھیں، چیز کی جگہ یا قیمت پوچھیں، اور کاؤنٹر کی بات مکمل کریں", "مینو سے انتخاب کریں، اپنی کھانے کی ضرورت واضح کریں، اور مسئلہ مؤدبانہ طور پر حل کریں", "کپڑے کا سائز سمجھیں، رسید کے ساتھ واپسی کریں، اور ادائیگی کی خرابی واضح کریں"],
+      targets: [
+        { lessonId:"a1-supermarket", dutch:"hoeveel kost dit brood?" },
+        { lessonId:"a1-cafe-ordering", dutch:"voor mij een thee", patternLessonId:"a1-cafe-ordering" },
+        { lessonId:"a1-cafe-food-needs", dutch:"ik ben allergisch voor noten", patternLessonId:"a1-cafe-food-needs" },
+        { lessonId:"a1-shopping-clothes", dutch:"deze jas is te groot", patternLessonId:"a1-shopping-clothes" },
+        { lessonId:"a1-shopping-returns", dutch:"ik wil dit terugbrengen", patternLessonId:"a1-shopping-returns" },
+        { lessonId:"a1-money-bank", dutch:"mijn pinpas werkt niet", patternLessonId:"a1-money-bank" }
+      ],
+      prerequisiteRefs: [["a0-food-drink","brood"],["a0-shopping-payment","bon"],["a1-supermarket","ik zoek melk"],["a1-cafe-ordering","de rekening alstublieft"],["a1-cafe-food-needs","kunt u dit controleren?"],["a1-shopping-clothes","mag ik dit passen?"],["a1-shopping-returns","hier is de bon"],["a1-money-bank","bedrag"],["a1-money-bank","mag ik de bon?"]],
+      useTypes:["document-choice","listen-choice","situation","build","situation","situation"],
+      checkTypes:["meaning","listen-choice","reverse","build","document-choice","situation"],
+      document:{documentKind:"shopping-receipt-mission-card",title:"Bon",labelUrdu:"خریداری کی فہرست اور رسید پڑھیں",promptUrdu:"کارڈ میں jas اور bedrag دیکھیں، پھر چیز واپس کرنے والی سیکھی ہوئی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"فہرست اور رسید میں چیز، سائز، اور رقم الگ پڑھیں، پھر واپسی کاؤنٹر کے لیے سیکھی ہوئی بات چنیں۔",rows:[{label:"brood",value:"hoeveel kost dit brood?"},{label:"jas",value:"deze jas is te groot"},{label:"bon",value:"ik wil dit terugbrengen"}]}
+    },
     "a1-mission-house-search": {
       sourceKey: "home-neighbours-repairs-housing-mission",
       scenarioTitleUrdu: "گھر میں رہنا، مسئلہ سنبھالنا، اور نیا مکان دیکھنا",

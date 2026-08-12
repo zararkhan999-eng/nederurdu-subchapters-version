@@ -40,16 +40,17 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. Unit
-1, Unit 2, Unit 3, Unit 4, and Unit 5 have since been authored and each passes its
+1, Unit 2, Unit 3, Unit 4, Unit 5, and Unit 6 have since been authored and each passes its
 exact audit slice with **0 findings**. The current complete A1 result is **727
 errors and 0 review flags** before Unit 5, and **586 errors and 0 review flags**
-after Unit 5. All remaining findings belong to Units 6–9 or the future chapter
+after Unit 5, and **398 errors and 0 review flags** after Unit 6. All remaining
+findings belong to Units 7–9 or the future chapter
 completion mission.
 
-After the Unit 5 rewrite also retired the duplicate home/neighbour node and
-separated food from home vocabulary, the current A1 totals are 330
-chapter-owned concepts, 350 chapter-owned skills, 20 patterns, 130 runs, 559
-teaching blocks, 2,395 normal-lesson exercises, and 270 mission records. The
+After the Unit 6 rewrite separated supermarket, café, dietary needs, clothing,
+returns, and payment responsibilities, the current A1 totals are 312
+chapter-owned concepts, 338 chapter-owned skills, 26 patterns, 116 runs, 504
+teaching blocks, 2,149 normal-lesson exercises, and 282 mission records. The
 chapter now has 41 normal path lessons until the later binding merge, split,
 move, and retire decisions are applied.
 
@@ -226,6 +227,19 @@ returns → payment problems.
 | `a1-money-bank` | **Remain and refocus** as “Betalen en betaalproblemen,” not abstract banking. |
 | `a1-food-shopping-mission` | **Remain but fully author** across food, clothes, returns, and payment. |
 
+Implementation checkpoint: **completed and locally clean**. The path now
+follows supermarket → café ordering → dietary needs/problems → clothes →
+returns → payment problems. Six focused lessons own 46 targets, of which 41
+are genuinely new, across 12 capped runs with six complete practical patterns.
+The supermarket teaches a list/price card and returns teaches a receipt before
+either document format appears in Independent Check or the mission. The
+mission has three authored variants, each with six Use and six Independent
+Check tasks covering all six lesson strands. The exact Unit 6 audit slice has
+0 findings, its corrected focused desktop/mobile gate passes 12/12, the
+combined Unit 1–6 regression gate passes 70/70, and frozen A0 remains 96/96.
+Manual review confirmed the required map order, Urdu-first allergy teaching,
+mission prerequisites, no responsive overflow, and an empty browser console.
+
 ### Unit 7 — Transport and practical places in town
 
 | Lesson | Decision |
@@ -295,8 +309,8 @@ work schedule.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–4 are complete. Unit 6 is the next permitted
-authoring batch; Units 7–9 and the completion mission remain blocked behind
+Current checkpoint: steps 1–5 are complete. Unit 7 is the next permitted
+authoring batch; Units 8–9 and the completion mission remain blocked behind
 that sequence.
 
 This document is an inventory and decision record, not an A1 completion
