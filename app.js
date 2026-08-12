@@ -760,6 +760,16 @@ function getMissingPrerequisites(lesson, run = null) {
   return requiredIds.filter((skillId) => !statusAtLeast(getSkillStatus(skillId), requiredStatus));
 }
 
+function getMissionPrerequisiteIds(lesson) {
+  return lesson?.kind === "mission" ? normalizeIdList(lesson.prerequisiteMissionIds) : [];
+}
+
+function getMissingMissionPrerequisites(lesson) {
+  return getMissionPrerequisiteIds(lesson).filter((missionId) => (
+    !statusAtLeast(getLessonStatus(missionId), "practiced")
+  ));
+}
+
 function getSkillDisplayName(skillId) {
   const skill = courseSkills.get(skillId);
   const conceptId = skill?.conceptId || normalizeIdList(skill?.conceptIds)[0];
@@ -1281,7 +1291,17 @@ function renderChapterSwitcher() {
 }
 
 function getSubchapterForLesson(chapter, lessonId) {
-  return chapter.subchapters?.find((item) => item.lessonIds.includes(lessonId)) || chapter.subchapters?.[0];
+  const owningSection = chapter.subchapters?.find((item) => item.lessonIds.includes(lessonId));
+  if (owningSection) return owningSection;
+  if (lessonId === chapter.contract?.completionMissionId) {
+    return {
+      id: `${chapter.id}-chapter-completion`,
+      title: `${chapter.id.toUpperCase()} آخری عملی جانچ`,
+      goal: "نو حصوں کی پہلے سیکھی ہوئی باتیں ایک مسلسل روزمرہ مشن میں استعمال کریں۔",
+      practice: "تمام یونٹ مشن مکمل ہونے کے بعد معنی، سننا، پڑھنا، بولنے کی مدد، اور عملی استعمال جانچیں۔"
+    };
+  }
+  return chapter.subchapters?.[0];
 }
 
 function renderUnitCard(chapter, nextLesson) {
@@ -1305,9 +1325,21 @@ function renderUnitCard(chapter, nextLesson) {
 }
 
 function renderLessonPath(chapter, nextLesson) {
-  const groups = chapter.subchapters?.length
+  const unitGroups = chapter.subchapters?.length
     ? chapter.subchapters.map((section) => ({ section, lessons: subchapterLessons(section) }))
     : [{ section: { title: chapter.title }, lessons: chapter.lessons }];
+  const groupedLessonIds = new Set(unitGroups.flatMap(({ lessons }) => lessons.map((lesson) => lesson.id)));
+  const ungroupedLessons = chapter.lessons.filter((lesson) => !groupedLessonIds.has(lesson.id));
+  const groups = ungroupedLessons.length
+    ? [...unitGroups, {
+      section: {
+        id: `${chapter.id}-chapter-completion`,
+        title: `${chapter.id.toUpperCase()} آخری عملی جانچ`,
+        goal: "تمام یونٹ مشن کے بعد باب کی آخری عملی جانچ۔"
+      },
+      lessons: ungroupedLessons
+    }]
+    : unitGroups;
   const focusLessonId = pathCardLessonId || nextLesson.id;
   const focusGroupIndex = Math.max(0, groups.findIndex(({ lessons }) => lessons.some((lesson) => lesson.id === focusLessonId)));
   const visibleGroups = pathExpanded
@@ -1537,7 +1569,9 @@ function renderLessonPreview() {
   const conceptIds = getLessonConceptIds(lesson, run);
   const prerequisiteIds = getPrerequisiteSkillIds(lesson, run);
   const missingPrerequisites = getMissingPrerequisites(lesson, run);
-  const missionBlocked = lesson.kind === "mission" && missingPrerequisites.length > 0;
+  const missingMissionPrerequisites = getMissingMissionPrerequisites(lesson);
+  const missionBlocked = lesson.kind === "mission"
+    && (missingPrerequisites.length > 0 || missingMissionPrerequisites.length > 0);
   const previewPhases = getLessonDisplayPhases(lesson);
   const masteryStatus = getLessonStatus(lesson.id);
   const completedRunIds = new Set(progress.lessonRunProgress?.[lesson.id]?.completedRunIds || []);
@@ -1593,7 +1627,7 @@ function renderLessonPreview() {
         </div>
       </section>
 
-      ${renderPrerequisiteGuidance(lesson, prerequisiteIds, missingPrerequisites)}
+      ${renderPrerequisiteGuidance(lesson, prerequisiteIds, missingPrerequisites, missingMissionPrerequisites)}
 
       <section class="learning-preview-content">
         <div class="learning-preview-column">
@@ -1628,9 +1662,10 @@ function renderLessonPreview() {
   `;
 }
 
-function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds) {
-  if (!prerequisiteIds.length && !missingIds.length) return "";
+function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds, missingMissionIds = []) {
+  if (!prerequisiteIds.length && !missingIds.length && !missingMissionIds.length) return "";
   const missingNames = missingIds.map(getSkillDisplayName);
+  const missingMissionNames = missingMissionIds.map((missionId) => getShortLessonTitle(getLesson(missionId) || { title: missionId }));
   const visibleMissingNames = missingNames.slice(0, 5);
   const remainingMissingCount = Math.max(0, missingNames.length - visibleMissingNames.length);
   const missingSkillTags = visibleMissingNames.map((name) => (
@@ -1640,13 +1675,18 @@ function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds) {
   )).join("");
   const readyCount = Math.max(0, prerequisiteIds.length - missingIds.length);
   const mission = lesson.kind === "mission";
+  const needsPreparation = missingIds.length > 0 || missingMissionIds.length > 0;
+  const missingMissionTags = missingMissionNames.map((name) => (
+    `<span class="prerequisite-skill">${escapeHtml(name)}</span>`
+  )).join("");
   return `
-    <aside class="prerequisite-guidance ${missingIds.length ? "needs-preparation" : "ready"}">
-      <span>${renderIcon(missingIds.length ? "notebook" : "check")}</span>
+    <aside class="prerequisite-guidance ${needsPreparation ? "needs-preparation" : "ready"}">
+      <span>${renderIcon(needsPreparation ? "notebook" : "check")}</span>
       <div>
-        <strong>${missingIds.length ? (mission ? "اس مشن سے پہلے تیاری کریں" : "پچھلی بات کی مختصر یاد دہانی") : "آپ اس سبق کے لیے تیار ہیں"}</strong>
+        <strong>${needsPreparation ? (mission ? "اس مشن سے پہلے تیاری کریں" : "پچھلی بات کی مختصر یاد دہانی") : "آپ اس سبق کے لیے تیار ہیں"}</strong>
+        ${missingMissionIds.length ? `<p>پہلے یہ یونٹ مشن مکمل کریں:</p><div class="prerequisite-skill-list">${missingMissionTags}</div>` : ""}
         ${missingIds.length ? `<p>یہ باتیں پہلے مضبوط کرنا بہتر ہے:</p><div class="prerequisite-skill-list">${missingSkillTags}</div>` : ""}
-        <p>${missingIds.length
+        <p>${needsPreparation
     ? `${remainingMissingCount ? (remainingMissingCount === 1 ? "اس کے علاوہ ایک مزید بات بھی دہرانی ہے۔ " : `اس کے علاوہ ${remainingMissingCount} مزید باتیں بھی دہرانی ہیں۔ `) : ""}${mission ? "یہ مشن صرف مشق کی ہوئی مہارتیں استعمال کرتا ہے۔" : "سبق پھر بھی کھلا ہے؛ ضرورت پر یاد دہانی اسی سبق میں ملے گی۔"}`
     : `${readyCount || prerequisiteIds.length} ضروری مہارتیں پہلے سے سیکھی ہوئی ہیں۔`}</p>
         ${missingIds.length ? `<button class="secondary-button prerequisite-review-button" data-action="practice">ضروری باتیں دہرائیں</button>` : ""}
@@ -2956,7 +2996,8 @@ function startLesson(id) {
     render();
     return;
   }
-  if (lesson.kind === "mission" && getMissingPrerequisites(lesson).length) {
+  if (lesson.kind === "mission"
+    && (getMissingPrerequisites(lesson).length || getMissingMissionPrerequisites(lesson).length)) {
     previewLessonId = lesson.id;
     screen = "preview";
     render();

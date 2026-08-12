@@ -41,14 +41,15 @@ a1: 52 lessons, 3352 questions, 671 errors, 0 review flags
 After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. All
 nine units have now been authored, and each passes its exact audit slice with
-**0 findings**. The current complete A1 result is **39 errors and 0 review
-flags**, down from 135 after Unit 8. The remaining findings are the deliberately
-missing chapter completion mission plus final cross-generated Unit 5 lexical
-ownership and shared confusion-template cleanup.
+**0 findings**. The separate chapter completion mission is also authored and
+passes its exact audit slice with **0 findings**. The current complete A1 result
+is **38 errors and 0 review flags**, down from 135 after Unit 8. The remaining
+findings are final cross-generated Unit 5 lexical ownership and shared
+confusion-template cleanup.
 
 After Unit 9 was rebuilt, the current A1 totals are 325 A1-associated concepts,
 302 chapter-owned skills, 38 patterns, 81 runs, 371 teaching blocks, 1,532
-normal-lesson exercises, and 318 mission records.
+normal-lesson exercises, and 354 mission records across ten missions.
 The chapter path now has **38 normal lessons and 9 unit missions**.
 
 ### Baseline audit error taxonomy
@@ -316,6 +317,22 @@ combined Units 1–9 regression gate passes 106/106, and frozen A0 remains 96/96
 Manual review confirmed the five-node order, Urdu-first school-contact teaching,
 mission prerequisites, and the six already-taught mission targets.
 
+### A1 chapter completion mission
+
+Implementation checkpoint: **authored and locally clean**. The separate
+`a1-chapter-completion-mission` appears after all nine unit sections and is not
+owned by Unit 9. It requires all nine unit capstones, introduces no skill or
+concept, and uses nine representative practiced skills across six connected
+tasks. Three paired tasks combine related strands so each variant keeps exactly
+six Use and six Independent Check items while representing all nine units.
+Every variant materialises meaning, listening, authentic document reading,
+unscored speaking support, and practical use, followed by required correction.
+The exact completion-mission audit slice has 0 findings, its focused
+desktop/mobile gate passes 12/12, the cumulative A1 gate passes 118/118, and
+frozen A0 remains 96/96. Manual review confirmed the final path placement, the
+nine-capstone lock, all nine learned targets, no horizontal overflow, and an
+empty browser console.
+
 ## 4. Replacement dependency contract
 
 - Replace the arbitrary five-skill A0 prerequisite with an explicit A1 bridge:
@@ -346,9 +363,9 @@ mission prerequisites, and the six already-taught mission targets.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–6 are complete through Unit 9. Step 7, the separate
-A1 chapter completion mission, is now the next permitted authoring batch. The
-chapter remains unfrozen until step 8 is fully green.
+Current checkpoint: steps 1–7 are complete. Step 8, clearing the remaining
+full-chapter findings and repeating every acceptance gate, is now active. The
+chapter remains unfrozen until that step is fully green.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

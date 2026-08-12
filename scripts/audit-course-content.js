@@ -749,16 +749,19 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
   };
   const answer = question.answer;
   const prompt = question.prompt;
+  const ownsCompositeDutch = (value) => concepts.length > 1 && concepts.every((concept) => (
+    normalizeSemantic(value).includes(normalizeSemantic(concept.dutch))
+  ));
   if (["reverse", "situation", "image-choice", "build", "short-input"].includes(question.type)) {
-    return concepts.some((concept) => sameSurface(answer, concept.dutch));
+    return ownsCompositeDutch(answer) || concepts.some((concept) => sameSurface(answer, concept.dutch));
   }
   if (question.type === "meaning") {
-    return concepts.some((concept) => (
+    return (ownsCompositeDutch(prompt) && hasUrdu(answer)) || concepts.some((concept) => (
       sameSurface(prompt, concept.dutch) && sameMeaning(answer, concept.urdu)
     ));
   }
   if (question.type === "listen-choice") {
-    return concepts.some((concept) => (
+    return (ownsCompositeDutch(question.speak || answer) && hasUrdu(answer)) || concepts.some((concept) => (
       sameSurface(question.speak || answer, concept.dutch)
       && (sameSurface(answer, concept.dutch) || sameMeaning(answer, concept.urdu))
     ));
@@ -1563,6 +1566,24 @@ function auditV4Chapter(
         "completion-mission-areas",
         "Completion mission must declare the same five skill areas as the chapter contract.",
         list(completionMission.completionSkillAreas).join(", "),
+        chapter,
+        completionMission
+      );
+    }
+    const requiredUnitMissionIds = list(chapter.unitIds).flatMap((unitId) => (
+      list(unitMap.get(unitId)?.capstoneMissionIds)
+    ));
+    const separateChapterCompletion = !requiredUnitMissionIds.includes(completionMission.id);
+    if (
+      separateChapterCompletion
+      && !sameIds(list(completionMission.prerequisiteMissionIds), requiredUnitMissionIds)
+    ) {
+      addCourseFinding(
+        findings,
+        "error",
+        "completion-mission-prerequisites",
+        "Chapter completion must require every unit capstone mission in chapter order.",
+        list(completionMission.prerequisiteMissionIds).join(", "),
         chapter,
         completionMission
       );

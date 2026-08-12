@@ -7456,6 +7456,24 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   missions: {
+    "a1-chapter-completion-mission": {
+      sourceKey:"chapter-completion-mission",scenarioTitleUrdu:"A1 کے نو روزمرہ حصوں کی آخری عملی جانچ",speakerUrdu:"استقبالی ملازم، فون پر ذمہ دار شخص، یا روزمرہ خدمت کا ملازم",
+      prerequisiteLessonIds:["a1-greetings-personal-info","a1-hebben-family","a1-daily-routine","a1-appointments","a1-house-search-extra","a1-shopping-returns","a1-directions-town","a1-pharmacy-medicine","a1-work-schedule"],
+      prerequisiteMissionIds:["a1-personal-info-mission","a1-family-people-mission","a1-daily-routine-mission","a1-mission-phone-internet","a1-mission-house-search","a1-food-shopping-mission","a1-mission-post-parcel","a1-mission-doctor","a1-mission-school-day"],
+      variantTitles:["نئے ہفتے کے روزمرہ کام","بدلے ہوئے دن میں رابطہ اور سفر","خاندان، گھر، صحت، اور کام کی عملی ترتیب"],
+      variantContexts:["ایک ہی دن میں تعارف، خاندان، وقت، ملاقات، گھر، واپسی، راستہ، صحت، اور کام کی اطلاع مکمل کریں","منصوبہ بدل گیا ہے؛ ضروری معلومات سنیں، دستاویز پڑھیں، اور مناسب سیکھی ہوئی باتیں استعمال کریں","اپنی اور خاندان کی معلومات سے شروع کریں، پھر گھر، خریداری، صحت، سفر، اور کام کے کام مکمل کریں"],
+      targets:[
+        {lessonId:"a1-greetings-personal-info",dutch:"mijn naam is Zarar",related:[{lessonId:"a1-hebben-family",dutch:"ik heb een broer"}],compoundDutch:"mijn naam is Zarar. ik heb een broer.",compoundUrdu:"میرا نام Zarar ہے۔ میرا ایک بھائی ہے۔",taskUrdu:"اپنا نام اور خاندان کی ایک معلومات دونوں واضح کریں۔"},
+        {lessonId:"a1-daily-routine",dutch:"ik heb om twaalf uur pauze",related:[{lessonId:"a1-appointments",dutch:"hoe laat is de afspraak?"}],compoundDutch:"ik heb om twaalf uur pauze. hoe laat is de afspraak?",compoundUrdu:"میری بارہ بجے چھٹی ہے۔ ملاقات کتنے بجے ہے؟",taskUrdu:"اپنا روزمرہ وقت بتائیں اور ملاقات کا وقت پوچھیں۔"},
+        {lessonId:"a1-house-search-extra",dutch:"wanneer is de woning beschikbaar?",taskUrdu:"مکان کے اشتہار سے دستیابی سمجھ کر مناسب سوال پوچھیں۔"},
+        {lessonId:"a1-shopping-returns",dutch:"kan ik mijn geld terugkrijgen?",taskUrdu:"رسید کے ساتھ رقم واپس لینے کی مناسب بات استعمال کریں۔"},
+        {lessonId:"a1-directions-town",dutch:"hoe kom ik bij de apotheek?",related:[{lessonId:"a1-pharmacy-medicine",dutch:"heeft u iets tegen de pijn?"}],compoundDutch:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?",compoundUrdu:"میں دواخانے کیسے پہنچوں؟ کیا آپ کے پاس درد کے لیے کچھ ہے؟",taskUrdu:"پہلے دواخانے کا راستہ پوچھیں، پھر وہاں درد کی دوا مانگیں۔"},
+        {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",taskUrdu:"کام کے بدلے ہوئے وقت کی مختصر واضح اطلاع دیں۔"}
+      ],
+      prerequisiteRefs:[["a1-greetings-personal-info","mijn naam is Zarar"],["a1-hebben-family","ik heb een broer"],["a1-daily-routine","ik heb om twaalf uur pauze"],["a1-appointments","hoe laat is de afspraak?"],["a1-house-search-extra","wanneer is de woning beschikbaar?"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"],["a1-directions-town","hoe kom ik bij de apotheek?"],["a1-pharmacy-medicine","heeft u iets tegen de pijn?"],["a1-work-schedule","mijn dienst is veranderd"]],
+      useTypes:["situation","listen-choice","document-choice","build","speak-repeat","situation"],checkTypes:["meaning","listen-choice","document-choice","reverse","build","situation"],
+      document:{documentKind:"a1-daily-life-completion-card",title:"woning",labelUrdu:"روزمرہ کاموں کا مکمل کارڈ پڑھیں",promptUrdu:"کارڈ میں wanneer is de woning beschikbaar، kan ik mijn geld terugkrijgen، apotheek، اور mijn dienst is veranderd الگ دیکھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"دن کے کارڈ میں تعارف، وقت، مکان، واپسی، صحت، اور کام کی قطاریں الگ پڑھیں، پھر نشان زدہ کام کی سیکھی ہوئی بات چنیں۔",rows:[{label:"mijn naam is Zarar",value:"mijn naam is Zarar. ik heb een broer."},{label:"hoe laat is de afspraak?",value:"ik heb om twaalf uur pauze. hoe laat is de afspraak?"},{label:"wanneer is de woning beschikbaar?",value:"wanneer is de woning beschikbaar?"},{label:"kan ik mijn geld terugkrijgen?",value:"kan ik mijn geld terugkrijgen?"},{label:"hoe kom ik bij de apotheek?",value:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?"},{label:"mijn dienst is veranderd",value:"mijn dienst is veranderd"}]}
+    },
     "a1-mission-school-day": {
       sourceKey:"work-school-message-mission",scenarioTitleUrdu:"پیغام سے اسکول اور کام کے بدلے دن تک",speakerUrdu:"اسکول یا کام کا ذمہ دار شخص",
       prerequisiteLessonIds:["a1-short-messages","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
@@ -12871,23 +12889,30 @@ for (const chapter of chaptersV4) {
 }
 
 function resolveA1MissionTargetV4(target) {
-  const concept = (lessonConceptIdsV4.get(target.lessonId) || [])
+  const resolveConcept = (reference) => (lessonConceptIdsV4.get(reference.lessonId) || [])
     .map((conceptId) => conceptByIdV4.get(conceptId))
-    .find((candidate) => (
-      normalizedTextV4(candidate?.dutch) === normalizedTextV4(target.dutch)
-    ));
+    .find((candidate) => normalizedTextV4(candidate?.dutch) === normalizedTextV4(reference.dutch));
+  const concept = resolveConcept(target);
   if (!concept) return null;
+  const relatedConcepts = (target.related || []).map(resolveConcept).filter(Boolean);
+  if (relatedConcepts.length !== (target.related || []).length) return null;
   const pattern = target.patternLessonId
     ? patternsV4.find((candidate) => candidate.lessonId === target.patternLessonId)
     : null;
   const conceptSkillId = skillIdByConceptIdV4.get(concept.id);
   const skillIds = uniqueV4([
     pattern?.skillId || conceptSkillId,
-    ...(target.includeConceptSkill && pattern?.skillId ? [conceptSkillId] : [])
+    ...(target.includeConceptSkill && pattern?.skillId ? [conceptSkillId] : []),
+    ...relatedConcepts.map((candidate) => skillIdByConceptIdV4.get(candidate.id))
   ].filter(Boolean));
   return {
     concept,
-    skillIds
+    relatedConcepts,
+    ownedConceptIds: uniqueV4([concept.id, ...relatedConcepts.map((candidate) => candidate.id)]),
+    skillIds,
+    compoundDutch: target.compoundDutch || "",
+    compoundUrdu: target.compoundUrdu || "",
+    taskUrdu: target.taskUrdu || ""
   };
 }
 
@@ -12923,65 +12948,83 @@ function makeA1AuthoredMissionQuestionV4({
   plan
 }) {
   const { concept, skillIds } = target;
-  const canonicalUrdu = canonicalUrduForDutchV4(mission, concept.dutch, concept.urdu);
+  const targetDutch = target.compoundDutch || concept.dutch;
+  const canonicalUrdu = target.compoundUrdu || canonicalUrduForDutchV4(mission, concept.dutch, concept.urdu);
+  const taskContext = [context, target.taskUrdu].filter(Boolean).join(" ");
   const sourceKey = plan.sourceKey || "personal-info-mission";
   const speakerUrdu = plan.speakerUrdu || "ملازم";
   const source = `a1-authored:${sourceKey}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`;
   const semanticKey = source.replace(/^a1-authored:/, "a1-authored-mission:");
   let question;
+  const optionsFor = (mode) => {
+    const answer = mode === "dutch" ? targetDutch : canonicalUrdu;
+    const alternatives = missionConceptOptionsV4(conceptIds, concept.id, mode)
+      .filter((option) => normalizedTextV4(option) !== normalizedTextV4(answer));
+    return [answer, ...alternatives].slice(0, 3);
+  };
   if (type === "situation") {
     question = situation(
-      `حال: ${context} اب “${canonicalUrdu}” والی مناسب بات منتخب کریں۔`,
-      missionConceptOptionsV4(conceptIds, concept.id, "dutch"),
-      concept.dutch,
-      `اس موقع میں کہیں: ${concept.dutch}۔`
+      `حال: ${taskContext} اب “${canonicalUrdu}” والی مناسب بات منتخب کریں۔`,
+      optionsFor("dutch"),
+      targetDutch,
+      `اس موقع میں کہیں: ${targetDutch}۔`
     );
   } else if (type === "listen-choice") {
     question = listenChoice(
-      concept.audioText || concept.dutch,
-      missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      targetDutch,
+      optionsFor("urdu"),
       canonicalUrdu,
-      `${concept.dutch} = ${canonicalUrdu}۔`
+      `${targetDutch} = ${canonicalUrdu}۔`
     );
-    question.prompt = `${context} ${speakerUrdu} کی ڈچ بات سنیں اور درست اردو مطلب منتخب کریں۔`;
+    question.prompt = `${taskContext} ${speakerUrdu} کی ڈچ بات سنیں اور درست اردو مطلب منتخب کریں۔`;
   } else if (type === "document-choice") {
     question = {
       type: "document-choice",
       label: plan.document?.labelUrdu || "ذاتی معلومات کا فارم پڑھیں",
       prompt: plan.document?.promptUrdu
-        ? `${context} ${plan.document.promptUrdu}`
-        : `${context} بھرے ہوئے فارم میں Voornaam: Sara پڑھیں اور درست اردو مطلب منتخب کریں۔`,
+        ? `${taskContext} ${plan.document.promptUrdu}`
+        : `${taskContext} بھرے ہوئے فارم میں Voornaam: Sara پڑھیں اور درست اردو مطلب منتخب کریں۔`,
       document: a1MissionDocumentV4(plan),
-      options: missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      options: optionsFor("urdu"),
       answer: canonicalUrdu,
-      explain: `${concept.dutch} = ${canonicalUrdu}۔`
+      explain: `${targetDutch} = ${canonicalUrdu}۔`
     };
   } else if (type === "build") {
     question = build(
-      `${context} ${canonicalUrdu}`,
-      concept.dutch.split(/\s+/).filter(Boolean),
-      concept.dutch,
-      `صحیح ترتیب: ${concept.dutch}۔`
+      `${taskContext} ${canonicalUrdu}`,
+      targetDutch.split(/\s+/).filter(Boolean),
+      targetDutch,
+      `صحیح ترتیب: ${targetDutch}۔`
     );
+  } else if (type === "speak-repeat") {
+    question = {
+      type: "speak-repeat",
+      label: "سنیں اور بغیر نمبر کے دہرائیں",
+      prompt: `${taskContext} آواز سنیں، سیکھی ہوئی باتیں آرام سے دہرائیں، پھر خود آگے بڑھیں۔`,
+      speak: targetDutch,
+      answer: targetDutch,
+      explain: `${targetDutch} = ${canonicalUrdu}۔`,
+      scored: false
+    };
   } else if (type === "meaning") {
     question = meaning(
-      concept.dutch,
-      missionConceptOptionsV4(conceptIds, concept.id, "urdu"),
+      targetDutch,
+      optionsFor("urdu"),
       canonicalUrdu,
-      `${concept.dutch} = ${canonicalUrdu}۔`
+      `${targetDutch} = ${canonicalUrdu}۔`
     );
     question.prompt = phase === "use"
-      ? `${context} ${speakerUrdu} لکھتا ہے: “${concept.dutch}”۔ اس مکمل بات کا درست مطلب منتخب کریں۔`
-      : concept.dutch;
+      ? `${taskContext} ${speakerUrdu} لکھتا ہے: “${targetDutch}”۔ اس مکمل بات کا درست مطلب منتخب کریں۔`
+      : targetDutch;
   } else {
     question = reverse(
       canonicalUrdu,
-      missionConceptOptionsV4(conceptIds, concept.id, "dutch"),
-      concept.dutch,
-      `${canonicalUrdu} = ${concept.dutch}۔`
+      optionsFor("dutch"),
+      targetDutch,
+      `${canonicalUrdu} = ${targetDutch}۔`
     );
     question.prompt = phase === "use"
-      ? `${context} ${speakerUrdu} یہ بات مانگتا ہے: “${canonicalUrdu}”۔ درست مکمل ڈچ بات منتخب کریں۔`
+      ? `${taskContext} ${speakerUrdu} یہ بات مانگتا ہے: “${canonicalUrdu}”۔ درست مکمل ڈچ بات منتخب کریں۔`
       : canonicalUrdu;
   }
   question.generatedConceptId = concept.id;
@@ -13000,14 +13043,15 @@ function makeA1AuthoredMissionQuestionV4({
     "document-choice": plan.document?.instructionUrdu
       || "ڈچ فارم کے خانوں اور ان کے سامنے لکھی معلومات کو پڑھیں، پھر نشان زدہ معلومات کا درست اردو مطلب منتخب کریں۔",
     build: "اردو ضرورت پڑھیں اور دیے گئے سکھائے ہوئے الفاظ سے مکمل ڈچ جملہ بنائیں۔",
+    "speak-repeat": "آواز سنیں اور سیکھی ہوئی ڈچ بات بلند آواز میں دہرائیں؛ اس حصے پر کوئی نمبر نہیں۔",
     meaning: "لکھی ہوئی مکمل ڈچ بات پڑھیں اور اس کا درست اردو مطلب منتخب کریں۔",
     reverse: "اردو معلومات پڑھیں اور اس کے لیے درست مکمل ڈچ بات منتخب کریں۔"
   };
-  const correct = `درست۔ “${concept.dutch}” کا مطلب “${canonicalUrdu}” ہے اور یہی اس مرحلے کی مطلوبہ معلومات ہے۔`;
-  const wrong = `یہ جواب مطلوبہ خانے یا بات سے مختلف ہے۔ دوبارہ دیکھیں: “${concept.dutch}” = “${canonicalUrdu}”۔`;
+  const correct = `درست۔ “${targetDutch}” کا مطلب “${canonicalUrdu}” ہے اور یہی اس مرحلے کی مطلوبہ معلومات ہے۔`;
+  const wrong = `یہ جواب مطلوبہ خانے یا بات سے مختلف ہے۔ دوبارہ دیکھیں: “${targetDutch}” = “${canonicalUrdu}”۔`;
   Object.assign(question, {
     phase,
-    conceptIds: [concept.id],
+    conceptIds: [...target.ownedConceptIds],
     skillIds: [...skillIds],
     scenarioId: `${mission.id}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`,
     scenarioSource: source,
@@ -13029,7 +13073,7 @@ function makeA1AuthoredMissionQuestionV4({
 function applyA1AuthoredMissionV4(mission, plan) {
   const targets = plan.targets.map(resolveA1MissionTargetV4).filter(Boolean);
   if (targets.length !== plan.targets.length) return;
-  const conceptIds = uniqueV4(targets.map((target) => target.concept.id));
+  const conceptIds = uniqueV4(targets.flatMap((target) => target.ownedConceptIds));
   const assessmentSkillIds = uniqueV4(targets.flatMap((target) => target.skillIds));
   const supportingPrerequisiteSkillIds = resolveA1AuthoredSkillRefsV4(plan.prerequisiteRefs);
   const prerequisiteSkillIds = uniqueV4([
@@ -13049,6 +13093,7 @@ function applyA1AuthoredMissionV4(mission, plan) {
       skillIds: prerequisiteSkillIds,
       recommended: true
     },
+    prerequisiteMissionIds: [...(plan.prerequisiteMissionIds || [])],
     introducesNewSkills: false,
     requiresMastery: "practiced-or-secure"
   });
@@ -13118,6 +13163,20 @@ function applyA1AuthoredMissionV4(mission, plan) {
     }))
   };
 }
+
+const a1CompletionMissionV4 = {
+  id: "a1-chapter-completion-mission",
+  kind: "mission",
+  unit: "A1: آخری عملی جانچ",
+  title: "A1 laatste praktische missie",
+  description: "A1 کے نو حصوں کی پہلے سیکھی ہوئی باتوں سے معنی، سننا، پڑھنا، بولنے کی مدد، اور عملی استعمال مکمل کرنا۔",
+  xp: 0,
+  variants: [],
+  questions: [],
+  chapterId: "a1",
+  unitId: "a1-chapter-completion"
+};
+a1Lessons.push(a1CompletionMissionV4);
 
 for (const [missionId, plan] of Object.entries(a1AuthoredCurriculumV4.missions)) {
   const mission = chaptersV4

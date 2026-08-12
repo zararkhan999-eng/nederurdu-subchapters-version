@@ -48,7 +48,7 @@ authored replay variants.
 | Chapters | 3 |
 | Units | 25 |
 | Normal lessons | 92 |
-| Missions | 25 |
+| Missions | 26 |
 | Adaptive unit reviews | 25 |
 | Concepts | 816 |
 | Skills | 868 |
@@ -57,7 +57,7 @@ authored replay variants.
 | Teaching blocks | 1,035 |
 | Active normal-lesson exercises | 4,802 |
 | Retired v3 compatibility records | 5,520 |
-| Mission records across all variants | 807 |
+| Mission records across all variants | 843 |
 
 ### Per-chapter inventory
 
@@ -65,7 +65,7 @@ authored replay variants.
 | --- | ---: | ---: | ---: |
 | Units | 9 | 9 | 7 |
 | Normal lessons | 36 | 38 | 18 |
-| Missions | 9 | 9 | 7 |
+| Missions | 9 | 10 | 7 |
 | Adaptive reviews | 9 | 9 | 7 |
 | Chapter-associated concepts | 345 | 325 | 246 |
 | Chapter-owned skills | 353 | 302 | 213 |
@@ -74,7 +74,7 @@ authored replay variants.
 | Teaching blocks | 376 | 371 | 288 |
 | Active normal-lesson exercises | 1,800 | 1,532 | 1,470 |
 | Retired v3 records | 2,160 | 2,280 | 1,080 |
-| Mission records across all variants | 321 | 318 | 168 |
+| Mission records across all variants | 321 | 354 | 168 |
 
 ## 3. Sequential chapter status
 
@@ -275,10 +275,25 @@ Unit 9, work and school messages, now completes the required unit sequence:
   passes **12/12**, the Units 1–9 regression gate passes **106/106**, and frozen
   A0 remains **96/96**.
 
-The current full A1 result is **39 errors and 0 review flags**, down by 96 from
-the post-Unit-8 result. The remaining work is the separate chapter completion
-mission and final cross-generated Unit 5 lexical-ownership/shared-template
-cleanup. A1 as a whole is not accepted or frozen.
+The separate A1 chapter completion mission now follows all nine unit missions:
+
+- it is a distinct final chapter section rather than a second Unit 9 mission;
+- it remains browseable but cannot start until all nine unit capstones are
+  practiced;
+- nine previously introduced representative skills cover all nine units across
+  six connected tasks, with three natural two-strand tasks keeping the Check
+  inside the required 4–6-item limit;
+- every replay variant has six authored Use tasks and six Independent Check
+  tasks covering meaning, listening, authentic document reading, unscored
+  speaking support, and practical use; and
+- the exact completion-mission audit slice reports **0 findings**, its focused
+  browser gate passes **12/12**, the cumulative Units 1–9 plus completion gate
+  passes **118/118**, and frozen A0 remains **96/96**.
+
+The current full A1 result is **38 errors and 0 review flags**, down by one from
+the post-Unit-9 result because the missing completion mission is resolved. The
+remaining work is final cross-generated Unit 5 lexical-ownership and shared
+confusion-template cleanup. A1 as a whole is not accepted or frozen.
 
 ### A2 — Handle practical situations independently
 
@@ -287,7 +302,7 @@ seven adaptive reviews exist. Grammar lessons are placed under practical
 situations rather than a grammar-first opening.
 
 A2 has not entered its permitted authoring and acceptance cycle. A diagnostic
-strict audit currently reports **387 errors and 1 review flag**. Practical
+strict audit currently reports **388 errors and 1 review flag**. Practical
 documents, concept-specific guidance, Use situations, option explanations, and
 completion-mission evidence remain future A2 work after A1 is frozen.
 
@@ -372,6 +387,12 @@ Manual browser review confirmed:
   practised, and it exposed exactly six already-taught targets. The focused
   suite verifies the message, school, work, and mission surfaces at phone,
   tablet, and desktop widths.
+- The A1 completion mission was manually reviewed as the tenth and final path
+  section. Its Preview named all nine required unit missions, exposed only its
+  nine learned targets, displayed the four mission phases, and kept Start
+  locked. The desktop preview had no horizontal overflow and the browser
+  console was empty; the focused suite verifies the same Preview and first Use
+  task at phone, tablet, and desktop widths.
 
 Focused automated checks cover migration, run prerequisites, adaptive-review
 filtering, selected-distractor explanations, correction loops, mastery
@@ -395,24 +416,24 @@ gate until those chapters reach their own permitted acceptance cycles.
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public` after the A1 Unit 9 authoring batch. The
+  `android/app/src/main/assets/public` after the A1 completion-mission batch. The
   Android source assets have the same course, app-runtime, and service-worker
   hashes as the web source.
-- The offline cache is `nederurdu-v69-learning-first-a1-unit9`.
-- The Unit 9 native build is pending. The current machine no longer exposes a
+- The offline cache is `nederurdu-v70-learning-first-a1-completion`.
+- The A1 completion native build is pending. The current machine no longer exposes a
   Java runtime, so Gradle stops before compilation. The last configured build
   attempt also required acceptance of Google's SDK license before API 35 and
   build-tools 35.0.0 could be installed.
-- Last successfully built APK (Unit 2, not the current Unit 9 package):
+- Last successfully built APK (Unit 2, not the current completion package):
   `android/app/build/outputs/apk/debug/app-debug.apk`
 - Last APK SHA-256:
   `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
-- Synchronized Unit 9 course-data SHA-256:
-  `8ee535f79e1712bca4d71147c7c1aa9bbf0291ebc7db81e1acb4cc0624f69e97`
-- Synchronized Unit 9 app runtime SHA-256:
-  `bb3c8cc20b87c855fa26ad8d834fdad216b9c564714ad0b70f17e29e2a4dcbd4`
-- Synchronized Unit 9 service-worker SHA-256:
-  `c3ae645a30cddafe79afae6ee84c9bc5b6b216096be05ce0d382ac877d056a67`
+- Synchronized completion course-data SHA-256:
+  `8226a3118807f086fb5b0c028e9bf3d5fba7752ebb604473824d757eb01a3846`
+- Synchronized completion app runtime SHA-256:
+  `b0c826938b33ba6bdb1e10a6141895b417e27cb9d9abafeca3bccc903125b361`
+- Synchronized completion service-worker SHA-256:
+  `a90418447138b3ac1ee6a3988a672c54e2925951f09a1708705856777c1676ad`
 - In the last installed acceptance build, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
   `migratedFrom: nederurdu-progress-v3`, retained XP, practice day, settings,
@@ -433,30 +454,28 @@ gate until those chapters reach their own permitted acceptance cycles.
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
 | Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Units 1–9 passed; completion mission pending | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–9: 0 local findings; full A1: 39 errors / 0 flags** | 387 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Units 1–9 content passed; completion mission pending | Blocked |
-| Browser phase journey | Representative path passed | Unit 9 **12/12**; Units 1–9 regression **106/106** | Blocked |
+| Urdu-first teaching records | Passed semantic review | Units 1–9 and completion mission passed | Not accepted |
+| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–9 + completion: 0 local findings; full A1: 38 errors / 0 flags** | 388 errors / 1 flag |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–9 and completion mission passed | Blocked |
+| Browser phase journey | Representative path passed | Completion **12/12**; cumulative A1 **118/118** | Blocked |
 | Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
-| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–9 passed at phone, tablet, and desktop sizes; chapter completion blocked | Blocked |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–9 and completion passed at phone, tablet, and desktop sizes | Blocked |
 | Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
 | Regular and slow audio | Android native requests passed | Blocked | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Unit 9 web/source-asset hashes match; APK pending | Shared package |
+| Android asset parity | Passed | Completion web/source-asset hashes match; APK pending | Shared package |
 | Native debug build | Passed | Blocked by missing Java runtime; SDK 35 license/install also pending | Shared package |
 | Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. Add the separate chapter-wide A1 completion mission after all nine unit
-   missions, covering every unit outcome and required modality.
-2. Clear the remaining Unit 5 lexical-ownership and shared confusion-template
+1. Clear the remaining Unit 5 lexical-ownership and shared confusion-template
    findings without weakening the audit.
-3. Audit the complete generated A1 chapter to zero errors and zero review flags,
+2. Audit the complete generated A1 chapter to zero errors and zero review flags,
    then
    repeat the full browser, responsive, offline, audio, migration, and Android
    acceptance gates.
-4. Freeze A1 before beginning the A2 authoring and acceptance cycle.
+3. Freeze A1 before beginning the A2 authoring and acceptance cycle.
 
 Until those steps are complete, neither this ledger nor the v4 scaffold may be
 used to claim that the full A0–A2 rework is done.

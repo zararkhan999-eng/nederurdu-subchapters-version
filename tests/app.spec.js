@@ -70,10 +70,14 @@ async function makeMissionReady(page, missionId) {
     const mission = window.NEDERURDU_COURSE.missions.find((item) => item.id === id);
     const saved = JSON.parse(localStorage.getItem("nederurdu-progress-v4") || "{}");
     const skillMastery = { ...(saved.skillMastery || {}) };
+    const lessonMastery = { ...(saved.lessonMastery || {}) };
     for (const skillId of mission.prerequisites.skillIds) {
       skillMastery[skillId] = { status: "practiced", lessonId: mission.id };
     }
-    saveProgress({ ...saved, skillMastery });
+    for (const prerequisiteMissionId of mission.prerequisiteMissionIds || []) {
+      lessonMastery[prerequisiteMissionId] = { status: "practiced", lessonId: prerequisiteMissionId };
+    }
+    saveProgress({ ...saved, skillMastery, lessonMastery });
   }, missionId);
 }
 
@@ -4117,6 +4121,34 @@ test("A1 Unit 9 prerequisites and mission cover all four lesson strands", async 
 
 test("A1 Unit 9 message teaching and mission fit all target widths", async ({ page }) => {
   await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){await page.setViewportSize(viewport);await page.evaluate(()=>showLessonPreview("a1-school-contact"));await expect(page.locator(".learning-preview")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);await page.evaluate(()=>showLessonPreview("a1-mission-school-day"));await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);}await page.setViewportSize({width:390,height:844});await page.evaluate(()=>showLessonPreview("a1-short-messages"));await page.locator('.learning-preview [data-action="start"]').click();await expect(page.locator(".learning-teaching-card")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);
+});
+
+test("A1 completion mission is separate and follows all nine unit capstones", async ({ page }) => {
+  await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((item)=>item.id==="a1"),mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),unitMissionIds=course.units.filter((unit)=>unit.chapterId==="a1").flatMap((unit)=>unit.capstoneMissionIds);return{last:chapter.lessons.at(-1)?.id,normal:chapter.lessonIds.length,missions:chapter.missionIds.length,completionId:chapter.contract.completionMissionId,completionCheck:mission.completionCheck,unitId:mission.unitId,unitMissionIds,prerequisites:mission.prerequisiteMissionIds,inUnit:course.units.some((unit)=>unit.missionIds.includes(mission.id))};});
+  expect(audit.last).toBe("a1-chapter-completion-mission");expect(audit.normal).toBe(38);expect(audit.missions).toBe(10);expect(audit.completionId).toBe(audit.last);expect(audit.completionCheck).toBe(true);expect(audit.unitId).toBe("a1-chapter-completion");expect(audit.unitMissionIds).toHaveLength(9);expect(audit.prerequisites).toEqual(audit.unitMissionIds);expect(audit.inUnit).toBe(false);
+});
+
+test("A1 completion mission covers nine units and all five required skill areas", async ({ page }) => {
+  await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),skillById=new Map(course.skills.map((skill)=>[skill.id,skill])),lessonById=new Map(course.lessons.map((lesson)=>[lesson.id,lesson])),unitIds=[...new Set(mission.assessmentSkillIds.map((id)=>lessonById.get(skillById.get(id)?.introducedInLessonId)?.unitId).filter(Boolean))];const areas={meaning:(q)=>["meaning","reverse","image-choice"].includes(q.type),listening:(q)=>q.type==="listen-choice",reading:(q)=>q.type==="document-choice",speaking:(q)=>q.type==="speak-repeat"&&q.scored===false,use:(q)=>q.phase==="use"&&["situation","build","sequence","short-input","fill-gap"].includes(q.type)};return{skills:mission.assessmentSkillIds.length,concepts:mission.conceptIds.length,unitIds,areas:mission.completionSkillAreas,variants:mission.variants.map((variant)=>{const use=variant.questions.filter((question)=>question.phase==="use"),check=variant.questions.filter((question)=>question.phase==="independent-check"),useSkills=new Set(use.flatMap(getQuestionSkillIds)),checkSkills=new Set(check.flatMap(getQuestionSkillIds));return{use:use.length,check:check.length,missingUse:mission.assessmentSkillIds.filter((id)=>!useSkills.has(id)),missingCheck:mission.assessmentSkillIds.filter((id)=>!checkSkills.has(id)),evidence:Object.values(areas).map((test)=>variant.questions.some(test))};})};});
+  expect(audit.skills).toBe(9);expect(audit.concepts).toBe(9);expect(audit.unitIds).toHaveLength(9);expect(audit.areas).toEqual(["meaning","listening","reading","speaking-support","practical-use"]);for(const variant of audit.variants){expect(variant.use).toBe(6);expect(variant.check).toBe(6);expect(variant.missingUse).toEqual([]);expect(variant.missingCheck).toEqual([]);expect(variant.evidence).toEqual([true,true,true,true,true]);}
+});
+
+test("A1 completion mission uses only earlier authored skills with complete feedback", async ({ page }) => {
+  await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((item)=>item.id==="a1"),mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),lessonOrder=new Map(chapter.lessons.map((lesson,index)=>[lesson.id,index])),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept])),ids=mission.questions.map((question)=>question.id);return{newSkills:mission.introducesNewSkills,unseen:mission.conceptIds.filter((id)=>{const concept=conceptById.get(id);return !concept||!lessonOrder.has(concept.introducedInLessonId)||lessonOrder.get(concept.introducedInLessonId)>=lessonOrder.get(mission.id);}),duplicateIds:ids.length-new Set(ids).size,invalid:mission.questions.filter((question)=>!/^a1-authored:chapter-completion-mission:variant-[1-3]:(?:use|independent-check):slot-[1-6]$/.test(question.scenarioSource)||!question.instructionUrdu||(!isInfoQuestion(question)&&(!question.explainCorrectUrdu||!question.explainWrongUrdu))||(!isInfoQuestion(question)&&question.options?.length&&!question.options.includes(question.answer))).map((question)=>question.id)};});
+  expect(audit.newSkills).toBe(false);expect(audit.unseen).toEqual([]);expect(audit.duplicateIds).toBe(0);expect(audit.invalid).toEqual([]);
+});
+
+test("A1 completion preview stays locked until every unit mission is practiced", async ({ page }) => {
+  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>{finishLaunch();const mission=window.NEDERURDU_COURSE.missions.find((item)=>item.id==="a1-chapter-completion-mission"),saved=JSON.parse(localStorage.getItem("nederurdu-progress-v4")||"{}"),skillMastery={...(saved.skillMastery||{})};for(const skillId of mission.prerequisites.skillIds)skillMastery[skillId]={status:"practiced",lessonId:mission.id};saveProgress({...saved,skillMastery});showLessonPreview(mission.id);});
+  await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();await expect(page.locator('.learning-preview [data-action="start"]')).toBeDisabled();await expect(page.locator(".prerequisite-guidance")).toContainText("پہلے یہ یونٹ مشن مکمل کریں");await expect(page.locator(".prerequisite-skill-list").first()).toContainText("میری معلومات");await page.evaluate(()=>{const mission=window.NEDERURDU_COURSE.missions.find((item)=>item.id==="a1-chapter-completion-mission"),saved=JSON.parse(localStorage.getItem("nederurdu-progress-v4")||"{}"),lessonMastery={...(saved.lessonMastery||{})};for(const id of mission.prerequisiteMissionIds)lessonMastery[id]={status:"practiced",lessonId:id};saveProgress({...saved,lessonMastery});showLessonPreview(mission.id);});await expect(page.locator('.learning-preview [data-action="start"]')).toBeEnabled();
+});
+
+test("A1 completion appears as the final chapter section", async ({ page }) => {
+  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());await page.getByRole("button",{name:/پورا راستہ دیکھیں/}).click();const sections=page.locator(".path-section");await expect(sections).toHaveCount(10);await expect(sections.last()).toContainText("A1 آخری عملی جانچ");await expect(sections.last()).toContainText("laatste praktische missie");const nodeIds=await page.locator(".lesson-node").evaluateAll((nodes)=>nodes.map((node)=>node.getAttribute("data-lesson")));expect(nodeIds.at(-1)).toBe("a1-chapter-completion-mission");
+});
+
+test("A1 completion preview and first Use task fit all target widths", async ({ page }) => {
+  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());await makeMissionReady(page,"a1-chapter-completion-mission");for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){await page.setViewportSize(viewport);await page.evaluate(()=>showLessonPreview("a1-chapter-completion-mission"));await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();await expect(page.locator(".learning-preview-phases .learning-phase-chip")).toHaveCount(4);expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);}await page.setViewportSize({width:390,height:844});await page.locator('.learning-preview [data-action="start"]').click();await expect(page.locator(".mission-lesson.learning-phase-use")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);
 });
 
 test("repeating a lesson selects incomplete runs before non-secure runs", async ({ page }) => {
