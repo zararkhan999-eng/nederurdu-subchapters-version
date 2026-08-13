@@ -2,10 +2,9 @@ const { test, expect } = require("@playwright/test");
 
 const STORAGE_KEY = "nederurdu-progress-v4";
 const LEGACY_STORAGE_KEY = "nederurdu-progress-v3";
-// Add the next chapter only when the previous one is frozen and that next
-// chapter enters its permitted authoring/acceptance cycle. A1 and A2 keep
-// their explicit diagnostics, but unfinished later content cannot block A0.
-const CURRENT_CHAPTER_GATE_IDS = ["a0"];
+// Only chapters that have completed their authored curriculum cycle belong in
+// this shared acceptance gate. Unfinished later content must not dilute it.
+const CURRENT_CHAPTER_GATE_IDS = ["a0", "a1"];
 
 async function openCleanApp(page, progress = {}) {
   await page.addInitScript(({ key, value }) => {
@@ -2171,8 +2170,9 @@ test("A1 practical lessons use capped learning runs with complete phases", async
   const audit = await page.evaluate(() => {
     const a1 = window.NEDERURDU_CHAPTERS.find((chapter) => chapter.id === "a1");
     const ids = [
-      "a1-daily-routine", "a1-plans-invitations", "a1-cafe-ordering", "a1-shopping-clothes",
-      "a1-public-transport", "a1-home-neighbours", "a1-health-pharmacy", "a1-work-school-messages"
+      "a1-greetings-personal-info", "a1-people-family-articles", "a1-daily-routine",
+      "a1-plans-invitations", "a1-house-food-plurals", "a1-cafe-ordering",
+      "a1-public-transport", "a1-health-appointments", "a1-work-school-messages"
     ];
     return {
       count: a1.lessons.length,
@@ -3769,12 +3769,19 @@ test("A1 Unit 5 prerequisites and mission cover every lesson strand", async ({ p
     const mission = course.missions.find((candidate) => candidate.id === "a1-mission-house-search");
     const represented = new Set(mission.assessmentSkillIds
       .map((id) => skillById.get(id)?.introducedInLessonId).filter(Boolean));
+    const conceptById = new Map(course.concepts.map((concept) => [concept.id, concept]));
+    const missionConceptSources = mission.conceptIds.map((id) => ({
+      id,
+      introducedInLessonId: conceptById.get(id)?.introducedInLessonId || ""
+    }));
     return {
       lessonIds: lessons.map((lesson) => lesson.id),
       chronologyFailures,
       missionPrerequisites: mission.prerequisites.lessonIds,
       assessmentSkillCount: mission.assessmentSkillIds.length,
       missingLessons: lessons.map((lesson) => lesson.id).filter((id) => !represented.has(id)),
+      missionConceptSources,
+      missionTargets: mission.conceptIds.map((id) => conceptById.get(id)?.dutch || ""),
       variants: mission.variants.map((variant) => {
         const useSkills = new Set(variant.questions.filter((question) => question.phase === "use")
           .flatMap(getQuestionSkillIds));
@@ -3795,6 +3802,13 @@ test("A1 Unit 5 prerequisites and mission cover every lesson strand", async ({ p
   expect(audit.missionPrerequisites).toEqual(audit.lessonIds);
   expect(audit.assessmentSkillCount).toBe(6);
   expect(audit.missingLessons).toEqual([]);
+  expect(audit.missionConceptSources.every(({ introducedInLessonId }) => (
+    audit.lessonIds.includes(introducedInLessonId)
+  ))).toBe(true);
+  expect(audit.missionTargets).toContain("kunt u zachter zijn?");
+  expect(audit.missionTargets).toContain("kunt u iemand sturen?");
+  expect(audit.missionTargets).not.toContain("kunt u mij helpen?");
+  expect(audit.missionTargets).not.toContain("de verwarming doet het niet");
   for (const variant of audit.variants) {
     expect(variant.missingUse, variant.id).toEqual([]);
     expect(variant.missingCheck, variant.id).toEqual([]);

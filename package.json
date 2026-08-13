@@ -2,6 +2,7 @@
   "scripts": {
     "start": "node server.js",
     "audit:course": "node scripts/audit-course-content.js",
+    "audit:a1": "node scripts/audit-course-content.js --chapter=a1",
     "offline:manifest": "node scripts/generate-offline-visual-manifest.js",
     "test": "playwright test",
     "test:a0": "playwright test --workers=1 --grep-invert \"A1|A2|mission preview and run|mission replay rotates|mission starts with briefing|optional mission typing|speaking self-check\"",
@@ -15,6 +16,8 @@
     "test:a1:unit8": "playwright test --workers=1 --grep \"A1 Unit 8\"",
     "test:a1:unit9": "playwright test --workers=1 --grep \"A1 Unit 9\"",
     "test:a1:completion": "playwright test --workers=1 --grep \"A1 completion\"",
+    "test:a1": "playwright test --workers=1 --grep \"A1\" --grep-invert \"A1 and A2\"",
+    "accept:a1": "npm run audit:a1 && npm run test:a1",
     "test:ui": "playwright test --ui",
     "android:debug": "./gradlew :app:assembleDebug",
     "android:bundle": "./gradlew :app:bundleRelease",

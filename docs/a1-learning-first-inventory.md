@@ -42,15 +42,16 @@ After the authored-Use provenance rule exposed 421 generated Use tasks, the
 binding pre-authoring baseline became **1,092 errors and 0 review flags**. All
 nine units have now been authored, and each passes its exact audit slice with
 **0 findings**. The separate chapter completion mission is also authored and
-passes its exact audit slice with **0 findings**. The current complete A1 result
-is **38 errors and 0 review flags**, down from 135 after Unit 8. The remaining
-findings are final cross-generated Unit 5 lexical ownership and shared
-confusion-template cleanup.
+passes its exact audit slice with **0 findings**. The complete A1 result is now
+**0 errors and 0 review flags**. The final cross-generated Unit 5 lexical
+ownership and shared confusion-template findings were corrected in authored
+content without weakening the audit.
 
 After Unit 9 was rebuilt, the current A1 totals are 325 A1-associated concepts,
-302 chapter-owned skills, 38 patterns, 81 runs, 371 teaching blocks, 1,532
+302 chapter-owned skills, 38 patterns, 81 runs, 371 teaching blocks, 1,537
 normal-lesson exercises, and 354 mission records across ten missions.
-The chapter path now has **38 normal lessons and 9 unit missions**.
+The chapter path now has **38 normal lessons, 9 unit missions, and 1 separate
+chapter-completion mission**.
 
 ### Baseline audit error taxonomy
 
@@ -328,7 +329,7 @@ six Use and six Independent Check items while representing all nine units.
 Every variant materialises meaning, listening, authentic document reading,
 unscored speaking support, and practical use, followed by required correction.
 The exact completion-mission audit slice has 0 findings, its focused
-desktop/mobile gate passes 12/12, the cumulative A1 gate passes 118/118, and
+desktop/mobile gate passes 12/12, the complete A1 gate passes 120/120, and
 frozen A0 remains 96/96. Manual review confirmed the final path placement, the
 nine-capstone lock, all nine learned targets, no horizontal overflow, and an
 empty browser console.
@@ -363,9 +364,15 @@ empty browser console.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: steps 1–7 are complete. Step 8, clearing the remaining
-full-chapter findings and repeating every acceptance gate, is now active. The
-chapter remains unfrozen until that step is fully green.
+Current checkpoint: the authored curriculum, full audit, manual review,
+responsive review, and browser matrices in step 8 are complete. A1 reports
+**0 errors / 0 review flags**, its A1-specific browser matrix passes **120/120**,
+and the shared A0+A1 runtime matrix passes **96/96**. Web and Android source
+assets match. The chapter remains unfrozen only because Google requires the
+user to accept the Android SDK license before Platform 35 and Build Tools 35
+can be installed for the mandatory native debug build and installed-Android
+audio/offline recheck. The existing Homebrew JDK 17 and command-line tools were
+located and the local SDK path was corrected.
 
 This document is an inventory and decision record, not an A1 completion
 certificate.

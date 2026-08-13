@@ -6591,7 +6591,7 @@ const a1AuthoredCurriculumV4 = {
         "kunt u later terugbellen": {
           usageUrdu: "ابھی بات ممکن نہ ہو تو سامنے والے سے بعد میں واپس فون کرنے کی درخواست کریں۔",
           usageBoundaryUrdu: "یہ سامنے والے سے واپسی کال مانگتا ہے؛ ik bel u vanavond terug اپنی کال کا وعدہ ہے۔",
-          commonConfusionUrdu: "سوال میں kunt u پہلے اور terugbellen آخر میں رکھیں۔",
+          commonConfusionUrdu: "واپسی کال کی درخواست kunt u سے شروع ہوتی ہے؛ later وقت بتاتا ہے اور پورا عمل terugbellen آخر میں آتا ہے۔",
           exampleDutch: "Kunt u later terugbellen?",
           exampleUrdu: "کیا آپ بعد میں واپس فون کر سکتے ہیں؟",
           pronunciationUrdu: "کُنت یو لا تَر تَروخ بَ لَن"
@@ -6695,12 +6695,12 @@ const a1AuthoredCurriculumV4 = {
         ["het huis", "اپنے یا کسی معلوم گھر کی بات میں het huis استعمال کریں۔", "یہ پورا گھر ہے؛ kamer گھر کے اندر ایک کمرہ ہے۔", "huis کے ساتھ het آتا ہے، de نہیں۔", "Dit is het huis.", "یہ گھر ہے۔", "ہَت ہاؤس"],
         ["kamer", "گھر کے اندر ایک کمرہ پہچاننے یا بتانے کے لیے kamer کہیں۔", "kamer ایک حصہ ہے؛ پورے گھر کے لیے huis کہیں۔", "اس سبق میں ایک کمرے کے لیے kamer ہے؛ کئی کمروں کی شکل ابھی جواب میں نہ بنائیں۔", "Dit is een kamer.", "یہ ایک کمرہ ہے۔", "کا مَر"],
         ["het boek is in huis", "کتاب گھر کے اندر ہونے کی جگہ مکمل جملے میں بتائیں۔", "in huis اندر کی جگہ بتاتا ہے؛ گھر کی طرف حرکت نہیں۔", "is کو چھوڑ کر صرف het boek in huis نہ کہیں؛ مکمل جملے میں is ضروری ہے۔", "Het boek is in huis.", "کتاب گھر میں ہے۔", "ہَت بوک اِس اِن ہاؤس"],
-        ["keuken", "کھانا بنانے والی جگہ پہچاننے کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "De tafel staat in de keuken.", "میز کچن میں ہے۔", "کو کَن"],
-        ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "badkamer کو toilet کے عین برابر نہ سمجھیں؛ یہ پورا باتھ روم ہے۔", "De badkamer is hier.", "باتھ روم یہاں ہے۔", "بات کا مَر"],
+        ["keuken", "کھانا بنانے والی جگہ پہچاننے کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "Dit is de keuken.", "یہ کچن ہے۔", "کو کَن"],
+        ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "اسے صرف بیت الخلا کے معنی تک محدود نہ کریں؛ یہ پورا باتھ روم ہے۔", "Dit is de badkamer.", "یہ باتھ روم ہے۔", "بات کا مَر"],
         ["tafel", "گھر میں میز کی چیز پہچاننے کے لیے tafel کہیں۔", "یہ فرنیچر ہے؛ stoel بیٹھنے کی کرسی ہے۔", "tafel اور stoel کو نہ ملائیں: tafel میز، stoel کرسی ہے۔", "Het boek ligt op de tafel.", "کتاب میز پر ہے۔", "تا فَل"],
         ["stoel", "بیٹھنے والی کرسی پہچاننے کے لیے stoel کہیں۔", "یہ ایک کرسی ہے؛ میز کے لیے tafel کہیں۔", "stoel کی آواز کے شروع کو سٹول جیسا پڑھیں، سٹیل نہیں۔", "De stoel staat in de kamer.", "کرسی کمرے میں ہے۔", "ستول"],
         ["boek", "ایک کتاب کی بات میں boek کہیں۔", "یہ ایک چیز ہے؛ boeken ایک سے زیادہ کتابیں ہیں۔", "ایک کتاب کے جواب میں boeken نہ کہیں۔", "Dit is een boek.", "یہ ایک کتاب ہے۔", "بوک"],
-        ["boeken", "ایک سے زیادہ کتابوں کی بات میں boeken کہیں۔", "یہ جمع ہے؛ ایک کتاب کے لیے boek کہیں۔", "آخر کی en جمع کا حصہ ہے؛ اسے چھوڑنے سے معنی ایک کتاب ہو جاتا ہے۔", "Twee boeken liggen op de tafel.", "دو کتابیں میز پر ہیں۔", "بو کَن"],
+        ["boeken", "ایک سے زیادہ کتابوں کی بات میں boeken کہیں۔", "یہ جمع ہے؛ ایک کتاب کے لیے boek کہیں۔", "آخر کے دو حروف جمع کا حصہ ہیں؛ انہیں چھوڑنے سے معنی ایک کتاب ہو جاتا ہے۔", "Twee boeken.", "دو کتابیں۔", "بو کَن"],
         ["waar is de tas", "بیگ نہ ملے تو اس کی جگہ پوچھنے کے لیے مکمل سوال کہیں۔", "یہ جگہ پوچھتا ہے؛ بیگ کی ملکیت یا تعداد نہیں۔", "سوال میں waar پہلے اور is اس کے بعد رکھیں۔", "Waar is de tas?", "بیگ کہاں ہے؟", "وار اِس دَ تاس"]
       ]),
       pattern: {
@@ -6714,8 +6714,11 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteLessonIds: ["a0-een-de-het", "a0-numbers-0-10", "a0-dit-dat-questions", "a0-place-1", "a0-home-needs"],
       prerequisiteRefs: [
         ["a0-een-de-het", "het huis"],
+        ["a0-een-de-het", "de man"],
         ["a0-numbers-0-10", "twee boeken"],
+        ["a0-numbers-0-10", "twee"],
         ["a0-dit-dat-questions", "waar"],
+        ["a0-dit-dat-questions", "dit is een boek"],
         ["a0-place-1", "in huis"],
         ["a0-home-needs", "kamer"]
       ],
@@ -6748,10 +6751,10 @@ const a1AuthoredCurriculumV4 = {
       ],
       teaching: authoredA1TeachingV4([
         ["buurvrouw", "اپنے پاس رہنے والی عورت کی بات میں buurvrouw کہیں۔", "یہ عورت پڑوسی ہے؛ مرد پڑوسی کے لیے buurman ہے۔", "buurvrouw کو عام دوست یا گھر کی عورت کے معنی میں استعمال نہ کریں۔", "Goedemorgen, buurvrouw.", "صبح بخیر، پڑوسن۔", "بیور فراؤ"],
-        ["lawaai", "تیز یا پریشان کرنے والی آواز کو lawaai کہیں۔", "یہ شور کا نام ہے؛ آواز کم کرنے کی درخواست الگ مکمل جملہ ہے۔", "lawaai کو خاموشی کے معنی میں نہ سمجھیں۔", "Er is veel lawaai.", "بہت شور ہے۔", "لا واے"],
+        ["lawaai", "تیز یا پریشان کرنے والی آواز کو lawaai کہیں۔", "یہ شور کا نام ہے؛ آواز کم کرنے کی درخواست الگ مکمل جملہ ہے۔", "lawaai کو خاموشی کے معنی میں نہ سمجھیں۔", "Geen lawaai.", "شور نہیں۔", "لا واے"],
         ["kunt u mij helpen", "پڑوسی سے مؤدبانہ مدد مانگنے کے لیے یہ مکمل سوال کہیں۔", "یہ مدد کی درخواست ہے؛ کسی خرابی کی تفصیل ابھی الگ بتانی ہوگی۔", "سوال میں kunt u پہلے اور helpen آخر میں رکھیں۔", "Kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟", "کُنت یو مَے ہَیل پَن"],
-        ["pakket", "ڈاک یا ترسیل سے آنے والے پارسل کے لیے pakket کہیں۔", "یہ بند چیز ہے؛ عام خط یا کچرا نہیں۔", "pakket کو vuilnis کے ساتھ نہ ملائیں۔", "Dit pakket is voor u.", "یہ پارسل آپ کے لیے ہے۔", "پا کَت"],
-        ["vuilnis", "گھر سے باہر رکھنے والے کچرے کے لیے vuilnis کہیں۔", "یہ پھینکنے والی چیز ہے؛ پہنچایا ہوا pakket نہیں۔", "vuilnis کو صفائی کرنے کے عمل کے معنی میں نہ استعمال کریں۔", "Het vuilnis staat buiten.", "کچرا باہر رکھا ہے۔", "فَؤل نِس"],
+        ["pakket", "ڈاک یا ترسیل سے آنے والے پارسل کے لیے pakket کہیں۔", "یہ بند چیز ہے؛ عام خط یا کچرا نہیں۔", "پارسل کو کچرے کے ساتھ نہ ملائیں۔", "Dit is een pakket.", "یہ ایک پارسل ہے۔", "پا کَت"],
+        ["vuilnis", "گھر سے باہر رکھنے والے کچرے کے لیے vuilnis کہیں۔", "یہ پھینکنے والی چیز ہے؛ پہنچایا ہوا pakket نہیں۔", "vuilnis کو صفائی کرنے کے عمل کے معنی میں نہ استعمال کریں۔", "Dit is vuilnis.", "یہ کچرا ہے۔", "فَؤل نِس"],
         ["ik heb last van lawaai", "شور آپ کو پریشان کرے تو الزام کے بغیر اپنی مشکل یہ مکمل جملہ کہہ کر بتائیں۔", "یہ اپنی پریشانی بتاتا ہے؛ آواز کم کرنے کی درخواست اگلا الگ جملہ ہے۔", "last van کو ساتھ رکھیں؛ صرف ik heb lawaai مطلوبہ معنی نہیں دیتا۔", "Ik heb last van lawaai.", "مجھے شور سے پریشانی ہے۔", "اِک ہَپ لاسٹ فان لا واے"],
         ["kunt u zachter zijn", "پڑوسی سے آواز کم کرنے کی مؤدبانہ درخواست کریں۔", "یہ آواز کم کرنے کو کہتا ہے؛ مکمل خاموشی یا مدد کا عمومی سوال نہیں۔", "zachter کو سوال کے آخر کے قریب رکھیں اور kunt u سے آغاز کریں۔", "Kunt u zachter zijn?", "کیا آپ آواز کم کر سکتے ہیں؟", "کُنت یو زاخ تَر زَین"],
         ["er ligt een pakket voor u", "پڑوسی کو بتائیں کہ ان کے لیے ایک پارسل رکھا ہے۔", "یہ موجود پارسل کی اطلاع ہے؛ پارسل مانگنے یا بھیجنے کی درخواست نہیں۔", "voor u پارسل کس کے لیے ہے بتاتا ہے؛ اسے شروع میں نہ رکھیں۔", "Er ligt een pakket voor u.", "آپ کے لیے ایک پارسل رکھا ہے۔", "اَر لِخت اَن پا کَت فور یو"]
@@ -6768,7 +6771,9 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteRefs: [
         ["a0-greetings-courtesy", "goedemorgen"],
         ["a0-greetings-courtesy", "dank u wel"],
+        ["a0-geen", "geen boek"],
         ["a0-understanding-help", "kunt u mij helpen"],
+        ["a0-dit-dat-questions", "dit is een boek"],
         ["a1-polite-chunks", "alstublieft"]
       ],
       scenarios: {
@@ -6801,10 +6806,10 @@ const a1AuthoredCurriculumV4 = {
         ["verwarming", "گھر گرم کرنے والے نظام کے لیے verwarming کہیں۔", "یہ پورا حرارتی نظام ہے؛ warm water صرف گرم پانی ہے۔", "verwarming کو عام گرمی یا موسم کے معنی میں نہ لیں۔", "De verwarming is aan.", "ہیٹنگ چل رہی ہے۔", "فَر وار مِنگ"],
         ["kapot", "کوئی چیز کام نہ کرے یا ٹوٹی ہو تو kapot کہیں۔", "یہ خرابی کی کیفیت ہے؛ مسئلہ حل ہونے کے لیے opgelost آتا ہے۔", "kapot کو چیز کے نام کے بدلے نہ کہیں؛ چیز بھی واضح کریں۔", "De lamp is kapot.", "بتی خراب ہے۔", "کا پوت"],
         ["de verwarming doet het niet", "ہیٹنگ کام نہ کرے تو مالک مکان یا مرمت والے کو یہ مکمل خرابی بتائیں۔", "یہ خاص طور پر ہیٹنگ کے کام نہ کرنے کی اطلاع ہے؛ گرم پانی الگ مسئلہ ہو سکتا ہے۔", "niet کو آخر میں رکھیں؛ de verwarming niet doet het غلط ترتیب ہے۔", "De verwarming doet het niet.", "ہیٹنگ کام نہیں کر رہی۔", "دَ فَر وار مِنگ دوت ہَت نیت"],
-        ["warm water", "نل یا غسل کے پانی کے گرم ہونے کی بات میں warm water کہیں۔", "یہ پانی کی کیفیت ہے؛ verwarming گھر گرم کرنے کا نظام ہے۔", "warm اور water کو الگ مفہوم سمجھ کر ترتیب نہ بدلیں۔", "Er is geen warm water.", "گرم پانی نہیں ہے۔", "وارم وا تَر"],
-        ["monteur", "خرابی دیکھنے یا مرمت کرنے والے شخص کے لیے monteur کہیں۔", "یہ کام کرنے والا شخص ہے؛ reparatie کام کا نام ہے۔", "monteur کو مالک مکان کے معنی میں نہ استعمال کریں۔", "De monteur komt morgen.", "مرمت کرنے والا کل آئے گا۔", "مون تَور"],
+        ["warm water", "نل یا غسل کے پانی کے گرم ہونے کی بات میں warm water کہیں۔", "یہ پانی کی کیفیت ہے؛ verwarming گھر گرم کرنے کا نظام ہے۔", "warm اور water کو الگ مفہوم سمجھ کر ترتیب نہ بدلیں۔", "Geen warm water.", "گرم پانی نہیں۔", "وارم وا تَر"],
+        ["monteur", "خرابی دیکھنے یا مرمت کرنے والے شخص کے لیے monteur کہیں۔", "یہ کام کرنے والا شخص ہے؛ reparatie کام کا نام ہے۔", "monteur کو مالک مکان کے معنی میں نہ استعمال کریں۔", "Dit is de monteur.", "یہ مرمت کرنے والا ہے۔", "مون تَور"],
         ["de lamp is kapot", "روشنی والی بتی خراب ہو تو چیز اور کیفیت دونوں مکمل جملے میں بتائیں۔", "یہ بتی کی خرابی ہے؛ ہیٹنگ کے لیے الگ جملہ ہے۔", "is کو نہ چھوڑیں؛ de lamp kapot مکمل جملہ نہیں۔", "De lamp is kapot.", "بتی خراب ہے۔", "دَ لامپ اِس کا پوت"],
-        ["kunt u iemand sturen", "خرابی بتانے کے بعد کسی مرمت والے کو بھیجنے کی مؤدبانہ درخواست کریں۔", "یہ کسی شخص کو بھیجنے کی درخواست ہے؛ آنے کا وقت نہیں پوچھتا۔", "سوال میں kunt u پہلے اور sturen آخر میں رکھیں۔", "Kunt u iemand sturen?", "کیا آپ کسی کو بھیج سکتے ہیں؟", "کُنت یو ایمانٹ ستیورَن"],
+        ["kunt u iemand sturen", "خرابی بتانے کے بعد کسی مرمت والے کو بھیجنے کی مؤدبانہ درخواست کریں۔", "یہ کسی شخص کو بھیجنے کی درخواست ہے؛ آنے کا وقت نہیں پوچھتا۔", "kunt u کے بعد جسے بھیجنا ہے iemand اور پھر عمل sturen آتا ہے۔", "Kunt u iemand sturen?", "کیا آپ کسی کو بھیج سکتے ہیں؟", "کُنت یو ایمانٹ ستیورَن"],
         ["wanneer komt de monteur", "مرمت والا کس وقت یا دن آئے گا یہ پوچھنے کے لیے سوال کہیں۔", "یہ آنے کا وقت پوچھتا ہے؛ کسی کو بھیجنے کی درخواست پہلے الگ ہو سکتی ہے۔", "wanneer سوال کے شروع میں رکھیں اور komt اس کے بعد۔", "Wanneer komt de monteur?", "مرمت کرنے والا کب آئے گا؟", "وا نیر کومت دَ مون تَور"],
         ["het probleem is opgelost", "مرمت کے بعد مسئلہ ختم ہو جائے تو اس کی مکمل تصدیق کریں۔", "یہ حل ہونے کی حالت ہے؛ kapot ابھی خراب ہونے کی حالت ہے۔", "opgelost کو مرمت والے شخص کے نام کے طور پر نہ لیں۔", "Het probleem is opgelost.", "مسئلہ حل ہو گیا ہے۔", "ہَت پرو بلیم اِس اوپ خَ لوست"]
       ]),
@@ -6821,6 +6826,9 @@ const a1AuthoredCurriculumV4 = {
         ["a0-home-needs", "deur"],
         ["a0-home-needs", "de kamer is koud"],
         ["a0-understanding-help", "kunt u mij helpen"],
+        ["a0-een-de-het", "de man"],
+        ["a0-geen", "geen boek"],
+        ["a0-dit-dat-questions", "dit is een boek"],
         ["a1-neighbour-talk", "kunt u mij helpen?"]
       ],
       scenarios: {
@@ -6849,10 +6857,10 @@ const a1AuthoredCurriculumV4 = {
         ["de badkamer is vies", "باتھ روم گندا ہے"]
       ],
       teaching: authoredA1TeachingV4([
-        ["schoonmaken", "کمرہ، کچن، یا گھر صاف کرنے کے عمل کے لیے schoonmaken کہیں۔", "یہ کام کا نام ہے؛ schoon صاف حالت کی صفت ہے۔", "schoonmaken اور schoon کو ایک ہی جگہ استعمال نہ کریں۔", "Ik ga schoonmaken.", "میں صفائی کرنے جا رہا یا رہی ہوں۔", "سخون ما کَن"],
-        ["was", "دھونے والے کپڑوں یا کپڑے دھونے کے کام کے لیے de was کہیں۔", "یہ کپڑوں کی دھلائی ہے؛ گھر کی عمومی صفائی نہیں۔", "was کو ماضی والے فعل کے طور پر نہ پڑھیں؛ اس صورت حال میں دھلائی مراد ہے۔", "Ik doe de was.", "میں کپڑے دھوتا یا دھوتی ہوں۔", "واس"],
+        ["schoonmaken", "کمرہ، کچن، یا گھر صاف کرنے کے عمل کے لیے schoonmaken کہیں۔", "یہ کام کا نام ہے؛ صاف ہونا ایک حالت ہے۔", "صفائی کے عمل اور صاف حالت کو ایک ہی جگہ استعمال نہ کریں۔", "Vandaag schoonmaken.", "آج صفائی کرنا۔", "سخون ما کَن"],
+        ["was", "دھونے والے کپڑوں یا کپڑے دھونے کے کام کے لیے de was کہیں۔", "یہ کپڑوں کی دھلائی ہے؛ گھر کی عمومی صفائی نہیں۔", "was کو ماضی والے فعل کے طور پر نہ پڑھیں؛ اس صورت حال میں دھلائی مراد ہے۔", "De was.", "کپڑوں کی دھلائی۔", "واس"],
         ["ik moet de kamer schoonmaken", "کمرہ صاف کرنا ضروری ہو تو اپنی ذمہ داری مکمل جملے میں کہیں۔", "moet ضرورت بتاتا ہے؛ کام مکمل ہو چکا ہو یہ نہیں کہتا۔", "schoonmaken کو آخر میں رکھیں؛ ik moet schoonmaken de kamer نہ کہیں۔", "Ik moet de kamer schoonmaken.", "مجھے کمرہ صاف کرنا ہے۔", "اِک موت دَ کا مَر سخون ما کَن"],
-        ["stofzuiger", "فرش صاف کرنے والی ویکیوم مشین کے لیے stofzuiger کہیں۔", "یہ صفائی کا آلہ ہے؛ schoonmaken پورا کام ہے۔", "stofzuiger کو جھاڑو یا کپڑے دھونے کے آلے کے معنی میں نہ لیں۔", "Ik gebruik de stofzuiger.", "میں ویکیوم استعمال کرتا یا کرتی ہوں۔", "ستوف زاؤ خَر"],
+        ["stofzuiger", "فرش صاف کرنے والی ویکیوم مشین کے لیے stofzuiger کہیں۔", "یہ صفائی کا آلہ ہے؛ schoonmaken پورا کام ہے۔", "stofzuiger کو جھاڑو یا کپڑے دھونے کے آلے کے معنی میں نہ لیں۔", "De stofzuiger.", "ویکیوم مشین۔", "ستوف زاؤ خَر"],
         ["ik doe vandaag de was", "آج کپڑے دھونے کا منصوبہ یا کام بتانے کے لیے یہ مکمل جملہ کہیں۔", "یہ آج کا دھلائی کام ہے؛ کمرہ صاف کرنے کی بات الگ ہے۔", "vandaag کو doe اور de was کے درمیان رکھیں۔", "Ik doe vandaag de was.", "میں آج کپڑے دھوتا یا دھوتی ہوں۔", "اِک دو فان داخ دَ واس"],
         ["de keuken is schoon", "صفائی کے بعد کچن کی صاف حالت مکمل جملے میں بتائیں۔", "schoon صاف حالت ہے؛ schoonmaken صفائی کا عمل ہے۔", "is کو نہ چھوڑیں؛ de keuken schoon مکمل جملہ نہیں۔", "De keuken is schoon.", "کچن صاف ہے۔", "دَ کو کَن اِس سخون"],
         ["de badkamer is vies", "باتھ روم گندا ہو تو اس کی حالت مکمل جملے میں بتائیں۔", "vies گندی حالت ہے؛ schoon اس کا صاف مقابل ہے۔", "schoon اور vies کے معنی الٹ نہ کریں۔", "De badkamer is vies.", "باتھ روم گندا ہے۔", "دَ بات کا مَر اِس فیس"]
@@ -6868,6 +6876,7 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteLessonIds: ["a0-time-days", "a1-house-food-plurals", "a1-home-repairs"],
       prerequisiteRefs: [
         ["a0-time-days", "vandaag"],
+        ["a0-een-de-het", "de man"],
         ["a1-house-food-plurals", "kamer"],
         ["a1-house-food-plurals", "keuken"],
         ["a1-house-food-plurals", "badkamer"],
@@ -6900,11 +6909,11 @@ const a1AuthoredCurriculumV4 = {
         ["is er een tuin?", "کیا باغ ہے؟"]
       ],
       teaching: authoredA1TeachingV4([
-        ["woning", "اشتہار یا کرایے کی گفتگو میں رہنے کی جگہ کے لیے woning کہیں۔", "یہ رہائش کا مکان ہے؛ صرف ایک kamer نہیں۔", "woning اور kamer کو ایک ہی معنی نہ دیں۔", "De woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔", "وو نِنگ"],
-        ["huur", "ہر ماہ مکان کے لیے ادا کی جانے والی رقم کو huur کہیں۔", "یہ کرایہ ہے؛ مکان کی خرید قیمت نہیں۔", "huur کو گھر دیکھنے کے وقت bezichtiging کے معنی میں نہ لیں۔", "De huur is achthonderd euro.", "کرایہ آٹھ سو یورو ہے۔", "ہیور"],
+        ["woning", "اشتہار یا کرایے کی گفتگو میں رہنے کی جگہ کے لیے woning کہیں۔", "یہ رہائش کا پورا مکان ہے؛ صرف ایک کمرہ نہیں۔", "مکان اور کمرے کو ایک ہی معنی نہ دیں۔", "Dit is een woning.", "یہ ایک مکان ہے۔", "وو نِنگ"],
+        ["huur", "ہر ماہ مکان کے لیے ادا کی جانے والی رقم کو huur کہیں۔", "یہ کرایہ ہے؛ مکان کی خرید قیمت نہیں۔", "huur کو گھر دیکھنے کے وقت bezichtiging کے معنی میں نہ لیں۔", "Huur: 800 euro.", "کرایہ: 800 یورو۔", "ہیور"],
         ["ik zoek een woning", "اپنی رہائش کی ضرورت بتانے کے لیے یہ مکمل جملہ کہیں۔", "یہ تلاش بتاتا ہے؛ کوئی خاص مکان پسند ہونے یا دیکھنے کا وقت نہیں۔", "zoek کے بعد een woning رکھیں؛ ik een woning zoek اس سبق کی سیدھی ترتیب نہیں۔", "Ik zoek een woning.", "میں مکان تلاش کر رہا یا رہی ہوں۔", "اِک زوک اَن وو نِنگ"],
-        ["beschikbaar", "جو مکان ابھی یا کسی تاریخ سے مل سکتا ہو اسے beschikbaar کہیں۔", "یہ دستیابی ہے؛ خالی کمروں کی تعداد نہیں۔", "beschikbaar کو سستا یا مناسب کے معنی میں نہ سمجھیں۔", "De woning is beschikbaar.", "مکان دستیاب ہے۔", "بَس خِک بار"],
-        ["bezichtiging", "مکان اندر سے دیکھنے کے مقرر وقت کو bezichtiging کہیں۔", "یہ گھر دیکھنے کی ملاقات ہے؛ کرایہ یا مرمت نہیں۔", "bezichtiging کو عام تصویر دیکھنے کے معنی میں نہ لیں۔", "De bezichtiging is maandag.", "گھر دیکھنے کا وقت پیر کو ہے۔", "بَ زِخ تِ خِنگ"],
+        ["beschikbaar", "جو مکان ابھی یا کسی تاریخ سے مل سکتا ہو اسے beschikbaar کہیں۔", "یہ دستیابی ہے؛ خالی کمروں کی تعداد نہیں۔", "beschikbaar کو سستا یا مناسب کے معنی میں نہ سمجھیں۔", "Maandag beschikbaar.", "پیر سے دستیاب۔", "بَس خِک بار"],
+        ["bezichtiging", "مکان اندر سے دیکھنے کے مقرر وقت کو bezichtiging کہیں۔", "یہ گھر دیکھنے کی ملاقات ہے؛ کرایہ یا مرمت نہیں۔", "bezichtiging کو عام تصویر دیکھنے کے معنی میں نہ لیں۔", "Bezichtiging: maandag.", "گھر دیکھنے کا وقت: پیر۔", "بَ زِخ تِ خِنگ"],
         ["hoeveel is de huur", "اشتہار میں رقم واضح نہ ہو تو کرایہ پوچھنے کے لیے یہ سوال کہیں۔", "hoeveel رقم پوچھتا ہے؛ wanneer دستیابی کا وقت پوچھتا ہے۔", "قیمت کے سوال میں hoeveel پہلے رکھیں۔", "Hoeveel is de huur?", "کرایہ کتنا ہے؟", "ہو فیل اِس دَ ہیور"],
         ["heeft de woning twee kamers", "مکان میں دو کمرے ہونے کی تصدیق کے لیے یہ سوال پوچھیں۔", "یہ کمروں کی تعداد پوچھتا ہے؛ باغ یا کرایہ نہیں۔", "ہاں یا نہیں سوال میں heeft پہلے اور de woning بعد میں رکھیں۔", "Heeft de woning twee kamers?", "کیا مکان میں دو کمرے ہیں؟", "ہیفٹ دَ وو نِنگ توے کا مَرس"],
         ["wanneer is de woning beschikbaar", "مکان کس دن یا وقت سے مل سکتا ہے یہ پوچھیں۔", "یہ دستیابی کا وقت ہے؛ گھر دیکھنے کی اجازت الگ سوال ہے۔", "wanneer کو شروع میں اور beschikbaar کو آخر میں رکھیں۔", "Wanneer is de woning beschikbaar?", "مکان کب دستیاب ہے؟", "وا نیر اِس دَ وو نِنگ بَس خِک بار"],
@@ -6923,6 +6932,10 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteRefs: [
         ["a0-numbers-0-10", "twee"],
         ["a0-date-appointment", "afspraak"],
+        ["a0-een-de-het", "de man"],
+        ["a0-dit-dat-questions", "dit is een boek"],
+        ["a0-time-days", "maandag"],
+        ["a0-numbers-0-10", "vier euro"],
         ["a1-house-food-plurals", "kamer"],
         ["a1-house-food-plurals", "het huis"],
         ["a1-appointments", "heeft u vandaag tijd?"]
@@ -7031,11 +7044,11 @@ const a1AuthoredCurriculumV4 = {
       teaching: authoredA1TeachingV4([
         ["vlees", "مینو یا کھانے میں گوشت کی چیز پہچاننے کے لیے vlees کہیں۔", "یہ گوشت ہے؛ zonder vlees اس کے بغیر کھانا مانگتا ہے۔", "vlees کو تمام کھانے کے معنی میں نہ لیں۔", "vlees — zonder vlees alstublieft", "گوشت — گوشت کے بغیر، برائے مہربانی۔", "فلیس"],
         ["bestelling", "کیفے میں آپ کے مانگے ہوئے پورے آرڈر کو bestelling کہیں۔", "یہ آرڈر ہے؛ menu انتخاب سے پہلے کی فہرست ہے۔", "bestelling کو بل rekening کے معنی میں نہ سمجھیں۔", "bestelling — vlees", "آرڈر — گوشت۔", "بَ ستَ لِنگ"],
-        ["zonder vlees alstublieft", "گوشت نہ کھاتے ہوں تو آرڈر کے ساتھ یہ شرط مؤدبانہ طور پر کہیں۔", "یہ گوشت کے بغیر مانگتا ہے؛ الرجی کی طبی اطلاع نہیں۔", "zonder کو vlees سے پہلے رکھیں۔", "Zonder vlees alstublieft.", "گوشت کے بغیر، برائے مہربانی۔", "زون دَر فلیس آلس تو بلیفٹ"],
+        ["zonder vlees alstublieft", "گوشت نہ کھاتے ہوں تو آرڈر کے ساتھ یہ شرط مؤدبانہ طور پر کہیں۔", "یہ گوشت کے بغیر مانگتا ہے؛ الرجی کی طبی اطلاع نہیں۔", "آرڈر کی شرط میں پہلے zonder کہیں اور vlees اس کے فوراً بعد لائیں۔", "Zonder vlees alstublieft.", "گوشت کے بغیر، برائے مہربانی۔", "زون دَر فلیس آلس تو بلیفٹ"],
         ["ik ben allergisch voor noten", "گری دار میوے سے الرجی ہو تو کھانا آنے سے پہلے صاف طبی اطلاع دیں۔", "یہ الرجی ہے؛ صرف پسند نہ ہونے یا گوشت نہ کھانے کی بات نہیں۔", "allergisch voor کو ساتھ رکھیں اور آخر میں وجہ بتائیں۔", "Ik ben allergisch voor noten.", "مجھے گری دار میوے سے الرجی ہے۔", "اِک بَن آ لیر خِس فور نو تَن"],
         ["dit is niet mijn bestelling", "غلط پلیٹ آئے تو واضح کریں کہ یہ آپ کا آرڈر نہیں۔", "یہ غلط آرڈر ہے؛ کچھ بھی نہ ملنے کی شکایت الگ ہے۔", "niet کو mijn bestelling سے پہلے رکھیں۔", "Dit is niet mijn bestelling.", "یہ میرا آرڈر نہیں ہے۔", "دِت اِس نیت مَین بَ ستَ لِنگ"],
         ["ik heb nog niets gekregen", "کافی انتظار کے بعد بھی کچھ نہ ملے تو مکمل شکایت کہیں۔", "یہ نہ پہنچنے کی بات ہے؛ غلط چیز پہنچنے کی نہیں۔", "nog niets دونوں رکھیں تاکہ ابھی تک کچھ نہ ملنے کا معنی واضح ہو۔", "Ik heb nog niets gekregen.", "مجھے ابھی تک کچھ نہیں ملا۔", "اِک ہَپ نوخ نیتس خَ کرے خَن"],
-        ["kunt u dit controleren", "غلطی یا الرجی کے بعد ویٹر سے معاملہ چیک کرنے کی درخواست کریں۔", "یہ جانچ کی درخواست ہے؛ نیا آرڈر خود نہیں بناتا۔", "سوال میں kunt u پہلے اور controleren آخر میں رکھیں۔", "Kunt u dit controleren?", "کیا آپ اسے چیک کر سکتے ہیں؟", "کُنت یو دِت کون ترو لے رَن"]
+        ["kunt u dit controleren", "غلطی یا الرجی کے بعد ویٹر سے معاملہ چیک کرنے کی درخواست کریں۔", "یہ جانچ کی درخواست ہے؛ نیا آرڈر خود نہیں بناتا۔", "kunt u کے بعد چیک ہونے والی چیز dit اور آخر میں عمل controleren رکھیں۔", "Kunt u dit controleren?", "کیا آپ اسے چیک کر سکتے ہیں؟", "کُنت یو دِت کون ترو لے رَن"]
       ]),
       pattern: { modelDutch:"ik ben allergisch voor noten", titleUrdu:"الرجی واضح کرنے والا محفوظ جملہ", highlight:"ik ben allergisch voor noten", explanationUrdu:"الرجی بتانے کے لیے ik ben allergisch voor کے بعد متعلقہ کھانا رکھیں۔", contrastUrdu:"zonder vlees ایک کھانے کی شرط ہے؛ allergisch voor صحت کی ضروری اطلاع ہے۔", commonMistakeUrdu:"صرف کھانا پسند نہ ہونے کے لیے allergisch نہ کہیں؛ اسے حقیقی الرجی کے لیے محفوظ رکھیں۔" },
       prerequisiteLessonIds:["a0-food-drink","a1-cafe-ordering","a1-polite-chunks"], prerequisiteRefs:[["a0-food-drink","eten"],["a1-cafe-ordering","menu"],["a1-cafe-ordering","de rekening alstublieft"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
@@ -7047,12 +7060,12 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts: [["maat", "سائز"], ["deze jas is te groot", "یہ جیکٹ بہت بڑی ہے"], ["hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟"], ["heeft u maat M?", "کیا آپ کے پاس سائز M ہے؟"], ["mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا یا سکتی ہوں؟"], ["waar is de paskamer?", "کپڑے پہن کر دیکھنے کا کمرہ کہاں ہے؟"], ["heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟"], ["ik neem deze", "میں یہ لوں گا یا گی"]],
       teaching: authoredA1TeachingV4([
         ["maat", "کپڑے یا جوتے کے سائز کے لیے maat کہیں۔", "یہ سائز ہے؛ prijs قیمت ہے۔", "maat کو تعداد یا رنگ کے معنی میں نہ لیں۔", "maat — heeft u maat M?", "سائز — کیا آپ کے پاس سائز M ہے؟", "مات"],
-        ["hoeveel kost deze jas", "کسی خاص جیکٹ کی قیمت پوچھنے کے لیے یہ مکمل سوال کہیں۔", "deze jas سامنے والی جیکٹ ہے؛ عام قیمت نہیں۔", "deze کو jas سے پہلے رکھیں۔", "Hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟", "ہو فیل کوست دے زَ یاس"],
+        ["hoeveel kost deze jas", "کسی خاص جیکٹ کی قیمت پوچھنے کے لیے یہ مکمل سوال کہیں۔", "deze jas سامنے والی جیکٹ ہے؛ عام قیمت نہیں۔", "قیمت پوچھتے وقت hoeveel سے آغاز کریں اور deze jas کو چیز کی ایک جوڑی کی طرح ساتھ رکھیں۔", "Hoeveel kost deze jas?", "یہ جیکٹ کتنے کی ہے؟", "ہو فیل کوست دے زَ یاس"],
         ["heeft u maat m", "دکان کے ملازم سے سائز M کی دستیابی پوچھیں۔", "یہ سائز کی تصدیق ہے؛ فٹنگ روم کی جگہ نہیں۔", "ہاں یا نہیں سوال میں heeft u سے آغاز کریں۔", "Heeft u maat M?", "کیا آپ کے پاس سائز M ہے؟", "ہیفٹ یو مات ایم"],
-        ["mag ik dit passen", "کپڑا خریدنے سے پہلے پہن کر دیکھنے کی اجازت مانگیں۔", "passen پہن کر فٹنگ دیکھنا ہے؛ خریدنے کا فیصلہ نہیں۔", "سوال میں mag ik پہلے اور passen آخر میں رکھیں۔", "Mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا یا سکتی ہوں؟", "ماخ اِک دِت پا سَن"],
+        ["mag ik dit passen", "کپڑا خریدنے سے پہلے پہن کر دیکھنے کی اجازت مانگیں۔", "passen پہن کر فٹنگ دیکھنا ہے؛ خریدنے کا فیصلہ نہیں۔", "اجازت mag ik سے مانگیں، چیز dit سے بتائیں، اور پہن کر دیکھنے کا عمل passen آخر میں رکھیں۔", "Mag ik dit passen?", "کیا میں اسے پہن کر دیکھ سکتا یا سکتی ہوں؟", "ماخ اِک دِت پا سَن"],
         ["waar is de paskamer", "کپڑے پہن کر دیکھنے والے کمرے کی جگہ پوچھیں۔", "یہ جگہ پوچھتا ہے؛ کپڑا پہننے کی اجازت الگ سوال ہے۔", "paskamer پورا ایک لفظ ہے؛ اسے عام کمرے کے نام سے نہ ملائیں۔", "Waar is de paskamer?", "کپڑے پہن کر دیکھنے کا کمرہ کہاں ہے؟", "وار اِس دَ پاس کا مَر"],
         ["deze jas is te groot", "جیکٹ ضرورت سے بڑی ہو تو فٹنگ مکمل جملے میں بتائیں۔", "te groot بہت بڑی ہے؛ صرف groot عام بڑی کیفیت ہے۔", "is کو نہ چھوڑیں اور te کو groot سے پہلے رکھیں۔", "Deze jas is te groot.", "یہ جیکٹ بہت بڑی ہے۔", "دے زَ یاس اِس تَ خروت"],
-        ["heeft u een andere kleur", "سائز درست ہو مگر رنگ نہ پسند ہو تو دوسرا رنگ پوچھیں۔", "یہ رنگ بدلتا ہے؛ سائز کے لیے andere maat کہیں۔", "andere کو kleur سے پہلے رکھیں۔", "Heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟", "ہیفٹ یو اَن آن دَ رَ کلیور"],
+        ["heeft u een andere kleur", "سائز درست ہو مگر رنگ نہ پسند ہو تو دوسرا رنگ پوچھیں۔", "یہ رنگ بدلتا ہے؛ سائز کے لیے andere maat کہیں۔", "صفت andere رنگ kleur کو بیان کرتی ہے، اس لیے دونوں کو اسی جوڑی میں رکھیں۔", "Heeft u een andere kleur?", "کیا آپ کے پاس دوسرا رنگ ہے؟", "ہیفٹ یو اَن آن دَ رَ کلیور"],
         ["ik neem deze", "کپڑا پسند اور مناسب ہو تو خریدنے کا فیصلہ کہیں۔", "یہ حتمی انتخاب ہے؛ پہن کر دیکھنے کی درخواست نہیں۔", "deze سامنے والی چیز کی طرف اشارہ کرتا ہے؛ اسے فٹنگ کی کیفیت نہ سمجھیں۔", "Ik neem deze.", "میں یہ لوں گا یا گی۔", "اِک نیم دے زَ"]
       ]),
       pattern:{modelDutch:"deze jas is te groot",titleUrdu:"کپڑے کی فٹنگ بتانا",highlight:"deze jas is te groot",explanationUrdu:"سامنے والے کپڑے کے بعد is اور پھر te کے ساتھ فٹنگ کی کیفیت رکھیں۔",contrastUrdu:"te groot فٹنگ کا مسئلہ بتاتا ہے؛ andere kleur رنگ بدلنے کی درخواست ہے۔",commonMistakeUrdu:"te کو کیفیت کے بعد نہ رکھیں؛ te groot اسی ترتیب میں کہیں۔"},
@@ -7068,10 +7081,10 @@ const a1AuthoredCurriculumV4 = {
         ["terugbrengen","خریدی ہوئی چیز دکان واپس لے جانے کے لیے terugbrengen کہیں۔","یہ واپسی کا عمل ہے؛ بدلنے یا رقم کا نتیجہ الگ مانگنا پڑتا ہے۔","اس پورے فعل کو واپسی کے معنی میں پہچانیں؛ حصے الگ کر کے ترتیب نہ بدلیں۔","ruilen — terugbrengen","بدلنا — واپس لانا۔","تَروخ برَنگَن"],
         ["ik wil dit terugbrengen","کاؤنٹر پر صاف کہیں کہ آپ یہ چیز واپس کرنا چاہتے ہیں۔","یہ مقصد بتاتا ہے؛ وجہ ابھی اگلے جملے میں دیں۔","wil کے بعد dit اور آخر میں terugbrengen رکھیں۔","Ik wil dit terugbrengen.","میں یہ واپس کرنا چاہتا یا چاہتی ہوں۔","اِک وِل دِت تَروخ برَنگَن"],
         ["hier is de bon","ملازم کو خریداری کا ثبوت دیتے وقت رسید پیش کریں۔","یہ رسید دینا ہے؛ نئی رسید مانگنا نہیں۔","hier is ترتیب نہ بدلیں؛ یہ رہی کے معنی دیتا ہے۔","Hier is de bon.","یہ رہی رسید۔","ہیر اِس دَ بون"],
-        ["de maat is te klein","واپسی کی وجہ میں سائز ضرورت سے چھوٹا بتائیں۔","یہ سائز کا مسئلہ ہے؛ خراب چیز کے لیے kapot کہیں۔","te کو klein سے پہلے رکھیں۔","De maat is te klein.","سائز بہت چھوٹا ہے۔","دَ مات اِس تَ کلَین"],
+        ["de maat is te klein","واپسی کی وجہ میں سائز ضرورت سے چھوٹا بتائیں۔","یہ سائز کا مسئلہ ہے؛ خراب چیز کے لیے kapot کہیں۔","te کیفیت کو ضرورت سے زیادہ بناتا ہے، اس لیے te klein کو ایک ساتھ بولیں۔","De maat is te klein.","سائز بہت چھوٹا ہے۔","دَ مات اِس تَ کلَین"],
         ["de jas is kapot","جیکٹ میں خرابی ہو تو چیز اور مسئلہ مکمل جملے میں بتائیں۔","یہ خرابی ہے؛ صرف غلط سائز نہیں۔","is کو نہ چھوڑیں؛ de jas kapot ادھورا ہے۔","De jas is kapot.","جیکٹ خراب ہے۔","دَ یاس اِس کا پوت"],
-        ["heeft u een grotere maat","اسی چیز کا بڑا سائز مانگنے کے لیے سوال کریں۔","یہ تبادلے کا حل ہے؛ رقم واپس لینے کی درخواست نہیں۔","grotere کو maat سے پہلے رکھیں۔","Heeft u een grotere maat?","کیا آپ کے پاس بڑا سائز ہے؟","ہیفٹ یو اَن خرو تَ رَ مات"],
-        ["kan ik mijn geld terugkrijgen","چیز نہ رکھنی ہو تو رقم واپس ملنے کی مؤدبانہ درخواست کریں۔","یہ رقم واپس مانگتا ہے؛ دوسری چیز سے بدلنا ruilen ہے۔","سوال میں kan ik پہلے اور terugkrijgen آخر میں رکھیں۔","Kan ik mijn geld terugkrijgen?","کیا مجھے پیسے واپس مل سکتے ہیں؟","کان اِک مَین خَیلٹ تَروخ کرَی خَن"]
+        ["heeft u een grotere maat","اسی چیز کا بڑا سائز مانگنے کے لیے سوال کریں۔","یہ تبادلے کا حل ہے؛ رقم واپس لینے کی درخواست نہیں۔","grotere اسی اسم maat کو بیان کرتا ہے؛ بڑا سائز مانگتے وقت دونوں کو الگ نہ کریں۔","Heeft u een grotere maat?","کیا آپ کے پاس بڑا سائز ہے؟","ہیفٹ یو اَن خرو تَ رَ مات"],
+        ["kan ik mijn geld terugkrijgen","چیز نہ رکھنی ہو تو رقم واپس ملنے کی مؤدبانہ درخواست کریں۔","یہ رقم واپس مانگتا ہے؛ دوسری چیز سے بدلنا ruilen ہے۔","kan ik کے بعد mijn geld رکھیں اور واپسی کا مرکب فعل terugkrijgen ایک لفظ میں آخر میں کہیں۔","Kan ik mijn geld terugkrijgen?","کیا مجھے پیسے واپس مل سکتے ہیں؟","کان اِک مَین خَیلٹ تَروخ کرَی خَن"]
       ]),
       pattern:{modelDutch:"ik wil dit terugbrengen",titleUrdu:"چیز واپس کرنے کا مقصد کہنا",highlight:"ik wil dit terugbrengen",explanationUrdu:"واپسی کا مقصد بتانے کے لیے ik wil کے بعد dit اور آخر میں terugbrengen رکھیں۔",contrastUrdu:"terugbrengen چیز واپس لانا ہے؛ ruilen اسے دوسری چیز سے بدلنا ہے۔",commonMistakeUrdu:"نتیجہ فرض نہ کریں؛ واپسی کے بعد بدلنا یا رقم الگ مانگیں۔"},
       prerequisiteLessonIds:["a0-shopping-payment","a0-home-needs","a1-shopping-clothes"],prerequisiteRefs:[["a0-shopping-payment","bon"],["a0-home-needs","kapot"],["a1-shopping-clothes","maat"],["a1-shopping-clothes","deze jas is te groot"]],
@@ -7138,13 +7151,13 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts:[["afhaalpunt","وصولی کی جگہ"],["ik wil mijn pakket ophalen","میں اپنا پارسل لینا چاہتا یا چاہتی ہوں"],["identiteitsbewijs","شناختی کاغذ"],["hier is mijn bericht","یہ میرا نوٹس ہے"],["heeft u een identiteitsbewijs?","کیا آپ کے پاس شناختی کاغذ ہے؟"],["het pakket is nog niet gekomen","پارسل ابھی نہیں آیا"],["op welk adres is het bezorgd?","یہ کس پتے پر پہنچایا گیا؟"],["ik moet hier tekenen","مجھے یہاں دستخط کرنے ہیں"]],
       teaching:authoredA1TeachingV4([
         ["afhaalpunt","پارسل لینے کی مقرر جگہ کو afhaalpunt کہیں۔","یہ وصولی کی جگہ ہے؛ گھر کا adres الگ ہے۔","afhaalpunt کو عام دکان یا ڈاک کے معنی میں نہ لیں۔","afhaalpunt — pakket","وصولی کی جگہ — پارسل۔","آف ہال پُنت"],
-        ["ik wil mijn pakket ophalen","کاؤنٹر پر اپنا پارسل لینے کا مقصد مکمل جملے میں بتائیں۔","ophalen وصول کرنا ہے؛ بھیجنا یا واپس کرنا نہیں۔","ophalen کو آخر میں رکھیں۔","Ik wil mijn pakket ophalen.","میں اپنا پارسل لینا چاہتا یا چاہتی ہوں۔","اِک وِل مَین پا کَت اوپ ہا لَن"],
+        ["ik wil mijn pakket ophalen","کاؤنٹر پر اپنا پارسل لینے کا مقصد مکمل جملے میں بتائیں۔","ophalen وصول کرنا ہے؛ بھیجنا یا واپس کرنا نہیں۔","wil کے بعد مقصد mijn pakket آتا ہے اور وصول کرنے کا کام ophalen جملہ مکمل کرتا ہے۔","Ik wil mijn pakket ophalen.","میں اپنا پارسل لینا چاہتا یا چاہتی ہوں۔","اِک وِل مَین پا کَت اوپ ہا لَن"],
         ["identiteitsbewijs","پارسل لیتے وقت شناخت دکھانے والے کاغذ کو identiteitsbewijs کہیں۔","یہ شناخت ہے؛ پارسل نوٹس bericht الگ ہے۔","اس لمبے لفظ کو پتے یا عام رکنیت کارڈ کے معنی میں نہ لیں۔","identiteitsbewijs — bericht","شناختی کاغذ — نوٹس۔","اِدَنتی تَیٹس بَ وِیس"],
         ["hier is mijn bericht","ملازم کو پارسل والا نوٹس پیش کرتے وقت یہ مکمل بات کہیں۔","یہ نوٹس دینا ہے؛ شناختی کاغذ دینا اگلا الگ قدم ہے۔","hier is ترتیب نہ بدلیں۔","Hier is mijn bericht.","یہ میرا نوٹس ہے۔","ہیر اِس مَین بَ رِخت"],
         ["heeft u een identiteitsbewijs","ملازم کا شناختی کاغذ مانگنے والا سوال سمجھیں۔","یہ شناخت کی تصدیق ہے؛ پتے کا سوال نہیں۔","سوال میں heeft u پہلے رکھیں۔","Heeft u een identiteitsbewijs?","کیا آپ کے پاس شناختی کاغذ ہے؟","ہیفٹ یو اَن اِدَنتی تَیٹس بَ وِیس"],
         ["het pakket is nog niet gekomen","پارسل مقرر وقت تک نہ پہنچے تو مسئلہ مکمل جملے میں بتائیں۔","یہ نہ پہنچنے کی بات ہے؛ غلط پتے کی تصدیق الگ ہے۔","nog niet کو gekomen سے پہلے رکھیں۔","Het pakket is nog niet gekomen.","پارسل ابھی نہیں آیا۔","ہَت پا کَت اِس نوخ نیت خَ کو مَن"],
         ["op welk adres is het bezorgd","پارسل کس پتے پر پہنچا یہ پوچھیں۔","یہ ترسیل کا پتہ پوچھتا ہے؛ وصولی کی جگہ نہیں۔","op welk adres کو سوال کے شروع میں رکھیں۔","Op welk adres is het bezorgd?","یہ کس پتے پر پہنچایا گیا؟","اوپ وِلک آ درَس اِس ہَت بَ زورخت"],
-        ["ik moet hier tekenen","کاؤنٹر پر دستخط ضروری ہوں تو ہدایت سمجھیں یا اپنی ذمہ داری کہیں۔","tekenen دستخط کرنا ہے؛ شناخت دکھانا نہیں۔","tekenen کو آخر میں رکھیں۔","Ik moet hier tekenen.","مجھے یہاں دستخط کرنے ہیں۔","اِک موت ہیر تے کَ نَن"]
+        ["ik moet hier tekenen","کاؤنٹر پر دستخط ضروری ہوں تو ہدایت سمجھیں یا اپنی ذمہ داری کہیں۔","tekenen دستخط کرنا ہے؛ شناخت دکھانا نہیں۔","moet ذمہ داری بتاتا ہے؛ جگہ hier کے بعد اصل کام tekenen رکھیں۔","Ik moet hier tekenen.","مجھے یہاں دستخط کرنے ہیں۔","اِک موت ہیر تے کَ نَن"]
       ]),
       pattern:{modelDutch:"ik wil mijn pakket ophalen",titleUrdu:"پارسل لینے کا مقصد کہنا",highlight:"ik wil mijn pakket ophalen",explanationUrdu:"پارسل لینے کے لیے ik wil mijn pakket کے بعد ophalen رکھیں۔",contrastUrdu:"pakket ophalen وصول کرنا ہے؛ pakket is nog niet gekomen نہ پہنچنے کی شکایت ہے۔",commonMistakeUrdu:"ophalen کو pakket سے پہلے نہ رکھیں؛ اس نمونے میں فعل آخر میں ہے۔"},
       prerequisiteLessonIds:["a0-address-phone","a1-neighbour-talk","a1-details-forms"],prerequisiteRefs:[["a0-address-phone","adres"],["a1-neighbour-talk","pakket"],["a1-details-forms","bericht"]],
@@ -7156,11 +7169,11 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts:[["bibliotheek","لائبریری"],["ik wil Nederlands leren","میں Nederlands سیکھنا چاہتا یا چاہتی ہوں"],["buurthuis","محلے کا مرکز"],["taalles","زبان کی کلاس"],["heeft u taalles?","کیا آپ کے پاس زبان کی کلاس ہے؟"],["ik wil lid worden","میں رکن بننا چاہتا یا چاہتی ہوں"],["hoe laat is het open?","یہ کتنے بجے کھلتا ہے؟"],["vandaag is het gesloten","آج یہ بند ہے"]],
       teaching:authoredA1TeachingV4([
         ["bibliotheek","کتابیں لینے یا پڑھنے کی عوامی جگہ کو bibliotheek کہیں۔","یہ لائبریری ہے؛ buurthuis محلے کا مرکز ہے۔","bibliotheek کو کتاب boek کے معنی میں نہ لیں۔","bibliotheek — buurthuis","لائبریری — محلے کا مرکز۔","بی بلی او تیک"],
-        ["ik wil nederlands leren","زبان کی جگہ پر Nederlands سیکھنے کا مقصد مکمل جملے میں بتائیں۔","یہ سیکھنے کی خواہش ہے؛ کلاس کی دستیابی الگ سوال ہے۔","leren کو آخر میں رکھیں۔","Ik wil Nederlands leren.","میں Nederlands سیکھنا چاہتا یا چاہتی ہوں۔","اِک وِل نے دَر لانتس لیرَن"],
+        ["ik wil nederlands leren","زبان کی جگہ پر Nederlands سیکھنے کا مقصد مکمل جملے میں بتائیں۔","یہ سیکھنے کی خواہش ہے؛ کلاس کی دستیابی الگ سوال ہے۔","wil خواہش بتاتا ہے؛ زبان Nederlands کے بعد سیکھنے کا فعل leren آتا ہے۔","Ik wil Nederlands leren.","میں Nederlands سیکھنا چاہتا یا چاہتی ہوں۔","اِک وِل نے دَر لانتس لیرَن"],
         ["buurthuis","محلے کی کلاس یا سرگرمیوں کی جگہ کو buurthuis کہیں۔","یہ کمیونٹی مرکز ہے؛ bibliotheek کتابوں کی جگہ ہے۔","buurthuis کو پڑوسی کے گھر کے معنی میں نہ لیں۔","buurthuis — bibliotheek","محلے کا مرکز — لائبریری۔","بیورت ہاؤس"],
         ["taalles","زبان سیکھنے کی کلاس کو taalles کہیں۔","یہ کلاس ہے؛ taal صرف زبان ہے۔","taalles کو عام کتاب یا کارڈ نہ سمجھیں۔","taalles — Nederlands leren","زبان کی کلاس — Nederlands سیکھنا۔","تال لَیس"],
         ["heeft u taalles","ادارے سے زبان کی کلاس ہونے کی تصدیق پوچھیں۔","یہ کلاس کی دستیابی ہے؛ اوقات الگ سوال ہیں۔","ہاں یا نہیں سوال میں heeft u سے شروع کریں۔","Heeft u taalles?","کیا آپ کے پاس زبان کی کلاس ہے؟","ہیفٹ یو تال لَیس"],
-        ["ik wil lid worden","لائبریری کا رکن بننے کا مقصد مکمل جملے میں کہیں۔","lid worden رکن بننا ہے؛ صرف کارڈ لینا نہیں۔","worden کو آخر میں رکھیں۔","Ik wil lid worden.","میں رکن بننا چاہتا یا چاہتی ہوں۔","اِک وِل لِت وور دَن"],
+        ["ik wil lid worden","لائبریری کا رکن بننے کا مقصد مکمل جملے میں کہیں۔","lid worden رکن بننا ہے؛ صرف کارڈ لینا نہیں۔","lid نئی حالت ہے اور worden تبدیلی؛ رکن بننے کے لیے دونوں کو lid worden کی جوڑی میں رکھیں۔","Ik wil lid worden.","میں رکن بننا چاہتا یا چاہتی ہوں۔","اِک وِل لِت وور دَن"],
         ["hoe laat is het open","ادارہ کس وقت کھلتا ہے یہ پوچھیں۔","hoe laat گھڑی کا وقت پوچھتا ہے؛ vandaag is gesloten آج کی حالت ہے۔","open کو سوال کے آخر میں رکھیں۔","Hoe laat is het open?","یہ کتنے بجے کھلتا ہے؟","ہو لات اِس ہَت او پَن"],
         ["vandaag is het gesloten","آج جگہ بند ہو تو مکمل اطلاع سمجھیں یا دیں۔","gesloten بند ہے؛ open کھلا ہے۔","vandaag کے بعد is het رکھیں۔","Vandaag is het gesloten.","آج یہ بند ہے۔","فان داخ اِس ہَت خَ سلو تَن"]
       ]),
@@ -7174,11 +7187,11 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts:[["toegestaan","اجازت ہے"],["mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا یا سکتی ہوں؟"],["gevaarlijk","خطرناک"],["veilig","محفوظ"],["het is hier verboden","یہاں منع ہے"],["u moet hier wachten","آپ کو یہاں انتظار کرنا ہے"],["de ingang is daar","داخلہ وہاں ہے"],["ik heb hulp nodig","مجھے مدد چاہیے"]],
       teaching:authoredA1TeachingV4([
         ["toegestaan","کسی کام کی اجازت والے نشان پر toegestaan پہچانیں۔","یہ اجازت ہے؛ verboden منع ہے۔","toegestaan کو محفوظ ہونے کے عمومی معنی میں نہ لیں۔","toegestaan — verboden","اجازت ہے — منع ہے۔","تو خَ ستان"],
-        ["mag ik hier wachten","عوامی جگہ پر یہاں انتظار کرنے کی اجازت پوچھیں۔","یہ اجازت کا سوال ہے؛ انتظار کی ہدایت نہیں۔","سوال میں mag ik پہلے اور wachten آخر میں رکھیں۔","Mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا یا سکتی ہوں؟","ماخ اِک ہیر واخ تَن"],
+        ["mag ik hier wachten","عوامی جگہ پر یہاں انتظار کرنے کی اجازت پوچھیں۔","یہ اجازت کا سوال ہے؛ انتظار کی ہدایت نہیں۔","mag ik اجازت پوچھتا ہے؛ hier جگہ اور wachten عمل ہے، اسی ترتیب میں سوال مکمل کریں۔","Mag ik hier wachten?","کیا میں یہاں انتظار کر سکتا یا سکتی ہوں؟","ماخ اِک ہیر واخ تَن"],
         ["gevaarlijk","خطرے والے نشان یا جگہ کے لیے gevaarlijk کہیں۔","یہ خطرناک ہے؛ veilig محفوظ ہے۔","gevaarlijk کو صرف منع کے معنی میں نہ سمجھیں۔","gevaarlijk — veilig","خطرناک — محفوظ۔","خَ فار لَک"],
         ["veilig","خطرہ نہ ہو یا جگہ محفوظ ہو تو veilig کہیں۔","یہ محفوظ ہے؛ toegestaan صرف اجازت بتاتا ہے۔","veilig کو آسان یا کھلا ہونے کے معنی میں نہ لیں۔","veilig — gevaarlijk","محفوظ — خطرناک۔","فَی لَخ"],
-        ["het is hier verboden","نشان بتائے کہ یہاں کوئی کام منع ہے تو مکمل اطلاع سمجھیں۔","یہ ممانعت ہے؛ خطرے کی وجہ ضروری نہیں۔","hier کو verboden سے پہلے رکھیں۔","Het is hier verboden.","یہاں منع ہے۔","ہَت اِس ہیر فَر بو دَن"],
-        ["u moet hier wachten","ملازم یا اعلان کی یہاں انتظار کرنے والی ہدایت سمجھیں۔","moet ضروری ہدایت ہے؛ mag ik اجازت کا سوال ہے۔","wachten کو آخر میں رکھیں۔","U moet hier wachten.","آپ کو یہاں انتظار کرنا ہے۔","یو موت ہیر واخ تَن"],
+        ["het is hier verboden","نشان بتائے کہ یہاں کوئی کام منع ہے تو مکمل اطلاع سمجھیں۔","یہ ممانعت ہے؛ خطرے کی وجہ ضروری نہیں۔","hier جگہ بتاتا ہے اور verboden ممانعت؛ دونوں کو is کے بعد اسی ترتیب میں رکھیں۔","Het is hier verboden.","یہاں منع ہے۔","ہَت اِس ہیر فَر بو دَن"],
+        ["u moet hier wachten","ملازم یا اعلان کی یہاں انتظار کرنے والی ہدایت سمجھیں۔","moet ضروری ہدایت ہے؛ mag ik اجازت کا سوال ہے۔","moet کے بعد جگہ hier اور پھر انتظار کا فعل wachten آتا ہے۔","U moet hier wachten.","آپ کو یہاں انتظار کرنا ہے۔","یو موت ہیر واخ تَن"],
         ["de ingang is daar","عمارت کے داخلے کی جگہ وہاں بتائیں یا سمجھیں۔","ingang داخلہ ہے؛ uitgang باہر جانے کا راستہ ہے۔","is کو نہ چھوڑیں؛ مکمل جگہ والا جملہ کہیں۔","De ingang is daar.","داخلہ وہاں ہے۔","دَ اِن خانخ اِس دار"],
         ["ik heb hulp nodig","فوری مدد درکار ہو تو واضح مکمل جملہ کہیں۔","یہ مدد کی ضرورت ہے؛ صرف خطرے کی کیفیت نہیں۔","hulp nodig کو ساتھ رکھیں۔","Ik heb hulp nodig.","مجھے مدد چاہیے۔","اِک ہَپ ہُلپ نو دَخ"]
       ]),
@@ -7237,7 +7250,7 @@ const a1AuthoredCurriculumV4 = {
         ["hoe laat begint de les","سبق کا گھڑی والا آغاز پوچھیں۔","hoe laat وقت پوچھتا ہے؛ waar huiswerk کی جگہ پوچھتا ہے۔","begint کو de les سے پہلے رکھیں۔","Goedemorgen, hoe laat begint de les?","صبح بخیر، سبق کتنے بجے شروع ہوتا ہے؟","ہو لات بَ خِنت دَ لَس"],
         ["waar staat het huiswerk","ایپ یا نوٹس میں گھر کا کام کہاں لکھا ہے پوچھیں۔","waar جگہ پوچھتا ہے؛ hoe laat سبق کا وقت پوچھتا ہے۔","huiswerk کو سوال کے آخر میں رکھیں۔","Waar staat het huiswerk?","گھر کا کام کہاں لکھا ہے؟","وار ستات ہَت ہاؤس ویرک"],
         ["het rooster staat in de app","اسکول کے اوقات ایپ میں ہونے کی اطلاع سمجھیں یا دیں۔","یہ rooster کی جگہ ہے؛ morgen geen school تعطیل کی اطلاع ہے۔","in de app کو آخر میں رکھیں۔","Het rooster staat in de app.","اوقات ایپ میں ہیں۔","ہَت روس تَر ستات اِن دَ ایپ"],
-        ["morgen is er geen school","اسکول ایپ میں کل چھٹی ہونے کی اطلاع سمجھیں۔","یہ کل اسکول نہ ہونے کی بات ہے؛ آج بچے کی بیماری نہیں۔","geen کو school سے پہلے رکھیں۔","Morgen is er geen school.","کل اسکول نہیں ہے۔","مور خَن اِس اَر خین سخُول"],
+        ["morgen is er geen school","اسکول ایپ میں کل چھٹی ہونے کی اطلاع سمجھیں۔","یہ کل اسکول نہ ہونے کی بات ہے؛ آج بچے کی بیماری نہیں۔","geen اسم school کی نفی کرتا ہے، اس لیے چھٹی کی اطلاع میں دونوں ساتھ آئیں۔","Morgen is er geen school.","کل اسکول نہیں ہے۔","مور خَن اِس اَر خین سخُول"],
         ["kunt u mij een bericht sturen","استاد یا دفتر سے تحریری پیغام بھیجنے کی درخواست کریں۔","یہ تحریری bericht ہے؛ terugbellen فون کی درخواست ہے۔","kunt u سے شروع کریں اور sturen آخر میں رکھیں۔","Kunt u mij een bericht sturen?","کیا آپ مجھے پیغام بھیج سکتے ہیں؟","کُنت یو مَے اَن بَ رِخت ستیو رَن"]
       ]),
       pattern:{modelDutch:"mijn kind komt vandaag niet naar school",titleUrdu:"بچے کی غیر حاضری مکمل بتانا",highlight:"mijn kind komt vandaag niet naar school",explanationUrdu:"اسکول کو اطلاع میں پہلے mijn kind، پھر vandaag niet اور آخر میں naar school رکھیں۔",contrastUrdu:"یہ بچے کی غیر حاضری ہے؛ ik kan vandaag niet komen اپنی غیر حاضری ہے۔",commonMistakeUrdu:"صرف mijn kind is ziek پر نہ رکیں؛ اسکول کو یہ بھی بتائیں کہ بچہ آج نہیں آئے گا۔"},
@@ -7249,14 +7262,14 @@ const a1AuthoredCurriculumV4 = {
       title:"Rooster en verandering op het werk",unitLabel:"A1: پیغام، اسکول اور کام",outcomeUrdu:"کام کا rooster اور dienst پڑھنا، آغاز اور وقفہ بتانا، بیماری یا کل کی عدم دستیابی لکھنا، اور بدلی ڈیوٹی پر ذمہ دار سے بات مانگنا۔",
       seedConcepts:[["mijn dienst is veranderd","میری ڈیوٹی بدل گئی ہے"],["rooster","اوقات کی فہرست"],["dienst","ڈیوٹی"],["pauze","وقفہ"],["baas","ذمہ دار یا باس"],["ik begin om negen uur","میں نو بجے شروع کرتا یا کرتی ہوں"],["ik heb om twaalf uur pauze","میرا بارہ بجے وقفہ ہے"],["ik werk morgen niet","میں کل کام نہیں کرتا یا کرتی"],["ik ben ziek en kan niet werken","میں بیمار ہوں اور کام نہیں کر سکتا یا سکتی"],["kan ik met mijn baas spreken?","کیا میں اپنے باس سے بات کر سکتا یا سکتی ہوں؟"],["staat het rooster in de app?","کیا اوقات ایپ میں ہیں؟"]],
       teaching:authoredA1TeachingV4([
-        ["mijn dienst is veranderd","مقرر ڈیوٹی بدل جائے تو مکمل تبدیلی واضح کریں۔","یہ ایک dienst کی تبدیلی ہے؛ پورا rooster کہاں ہے یہ الگ سوال ہے۔","veranderd کو آخر میں رکھیں۔","Mijn dienst is veranderd.","میری ڈیوٹی بدل گئی ہے۔","مَین دینسٹ اِس فَر آن دَرت"],
+        ["mijn dienst is veranderd","مقرر ڈیوٹی بدل جائے تو مکمل تبدیلی واضح کریں۔","یہ ایک dienst کی تبدیلی ہے؛ پورا rooster کہاں ہے یہ الگ سوال ہے۔","veranderd بدلی ہوئی حالت ہے؛ اسے is کے بعد رکھ کر ڈیوٹی کی تبدیلی مکمل کریں۔","Mijn dienst is veranderd.","میری ڈیوٹی بدل گئی ہے۔","مَین دینسٹ اِس فَر آن دَرت"],
         ["rooster","کام کے دن، ڈیوٹی اور وقت کی فہرست کو rooster کہیں۔","یہ پوری فہرست ہے؛ dienst ایک ڈیوٹی ہے۔","rooster کو وقفہ pauze نہ سمجھیں۔","rooster — dienst","اوقات — ڈیوٹی۔","روس تَر"],
         ["dienst","ایک مقرر کام کی ڈیوٹی یا شفٹ کو dienst کہیں۔","یہ ایک شفٹ ہے؛ rooster تمام اوقات کی فہرست ہے۔","dienst کو عام کام werk کے معنی میں ہر جگہ نہ بولیں۔","dienst — rooster","ڈیوٹی — اوقات۔","دینسٹ"],
         ["pauze","کام کے درمیان مقرر وقفے کو pauze کہیں۔","یہ آرام کا وقفہ ہے؛ dienst ختم ہونا نہیں۔","pauze کو بیماری کی چھٹی نہ سمجھیں۔","pauze — dienst","وقفہ — ڈیوٹی۔","پاؤ زَ"],
         ["baas","کام میں ذمہ دار شخص یا باس کو baas کہیں۔","یہ ذمہ دار شخص ہے؛ collega ساتھی ہے۔","baas کو پوری کمپنی کے معنی میں نہ لیں۔","baas — collega","باس — ساتھی۔","باس"],
         ["ik begin om negen uur","اپنا کام شروع ہونے کا گھڑی والا وقت بتائیں۔","یہ آغاز ہے؛ pauze کا وقت الگ ہے۔","om کو وقت سے پہلے رکھیں۔","Ik begin om negen uur.","میں نو بجے شروع کرتا یا کرتی ہوں۔","اِک بَ خِن اوم نے خَن یور"],
         ["ik heb om twaalf uur pauze","اپنے وقفے کا گھڑی والا وقت مکمل جملے میں بتائیں۔","یہ pauze ہے؛ کام شروع ہونے کا وقت نہیں۔","om twaalf uur کو pauze سے پہلے رکھیں۔","Ik heb om twaalf uur pauze.","میرا بارہ بجے وقفہ ہے۔","اِک ہَپ اوم توالف یور پاؤ زَ"],
-        ["ik werk morgen niet","کل کام پر دستیاب نہ ہوں تو مختصر واضح اطلاع دیں۔","یہ کل کی عدم دستیابی ہے؛ آج بیماری کی وجہ الگ ہو سکتی ہے۔","niet کو آخر میں رکھیں۔","Ik werk morgen niet.","میں کل کام نہیں کرتا یا کرتی۔","اِک ویرک مور خَن نیت"],
+        ["ik werk morgen niet","کل کام پر دستیاب نہ ہوں تو مختصر واضح اطلاع دیں۔","یہ کل کی عدم دستیابی ہے؛ آج بیماری کی وجہ الگ ہو سکتی ہے۔","یہ کام کی نفی ہے، اس لیے niet پورے بیان کے آخر میں آتا ہے اور morgen دن بتاتا ہے۔","Ik werk morgen niet.","میں کل کام نہیں کرتا یا کرتی۔","اِک ویرک مور خَن نیت"],
         ["ik ben ziek en kan niet werken","بیماری اور کام نہ کر سکنے کی وجہ ایک مکمل جملے میں دیں۔","یہ بیماری کی وجہ ہے؛ dienst کی تبدیلی الگ مسئلہ ہے۔","en کے دونوں طرف مکمل بات رکھیں۔","Ik ben ziek en kan niet werken.","میں بیمار ہوں اور کام نہیں کر سکتا یا سکتی۔","اِک بَین زیک اَن کان نیت ویر کَن"],
         ["kan ik met mijn baas spreken","ڈیوٹی یا rooster کے مسئلے پر ذمہ دار سے بات مانگیں۔","یہ گفتگو کی درخواست ہے؛ collega سے عام بات نہیں۔","met mijn baas کو spreken سے پہلے رکھیں۔","Kan ik met mijn baas spreken?","کیا میں اپنے باس سے بات کر سکتا یا سکتی ہوں؟","کان اِک مَت مَین باس سپرے کَن"],
         ["staat het rooster in de app","کام کے اوقات ایپ میں ہونے کی تصدیق پوچھیں۔","یہ rooster کی جگہ پوچھتا ہے؛ dienst بدلنے کی اطلاع نہیں۔","ہاں یا نہیں سوال میں staat پہلے رکھیں۔","Staat het rooster in de app?","کیا اوقات ایپ میں ہیں؟","ستات ہَت روس تَر اِن دَ ایپ"]
@@ -7275,7 +7288,7 @@ const a1AuthoredCurriculumV4 = {
         ["ik wil een afspraak bij de huisarts","فون پر huisarts سے ملاقات مانگنے کا مقصد مکمل جملے میں کہیں۔","bij de huisarts جگہ بتاتا ہے؛ صرف afspraak عام ملاقات ہو سکتی ہے۔","huisarts سے پہلے bij de رکھیں اور ملاقات کو een afspraak کہیں۔","Ik wil een afspraak bij de huisarts.","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں۔","اِک وِل اَن آف سپراک بَے دَ ہاؤس آرتس"],
         ["wat is uw geboortedatum","استقبالی ملازم تاریخ پیدائش کی تصدیق کے لیے یہ سوال پوچھتا ہے۔","geboortedatum تاریخ پیدائش ہے؛ afspraak کی تاریخ نہیں۔","uw ذاتی معلومات کے احترام والا لفظ ہے؛ اسے دن کے نام سے نہ بدلیں۔","Wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟","وات اِس یو خَ بور تَ دا تُم"],
         ["wanneer kan ik komen","ملاقات ملنے کا دن یا وقت پوچھنے کے لیے یہ مکمل سوال کہیں۔","wanneer وقت یا دن پوچھتا ہے؛ waar جگہ پوچھتا ہے۔","wanneer سے شروع کریں اور komen آخر میں رکھیں۔","Wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟","وا نیر کان اِک کو مَن"],
-        ["ik kan morgen niet komen","پیش کیا گیا کل کا وقت ممکن نہ ہو تو واضح اطلاع دیں۔","یہ عدم دستیابی ہے؛ ملاقات خود بخود منسوخ نہیں ہوتی۔","niet کو komen سے پہلے رکھیں۔","Ik kan morgen niet komen.","میں کل نہیں آ سکتا یا سکتی۔","اِک کان مور خَن نیت کو مَن"],
+        ["ik kan morgen niet komen","پیش کیا گیا کل کا وقت ممکن نہ ہو تو واضح اطلاع دیں۔","یہ عدم دستیابی ہے؛ ملاقات خود بخود منسوخ نہیں ہوتی۔","niet آنے کی نفی ہے، اس لیے ملاقات والی اطلاع میں komen کے عین پہلے رہتا ہے۔","Ik kan morgen niet komen.","میں کل نہیں آ سکتا یا سکتی۔","اِک کان مور خَن نیت کو مَن"],
         ["is het dringend","استقبالی ملازم پوچھتا ہے کہ مسئلہ فوری ہے یا انتظار کر سکتا ہے۔","dringend فوری ضرورت ہے؛ عام afspraak کا وقت نہیں۔","یہ ہاں یا نہیں سوال ہے؛ is پہلے رکھیں۔","Is het dringend?","کیا یہ فوری ہے؟","اِس ہَت درِن خَنت"],
         ["kunt u mij terugbellen","فون پر جواب فوراً نہ ملے تو مؤدبانہ واپسی کال مانگیں۔","terugbellen واپس فون کرنا ہے؛ afspraak بنانا نہیں۔","kunt u سے شروع کریں اور terugbellen آخر میں رکھیں۔","Kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","کُنت یو مَے تَ رُخ بَ لَن"]
       ]),
@@ -7568,8 +7581,8 @@ const a1AuthoredCurriculumV4 = {
       ],
       targets: [
         { lessonId: "a1-house-food-plurals", dutch: "het boek is in huis", patternLessonId: "a1-house-food-plurals" },
-        { lessonId: "a1-neighbour-talk", dutch: "kunt u mij helpen?", patternLessonId: "a1-neighbour-talk" },
-        { lessonId: "a1-home-repairs", dutch: "de verwarming doet het niet", patternLessonId: "a1-home-repairs" },
+        { lessonId: "a1-neighbour-talk", dutch: "kunt u zachter zijn?", patternLessonId: "a1-neighbour-talk" },
+        { lessonId: "a1-home-repairs", dutch: "kunt u iemand sturen?", patternLessonId: "a1-home-repairs" },
         { lessonId: "a1-cleaning-house", dutch: "ik moet de kamer schoonmaken", patternLessonId: "a1-cleaning-house" },
         { lessonId: "a1-house-search-extra", dutch: "hoeveel is de huur?" },
         { lessonId: "a1-house-search-extra", dutch: "wanneer is de woning beschikbaar?" }
@@ -7582,7 +7595,8 @@ const a1AuthoredCurriculumV4 = {
         ["a1-neighbour-talk", "kunt u zachter zijn?"],
         ["a1-home-repairs", "kunt u iemand sturen?"],
         ["a1-cleaning-house", "de keuken is schoon"],
-        ["a1-house-search-extra", "kan ik de woning bekijken?"]
+        ["a1-house-search-extra", "kan ik de woning bekijken?"],
+        ["a1-house-search-extra", "heeft de woning twee kamers?"]
       ],
       useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
       checkTypes: ["meaning", "listen-choice", "reverse", "build", "situation", "document-choice"],

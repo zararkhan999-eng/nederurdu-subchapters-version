@@ -1,6 +1,6 @@
 # NederUrdu Learning-First Rework — Implementation Ledger
 
-Status: **v4 foundation implemented; A0 accepted and frozen; A1 is the active rework chapter**
+Status: **v4 foundation implemented; A0 frozen; A1 curriculum and web acceptance clean, native Android gate pending**
 
 Authority:
 [`docs/learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
@@ -72,7 +72,7 @@ authored replay variants.
 | Patterns | 8 | 38 | 6 |
 | Learning runs | 107 | 81 | 79 |
 | Teaching blocks | 376 | 371 | 288 |
-| Active normal-lesson exercises | 1,800 | 1,532 | 1,470 |
+| Active normal-lesson exercises | 1,800 | 1,537 | 1,470 |
 | Retired v3 records | 2,160 | 2,280 | 1,080 |
 | Mission records across all variants | 321 | 354 | 168 |
 
@@ -288,12 +288,16 @@ The separate A1 chapter completion mission now follows all nine unit missions:
   speaking support, and practical use; and
 - the exact completion-mission audit slice reports **0 findings**, its focused
   browser gate passes **12/12**, the cumulative Units 1–9 plus completion gate
-  passes **118/118**, and frozen A0 remains **96/96**.
+  passes **120/120**, and the shared A0+A1 runtime gate passes **96/96**.
 
-The current full A1 result is **38 errors and 0 review flags**, down by one from
-the post-Unit-9 result because the missing completion mission is resolved. The
-remaining work is final cross-generated Unit 5 lexical-ownership and shared
-confusion-template cleanup. A1 as a whole is not accepted or frozen.
+The complete A1 strict audit now reports **0 errors and 0 review flags**. The
+last Unit 5 lexical-ownership findings were resolved by making supporting words
+explicit prerequisites or replacing them with owned, natural micro-examples.
+The housing mission now assesses the A1-taught requests `kunt u zachter zijn?`
+and `kunt u iemand sturen?`, rather than reusing two A0 concepts as if A1 had
+introduced them. Twenty-one common-mistake notes were also rewritten as
+concept-specific Urdu explanations. A1 curriculum and web acceptance are
+clean; formal freeze still waits for the mandatory native Android gate.
 
 ### A2 — Handle practical situations independently
 
@@ -408,32 +412,35 @@ Total:   96/96
 Failures: 0
 ```
 
-The matrix deliberately contains all chapter-neutral runtime checks and all
-A0-specific curriculum, review, mission, migration, offline, mastery, and
-responsive checks. Explicit A1/A2 authoring checks remain outside this freeze
-gate until those chapters reach their own permitted acceptance cycles.
+The shared matrix now admits both A0 and A1 and contains all chapter-neutral
+runtime checks plus curriculum, review, mission, migration, offline, mastery,
+and responsive gates for the accepted web chapters. It passes **96/96**. The
+separate A1-authored curriculum matrix passes **120/120** across desktop and
+mobile. A2 diagnostics remain isolated until its permitted authoring cycle.
 
 ### Android, migration, offline, and audio
 
 - Root web files and all 341 offline visual assets were synchronized to
-  `android/app/src/main/assets/public` after the A1 completion-mission batch. The
+  `android/app/src/main/assets/public` after the A1 acceptance cleanup. The
   Android source assets have the same course, app-runtime, and service-worker
   hashes as the web source.
-- The offline cache is `nederurdu-v70-learning-first-a1-completion`.
-- The A1 completion native build is pending. The current machine no longer exposes a
-  Java runtime, so Gradle stops before compilation. The last configured build
-  attempt also required acceptance of Google's SDK license before API 35 and
-  build-tools 35.0.0 could be installed.
+- The offline cache is `nederurdu-v71-learning-first-a1-acceptance`.
+- The A1 native build is pending. Homebrew JDK 17 and Android command-line tools
+  are present, the local SDK path now points to
+  `/opt/homebrew/share/android-commandlinetools`, and Gradle 9.3 launches. Google
+  requires the user to accept the Android SDK license before API 35,
+  platform-tools, and build-tools 35.0.0 can be installed; the automated run
+  explicitly declined instead of accepting legal terms on the user's behalf.
 - Last successfully built APK (Unit 2, not the current completion package):
   `android/app/build/outputs/apk/debug/app-debug.apk`
 - Last APK SHA-256:
   `2d010712e3e613186c72df8df101290eadccad240564a35147f0af4f4df31b29`
-- Synchronized completion course-data SHA-256:
-  `8226a3118807f086fb5b0c028e9bf3d5fba7752ebb604473824d757eb01a3846`
+- Synchronized A1-acceptance course-data SHA-256:
+  `b1edfcccd05ce67a9126480078ba7a464c61aa13f964005983d2f92d2d81b4c7`
 - Synchronized completion app runtime SHA-256:
   `b0c826938b33ba6bdb1e10a6141895b417e27cb9d9abafeca3bccc903125b361`
-- Synchronized completion service-worker SHA-256:
-  `a90418447138b3ac1ee6a3988a672c54e2925951f09a1708705856777c1676ad`
+- Synchronized A1-acceptance service-worker SHA-256:
+  `d53d27b5266746ba6af43705bdab2770a6e83682c8f05473e61a5d75c0dd0f19`
 - In the last installed acceptance build, both `nederurdu-progress-v3` and
   `nederurdu-progress-v4` remained present. V4 reported schema `4`,
   `migratedFrom: nederurdu-progress-v3`, retained XP, practice day, settings,
@@ -455,27 +462,27 @@ gate until those chapters reach their own permitted acceptance cycles.
 | --- | --- | --- | --- |
 | Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
 | Urdu-first teaching records | Passed semantic review | Units 1–9 and completion mission passed | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **Units 1–9 + completion: 0 local findings; full A1: 38 errors / 0 flags** | 388 errors / 1 flag |
+| Strict generated-course audit | **0 errors / 0 flags** | **0 errors / 0 flags** | 388 errors / 1 flag |
 | Manual content review | 36 lessons + 9 missions reviewed | Units 1–9 and completion mission passed | Blocked |
-| Browser phase journey | Representative path passed | Completion **12/12**; cumulative A1 **118/118** | Blocked |
-| Full chapter browser matrix | **96/96 passed** | Blocked | Blocked |
+| Browser phase journey | Representative path passed | Completion **12/12**; complete A1 **120/120** | Blocked |
+| Full chapter browser matrix | Shared A0+A1 runtime **96/96 passed** | **120/120 A1-specific + shared 96/96 passed** | Blocked |
 | Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–9 and completion passed at phone, tablet, and desktop sizes | Blocked |
-| Offline and 341 visuals | Web automation + Android cold launch passed | Blocked | Blocked |
-| Regular and slow audio | Android native requests passed | Blocked | Blocked |
+| Offline and 341 visuals | Web automation + Android cold launch passed | Web automation passed; installed Android recheck pending | Blocked |
+| Regular and slow audio | Android native requests passed | Browser/native-bridge checks passed; installed Android recheck pending | Blocked |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | Completion web/source-asset hashes match; APK pending | Shared package |
-| Native debug build | Passed | Blocked by missing Java runtime; SDK 35 license/install also pending | Shared package |
+| Android asset parity | Passed | A1-acceptance web/source-asset hashes match; APK pending | Shared package |
+| Native debug build | Passed | Blocked by user acceptance of Android SDK license; JDK 17 and Gradle launch correctly | Shared package |
 | Chapter freeze | **YES — 2026-08-05** | **NO** | **NO** |
 
 ## 6. Required next actions
 
-1. Clear the remaining Unit 5 lexical-ownership and shared confusion-template
-   findings without weakening the audit.
-2. Audit the complete generated A1 chapter to zero errors and zero review flags,
-   then
-   repeat the full browser, responsive, offline, audio, migration, and Android
-   acceptance gates.
-3. Freeze A1 before beginning the A2 authoring and acceptance cycle.
+1. Accept Google's Android SDK license and install the required Android SDK 35
+   components on the build machine.
+2. Build and install the synchronized debug APK, then repeat native regular and
+   slow Dutch audio, offline cold launch, migration persistence, and visual
+   checks.
+3. Freeze A1 only after that native gate passes, then begin the A2 authoring and
+   acceptance cycle.
 
 Until those steps are complete, neither this ledger nor the v4 scaffold may be
 used to claim that the full A0–A2 rework is done.
