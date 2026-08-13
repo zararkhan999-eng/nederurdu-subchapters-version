@@ -1,14 +1,15 @@
 # A1 Learning-First Rework — Inventory and Binding Decisions
 
-Status: **active authoring chapter; not accepted and not frozen**
+Status: **accepted and frozen as of 2026-08-13**
 
 Authority: [`learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
 
 Inventory date: **2026-08-12**
 
 This document completes step 1 and records the binding structural decisions for
-step 2 of the A1 chapter cycle. A1 content work must follow this inventory. A2
-must not enter its authoring cycle until A1 is frozen.
+step 2 of the A1 chapter cycle. A1 content work must continue to follow this
+inventory. A2 was not allowed to enter its authoring cycle until the A1 freeze
+recorded here.
 
 ## 1. Baseline A1 inventory before authoring
 
@@ -364,15 +365,14 @@ empty browser console.
    review flags with all browser, visual, offline, audio, migration, and
    Android gates green.
 
-Current checkpoint: the authored curriculum, full audit, manual review,
-responsive review, and browser matrices in step 8 are complete. A1 reports
-**0 errors / 0 review flags**, its A1-specific browser matrix passes **120/120**,
-and the shared A0+A1 runtime matrix passes **96/96**. Web and Android source
-assets match. The chapter remains unfrozen only because Google requires the
-user to accept the Android SDK license before Platform 35 and Build Tools 35
-can be installed for the mandatory native debug build and installed-Android
-audio/offline recheck. The existing Homebrew JDK 17 and command-line tools were
-located and the local SDK path was corrected.
+Final checkpoint: all eight authoring and acceptance steps are complete. A1
+reports **0 errors / 0 review flags**, its A1-specific browser matrix passes
+**120/120**, and the shared A0+A1 runtime matrix passes **96/96**. Web and
+Android source assets match. The synchronized native debug APK built and
+installed successfully, retained the v3-to-v4 migrated record through an
+in-place update, completed regular and slow `nl-NL` native speech requests,
+cold-launched with no active network, and rendered the A1 learner home without
+duplication or overflow. **A1 is frozen as of 2026-08-13.**
 
-This document is an inventory and decision record, not an A1 completion
-certificate.
+This remains the permanent A1 inventory and binding decision record. Later
+changes may not weaken its teaching order, ownership, or acceptance gates.
