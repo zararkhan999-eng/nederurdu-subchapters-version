@@ -1,6 +1,6 @@
 # NederUrdu Learning-First Rework — Implementation Ledger
 
-Status: **v4 foundation implemented; A0 and A1 frozen; A2 inventory is next**
+Status: **v4 learning-first curriculum implemented, accepted, and frozen across A0, A1, and A2**
 
 Authority:
 [`docs/learning-first-curriculum-roadmap.md`](./learning-first-curriculum-roadmap.md)
@@ -46,35 +46,35 @@ authored replay variants.
 | Item | Count |
 | --- | ---: |
 | Chapters | 3 |
-| Units | 25 |
-| Normal lessons | 92 |
-| Missions | 26 |
-| Adaptive unit reviews | 25 |
-| Concepts | 816 |
-| Skills | 868 |
-| Reusable patterns | 52 |
-| Internal learning runs | 267 |
-| Teaching blocks | 1,035 |
-| Active normal-lesson exercises | 4,802 |
+| Units | 26 |
+| Normal lessons | 93 |
+| Missions | 28 |
+| Adaptive unit reviews | 26 |
+| Concepts | 753 |
+| Skills | 801 |
+| Reusable patterns | 48 |
+| Internal learning runs | 229 |
+| Teaching blocks | 901 |
+| Active normal-lesson exercises | 4,114 |
 | Retired v3 compatibility records | 5,520 |
-| Mission records across all variants | 843 |
+| Mission records across all variants | 993 |
 
 ### Per-chapter inventory
 
 | Metric | A0 | A1 | A2 |
 | --- | ---: | ---: | ---: |
-| Units | 9 | 9 | 7 |
-| Normal lessons | 36 | 38 | 18 |
-| Missions | 9 | 10 | 7 |
-| Adaptive reviews | 9 | 9 | 7 |
-| Chapter-associated concepts | 345 | 325 | 246 |
-| Chapter-owned skills | 353 | 302 | 213 |
-| Patterns | 8 | 38 | 6 |
-| Learning runs | 107 | 81 | 79 |
-| Teaching blocks | 376 | 371 | 288 |
-| Active normal-lesson exercises | 1,800 | 1,537 | 1,470 |
+| Units | 9 | 9 | 8 |
+| Normal lessons | 36 | 38 | 19 |
+| Missions | 9 | 10 | 9 |
+| Adaptive reviews | 9 | 9 | 8 |
+| Chapter-associated concepts | 345 | 325 | 150 |
+| Chapter-owned skills | 353 | 302 | 146 |
+| Patterns | 8 | 38 | 2 |
+| Learning runs | 107 | 81 | 41 |
+| Teaching blocks | 376 | 371 | 154 |
+| Active normal-lesson exercises | 1,800 | 1,537 | 777 |
 | Retired v3 records | 2,160 | 2,280 | 1,080 |
-| Mission records across all variants | 321 | 354 | 168 |
+| Mission records across all variants | 321 | 354 | 318 |
 
 ## 3. Sequential chapter status
 
@@ -302,14 +302,36 @@ launch, and visual parity gates all passed. **A1 is frozen as of 2026-08-13.**
 
 ### A2 — Handle practical situations independently
 
-The v4 schema, practical-unit placement, phase generator, seven missions, and
-seven adaptive reviews exist. Grammar lessons are placed under practical
-situations rather than a grammar-first opening.
+The complete A2 curriculum now follows the binding eight-unit path in
+[`a2-learning-first-inventory.md`](./a2-learning-first-inventory.md):
+gemeente/forms, employment, school contact, health, housing, complaints,
+bills/banking, and formal messages. Each unit ends in a dedicated practical
+mission and has one off-path adaptive review. A separate
+`a2-chapter-completion-mission` follows all eight capstones.
 
-A2 has not entered its permitted authoring and acceptance cycle. A diagnostic
-strict audit currently reports **388 errors and 1 review flag**. Practical
-documents, concept-specific guidance, Use situations, option explanations, and
-completion-mission evidence remain future A2 work after A1 is frozen.
+The old 556-error diagnostic has been fully cleared. The final strict A2 audit
+reports **0 errors and 0 review flags** across 19 normal lessons, nine missions,
+1,095 active questions, and eight adaptive reviews. The A0 and A1 regression
+audits remain **0/0**.
+
+The completed A2 curriculum contains 150 associated concepts, 146 A2-owned
+skills, 41 capped learning runs, 154 teaching blocks, 777 normal-lesson
+exercises, and 318 mission records. It also adds the required focused school
+absence/notice lesson while preserving the approved stable IDs for the other
+lessons and unit missions.
+
+All selected scored Use work now has stable `a2-authored:` provenance and a
+concrete practical situation. Every active run has Urdu-first authored
+teaching, pronunciation, an owned useful example, a specific usage boundary,
+a specific common mistake, and typed documents whose length rises through the
+chapter. Abstract grammar buckets were replaced with employment, health, and
+housing functions, and the duplicate return-language review flag was removed.
+
+The final completion mission introduces nothing, requires all eight unit
+capstones, samples every unit, and materializes meaning, listening, document
+reading, unscored speaking support, word-bank-accessible construction, and
+practical Use in every variant. Final full-browser, offline, audio, responsive,
+and native Android acceptance evidence is recorded below as it completes.
 
 ## 4. Current verification evidence
 
@@ -398,6 +420,13 @@ Manual browser review confirmed:
   locked. The desktop preview had no horizontal overflow and the browser
   console was empty; the focused suite verifies the same Preview and first Use
   task at phone, tablet, and desktop widths.
+- The complete A2 map was manually reviewed in the running app. It shows the
+  eight binding practical units in order, each with its own mission, followed
+  by the separate final mission. The employment Preview states one practical
+  Urdu outcome, four capped targets, no false prerequisite, time, and all six
+  phases. Its first teaching card shows the complete Dutch chunk, Urdu meaning,
+  reviewed pronunciation, regular and slow audio controls, concrete usage,
+  example, and a specific mistake without scoring or guessing.
 
 Focused automated checks cover migration, run prerequisites, adaptive-review
 filtering, selected-distractor explanations, correction loops, mastery
@@ -417,7 +446,9 @@ The shared matrix now admits both A0 and A1 and contains all chapter-neutral
 runtime checks plus curriculum, review, mission, migration, offline, mastery,
 and responsive gates for the accepted web chapters. It passes **96/96**. The
 separate A1-authored curriculum matrix passes **120/120** across desktop and
-mobile. A2 diagnostics remain isolated until its permitted authoring cycle.
+mobile. The final A2 desktop/mobile matrix passes **22/22**. Its additional
+offline, migration, mastery, audio, and 341-visual resilience matrix passes
+**10/10**.
 
 ### Android, migration, offline, and audio
 
@@ -425,14 +456,14 @@ mobile. A2 diagnostics remain isolated until its permitted authoring cycle.
   `android/app/src/main/assets/public` after the A1 acceptance cleanup. The
   Android source assets have the same course, app-runtime, and service-worker
   hashes as the web source.
-- The offline cache is `nederurdu-v71-learning-first-a1-acceptance`.
+- The current web cache is `nederurdu-v73-learning-first-a2-complete`.
 - The Android SDK licenses were accepted with the user's approval. API 35,
   platform-tools, build-tools, emulator, and the Google APIs ARM64 system image
   are installed under `/opt/homebrew/share/android-commandlinetools`.
 - The synchronized native debug package built successfully with JDK 17 and
   installed on Android 15:
   `android/app/build/outputs/apk/debug/app-debug.apk`
-- Current APK SHA-256:
+- Frozen-A1 APK SHA-256:
   `ef04568de731ed27bea7e4c637c4bdd09c00e2081850378ca57e629765ccb0fe`
 - APK verification reports one signer with valid v1 and v2 debug signatures.
 - Synchronized A1-acceptance course-data SHA-256:
@@ -441,6 +472,17 @@ mobile. A2 diagnostics remain isolated until its permitted authoring cycle.
   `b0c826938b33ba6bdb1e10a6141895b417e27cb9d9abafeca3bccc903125b361`
 - Synchronized A1-acceptance service-worker SHA-256:
   `d53d27b5266746ba6af43705bdab2770a6e83682c8f05473e61a5d75c0dd0f19`
+- The synchronized A2 Unit 1 preview build also succeeds and installs as an
+  in-place Android update. Current SHA-256 values are:
+  - course data:
+    `c961cce27352f0a36dbdb777b3620386f8fbc05c559d44e7046d1df0e4dcc94f`;
+  - app runtime:
+    `b0c826938b33ba6bdb1e10a6141895b417e27cb9d9abafeca3bccc903125b361`;
+  - service worker:
+    `5a2eec7e3af248dd780341fc3bb9b6faf6de93852504f2eff0046481a6cf0137`;
+    and
+  - debug APK:
+    `b112e06c288a84caf2c6584ec4a3e3e3225134074d14c6a01a73b1e2befd9ba3`.
 - In the installed A1 acceptance build, a controlled v3 record migrated to v4
   with schema `4`, `migratedFrom: nederurdu-progress-v3`, retained XP, practice
   day and settings, preserved the v3 recovery record, and mapped the old
@@ -460,34 +502,57 @@ mobile. A2 diagnostics remain isolated until its permitted authoring cycle.
 - The installed A1 home was opened after the offline gate and visually checked
   in the Android WebView. It showed the expected 48-lesson A1 path total with
   stable Urdu typography and no stale duplicated tiles.
+- The installed A2 Unit 1 update was opened directly on its first Preview. The
+  practical form lesson, Urdu prerequisite guidance, phase/time summary, and
+  controls rendered cleanly in the Android WebView without horizontal overflow
+  or stale tiles.
+- The final A2 package was synchronized, rebuilt with JDK 17, installed as an
+  update on Android 15, and verified with valid v1 and v2 debug signatures.
+  Final SHA-256 values are:
+  - course data:
+    `e4dd9ebd1996fd5c4bcf0c6dec5fef5ad9e1c17ea86548d42e9cc333a2ac44f5`;
+  - app runtime:
+    `b0c826938b33ba6bdb1e10a6141895b417e27cb9d9abafeca3bccc903125b361`;
+  - service worker:
+    `a7748dadd520544e19a3d56ea300e5bf5325aa2281d169da34520831ac1fea67`;
+    and
+  - debug APK:
+    `cea4c78e1cfc0b30f12c32b9d02430fee6f4d3d34dbc7cedf92dcbde6da917eb`.
+- The installed final build retained schema-v4 progress, the selected A2
+  chapter, the practice-day record, and the original `nederurdu-progress-v3`
+  recovery record after update installation.
+- With emulator Wi-Fi and mobile data disabled, a cold launch completed from
+  bundled assets with the A2 learner home, all 93 normal lessons in memory,
+  and retained progress. Networking was restored immediately afterward.
+- The final Android learner home was visually rechecked after the offline
+  launch. Urdu typography, the first A2 form lesson, the 0/28 path total, fixed
+  navigation, and decorative layers rendered without overflow or duplicated
+  tiles.
+- The final installed build selected `nl-NL-language`; both regular and slow
+  Dutch requests returned native success (`result=0`).
 
 ## 5. Acceptance gate ledger
 
 | Gate | A0 | A1 | A2 |
 | --- | --- | --- | --- |
-| Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | Scaffold only |
-| Urdu-first teaching records | Passed semantic review | Units 1–9 and completion mission passed | Not accepted |
-| Strict generated-course audit | **0 errors / 0 flags** | **0 errors / 0 flags** | 388 errors / 1 flag |
-| Manual content review | 36 lessons + 9 missions reviewed | Units 1–9 and completion mission passed | Blocked |
-| Browser phase journey | Representative path passed | Completion **12/12**; complete A1 **120/120** | Blocked |
-| Full chapter browser matrix | Shared A0+A1 runtime **96/96 passed** | **120/120 A1-specific + shared 96/96 passed** | Blocked |
-| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–9 and completion passed at phone, tablet, and desktop sizes | Blocked |
-| Offline and 341 visuals | Web automation + Android cold launch passed | **Web automation + installed Android cold launch passed** | Blocked |
-| Regular and slow audio | Android native requests passed | **Installed `nl-NL` regular + slow requests passed** | Blocked |
+| Inventory and structural decisions | Passed | **Passed — binding decisions recorded** | **Passed — binding decisions recorded** |
+| Urdu-first teaching records | Passed semantic review | Units 1–9 and completion mission passed | **All 19 lessons and final mission passed** |
+| Strict generated-course audit | **0 errors / 0 flags** | **0 errors / 0 flags** | **0 errors / 0 flags** |
+| Manual content review | 36 lessons + 9 missions reviewed | Units 1–9 and completion mission passed | **Eight-unit map, representative Previews, teaching, documents, and completion passed** |
+| Browser phase journey | Representative path passed | Completion **12/12**; complete A1 **120/120** | **Complete A2 22/22 passed** |
+| Full chapter browser matrix | Shared A0+A1 runtime **96/96 passed** | **120/120 A1-specific + shared 96/96 passed** | **22/22 A2-specific + 10/10 resilience passed** |
+| Responsive visual checks | Beginning, middle, final lesson, and final mission passed | Units 1–9 and completion passed at phone, tablet, and desktop sizes | **All eight unit representatives and final mission passed at phone, tablet, and desktop sizes** |
+| Offline and 341 visuals | Web automation + Android cold launch passed | **Web automation + installed Android cold launch passed** | **Web automation + installed Android cold launch passed** |
+| Regular and slow audio | Android native requests passed | **Installed `nl-NL` regular + slow requests passed** | **Installed `nl-NL` regular + slow requests passed** |
 | v3→v4 migration and recovery record | Browser focused test + installed Android passed | Shared runtime | Shared runtime |
-| Android asset parity | Passed | **A1-acceptance web/source-asset hashes match** | Shared package |
-| Native debug build | Passed | **Passed; signed debug APK installed on Android 15** | Shared package |
-| Chapter freeze | **YES — 2026-08-05** | **YES — 2026-08-13** | **NO** |
+| Android asset parity | Passed | **A1-acceptance web/source-asset hashes match** | **Final web/source-asset hashes match** |
+| Native debug build | Passed | **Passed; signed debug APK installed on Android 15** | **Passed; signed final debug APK installed on Android 15** |
+| Chapter freeze | **YES — 2026-08-05** | **YES — 2026-08-13** | **YES — 2026-08-13** |
 
-## 6. Required next actions
+## 6. Release status
 
-1. Inventory every A2 lesson, concept, phrase, exercise, prerequisite, mission,
-   and practical document.
-2. Record binding remain, split, move, merge, and retire decisions before A2
-   authoring begins.
-3. Rebuild A2 one unit at a time, repeating the strict audit and learner-journey
-   review after every unit, then run the full web and Android acceptance gates.
-
-A0 and A1 are complete and frozen. The full A0–A2 rework is not complete until
-A2 also reaches zero errors, zero review flags, passes every acceptance gate,
-and receives its own freeze record.
+The learning-first A0–A2 rework is complete and frozen. No curriculum,
+teaching-order, generated-output, responsive, offline, audio, migration,
+Android-parity, or native-debug blocker remains in this acceptance ledger.
+A production store release would still require the normal release signing and
+publishing workflow; it is separate from this curriculum implementation.

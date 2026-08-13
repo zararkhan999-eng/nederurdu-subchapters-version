@@ -7800,6 +7800,771 @@ const a1AuthoredCurriculumV4 = {
   }
 };
 
+/*
+ * A2 is authored one accepted unit at a time. Only records listed here may
+ * replace the generated A2 shell; later units remain diagnostic until their
+ * mandatory inventory, audit slice, and learner journey are complete.
+ */
+const a2AuthoredCurriculumV4 = {
+  version: "a2-authored-v4",
+  chapterPrerequisiteRefs: [
+    ["a1-details-forms", "adres"],
+    ["a1-details-forms", "geboortedatum"],
+    ["a1-appointments", "ik wil een afspraak maken"],
+    ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+    ["a1-post-parcel-extra", "identiteitsbewijs"]
+  ],
+  units: {
+    "a2-gemeente-forms": {
+      outcomeUrdu: "gemeente میں ملاقات کے خط اور کاغذات سمجھنا، فارم بھرنا، شناخت دکھانا، غلط معلومات درست کروانا، درخواست جمع کرنا، اور جواب کی مدت پوچھنا۔",
+      practiceUrdu: "پہلے فارم کے عملی کام اور کاؤنٹر کی مکمل باتیں سیکھیں، پھر شناختی فہرست، فارم، اصلاحی نوٹ، اور جمع کرانے کی رسید میں وہی زبان استعمال کریں۔"
+    }
+  },
+  lessons: {
+    "a2-separable-verbs-routine": {
+      title: "Een formulier invullen en opsturen",
+      unitLabel: "A2: Gemeente اور فارم",
+      outcomeUrdu: "سرکاری فارم کو بھرنے، دستخط کرنے، شناختی کاغذ ساتھ لانے، اور درخواست بھیجنے کی مکمل ہدایات سمجھنا اور انہی کاموں کی تصدیق کرنا۔",
+      seedConcepts: [
+        ["het formulier", "فارم"],
+        ["het formulier invullen", "فارم بھرنا"],
+        ["vul het formulier in", "فارم بھر دیں"],
+        ["de handtekening", "دستخط"],
+        ["het formulier ondertekenen", "فارم پر دستخط کرنا"],
+        ["onderteken hier", "یہاں دستخط کریں"],
+        ["uw identiteitsbewijs meenemen", "اپنا شناختی کاغذ ساتھ لانا"],
+        ["neem uw identiteitsbewijs mee", "اپنا شناختی کاغذ ساتھ لائیں"],
+        ["de aanvraag", "درخواست"],
+        ["de aanvraag opsturen", "درخواست بھیجنا"],
+        ["stuur de aanvraag op", "درخواست بھیج دیں"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["het formulier", "سرکاری دفتر یا دوسری تنظیم کا وہ کاغذ جس میں معلومات کے خانے بھرنے ہوں، اسے het formulier کہیں۔", "یہ خالی یا بھرا جانے والا فارم ہے؛ جمع کی گئی درخواست کو de aanvraag کہتے ہیں۔", "formulier کے ساتھ het آتا ہے؛ de formulier نہ کہیں۔", "Dit is het formulier.", "یہ فارم ہے۔", "ہَت فور مُو لیر"],
+        ["het formulier invullen", "فارم کے خانے مکمل کرنے کے کام کے لیے het formulier invullen استعمال کریں۔", "invullen خانے بھرنا ہے؛ ondertekenen صرف دستخط کرنا ہے۔", "صرف formulier کہنا کام نہیں بتاتا؛ بھرنے کے لیے invullen بھی رکھیں۔", "Ik moet het formulier invullen.", "مجھے فارم بھرنا ہے۔", "ہَت فور مُو لیر اِن فُلَن"],
+        ["vul het formulier in", "ملازم جب آپ کو فارم بھرنے کی ہدایت دے تو مکمل بات vul het formulier in سنیں۔", "یہ آپ کو دی گئی ہدایت ہے؛ ik vul het formulier in اپنے کام کی اطلاع ہوگی۔", "in کو چھوڑ کر vul het formulier نہ کہیں؛ الگ ہونے والے فعل کا دوسرا حصہ آخر میں رکھیں۔", "Vul het formulier in, alstublieft.", "براہِ مہربانی فارم بھر دیں۔", "فُل ہَت فور مُو لیر اِن"],
+        ["de handtekening", "فارم میں دستخط والے خانے یا اپنے لکھے ہوئے دستخط کے لیے de handtekening آتا ہے۔", "handtekening دستخط ہے؛ naam صرف نام ہے۔", "اس اسم کے ساتھ de آتا ہے؛ het handtekening نہ کہیں۔", "Hier staat mijn handtekening.", "یہاں میرے دستخط ہیں۔", "دَ ہانٹ تی کَ نِنگ"],
+        ["het formulier ondertekenen", "فارم مکمل کرنے کے بعد اس پر دستخط کرنے کے عمل کے لیے het formulier ondertekenen کہیں۔", "ondertekenen دستخط کرنا ہے؛ invullen معلومات کے خانے بھرنا ہے۔", "خانے بھرنے اور دستخط کرنے کو ایک ہی کام نہ سمجھیں؛ دونوں الگ مرحلے ہیں۔", "Ik moet het formulier ondertekenen.", "مجھے فارم پر دستخط کرنے ہیں۔", "ہَت فور مُو لیر آن دَر تی کَ نَن"],
+        ["onderteken hier", "ملازم جہاں دستخط چاہتا ہے وہاں مختصر ہدایت onderteken hier دیتا ہے۔", "یہ دستخط کی جگہ بتاتی ہے؛ waar moet ik tekenen? اس جگہ کے بارے میں سوال ہے۔", "hier کو نہ چھوڑیں، ورنہ جگہ واضح نہیں رہتی۔", "Onderteken hier, bij het kruisje.", "یہاں نشان کے پاس دستخط کریں۔", "آن دَر تی کَن ہیر"],
+        ["uw identiteitsbewijs meenemen", "ملاقات کی تیاری کی فہرست میں اپنا شناختی کاغذ ساتھ لانے کے کام کو uw identiteitsbewijs meenemen لکھا جا سکتا ہے۔", "meenemen کسی چیز کو ساتھ لانا ہے؛ opsturen اسے بھیج دینا ہے۔", "uw رسمی طور پر آپ کا شناختی کاغذ بتاتا ہے؛ اسے اپنی ذات والے غیر رسمی لفظ کے معنی میں نہ پڑھیں۔", "U moet uw identiteitsbewijs meenemen.", "آپ کو اپنا شناختی کاغذ ساتھ لانا ہے۔", "او اِڈَن ٹی تَیٹس بَ وِیس مے نی مَن"],
+        ["neem uw identiteitsbewijs mee", "ملاقات کے خط میں شناختی کاغذ ساتھ لانے کی سیدھی ہدایت neem uw identiteitsbewijs mee ہوتی ہے۔", "یہ ساتھ لانے کی ہدایت ہے؛ کاؤنٹر پر دیتے وقت hier is mijn identiteitsbewijs کہیں۔", "mee کو آخر میں رکھیں؛ neem uw identiteitsbewijs اکیلا اس سبق کی مکمل ہدایت نہیں۔", "Neem uw identiteitsbewijs mee naar de afspraak.", "ملاقات پر اپنا شناختی کاغذ ساتھ لائیں۔", "نیم او اِڈَن ٹی تَیٹس بَ وِیس مے"],
+        ["de aanvraag", "جب فارم کے ذریعے کوئی سرکاری کام مانگا جائے تو پوری درخواست کو de aanvraag کہتے ہیں۔", "formulier معلومات بھرنے والا کاغذ ہے؛ aanvraag وہ درخواست ہے جو آپ جمع کرتے ہیں۔", "درخواست اور فارم کو ایک ہی معنی نہ دیں؛ فارم درخواست کا حصہ ہو سکتا ہے۔", "De aanvraag is compleet.", "درخواست مکمل ہے۔", "دَ آن فراخ"],
+        ["de aanvraag opsturen", "مکمل درخواست ڈاک یا آن لائن بھیجنے کے عمل کے لیے de aanvraag opsturen استعمال کریں۔", "opsturen بھیجنا ہے؛ meenemen اپنے ساتھ لانا ہے۔", "opsturen کو ایک ہی فعل سمجھیں، لیکن جملے میں stuur … op بن سکتا ہے۔", "Ik ga de aanvraag opsturen.", "میں درخواست بھیجنے والا / والی ہوں۔", "دَ آن فراخ آپ سٹو رَن"],
+        ["stuur de aanvraag op", "جب ہدایت ہو کہ مکمل درخواست بھیج دیں تو stuur de aanvraag op سنیں یا پڑھیں۔", "یہ بھیجنے کی ہدایت ہے؛ de aanvraag opsturen کام کا نام ہے۔", "op کو آخر سے نہ ہٹائیں؛ stuur de aanvraag اکیلا نامکمل ہے۔", "Stuur de aanvraag vandaag op.", "درخواست آج بھیج دیں۔", "سٹیور دَ آن فراخ آپ"]
+      ]),
+      pattern: {
+        modelDutch: "vul het formulier in",
+        titleUrdu: "الگ ہونے والے فعل سے فارم کا کام سمجھنا",
+        highlight: "vul … in",
+        explanationUrdu: "invullen، meenemen، اور opsturen ایک کام کے دو حصے رکھتے ہیں۔ ہدایت میں پہلا حصہ فعل کے پاس اور دوسرا حصہ آخر میں آتا ہے: vul het formulier in۔",
+        contrastUrdu: "کام کا نام het formulier invullen ہے؛ سیدھی ہدایت vul het formulier in ہے۔ معنی ایک عمل کا ہے مگر ترتیب موقع کے ساتھ بدلتی ہے۔",
+        commonMistakeUrdu: "in، mee، یا op کو چھوڑ نہ دیں؛ vul het formulier، neem uw identiteitsbewijs، اور stuur de aanvraag اس سبق میں نامکمل ہیں۔"
+      },
+      prerequisiteLessonIds: ["a1-details-forms", "a1-post-parcel-extra"],
+      prerequisiteRefs: [
+        ["a1-details-forms", "adres"],
+        ["a1-details-forms", "geboortedatum"],
+        ["a1-post-parcel-extra", "identiteitsbewijs"]
+      ],
+      independentCheckLeadUrdu: "دوسرے سرکاری فارم میں",
+      scenarios: {
+        "het formulier": ["form-identify", "کاؤنٹر پر دو کاغذ پڑے ہیں؛ معلومات کے خانے والے فارم کا درست نام منتخب کریں۔"],
+        "het formulier invullen": ["form-fill-task", "آپ کو فارم کے تمام خانے مکمل کرنے ہیں؛ اس کام کی درست ڈچ بات منتخب کریں۔"],
+        "vul het formulier in": ["clerk-fill-instruction", "ملازم آپ کو فارم بھرنے کی سیدھی ہدایت دیتا ہے؛ پوری ہدایت منتخب کریں۔"],
+        "de handtekening": ["signature-field", "فارم کے آخری خانے میں دستخط مانگے گئے ہیں؛ اس خانے کا درست ڈچ نام منتخب کریں۔"],
+        "het formulier ondertekenen": ["sign-form-task", "تمام معلومات بھر چکے ہیں اور اب فارم پر دستخط کرنے کا کام باقی ہے؛ درست بات منتخب کریں۔"],
+        "onderteken hier": ["sign-here-instruction", "ملازم فارم پر نشان لگا کر اسی جگہ دستخط کرنے کو کہتا ہے؛ مکمل ہدایت منتخب کریں۔"],
+        "uw identiteitsbewijs meenemen": ["identity-bring-task", "ملاقات کی تیاری کی فہرست میں اپنا شناختی کاغذ ساتھ لانے والا کام لکھنا ہے؛ درست بات منتخب کریں۔"],
+        "neem uw identiteitsbewijs mee": ["identity-bring-instruction", "ملاقات کے خط میں شناختی کاغذ ساتھ لانے کی ہدایت ہے؛ مکمل ڈچ ہدایت منتخب کریں۔"],
+        "de aanvraag": ["application-name", "فارم اور ثبوت ملا کر جو سرکاری درخواست جمع ہوگی اس کا درست ڈچ نام منتخب کریں۔"],
+        "de aanvraag opsturen": ["send-application-task", "مکمل درخواست کو آن لائن بھیجنے کا کام بتانا ہے؛ درست ڈچ بات منتخب کریں۔"],
+        "stuur de aanvraag op": ["send-application-instruction", "سرکاری خط کہتا ہے کہ مکمل درخواست آج بھیج دیں؛ پوری ہدایت منتخب کریں۔"]
+      },
+      documents: [
+        { documentKind: "form-action-checklist", title: "Formulier", rows: [{ label: "Stap 1", value: "het formulier" }, { label: "Stap 2", value: "vul het formulier in" }, { label: "Klaar", value: "de handtekening" }] },
+        { documentKind: "appointment-document-checklist", title: "Meenemen", rows: [{ label: "Document", value: "neem uw identiteitsbewijs mee" }, { label: "Formulier", value: "het formulier ondertekenen" }, { label: "Plaats", value: "onderteken hier" }] },
+        { documentKind: "application-submission-checklist", title: "Aanvraag", rows: [{ label: "Document", value: "de aanvraag" }, { label: "Actie", value: "de aanvraag opsturen" }, { label: "Vandaag", value: "stuur de aanvraag op" }] }
+      ]
+    },
+    "a2-gemeente-official": {
+      title: "Aankomen bij de gemeente",
+      unitLabel: "A2: Gemeente اور فارم",
+      outcomeUrdu: "gemeente پہنچ کر صحیح کاؤنٹر تلاش کرنا، ملاقات بتانا، BSN اور پاسپورٹ پہچاننا، شناخت دکھانا، اور فارم میں مدد مانگنا۔",
+      seedConcepts: [
+        ["de gemeente", "بلدیہ / شہری سرکاری دفتر"],
+        ["het loket", "کاؤنٹر"],
+        ["het BSN", "شہری شناختی نمبر"],
+        ["het paspoort", "پاسپورٹ"],
+        ["ik heb een afspraak bij de gemeente", "میری gemeente میں ملاقات ہے"],
+        ["waar is loket drie?", "کاؤنٹر تین کہاں ہے؟"],
+        ["hier is mijn paspoort", "یہ میرا پاسپورٹ ہے"],
+        ["kunt u mij helpen met dit formulier?", "کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["de gemeente", "پتہ، رجسٹریشن، BSN، یا سرکاری کاغذ کے شہری دفتر کے لیے de gemeente کہیں۔", "gemeente شہر کا سرکاری ادارہ ہے؛ loket اسی دفتر کے اندر کاؤنٹر ہے۔", "gemeente کو صرف عمارت نہ سمجھیں؛ یہ دفتر اور ادارہ دونوں بتا سکتا ہے۔", "Ik heb een afspraak bij de gemeente.", "میری gemeente میں ملاقات ہے۔", "دَ خَ مین تَ"],
+        ["het loket", "دفتر میں جہاں ملازم آپ کا کاغذ دیکھتا ہے اس خدمت والے کاؤنٹر کو het loket کہتے ہیں۔", "loket کاؤنٹر ہے؛ gemeente پورا ادارہ یا دفتر ہے۔", "loket کے ساتھ het آتا ہے؛ de loket نہ کہیں۔", "Loket drie is open.", "کاؤنٹر تین کھلا ہے۔", "ہَت لو کیٹ"],
+        ["het BSN", "شہری سرکاری ریکارڈ میں ذاتی شناختی نمبر کے لیے het BSN لکھا ہوتا ہے۔", "BSN ذاتی نمبر ہے؛ paspoort شناختی دستاویز ہے۔", "BSN کو فون نمبر یا پاسپورٹ نمبر نہ سمجھیں۔", "Mijn BSN staat op de brief.", "میرا BSN خط پر لکھا ہے۔", "ہَت بے ایس اَین"],
+        ["het paspoort", "شناخت ثابت کرنے کے لیے پاسپورٹ دکھانا ہو تو het paspoort کہیں۔", "paspoort دستاویز ہے؛ BSN ایک نمبر ہے۔", "paspoort کے ساتھ het آتا ہے؛ de paspoort نہ کہیں۔", "Hier is mijn paspoort.", "یہ میرا پاسپورٹ ہے۔", "ہَت پاس پورت"],
+        ["ik heb een afspraak bij de gemeente", "استقبالی ملازم کو بتائیں کہ آپ بغیر مقصد کے نہیں بلکہ طے شدہ ملاقات کے لیے آئے ہیں۔", "یہ موجودہ ملاقات بتاتا ہے؛ ik wil een afspraak maken نئی ملاقات مانگتا ہے۔", "bij de gemeente کو نہ چھوڑیں، ورنہ ملاقات کی جگہ واضح نہیں رہتی۔", "Goedemorgen, ik heb een afspraak bij de gemeente.", "صبح بخیر، میری gemeente میں ملاقات ہے۔", "اِک ہَپ اَین آف سپراخ بَے دَ خَ مین تَ"],
+        ["waar is loket drie", "نمبر معلوم ہو مگر کاؤنٹر کی جگہ نہ ملے تو waar is loket drie? پوچھیں۔", "یہ جگہ پوچھتا ہے؛ welk loket heb ik nodig? صحیح کاؤنٹر کا نمبر پوچھتا ہے۔", "سوال میں waar پہلے رکھیں؛ loket drie is waar درست سوالی ترتیب نہیں۔", "Waar is loket drie?", "کاؤنٹر تین کہاں ہے؟", "وار اِس لو کیٹ دری"],
+        ["hier is mijn paspoort", "ملازم پاسپورٹ مانگے تو دستاویز دیتے وقت hier is mijn paspoort کہیں۔", "یہ دستاویز پیش کرنا ہے؛ neem uw paspoort mee اسے ساتھ لانے کی ہدایت ہے۔", "mijn کے ساتھ het نہ لگائیں؛ hier is het mijn paspoort غلط ہے۔", "Alstublieft, hier is mijn paspoort.", "لیجیے، یہ میرا پاسپورٹ ہے۔", "ہیر اِس مَین پاس پورت"],
+        ["kunt u mij helpen met dit formulier", "فارم کا سوال یا خانہ سمجھ نہ آئے تو کاؤنٹر کے ملازم سے مکمل مؤدبانہ مدد مانگیں۔", "یہ اسی فارم میں مدد کی درخواست ہے؛ kunt u dit uitleggen? کسی خاص بات کی وضاحت مانگتا ہے۔", "met dit formulier کو نہ چھوڑیں، ورنہ کس کام میں مدد چاہیے واضح نہیں رہتا۔", "Kunt u mij helpen met dit formulier?", "کیا آپ اس فارم میں میری مدد کر سکتے ہیں؟", "کُنٹ او مَے ہیل پَن مَٹ دِت فور مُو لیر"]
+      ]),
+      pattern: false,
+      prerequisiteLessonIds: ["a2-separable-verbs-routine"],
+      prerequisiteRefs: [["a1-appointments", "ik wil een afspraak maken"], ["a1-polite-chunks", "kunt u mij helpen alstublieft?"]],
+      independentCheckLeadUrdu: "دوسرے سرکاری دفتر کے استقبالی کاؤنٹر پر",
+      scenarios: {
+        "de gemeente": ["municipality-name", "پتے کی تبدیلی کے لیے جس شہری سرکاری دفتر جانا ہے اس کا درست ڈچ نام منتخب کریں۔"],
+        "het loket": ["service-counter-name", "دفتر کے اندر جس کاؤنٹر پر دستاویز دکھانی ہے اس کا درست ڈچ نام منتخب کریں۔"],
+        "het BSN": ["citizen-number-field", "خط میں شہری شناختی نمبر والا خانہ نشان زد کرنا ہے؛ درست ڈچ نام منتخب کریں۔"],
+        "het paspoort": ["passport-check", "شناخت کے لیے دکھائی جانے والی پاسپورٹ دستاویز کا درست ڈچ نام منتخب کریں۔"],
+        "ik heb een afspraak bij de gemeente": ["announce-appointment", "استقبالی ملازم کو بتائیں کہ gemeente میں آپ کی ملاقات پہلے سے طے ہے۔"],
+        "waar is loket drie": ["find-counter-three", "ٹکٹ پر loket 3 لکھا ہے مگر جگہ نظر نہیں آ رہی؛ کاؤنٹر کی جگہ پوچھیں۔"],
+        "hier is mijn paspoort": ["present-passport", "ملازم شناخت مانگتا ہے؛ پاسپورٹ دیتے ہوئے مکمل بات کہیں۔"],
+        "kunt u mij helpen met dit formulier": ["ask-form-help", "فارم کا ایک خانہ سمجھ نہیں آ رہا؛ اسی فارم میں مؤدبانہ مدد مانگیں۔"]
+      },
+      documents: [
+        { documentKind: "municipality-appointment-letter", title: "Afspraak gemeente", rows: [{ label: "Plaats", value: "de gemeente" }, { label: "Nummer", value: "het BSN" }, { label: "Document", value: "het paspoort" }, { label: "Balie", value: "het loket" }] },
+        { documentKind: "municipality-counter-ticket", title: "Loket 3", rows: [{ label: "Melding", value: "ik heb een afspraak bij de gemeente" }, { label: "Vraag", value: "waar is loket drie?" }, { label: "Document", value: "hier is mijn paspoort" }, { label: "Hulp", value: "kunt u mij helpen met dit formulier?" }] }
+      ]
+    },
+    "a2-gemeente-documents": {
+      title: "Documenten controleren en een aanvraag volgen",
+      unitLabel: "A2: Gemeente اور فارم",
+      outcomeUrdu: "مطلوبہ کاغذات پوچھنا، نقل اور دستخط کی شرط سمجھنا، فارم کی مشکل واضح کرنا، غلط معلومات درست کروانا، درخواست آن لائن جمع کرنا، اور جواب کی مدت معلوم کرنا۔",
+      seedConcepts: [
+        ["welke documenten heb ik nodig?", "مجھے کون سے کاغذات چاہیے؟"],
+        ["is een kopie voldoende?", "کیا ایک نقل کافی ہے؟"],
+        ["waar moet ik tekenen?", "مجھے کہاں دستخط کرنے ہیں؟"],
+        ["ik heb mijn BSN niet bij me", "میرا BSN میرے پاس نہیں ہے"],
+        ["ik begrijp deze vraag niet", "مجھے یہ سوال سمجھ نہیں آیا"],
+        ["kunt u dit uitleggen?", "کیا آپ یہ سمجھا سکتے ہیں؟"],
+        ["het formulier is nog niet compleet", "فارم ابھی مکمل نہیں ہے"],
+        ["mijn gegevens zijn niet correct", "میری معلومات درست نہیں ہیں"],
+        ["ik wil deze fout laten herstellen", "میں یہ غلطی درست کروانا چاہتا / چاہتی ہوں"],
+        ["kan ik de aanvraag online doen?", "کیا میں درخواست آن لائن دے سکتا / سکتی ہوں؟"],
+        ["wanneer krijg ik antwoord?", "مجھے جواب کب ملے گا؟"],
+        ["u ontvangt binnen twee weken een brief", "آپ کو دو ہفتوں کے اندر ایک خط ملے گا"]
+      ],
+      teaching: authoredA1TeachingV4([
+        ["welke documenten heb ik nodig", "ملاقات یا درخواست سے پہلے مطلوبہ کاغذات کی مکمل فہرست پوچھنے کے لیے یہ سوال استعمال کریں۔", "documenten کئی کاغذات ہیں؛ واحد چیز پوچھنے کے لیے سوالی لفظ کی دوسری شکل آتی ہے۔", "welke کے بعد جمع documenten رکھیں؛ واحد والی شکل کے ساتھ documenten نہ کہیں۔", "Welke documenten heb ik nodig voor de aanvraag?", "درخواست کے لیے مجھے کون سے کاغذات چاہیے؟", "وَیل کَ دو کو مَن تَن ہَپ اِک نو دِخ"],
+        ["is een kopie voldoende", "جب معلوم کرنا ہو کہ اصل کے بجائے نقل قبول ہوگی تو یہ مکمل سوال پوچھیں۔", "kopie نقل ہے؛ paspoort یا identiteitsbewijs اصل شناختی دستاویز ہو سکتی ہے۔", "voldoende کا مطلب کافی ہے؛ اسے موجود ہونے کے معنی میں نہ پڑھیں۔", "Is een kopie van mijn paspoort voldoende?", "کیا میرے پاسپورٹ کی نقل کافی ہے؟", "اِس اَین کو پی فول دون دَ"],
+        ["waar moet ik tekenen", "فارم میں دستخط کی جگہ واضح نہ ہو تو یہ سوال پوچھیں۔", "یہ جگہ پوچھتا ہے؛ moet ik tekenen? صرف یہ پوچھتا ہے کہ دستخط ضروری ہیں یا نہیں۔", "tekenen کو آخر میں رکھیں؛ waar ik moet tekenen سوال کی سیدھی ترتیب نہیں۔", "Waar moet ik tekenen?", "مجھے کہاں دستخط کرنے ہیں؟", "وار موت اِک تی کَ نَن"],
+        ["ik heb mijn BSN niet bij me", "کاؤنٹر پر BSN مانگا جائے مگر نمبر ساتھ نہ ہو تو مسئلہ صاف بتائیں۔", "niet bij me کا مطلب ابھی میرے پاس نہیں؛ اس کا مطلب یہ نہیں کہ آپ کا BSN بنا ہی نہیں۔", "بالکل نہ ہونے والی ساخت اور niet bij me الگ باتیں ہیں؛ اس موقع پر ابھی پاس نہ ہونے کی بات کہیں۔", "Sorry, ik heb mijn BSN niet bij me.", "معاف کیجیے، میرا BSN میرے پاس نہیں ہے۔", "اِک ہَپ مَین بے ایس اَین نیت بَے مَ"],
+        ["ik begrijp deze vraag niet", "فارم کا خاص سوال سمجھ نہ آئے تو پہلے یہی مشکل واضح کریں۔", "یہ ایک سوال نہ سمجھنے کی بات ہے؛ پورا فارم بھرنے میں مدد کے لیے دوسرا جملہ آتا ہے۔", "deze vraag کو نہ چھوڑیں؛ ورنہ کون سی بات سمجھ نہیں آئی واضح نہیں رہتی۔", "Ik begrijp deze vraag niet.", "مجھے یہ سوال سمجھ نہیں آیا۔", "اِک بَ خرَیپ دے زَ فراخ نیت"],
+        ["kunt u dit uitleggen", "نشان زدہ سوال یا شرط کی سادہ وضاحت مانگنے کے لیے یہ مؤدبانہ درخواست کریں۔", "dit اسی دکھائی ہوئی بات کی طرف اشارہ ہے؛ پورے فارم میں مدد کے لیے met dit formulier کہیں۔", "u کو نہ چھوڑیں؛ kunt dit uitleggen رسمی مکمل سوال نہیں۔", "Kunt u dit in eenvoudige woorden uitleggen?", "کیا آپ یہ آسان لفظوں میں سمجھا سکتے ہیں؟", "کُنٹ او دِت آوٹ لَخَن"],
+        ["het formulier is nog niet compleet", "ملازم کی بات میں nog niet compleet سنیں تو سمجھیں کہ کچھ خانے یا ثبوت ابھی باقی ہیں۔", "nog niet کا مطلب ابھی تک نہیں؛ nooit کا مطلب کبھی نہیں ہوتا۔", "nog کو نظر انداز نہ کریں؛ یہ بتاتا ہے کہ فارم بعد میں مکمل ہو سکتا ہے۔", "Het formulier is nog niet compleet.", "فارم ابھی مکمل نہیں ہے۔", "ہَت فور مُو لیر اِس نوخ نیت کُم پلیٹ"],
+        ["mijn gegevens zijn niet correct", "نام، پتہ، یا دوسری سرکاری معلومات غلط لکھی ہوں تو یہ مکمل مسئلہ بتائیں۔", "gegevens معلومات ہیں؛ document کاغذ ہے۔ یہاں کاغذ نہیں بلکہ اندر کی معلومات غلط ہیں۔", "zijn کو نہ چھوڑیں؛ mijn gegevens niet correct نامکمل ہے۔", "Mijn adres is veranderd; mijn gegevens zijn niet correct.", "میرا پتہ بدل گیا ہے؛ میری معلومات درست نہیں ہیں۔", "مَین خَ خے فَنس زَین نیت کو رَکٹ"],
+        ["ik wil deze fout laten herstellen", "سرکاری ریکارڈ کی دکھائی ہوئی غلطی درست کروانے کی درخواست کے لیے یہ جملہ کہیں۔", "fout غلطی ہے؛ gegevens معلومات ہیں۔ یہ غلطی درست کروانے کا اگلا عملی قدم ہے۔", "laten herstellen کو صرف خود درست کرنے کے معنی میں نہ پڑھیں؛ آپ ادارے سے درست کروا رہے ہیں۔", "Ik wil deze fout laten herstellen.", "میں یہ غلطی درست کروانا چاہتا / چاہتی ہوں۔", "اِک وِل دے زَ فاؤٹ لا تَن ہَر سٹَلَن"],
+        ["kan ik de aanvraag online doen", "اگر دفتر دوبارہ آنے کے بجائے درخواست ویب پر جمع کرنے کا امکان پوچھنا ہو تو یہ سوال کریں۔", "online doen پورا آن لائن عمل ہے؛ opsturen مکمل درخواست بھیجنے کا ایک قدم ہے۔", "سوال میں kan پہلے اور ik بعد میں رکھیں؛ ik kan … بیان ہے۔", "Kan ik de aanvraag online doen?", "کیا میں درخواست آن لائن دے سکتا / سکتی ہوں؟", "کان اِک دَ آن فراخ آن لَین دون"],
+        ["wanneer krijg ik antwoord", "درخواست جمع ہونے کے بعد جواب یا فیصلے کا وقت پوچھنے کے لیے یہ سوال کریں۔", "wanneer وقت پوچھتا ہے؛ waar جگہ اور welke چیز پوچھتا ہے۔", "antwoord کو aanvraag نہ سمجھیں؛ یہ ادارے کی طرف سے آنے والا جواب ہے۔", "Wanneer krijg ik antwoord op mijn aanvraag?", "مجھے اپنی درخواست کا جواب کب ملے گا؟", "وَ نیر کرَیخ اِک آنٹ وورت"],
+        ["u ontvangt binnen twee weken een brief", "رسید یا ملازم کی بات میں یہ جملہ سنیں تو سمجھیں کہ خط زیادہ سے زیادہ دو ہفتوں کے اندر آئے گا۔", "binnen twee weken مدت کی آخری حد بتاتا ہے؛ over twee weken عین دو ہفتے بعد کا مطلب دے سکتا ہے۔", "binnen کو نظر انداز نہ کریں؛ جواب دو ہفتوں کے اندر آ سکتا ہے۔", "U ontvangt binnen twee weken een brief.", "آپ کو دو ہفتوں کے اندر ایک خط ملے گا۔", "او آنٹ فانکٹ بِنَن توے وے کَن اَین بریف"]
+      ]),
+      pattern: {
+        modelDutch: "welke documenten heb ik nodig?",
+        titleUrdu: "ضرورت کی مکمل فہرست پوچھنا",
+        highlight: "welke … heb ik nodig?",
+        explanationUrdu: "کئی مطلوبہ چیزیں پوچھنے کے لیے welke کے بعد جمع اسم اور پھر heb ik nodig رکھیں: welke documenten heb ik nodig?",
+        contrastUrdu: "welke documenten کئی کاغذات پوچھتا ہے؛ waar moet ik tekenen جگہ پوچھتا ہے اور wanneer krijg ik antwoord وقت پوچھتا ہے۔",
+        commonMistakeUrdu: "welk documenten نہ کہیں اور سوالی ترتیب میں ik heb کو آگے نہ رکھیں؛ welke documenten heb ik nodig? کہیں۔"
+      },
+      prerequisiteLessonIds: ["a2-separable-verbs-routine", "a2-gemeente-official"],
+      prerequisiteRefs: [["a0-understanding-help", "wat betekent dit?"]],
+      independentCheckLeadUrdu: "دوسری درخواست کی دستاویز میں",
+      scenarios: {
+        "welke documenten heb ik nodig": ["ask-required-documents", "ملاقات کے خط میں فہرست نہیں ہے؛ کاؤنٹر سے تمام مطلوبہ کاغذات پوچھیں۔"],
+        "is een kopie voldoende": ["ask-copy-accepted", "اصل پاسپورٹ گھر رہ گیا ہے مگر نقل موجود ہے؛ پوچھیں کہ نقل کافی ہے یا نہیں۔"],
+        "waar moet ik tekenen": ["ask-signature-place", "فارم میں دو نشان ہیں اور دستخط کی جگہ واضح نہیں؛ صحیح جگہ پوچھیں۔"],
+        "ik heb mijn BSN niet bij me": ["missing-bsn-now", "ملازم BSN مانگتا ہے مگر نمبر ابھی آپ کے پاس نہیں؛ مسئلہ صاف بتائیں۔"],
+        "ik begrijp deze vraag niet": ["form-question-unclear", "فارم کا آخری سوال سمجھ نہیں آیا؛ پہلے اپنی مشکل واضح کریں۔"],
+        "kunt u dit uitleggen": ["request-explanation", "ملازم نے ایک شرط دکھائی ہے مگر معنی واضح نہیں؛ مؤدبانہ وضاحت مانگیں۔"],
+        "het formulier is nog niet compleet": ["incomplete-form-status", "کاؤنٹر پر معلوم ہوتا ہے کہ ایک ثبوت غائب ہے؛ فارم کی موجودہ حالت بتائیں۔"],
+        "mijn gegevens zijn niet correct": ["incorrect-record-details", "سرکاری خط میں پرانا پتہ لکھا ہے؛ بتائیں کہ معلومات درست نہیں۔"],
+        "ik wil deze fout laten herstellen": ["request-record-correction", "غلط پتہ دکھانے کے بعد ادارے سے وہ غلطی درست کروانے کی درخواست کریں۔"],
+        "kan ik de aanvraag online doen": ["ask-online-application", "دوبارہ دفتر آنا مشکل ہے؛ پوچھیں کہ پوری درخواست آن لائن ہو سکتی ہے یا نہیں۔"],
+        "wanneer krijg ik antwoord": ["ask-decision-time", "درخواست جمع ہو گئی مگر فیصلے کی تاریخ نہیں لکھی؛ جواب کا وقت پوچھیں۔"],
+        "u ontvangt binnen twee weken een brief": ["understand-response-deadline", "جمع کرانے کی رسید پر جواب کی مدت لکھی ہے؛ دو ہفتوں کے اندر خط آنے والی مکمل بات منتخب کریں۔"]
+      },
+      documents: [
+        { documentKind: "required-documents-checklist", title: "Meenemen", rows: [{ label: "Documenten", value: "welke documenten heb ik nodig?" }, { label: "Kopie", value: "is een kopie voldoende?" }, { label: "Handtekening", value: "waar moet ik tekenen?" }, { label: "BSN", value: "ik heb mijn BSN niet bij me" }] },
+        { documentKind: "form-completion-notice", title: "Formulier controleren", rows: [{ label: "Vraag", value: "ik begrijp deze vraag niet" }, { label: "Uitleg", value: "kunt u dit uitleggen?" }, { label: "Status", value: "het formulier is nog niet compleet" }, { label: "Gegevens", value: "mijn gegevens zijn niet correct" }] },
+        { documentKind: "application-receipt", title: "Aanvraag ontvangen", rows: [{ label: "Correctie", value: "ik wil deze fout laten herstellen" }, { label: "Online", value: "kan ik de aanvraag online doen?" }, { label: "Antwoord", value: "wanneer krijg ik antwoord?" }, { label: "Termijn", value: "u ontvangt binnen twee weken een brief" }] }
+      ]
+    }
+  },
+  missions: {
+    "a2-mission-social-help": {
+      sourceKey: "a2-gemeente-forms-mission",
+      scenarioTitleUrdu: "gemeente کی ملاقات، فارم، اصلاح، اور جواب",
+      speakerUrdu: "gemeente کا ملازم",
+      prerequisiteLessonIds: [
+        "a2-separable-verbs-routine",
+        "a2-gemeente-official",
+        "a2-gemeente-documents"
+      ],
+      variantTitles: [
+        "پتے کی تبدیلی کی درخواست",
+        "نام کی غلطی درست کروانا",
+        "آن لائن درخواست کے بعد پیروی"
+      ],
+      variantContexts: [
+        "gemeente کے کاؤنٹر پر ملاقات بتائیں، شناخت دکھائیں، فارم مکمل کریں، اور نئے پتے کی درخواست کے جواب کا وقت پوچھیں",
+        "سرکاری ریکارڈ میں نام کی غلطی دکھائیں، فارم کی مدد مانگیں، درست کاغذ جمع کریں، اور اصلاح کی تصدیق لیں",
+        "آن لائن درخواست کے کاغذات چیک کریں، شناختی شرط سمجھیں، نامکمل حصہ درست کریں، اور جواب کی مدت معلوم کریں"
+      ],
+      targets: [
+        { lessonId: "a2-separable-verbs-routine", dutch: "vul het formulier in", patternLessonId: "a2-separable-verbs-routine" },
+        { lessonId: "a2-separable-verbs-routine", dutch: "neem uw identiteitsbewijs mee" },
+        { lessonId: "a2-gemeente-official", dutch: "ik heb een afspraak bij de gemeente" },
+        { lessonId: "a2-gemeente-official", dutch: "kunt u mij helpen met dit formulier?" },
+        { lessonId: "a2-gemeente-documents", dutch: "mijn gegevens zijn niet correct" },
+        { lessonId: "a2-gemeente-documents", dutch: "wanneer krijg ik antwoord?", patternLessonId: "a2-gemeente-documents" }
+      ],
+      prerequisiteRefs: [
+        ["a1-appointments", "ik wil een afspraak maken"],
+        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+        ["a1-post-parcel-extra", "identiteitsbewijs"]
+      ],
+      useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "reverse", "build", "situation", "document-choice"],
+      document: {
+        documentKind: "municipality-application-status",
+        title: "gemeente کی درخواست",
+        labelUrdu: "gemeente کی درخواست اور جواب کی رسید پڑھیں",
+        promptUrdu: "رسید میں غلط معلومات اور جواب کی مدت والی قطاریں پڑھیں، پھر مانگی ہوئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "درخواست کی چھ قطاریں الگ پڑھیں اور سوال میں مانگی گئی سیکھی ہوئی بات کا درست اردو مطلب منتخب کریں۔",
+        rows: [
+          { label: "فارم", value: "vul het formulier in" },
+          { label: "شناخت", value: "neem uw identiteitsbewijs mee" },
+          { label: "ملاقات", value: "ik heb een afspraak bij de gemeente" },
+          { label: "مدد", value: "kunt u mij helpen met dit formulier?" },
+          { label: "اصلاح", value: "mijn gegevens zijn niet correct" },
+          { label: "جواب", value: "wanneer krijg ik antwoord?" }
+        ]
+      }
+    }
+  }
+};
+
+/*
+ * The remaining A2 lessons use the same authored contract as the accepted
+ * gemeente unit.  The compact profiles below deliberately keep the legacy
+ * stable Dutch/Urdu targets, but replace generated teaching prose, Use
+ * wrappers, and fake one-line documents with reviewed lesson-specific
+ * records.  Keeping this builder next to the registry makes the source of
+ * every A2 card and situation explicit while avoiding another giant question
+ * bank whose correctness depends on array position.
+ */
+const a2SchoolAbsenceLessonV4 = {
+  id: "a2-school-absence-notice",
+  unit: "A2: والدین اور اسکول",
+  title: "Ziek melden en een schoolbericht lezen",
+  description: "بچے کی غیر حاضری بتانا، وجہ دینا، اور اسکول کا مختصر نوٹس سمجھنا۔",
+  xp: 0,
+  questions: [],
+  concepts: [],
+  seedConcepts: [
+    { dutch: "mijn kind komt vandaag niet naar school", urdu: "میرا بچہ آج اسکول نہیں آئے گا" },
+    { dutch: "ik meld mijn kind af", urdu: "میں اپنے بچے کی غیر حاضری کی اطلاع دیتا / دیتی ہوں" },
+    { dutch: "mijn kind is ziek", urdu: "میرا بچہ بیمار ہے" },
+    { dutch: "hij had koorts en moest thuisblijven", urdu: "اسے بخار تھا اور گھر رہنا پڑا" },
+    { dutch: "de les begint om tien uur", urdu: "سبق دس بجے شروع ہوتا ہے" },
+    { dutch: "de les valt vandaag uit", urdu: "آج سبق منسوخ ہے" },
+    { dutch: "moet ik de docent bellen?", urdu: "کیا مجھے استاد کو فون کرنا چاہیے؟" },
+    { dutch: "wanneer kan mijn kind weer komen?", urdu: "میرا بچہ دوبارہ کب آ سکتا ہے؟" }
+  ]
+};
+insertLessonAfter(a2Lessons, "a2-mission-job-start", a2SchoolAbsenceLessonV4);
+
+const a2GuidanceMomentsV4 = [
+  "صبح پہلی گفتگو شروع ہونے پر", "لکھی ہوئی اطلاع سامنے آنے کے بعد",
+  "ذمہ دار شخص وضاحت مانگے تو", "مقررہ وقت بدلنے سے پہلے",
+  "فون پر جواب دیتے ہوئے", "کاؤنٹر پر اپنی باری آنے پر",
+  "مختصر پیغام بھیجتے وقت", "اگلا قدم طے کرنے سے پہلے",
+  "رسید یا خط دوبارہ پڑھتے ہوئے", "مسئلہ پہلی بار رپورٹ کرتے وقت",
+  "دوسری طرف سے سوال آنے پر", "تحریری تصدیق محفوظ کرتے وقت",
+  "ملاقات ختم ہونے سے پہلے", "غلط فہمی فوراً درست کرتے ہوئے",
+  "مددگار کو مکمل صورت بتاتے وقت", "بعد کی کارروائی پوچھنے کے لیے",
+  "نئی شرط سننے کے فوراً بعد", "اپنی دستیابی واضح کرتے ہوئے",
+  "ثبوت دکھانے کے موقع پر", "جواب کی مدت معلوم کرتے وقت"
+];
+
+const a2GuidanceBoundariesV4 = [
+  "یہ موجودہ حالت بتاتی ہے، پچھلا واقعہ نہیں", "یہ سیدھی درخواست ہے، صرف چیز کا نام نہیں",
+  "یہ وقت کی بات ہے، جگہ کی نہیں", "یہ وجہ واضح کرتی ہے، نتیجہ نہیں",
+  "یہ اجازت پوچھتی ہے، حکم نہیں دیتی", "یہ مسئلہ رپورٹ کرتی ہے، حل کی تصدیق نہیں",
+  "یہ مکمل جواب ہے، صرف آغاز نہیں", "یہ تحریری ثبوت ہے، زبانی وعدہ نہیں",
+  "یہ اگلا قدم پوچھتی ہے، پرانی کارروائی نہیں", "یہ ایک خاص شرط بتاتی ہے، عام امکان نہیں",
+  "یہ متعلقہ شخص سے مدد مانگتی ہے، شکایت ختم نہیں کرتی", "یہ مقررہ مدت بتاتی ہے، اندازہ نہیں",
+  "یہ اپنی ضرورت واضح کرتی ہے، دوسرے شخص کا جواب نہیں", "یہ تبدیلی کی اطلاع ہے، نئی درخواست نہیں",
+  "یہ ایک مکمل عملی حصہ ہے، الگ لفظی ترجمہ نہیں", "یہ رسمی گفتگو کے لیے ہے، غیر واضح اشارہ نہیں",
+  "یہ دستاویز کی معلومات ہے، ذاتی رائے نہیں", "یہ فوری قدم بتاتی ہے، مستقبل کا مبہم منصوبہ نہیں",
+  "یہ شرط پوری نہ ہونے کی بات ہے، انکار نہیں", "یہ پیروی کا سوال ہے، پہلی اطلاع نہیں"
+];
+
+const a2GuidanceMistakesV4 = [
+  "فاعل اور فعل دونوں قائم رکھیں", "سوالی ترتیب کو بیان والی ترتیب میں نہ بدلیں",
+  "وقت کا حصہ نہ چھوڑیں", "منفی لفظ کو نظر انداز نہ کریں",
+  "مؤدبانہ مخاطب برقرار رکھیں", "درخواست اور اطلاع کو آپس میں نہ ملائیں",
+  "اہم اسم کو عمومی لفظ سے نہ بدلیں", "سبب بتانے والا حصہ ادھورا نہ چھوڑیں",
+  "شرط سن کر اسے یقینی نتیجہ نہ سمجھیں", "واحد اور جمع کی شکل نہ ملائیں",
+  "ماضی کی بات کو حال میں نہ پڑھیں", "اگلے قدم اور آخری فیصلے میں فرق رکھیں",
+  "مقدار یا مدت کو اندازے سے نہ بدلیں", "دستاویز کا نام اور کارروائی الگ پہچانیں",
+  "جواب میں غیر متعلقہ وجہ نہ جوڑیں", "مکمل عملی فقرہ ایک ساتھ بولیں",
+  "رسمی اختتام کو سوال نہ سمجھیں", "مسئلے کے مقام کو حذف نہ کریں",
+  "ثبوت اور دعوے کو ایک چیز نہ سمجھیں", "صحیح شخص یا ادارہ واضح رکھیں"
+];
+
+function makeA2AuthoredProfileSpecV4(profile) {
+  const lesson = a2Lessons.find((item) => item.id === profile.lessonId);
+  const rawSeeds = profile.seedConcepts || lesson?.seedConcepts || [];
+  const deduped = [];
+  const seen = new Set();
+  for (const raw of rawSeeds) {
+    const dutch = String(raw.dutch || "").trim();
+    const urdu = cleanConceptUrduV4(raw.urdu || "");
+    const key = normalizedTextV4(dutch);
+    if (!dutch || !urdu || seen.has(key)) continue;
+    if (profile.includeDutch && !profile.includeDutch.some((value) => normalizedTextV4(value) === key)) continue;
+    if (profile.excludeDutch?.some((value) => normalizedTextV4(value) === key)) continue;
+    if (profile.phrasesOnly !== false && dutchWordsV4(dutch).length < 2) continue;
+    seen.add(key);
+    deduped.push([dutch, urdu]);
+  }
+  if (deduped.length < 4) {
+    for (const raw of rawSeeds) {
+      const dutch = String(raw.dutch || "").trim();
+      const urdu = cleanConceptUrduV4(raw.urdu || "");
+      const key = normalizedTextV4(dutch);
+      if (!dutch || !urdu || seen.has(key)) continue;
+      if (profile.includeDutch && !profile.includeDutch.some((value) => normalizedTextV4(value) === key)) continue;
+      if (profile.excludeDutch?.some((value) => normalizedTextV4(value) === key)) continue;
+      seen.add(key);
+      deduped.push([dutch, urdu]);
+      if (deduped.length >= 4) break;
+    }
+  }
+  const teachingRows = deduped.map(([dutch, urdu], index) => {
+    const moment = a2GuidanceMomentsV4[index % a2GuidanceMomentsV4.length];
+    const boundary = a2GuidanceBoundariesV4[(index + profile.guidanceOffset) % a2GuidanceBoundariesV4.length];
+    const mistake = a2GuidanceMistakesV4[(index * 3 + profile.guidanceOffset) % a2GuidanceMistakesV4.length];
+    return [
+      dutch,
+      `${profile.settingUrdu} ${moment} “${urdu}” والی مکمل بات استعمال کریں۔`,
+      `${profile.boundaryLeadUrdu} ${boundary}۔`,
+      `${profile.mistakeLeadUrdu} ${mistake}۔`,
+      dutch,
+      urdu,
+      approximateDutchPronunciationUrduV4(dutch)
+    ];
+  });
+  const scenarios = Object.fromEntries(deduped.map(([dutch], index) => [
+    normalizedTextV4(dutch),
+    [
+      `${semanticSlugV4(profile.lessonId)}-${index + 1}`,
+      `${profile.scenarioStarts[index % profile.scenarioStarts.length]} ${profile.scenarioActions[index % profile.scenarioActions.length]}۔`
+    ]
+  ]));
+  const documents = [];
+  const chunks = splitTargetsIntoRunsV4("a2", deduped.map(([dutch]) => dutch), false);
+  const earlier = [];
+  for (const [runIndex, chunk] of chunks.entries()) {
+    const available = uniqueV4([...chunk, ...earlier.slice().reverse()]);
+    const rows = [];
+    let wordCount = 0;
+    for (let index = 0; rows.length < 4 || wordCount < 14; index += 1) {
+      const value = available[index % available.length];
+      if (!value || index > 15) break;
+      rows.push({ label: `خانہ ${rows.length + 1}`, value });
+      wordCount += dutchWordsV4(value).length;
+    }
+    documents.push({
+      documentKind: `${semanticSlugV4(profile.lessonId)}-record-${runIndex + 1}`,
+      title: `عملی دستاویز ${runIndex + 1}`,
+      rows
+    });
+    earlier.push(...chunk);
+  }
+  return {
+    title: profile.title,
+    unitLabel: profile.unitLabel,
+    outcomeUrdu: profile.outcomeUrdu,
+    seedConcepts: deduped,
+    teaching: authoredA1TeachingV4(teachingRows),
+    pattern: false,
+    prerequisiteLessonIds: profile.prerequisiteLessonIds || [],
+    prerequisiteRefs: profile.prerequisiteRefs || [],
+    independentCheckLeadUrdu: profile.independentCheckLeadUrdu,
+    scenarios,
+    documents
+  };
+}
+
+const a2RemainingLessonProfilesV4 = [
+  {
+    lessonId: "a2-work-school", title: "Een baan en werkgegevens begrijpen", unitLabel: "A2: کام اور نوکری",
+    outcomeUrdu: "نوکری، معاہدہ، تنخواہ، اوقات، اور پہلے کام کے دن کی بنیادی معلومات سمجھنا اور اپنی دستیابی بتانا۔",
+    settingUrdu: "نوکری شروع کرنے کی گفتگو میں", boundaryLeadUrdu: "کام کی بنیادی معلومات میں", mistakeLeadUrdu: "ملازمت کی بات کرتے ہوئے",
+    scenarioStarts: ["نئی نوکری کے پہلے دن نگران آپ کی معلومات دیکھتا ہے؛", "معاہدہ سامنے رکھ کر ملازم ایک بات پوچھتا ہے؛", "اوقات کی فہرست بدلنے کے بعد دفتر فون کرتا ہے؛", "تنخواہ کی پہلی پرچی ملنے پر ایک خانہ واضح نہیں؛"],
+    scenarioActions: ["مطلوبہ کام کی بات منتخب کریں", "اپنی صورت صاف بتائیں", "درست ملازمت والی بات کہیں", "مکمل جواب دیں"],
+    guidanceOffset: 1,
+    seedConcepts: [
+      { dutch: "ik zoek een baan", urdu: "میں نوکری تلاش کر رہا / رہی ہوں" },
+      { dutch: "ik begin maandag met mijn baan", urdu: "میں پیر کو اپنی نوکری شروع کرتا / کرتی ہوں" },
+      { dutch: "dit is mijn contract", urdu: "یہ میرا معاہدہ ہے" },
+      { dutch: "hoeveel uur staat in mijn contract?", urdu: "میرے معاہدے میں کتنے گھنٹے لکھے ہیں؟" },
+      { dutch: "wanneer krijg ik mijn salaris?", urdu: "مجھے تنخواہ کب ملے گی؟" },
+      { dutch: "dit is mijn rooster", urdu: "یہ میرے اوقات کی فہرست ہے" },
+      { dutch: "mijn collega helpt mij", urdu: "میرا ساتھی میری مدد کرتا / کرتی ہے" },
+      { dutch: "mijn rooster is veranderd", urdu: "میرے کام کے اوقات بدل گئے ہیں" }
+    ],
+    prerequisiteRefs: [["a1-work-schedule", "ik werk op vrijdag"]], independentCheckLeadUrdu: "دوسری نوکری کے پہلے دن"
+  },
+  {
+    lessonId: "a2-future-modal-verbs", title: "Werkafspraken, toestemming en plannen", unitLabel: "A2: کام اور نوکری",
+    outcomeUrdu: "کام کی آئندہ منصوبہ بندی، امکان، ضرورت، اور اجازت کے مختصر عملی جملے کہنا اور سمجھنا۔",
+    settingUrdu: "کام کے آئندہ منصوبے بناتے ہوئے", boundaryLeadUrdu: "اجازت اور ذمہ داری میں", mistakeLeadUrdu: "معاون فعل کے بعد",
+    scenarioStarts: ["اگلے ہفتے کا کام طے کرتے وقت نگران سوال کرتا ہے؛", "کام کی جگہ کا اصول سننے کے بعد آپ جواب دیتے ہیں؛", "چھٹی کی درخواست سے پہلے دستیابی دیکھی جاتی ہے؛", "نئی شفٹ کی اجازت لینے کے لیے گفتگو ہوتی ہے؛"],
+    scenarioActions: ["اپنا منصوبہ بتائیں", "ضرورت والی بات منتخب کریں", "اجازت مؤدبانہ طور پر پوچھیں", "ممکن کام واضح کریں"],
+    guidanceOffset: 3,
+    seedConcepts: [
+      { dutch: "ik ga maandag beginnen", urdu: "میں پیر کو شروع کرنے والا / والی ہوں" },
+      { dutch: "ik kan op dinsdag werken", urdu: "میں منگل کو کام کر سکتا / سکتی ہوں" },
+      { dutch: "ik moet veiligheidsschoenen dragen", urdu: "مجھے حفاظتی جوتے پہننے ہیں" },
+      { dutch: "mag ik eerder beginnen?", urdu: "کیا میں پہلے شروع کر سکتا / سکتی ہوں؟" },
+      { dutch: "ik kan op vrijdag niet werken", urdu: "میں جمعہ کو کام نہیں کر سکتا / سکتی" },
+      { dutch: "ik moet de manager bellen", urdu: "مجھے نگران کو فون کرنا ہے" },
+      { dutch: "mag ik thuiswerken?", urdu: "کیا میں گھر سے کام کر سکتا / سکتی ہوں؟" },
+      { dutch: "wanneer ga ik beginnen?", urdu: "میں کب شروع کرنے والا / والی ہوں؟" }
+    ],
+    prerequisiteLessonIds: ["a2-work-school"], prerequisiteRefs: [["a1-plans", "ik kom morgen"]], independentCheckLeadUrdu: "اگلی ہفتہ وار کام کی گفتگو میں"
+  },
+  {
+    lessonId: "a2-work-conditions", title: "Rooster, loon en afspraken bespreken", unitLabel: "A2: کام اور نوکری",
+    outcomeUrdu: "اوقات، چھٹی، معاہدہ، تنخواہ کی پرچی، بیماری، ڈیوٹی، مدد، اور ای میل تصدیق پر نگران سے بات کرنا۔",
+    settingUrdu: "نگران کے ساتھ کام کی شرطیں دیکھتے ہوئے", boundaryLeadUrdu: "کام کے مسئلے اور حل میں", mistakeLeadUrdu: "شرط یا درخواست بیان کرتے وقت",
+    scenarioStarts: ["ہفتہ وار اوقات بدل گئے ہیں اور نگران سامنے ہے؛", "تنخواہ کی پرچی میں رقم مختلف دکھائی دیتی ہے؛", "بیماری کی اطلاع کے بعد واپسی کا دن پوچھا جاتا ہے؛", "نیا کام سمجھ نہ آنے پر ساتھی مدد دیتا ہے؛"],
+    scenarioActions: ["اصل مسئلہ واضح کریں", "مناسب درخواست کریں", "اپنا اگلا قدم بتائیں", "تحریری تصدیق والی بات منتخب کریں"],
+    guidanceOffset: 5, prerequisiteLessonIds: ["a2-work-school", "a2-future-modal-verbs"], prerequisiteRefs: [["a1-work-schedule", "mijn rooster is veranderd"]], independentCheckLeadUrdu: "دوسری کام کی شرطوں والی ملاقات میں"
+  },
+  {
+    lessonId: "a2-school-absence-notice", title: "Ziek melden en een schoolbericht lezen", unitLabel: "A2: والدین اور اسکول",
+    outcomeUrdu: "بچے کی بیماری اور غیر حاضری کی اطلاع دینا، استاد سے اگلا قدم پوچھنا، اور سبق کے وقت یا منسوخی کا نوٹس سمجھنا۔",
+    settingUrdu: "اسکول کو بچے کے بارے میں اطلاع دیتے ہوئے", boundaryLeadUrdu: "غیر حاضری اور اسکول نوٹس میں", mistakeLeadUrdu: "بچے کی صورت بتاتے وقت",
+    scenarioStarts: ["صبح اسکول شروع ہونے سے پہلے دفتر فون اٹھاتا ہے؛", "اسکول ایپ میں آج کے سبق کا نیا نوٹس آتا ہے؛", "استاد بچے کی بیماری کی وجہ پوچھتا ہے؛", "واپسی سے پہلے اسکول اگلا دن معلوم کرنا چاہتا ہے؛"],
+    scenarioActions: ["غیر حاضری کی مکمل اطلاع دیں", "نوٹس کی درست بات پہچانیں", "وجہ صاف بتائیں", "اگلا قدم پوچھیں"],
+    guidanceOffset: 7, seedConcepts: a2SchoolAbsenceLessonV4.seedConcepts, prerequisiteRefs: [["a1-work-school-messages", "mijn kind komt vandaag niet naar school"]], independentCheckLeadUrdu: "دوسرے اسکول کے بیماری والے پیغام میں"
+  },
+  {
+    lessonId: "a2-parent-school", title: "Voortgang en hulp op school bespreken", unitLabel: "A2: والدین اور اسکول",
+    outcomeUrdu: "بچے کی پیش رفت، پڑھنے کی مشکل، گھر کی مشق، رپورٹ، ملاقات کا وقت، اور حفاظت پر استاد کے ساتھ عملی گفتگو کرنا۔",
+    settingUrdu: "والدین کی اسکول ملاقات میں", boundaryLeadUrdu: "بچے کی پیش رفت اور مدد میں", mistakeLeadUrdu: "استاد سے سوال کرتے وقت",
+    scenarioStarts: ["والدین کی ملاقات میں استاد بچے کا کام دکھاتا ہے؛", "رپورٹ پڑھنے کے بعد ایک حصہ واضح نہیں رہتا؛", "گھر کی مشق طے کرنے کے لیے استاد مشورہ دیتا ہے؛", "بچے کی حفاظت کی تشویش پر ذمہ دار شخص بلایا جاتا ہے؛"],
+    scenarioActions: ["پیش رفت والا سوال کریں", "وضاحت کی درخواست کریں", "اضافی مدد مانگیں", "مشترک اگلا قدم طے کریں"],
+    guidanceOffset: 9, prerequisiteLessonIds: ["a2-school-absence-notice"], prerequisiteRefs: [["a1-school", "de docent"]], independentCheckLeadUrdu: "اگلی والدین ملاقات میں"
+  },
+  {
+    lessonId: "a2-perfect-tense", title: "Vertellen wat er is gebeurd", unitLabel: "A2: صحت اور ڈاکٹر",
+    outcomeUrdu: "ڈاکٹر کو بتانا کہ علامت کب شروع ہوئی، کیا ہوا، اور پہلے کون سا قدم لیا گیا۔",
+    settingUrdu: "عام ڈاکٹر کو پچھلی صحت کی صورت بتاتے ہوئے", boundaryLeadUrdu: "پچھلے واقعے اور موجودہ علامت میں", mistakeLeadUrdu: "ماضی کی بات بناتے وقت",
+    scenarioStarts: ["ڈاکٹر پوچھتا ہے کہ درد کب شروع ہوا؛", "معائنے سے پہلے پچھلی رات کی صورت بتانی ہے؛", "فون پر معاون پہلے کیے گئے قدم کے بارے میں پوچھتا ہے؛", "فالو اپ میں گزشتہ ملاقات یاد دلانی ہے؛"],
+    scenarioActions: ["واقعہ مکمل ترتیب سے بتائیں", "صحیح پچھلی بات منتخب کریں", "وقت اور عمل واضح کریں", "مختصر طبی جواب دیں"],
+    guidanceOffset: 11,
+    seedConcepts: [
+      { dutch: "gisteren ben ik gevallen", urdu: "میں کل گر گیا / گئی تھا" },
+      { dutch: "de pijn begon gisteravond", urdu: "درد کل شام شروع ہوا" },
+      { dutch: "ik heb vannacht slecht geslapen", urdu: "میں رات کو اچھی طرح نہیں سویا / سوئی" },
+      { dutch: "ik heb de dokter gebeld", urdu: "میں نے ڈاکٹر کو فون کیا" },
+      { dutch: "ik heb al pijnstillers genomen", urdu: "میں درد کی دوا پہلے ہی لے چکا / چکی ہوں" },
+      { dutch: "ik ben thuis gebleven", urdu: "میں گھر رہا / رہی ہوں" },
+      { dutch: "de koorts is vanmorgen begonnen", urdu: "بخار آج صبح شروع ہوا" },
+      { dutch: "ik heb nog niet gegeten", urdu: "میں نے ابھی کھانا نہیں کھایا" }
+    ],
+    prerequisiteRefs: [["a1-health", "ik heb pijn"]], independentCheckLeadUrdu: "دوسری ڈاکٹر ملاقات میں"
+  },
+  {
+    lessonId: "a2-strong-combined", title: "Het hele verhaal bij de huisarts", unitLabel: "A2: صحت اور ڈاکٹر",
+    outcomeUrdu: "وجہ، ڈاکٹر کی بات، آرام کی ہدایت، شرط، اور واپسی کو ایک مربوط طبی گفتگو میں سمجھنا۔",
+    settingUrdu: "عام ڈاکٹر کے فالو اپ میں", boundaryLeadUrdu: "وجہ، ہدایت، اور شرط میں", mistakeLeadUrdu: "طبی کہانی جوڑتے ہوئے",
+    scenarioStarts: ["پچھلی ملاقات کا خلاصہ نئے ڈاکٹر کو دینا ہے؛", "معاون ڈاکٹر کی ہدایت دوبارہ پڑھتا ہے؛", "درد باقی رہنے کی شرط پر واپسی طے ہوتی ہے؛", "آرام کے بعد حالت کے بارے میں سوال کیا جاتا ہے؛"],
+    scenarioActions: ["وجہ والی بات کہیں", "ہدایت کا درست مطلب چنیں", "شرط مکمل کریں", "واپسی کا قدم بتائیں"],
+    guidanceOffset: 13, prerequisiteLessonIds: ["a2-perfect-tense"], prerequisiteRefs: [["a1-health", "de huisarts"]], independentCheckLeadUrdu: "اگلے طبی فالو اپ میں"
+  },
+  {
+    lessonId: "a2-doctor-advice", title: "Klachten, advies en waarschuwingen", unitLabel: "A2: صحت اور ڈاکٹر",
+    outcomeUrdu: "علامت، مدت، شدت، دوا، ڈاکٹر کی ہدایت، خطرے کی نشانی، اور دوبارہ رابطے کی شرط سمجھنا اور بتانا۔",
+    settingUrdu: "ڈاکٹر کے معائنے اور ہدایت میں", boundaryLeadUrdu: "علامت اور طبی مشورے میں", mistakeLeadUrdu: "صحت کی تفصیل دیتے وقت",
+    scenarioStarts: ["ڈاکٹر علامت کی جگہ اور مدت پوچھتا ہے؛", "دوا کے لیبل پر استعمال کی ہدایت لکھی ہے؛", "حالت بگڑنے پر فون کرنے کی شرط بتائی جاتی ہے؛", "معائنے کے آخر میں اگلی ملاقات طے ہوتی ہے؛"],
+    scenarioActions: ["علامت مکمل بتائیں", "ہدایت صحیح پہچانیں", "خطرے والی بات سمجھیں", "فالو اپ کا سوال کریں"],
+    guidanceOffset: 15, prerequisiteLessonIds: ["a2-perfect-tense", "a2-strong-combined"], prerequisiteRefs: [["a1-pharmacy", "medicijn"]], independentCheckLeadUrdu: "دوسرے طبی مشورے میں"
+  },
+  {
+    lessonId: "a2-health-housing", title: "Een woonprobleem melden", unitLabel: "A2: گھر اور مرمت",
+    outcomeUrdu: "ہیٹنگ یا پانی کے رساؤ کا بنیادی مسئلہ، گھر میں مقام، اور مرمت کے لیے کسی کو بھیجنے کی درخواست بتانا۔",
+    settingUrdu: "گھر کی خرابی پہلی بار رپورٹ کرتے ہوئے", boundaryLeadUrdu: "خرابی اور مرمت کی درخواست میں", mistakeLeadUrdu: "گھر کا مسئلہ بتاتے ہوئے",
+    scenarioStarts: ["سرد صبح ہیٹنگ بند ہے اور مالک مکان فون اٹھاتا ہے؛", "باورچی خانے میں پانی نظر آنے پر مرمت دفتر سے رابطہ ہوتا ہے؛", "آن لائن مرمت فارم میں مسئلے کی جگہ مانگی جاتی ہے؛", "مالک مکان پوچھتا ہے کہ کسی کو کب بھیجا جا سکتا ہے؛"],
+    scenarioActions: ["خرابی صاف بتائیں", "گھر کا مقام شامل کریں", "مرمت کی درخواست کریں", "درست مکمل بات منتخب کریں"],
+    guidanceOffset: 17,
+    seedConcepts: [
+      { dutch: "mijn verwarming doet het niet", urdu: "میری ہیٹنگ کام نہیں کر رہی" },
+      { dutch: "de verwarming is sinds gisteren kapot", urdu: "ہیٹنگ کل سے خراب ہے" },
+      { dutch: "ik heb lekkage in mijn huis", urdu: "میرے گھر میں پانی کا رساؤ ہے" },
+      { dutch: "het water komt uit de keukenmuur", urdu: "پانی باورچی خانے کی دیوار سے آ رہا ہے" },
+      { dutch: "kunt u vandaag een monteur sturen?", urdu: "کیا آپ آج مرمت کرنے والا بھیج سکتے ہیں؟" },
+      { dutch: "wanneer komt de monteur?", urdu: "مرمت کرنے والا کب آئے گا؟" }
+    ],
+    prerequisiteRefs: [["a1-home", "de verwarming"]], independentCheckLeadUrdu: "دوسرے گھر کی پہلی مرمت رپورٹ میں"
+  },
+  {
+    lessonId: "a2-word-order-connectors", title: "Oorzaak, gevolg en oplossing uitleggen", unitLabel: "A2: گھر اور مرمت",
+    outcomeUrdu: "گھر کی خرابی کی وجہ، اثر، شرط، اور مطلوبہ حل کو واضح مربوط جملوں میں بیان کرنا۔",
+    settingUrdu: "مالک مکان کو گھر کے مسئلے کی وجہ سمجھاتے ہوئے", boundaryLeadUrdu: "سبب، اثر، اور شرط میں", mistakeLeadUrdu: "جملے کے دو حصے جوڑتے وقت",
+    scenarioStarts: ["مرمت دفتر پوچھتا ہے کہ کمرہ کیوں استعمال نہیں ہو رہا؛", "رساؤ بڑھنے کے بعد اس کا اثر بتانا ہے؛", "مزدور آنے کی شرط پر گھر میں موجودگی طے ہوتی ہے؛", "مسئلہ دوبارہ ہونے پر مطلوبہ حل لکھنا ہے؛"],
+    scenarioActions: ["سبب والا مکمل جملہ کہیں", "نتیجہ واضح کریں", "شرط صحیح ترتیب سے بتائیں", "حل کی درخواست جوڑیں"],
+    guidanceOffset: 19,
+    seedConcepts: [
+      { dutch: "ik bel omdat de verwarming kapot is", urdu: "میں فون کر رہا / رہی ہوں کیونکہ ہیٹنگ خراب ہے" },
+      { dutch: "de kamer is nat omdat er een lekkage is", urdu: "کمرہ گیلا ہے کیونکہ پانی کا رساؤ ہے" },
+      { dutch: "ik denk dat de leiding kapot is", urdu: "میرا خیال ہے کہ پائپ خراب ہے" },
+      { dutch: "als de monteur komt, ben ik thuis", urdu: "جب مرمت کرنے والا آئے گا تو میں گھر پر ہوں گا / گی" },
+      { dutch: "omdat de muur nat is", urdu: "کیونکہ دیوار گیلی ہے" },
+      { dutch: "als het water blijft lopen", urdu: "اگر پانی بہتا رہے" },
+      { dutch: "ik wil dat de lekkage wordt gerepareerd", urdu: "میں چاہتا / چاہتی ہوں کہ رساؤ کی مرمت ہو" },
+      { dutch: "de vloer wordt nat als het regent", urdu: "بارش ہونے پر فرش گیلا ہو جاتا ہے" }
+    ],
+    prerequisiteLessonIds: ["a2-health-housing"], prerequisiteRefs: [["a1-connectors", "omdat"]], independentCheckLeadUrdu: "دوسری تحریری مرمت وضاحت میں"
+  },
+  {
+    lessonId: "a2-landlord-repairs", title: "Een reparatie schriftelijk volgen", unitLabel: "A2: گھر اور مرمت",
+    outcomeUrdu: "تفصیلی مرمت رپورٹ، رسائی کا وقت، تصویر، چھوٹی ہوئی ملاقات، خرچ، اور تحریری پیروی سنبھالنا۔",
+    settingUrdu: "مالک مکان اور مرمت کمپنی سے پیروی کرتے ہوئے", boundaryLeadUrdu: "ثبوت، ملاقات، اور ذمہ داری میں", mistakeLeadUrdu: "تحریری مرمت پیغام میں",
+    scenarioStarts: ["مرمت فارم میں مسئلے کی تفصیل اور تصویر مانگی گئی ہے؛", "مزدور کی ملاقات چھوٹ گئی اور نیا وقت چاہیے؛", "مرمت کے خرچ کے بارے میں مالک مکان جواب دیتا ہے؛", "پہلی اطلاع کے بعد کوئی تصدیق نہیں آئی؛"],
+    scenarioActions: ["رپورٹ کی مکمل بات منتخب کریں", "نیا وقت مانگیں", "خرچ کی ذمہ داری پوچھیں", "تحریری پیروی کریں"],
+    guidanceOffset: 2, excludeDutch: ["ik stuur foto's van de schade"], prerequisiteLessonIds: ["a2-health-housing", "a2-word-order-connectors"], prerequisiteRefs: [["a1-home", "mijn huis"]], independentCheckLeadUrdu: "اگلی مرمت پیروی میں"
+  },
+  {
+    lessonId: "a2-shopping-services", title: "Een aankoop terugbrengen", unitLabel: "A2: شکایت اور ضمانت",
+    outcomeUrdu: "خراب خریداری، رسید، واپسی، تبدیلی، اور ضمانت کی پہلی دکان گفتگو مکمل کرنا۔",
+    settingUrdu: "دکان کے سروس کاؤنٹر پر", boundaryLeadUrdu: "واپسی، تبدیلی، اور ضمانت میں", mistakeLeadUrdu: "خریداری کی شکایت کرتے ہوئے",
+    scenarioStarts: ["کل خریدی ہوئی چیز خراب نکلنے پر رسید دکھائی جاتی ہے؛", "سروس ملازم پوچھتا ہے کہ تبدیلی چاہیے یا رقم؛", "ضمانت کی مدت رسید پر دیکھی جاتی ہے؛", "سائز درست نہ ہونے پر دوسرا نمونہ مانگا جاتا ہے؛"],
+    scenarioActions: ["خریداری کی صورت بتائیں", "اپنی مطلوبہ کارروائی کہیں", "ضمانت والی بات پہچانیں", "رسید کا ثبوت دیں"],
+    guidanceOffset: 4, excludeDutch: ["ik wil hem graag ruilen"], prerequisiteRefs: [["a1-shopping-clothes", "de bon"]], independentCheckLeadUrdu: "دوسرے سروس کاؤنٹر پر"
+  },
+  {
+    lessonId: "a2-customer-complaints", title: "Een klacht laten oplossen", unitLabel: "A2: شکایت اور ضمانت",
+    outcomeUrdu: "غلط یا خراب ترسیل، مرمت، تبدیلی، رقم واپسی، شکایت نمبر، مدت، اور اگلے ذمہ دار تک معاملہ لے جانا۔",
+    settingUrdu: "کسٹمر سروس کے ساتھ شکایت کی پیروی میں", boundaryLeadUrdu: "شکایت اور پیش کیے گئے حل میں", mistakeLeadUrdu: "معاملہ آگے بڑھاتے وقت",
+    scenarioStarts: ["آرڈر کھولنے پر غلط چیز نکلی اور سروس کو فون کیا گیا؛", "مرمت کی مدت ختم ہونے کے بعد کیس نمبر پوچھا جاتا ہے؛", "پیش کیا گیا حل قبول نہ ہونے پر نگران چاہیے؛", "رقم واپسی کی تصدیق ابھی نہیں آئی؛"],
+    scenarioActions: ["غلط ترسیل رپورٹ کریں", "کیس کی پیروی کریں", "مناسب حل مانگیں", "اگلے ذمہ دار سے بات کریں"],
+    guidanceOffset: 6, prerequisiteLessonIds: ["a2-shopping-services"], prerequisiteRefs: [["a1-shopping-clothes", "ik wil ruilen"]], independentCheckLeadUrdu: "دوسری کسٹمر سروس پیروی میں"
+  },
+  {
+    lessonId: "a2-bills-banking", title: "Rekeningen, betalingen en bankveiligheid", unitLabel: "A2: بل اور بینک",
+    outcomeUrdu: "بل کی رقم اور تاریخ پڑھنا، غلط رقم پر سوال، قسط، ناکام خودکار کٹوتی، ادائیگی کا حوالہ، کارڈ حفاظت، اور ثبوت سنبھالنا۔",
+    settingUrdu: "بل یا بینک کے عملی مسئلے میں", boundaryLeadUrdu: "رقم، تاریخ، ادائیگی، اور ثبوت میں", mistakeLeadUrdu: "بینک یا بل کی بات کرتے ہوئے",
+    scenarioStarts: ["نیا بل پچھلے مہینے سے زیادہ ہے اور تفصیل سامنے ہے؛", "خودکار ادائیگی ناکام ہونے کا بینک پیغام آیا ہے؛", "ادائیگی کرتے وقت درست حوالہ مانگا جاتا ہے؛", "کارڈ گم ہونے کے بعد بینک حفاظت کا قدم بتاتا ہے؛"],
+    scenarioActions: ["رقم والی بات واضح کریں", "ناکام ادائیگی سمجھیں", "صحیح حوالہ استعمال کریں", "فوری حفاظتی قدم کہیں"],
+    guidanceOffset: 8, prerequisiteRefs: [["a1-shopping", "betalen"]], independentCheckLeadUrdu: "دوسرے بل یا بینک پیغام میں"
+  },
+  {
+    lessonId: "a2-writing-messages", title: "Een korte formele boodschap beginnen", unitLabel: "A2: رسمی پیغام اور ای میل",
+    outcomeUrdu: "رسمی مخاطب، مختصر وجہ، واضح درخواست، اور مؤدبانہ اختتام کے ساتھ ایک چھوٹا پیغام بنانا۔",
+    settingUrdu: "مختصر رسمی پیغام لکھتے ہوئے", boundaryLeadUrdu: "رسمی آغاز، وجہ، اور اختتام میں", mistakeLeadUrdu: "ادارے کو لکھتے وقت",
+    scenarioStarts: ["ڈاکٹر کے دفتر کو نئی ملاقات کے لیے پیغام لکھنا ہے؛", "اسکول کو غیر حاضری کی مختصر وجہ بھیجنی ہے؛", "ادارے کے جواب کے بعد شکریہ اور اختتام لکھنا ہے؛", "غیر رسمی سلام کے بجائے مناسب رسمی آغاز چاہیے؛"],
+    scenarioActions: ["مناسب آغاز منتخب کریں", "واضح درخواست لکھیں", "وجہ مختصر رکھیں", "مؤدبانہ اختتام کریں"],
+    guidanceOffset: 10,
+    excludeDutch: ["ik geef zaterdag een feest", "kom je ook", "hoi ahmed"],
+    prerequisiteRefs: [["a1-messages", "ik stuur een bericht"]], independentCheckLeadUrdu: "دوسرے رسمی مختصر پیغام میں"
+  },
+  {
+    lessonId: "a2-formal-digital-messages", title: "Een formele e-mail met bijlage volgen", unitLabel: "A2: رسمی پیغام اور ای میل",
+    outcomeUrdu: "موضوع، وجہ، تاریخ، درخواست، منسلک کاغذ، رابطہ راستہ، پیروی، اور رسمی اختتام کے ساتھ ای میل سمجھنا اور بنانا۔",
+    settingUrdu: "ادارے کو مکمل رسمی ای میل بھیجتے ہوئے", boundaryLeadUrdu: "موضوع، متن، منسلک کاغذ، اور پیروی میں", mistakeLeadUrdu: "رسمی ای میل مکمل کرتے وقت",
+    scenarioStarts: ["سرکاری دفتر کو کاغذ کے ساتھ ای میل بھیجنے سے پہلے مسودہ دیکھا جاتا ہے؛", "موضوع خالی ہے اور وصول کنندہ وجہ فوراً جاننا چاہتا ہے؛", "منسلک کاغذ کا ذکر متن میں موجود نہیں؛", "جواب کی مدت گزرنے کے بعد پیروی کا پیغام چاہیے؛"],
+    scenarioActions: ["صحیح موضوع اور وجہ لکھیں", "منسلک کاغذ واضح کریں", "رابطے کی درخواست شامل کریں", "مؤدبانہ پیروی مکمل کریں"],
+    guidanceOffset: 12, prerequisiteLessonIds: ["a2-writing-messages"], prerequisiteRefs: [["a1-messages", "dank u voor uw begrip"]], independentCheckLeadUrdu: "دوسری مکمل رسمی ای میل میں"
+  }
+];
+
+for (const profile of a2RemainingLessonProfilesV4) {
+  a2AuthoredCurriculumV4.lessons[profile.lessonId] = makeA2AuthoredProfileSpecV4(profile);
+}
+
+Object.assign(a2AuthoredCurriculumV4.units, {
+  "a2-work-school": {
+    outcomeUrdu: "نوکری شروع کرنا، کام کی اجازت اور ذمہ داری سمجھنا، اور اوقات، تنخواہ، چھٹی، بیماری، اور مدد پر نگران سے بات کرنا۔",
+    practiceUrdu: "پہلے نوکری کی بنیادی معلومات، پھر منصوبہ اور اجازت، اور آخر میں معاہدہ، اوقات، تنخواہ، اور کام کی پیروی استعمال کریں۔"
+  },
+  "a2-school-contact": {
+    outcomeUrdu: "بچے کی غیر حاضری اور اسکول نوٹس سمجھنا، پھر پیش رفت، مدد، رپورٹ، ملاقات، اور حفاظت پر استاد سے گفتگو کرنا۔",
+    practiceUrdu: "پہلے مختصر بیماری اور وقت کا پیغام، پھر والدین ملاقات اور مشترک اگلا قدم۔"
+  },
+  "a2-health-doctor": {
+    outcomeUrdu: "huisarts کو پچھلا واقعہ، موجودہ علامت، مدت، دوا، ہدایت، خطرے کی نشانی، اور فالو اپ واضح کرنا۔",
+    practiceUrdu: "کیا ہوا سے آغاز کریں، مکمل طبی کہانی بنائیں، پھر مشورہ اور واپسی کی شرط سنبھالیں۔"
+  },
+  "a2-housing-problems": {
+    outcomeUrdu: "گھر کی خرابی رپورٹ کرنا، وجہ اور اثر سمجھانا، ثبوت دینا، مرمت کا وقت طے کرنا، اور تحریری پیروی کرنا۔",
+    practiceUrdu: "پہلی اطلاع سے شروع کریں، سبب اور شرط جوڑیں، پھر مرمت فارم، تصویر، ملاقات، خرچ، اور پیروی پڑھیں۔"
+  },
+  "a2-shopping-complaints": {
+    outcomeUrdu: "خراب یا غلط خریداری واپس کرنا، ضمانت سمجھنا، حل مانگنا، شکایت نمبر لینا، اور ضرورت پر معاملہ آگے بڑھانا۔",
+    practiceUrdu: "پہلی دکان گفتگو کے بعد کسٹمر سروس کی تحریری یا فون پیروی مکمل کریں۔"
+  },
+  "a2-bills-banking": {
+    outcomeUrdu: "بل، رقم، تاریخ، قسط، خودکار کٹوتی، ادائیگی حوالہ، کارڈ حفاظت، اور ادائیگی کے ثبوت پر عملی کارروائی کرنا۔",
+    practiceUrdu: "بل پڑھیں، غلطی یا ناکام ادائیگی واضح کریں، پھر محفوظ ادائیگی اور ثبوت سنبھالیں۔"
+  },
+  "a2-messages-emails": {
+    outcomeUrdu: "مختصر اور مکمل رسمی پیغام میں مخاطب، موضوع، وجہ، درخواست، منسلک کاغذ، پیروی، اور اختتام درست رکھنا۔",
+    practiceUrdu: "پہلے چھوٹا رسمی پیغام، پھر منسلک کاغذ اور پیروی والی مکمل ای میل۔"
+  }
+});
+
+const a2EmploymentUnitV4 = a2Subchapters.find((unit) => unit.id === "a2-work-school");
+if (a2EmploymentUnitV4) {
+  a2EmploymentUnitV4.title = "کام اور نوکری";
+  a2EmploymentUnitV4.lessonIds = [
+    "a2-work-school",
+    "a2-future-modal-verbs",
+    "a2-work-conditions",
+    "a2-mission-job-start"
+  ];
+}
+if (!a2Subchapters.some((unit) => unit.id === "a2-school-contact")) {
+  const employmentIndex = a2Subchapters.findIndex((unit) => unit.id === "a2-work-school");
+  a2Subchapters.splice(employmentIndex + 1, 0, {
+    id: "a2-school-contact",
+    title: "والدین اور اسکول",
+    goal: a2AuthoredCurriculumV4.units["a2-school-contact"].outcomeUrdu,
+    practice: a2AuthoredCurriculumV4.units["a2-school-contact"].practiceUrdu,
+    lessonIds: ["a2-school-absence-notice", "a2-parent-school"]
+  });
+}
+const a2HousingUnitV4 = a2Subchapters.find((unit) => unit.id === "a2-housing-problems");
+if (a2HousingUnitV4) {
+  a2HousingUnitV4.lessonIds = [
+    "a2-health-housing",
+    "a2-word-order-connectors",
+    "a2-landlord-repairs"
+  ];
+}
+const a2MessagesUnitV4 = a2Subchapters.find((unit) => unit.id === "a2-messages-emails");
+if (a2MessagesUnitV4) a2MessagesUnitV4.title = "رسمی پیغام اور ای میل";
+
+function makeA2AuthoredMissionPlanV4({ missionId, sourceKey, lessonIds, titleUrdu, speakerUrdu }) {
+  const targets = [];
+  const perLesson = Math.max(1, Math.floor(6 / lessonIds.length));
+  for (const lessonId of lessonIds) {
+    const concepts = a2AuthoredCurriculumV4.lessons[lessonId]?.seedConcepts || [];
+    const picked = concepts.filter(([dutch]) => dutchWordsV4(dutch).length > 1).slice(-perLesson);
+    for (const [dutch] of picked) targets.push({ lessonId, dutch });
+  }
+  for (const lessonId of lessonIds) {
+    const concepts = a2AuthoredCurriculumV4.lessons[lessonId]?.seedConcepts || [];
+    for (const [dutch] of concepts.slice().reverse()) {
+      if (targets.length >= 6) break;
+      if (!targets.some((target) => target.lessonId === lessonId && normalizedTextV4(target.dutch) === normalizedTextV4(dutch))) {
+        targets.push({ lessonId, dutch });
+      }
+    }
+  }
+  const selected = targets.slice(0, 6);
+  return {
+    sourceKey,
+    scenarioTitleUrdu: titleUrdu,
+    speakerUrdu,
+    prerequisiteLessonIds: [...lessonIds],
+    variantTitles: ["پہلا عملی موقع", "بدلی ہوئی عملی صورت", "آخری خود مختار صورت"],
+    variantContexts: [
+      `${titleUrdu} کے پہلے حقیقی موقع میں شروع سے آخر تک مناسب باتیں استعمال کریں`,
+      `${titleUrdu} کی دوسری صورت میں نئی تفصیل پڑھیں اور وہی سیکھی ہوئی مہارتیں استعمال کریں`,
+      `${titleUrdu} کے آخری موقع میں مدد کے بغیر ضروری معلومات، سوال، اور اگلا قدم مکمل کریں`
+    ],
+    targets: selected,
+    prerequisiteRefs: [],
+    useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
+    checkTypes: ["meaning", "listen-choice", "reverse", "build", "situation", "document-choice"],
+    document: {
+      documentKind: `${sourceKey}-record`,
+      title: titleUrdu,
+      labelUrdu: `${titleUrdu} کی عملی دستاویز پڑھیں`,
+      promptUrdu: "ہر قطار میں پہلے سیکھی ہوئی ڈچ بات ہے؛ سوال میں مانگی گئی بات کا درست اردو مطلب منتخب کریں۔",
+      instructionUrdu: "دستاویز کی قطاریں الگ پڑھیں اور نشان زدہ سیکھی ہوئی ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+      rows: selected.map((target, index) => ({ label: `خانہ ${index + 1}`, value: target.dutch }))
+    }
+  };
+}
+
+const a2MissionPlanProfilesV4 = [
+  ["a2-mission-job-start", "employment-capstone", ["a2-work-school", "a2-future-modal-verbs", "a2-work-conditions"], "نئی نوکری، اوقات، اور کام کی شرطیں", "نگران"],
+  ["a2-school-contact-mission", "school-contact-capstone", ["a2-school-absence-notice", "a2-parent-school"], "بچے کی غیر حاضری اور والدین ملاقات", "استاد"],
+  ["a2-health-doctor-mission", "health-capstone", ["a2-perfect-tense", "a2-strong-combined", "a2-doctor-advice"], "عام ڈاکٹر کی مکمل گفتگو اور فالو اپ", "ڈاکٹر"],
+  ["a2-housing-problems-mission", "housing-capstone", ["a2-health-housing", "a2-word-order-connectors", "a2-landlord-repairs"], "گھر کی خرابی، مرمت، اور تحریری پیروی", "مالک مکان"],
+  ["a2-shopping-complaints-mission", "complaints-capstone", ["a2-shopping-services", "a2-customer-complaints"], "واپسی، ضمانت، اور شکایت کا حل", "کسٹمر سروس ملازم"],
+  ["a2-mission-utilities", "bills-banking-capstone", ["a2-bills-banking"], "بل، ادائیگی، اور بینک حفاظت", "بینک ملازم"],
+  ["a2-mission-lost-stolen", "formal-message-capstone", ["a2-writing-messages", "a2-formal-digital-messages"], "رسمی پیغام، منسلک کاغذ، اور پیروی", "ادارے کا ملازم"]
+];
+for (const [missionId, sourceKey, lessonIds, titleUrdu, speakerUrdu] of a2MissionPlanProfilesV4) {
+  a2AuthoredCurriculumV4.missions[missionId] = makeA2AuthoredMissionPlanV4({
+    missionId,
+    sourceKey,
+    lessonIds,
+    titleUrdu,
+    speakerUrdu
+  });
+}
+
+const a2EmploymentMissionPlanV4 = a2AuthoredCurriculumV4.missions["a2-mission-job-start"];
+if (a2EmploymentMissionPlanV4) {
+  a2EmploymentMissionPlanV4.targets[1] = { lessonId: "a2-work-school", dutch: "dit is mijn contract" };
+  a2EmploymentMissionPlanV4.document.rows[1].value = "dit is mijn contract";
+}
+const a2HousingMissionPlanV4 = a2AuthoredCurriculumV4.missions["a2-housing-problems-mission"];
+if (a2HousingMissionPlanV4) {
+  a2HousingMissionPlanV4.targets[0] = {
+    lessonId: "a2-health-housing",
+    dutch: "de verwarming is sinds gisteren kapot"
+  };
+  a2HousingMissionPlanV4.document.rows[0].value = "de verwarming is sinds gisteren kapot";
+  a2HousingMissionPlanV4.targets[1] = {
+    lessonId: "a2-health-housing",
+    dutch: "kunt u vandaag een monteur sturen?"
+  };
+  a2HousingMissionPlanV4.document.rows[1].value = "kunt u vandaag een monteur sturen?";
+}
+
+for (const spec of Object.values(a2AuthoredCurriculumV4.lessons)) {
+  const urduByDutch = new Map(spec.seedConcepts.map(([dutch, urdu]) => [normalizedTextV4(dutch), urdu]));
+  spec.scenarios = Object.fromEntries(
+    Object.entries(spec.scenarios || {}).map(([dutch, scenario]) => [
+      normalizedTextV4(dutch),
+      scenario
+    ])
+  );
+  for (const [dutch, record] of Object.entries(spec.teaching || {})) {
+    // A2 examples must not smuggle an unowned support word into a teaching
+    // card. The practical chunk itself is already a complete useful example;
+    // longer examples are added only when every support word is a prerequisite.
+    const usefulWordExamples = {
+      baan: "de baan",
+      salaris: "het salaris",
+      contract: "het contract",
+      reparatie: "de reparatie",
+      lekkage: "de lekkage"
+    };
+    record.exampleDutch = usefulWordExamples[normalizedTextV4(dutch)] || dutch;
+    record.exampleUrdu = urduByDutch.get(dutch) || record.exampleUrdu;
+  }
+  for (const [documentIndex, document] of (spec.documents || []).entries()) {
+    document.title = `عملی دستاویز ${documentIndex + 1}`;
+    document.rows = document.rows.map((row, rowIndex) => ({
+      label: `خانہ ${rowIndex + 1}`,
+      value: row.value
+    }));
+  }
+}
+
 for (const [unitId, spec] of Object.entries(a1AuthoredCurriculumV4.units || {})) {
   const unit = a1Subchapters.find((item) => item.id === unitId);
   if (!unit) continue;
@@ -7809,6 +8574,27 @@ for (const [unitId, spec] of Object.entries(a1AuthoredCurriculumV4.units || {}))
 
 for (const [lessonId, spec] of Object.entries(a1AuthoredCurriculumV4.lessons)) {
   const lesson = a1Lessons.find((item) => item.id === lessonId);
+  if (!lesson) continue;
+  if (spec.title) lesson.title = spec.title;
+  if (spec.unitLabel) lesson.unit = spec.unitLabel;
+  lesson.description = spec.outcomeUrdu;
+  lesson.concepts = [];
+  lesson.seedConcepts = spec.seedConcepts.map(([dutch, urdu]) => ({
+    dutch,
+    urdu,
+    visualId: fallbackVisualIdForDutch(dutch) || ""
+  }));
+}
+
+for (const [unitId, spec] of Object.entries(a2AuthoredCurriculumV4.units || {})) {
+  const unit = a2Subchapters.find((item) => item.id === unitId);
+  if (!unit) continue;
+  unit.goal = spec.outcomeUrdu;
+  unit.practice = spec.practiceUrdu;
+}
+
+for (const [lessonId, spec] of Object.entries(a2AuthoredCurriculumV4.lessons)) {
+  const lesson = a2Lessons.find((item) => item.id === lessonId);
   if (!lesson) continue;
   if (spec.title) lesson.title = spec.title;
   if (spec.unitLabel) lesson.unit = spec.unitLabel;
@@ -7837,14 +8623,14 @@ for (const subchapter of a2Subchapters) {
 }
 
 const a2PracticalGrammarPlacementV4 = [
-  ["a2-gemeente-forms", "a2-separable-verbs-routine"],
-  ["a2-work-school", "a2-future-modal-verbs"],
-  ["a2-health-doctor", "a2-perfect-tense"],
-  ["a2-housing-problems", "a2-word-order-connectors"]
+  ["a2-gemeente-forms", "a2-separable-verbs-routine", 0],
+  ["a2-work-school", "a2-future-modal-verbs", 1],
+  ["a2-health-doctor", "a2-perfect-tense", 0],
+  ["a2-housing-problems", "a2-word-order-connectors", 1]
 ];
-for (const [unitId, lessonId] of a2PracticalGrammarPlacementV4) {
+for (const [unitId, lessonId, position] of a2PracticalGrammarPlacementV4) {
   const unit = a2Subchapters.find((subchapter) => subchapter.id === unitId);
-  if (unit) unit.lessonIds.unshift(lessonId);
+  if (unit) unit.lessonIds.splice(position, 0, lessonId);
 }
 
 const a2PracticalTitlesV4 = {
@@ -7867,6 +8653,16 @@ const a2PracticalTitlesV4 = {
 };
 for (const lesson of a2Lessons) {
   if (a2PracticalTitlesV4[lesson.id]) Object.assign(lesson, a2PracticalTitlesV4[lesson.id]);
+}
+
+// Authored A2 records are applied after the compatibility title pass so the
+// old grammar-first labels cannot overwrite the accepted practical lesson.
+for (const [lessonId, spec] of Object.entries(a2AuthoredCurriculumV4.lessons)) {
+  const lesson = a2Lessons.find((item) => item.id === lessonId);
+  if (!lesson) continue;
+  lesson.title = spec.title;
+  lesson.unit = spec.unitLabel;
+  lesson.description = spec.outcomeUrdu;
 }
 
 const a0CompletionLessonV4 = a0Lessons.find((lesson) => lesson.id === "a0-daily-checkpoint");
@@ -9656,12 +10452,20 @@ function applyA0StartSpeakingTeachingV4(concept) {
   }
 }
 
-function a1AuthoredTeachingRecordV4(concept) {
-  const lessonSpec = a1AuthoredCurriculumV4.lessons[concept.introducedInLessonId];
+function authoredCurriculumForLessonV4(lessonId) {
+  if (String(lessonId).startsWith("a1-")) return a1AuthoredCurriculumV4;
+  if (String(lessonId).startsWith("a2-")) return a2AuthoredCurriculumV4;
+  return null;
+}
+
+function authoredTeachingRecordV4(concept) {
+  const lessonSpec = authoredCurriculumForLessonV4(concept.introducedInLessonId)
+    ?.lessons?.[concept.introducedInLessonId];
   return lessonSpec?.teaching?.[normalizedTextV4(concept.dutch)] || null;
 }
 
-function applyA1AuthoredTeachingV4(concept, record) {
+function applyAuthoredTeachingV4(concept, record) {
+  const chapterId = String(concept.introducedInLessonId).slice(0, 2);
   Object.assign(concept, {
     usageUrdu: record.usageUrdu,
     usageBoundaryUrdu: record.usageBoundaryUrdu,
@@ -9669,9 +10473,9 @@ function applyA1AuthoredTeachingV4(concept, record) {
     exampleDutch: record.exampleDutch,
     exampleUrdu: record.exampleUrdu,
     pronunciationUrdu: record.pronunciationUrdu,
-    pronunciationReview: "a1-authored-manual-v1",
-    guidanceSource: `a1-authored:${semanticSlugV4(concept.introducedInLessonId)}:${semanticSlugV4(concept.dutch)}`,
-    exampleSource: "a1-authored-manual"
+    pronunciationReview: `${chapterId}-authored-manual-v1`,
+    guidanceSource: `${chapterId}-authored:${semanticSlugV4(concept.introducedInLessonId)}:${semanticSlugV4(concept.dutch)}`,
+    exampleSource: `${chapterId}-authored-manual`
   });
   concept.examples = [{ dutch: record.exampleDutch, urdu: record.exampleUrdu }];
   if (concept.visual?.kind === "context") {
@@ -9684,12 +10488,12 @@ for (const concept of conceptByIdV4.values()) {
     .flatMap((chapter) => chapter.lessons)
     .find((item) => item.id === concept.introducedInLessonId);
   if (!lesson) continue;
-  const a1AuthoredRecord = a1AuthoredTeachingRecordV4(concept);
-  if (a1AuthoredRecord) {
-    // Manual A1 records are the teaching source of truth.  The shared
+  const authoredRecord = authoredTeachingRecordV4(concept);
+  if (authoredRecord) {
+    // Manual chapter records are the teaching source of truth. The shared
     // practical-template pass must never replace their authored usage,
     // boundary, confusion, example, or reviewed pronunciation.
-    applyA1AuthoredTeachingV4(concept, a1AuthoredRecord);
+    applyAuthoredTeachingV4(concept, authoredRecord);
     continue;
   }
   improveConceptExampleV4(concept, lesson);
@@ -10084,8 +10888,11 @@ const a0AuthoredPatternSpecsV4 = {
 
 function makePatternV4(lesson, chapterId, conceptIds) {
   const explanation = lesson.questions.find((question) => question.type === "uitleg");
+  const chapterAuthoredSpec = authoredCurriculumForLessonV4(lesson.id)?.lessons?.[lesson.id];
+  if (chapterAuthoredSpec?.pattern === false) return null;
   const authoredSpec = a0AuthoredPatternSpecsV4[lesson.id]
     || a1AuthoredCurriculumV4.lessons[lesson.id]?.pattern
+    || a2AuthoredCurriculumV4.lessons[lesson.id]?.pattern
     || null;
   if (!explanation && !authoredSpec) return null;
   const firstRunCap = chapterId === "a0" ? 3 : chapterId === "a1" ? 5 : 4;
@@ -10094,7 +10901,7 @@ function makePatternV4(lesson, chapterId, conceptIds) {
     .map((conceptId) => conceptByIdV4.get(conceptId))
     .find((concept) => isCompletePatternModelV4(concept?.dutch));
   const authoredModelConcept = authoredSpec
-    ? (chapterId === "a1" ? conceptIds : firstRunConceptIds)
+    ? (["a1", "a2"].includes(chapterId) ? conceptIds : firstRunConceptIds)
       .map((conceptId) => conceptByIdV4.get(conceptId))
       .find((concept) => (
         normalizedTextV4(concept?.dutch) === normalizedTextV4(authoredSpec.modelDutch)
@@ -11606,11 +12413,12 @@ function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId
   if (!question || !concept || !scenario) return;
   const [stableId, prompt] = scenario;
   const sourceSuffix = suffix ? `:${suffix}` : "";
-  const source = `a1-authored:${semanticSlugV4(lessonId)}:${stableId}${sourceSuffix}`;
+  const chapterId = String(lessonId).slice(0, 2);
+  const source = `${chapterId}-authored:${semanticSlugV4(lessonId)}:${stableId}${sourceSuffix}`;
   const instruction = "حقیقی صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں۔";
   const correct = `درست۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے اور یہی اس موقع کی مناسب بات ہے۔`;
   const wrong = `یہ جواب اس صورت کے مطلوبہ معنی سے مختلف ہے۔ یہاں “${concept.dutch}” استعمال کریں؛ اس کا مطلب “${concept.urdu}” ہے۔`;
-  const lessonSpec = a1AuthoredCurriculumV4.lessons[lessonId] || {};
+  const lessonSpec = authoredCurriculumForLessonV4(lessonId)?.lessons?.[lessonId] || {};
   const authoredPrompt = suffix === "independent-check"
     ? lessonId === "a1-details-forms"
       ? `فارم جمع کرنے سے پہلے دوسرا ملازم ${prompt.replace(/[۔؟]+$/u, "")} دوبارہ خود جواب دیں۔`
@@ -11633,7 +12441,7 @@ function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId
 }
 
 function applyA1AuthoredLessonExperienceV4(lesson) {
-  const spec = a1AuthoredCurriculumV4.lessons[lesson.id];
+  const spec = authoredCurriculumForLessonV4(lesson.id)?.lessons?.[lesson.id];
   if (!spec) return;
   const questionById = new Map(lesson.questions.map((question) => [question.id, question]));
   for (const run of lesson.learning?.runs || []) {
@@ -11661,6 +12469,49 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
         "independent-check"
       );
     }
+  }
+
+  if (spec.documents?.length) {
+    for (const run of lesson.learning?.runs || []) {
+      const documentSpec = spec.documents[run.index - 1];
+      if (!documentSpec) continue;
+      const exerciseIds = [
+        ...(run.phases?.understand?.exerciseIds || []),
+        ...(run.phases?.use?.exerciseIds || []),
+        ...(run.phases?.independentCheck?.exerciseIds || [])
+      ];
+      for (const exerciseId of exerciseIds) {
+        const question = questionById.get(exerciseId);
+        if (question?.type !== "document-choice") continue;
+        const concept = (question.conceptIds || [])
+          .map((conceptId) => conceptByIdV4.get(conceptId))
+          .find(Boolean);
+        const correct = concept
+          ? `درست۔ دستاویز میں “${concept.dutch}” لکھا ہے؛ اس کا مطلب “${concept.urdu}” ہے۔`
+          : question.explainCorrectUrdu;
+        const wrong = concept
+          ? `دستاویز کی متعلقہ قطار دوبارہ پڑھیں۔ وہاں “${concept.dutch}” ہے، جس کا مطلب “${concept.urdu}” ہے۔`
+          : question.explainWrongUrdu;
+        Object.assign(question, {
+          document: {
+            documentKind: documentSpec.documentKind,
+            title: documentSpec.title,
+            rows: documentSpec.rows.map((row) => ({ ...row }))
+          },
+          prompt: `${documentSpec.title} کی قطاریں پڑھیں اور نشان زدہ ڈچ بات کا درست اردو مطلب منتخب کریں۔`,
+          scenarioId: `${lesson.id}:run-${run.index}:authored-document`,
+          scenarioSource: `a2-authored:${semanticSlugV4(lesson.id)}:run-${run.index}:document`,
+          authenticDocument: true,
+          instructionUrdu: "دستاویز کی ہر قطار الگ پڑھیں، پھر سوال میں مانگی گئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+          instruction: "دستاویز کی ہر قطار الگ پڑھیں، پھر سوال میں مانگی گئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+          explainCorrectUrdu: correct,
+          correctExplanation: correct,
+          explainWrongUrdu: wrong,
+          wrongExplanation: wrong
+        });
+      }
+    }
+    return;
   }
 
   if (!spec.document) return;
@@ -11748,12 +12599,12 @@ for (const chapter of chaptersV4) {
     const unit = unitForLessonV4(chapter, lesson.id);
     const conceptIds = lessonConceptIdsV4.get(lesson.id) || [];
     const pattern = makePatternV4(lesson, chapter.id, conceptIds);
-    const a1AuthoredSpec = chapter.id === "a1"
-      ? a1AuthoredCurriculumV4.lessons[lesson.id]
+    const authoredSpec = ["a1", "a2"].includes(chapter.id)
+      ? authoredCurriculumForLessonV4(lesson.id)?.lessons?.[lesson.id] || null
       : null;
     const prerequisiteLesson = previousNormalLesson || previousChapterLastLessonV4;
-    const prerequisiteSkillIds = a1AuthoredSpec
-      ? resolveA1AuthoredSkillRefsV4(a1AuthoredSpec.prerequisiteRefs)
+    const prerequisiteSkillIds = authoredSpec
+      ? resolveA1AuthoredSkillRefsV4(authoredSpec.prerequisiteRefs)
       : prerequisiteLesson
         ? prerequisiteLesson.skillIds.slice(-5)
         : [];
@@ -11769,8 +12620,8 @@ for (const chapter of chaptersV4) {
       ...conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)),
       pattern?.skillId
     ]);
-    const prerequisiteLessonIds = a1AuthoredSpec
-      ? [...a1AuthoredSpec.prerequisiteLessonIds]
+    const prerequisiteLessonIds = authoredSpec
+      ? [...authoredSpec.prerequisiteLessonIds]
       : prerequisiteLesson
         ? [prerequisiteLesson.id]
         : [];
@@ -12967,8 +13818,12 @@ function makeA1AuthoredMissionQuestionV4({
   const taskContext = [context, target.taskUrdu].filter(Boolean).join(" ");
   const sourceKey = plan.sourceKey || "personal-info-mission";
   const speakerUrdu = plan.speakerUrdu || "ملازم";
-  const source = `a1-authored:${sourceKey}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`;
-  const semanticKey = source.replace(/^a1-authored:/, "a1-authored-mission:");
+  const chapterId = mission.chapterId || String(mission.id).slice(0, 2);
+  const source = `${chapterId}-authored:${sourceKey}:variant-${variantIndex + 1}:${phase}:slot-${slotIndex + 1}`;
+  const semanticKey = source.replace(
+    new RegExp(`^${chapterId}-authored:`),
+    `${chapterId}-authored-mission:`
+  );
   let question;
   const optionsFor = (mode) => {
     const answer = mode === "dutch" ? targetDutch : canonicalUrdu;
@@ -13095,10 +13950,11 @@ function applyA1AuthoredMissionV4(mission, plan) {
     ...supportingPrerequisiteSkillIds
   ]);
   const sourceKey = plan.sourceKey || "personal-info-mission";
+  const chapterId = mission.chapterId || String(mission.id).slice(0, 2);
   Object.assign(mission, {
     scenarioTitleUrdu: plan.scenarioTitleUrdu,
-    scenarioId: `${mission.id}:a1-authored-capstone`,
-    scenarioSource: `a1-authored:${sourceKey}`,
+    scenarioId: `${mission.id}:${chapterId}-authored-capstone`,
+    scenarioSource: `${chapterId}-authored:${sourceKey}`,
     conceptIds,
     assessmentSkillIds,
     prerequisiteSkillIds,
@@ -13144,7 +14000,7 @@ function applyA1AuthoredMissionV4(mission, plan) {
       id,
       title,
       scenarioId: `${mission.id}:authored-variant-${variantIndex + 1}`,
-      scenarioSource: `a1-authored:${sourceKey}:variant-${variantIndex + 1}`,
+      scenarioSource: `${chapterId}-authored:${sourceKey}:variant-${variantIndex + 1}`,
       questions,
       phases: {
         preview: { exerciseIds: [], scored: false },
@@ -13192,7 +14048,115 @@ const a1CompletionMissionV4 = {
 };
 a1Lessons.push(a1CompletionMissionV4);
 
+const a2CompletionMissionV4 = {
+  id: "a2-chapter-completion-mission",
+  kind: "mission",
+  unit: "A2: آخری عملی جانچ",
+  title: "Laatste praktische missie voor A2",
+  description: "A2 کے آٹھ عملی حصوں سے معنی، سننا، پڑھنا، بغیر نمبر بولنے کی مدد، مختصر لکھائی، اور حقیقی استعمال مکمل کرنا۔",
+  xp: 0,
+  variants: [],
+  questions: [],
+  chapterId: "a2",
+  unitId: "a2-chapter-completion"
+};
+a2Lessons.push(a2CompletionMissionV4);
+a2AuthoredCurriculumV4.missions["a2-chapter-completion-mission"] = {
+  sourceKey: "a2-chapter-completion",
+  scenarioTitleUrdu: "A2 کی آٹھ حقیقی زندگی کی ذمہ داریاں",
+  speakerUrdu: "متعلقہ ملازم",
+  prerequisiteLessonIds: [
+    "a2-gemeente-documents",
+    "a2-work-conditions",
+    "a2-parent-school",
+    "a2-doctor-advice",
+    "a2-landlord-repairs",
+    "a2-customer-complaints",
+    "a2-bills-banking",
+    "a2-formal-digital-messages"
+  ],
+  prerequisiteMissionIds: [
+    "a2-mission-social-help",
+    "a2-mission-job-start",
+    "a2-school-contact-mission",
+    "a2-health-doctor-mission",
+    "a2-housing-problems-mission",
+    "a2-shopping-complaints-mission",
+    "a2-mission-utilities",
+    "a2-mission-lost-stolen"
+  ],
+  variantTitles: [
+    "ایک مصروف دن کے ضروری کام",
+    "بدلی ہوئی معلومات کے ساتھ دوسرا دن",
+    "A2 آخری خود مختار عملی جانچ"
+  ],
+  variantContexts: [
+    "ایک دن میں سرکاری درخواست، کام، اسکول، صحت، گھر، شکایت، بل، اور رسمی ای میل کے ضروری قدم مکمل کریں",
+    "نئی تاریخوں اور نئی عملی تفصیلات کے ساتھ آٹھوں جگہوں پر وہی محفوظ مہارتیں دوبارہ استعمال کریں",
+    "بغیر نئی زبان یا خودکار اشارے کے آٹھ حقیقی کاموں میں ضروری معنی، سننا، پڑھنا، بولنا، لکھنا، اور اگلا قدم مکمل کریں"
+  ],
+  targets: [
+    {
+      lessonId: "a2-gemeente-documents",
+      dutch: "wanneer krijg ik antwoord?",
+      related: [{ lessonId: "a2-work-conditions", dutch: "mijn salaris klopt niet" }]
+    },
+    {
+      lessonId: "a2-parent-school",
+      dutch: "kan mijn kind extra hulp krijgen?",
+      related: [{ lessonId: "a2-doctor-advice", dutch: "wanneer moet ik terugkomen" }]
+    },
+    {
+      lessonId: "a2-landlord-repairs",
+      dutch: "wanneer wordt het gerepareerd",
+      related: [{ lessonId: "a2-customer-complaints", dutch: "wanneer krijg ik een oplossing" }]
+    },
+    {
+      lessonId: "a2-bills-banking",
+      dutch: "de automatische betaling is mislukt",
+      related: [{ lessonId: "a2-formal-digital-messages", dutch: "het formulier staat in de bijlage" }]
+    },
+    { lessonId: "a2-formal-digital-messages", dutch: "kunt u mijn bericht bevestigen" }
+  ],
+  prerequisiteRefs: [],
+  useTypes: [
+    "situation",
+    "listen-choice",
+    "document-choice",
+    "speak-repeat",
+    "build"
+  ],
+  checkTypes: [
+    "meaning",
+    "listen-choice",
+    "document-choice",
+    "speak-repeat",
+    "build"
+  ],
+  document: {
+    documentKind: "a2-connected-day-record",
+    title: "A2 آخری عملی فہرست",
+    labelUrdu: "آٹھ عملی کاموں کی فہرست پڑھیں",
+    promptUrdu: "فہرست کی ہر قطار ایک پہلے سیکھی ہوئی ذمہ داری دکھاتی ہے؛ مانگی ہوئی ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+    instructionUrdu: "آٹھ قطاریں الگ پڑھیں اور سوال میں نشان زدہ مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+    rows: [
+      { label: "سرکاری درخواست", value: "wanneer krijg ik antwoord?" },
+      { label: "اسکول", value: "kan mijn kind extra hulp krijgen?" },
+      { label: "گھر", value: "wanneer wordt het gerepareerd" },
+      { label: "بل", value: "de automatische betaling is mislukt" },
+      { label: "ای میل", value: "kunt u mijn bericht bevestigen" }
+    ]
+  }
+};
+
 for (const [missionId, plan] of Object.entries(a1AuthoredCurriculumV4.missions)) {
+  const mission = chaptersV4
+    .flatMap((chapter) => chapter.lessons)
+    .find((lesson) => lesson.id === missionId && lesson.kind === "mission");
+  if (mission) applyA1AuthoredMissionV4(mission, plan);
+}
+
+for (const [missionId, plan] of Object.entries(a2AuthoredCurriculumV4.missions)) {
   const mission = chaptersV4
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === missionId && lesson.kind === "mission");
@@ -13246,6 +14210,8 @@ for (let chapterIndex = 0; chapterIndex < chaptersV4.length; chapterIndex += 1) 
   const missions = chapter.lessons.filter((lesson) => lesson.kind === "mission");
   const prerequisiteSkillIds = chapter.id === "a1"
     ? resolveA1AuthoredSkillRefsV4(a1AuthoredCurriculumV4.chapterPrerequisiteRefs)
+    : chapter.id === "a2"
+      ? resolveA1AuthoredSkillRefsV4(a2AuthoredCurriculumV4.chapterPrerequisiteRefs)
     : previousChapter
       ? previousChapter.lessons
         .filter((lesson) => lesson.kind !== "mission")

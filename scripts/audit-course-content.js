@@ -1071,7 +1071,7 @@ function auditV4Exercise(findings, chapter, lesson, question, conceptMap, skillM
 
 function auditA1UseScenarioProvenance(findings, chapter, lesson, question) {
   if (
-    chapter.id !== "a1"
+    !["a1", "a2"].includes(chapter.id)
     || !question
     || question.phase !== "use"
     || question.scored === false
@@ -1079,16 +1079,17 @@ function auditA1UseScenarioProvenance(findings, chapter, lesson, question) {
   ) return;
 
   const scenarioSource = text(question.scenarioSource);
+  const requiredPrefix = `${chapter.id}-authored:`;
   if (
-    scenarioSource.startsWith("a1-authored:")
-    && scenarioSource.length > "a1-authored:".length
+    scenarioSource.startsWith(requiredPrefix)
+    && scenarioSource.length > requiredPrefix.length
   ) return;
 
   addCourseFinding(
     findings,
     "error",
-    "a1-use-scenario-provenance",
-    "Every selected scored A1 Use exercise needs a stable authored scenarioSource beginning with a1-authored:.",
+    `${chapter.id}-use-scenario-provenance`,
+    `Every selected scored ${chapter.id.toUpperCase()} Use exercise needs a stable authored scenarioSource beginning with ${requiredPrefix}.`,
     scenarioSource || "missing scenarioSource",
     chapter,
     lesson,
