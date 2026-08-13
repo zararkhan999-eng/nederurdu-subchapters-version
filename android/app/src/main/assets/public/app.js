@@ -3,15 +3,38 @@ const LEGACY_STORAGE_KEY = "nederurdu-progress-v3";
 const PROGRESS_SCHEMA_VERSION = 4;
 const COURSE_SCHEMA_VERSION = Number(window.NEDERURDU_COURSE?.schemaVersion || 0);
 const launchScreen = document.querySelector(".launch-screen");
-const constrainedViewport = Boolean(
-  window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
-);
-const constrainedHardware = Boolean(
-  (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
-  || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4)
-);
-const performanceLite = constrainedViewport || (constrainedHardware && window.innerWidth <= 1100);
-document.documentElement.classList.toggle("performance-lite", performanceLite);
+const effectsProfileOverride = ["enhanced", "lite", "reduced"].includes(window.NEDERURDU_EFFECTS_PROFILE)
+  ? window.NEDERURDU_EFFECTS_PROFILE
+  : "";
+const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+
+function detectEffectsProfile() {
+  if (effectsProfileOverride) return effectsProfileOverride;
+  if (reducedMotionQuery?.matches) return "reduced";
+  const constrainedViewport = Boolean(
+    window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
+  );
+  const constrainedHardware = Boolean(
+    (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
+    || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4)
+  );
+  return constrainedViewport || (constrainedHardware && window.innerWidth <= 1100) ? "lite" : "enhanced";
+}
+
+let effectsProfile = detectEffectsProfile();
+let performanceLite = effectsProfile !== "enhanced";
+
+function applyEffectsProfile(profile) {
+  effectsProfile = profile;
+  performanceLite = profile !== "enhanced";
+  document.documentElement.dataset.effects = profile;
+  document.documentElement.classList.toggle("performance-lite", performanceLite);
+  document.documentElement.classList.toggle("effects-enhanced", profile === "enhanced");
+  document.documentElement.classList.toggle("effects-lite", profile === "lite");
+  document.documentElement.classList.toggle("effects-reduced", profile === "reduced");
+}
+
+applyEffectsProfile(effectsProfile);
 
 let launchFinished = false;
 const finishLaunch = () => {
@@ -22,14 +45,14 @@ const finishLaunch = () => {
   window.setTimeout(() => launchScreen?.remove(), 720);
 };
 
-if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+if (effectsProfile === "reduced") {
   finishLaunch();
 } else {
   const playLaunch = () => {
     requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
     if (!navigator.webdriver) {
       launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
-      window.setTimeout(finishLaunch, 3800);
+      window.setTimeout(finishLaunch, effectsProfile === "lite" ? 1900 : 3800);
     }
   };
   if (document.readyState === "complete") playLaunch();
@@ -439,9 +462,14 @@ let globalMotionBound = false;
 let pointerFrame = 0;
 let scrollFrame = 0;
 let worldTransitionTimer = 0;
+let effectsProfileRefreshTimer = 0;
 let lastPointerPosition = { x: window.innerWidth / 2, y: window.innerHeight * 0.32 };
 
-const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = () => effectsProfile === "reduced" || Boolean(reducedMotionQuery?.matches);
+const enhancedInteractiveEffects = () => (
+  effectsProfile === "enhanced"
+  && (!navigator.webdriver || effectsProfileOverride === "enhanced")
+);
 
 function loadProgress() {
   try {
@@ -1129,7 +1157,7 @@ function render() {
     `;
   }
   bindEvents();
-  bindExperienceMotion();
+  bindExperienceMotion(screenChanged);
   lastRenderedScreen = screen;
 }
 
@@ -2656,9 +2684,9 @@ function bindEvents() {
   });
 }
 
-function bindExperienceMotion() {
+function bindExperienceMotion(screenChanged = false) {
   experienceObserver?.disconnect();
-  if (navigator.webdriver || performanceLite) {
+  if (prefersReducedMotion()) {
     updateScrollMotion();
     return;
   }
@@ -2670,88 +2698,30 @@ function bindExperienceMotion() {
     ".utility-action"
   ].join(","));
 
-  revealTargets.forEach((element, index) => {
-    element.classList.add("experience-reveal");
-    element.style.setProperty("--reveal-order", String(index % 8));
-  });
-
-  if (!prefersReducedMotion() && "IntersectionObserver" in window) {
-    experienceObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        experienceObserver?.unobserve(entry.target);
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -24px" });
-    revealTargets.forEach((element) => experienceObserver.observe(element));
-  } else {
-    revealTargets.forEach((element) => element.classList.add("is-visible"));
-  }
-
-  if (!prefersReducedMotion() && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) {
-    document.querySelectorAll(".today-panel, .unit-card, .review-hero").forEach((element) => {
-      element.classList.add("motion-tilt");
-      element.addEventListener("pointermove", (event) => {
-        const bounds = element.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5;
-        const y = (event.clientY - bounds.top) / Math.max(1, bounds.height) - 0.5;
-        element.style.setProperty("--tilt-x", `${(-y * 3.2).toFixed(2)}deg`);
-        element.style.setProperty("--tilt-y", `${(x * 4.2).toFixed(2)}deg`);
-        element.style.setProperty("--glow-x", `${((x + 0.5) * 100).toFixed(1)}%`);
-        element.style.setProperty("--glow-y", `${((y + 0.5) * 100).toFixed(1)}%`);
-      });
-      element.addEventListener("pointerleave", () => {
-        element.style.setProperty("--tilt-x", "0deg");
-        element.style.setProperty("--tilt-y", "0deg");
-      });
+  if (screenChanged) {
+    revealTargets.forEach((element, index) => {
+      element.classList.add("experience-reveal");
+      element.style.setProperty("--reveal-order", String(index % 6));
     });
+
+    if (enhancedInteractiveEffects() && "IntersectionObserver" in window) {
+      experienceObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          experienceObserver?.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -24px" });
+      revealTargets.forEach((element) => experienceObserver.observe(element));
+    } else {
+      revealTargets.forEach((element) => element.classList.add("is-visible"));
+    }
+
+    animateCountUpMetrics();
   }
 
-  animateCountUpMetrics();
-  bindGlobalPointerGlow();
+  if (enhancedInteractiveEffects()) bindGlobalPointerGlow();
   updateScrollMotion();
-}
-
-function bindSurfaceSpotlights() {
-  if (prefersReducedMotion() || !window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) return;
-  const surfaces = document.querySelectorAll([
-    ".progress-header",
-    ".today-panel",
-    ".unit-card",
-    ".chapter-switcher",
-    ".path-overview",
-    ".lesson-start-card",
-    ".prompt-scene",
-    ".teaching-card",
-    ".choice-button",
-    ".review-hero",
-    ".review-hub-card",
-    ".settings-intro",
-    ".setting-row",
-    ".utility-action",
-    ".letter-card",
-    ".quiz-action-bar",
-    ".quiz-feedback-panel",
-    ".complete-screen",
-    ".bottom-nav"
-  ].join(","));
-
-  surfaces.forEach((element) => {
-    element.classList.add("immersive-surface");
-    const light = document.createElement("span");
-    light.className = "surface-spotlight";
-    light.setAttribute("aria-hidden", "true");
-    element.prepend(light);
-    element.addEventListener("pointerenter", () => element.classList.add("surface-lit"));
-    element.addEventListener("pointermove", (event) => {
-      const bounds = element.getBoundingClientRect();
-      const x = ((event.clientX - bounds.left) / Math.max(1, bounds.width)) * 100;
-      const y = ((event.clientY - bounds.top) / Math.max(1, bounds.height)) * 100;
-      element.style.setProperty("--surface-x", `${Math.max(0, Math.min(100, x)).toFixed(1)}%`);
-      element.style.setProperty("--surface-y", `${Math.max(0, Math.min(100, y)).toFixed(1)}%`);
-    });
-    element.addEventListener("pointerleave", () => element.classList.remove("surface-lit"));
-  });
 }
 
 function updateScrollMotion() {
@@ -2770,9 +2740,10 @@ function updateScrollMotion() {
 }
 
 function bindGlobalPointerGlow() {
-  if (globalMotionBound || prefersReducedMotion()) return;
+  if (globalMotionBound || !enhancedInteractiveEffects()) return;
   globalMotionBound = true;
   document.addEventListener("pointermove", (event) => {
+    if (!enhancedInteractiveEffects()) return;
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
     pointerFrame = requestAnimationFrame(() => {
       updatePointerAtmosphere(event.clientX, event.clientY);
@@ -2780,14 +2751,17 @@ function bindGlobalPointerGlow() {
   }, { passive: true });
 
   document.addEventListener("pointerdown", (event) => {
+    if (!enhancedInteractiveEffects()) return;
     updatePointerAtmosphere(event.clientX, event.clientY);
     triggerAmbientPulse(event.clientX, event.clientY, event.pointerType === "touch");
   }, { passive: true });
 
   window.addEventListener("scroll", () => {
+    if (!enhancedInteractiveEffects()) return;
     if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
   }, { passive: true });
   window.addEventListener("resize", () => {
+    if (!enhancedInteractiveEffects()) return;
     updateScrollMotion();
     updatePointerAtmosphere(lastPointerPosition.x, lastPointerPosition.y);
   }, { passive: true });
@@ -2818,6 +2792,7 @@ function updatePointerAtmosphere(clientX, clientY) {
 }
 
 function triggerAmbientPulse(clientX, clientY, compact = false) {
+  if (!enhancedInteractiveEffects()) return;
   const atmosphere = document.querySelector(".responsive-atmosphere");
   if (!atmosphere) return;
   const pulse = document.createElement("span");
@@ -2881,15 +2856,19 @@ function triggerAnswerMoment(correct, compact = false) {
   requestAnimationFrame(() => document.body.classList.add(correct ? "answer-correct-flash" : "answer-wrong-flash"));
   window.setTimeout(() => document.body.classList.remove("answer-correct-flash", "answer-wrong-flash"), correct ? 900 : 650);
   document.querySelectorAll(".answer-moment").forEach((element) => element.remove());
-  const moment = document.createElement("div");
-  moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
-  moment.setAttribute("aria-hidden", "true");
-  moment.innerHTML = correct
-    ? Array.from({ length: compact ? 7 : 14 }, (_, index) => `<span style="--burst-index:${index};--burst-angle:${(360 / (compact ? 7 : 14)) * index}deg"></span>`).join("")
-    : "<span></span><span></span><span></span>";
-  document.body.append(moment);
-  requestAnimationFrame(() => moment.classList.add("is-active"));
-  window.setTimeout(() => moment.remove(), correct ? 1800 : 720);
+  const anchor = document.querySelector(".quiz-feedback-panel .feedback-icon, .question-kind-icon");
+  if (anchor) {
+    anchor.classList.add("effect-burst-anchor");
+    const moment = document.createElement("span");
+    moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
+    moment.setAttribute("aria-hidden", "true");
+    moment.innerHTML = correct
+      ? Array.from({ length: compact ? 5 : 9 }, (_, index) => `<span style="--burst-index:${index};--burst-angle:${(360 / (compact ? 5 : 9)) * index}deg"></span>`).join("")
+      : "<span></span><span></span><span></span>";
+    anchor.append(moment);
+    requestAnimationFrame(() => moment.classList.add("is-active"));
+    window.setTimeout(() => moment.remove(), correct ? 1200 : 720);
+  }
 
   try {
     navigator.vibrate?.(correct ? 18 : [12, 36, 12]);
@@ -4192,6 +4171,27 @@ function playAnswerSound(kind) {
   playTone(context, 210, now, 0.16, 0.12, "sine");
   playTone(context, 165, now + 0.12, 0.18, 0.1, "sine");
 }
+
+function refreshEffectsProfile() {
+  const nextProfile = detectEffectsProfile();
+  if (nextProfile === effectsProfile) return;
+  applyEffectsProfile(nextProfile);
+  experienceObserver?.disconnect();
+  if (nextProfile === "reduced") finishLaunch();
+  if (document.querySelector("#app")?.childElementCount) bindExperienceMotion(false);
+}
+
+function scheduleEffectsProfileRefresh() {
+  window.clearTimeout(effectsProfileRefreshTimer);
+  effectsProfileRefreshTimer = window.setTimeout(refreshEffectsProfile, 120);
+}
+
+window.addEventListener("resize", scheduleEffectsProfileRefresh, { passive: true });
+reducedMotionQuery?.addEventListener?.("change", refreshEffectsProfile);
+document.addEventListener("visibilitychange", () => {
+  document.documentElement.classList.toggle("effects-paused", document.hidden);
+});
+document.documentElement.classList.toggle("effects-paused", document.hidden);
 
 render();
 

@@ -80,6 +80,393 @@ async function makeMissionReady(page, missionId) {
   }, missionId);
 }
 
+test("effects regression: enhanced atmosphere stays behind the app with a bounded motion budget", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Run this deterministic effects contract once in desktop Chromium.");
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    window.NEDERURDU_EFFECTS_PROFILE = "enhanced";
+  });
+  await openCleanApp(page);
+  await page.evaluate(() => finishLaunch());
+  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+  await expect(page.locator("html")).toHaveAttribute("data-effects", "enhanced");
+
+  const initialDecorationCounts = await page.evaluate(() => ({
+    atmosphere: document.querySelectorAll(".responsive-atmosphere").length,
+    atmosphereChildren: document.querySelectorAll(".responsive-atmosphere > *").length,
+    backdrop: document.querySelectorAll(".experience-backdrop").length,
+    backdropChildren: document.querySelectorAll(".experience-backdrop > *").length,
+    spotlights: document.querySelectorAll(".surface-spotlight").length
+  }));
+
+  expect(initialDecorationCounts.atmosphere).toBe(1);
+  expect(initialDecorationCounts.atmosphereChildren).toBeGreaterThan(0);
+  expect(initialDecorationCounts.backdrop).toBe(1);
+  expect(initialDecorationCounts.backdropChildren).toBeGreaterThan(0);
+  expect(initialDecorationCounts.spotlights).toBe(0);
+
+  await page.evaluate(() => {
+    for (let index = 0; index < 24; index += 1) render();
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+
+  const contract = await page.evaluate(() => {
+    const atmosphere = document.querySelector(".responsive-atmosphere");
+    const app = document.querySelector("#app");
+    const atmosphereBounds = atmosphere.getBoundingClientRect();
+    const decorations = [...document.querySelectorAll([
+      ".responsive-atmosphere",
+      ".responsive-atmosphere *",
+      ".experience-backdrop",
+      ".experience-backdrop *"
+    ].join(","))];
+    const actionElements = [...document.querySelectorAll("[data-action],a[href],button,input,select,textarea,[role='button']")];
+    const dock = document.querySelector(".bottom-nav");
+    const dockBounds = dock?.getBoundingClientRect();
+    const blockedControls = actionElements.flatMap((element) => {
+      const bounds = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      if (
+        bounds.width < 2
+        || bounds.height < 2
+        || bounds.right <= 0
+        || bounds.bottom <= 0
+        || bounds.left >= innerWidth
+        || bounds.top >= innerHeight
+        || style.display === "none"
+        || style.visibility === "hidden"
+        || Number(style.opacity) === 0
+      ) return [];
+      const x = Math.min(innerWidth - 1, Math.max(0, bounds.left + (bounds.width / 2)));
+      const y = Math.min(innerHeight - 1, Math.max(0, bounds.top + (bounds.height / 2)));
+      if (dockBounds && !dock.contains(element) && y >= dockBounds.top && y <= dockBounds.bottom) return [];
+      const topHit = document.elementsFromPoint(x, y).find((candidate) => getComputedStyle(candidate).pointerEvents !== "none");
+      if (topHit && (element.contains(topHit) || topHit.contains(element))) return [];
+      return [{
+        action: element.getAttribute("data-action") || element.getAttribute("aria-label") || element.tagName,
+        topHit: topHit?.getAttribute("data-action") || topHit?.className || topHit?.tagName || "none"
+      }];
+    });
+    const activeInfiniteAnimations = document.getAnimations().flatMap((animation) => {
+      const iterations = animation.effect?.getTiming?.().iterations;
+      const target = animation.effect?.target;
+      if (iterations !== Infinity || !["running", "pending"].includes(animation.playState) || !(target instanceof Element)) return [];
+      const bounds = target.getBoundingClientRect();
+      const style = getComputedStyle(target);
+      const onScreen = bounds.width > 0
+        && bounds.height > 0
+        && bounds.right > 0
+        && bounds.bottom > 0
+        && bounds.left < innerWidth
+        && bounds.top < innerHeight;
+      if (!onScreen || style.display === "none" || style.visibility === "hidden") return [];
+      return [{
+        name: animation.animationName || animation.id || "unnamed",
+        target: target.className || target.tagName,
+        pseudo: animation.effect?.pseudoElement || ""
+      }];
+    });
+    return {
+      counts: {
+        atmosphere: document.querySelectorAll(".responsive-atmosphere").length,
+        atmosphereChildren: document.querySelectorAll(".responsive-atmosphere > *").length,
+        backdrop: document.querySelectorAll(".experience-backdrop").length,
+        backdropChildren: document.querySelectorAll(".experience-backdrop > *").length,
+        spotlights: document.querySelectorAll(".surface-spotlight").length
+      },
+      atmosphere: {
+        display: getComputedStyle(atmosphere).display,
+        position: getComputedStyle(atmosphere).position,
+        pointerEvents: getComputedStyle(atmosphere).pointerEvents,
+        zIndex: Number(getComputedStyle(atmosphere).zIndex),
+        left: atmosphereBounds.left,
+        top: atmosphereBounds.top,
+        right: atmosphereBounds.right,
+        bottom: atmosphereBounds.bottom
+      },
+      appZIndex: Number(getComputedStyle(app).zIndex),
+      decorationsIntercepting: decorations.filter((element) => getComputedStyle(element).pointerEvents !== "none").map((element) => element.className || element.tagName),
+      blockedControls,
+      activeInfiniteAnimations
+    };
+  });
+
+  expect(contract.counts).toEqual(initialDecorationCounts);
+  expect(contract.atmosphere.display).toBe("block");
+  expect(contract.atmosphere.position).toBe("fixed");
+  expect(contract.atmosphere.pointerEvents).toBe("none");
+  expect(contract.atmosphere.zIndex).toBeLessThan(contract.appZIndex);
+  expect(Math.abs(contract.atmosphere.left)).toBeLessThanOrEqual(1);
+  expect(Math.abs(contract.atmosphere.top)).toBeLessThanOrEqual(1);
+  expect(Math.abs(contract.atmosphere.right - 1440)).toBeLessThanOrEqual(1);
+  expect(Math.abs(contract.atmosphere.bottom - 900)).toBeLessThanOrEqual(1);
+  expect(contract.decorationsIntercepting).toEqual([]);
+  expect(contract.blockedControls).toEqual([]);
+  expect(contract.activeInfiniteAnimations.length, JSON.stringify(contract.activeInfiniteAnimations)).toBeGreaterThanOrEqual(2);
+  expect(contract.activeInfiniteAnimations.length, JSON.stringify(contract.activeInfiniteAnimations)).toBeLessThanOrEqual(3);
+});
+
+test("effects regression: enhanced effects remain responsive beyond twelve seconds", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Run this long-duration effects check once in desktop Chromium.");
+  test.setTimeout(45_000);
+
+  const runtimeErrors = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") runtimeErrors.push(message.text());
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    window.NEDERURDU_EFFECTS_PROFILE = "enhanced";
+  });
+  await openCleanApp(page);
+  await page.evaluate(() => finishLaunch());
+  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+
+  const startedAt = Date.now();
+  for (let index = 0; index < 24; index += 1) {
+    await page.mouse.move(80 + ((index * 53) % 1280), 70 + ((index * 37) % 760));
+    if (index % 6 === 0) await page.mouse.wheel(0, index % 12 === 0 ? 180 : -180);
+    await page.waitForTimeout(70);
+  }
+  await page.waitForTimeout(Math.max(0, 12_500 - (Date.now() - startedAt)));
+
+  await page.locator('[data-action="settings"]').click({ timeout: 3_000 });
+  await expect(page.locator(".settings-panel")).toBeVisible({ timeout: 3_000 });
+  await page.locator('[data-action="home"]').click({ timeout: 3_000 });
+  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible({ timeout: 3_000 });
+  await page.locator('[data-action="preview"]:visible').first().click({ timeout: 3_000 });
+  await expect(page.locator(".learning-preview")).toBeVisible({ timeout: 3_000 });
+  await page.locator('.learning-preview [data-action="start"]').click({ timeout: 3_000 });
+  await expect(page.locator(".quiz-screen")).toBeVisible({ timeout: 3_000 });
+
+  const heartbeat = await page.evaluate(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve({
+      profile: document.documentElement.dataset.effects,
+      screen: document.body.dataset.screen,
+      spotlights: document.querySelectorAll(".surface-spotlight").length
+    })));
+  }));
+  await page.waitForTimeout(1_100);
+
+  expect(Date.now() - startedAt).toBeGreaterThanOrEqual(12_000);
+  expect(heartbeat).toEqual({ profile: "enhanced", screen: "lesson", spotlights: 0 });
+  await expect(page.locator(".atmosphere-pulse")).toHaveCount(0);
+  expect(runtimeErrors).toEqual([]);
+});
+
+test("effects regression: atmosphere and fixed controls stay pixel-contained across responsive widths", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Run this deterministic viewport matrix once in desktop Chromium.");
+
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 360, height: 800 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 768 },
+    { width: 1440, height: 900 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await openCleanApp(page);
+    await page.evaluate(() => finishLaunch());
+    await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+
+    const homeGeometry = await page.evaluate(() => {
+      const rect = (selector) => {
+        const element = document.querySelector(selector);
+        if (!element) return null;
+        const bounds = element.getBoundingClientRect();
+        return { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom, width: bounds.width, height: bounds.height };
+      };
+      const overlaps = (first, second) => Boolean(
+        first && second
+        && first.left < second.right
+        && first.right > second.left
+        && first.top < second.bottom
+        && first.bottom > second.top
+      );
+      const atmosphere = document.querySelector(".responsive-atmosphere");
+      const app = document.querySelector("#app");
+      const atmosphereBounds = rect(".responsive-atmosphere");
+      const navBounds = rect(".bottom-nav");
+      const actionBounds = rect(".today-action");
+      const horizontalFailures = [".progress-header", ".today-panel", ".chapter-switcher-wrap", ".unit-card", ".bottom-nav"].flatMap((selector) => (
+        [...document.querySelectorAll(selector)].flatMap((element) => {
+          const bounds = element.getBoundingClientRect();
+          return bounds.left < -1 || bounds.right > innerWidth + 1 ? [{ selector, left: bounds.left, right: bounds.right }] : [];
+        })
+      ));
+      const navButtonsBlocked = [...document.querySelectorAll(".bottom-nav [data-action]")].flatMap((element) => {
+        const bounds = element.getBoundingClientRect();
+        const topHit = document.elementsFromPoint(bounds.left + (bounds.width / 2), bounds.top + (bounds.height / 2))
+          .find((candidate) => getComputedStyle(candidate).pointerEvents !== "none");
+        return topHit && (element.contains(topHit) || topHit.contains(element)) ? [] : [element.dataset.action];
+      });
+      return {
+        profile: document.documentElement.dataset.effects,
+        documentOverflow: document.documentElement.scrollWidth - innerWidth,
+        atmosphereBounds,
+        atmospherePosition: getComputedStyle(atmosphere).position,
+        atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
+        atmosphereBehindApp: Number(getComputedStyle(atmosphere).zIndex) < Number(getComputedStyle(app).zIndex),
+        navBounds,
+        navOpaque: getComputedStyle(document.querySelector(".bottom-nav")).backgroundImage !== "none",
+        actionOverlapsDock: overlaps(actionBounds, navBounds),
+        horizontalFailures,
+        navButtonsBlocked
+      };
+    });
+
+    expect(homeGeometry.documentOverflow, `${viewport.width}px home overflow`).toBeLessThanOrEqual(1);
+    expect(homeGeometry.atmospherePosition, `${viewport.width}px atmosphere position`).toBe("fixed");
+    expect(homeGeometry.atmospherePointerEvents, `${viewport.width}px atmosphere hit testing`).toBe("none");
+    expect(homeGeometry.atmosphereBehindApp, `${viewport.width}px atmosphere stacking`).toBe(true);
+    expect(Math.abs(homeGeometry.atmosphereBounds.left), `${viewport.width}px atmosphere left`).toBeLessThanOrEqual(1);
+    expect(Math.abs(homeGeometry.atmosphereBounds.top), `${viewport.width}px atmosphere top`).toBeLessThanOrEqual(1);
+    expect(Math.abs(homeGeometry.atmosphereBounds.right - viewport.width), `${viewport.width}px atmosphere right`).toBeLessThanOrEqual(1);
+    expect(Math.abs(homeGeometry.atmosphereBounds.bottom - viewport.height), `${viewport.width}px atmosphere bottom`).toBeLessThanOrEqual(1);
+    expect(homeGeometry.navBounds.left, `${viewport.width}px dock left`).toBeGreaterThanOrEqual(-1);
+    expect(homeGeometry.navBounds.right, `${viewport.width}px dock right`).toBeLessThanOrEqual(viewport.width + 1);
+    expect(Math.abs(homeGeometry.navBounds.bottom - viewport.height), `${viewport.width}px dock bottom`).toBeLessThanOrEqual(1);
+    expect(homeGeometry.navOpaque, `${viewport.width}px opaque dock`).toBe(true);
+    expect(homeGeometry.actionOverlapsDock, `${viewport.width}px home action versus dock`).toBe(false);
+    expect(homeGeometry.horizontalFailures, `${viewport.width}px home bounds`).toEqual([]);
+    expect(homeGeometry.navButtonsBlocked, `${viewport.width}px dock hit testing`).toEqual([]);
+
+    await page.evaluate(() => showLessonPreview("a0-letters-1"));
+    await expect(page.locator(".learning-preview")).toBeVisible();
+    const previewGeometry = await page.evaluate(() => {
+      const selectors = [".progress-header", ".learning-preview", ".learning-preview-hero", ".quiz-close", ".bottom-nav"];
+      const failures = selectors.flatMap((selector) => [...document.querySelectorAll(selector)].flatMap((element) => {
+        const bounds = element.getBoundingClientRect();
+        return bounds.left < -1 || bounds.right > innerWidth + 1 ? [{ selector, left: bounds.left, right: bounds.right }] : [];
+      }));
+      return {
+        overflow: document.documentElement.scrollWidth - innerWidth,
+        failures,
+        spotlights: document.querySelectorAll(".surface-spotlight").length
+      };
+    });
+    expect(previewGeometry.overflow, `${viewport.width}px preview overflow`).toBeLessThanOrEqual(1);
+    expect(previewGeometry.failures, `${viewport.width}px preview bounds`).toEqual([]);
+    expect(previewGeometry.spotlights, `${viewport.width}px preview spotlights`).toBe(0);
+
+    await page.locator('.learning-preview [data-action="start"]').click();
+    await expect(page.locator(".quiz-screen")).toBeVisible();
+    const lessonGeometry = await page.evaluate(() => {
+      const topbar = document.querySelector(".quiz-topbar").getBoundingClientRect();
+      const close = document.querySelector(".quiz-close").getBoundingClientRect();
+      const progress = document.querySelector(".quiz-progress-shell").getBoundingClientRect();
+      const action = document.querySelector(".quiz-action-bar").getBoundingClientRect();
+      const overlaps = close.left < progress.right
+        && close.right > progress.left
+        && close.top < progress.bottom
+        && close.bottom > progress.top;
+      return {
+        overflow: document.documentElement.scrollWidth - innerWidth,
+        topbar: { left: topbar.left, top: topbar.top, right: topbar.right },
+        action: { left: action.left, right: action.right, bottom: action.bottom },
+        closeOverlapsProgress: overlaps,
+        actionCenterHit: (() => {
+          const button = document.querySelector(".quiz-action-bar [data-action]");
+          const bounds = button.getBoundingClientRect();
+          const topHit = document.elementsFromPoint(bounds.left + (bounds.width / 2), bounds.top + (bounds.height / 2))
+            .find((candidate) => getComputedStyle(candidate).pointerEvents !== "none");
+          return Boolean(topHit && (button.contains(topHit) || topHit.contains(button)));
+        })()
+      };
+    });
+    expect(lessonGeometry.overflow, `${viewport.width}px lesson overflow`).toBeLessThanOrEqual(1);
+    expect(lessonGeometry.topbar.left, `${viewport.width}px lesson topbar left`).toBeGreaterThanOrEqual(-1);
+    expect(lessonGeometry.topbar.top, `${viewport.width}px lesson topbar top`).toBeGreaterThanOrEqual(-1);
+    expect(lessonGeometry.topbar.right, `${viewport.width}px lesson topbar right`).toBeLessThanOrEqual(viewport.width + 1);
+    expect(lessonGeometry.action.left, `${viewport.width}px lesson action left`).toBeGreaterThanOrEqual(-1);
+    expect(lessonGeometry.action.right, `${viewport.width}px lesson action right`).toBeLessThanOrEqual(viewport.width + 1);
+    expect(Math.abs(lessonGeometry.action.bottom - viewport.height), `${viewport.width}px lesson action bottom`).toBeLessThanOrEqual(1);
+    expect(lessonGeometry.closeOverlapsProgress, `${viewport.width}px close versus progress`).toBe(false);
+    expect(lessonGeometry.actionCenterHit, `${viewport.width}px lesson action hit testing`).toBe(true);
+  }
+});
+
+test("effects regression: the lite launch is visible, finite, and interactive", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "The lite profile is the phone and Android WebView contract.");
+
+  await openCleanApp(page);
+  await expect(page.locator("html")).toHaveAttribute("data-effects", "lite");
+  await expect(page.locator(".launch-screen")).toHaveClass(/is-playing/);
+  await page.waitForTimeout(800);
+
+  const launchContract = await page.evaluate(() => {
+    const selectors = [
+      ".launch-language-urdu",
+      ".launch-language-nl",
+      ".launch-logo-shell",
+      ".launch-wordmark",
+      ".launch-progress"
+    ];
+    const hidden = selectors.flatMap((selector) => {
+      const element = document.querySelector(selector);
+      const bounds = element?.getBoundingClientRect();
+      const style = element ? getComputedStyle(element) : null;
+      return !element
+        || !bounds?.width
+        || !bounds?.height
+        || Number(style.opacity) < 0.9
+        || style.visibility === "hidden"
+        ? [selector]
+        : [];
+    });
+    const atmosphere = document.querySelector(".responsive-atmosphere");
+    return {
+      hidden,
+      atmosphereDisplay: getComputedStyle(atmosphere).display,
+      atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
+      heavyLaunchLayers: [...document.querySelectorAll(".launch-orbit,.launch-beam,.launch-particle")]
+        .filter((element) => getComputedStyle(element).display !== "none").length
+    };
+  });
+
+  expect(launchContract).toEqual({
+    hidden: [],
+    atmosphereDisplay: "block",
+    atmospherePointerEvents: "none",
+    heavyLaunchLayers: 0
+  });
+
+  await page.evaluate(() => finishLaunch());
+  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+  await page.locator('[data-action="settings"]').click();
+  await expect(page.locator(".settings-panel")).toBeVisible();
+});
+
+test("effects regression: reduced motion reaches a complete, static UI", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openCleanApp(page);
+
+  await expect(page.locator("html")).toHaveAttribute("data-effects", "reduced");
+  await expect(page.locator("body")).not.toHaveClass(/launching/);
+  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+
+  const reducedContract = await page.evaluate(() => ({
+    overflow: document.documentElement.scrollWidth - innerWidth,
+    atmospherePointerEvents: getComputedStyle(document.querySelector(".responsive-atmosphere")).pointerEvents,
+    activeInfiniteAnimations: document.getAnimations().filter((animation) => (
+      animation.effect?.getTiming?.().iterations === Infinity
+      && ["running", "pending"].includes(animation.playState)
+    )).length
+  }));
+
+  expect(reducedContract.overflow).toBeLessThanOrEqual(1);
+  expect(reducedContract.atmospherePointerEvents).toBe("none");
+  expect(reducedContract.activeInfiniteAnimations).toBe(0);
+  await page.locator('[data-action="practice"]').click();
+  await expect(page.locator(".practice-screen")).toBeVisible();
+});
+
 test("cinematic bilingual launch hands off cleanly to the app", async ({ page }) => {
   await openCleanApp(page);
 
@@ -4526,12 +4913,22 @@ test("mission replay rotates variants and typed normalization is forgiving", asy
   expect(result.accepted).toEqual(["ik bel u later", "ik bel u later"]);
 });
 
-test("mission starts with briefing then renders a readable document", async ({ page }) => {
+test("mission starts in Use then renders a readable authored document", async ({ page }) => {
   await openCleanApp(page);
   await makeMissionReady(page, "a1-mission-phone-internet");
   await page.evaluate(() => startLesson("a1-mission-phone-internet"));
-  await expect(page.locator(".teaching-card")).toBeVisible();
-  await page.locator('[data-action="continue-info"]').click();
+  await expect(page.locator(".quiz-screen.mission-lesson.learning-phase-use")).toBeVisible();
+  expect(await page.evaluate(() => getQuestionPhase(getActiveQuestion()))).toBe("use");
+  await page.evaluate(() => {
+    const documentIndex = sessionQuestions.findIndex((question) => (
+      question.type === "document-choice" && getQuestionPhase(question) === "use"
+    ));
+    if (documentIndex < 0) throw new Error("Mission is missing its authored Use document.");
+    activeQuestionIndex = documentIndex;
+    selectedAnswer = "";
+    checked = false;
+    render();
+  });
   const document = page.locator(".practice-document");
   await expect(document).toBeVisible();
   await expect(document.locator(":scope > strong")).not.toHaveText("");
@@ -4544,32 +4941,20 @@ test("mission starts with briefing then renders a readable document", async ({ p
   await expect(page.locator('[data-action="check"]')).toBeDisabled();
 });
 
-test("optional mission typing converts to a working word bank", async ({ page }) => {
+test("mission build exercise renders a working word bank", async ({ page }) => {
   await openCleanApp(page);
   await makeMissionReady(page, "a1-mission-phone-internet");
   await page.evaluate(() => {
     startLesson("a1-mission-phone-internet");
-    while (getActiveQuestion().type !== "short-input") {
-      const question = getActiveQuestion();
-      if (isInfoQuestion(question)) {
-        continueInfoStep();
-      } else if (question.type === "build" || question.type === "sequence") {
-        const words = question.type === "sequence" ? question.answer.split(" | ") : question.answer.split(" ");
-        const used = new Set();
-        for (const word of words) {
-          const tile = getAnswerTiles(question).find((item) => item.word === word && !used.has(item.id));
-          used.add(tile.id);
-          selectBuildTile(tile.id);
-        }
-        checkAnswer();
-        nextQuestion();
-      } else {
-        chooseAnswer(question.answer);
-        checkAnswer();
-        nextQuestion();
-      }
-    }
-    enableInputFallback();
+    const buildIndex = sessionQuestions.findIndex((question) => (
+      question.type === "build" && getQuestionPhase(question) === "check"
+    ));
+    if (buildIndex < 0) throw new Error("Mission is missing its Independent Check build exercise.");
+    activeQuestionIndex = buildIndex;
+    buildAnswerIds = [];
+    selectedAnswer = "";
+    checked = false;
+    render();
   });
   await expect(page.locator(".build-bank")).toBeVisible();
   const result = await page.evaluate(() => {
@@ -4588,25 +4973,36 @@ test("optional mission typing converts to a working word bank", async ({ page })
 
 test("speaking self-check is unscored and alternate skill review changes the prompt", async ({ page }) => {
   await openCleanApp(page);
-  await makeMissionReady(page, "a1-mission-doctor");
+  await makeMissionReady(page, "a1-chapter-completion-mission");
   const audit = await page.evaluate(() => {
-    const mission = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons).find((lesson) => lesson.id === "a1-mission-doctor");
-    const speaking = mission.questions.find((question) => question.type === "speak-repeat");
-    const speakingSkillId = getQuestionSkillIds(speaking)[0];
-    const source = mission.questions.find((question) => getQuestionSkillIds(question).includes(speakingSkillId) && !isInfoQuestion(question));
+    const mission = window.NEDERURDU_CHAPTERS.flatMap((chapter) => chapter.lessons)
+      .find((lesson) => lesson.id === "a1-chapter-completion-mission");
+    const speaking = mission.variants.flatMap((variant) => variant.questions)
+      .find((question) => question.type === "speak-repeat");
+    if (!speaking) throw new Error("A1 completion mission is missing its speaking self-check.");
+    const speakingSkillIds = getQuestionSkillIds(speaking);
     saveProgress({
       ...JSON.parse(localStorage.getItem("nederurdu-progress-v4") || "{}"),
-      mistakes: [{ lessonId: mission.id, questionId: source.id, skillId: speakingSkillId, prompt: source.prompt, answer: source.answer }]
+      mistakes: [{
+        lessonId: mission.id,
+        questionId: speaking.id,
+        skillIds: speakingSkillIds,
+        prompt: speaking.prompt,
+        answer: speaking.answer
+      }]
     });
     const replacement = getMistakeReviewQuestions()[0];
+    if (!replacement) throw new Error("Speaking self-check did not produce a same-skill review alternative.");
     return {
       speakingIsInfo: isInfoQuestion(speaking),
+      speakingScored: speaking.scored,
       replacementId: replacement.id,
-      sourceId: source.id,
-      sameSkill: getQuestionSkillIds(replacement).includes(speakingSkillId)
+      sourceId: speaking.id,
+      sameSkill: getQuestionSkillIds(replacement).some((skillId) => speakingSkillIds.includes(skillId))
     };
   });
   expect(audit.speakingIsInfo).toBe(true);
+  expect(audit.speakingScored).toBe(false);
   expect(audit.replacementId).not.toBe(audit.sourceId);
   expect(audit.sameSkill).toBe(true);
 });
