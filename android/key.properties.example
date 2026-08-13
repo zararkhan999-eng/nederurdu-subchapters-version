@@ -1,0 +1,6 @@
+# Copy this file to android/key.properties and replace every placeholder.
+# android/key.properties and *.jks are ignored by Git and must never be committed.
+storeFile=android/nederurdu-upload-key.jks
+storePassword=CHANGE_ME
+keyAlias=nederurdu-upload
+keyPassword=CHANGE_ME

@@ -21,8 +21,13 @@
   - Text fits on small screens.
 
 ## Release Bundle
-- Create a Play signing key in Android Studio or Play Console.
-- Build a release Android App Bundle (`.aab`).
+- Confirm whether Play Console has already used the current `versionCode`.
+- Reuse the existing upload key, or create and securely back up a new upload
+  key before the first upload.
+- Copy `android/key.properties.example` to the Git-ignored
+  `android/key.properties` and add the real signing values locally.
+- Build a signed release Android App Bundle (`.aab`).
+- Verify the bundle signature and confirm it is not signed with the debug key.
 - Upload the `.aab` to Play Console internal testing first.
 
 ## Play Console Materials

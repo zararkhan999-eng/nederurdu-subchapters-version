@@ -40,3 +40,21 @@ npm run android:bundle
 The first command-line build may download the wrapper's pinned Gradle version
 and Android dependencies. Android Studio can also run the same wrapper and use
 its bundled Java runtime automatically.
+
+## Production Signing
+
+Release builds look for the private, Git-ignored file
+`android/key.properties`. Start from `android/key.properties.example` and keep
+the real values and upload key outside Git. The configured `storeFile` path is
+relative to the repository root.
+
+When `android/key.properties` is absent, `bundleRelease` stops with an error so
+an unsigned file cannot be mistaken for a Play Store bundle. Use
+`./gradlew :app:assembleRelease` when only an unsigned compile check is needed.
+When the file and upload key are present, `bundleRelease` produces the signed
+bundle at
+`android/app/build/outputs/bundle/release/app-release.aab`.
+
+Before upload, verify the bundle with `jarsigner -verify` and confirm that the
+release row in `./gradlew :app:signingReport` names the intended private upload
+key rather than the Android debug key.
