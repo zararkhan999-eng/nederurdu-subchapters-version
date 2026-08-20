@@ -14,7 +14,7 @@ const meaning = (prompt, options, answer, explain, note = "") =>
 const reverse = (prompt, options, answer, explain, note = "") =>
   q("reverse", "اردو معنی کے لیے صحیح Nederlands منتخب کریں", prompt, options, answer, explain, note);
 
-const build = (prompt, tiles, answer, explain, hint = "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔ پہلے دیکھیں کام کون کر رہا ہے، پھر کام والا لفظ، پھر باقی جملہ رکھیں۔") => ({
+const build = (prompt, tiles, answer, explain, hint = "پہلے شخص، پھر فعل، پھر باقی جملہ رکھیں۔") => ({
   type: "build",
   label: "Nederlands جملہ صحیح ترتیب میں بنائیں",
   prompt,
@@ -8189,6 +8189,7 @@ function makeA2AuthoredProfileSpecV4(profile) {
     title: profile.title,
     unitLabel: profile.unitLabel,
     outcomeUrdu: profile.outcomeUrdu,
+    settingUrdu: profile.settingUrdu,
     seedConcepts: deduped,
     teaching: authoredA1TeachingV4(teachingRows),
     pattern: false,
@@ -8535,7 +8536,9 @@ if (a2HousingMissionPlanV4) {
 }
 
 for (const spec of Object.values(a2AuthoredCurriculumV4.lessons)) {
-  const urduByDutch = new Map(spec.seedConcepts.map(([dutch, urdu]) => [normalizedTextV4(dutch), urdu]));
+  const urduByDutch = new Map(
+    spec.seedConcepts.map(([dutch, urdu]) => [normalizedTextV4(dutch), urdu])
+  );
   spec.scenarios = Object.fromEntries(
     Object.entries(spec.scenarios || {}).map(([dutch, scenario]) => [
       normalizedTextV4(dutch),
@@ -8543,18 +8546,28 @@ for (const spec of Object.values(a2AuthoredCurriculumV4.lessons)) {
     ])
   );
   for (const [dutch, record] of Object.entries(spec.teaching || {})) {
-    // A2 examples must not smuggle an unowned support word into a teaching
-    // card. The practical chunk itself is already a complete useful example;
-    // longer examples are added only when every support word is a prerequisite.
-    const usefulWordExamples = {
-      baan: "de baan",
-      salaris: "het salaris",
-      contract: "het contract",
-      reparatie: "de reparatie",
-      lekkage: "de lekkage"
-    };
-    record.exampleDutch = usefulWordExamples[normalizedTextV4(dutch)] || dutch;
-    record.exampleUrdu = urduByDutch.get(dutch) || record.exampleUrdu;
+    const canonicalUrdu = urduByDutch.get(normalizedTextV4(dutch)) || record.exampleUrdu;
+    // A2 target chunks are often complete sentences already. Keep the Dutch
+    // example inside the run's owned language, and use the concrete setup from
+    // its authored lesson or scenario instead of repeating a topic label or
+    // importing untaught Dutch support words.
+    const scenario = spec.scenarios[normalizedTextV4(dutch)];
+    const scenarioUrdu = Array.isArray(scenario) ? scenario[1] : "";
+    const authoredContext = spec.independentCheckLeadUrdu || spec.settingUrdu || scenarioUrdu;
+    const contextClause = cleanTerminalPunctuationV4(
+      String(authoredContext || "").split(/[؛۔!?؟]/u)[0].trim()
+    );
+    record.exampleDutch = dutch;
+    record.exampleUrdu = contextClause
+      ? `“${cleanTerminalPunctuationV4(canonicalUrdu)}” — ${contextClause}۔`
+      : `“${cleanTerminalPunctuationV4(canonicalUrdu)}” — روزمرہ عملی موقع میں۔`;
+    record.exampleContextSource = contextClause
+      ? (spec.independentCheckLeadUrdu
+        ? "authored-independent-context"
+        : spec.settingUrdu
+          ? "authored-setting-context"
+          : "authored-scenario-context")
+      : "authored-practical-context";
   }
   for (const [documentIndex, document] of (spec.documents || []).entries()) {
     document.title = `عملی دستاویز ${documentIndex + 1}`;
@@ -9945,6 +9958,74 @@ function unownedTeachingTokensV4(value, allowedConceptIds) {
   return dutchWordsV4(value).filter((word) => !allowed.has(word));
 }
 
+// A contrast is useful only when the two targets are genuinely easy to mix
+// up.  Earlier generation paired every A0 target with a nearby target, which
+// repeated unrelated comparisons across usage, boundary, confusion, and the
+// example.  Keep one purposeful contrast instead of inventing a partner.
+const meaningfulA0ContrastTargetsV4 = {
+  ik: ["jij", "u"],
+  jij: ["u", "ik"],
+  u: ["jij"],
+  hij: ["zij"],
+  zij: ["hij", "wij"],
+  wij: ["zij"],
+  man: ["vrouw"],
+  vrouw: ["man"],
+  vader: ["moeder"],
+  moeder: ["vader"],
+  broer: ["zus"],
+  zus: ["broer"],
+  dit: ["dat"],
+  dat: ["dit"],
+  hier: ["daar"],
+  daar: ["hier"],
+  wie: ["wat", "waar"],
+  wat: ["wie", "waar"],
+  waar: ["wie", "wat"],
+  niet: ["geen", "nee"],
+  geen: ["niet"],
+  de: ["het", "een"],
+  het: ["de", "een"],
+  een: ["de", "het"],
+  gaan: ["komen"],
+  komen: ["gaan"],
+  "ik ga": ["ik kom"],
+  "ik kom": ["ik ga"],
+  "hij gaat": ["hij komt"],
+  "hij komt": ["hij gaat"],
+  naar: ["met"],
+  met: ["naar"],
+  brengen: ["ophalen"],
+  ophalen: ["brengen"],
+  "ik breng mijn kind naar school": ["ik haal mijn kind om drie uur op"],
+  "ik haal mijn kind om drie uur op": ["ik breng mijn kind naar school"],
+  links: ["rechts"],
+  rechts: ["links"],
+  ingang: ["uitgang"],
+  uitgang: ["ingang"],
+  warm: ["koud"],
+  koud: ["warm"],
+  goedkoop: ["duur"],
+  duur: ["goedkoop"]
+};
+
+function meaningfulA0ContrastPartnerV4(concept, lesson, allowedConceptIds) {
+  const targets = meaningfulA0ContrastTargetsV4[normalizedTextV4(concept.dutch)] || [];
+  if (!targets.length) return null;
+  const allowed = new Set(allowedConceptIds || []);
+  const lessonConceptOrder = lessonConceptIdsV4.get(lesson.id) || [];
+  return targets
+    .map((target) => lessonConceptOrder
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find((candidate) => (
+        candidate
+        && candidate.id !== concept.id
+        && allowed.has(candidate.id)
+        && normalizedTextV4(candidate.dutch) === normalizedTextV4(target)
+      )))
+    .find(Boolean) || null;
+}
+
 function safeTargetOnlyExampleV4(concept, lesson, allowedConceptIds) {
   const dutch = cleanTerminalPunctuationV4(concept.dutch);
   const urdu = cleanTerminalPunctuationV4(concept.urdu);
@@ -10043,11 +10124,11 @@ function safeTargetOnlyExampleV4(concept, lesson, allowedConceptIds) {
   const lessonConceptOrder = lessonConceptIdsV4.get(lesson.id) || [];
   const allowedSet = new Set(allowedConceptIds);
   const conceptIndex = lessonConceptOrder.indexOf(concept.id);
-  const nearbyPartner = lessonConceptOrder
-    .map((conceptId, index) => ({
-      candidate: conceptByIdV4.get(conceptId),
-      index
-    }))
+  const purposefulPartner = lesson.id.startsWith("a0-")
+    ? meaningfulA0ContrastPartnerV4(concept, lesson, allowedConceptIds)
+    : null;
+  const contrastPartner = purposefulPartner || lessonConceptOrder
+    .map((conceptId, index) => ({ candidate: conceptByIdV4.get(conceptId), index }))
     .filter(({ candidate }) => (
       candidate
       && candidate.id !== concept.id
@@ -10059,13 +10140,15 @@ function safeTargetOnlyExampleV4(concept, lesson, allowedConceptIds) {
       return leftRole - rightRole
         || Math.abs(left.index - conceptIndex) - Math.abs(right.index - conceptIndex);
     })[0]?.candidate;
-  if (nearbyPartner) {
+  if (contrastPartner) {
     return {
-      exampleDutch: `${dutch} — ${nearbyPartner.dutch}`,
-      exampleUrdu: `“${dutch}” (${urdu}) کو “${nearbyPartner.dutch}” (${cleanTerminalPunctuationV4(
-        nearbyPartner.urdu
+      exampleDutch: `${dutch} — ${contrastPartner.dutch}`,
+      exampleUrdu: `“${dutch}” (${urdu}) کو “${contrastPartner.dutch}” (${cleanTerminalPunctuationV4(
+        contrastPartner.urdu
       )}) سے الگ پہچانیں۔`,
-      source: "run-owned-meaning-contrast"
+      source: purposefulPartner
+        ? "purposeful-meaning-contrast"
+        : "run-owned-meaning-pair"
     };
   }
   if (concept.visualId || concept.role === "sound" || concept.role === "letter"
@@ -10466,6 +10549,7 @@ function authoredTeachingRecordV4(concept) {
 
 function applyAuthoredTeachingV4(concept, record) {
   const chapterId = String(concept.introducedInLessonId).slice(0, 2);
+  const hasContextualExample = Boolean(record.exampleDutch && record.exampleUrdu);
   Object.assign(concept, {
     usageUrdu: record.usageUrdu,
     usageBoundaryUrdu: record.usageBoundaryUrdu,
@@ -10475,9 +10559,13 @@ function applyAuthoredTeachingV4(concept, record) {
     pronunciationUrdu: record.pronunciationUrdu,
     pronunciationReview: `${chapterId}-authored-manual-v1`,
     guidanceSource: `${chapterId}-authored:${semanticSlugV4(concept.introducedInLessonId)}:${semanticSlugV4(concept.dutch)}`,
-    exampleSource: `${chapterId}-authored-manual`
+    exampleSource: hasContextualExample
+      ? `${chapterId}-authored-manual`
+      : `${chapterId}-translation-only-omitted`
   });
-  concept.examples = [{ dutch: record.exampleDutch, urdu: record.exampleUrdu }];
+  concept.examples = hasContextualExample
+    ? [{ dutch: record.exampleDutch, urdu: record.exampleUrdu }]
+    : [];
   if (concept.visual?.kind === "context") {
     concept.visual.descriptionUrdu = record.usageUrdu;
   }
@@ -10537,14 +10625,18 @@ for (const concept of conceptByIdV4.values()) {
 }
 
 function a0ConceptTeachingPartnerV4(concept, lesson) {
+  const allowedConceptIds = teachingConceptIdsForV4(concept, lesson);
+  const meaningfulPartner = meaningfulA0ContrastPartnerV4(
+    concept,
+    lesson,
+    allowedConceptIds
+  );
+  if (meaningfulPartner) return meaningfulPartner;
   const lessonConceptOrder = lessonConceptIdsV4.get(lesson.id) || [];
-  const allowedIds = new Set(teachingConceptIdsForV4(concept, lesson));
+  const allowedIds = new Set(allowedConceptIds);
   const currentIndex = lessonConceptOrder.indexOf(concept.id);
   return lessonConceptOrder
-    .map((conceptId, index) => ({
-      candidate: conceptByIdV4.get(conceptId),
-      index
-    }))
+    .map((conceptId, index) => ({ candidate: conceptByIdV4.get(conceptId), index }))
     .filter(({ candidate }) => (
       candidate
       && candidate.id !== concept.id
@@ -10568,7 +10660,11 @@ function a0ConceptUseGuidanceV4(concept, lesson, partner) {
   const isQuestion = looksLikeDutchQuestionV4(concept.dutch);
   const role = String(concept.role || "").toLowerCase();
   let firstSentence;
-  if (role === "sound" || role === "letter" || /^[a-z]$/i.test(dutch)) {
+  if (lesson.id === "a0-child-school" && normalizedTextV4(dutch) === "brengen") {
+    firstSentence = "اسکول کے موقع میں “brengen” بچے کو وہاں لے جا کر چھوڑنے کے لیے ہے۔";
+  } else if (lesson.id === "a0-child-school" && normalizedTextV4(dutch) === "ophalen") {
+    firstSentence = "اسکول کے موقع میں “ophalen” بچے کو وہاں سے واپس لینے کے لیے ہے۔";
+  } else if (role === "sound" || role === "letter" || /^[a-z]$/i.test(dutch)) {
     firstSentence = `لفظ سننے یا پڑھنے سے پہلے “${dutch}” کی شکل اور ڈچ آواز کو “${urdu}” کے طور پر پہچانیں۔`;
   } else if (isQuestion) {
     firstSentence = `جب ${urdu} پوچھنا مقصود ہو تو پورا سوال “${dutch}” استعمال کریں۔`;
@@ -10590,10 +10686,22 @@ function a0ConceptUseGuidanceV4(concept, lesson, partner) {
     };
     firstSentence = `${contexts[domain] || contexts.everyday} میں “${dutch}” سے ${urdu} مراد لیں۔`;
   }
+  const purposefulPartner = meaningfulA0ContrastPartnerV4(
+    concept,
+    lesson,
+    teachingConceptIdsForV4(concept, lesson)
+  );
   if (!partner) return firstSentence;
-  return `${firstSentence} اسی حصے میں “${partner.dutch}” کا مطلب ${cleanTerminalPunctuationV4(
+  if (purposefulPartner) {
+    if (["brengen", "ophalen", "ik breng mijn kind naar school", "ik haal mijn kind om drie uur op"]
+      .includes(normalizedTextV4(dutch))) return firstSentence;
+    return `${firstSentence} فرق یاد رکھیں: “${partner.dutch}” سے ${cleanTerminalPunctuationV4(
+      partner.urdu
+    )} مراد ہے۔`;
+  }
+  return `${firstSentence} اسی موقع میں “${partner.dutch}” سے ${cleanTerminalPunctuationV4(
     partner.urdu
-  )} ہے؛ دونوں کو آواز، تصویر، یا کام دیکھ کر الگ چنیں۔`;
+  )} مراد ہے۔`;
 }
 
 function a0ConceptBoundaryV4(concept, lesson, partner) {
@@ -10607,30 +10715,72 @@ function a0ConceptBoundaryV4(concept, lesson, partner) {
       : role === "phrase" || dutchWordsV4(dutch).length > 1
         ? "مکمل تیار بات"
         : "لفظ";
-  if (!partner) {
-    return `“${dutch}” کو صرف ${urdu} والے ${targetKind} کے طور پر استعمال کریں؛ مختلف مطلب یا کام کے لیے نیا ہدف دیکھیں۔`;
+  if (!partner) return `“${dutch}” ${urdu} والا ${targetKind} ہے؛ اسے دوسرے معنی یا کام کے لیے استعمال نہ کریں۔`;
+  if (normalizedTextV4(dutch) === "brengen") {
+    return "“brengen” بچے کو اسکول لے جا کر چھوڑنا ہے؛ “ophalen” وہاں سے واپس لینے آنا ہے۔";
   }
-  return `“${dutch}” ${urdu} والا ${targetKind} ہے؛ “${partner.dutch}” کا مطلب ${cleanTerminalPunctuationV4(
-    partner.urdu
-  )} ہے، اس لیے دونوں کا موقع ایک نہیں۔`;
+  if (normalizedTextV4(dutch) === "ophalen") {
+    return "“ophalen” بچے کو اسکول سے واپس لینے آنا ہے؛ “brengen” اسے وہاں چھوڑنا ہے۔";
+  }
+  if (normalizedTextV4(dutch) === "ik breng mijn kind naar school") {
+    return "یہ بچے کو اسکول چھوڑنے کی بات ہے؛ “ik haal mijn kind … op” واپس لینے کی بات ہے۔";
+  }
+  if (normalizedTextV4(dutch) === "ik haal mijn kind om drie uur op") {
+    return "یہ بچے کو تین بجے واپس لینے کی بات ہے؛ “ik breng mijn kind …” اسکول چھوڑنے کی بات ہے۔";
+  }
+  const purposefulPartner = meaningfulA0ContrastPartnerV4(
+    concept,
+    lesson,
+    teachingConceptIdsForV4(concept, lesson)
+  );
+  if (purposefulPartner) {
+    if (targetKind === "سوال") {
+      return `“${dutch}” ${urdu} پوچھنے کا مکمل سوال ہے؛ اسے جواب یا صرف ایک لفظ نہ سمجھیں۔`;
+    }
+    if (targetKind === "مکمل تیار بات") {
+      return `“${dutch}” ${urdu} کی مکمل بات ہے؛ ضروری لفظ چھوڑ کر اسے ادھورا نہ کریں۔`;
+    }
+    return `“${dutch}” ${urdu} کا مخصوص لفظ ہے؛ مطلوبہ شخص، چیز، جگہ، یا عمل بدلنے پر دوسرا لفظ چنیں۔`;
+  }
+  if (targetKind === "سوال") {
+    return `“${dutch}” ${urdu} پوچھنے کا مکمل سوال ہے؛ اسے جواب یا صرف ایک لفظ نہ سمجھیں۔`;
+  }
+  if (targetKind === "مکمل تیار بات") {
+    return `“${dutch}” ${urdu} کی مکمل بات ہے؛ ضروری لفظ چھوڑ کر اسے ادھورا نہ کریں۔`;
+  }
+  if (targetKind === "حرف یا آواز") {
+    return `“${dutch}” ${urdu} والی آواز ہے؛ اسے پورا ڈچ لفظ نہ سمجھیں۔`;
+  }
+  return `“${dutch}” ${urdu} کا لفظ ہے؛ شخص، چیز، حالت، یا عمل بدلنے پر دوسرا لفظ درکار ہوگا۔`;
 }
 
 function a0ConceptConfusionGuidanceV4(concept, lesson, partner) {
-  const dutch = cleanTerminalPunctuationV4(concept.dutch);
-  const urdu = cleanTerminalPunctuationV4(concept.urdu);
-  const existing = cleanTerminalPunctuationV4(concept.commonConfusionUrdu);
-  const generic = (
-    /تصویر\s+میں.+کا\s+نام\s+ہے؛\s*اسے\s+کسی\s+عمل\s+یا\s+کیفیت/u.test(existing)
-    || /مخصوص\s+معنی\s+دیتا\s+ہے؛\s*اسے\s+دوسرے\s+کام\s+یا\s+چیز/u.test(existing)
-    || /عام\s+غلطی\s+یہ\s+ہے\s+کہ.+موقع\s+دیکھے\s+بغیر/u.test(existing)
+  const precise = preciseCommonConfusionV4(
+    concept,
+    lesson,
+    teachingConceptIdsForV4(concept, lesson)
   );
-  const base = generic || !existing
-    ? `“${dutch}” کو ${urdu} کے لیے پہچانیں؛ صرف ملتی جلتی تصویر یا آواز دیکھ کر جواب نہ دیں`
-    : existing;
-  if (!partner) return `${base}۔`;
-  return `${base}۔ ساتھ پڑھا ہوا “${partner.dutch}” ${cleanTerminalPunctuationV4(
-    partner.urdu
-  )} کے لیے ہے؛ مطلوبہ معنی بدلتے ہی جواب بھی بدلتا ہے۔`;
+  const cleanPrecise = cleanTerminalPunctuationV4(precise);
+  const generic = (
+    /تصویر\s+میں.+کا\s+نام\s+ہے؛\s*اسے\s+کسی\s+عمل\s+یا\s+کیفیت/u.test(cleanPrecise)
+    || /مخصوص\s+معنی\s+دیتا\s+ہے؛\s*اسے\s+دوسرے\s+کام\s+یا\s+چیز/u.test(cleanPrecise)
+    || /مکمل\s+تیار\s+بات\s+ہے؛.+ادھورا\s+چھوڑے\s+بغیر/u.test(cleanPrecise)
+    || /سوال\s+ہے؛\s*جواب\s+دیتے\s+وقت/u.test(cleanPrecise)
+  );
+  if (!generic) return `${cleanPrecise}۔`;
+  const pronunciation = cleanTerminalPunctuationV4(concept.pronunciationUrdu);
+  if (looksLikeDutchQuestionV4(concept.dutch)) {
+    return `سوال کی آواز ${pronunciation} سے پہچانیں؛ جواب والی ترتیب لگا کر سوال کا آغاز نہ ہٹائیں۔`;
+  }
+  if (concept.role === "phrase" || dutchWordsV4(concept.dutch).length > 1) {
+    return `پوری بات کی آواز ${pronunciation} سنیں؛ ضروری لفظ یا الگ ہونے والا آخری حصہ نہ چھوڑیں۔`;
+  }
+  if (concept.role === "sound" || concept.role === "letter") {
+    return `ڈچ آواز ${pronunciation} سنیں؛ اردو حرف کی مانوس آواز خود سے نہ لگائیں۔`;
+  }
+  return `لفظ کی آواز ${pronunciation} کو ${cleanTerminalPunctuationV4(
+    concept.urdu
+  )} کے معنی سے ملائیں؛ صرف تصویر کی شکل پر اندازہ نہ لگائیں۔`;
 }
 
 for (const concept of conceptByIdV4.values()) {
@@ -10641,6 +10791,17 @@ for (const concept of conceptByIdV4.values()) {
     .find((item) => item.id === concept.introducedInLessonId);
   if (!lesson) continue;
   const partner = a0ConceptTeachingPartnerV4(concept, lesson);
+  const purposefulPartner = meaningfulA0ContrastPartnerV4(
+    concept,
+    lesson,
+    teachingConceptIdsForV4(concept, lesson)
+  );
+  if (purposefulPartner) {
+    concept.contrastConceptIds = uniqueV4([
+      ...(concept.contrastConceptIds || []),
+      purposefulPartner.id
+    ]);
+  }
   concept.usageUrdu = a0ConceptUseGuidanceV4(concept, lesson, partner);
   concept.usageBoundaryUrdu = a0ConceptBoundaryV4(concept, lesson, partner);
   concept.commonConfusionUrdu = a0ConceptConfusionGuidanceV4(concept, lesson, partner);
@@ -10740,6 +10901,14 @@ const a0ReviewedTeachingOverridesV4 = {
   "a0-child-school|klas": {
     exampleDutch: "klas: 2",
     exampleUrdu: "اسکول فارم پر جماعت: 2۔"
+  },
+  "a0-child-school|brengen": {
+    exampleDutch: "brengen — ophalen",
+    exampleUrdu: "اسکول چھوڑنے کے لیے “brengen”، واپس لینے کے لیے “ophalen”۔"
+  },
+  "a0-child-school|ophalen": {
+    exampleDutch: "brengen — ophalen",
+    exampleUrdu: "اسکول چھوڑنے کے لیے “brengen”، واپس لینے کے لیے “ophalen”۔"
   },
   "a0-child-school|schooltijd": {
     exampleDutch: "schooltijd: 08:30",
@@ -11038,60 +11207,63 @@ function defaultExercisePhaseV4(question) {
 }
 
 function instructionForQuestionV4(question, concepts) {
-  const target = concepts[0];
   if (question.type === "uitleg") {
-    return `“${question.prompt}” کی مثال اور آسان وضاحت پڑھیں؛ یہاں اندازہ لگانے یا نمبر لینے کی ضرورت نہیں۔`;
+    return "مثال دیکھیں اور آسان وضاحت پڑھیں؛ اس حصے پر نمبر نہیں۔";
   }
   if (question.type === "meaning") {
-    return `Nederlands “${question.prompt}” کا درست اردو مطلب منتخب کریں۔`;
+    return "اوپر دی گئی ڈچ بات کا درست اردو مطلب منتخب کریں۔";
   }
   if (question.type === "reverse") {
-    return `اردو “${question.prompt}” کے لیے درست Nederlands منتخب کریں۔`;
+    return "دیے گئے معنی کا درست ڈچ جواب منتخب کریں۔";
   }
   if (question.type === "image-choice") {
-    return `تصویر میں دکھائی گئی ${target?.urdu || "چیز یا حالت"} کے لیے درست Nederlands منتخب کریں۔`;
+    return "تصویر دیکھیں اور درست ڈچ لفظ یا بات منتخب کریں۔";
   }
   if (question.type === "listen-choice") {
-    return `آواز میں ${target?.urdu || "سبق کی بات"} سے متعلق لفظ یا فقرہ سنیں اور درست جواب منتخب کریں۔`;
+    return "آواز سنیں اور درست جواب منتخب کریں۔";
   }
   if (question.type === "fill-gap") {
-    return `جملہ “${question.prompt}” مکمل کرنے والا درست Nederlands لفظ منتخب کریں۔`;
+    return "خالی جگہ کے لیے درست ڈچ لفظ منتخب کریں۔";
   }
   if (question.type === "situation") {
-    return `${question.prompt} اس خاص موقع کے لیے مناسب Nederlands جواب منتخب کریں۔`;
+    return "صورت پڑھیں اور مناسب ڈچ جواب منتخب کریں۔";
   }
   if (question.type === "build") {
-    return `اردو “${question.prompt}” کے لیے دیے گئے الفاظ سے مکمل Nederlands جملہ بنائیں۔`;
+    return "دیے گئے الفاظ سے درست ڈچ جملہ بنائیں۔";
   }
   if (question.type === "document-choice") {
-    return `“${question.document?.title || "دستاویز"}” میں اہم Nederlands معلومات پڑھ کر درست اردو مطلب منتخب کریں۔`;
+    return "دستاویز پڑھیں اور مانگی گئی ڈچ بات کا درست اردو مطلب منتخب کریں۔";
   }
   if (question.type === "sequence") {
-    return `“${question.prompt}” کے قدم پہلے سے آخری تک درست ترتیب میں رکھیں۔`;
+    return "قدموں کو شروع سے آخر تک درست ترتیب میں رکھیں۔";
   }
   if (question.type === "speak-repeat") {
-    return `“${question.speak || question.answer}” آہستہ سنیں، پھر بلند آواز میں دہرائیں؛ یہ مشق اسکور نہیں ہوگی۔`;
+    return "آہستہ آڈیو سنیں اور بلند آواز میں دہرائیں؛ اس پر نمبر نہیں۔";
   }
   if (question.type === "short-input") {
-    return `اردو “${question.prompt}” کا مختصر Nederlands جواب لکھیں، یا ضرورت پر لفظوں کا بینک استعمال کریں۔`;
+    return "مختصر ڈچ جواب لکھیں، یا ضرورت پر لفظوں کا بینک استعمال کریں۔";
   }
-  return `${question.prompt || "سوال"} غور سے پڑھیں اور اسی سیکھی ہوئی بات کے مطابق جواب دیں۔`;
+  return "سوال غور سے پڑھیں اور سیکھی ہوئی بات کے مطابق جواب دیں۔";
 }
 
 function hintForQuestionV4(question, concepts) {
   if (question.hint) return String(question.hint);
   if (question.note) return String(question.note);
-  const concept = concepts[0];
-  if (question.type === "uitleg") return "مثال پہلے پڑھیں، پھر آواز سن کر اسے دہرائیں۔";
+  if (question.type === "uitleg") return "پہلے آواز سنیں، پھر مثال کا مطلب دیکھیں۔";
   if (question.type === "listen-choice") return "آواز دوبارہ اور آہستہ سن سکتے ہیں۔";
-  if (question.type === "image-choice") return "تصویر کی اصل چیز یا عمل پہچانیں، پھر Nederlands لفظ دیکھیں۔";
-  if (question.type === "fill-gap") return `پورا جملہ ذہن میں بولیں؛ سبق کا ہدف ${concept?.dutch || "یاد کیا ہوا لفظ"} ہے۔`;
+  if (question.type === "image-choice") return "تصویر کی اصل چیز یا عمل پر توجہ دیں۔";
+  if (question.type === "meaning" || question.type === "reverse") {
+    return "پہلے مرکزی لفظ پہچانیں، پھر پورے معنی سے ملائیں۔";
+  }
+  if (question.type === "fill-gap") return "پورا جملہ ذہن میں بول کر خالی جگہ سنیں۔";
   if (question.type === "build" || question.type === "sequence") {
     return "پہلے کام کرنے والا شخص، پھر فعل، پھر باقی بات رکھیں۔";
   }
+  if (question.type === "situation") return "شخص، جگہ، وقت، اور مقصد پر توجہ دیں۔";
+  if (question.type === "document-choice") return "سوال میں مانگی گئی قطار دوبارہ دیکھیں۔";
   if (question.type === "speak-repeat") return "آہستہ آواز استعمال کریں اور لفظ بہ لفظ دہرائیں۔";
   if (question.type === "short-input") return "مشکل ہو تو لفظوں کا بینک کھولیں؛ آزاد ٹائپنگ لازمی نہیں۔";
-  return `معنی یاد کریں: ${concept?.dutch || question.answer} = ${concept?.urdu || question.prompt}۔`;
+  return "سوال میں مانگی گئی ایک بات پر دوبارہ توجہ دیں۔";
 }
 
 function semanticExerciseKeyV4(question, scopeId) {
@@ -11143,12 +11315,12 @@ function optionFeedbackUrduV4(question, targetConcept, availableConceptIds) {
     const distractor = conceptForOptionV4(option, availableConceptIds);
     if (distractor) {
       feedback[String(option)] = answerIsDutch
-        ? `“${option}” کا مطلب “${cleanTerminalPunctuationV4(distractor.urdu)}” ہے، لیکن یہاں “${targetMeaning}” کہنا ہے؛ اس لیے “${targetConcept.dutch}” درست ہے۔`
-        : `“${option}” کا ڈچ ہدف “${distractor.dutch}” ہے، لیکن آپ نے “${targetConcept.dutch}” سنا یا پڑھا؛ اس کا مطلب “${targetMeaning}” ہے۔`;
+        ? `“${option}” = “${cleanTerminalPunctuationV4(distractor.urdu)}”؛ یہاں درست ڈچ “${targetConcept.dutch}” ہے۔`
+        : `“${option}” یہاں غلط مطلب ہے؛ “${targetConcept.dutch}” = “${targetMeaning}”۔`;
     } else {
       feedback[String(option)] = answerIsDutch
-        ? `“${option}” اس مخصوص معنی “${targetMeaning}” کے لیے درست نہیں؛ سیکھی ہوئی بات “${targetConcept.dutch}” استعمال کریں۔`
-        : `“${option}” کا معنی اس ہدف سے مختلف ہے؛ “${targetConcept.dutch}” کا درست مطلب “${targetMeaning}” ہے۔`;
+        ? `“${option}” یہاں درست نہیں؛ درست ڈچ “${targetConcept.dutch}” ہے۔`
+        : `“${option}” یہاں درست نہیں؛ “${targetConcept.dutch}” = “${targetMeaning}”۔`;
     }
   }
   return feedback;
@@ -11201,17 +11373,15 @@ function annotateQuestionV4({ lesson, question, conceptIds, pattern, scopeId, al
     : `صحیح جواب “${question.answer}”`;
   const correctExplanation = question.type === "uitleg"
     ? String(question.explain || "یہ تدریسی مثال اگلی مشق کی تیاری ہے۔")
-    : `درست۔ ${targetSummary}؛ اسی معنی یا ساخت کو آپ نے صحیح پہچانا۔`;
+    : `درست۔ ${targetSummary}۔`;
   const optionExplanationsUrdu = optionFeedbackUrduV4(
     question,
     concepts[0],
     conceptIds
   );
-  const firstOptionExplanation = Object.values(optionExplanationsUrdu)[0];
   const wrongExplanation = question.type === "uitleg"
     ? "مثال اور آسان اصول دوبارہ پڑھیں، پھر اگلی مشق شروع کریں۔"
-    : (firstOptionExplanation
-      || `یہ جواب “${concepts[0]?.urdu || question.answer}” کے ہدف سے مختلف ہے؛ درست بات ${targetSummary} ہے۔`);
+    : `درست جوڑا ${targetSummary} ہے؛ دوبارہ کوشش کریں۔`;
 
   question.semanticKey = semanticKey;
   Object.assign(question, {
@@ -11993,12 +12163,12 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       const taskDemonstration = {
         type: "uitleg",
         label: "پہلے طریقہ سمجھیں",
-        prompt: "مثال دیکھیں: آواز سننے کے بعد جواب کیسے پہچاننا ہے",
+        prompt: "پہلے سننے کا طریقہ دیکھیں",
         points: [
-          `پہلے “${demonstrationConcept.dutch}” کی باقاعدہ یا آہستہ آواز سنیں۔`,
-          `اس نمونے میں درست مطلب “${demonstrationUrdu}” ہے؛ اگلی سرگرمی میں اسی طرح معنی پہچانیں۔`
+          `“${demonstrationConcept.dutch}” سنیں۔`,
+          `درست مطلب: “${demonstrationUrdu}”۔`
         ],
-        explain: `${demonstrationConcept.dutch} = ${demonstrationUrdu}۔`,
+        explain: "اب اسی طریقے سے اگلی آواز سنیں۔",
         speak: demonstrationConcept.audioText || demonstrationConcept.dutch,
         answer: demonstrationUrdu,
         taskDemonstration: true,
@@ -12415,9 +12585,9 @@ function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId
   const sourceSuffix = suffix ? `:${suffix}` : "";
   const chapterId = String(lessonId).slice(0, 2);
   const source = `${chapterId}-authored:${semanticSlugV4(lessonId)}:${stableId}${sourceSuffix}`;
-  const instruction = "حقیقی صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں۔";
-  const correct = `درست۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے اور یہی اس موقع کی مناسب بات ہے۔`;
-  const wrong = `یہ جواب اس صورت کے مطلوبہ معنی سے مختلف ہے۔ یہاں “${concept.dutch}” استعمال کریں؛ اس کا مطلب “${concept.urdu}” ہے۔`;
+  const instruction = "صورت پڑھیں اور اسی موقع کی درست ڈچ بات منتخب کریں۔";
+  const correct = `درست۔ “${concept.dutch}” = “${concept.urdu}”۔`;
+  const wrong = `اس صورت میں “${concept.dutch}” کہیں: “${concept.urdu}”۔`;
   const lessonSpec = authoredCurriculumForLessonV4(lessonId)?.lessons?.[lessonId] || {};
   const authoredPrompt = suffix === "independent-check"
     ? lessonId === "a1-details-forms"
@@ -12487,10 +12657,10 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
           .map((conceptId) => conceptByIdV4.get(conceptId))
           .find(Boolean);
         const correct = concept
-          ? `درست۔ دستاویز میں “${concept.dutch}” لکھا ہے؛ اس کا مطلب “${concept.urdu}” ہے۔`
+          ? `درست۔ “${concept.dutch}” = “${concept.urdu}”۔`
           : question.explainCorrectUrdu;
         const wrong = concept
-          ? `دستاویز کی متعلقہ قطار دوبارہ پڑھیں۔ وہاں “${concept.dutch}” ہے، جس کا مطلب “${concept.urdu}” ہے۔`
+          ? `نشان زدہ قطار دوبارہ دیکھیں: “${concept.dutch}” = “${concept.urdu}”۔`
           : question.explainWrongUrdu;
         Object.assign(question, {
           document: {
@@ -12502,8 +12672,8 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
           scenarioId: `${lesson.id}:run-${run.index}:authored-document`,
           scenarioSource: `a2-authored:${semanticSlugV4(lesson.id)}:run-${run.index}:document`,
           authenticDocument: true,
-          instructionUrdu: "دستاویز کی ہر قطار الگ پڑھیں، پھر سوال میں مانگی گئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
-          instruction: "دستاویز کی ہر قطار الگ پڑھیں، پھر سوال میں مانگی گئی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+          instructionUrdu: "نشان زدہ قطار پڑھیں اور درست اردو مطلب منتخب کریں۔",
+          instruction: "نشان زدہ قطار پڑھیں اور درست اردو مطلب منتخب کریں۔",
           explainCorrectUrdu: correct,
           correctExplanation: correct,
           explainWrongUrdu: wrong,

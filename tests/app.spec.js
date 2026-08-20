@@ -555,9 +555,24 @@ test("the cached course and lesson preview remain available offline", async ({ p
       image.complete ? image.naturalWidth : 0
     ))).toBeGreaterThan(0);
     await expect(page.locator(".learning-phase-track .learning-phase-step")).toHaveCount(6);
-    const firstTeachingIndex = await page.evaluate(() => activeQuestionIndex);
+    const teachingProgressBefore = await page.evaluate(() => ({
+      index: activeQuestionIndex,
+      step: teachingStep,
+      stepCount: getTeachingStepCount(getActiveQuestion())
+    }));
     await page.locator('[data-action="continue-info"]').click();
-    expect(await page.evaluate(() => activeQuestionIndex)).toBeGreaterThan(firstTeachingIndex);
+    const teachingProgressAfter = await page.evaluate(() => ({
+      index: activeQuestionIndex,
+      step: teachingStep
+    }));
+    if (teachingProgressBefore.step < teachingProgressBefore.stepCount - 1) {
+      expect(teachingProgressAfter).toEqual({
+        index: teachingProgressBefore.index,
+        step: teachingProgressBefore.step + 1
+      });
+    } else {
+      expect(teachingProgressAfter.index).toBeGreaterThan(teachingProgressBefore.index);
+    }
     await expect(page.locator(".quiz-screen")).toBeVisible();
     expect(runtimeErrors).toEqual([]);
   } finally {
@@ -804,6 +819,270 @@ test("a lesson run shows the current learning phase and the full phase path", as
   await expect(page.locator(".learning-phase-step")).toHaveCount(6);
   await expect(page.locator(".learning-phase-step.active")).toHaveCount(1);
   await expect(page.locator(".learning-teaching-card")).toBeVisible();
+});
+
+test("A0 A1 and A2 concept teaching reveals one meaningful stage at a time", async ({ page }) => {
+  await openCleanApp(page);
+
+  for (const chapterId of ["a0", "a1", "a2"]) {
+    const candidate = await page.evaluate((level) => {
+      const lessons = window.NEDERURDU_COURSE.lessons.filter((lesson) => lesson.id.startsWith(`${level}-`));
+      for (const lesson of lessons) {
+        startLesson(lesson.id);
+        const index = sessionQuestions.findIndex((question) => (
+          question.type === "concept-teach"
+          && question.teachingMode !== "refresh"
+          && getTeachingStepCount(question) === 2
+        ));
+        if (index < 0) continue;
+        activeQuestionIndex = index;
+        teachingStep = 0;
+        render();
+        const question = getActiveQuestion();
+        return {
+          lessonId: lesson.id,
+          dutch: question.concept?.dutch || question.dutch || question.prompt
+        };
+      }
+      throw new Error(`No two-stage concept teaching card found for ${level}.`);
+    }, chapterId);
+
+    await expect(page.locator(".concept-teaching-card.teaching-stage-meet .teaching-core"), candidate.lessonId).toBeVisible();
+    await expect(page.locator(".concept-teaching-card .teaching-use-panel")).toHaveCount(0);
+    await expect(page.locator(".concept-teaching-card .teaching-step-progress")).toContainText("1/2");
+
+    await page.locator('[data-action="continue-info"]').click();
+    await expect(page.locator(".concept-teaching-card.teaching-stage-use .teaching-use-panel")).toBeVisible();
+    await expect(page.locator(".concept-teaching-card .teaching-core")).toHaveCount(0);
+    await expect(page.locator(".concept-teaching-card .teaching-step-progress")).toContainText("2/2");
+    await expect(page.locator('[data-action="teaching-back"]')).toBeVisible();
+
+    const handled = await page.evaluate(() => window.handleNederUrduBack());
+    expect(handled, `${candidate.lessonId} internal Back`).toBe(true);
+    await expect(page.locator(".concept-teaching-card.teaching-stage-meet .teaching-core")).toBeVisible();
+
+    await page.locator('[data-action="open-lesson-detail"][data-detail-kind="notes"]').click();
+    await expect(page.locator('.lesson-detail-layer[data-detail-kind="notes"]')).toBeVisible();
+    await expect(page.locator(".lesson-detail-sheet")).toContainText(candidate.dutch);
+    expect(await page.evaluate(() => window.handleNederUrduBack())).toBe(true);
+    await expect(page.locator(".lesson-detail-layer")).toHaveCount(0);
+  }
+});
+
+test("A0 A1 and A2 pattern teaching separates the model from the rule", async ({ page }) => {
+  await openCleanApp(page);
+
+  for (const chapterId of ["a0", "a1", "a2"]) {
+    const lessonId = await page.evaluate((level) => {
+      const lessons = window.NEDERURDU_COURSE.lessons.filter((lesson) => lesson.id.startsWith(`${level}-`));
+      for (const lesson of lessons) {
+        startLesson(lesson.id);
+        const index = sessionQuestions.findIndex((question) => (
+          question.type === "pattern-teach" && getTeachingStepCount(question) === 2
+        ));
+        if (index < 0) continue;
+        activeQuestionIndex = index;
+        teachingStep = 0;
+        render();
+        return lesson.id;
+      }
+      throw new Error(`No two-stage pattern teaching card found for ${level}.`);
+    }, chapterId);
+
+    await expect(page.locator(".pattern-teaching-card.teaching-stage-model .pattern-model-panel"), lessonId).toBeVisible();
+    await expect(page.locator(".pattern-teaching-card .pattern-rule-panel")).toHaveCount(0);
+    await page.locator('[data-action="continue-info"]').click();
+    await expect(page.locator(".pattern-teaching-card.teaching-stage-rule .pattern-rule-panel")).toBeVisible();
+    await expect(page.locator(".pattern-teaching-card .pattern-model-panel")).toHaveCount(0);
+    await expect(page.locator(".pattern-teaching-card .teaching-step-progress")).toContainText("2/2");
+
+    const detailTrigger = page.locator('.pattern-teaching-card [data-detail-kind="pattern"]');
+    if (await detailTrigger.count()) {
+      await detailTrigger.click();
+      await expect(page.locator('.lesson-detail-layer[data-detail-kind="pattern"]')).toBeVisible();
+      await expect(page.locator(".lesson-detail-section").first()).toBeVisible();
+      await page.locator(".lesson-detail-close").click();
+    }
+    await page.locator('[data-action="teaching-back"]').click();
+    await expect(page.locator(".pattern-teaching-card.teaching-stage-model .pattern-model-panel")).toBeVisible();
+  }
+});
+
+test("task demonstrations become one-time coachmarks and guided help stays on demand", async ({ page }) => {
+  await openCleanApp(page);
+
+  const audit = await page.evaluate(() => ["a0", "a1", "a2"].map((level) => {
+    let coachmarkedRuns = 0;
+    const failures = [];
+    for (const lesson of window.NEDERURDU_COURSE.lessons.filter((item) => item.id.startsWith(`${level}-`))) {
+      for (const run of getLearningRuns(lesson)) {
+        const questions = buildLearningFirstSession(lesson, run);
+        if (questions.some((question) => question.type === "uitleg" && question.taskDemonstration)) {
+          failures.push(`${lesson.id}/${run.id}:task-demo-remained`);
+        }
+        if (questions.some((question) => question.contextCoachmark)) coachmarkedRuns += 1;
+      }
+    }
+    return { level, coachmarkedRuns, failures };
+  }));
+
+  for (const result of audit) {
+    expect(result.failures, result.level).toEqual([]);
+    expect(result.coachmarkedRuns, result.level).toBeGreaterThan(0);
+  }
+
+  await page.evaluate(() => {
+    for (const lesson of window.NEDERURDU_COURSE.lessons) {
+      startLesson(lesson.id);
+      const index = sessionQuestions.findIndex((question) => question.contextCoachmark && question.hint);
+      if (index < 0) continue;
+      activeQuestionIndex = index;
+      coachmarkDismissed = false;
+      hintOpen = false;
+      render();
+      return;
+    }
+    throw new Error("No coachmarked exercise with on-demand help found.");
+  });
+
+  await expect(page.locator(".question-coachmark")).toBeVisible();
+  await expect(page.locator(".guided-support")).toHaveCount(0);
+  await page.locator('[data-action="dismiss-coachmark"]').click();
+  await expect(page.locator(".question-coachmark")).toHaveCount(0);
+  await page.locator('[data-action="hint"]').click();
+  await expect(page.locator("#question-help-panel")).toBeVisible();
+  expect(await page.evaluate(() => window.handleNederUrduBack())).toBe(true);
+  await expect(page.locator("#question-help-panel")).toHaveCount(0);
+});
+
+test("lesson detail drawers preserve the internal phone scroll position and return focus", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await openCleanApp(page, { selectedChapterId: "a1" });
+
+  const beforeOpen = await page.evaluate(() => {
+    finishLaunch();
+    startLesson("a1-weather-clothes");
+    activeQuestionIndex = Math.min(10, sessionQuestions.length - 1);
+    render();
+    const content = document.querySelector(".quiz-content");
+    const notes = document.querySelector('[data-action="open-lesson-detail"][data-detail-kind="notes"]');
+    if (!content || !notes) throw new Error("The lesson scroller or Notes control was not rendered.");
+    const maxScroll = content.scrollHeight - content.clientHeight;
+    if (maxScroll <= 0) throw new Error("The regression lesson is not internally scrollable.");
+    content.scrollTop = Math.min(295, maxScroll);
+    const scrollTop = content.scrollTop;
+    notes.click();
+    return { scrollTop, maxScroll };
+  });
+
+  expect(beforeOpen.scrollTop).toBeGreaterThan(0);
+  await expect(page.locator('.lesson-detail-layer[data-detail-kind="notes"]')).toBeVisible();
+  const whileOpen = await page.locator(".quiz-content").evaluate((content) => ({
+    scrollTop: content.scrollTop,
+    maxScroll: content.scrollHeight - content.clientHeight
+  }));
+  expect(whileOpen.scrollTop).toBe(Math.min(beforeOpen.scrollTop, whileOpen.maxScroll));
+  expect(whileOpen.scrollTop).toBeGreaterThan(0);
+
+  await page.locator(".lesson-detail-close").click();
+  await expect(page.locator(".lesson-detail-layer")).toHaveCount(0);
+  await expect.poll(() => page.locator(".quiz-content").evaluate((content) => content.scrollTop)).toBe(beforeOpen.scrollTop);
+  await expect(page.locator('[data-action="open-lesson-detail"][data-detail-kind="notes"]')).toBeFocused();
+});
+
+test("long lesson detail notes are keyboard scrollable inside the focus trap", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await openCleanApp(page, {
+    selectedChapterId: "a1",
+    settings: { largeText: true }
+  });
+  await makeMissionReady(page, "a1-chapter-completion-mission");
+
+  await page.evaluate(() => {
+    finishLaunch();
+    startLesson("a1-chapter-completion-mission");
+    document.querySelector('[data-action="open-lesson-detail"][data-detail-kind="notes"]')?.click();
+  });
+  await expect(page.locator('.lesson-detail-layer[data-detail-kind="notes"]')).toBeVisible();
+
+  const body = page.locator(".lesson-detail-body");
+  await expect(page.locator(".lesson-detail-sheet")).not.toHaveAttribute("aria-describedby", /.+/);
+  await expect(page.locator(".quiz-screen")).toHaveAttribute("inert", "");
+  await expect(body).toHaveAttribute("role", "region");
+  await expect(body).toHaveAttribute("tabindex", "0");
+  const geometry = await body.evaluate((element) => ({
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight
+  }));
+  expect(geometry.scrollHeight).toBeGreaterThan(geometry.clientHeight);
+
+  await expect(page.locator(".lesson-detail-close")).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(body).toBeFocused();
+  await page.keyboard.press("PageDown");
+  await expect.poll(() => body.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await page.keyboard.press("Tab");
+  await expect(page.locator(".lesson-detail-close")).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(body).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".lesson-detail-layer")).toHaveCount(0);
+  await expect(page.locator(".quiz-screen")).not.toHaveAttribute("inert", "");
+  await expect(page.locator('[data-action="open-lesson-detail"][data-detail-kind="notes"]')).toBeFocused();
+});
+
+test("same-question help and coachmark updates preserve the internal phone scroll position", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await openCleanApp(page);
+
+  const before = await page.evaluate(() => {
+    finishLaunch();
+    startLesson("a0-greetings-courtesy");
+    const index = sessionQuestions.findIndex((question) => question.contextCoachmark && question.hint);
+    if (index < 0) throw new Error("A scrollable supported question was not found.");
+    activeQuestionIndex = index;
+    coachmarkDismissed = false;
+    hintOpen = false;
+    render();
+    const content = document.querySelector(".quiz-content");
+    if (!content) throw new Error("The lesson scroller was not rendered.");
+    const maxScroll = content.scrollHeight - content.clientHeight;
+    if (maxScroll <= 0) throw new Error("The supported phone question is not scrollable.");
+    content.scrollTop = Math.min(120, maxScroll);
+    const scrollTop = content.scrollTop;
+    document.querySelector('[data-action="hint"]')?.click();
+    return { scrollTop, maxScroll };
+  });
+
+  expect(before.scrollTop).toBeGreaterThan(0);
+  await expect(page.locator("#question-help-panel")).toBeVisible();
+  await expect.poll(() => page.locator(".quiz-content").evaluate((content) => content.scrollTop)).toBe(before.scrollTop);
+  await page.evaluate(() => document.querySelector('[data-action="dismiss-coachmark"]')?.click());
+  await expect(page.locator(".question-coachmark")).toHaveCount(0);
+  await expect.poll(() => page.locator(".quiz-content").evaluate((content) => content.scrollTop)).toBe(before.scrollTop);
+});
+
+test("Android Back follows the lesson close route after transient lesson surfaces are clear", async ({ page }) => {
+  await openCleanApp(page);
+
+  const result = await page.evaluate(() => {
+    finishLaunch();
+    startLesson("a0-greetings-courtesy");
+    const index = sessionQuestions.findIndex((question) => !isInfoQuestion(question));
+    if (index < 0) throw new Error("A scored lesson question was not found.");
+    activeQuestionIndex = index;
+    lessonDetailKind = "";
+    teachingStep = 0;
+    hintOpen = false;
+    coachmarkDismissed = true;
+    render();
+    coachmarkDismissed = true;
+    const handled = window.handleNederUrduBack();
+    return { handled, screen };
+  });
+
+  expect(result).toEqual({ handled: true, screen: "home" });
+  await expect(page.locator(".learn-screen")).toBeVisible();
 });
 
 test("lesson selection cards never leave the phone viewport", async ({ page }) => {
@@ -1077,13 +1356,17 @@ test("every normal lesson produces a valid phased learning run", async ({ page }
         const questions = buildLearningFirstSession(lesson, run);
         const phases = questions.map(getQuestionPhase);
         const checkCount = phases.filter((phase) => phase === "check").length;
-        const firstUnderstand = questions.find((question) => getQuestionPhase(question) === "understand");
-        const hasUnderstandDemo = Boolean(
-          firstUnderstand
-          && firstUnderstand.taskDemonstration === true
-          && firstUnderstand.scored === false
-          && firstUnderstand.demonstratesType
-          && isInfoQuestion(firstUnderstand)
+        const understandQuestions = questions.filter((question) => getQuestionPhase(question) === "understand");
+        const firstSupportedUnderstand = understandQuestions.find((question) => !isInfoQuestion(question));
+        const coachmarkedUnderstand = understandQuestions.filter((question) => question.contextCoachmark);
+        const taskDemonstrationCount = understandQuestions.filter((question) => (
+          question.type === "uitleg" && question.taskDemonstration
+        )).length;
+        const hasUnderstandCoachmark = Boolean(
+          firstSupportedUnderstand
+          && coachmarkedUnderstand.length === 1
+          && coachmarkedUnderstand[0] === firstSupportedUnderstand
+          && /[\u0600-\u06ff]/u.test(firstSupportedUnderstand.contextCoachmark)
         );
         const phaseRegression = phases.some((phase, index) => (
           index > 0 && phaseRank[phase] < phaseRank[phases[index - 1]]
@@ -1146,7 +1429,8 @@ test("every normal lesson produces a valid phased learning run", async ({ page }
           firstPhase: phases[0],
           checkCount,
           phaseRegression,
-          hasUnderstandDemo,
+          hasUnderstandCoachmark,
+          taskDemonstrationCount,
           invalidMaterializedExercises
         };
       })
@@ -1156,7 +1440,8 @@ test("every normal lesson produces a valid phased learning run", async ({ page }
       || result.checkCount < 4
       || result.checkCount > 6
       || result.phaseRegression
-      || !result.hasUnderstandDemo
+      || !result.hasUnderstandCoachmark
+      || result.taskDemonstrationCount !== 0
       || result.invalidMaterializedExercises.length
     ));
   }, CURRENT_CHAPTER_GATE_IDS);
@@ -1378,11 +1663,11 @@ test("quiz check button enables and feedback appears", async ({ page }) => {
   await expect(page.locator('[data-action="next"]')).toBeEnabled();
 });
 
-test("correct feedback and the selected distractor's specific Urdu explanation are rendered", async ({ page }) => {
+test("feedback stays compact while complete answer-specific Urdu explanations remain available", async ({ page }) => {
   await openCleanApp(page);
   const lessonId = await page.evaluate(() => window.NEDERURDU_COURSE.lessons[0].id);
 
-  const correctExplanation = await page.evaluate((id) => {
+  const correctFeedback = await page.evaluate((id) => {
     startLesson(id);
     const index = sessionQuestions.findIndex((question) => (
       getQuestionPhase(question) === "check"
@@ -1394,9 +1679,17 @@ test("correct feedback and the selected distractor's specific Urdu explanation a
     const question = getActiveQuestion();
     chooseAnswer(question.answer);
     checkAnswer();
-    return question.correctExplanation;
+    return { explanation: getFullFeedbackExplanation(question, true), answer: question.answer };
   }, lessonId);
-  await expect(page.locator(".quiz-feedback-panel.correct")).toContainText(correctExplanation);
+  await expect(page.locator(".quiz-feedback-panel.correct .feedback-answer")).toContainText(correctFeedback.answer);
+  if (correctFeedback.explanation.length > 105) {
+    await page.locator('.quiz-feedback-panel.correct [data-detail-kind="feedback"]').click();
+    await expect(page.locator('.lesson-detail-layer[data-detail-kind="feedback"]')).toBeVisible();
+    await expect(page.locator(".lesson-detail-sheet")).toContainText(correctFeedback.explanation);
+    await page.locator(".lesson-detail-close").click();
+  } else {
+    await expect(page.locator(".quiz-feedback-panel.correct .feedback-reason")).toContainText(correctFeedback.explanation);
+  }
 
   const selectedFeedback = await page.evaluate(() => {
     for (const lesson of window.NEDERURDU_COURSE.lessons) {
@@ -1408,7 +1701,7 @@ test("correct feedback and the selected distractor's specific Urdu explanation a
           || question.feedbackByOption;
         return getQuestionPhase(question) === "check"
           && Array.isArray(question.options)
-          && question.options.some((option) => option !== question.answer && explanations?.[option]);
+          && question.options.some((option) => option !== question.answer && explanations?.[option]?.length > 115);
       });
       if (index < 0) continue;
       activeQuestionIndex = index;
@@ -1418,11 +1711,12 @@ test("correct feedback and the selected distractor's specific Urdu explanation a
         || question.wrongExplanationsByOption
         || question.optionExplanations
         || question.feedbackByOption;
-      const selected = question.options.find((option) => option !== question.answer && explanations?.[option]);
+      const selected = question.options.find((option) => option !== question.answer && explanations?.[option]?.length > 115);
       chooseAnswer(selected);
       checkAnswer();
       return {
         selected,
+        answer: question.answer,
         explanation: explanations[selected],
         generic: question.wrongExplanation
       };
@@ -1430,7 +1724,11 @@ test("correct feedback and the selected distractor's specific Urdu explanation a
     throw new Error("No Independent Check choice has option-specific wrong feedback.");
   });
   expect(selectedFeedback.explanation).toContain(selectedFeedback.selected);
-  await expect(page.locator(".quiz-feedback-panel.wrong")).toContainText(selectedFeedback.explanation);
+  await expect(page.locator(".quiz-feedback-panel.wrong .feedback-answer")).toContainText(selectedFeedback.answer);
+  await page.locator('.quiz-feedback-panel.wrong [data-detail-kind="feedback"]').click();
+  await expect(page.locator('.lesson-detail-layer[data-detail-kind="feedback"]')).toBeVisible();
+  await expect(page.locator(".lesson-detail-sheet")).toContainText(selectedFeedback.explanation);
+  await page.locator(".lesson-detail-close").click();
   if (selectedFeedback.generic !== selectedFeedback.explanation) {
     await expect(page.locator(".quiz-feedback-panel.wrong")).not.toContainText(selectedFeedback.generic);
   }
@@ -1452,7 +1750,193 @@ test("correct feedback and the selected distractor's specific Urdu explanation a
     return getActiveQuestion().wrongExplanation;
   });
   expect(correctionExplanation).toBe(selectedFeedback.explanation);
-  await expect(page.locator(".correction-teaching-card")).toContainText(selectedFeedback.explanation);
+  await expect(page.locator(".correction-teaching-card")).not.toContainText(selectedFeedback.explanation);
+  await page.locator('.correction-teaching-card [data-detail-kind="correction"]').click();
+  await expect(page.locator('.lesson-detail-layer[data-detail-kind="correction"]')).toBeVisible();
+  await expect(page.locator(".lesson-detail-sheet")).toContainText(selectedFeedback.explanation);
+});
+
+test("long feedback leaves every lesson and answer reachable above the fixed footer", async ({ page }) => {
+  await openCleanApp(page);
+  await page.evaluate(() => finishLaunch());
+  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
+  const candidate = await page.evaluate(() => {
+    let longest = null;
+    for (const lesson of window.NEDERURDU_COURSE.lessons) {
+      startLesson(lesson.id);
+      for (const question of sessionQuestions) {
+        const explanations = question.optionExplanationsUrdu
+          || question.wrongExplanationsByOption
+          || question.optionExplanations
+          || question.feedbackByOption;
+        if (!Array.isArray(question.options) || !explanations) continue;
+        for (const option of question.options) {
+          const explanation = option !== question.answer ? explanations[option] : "";
+          if (!explanation || explanation.length <= (longest?.length || 0)) continue;
+          longest = {
+            lessonId: lesson.id,
+            questionId: question.id,
+            selected: option,
+            length: explanation.length
+          };
+        }
+      }
+    }
+    if (!longest) throw new Error("No answer-specific feedback candidate found.");
+    return longest;
+  });
+
+  expect(candidate.length).toBeGreaterThan(115);
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.evaluate(({ lessonId, questionId, selected }) => {
+      startLesson(lessonId);
+      const index = sessionQuestions.findIndex((question) => question.id === questionId);
+      if (index < 0) throw new Error(`Feedback question ${questionId} was not restored.`);
+      activeQuestionIndex = index;
+      render();
+      chooseAnswer(selected);
+      checkAnswer();
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    }, candidate);
+    await expect(page.locator(".quiz-feedback-panel.wrong")).toBeVisible();
+
+    const geometry = await page.evaluate(() => {
+      const panel = document.querySelector(".quiz-feedback-panel");
+      const content = document.querySelector(".quiz-content");
+      const action = panel?.querySelector(".quiz-action");
+      const panelRect = panel?.getBoundingClientRect();
+      const contentRect = content?.getBoundingClientRect();
+      const actionRect = action?.getBoundingClientRect();
+      const hit = actionRect
+        ? document.elementFromPoint(actionRect.left + actionRect.width / 2, actionRect.top + actionRect.height / 2)
+        : null;
+      return {
+        panel: panelRect && {
+          left: panelRect.left,
+          right: panelRect.right,
+          top: panelRect.top,
+          bottom: panelRect.bottom,
+          height: panelRect.height
+        },
+        contentBottom: contentRect?.bottom,
+        scrollWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        action: actionRect && {
+          left: actionRect.left,
+          right: actionRect.right,
+          top: actionRect.top,
+          bottom: actionRect.bottom
+        },
+        panelScrollTop: panel?.scrollTop,
+        panelScrollHeight: panel?.scrollHeight,
+        panelClientHeight: panel?.clientHeight,
+        hit: hit?.className || hit?.tagName || null,
+        actionHit: Boolean(action && hit && (hit === action || action.contains(hit)))
+      };
+    });
+
+    expect(geometry.scrollWidth, `${viewport.width}px horizontal overflow`).toBeLessThanOrEqual(geometry.viewportWidth + 1);
+    expect(geometry.panel.left, `${viewport.width}px feedback left`).toBeGreaterThanOrEqual(0);
+    expect(geometry.panel.right, `${viewport.width}px feedback right`).toBeLessThanOrEqual(geometry.viewportWidth);
+    expect(geometry.panel.bottom, `${viewport.width}px feedback bottom`).toBeLessThanOrEqual(geometry.viewportHeight + 1);
+    expect(geometry.panel.height, `${viewport.width}px feedback height`).toBeLessThanOrEqual(geometry.viewportHeight * 0.5);
+    expect(geometry.contentBottom, `${viewport.width}px content/footer clearance`).toBeLessThanOrEqual(geometry.panel.top + 1);
+    expect(geometry.actionHit, `${viewport.width}px feedback action hit target ${JSON.stringify(geometry)}`).toBe(true);
+  }
+});
+
+test("tablet coachmark and open help keep every listening choice reachable above the footer", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await openCleanApp(page, { selectedChapterId: "a2" });
+  await page.evaluate(() => {
+    finishLaunch();
+    startLesson("a2-separable-verbs-routine");
+    const index = sessionQuestions.findIndex((question) => (
+      getQuestionPhase(question) === "understand" && question.type === "listen-choice"
+    ));
+    if (index < 0) throw new Error("A2 Understand listening question was not found.");
+    activeQuestionIndex = index;
+    coachmarkDismissed = false;
+    render();
+    hintOpen = true;
+    render();
+  });
+
+  await expect(page.locator(".question-coachmark")).toBeVisible();
+  await expect(page.locator(".question-help-panel")).toBeVisible();
+  await expect(page.locator(".listening-question .choice-button")).toHaveCount(3);
+
+  const geometry = await page.evaluate(() => {
+    const content = document.querySelector(".quiz-content");
+    const footer = document.querySelector(".quiz-action-bar");
+    const phaseHeader = document.querySelector(".learning-phase-header");
+    const surface = document.querySelector(".listening-question");
+    const choices = surface?.querySelector(".choices");
+    const buttons = Array.from(surface?.querySelectorAll(".choice-button") || []);
+    if (!content || !footer || !phaseHeader || !surface || !choices || buttons.length === 0) {
+      throw new Error("Listening geometry could not be measured.");
+    }
+
+    content.scrollTop = 0;
+    const footerTop = footer.getBoundingClientRect().top;
+    const contentTop = content.getBoundingClientRect().top;
+    const surfaceRect = surface.getBoundingClientRect();
+    const choicesRect = choices.getBoundingClientRect();
+    const contained = surfaceRect.bottom >= choicesRect.bottom - 1;
+    const maxScroll = content.scrollHeight - content.clientHeight;
+    const reachable = buttons.map((button) => {
+      content.scrollTop = 0;
+      const initial = button.getBoundingClientRect();
+      const needed = Math.max(0, initial.bottom - footerTop + 8);
+      content.scrollTop = Math.min(maxScroll, needed);
+      const rect = button.getBoundingClientRect();
+      return {
+        top: rect.top,
+        bottom: rect.bottom,
+        fullyVisible: rect.top >= contentTop - 1 && rect.bottom <= footerTop + 1
+      };
+    });
+    content.scrollTop = maxScroll;
+    const phaseHeaderRect = phaseHeader.getBoundingClientRect();
+    const headerHit = document.elementFromPoint(
+      phaseHeaderRect.left + phaseHeaderRect.width / 2,
+      phaseHeaderRect.top + phaseHeaderRect.height / 2
+    );
+    const headerBackground = getComputedStyle(phaseHeader).backgroundColor;
+    const backgroundParts = headerBackground.match(/[\d.]+/g)?.map(Number) || [];
+    const headerAlpha = backgroundParts.length >= 4 ? backgroundParts[3] : 1;
+
+    return {
+      contained,
+      clientHeight: content.clientHeight,
+      scrollHeight: content.scrollHeight,
+      maxScroll,
+      reachable,
+      stickyHeader: {
+        alpha: headerAlpha,
+        ownsHit: Boolean(headerHit && (headerHit === phaseHeader || phaseHeader.contains(headerHit)))
+      },
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  });
+
+  expect(geometry.contained, JSON.stringify(geometry)).toBe(true);
+  expect(geometry.scrollHeight, JSON.stringify(geometry)).toBeGreaterThan(geometry.clientHeight);
+  expect(geometry.maxScroll, JSON.stringify(geometry)).toBeGreaterThan(0);
+  expect(geometry.stickyHeader.alpha, JSON.stringify(geometry)).toBeGreaterThanOrEqual(0.98);
+  expect(geometry.stickyHeader.ownsHit, JSON.stringify(geometry)).toBe(true);
+  expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.viewportWidth + 1);
+  for (const [index, choice] of geometry.reachable.entries()) {
+    expect(choice.fullyVisible, `choice ${index + 1}: ${JSON.stringify(geometry)}`).toBe(true);
+  }
 });
 
 test("correction waits for the full Independent Check and recap clears every resolved miss", async ({ page }) => {

@@ -122,11 +122,25 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     @Override
     public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
-            webView.goBack();
+        if (webView == null) {
+            super.onBackPressed();
             return;
         }
-        super.onBackPressed();
+
+        // Give lesson drawers and staged teaching panels the first chance to
+        // handle Android Back. evaluateJavascript returns the boolean result as
+        // JSON ("true"/"false"), after which normal WebView navigation remains
+        // the fallback for pages without an open in-app surface.
+        webView.evaluateJavascript(
+                "window.handleNederUrduBack ? window.handleNederUrduBack() : false",
+                handled -> {
+                    if ("true".equals(handled)) return;
+                    if (webView.canGoBack()) {
+                        webView.goBack();
+                    } else {
+                        MainActivity.super.onBackPressed();
+                    }
+                });
     }
 
     @Override

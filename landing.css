@@ -2296,3 +2296,1249 @@ html[data-effects="reduced"] :is(.atmosphere-aurora, .atmosphere-mesh) {
     margin-inline: 0;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Structured lesson reading flow                                             */
+/* -------------------------------------------------------------------------- */
+
+/* The lesson footer is intentionally fixed, so the document reserves its real
+   footprint. This lets the last answer/card scroll fully above the dock instead
+   of disappearing behind it, including when feedback contains a longer Urdu
+   explanation. */
+.quiz-screen {
+  --lesson-action-reserve: calc(136px + env(safe-area-inset-bottom));
+  --lesson-feedback-reserve: calc(164px + env(safe-area-inset-bottom));
+  padding-bottom: var(--lesson-action-reserve);
+}
+
+.app-shell:has(> .quiz-screen) {
+  padding-bottom: 0;
+}
+
+.quiz-screen:has(> .quiz-feedback-panel) {
+  padding-bottom: var(--lesson-feedback-reserve);
+}
+
+.quiz-topbar {
+  min-height: 68px;
+  margin-bottom: 18px;
+  padding-block: 9px;
+}
+
+.quiz-content {
+  width: min(100%, 760px);
+}
+
+.learning-phase-header {
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  width: min(720px, 100%);
+  margin: 0 auto 14px;
+  padding: 10px 13px;
+  border-radius: 17px;
+}
+
+.learning-phase-name {
+  display: block;
+  min-width: 0;
+  color: var(--mint-bright);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.learning-phase-track {
+  gap: 5px;
+}
+
+.learning-phase-step {
+  gap: 4px;
+}
+
+.learning-phase-step i {
+  height: 5px;
+}
+
+.question-meta {
+  margin-bottom: 9px;
+}
+
+.question-heading {
+  margin-bottom: 14px;
+}
+
+.learning-teaching-card,
+.concept-teaching-card,
+.pattern-teaching-card,
+.correction-teaching-card {
+  width: min(680px, 100%);
+  gap: 13px;
+  padding: clamp(20px, 3vw, 30px);
+  border-radius: 26px;
+}
+
+.learning-teaching-card .learning-visual,
+.learning-teaching-card .teaching-visual {
+  width: min(164px, 38vw);
+}
+
+.learning-teaching-card .learning-visual img,
+.learning-teaching-card .teaching-visual img {
+  max-height: 164px;
+  object-fit: cover;
+}
+
+.teaching-dutch,
+.pattern-sentence {
+  font-size: clamp(1.9rem, 5.4vw, 3.45rem);
+  overflow-wrap: anywhere;
+}
+
+.teaching-urdu {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.2vw, 1.9rem);
+  line-height: 1.72;
+}
+
+.teaching-pronunciation {
+  max-width: 100%;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.teaching-usage,
+.teaching-example,
+.teaching-confusion,
+.pattern-explanation,
+.pattern-contrast,
+.pattern-mistake {
+  padding: 12px 14px;
+  border-radius: 15px;
+  font-size: 0.96rem;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+
+/* Usage is supporting context, so it should not compete with the main target
+   or the worked example as another equally strong card. */
+.teaching-usage,
+.pattern-contrast {
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.teaching-actions button {
+  min-height: 44px;
+}
+
+.image-prompt .learning-visual.quiz-visual {
+  width: min(230px, 58vw);
+}
+
+.image-prompt .learning-visual.quiz-visual img {
+  max-height: 230px;
+  object-fit: cover;
+}
+
+/* Shared progressive-disclosure vocabulary. The lesson renderer can use any
+   of these surfaces without reintroducing a visually dominant stack of boxes. */
+:is(.teaching-step-progress, .teaching-segment-progress, .lesson-step-progress) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(680px, 100%);
+  margin: 0 auto 10px;
+  color: var(--text-faint);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+:is(.teaching-step-dots, .teaching-segment-dots, .lesson-step-dots) {
+  display: flex;
+  flex: 1;
+  gap: 5px;
+  min-width: 0;
+}
+
+:is(.teaching-step-dots, .teaching-segment-dots, .lesson-step-dots) > * {
+  flex: 1;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(183, 208, 201, 0.14);
+}
+
+:is(.teaching-step-dots, .teaching-segment-dots, .lesson-step-dots) > .active,
+:is(.teaching-step-dots, .teaching-segment-dots, .lesson-step-dots) > [aria-current="step"] {
+  background: linear-gradient(90deg, var(--mint), var(--amber));
+}
+
+:is(.teaching-step, .teaching-segment, .lesson-step) {
+  min-width: 0;
+}
+
+:is(.lesson-detail-toggle, .teaching-detail-toggle, .feedback-detail-toggle) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px 13px;
+  border: 1px solid rgba(110, 243, 197, 0.18);
+  border-radius: 14px;
+  color: var(--mint-bright);
+  background: rgba(110, 243, 197, 0.07);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+:is(.lesson-detail, .teaching-detail, .feedback-detail, .lesson-detail-sheet, .teaching-detail-sheet) {
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(190, 255, 237, 0.1);
+  border-radius: 15px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 0.92rem;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+
+:is(.lesson-detail, .teaching-detail, .feedback-detail)[hidden] {
+  display: none !important;
+}
+
+details:is(.lesson-detail, .teaching-detail, .feedback-detail) > summary {
+  color: var(--mint-bright);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quiz-action-bar,
+.quiz-feedback-panel {
+  width: min(760px, calc(100% - 32px));
+  min-height: 82px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+}
+
+.quiz-action-bar .quiz-action {
+  width: min(100%, 380px);
+  min-height: 54px;
+  margin-inline: auto;
+}
+
+.quiz-feedback-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 230px);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  column-gap: 18px;
+  max-height: min(42svh, 320px);
+  overflow: hidden;
+}
+
+/* A clip-path reveal temporarily removed the new Continue button from hit
+   testing even though its box was visible. Opacity keeps the finite arrival
+   motion without ever putting the action behind the lesson surface. */
+.quiz-feedback-panel {
+  clip-path: none !important;
+  animation: lesson-feedback-fade 180ms ease-out both !important;
+}
+
+@keyframes lesson-feedback-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.feedback-copy {
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.feedback-copy > div {
+  min-width: 0;
+  max-height: 210px;
+  padding-inline-end: 3px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.feedback-copy > div {
+  gap: 3px;
+}
+
+.feedback-copy small {
+  display: block;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.quiz-feedback-panel > .quiz-action {
+  min-height: 54px;
+}
+
+@media (max-width: 680px) {
+  .quiz-screen {
+    --lesson-topbar-height: calc(58px + env(safe-area-inset-top));
+    --lesson-action-reserve: calc(112px + env(safe-area-inset-bottom));
+    --lesson-feedback-reserve: calc(min(46svh, 280px) + 18px + env(safe-area-inset-bottom));
+  }
+
+  .quiz-topbar {
+    top: 0;
+    min-height: var(--lesson-topbar-height);
+    margin-bottom: 8px;
+    padding: max(7px, env(safe-area-inset-top)) 10px 7px;
+    border-radius: 0 0 18px 18px;
+  }
+
+  .quiz-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+  }
+
+  .quiz-progress {
+    height: 8px;
+  }
+
+  .quiz-progress-dots {
+    display: none;
+  }
+
+  .quiz-content {
+    padding-inline: 0;
+  }
+
+  .learning-phase-header {
+    position: sticky;
+    top: var(--lesson-topbar-height);
+    z-index: 80;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 11px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(5, 23, 28, 0.96);
+    box-shadow: 0 9px 24px rgba(0, 8, 11, 0.2), inset 0 1px rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .learning-phase-name {
+    font-size: 0.72rem;
+  }
+
+  .learning-phase-step b {
+    display: none;
+  }
+
+  .learning-phase-step i {
+    height: 5px;
+  }
+
+  .question-meta {
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+  }
+
+  .question-heading {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 10px;
+    margin-bottom: 11px;
+  }
+
+  .question-kind-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    box-shadow: 3px 3px 0 var(--question-soft);
+  }
+
+  .question-title {
+    font-size: clamp(1.32rem, 6.2vw, 1.58rem);
+    line-height: 1.42;
+  }
+
+  .learning-teaching-card,
+  .concept-teaching-card,
+  .pattern-teaching-card,
+  .correction-teaching-card {
+    gap: 11px;
+    padding: 18px 14px;
+    border-radius: 21px;
+  }
+
+  .learning-teaching-card .learning-visual,
+  .learning-teaching-card .teaching-visual {
+    width: min(142px, 42vw);
+  }
+
+  .learning-teaching-card .learning-visual img,
+  .learning-teaching-card .teaching-visual img {
+    max-height: 142px;
+  }
+
+  .teaching-dutch,
+  .pattern-sentence {
+    font-size: clamp(1.72rem, 9.2vw, 2.7rem);
+    line-height: 1.12;
+  }
+
+  .teaching-urdu {
+    font-size: clamp(1.4rem, 6.2vw, 1.72rem);
+    line-height: 1.72;
+  }
+
+  .teaching-pronunciation {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .teaching-usage,
+  .teaching-example,
+  .teaching-confusion,
+  .pattern-explanation,
+  .pattern-contrast,
+  .pattern-mistake,
+  :is(.lesson-detail, .teaching-detail, .feedback-detail, .lesson-detail-sheet, .teaching-detail-sheet) {
+    padding: 10px 12px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  :is(.teaching-step-progress, .teaching-segment-progress, .lesson-step-progress) {
+    margin-bottom: 8px;
+    font-size: 0.7rem;
+  }
+
+  .image-prompt .learning-visual.quiz-visual {
+    width: min(200px, 58vw);
+  }
+
+  .image-prompt .learning-visual.quiz-visual img {
+    max-height: 200px;
+  }
+
+  .quiz-action-bar,
+  .quiz-feedback-panel {
+    width: calc(100% - 16px);
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    border-radius: 19px 19px 0 0;
+  }
+
+  .quiz-action-bar .quiz-action {
+    width: 100%;
+  }
+
+  .quiz-feedback-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: 9px;
+    max-height: min(46svh, 280px);
+  }
+
+  .feedback-copy {
+    gap: 8px;
+  }
+
+  .feedback-icon {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+  }
+
+  .feedback-copy > div {
+    max-height: min(22svh, 118px);
+  }
+
+  .feedback-copy strong {
+    font-size: 1rem;
+  }
+
+  .feedback-copy small {
+    font-size: 0.84rem;
+    line-height: 1.58;
+  }
+
+  .quiz-feedback-panel > .quiz-action,
+  .quiz-action-bar .quiz-action {
+    min-height: 50px;
+  }
+}
+
+@media (max-width: 680px) and (max-height: 640px) {
+  .quiz-screen {
+    --lesson-topbar-height: calc(52px + env(safe-area-inset-top));
+    --lesson-feedback-reserve: calc(48svh + 14px + env(safe-area-inset-bottom));
+  }
+
+  .quiz-topbar {
+    min-height: var(--lesson-topbar-height);
+    padding-block: max(5px, env(safe-area-inset-top)) 5px;
+  }
+
+  .quiz-close {
+    width: 38px;
+    height: 38px;
+  }
+
+  .learning-phase-header {
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-block: 7px;
+  }
+
+  .quiz-screen:has(.learning-teaching-card) .question-meta {
+    display: none;
+  }
+
+  .question-heading {
+    grid-template-columns: 1fr;
+    margin-bottom: 9px;
+  }
+
+  .question-kind-icon {
+    display: none;
+  }
+
+  .learning-teaching-card .learning-visual,
+  .learning-teaching-card .teaching-visual {
+    width: min(112px, 36vw);
+  }
+
+  .learning-teaching-card .learning-visual img,
+  .learning-teaching-card .teaching-visual img {
+    max-height: 112px;
+  }
+
+  .quiz-feedback-panel {
+    max-height: 48svh;
+  }
+}
+
+@media (max-width: 350px) {
+  .quiz-action-bar,
+  .quiz-feedback-panel {
+    width: calc(100% - 10px);
+    padding-inline: 9px;
+  }
+
+  .learning-phase-header {
+    gap: 7px;
+    padding-inline: 8px;
+  }
+
+  .learning-phase-name {
+    max-width: 76px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .learning-teaching-card,
+  .concept-teaching-card,
+  .pattern-teaching-card,
+  .correction-teaching-card {
+    padding-inline: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.lesson-detail, .teaching-detail, .feedback-detail, .lesson-detail-sheet, .teaching-detail-sheet),
+  :is(.lesson-detail-toggle, .teaching-detail-toggle, .feedback-detail-toggle) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Renderer contract for the segmented teaching cards and optional detail
+   drawer. Core teaching stays in the page; secondary explanation uses the
+   drawer without stacking another full-strength card in the reading flow. */
+.learning-phase-header {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+}
+
+.learning-phase-name {
+  grid-column: 1;
+}
+
+.learning-phase-track {
+  grid-column: 2;
+}
+
+.learning-phase-header > .lesson-notes-button {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.lesson-notes-button,
+.lesson-detail-trigger,
+.question-help-toggle,
+.question-coachmark-dismiss,
+.lesson-detail-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 7px 12px;
+  border: 1px solid rgba(110, 243, 197, 0.18);
+  border-radius: 13px;
+  color: var(--mint-bright);
+  background: rgba(110, 243, 197, 0.075);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.lesson-notes-button {
+  min-height: 34px;
+  padding: 5px 9px;
+  border-color: rgba(255, 209, 102, 0.17);
+  color: var(--amber-soft);
+  background: rgba(255, 209, 102, 0.07);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.progressive-teaching-card {
+  align-items: stretch;
+  align-self: start;
+  min-height: max-content;
+}
+
+/* Exercise surfaces are direct children of the scrollable lesson grid. Grid's
+   default automatic minimum can otherwise shrink a clipped surface while its
+   answer controls continue painting below it. Give every question type an
+   intrinsic block size so all descendants contribute to quiz-content's scroll
+   range, including the tablet coachmark + open-help state. */
+.quiz-content > :is(
+  .learning-teaching-card,
+  .teaching-card,
+  .multiple-choice-question,
+  .listening-question,
+  .document-question,
+  .short-input-question,
+  .sequence-question,
+  .speak-repeat-question,
+  .word-bank-question,
+  .match-pairs-question
+) {
+  align-self: start;
+  min-height: max-content;
+}
+
+/* Segmented cards name their own single task. Keep the document heading for
+   assistive technology, but remove the duplicate visible instruction and
+   percentage row that previously repeated the same idea above every card. */
+.quiz-screen:has(.progressive-teaching-card) .question-meta {
+  display: none;
+}
+
+.quiz-screen:has(.progressive-teaching-card) .question-heading {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.teaching-step-count {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: var(--mint-bright);
+  background: rgba(110, 243, 197, 0.08);
+}
+
+.teaching-step-name {
+  min-width: 0;
+  color: var(--text-soft);
+  text-align: end;
+}
+
+.teaching-core,
+.pattern-model-panel,
+.pattern-rule-panel,
+.teaching-use-panel {
+  display: grid;
+  min-width: 0;
+}
+
+.teaching-core,
+.pattern-model-panel {
+  justify-items: center;
+  gap: 10px;
+}
+
+.teaching-use-panel,
+.pattern-rule-panel {
+  gap: 9px;
+  padding: 12px 14px;
+  border: 1px solid rgba(110, 243, 197, 0.11);
+  border-radius: 16px;
+  background: rgba(110, 243, 197, 0.045);
+  text-align: start;
+}
+
+.teaching-stage-use .teaching-use-panel,
+.teaching-stage-rule .pattern-rule-panel {
+  justify-items: center;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.teaching-step-label {
+  width: fit-content;
+  color: var(--mint-bright);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.teaching-stage-use .teaching-use-copy,
+.teaching-stage-rule .pattern-rule-panel > p {
+  max-width: 580px;
+  color: var(--text);
+  font-size: 1.02rem;
+  text-align: center;
+}
+
+.teaching-stage-use .teaching-example {
+  width: min(560px, 100%);
+  margin-top: 2px;
+  padding: 12px 14px;
+  border: 1px solid rgba(110, 243, 197, 0.13);
+  background: rgba(110, 243, 197, 0.055);
+  text-align: start;
+}
+
+.teaching-use-copy,
+.pattern-rule-panel > p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.94rem;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+
+.teaching-use-panel .teaching-example,
+.pattern-rule-panel :is(.pattern-explanation, .pattern-contrast) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.progressive-teaching-card > .lesson-detail-trigger {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.teaching-step-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 40px;
+  margin-top: 2px;
+  padding: 7px 12px;
+  border: 1px solid rgba(190, 255, 237, 0.13);
+  border-radius: 13px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.035);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.refresh-teaching-card .teaching-core {
+  padding-block: 4px;
+}
+
+.question-help {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.question-help-toggle {
+  border-color: rgba(255, 209, 102, 0.2);
+  color: var(--amber-soft);
+  background: rgba(255, 209, 102, 0.07);
+}
+
+.question-help-panel,
+.guided-support.question-help-panel {
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 209, 102, 0.15);
+  border-radius: 14px;
+  color: var(--text-soft);
+  background: rgba(255, 209, 102, 0.055);
+  font-size: 0.9rem;
+  line-height: 1.68;
+}
+
+.question-coachmark {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(141, 145, 255, 0.18);
+  border-radius: 15px;
+  color: var(--text-soft);
+  background: rgba(141, 145, 255, 0.07);
+}
+
+.question-coachmark-copy {
+  min-width: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.question-coachmark-dismiss {
+  width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.correction-retry-banner {
+  margin: 0 0 10px;
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  line-height: 1.58;
+}
+
+.feedback-summary {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.feedback-answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 6px;
+  margin: 0;
+  color: var(--amber-soft);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.feedback-answer > span {
+  color: var(--text-faint);
+}
+
+.feedback-answer > bdi {
+  color: var(--amber-soft);
+  font-weight: 800;
+}
+
+.feedback-reason {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  line-height: 1.58;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.feedback-detail-trigger {
+  width: fit-content;
+  min-height: 36px;
+  margin-top: 3px;
+  padding: 5px 9px;
+  font-size: 0.76rem;
+}
+
+.lesson-detail-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  align-items: end;
+  width: 100%;
+  height: 100dvh;
+  padding: 0;
+  isolation: isolate;
+  direction: rtl;
+}
+
+.lesson-detail-layer[hidden],
+.question-help-panel[hidden] {
+  display: none !important;
+}
+
+body:has(.lesson-detail-layer:not([hidden])) {
+  overflow: hidden;
+}
+
+.lesson-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(0, 9, 12, 0.72);
+  cursor: pointer;
+  animation: lesson-detail-fade 180ms ease-out both;
+}
+
+.lesson-detail-sheet {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(680px, 100%);
+  max-height: min(82dvh, 720px);
+  margin: 0 auto;
+  padding: 0 0 env(safe-area-inset-bottom);
+  overflow: hidden;
+  border: 1px solid rgba(190, 255, 237, 0.15);
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(110, 243, 197, 0.11), transparent 18rem),
+    linear-gradient(155deg, #103239, #071f25 72%);
+  box-shadow: 0 -24px 72px rgba(0, 7, 10, 0.52), inset 0 1px rgba(255, 255, 255, 0.06);
+  font-size: 1rem;
+  animation: lesson-detail-reveal 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lesson-detail-handle {
+  display: block;
+  width: 42px;
+  height: 4px;
+  margin: 9px auto 2px;
+  border-radius: 999px;
+  background: rgba(183, 208, 201, 0.36);
+}
+
+.lesson-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 12px 18px 13px;
+  border-bottom: 1px solid rgba(190, 255, 237, 0.09);
+}
+
+.lesson-detail-header > :not(.lesson-detail-close) {
+  min-width: 0;
+  margin: 0;
+}
+
+.lesson-detail-header h2,
+.lesson-detail-header strong {
+  color: #fff;
+  font-size: 1.22rem;
+  line-height: 1.5;
+}
+
+.lesson-detail-close {
+  flex: 0 0 auto;
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.lesson-detail-body {
+  display: grid;
+  align-content: start;
+  gap: 11px;
+  min-height: 0;
+  padding: 16px 18px 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lesson-detail-section {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(190, 255, 237, 0.09);
+  border-radius: 15px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.035);
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+
+.lesson-detail-section > * {
+  margin: 0;
+}
+
+.lesson-detail-section > :is(strong, h3) {
+  color: var(--mint-bright);
+}
+
+.lesson-detail-example {
+  color: var(--amber-soft);
+}
+
+.lesson-detail-note-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lesson-detail-note-list > li {
+  position: relative;
+  padding-inline-start: 18px;
+}
+
+.lesson-detail-note-list > li::before {
+  position: absolute;
+  inset: 0.72em 2px auto auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+  content: "";
+}
+
+@keyframes lesson-detail-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lesson-detail-reveal {
+  from { opacity: 0; clip-path: inset(12% 0 0 round 28px); }
+  to { opacity: 1; clip-path: inset(0 0 0 round 28px); }
+}
+
+@media (max-width: 680px) {
+  .lesson-notes-button {
+    width: 34px;
+    min-height: 34px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+    white-space: nowrap;
+  }
+
+  .lesson-notes-button .ui-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .teaching-use-panel,
+  .pattern-rule-panel {
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  .teaching-use-copy,
+  .pattern-rule-panel > p {
+    font-size: 0.9rem;
+    line-height: 1.66;
+  }
+
+  .question-help {
+    margin-bottom: 9px;
+  }
+
+  .question-help-toggle {
+    min-height: 40px;
+    padding-block: 6px;
+  }
+
+  .question-coachmark {
+    margin-bottom: 9px;
+    padding: 9px 10px;
+  }
+
+  .feedback-reason {
+    -webkit-line-clamp: 2;
+  }
+
+  .lesson-detail-sheet {
+    max-height: min(86dvh, 680px);
+    border-radius: 22px 22px 0 0;
+  }
+
+  .lesson-detail-header {
+    padding: 9px 13px 10px;
+  }
+
+  .lesson-detail-header h2,
+  .lesson-detail-header strong {
+    font-size: 1.08rem;
+  }
+
+  .lesson-detail-close {
+    width: 40px;
+    min-height: 40px;
+  }
+
+  .lesson-detail-body {
+    gap: 9px;
+    padding: 12px 12px 18px;
+  }
+
+  .lesson-detail-section {
+    gap: 5px;
+    padding: 10px 12px;
+    font-size: 0.92rem;
+    line-height: 1.68;
+  }
+}
+
+@media (max-width: 680px) and (max-height: 640px) {
+  .lesson-detail-sheet {
+    max-height: 92dvh;
+  }
+
+  .lesson-detail-handle {
+    margin-top: 6px;
+  }
+
+  .lesson-detail-header {
+    padding-block: 7px 8px;
+  }
+
+  .lesson-detail-body {
+    padding-bottom: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-detail-backdrop,
+  .lesson-detail-sheet {
+    animation: none !important;
+  }
+}
+
+/* Every lesson becomes a three-row viewport: compact top chrome, independently
+   scrollable teaching content, and an action/feedback row. Unlike a padded
+   fixed dock, this creates zero geometric overlap at every scroll position,
+   from the 320 x 568 Android contract through desktop. */
+.app-shell:has(.quiz-screen > :is(.quiz-action-bar, .quiz-feedback-panel)) {
+  --lesson-shell-top: 28px;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: calc(100dvh - var(--lesson-shell-top));
+  min-height: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) > .quiz-topbar {
+  position: relative;
+  top: auto;
+  margin-bottom: 8px;
+}
+
+.quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) > .quiz-content {
+  min-height: 0;
+  padding-bottom: 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-bottom: 18px;
+  -webkit-overflow-scrolling: touch;
+  animation: lesson-content-fade 180ms ease-out both !important;
+  transform: none !important;
+}
+
+.quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) .learning-phase-header {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: rgb(5, 23, 28);
+  box-shadow: 0 9px 24px rgba(0, 8, 11, 0.28), inset 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.quiz-screen:has(> .quiz-feedback-panel) :is(
+    .question-meta,
+    .question-coachmark,
+  .question-help,
+  .correction-retry-banner
+) {
+  display: none;
+}
+
+.quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) > :is(.quiz-action-bar, .quiz-feedback-panel) {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: min(760px, 100%);
+  margin: 0 auto;
+  transform: none;
+}
+
+@media (max-width: 820px) {
+  .app-shell:has(.quiz-screen > :is(.quiz-action-bar, .quiz-feedback-panel)) {
+    --lesson-shell-top: 18px;
+  }
+}
+
+@media (max-width: 620px) {
+  .app-shell:has(.quiz-screen > :is(.quiz-action-bar, .quiz-feedback-panel)) {
+    --lesson-shell-top: 12px;
+  }
+}
+
+@keyframes lesson-content-fade {
+  from { opacity: 0.72; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-feedback-panel,
+  .quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) > .quiz-content {
+    animation: none !important;
+  }
+}
+
+html[data-effects="reduced"] .quiz-feedback-panel,
+html[data-effects="reduced"] .quiz-screen:has(> :is(.quiz-action-bar, .quiz-feedback-panel)) > .quiz-content {
+  animation: none !important;
+}

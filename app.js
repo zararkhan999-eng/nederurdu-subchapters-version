@@ -448,12 +448,17 @@ let activeReview = null;
 let pathCardLessonId = "";
 let pathExpanded = false;
 let lastRenderedScreen = "";
+let lastRenderedQuestionId = "";
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
 let matchPairError = "";
 let typedAnswer = "";
 let typedFallback = false;
+let lessonDetailKind = "";
+let lessonDetailReturnScrollTop = null;
+let coachmarkDismissed = false;
+let teachingStep = 0;
 let preferredDutchVoice = null;
 let answerCombo = 0;
 let bestAnswerCombo = 0;
@@ -1126,7 +1131,20 @@ function getActiveLesson() {
 function render() {
   const app = document.querySelector("#app");
   applyDisplaySettings();
+  const renderedQuestionId = lastRenderedScreen === "lesson" ? lastRenderedQuestionId : "";
+  const nextQuestionId = screen === "lesson" ? String(getActiveQuestion()?.id || "") : "";
+  const sameQuestionScrollTop = renderedQuestionId && renderedQuestionId === nextQuestionId
+    ? getLessonContentScrollTop()
+    : null;
   const screenChanged = screen !== lastRenderedScreen;
+  if (screenChanged && screen !== "lesson") {
+    lessonDetailKind = "";
+    lessonDetailReturnScrollTop = null;
+    teachingStep = 0;
+    coachmarkDismissed = false;
+    hintOpen = false;
+    lastRenderedQuestionId = "";
+  }
   app.classList.toggle("screen-changing", screenChanged);
   document.body.dataset.screen = screen;
   if (screenChanged) triggerWorldTransition();
@@ -1159,6 +1177,11 @@ function render() {
   bindEvents();
   bindExperienceMotion(screenChanged);
   lastRenderedScreen = screen;
+  if (sameQuestionScrollTop !== null
+    && screen === "lesson"
+    && String(getActiveQuestion()?.id || "") === nextQuestionId) {
+    restoreLessonContentScrollTop(sameQuestionScrollTop);
+  }
 }
 
 function renderExperienceBackdrop() {
@@ -1729,6 +1752,14 @@ function renderLesson() {
   const questions = sessionQuestions.length ? sessionQuestions : (lesson.questions || []);
   const question = questions[activeQuestionIndex];
   if (!question) return renderMissingLesson();
+  if (question.id !== lastRenderedQuestionId) {
+    lessonDetailKind = "";
+    lessonDetailReturnScrollTop = null;
+    teachingStep = 0;
+    coachmarkDismissed = false;
+    hintOpen = false;
+    lastRenderedQuestionId = question.id;
+  }
   const visual = getExerciseVisual(question, lesson);
   const percentage = Math.round(((activeQuestionIndex + (checked ? 1 : 0)) / questions.length) * 100);
   const infoStep = isInfoQuestion(question);
@@ -1748,12 +1779,14 @@ function renderLesson() {
           <span class="question-kind-icon" aria-hidden="true">${renderIcon(questionTheme.icon)}</span>
           <h1 class="question-title">${escapeHtml(getQuestionTitle(question))}</h1>
         </div>
-        ${["understand", "guided"].includes(phase) && question.hint ? `<aside class="guided-support"><strong>مدد:</strong> <span>${escapeHtml(question.hint)}</span></aside>` : ""}
-        ${question.correctionRetry ? `<aside class="correction-retry-banner"><strong>مدد کے ساتھ دوبارہ کوشش</strong><span>${escapeHtml(question.hint || question.explain || "")}</span></aside>` : ""}
+        ${renderQuestionCoachmark(question)}
+        ${question.correctionRetry ? `<aside class="correction-retry-banner"><strong>مدد کے ساتھ دوبارہ کوشش</strong><span>اس بار جواب خود چنیں؛ ضرورت ہو تو مدد کھولیں۔</span></aside>` : ""}
+        ${renderQuestionHelp(question, phase)}
         ${renderQuestionCard(question, visual)}
       </section>
       ${renderQuizFooter(question, infoStep)}
     </main>
+    ${renderLessonDetailSheet(question)}
   `;
 }
 
@@ -1796,9 +1829,15 @@ function getLessonDisplayPhases(lesson) {
 function renderLearningPhaseHeader(activePhase) {
   const displayPhases = getLessonDisplayPhases(getActiveLesson());
   const activeIndex = displayPhases.findIndex((phase) => phase.id === activePhase);
+  const notesButton = getActiveLesson()?.reviewKind ? "" : `
+    <button class="lesson-notes-button" data-action="open-lesson-detail" data-detail-kind="notes" aria-label="اس حصے کے نوٹس کھولیں">
+      ${renderIcon("notebook")}<span>نوٹس</span>
+    </button>
+  `;
   return `
     <div class="learning-phase-header">
       <span class="learning-phase-name">${displayPhases.find((phase) => phase.id === activePhase)?.label || "مشق"}</span>
+      ${notesButton}
       <div class="learning-phase-track" aria-label="سبق کے مرحلے">
         ${displayPhases.map((phase) => {
     const index = displayPhases.findIndex((item) => item.id === phase.id);
@@ -1837,10 +1876,13 @@ function renderQuizTopBar(percentage) {
 }
 
 function getQuestionTitle(question) {
+  if (question.type === "concept-teach") {
+    if (question.teachingMode === "refresh") return "مختصر یاد دہانی";
+    return teachingStep === 0 ? "معنی اور آواز" : "روزمرہ استعمال";
+  }
+  if (question.type === "pattern-teach") return teachingStep === 0 ? "جملے کا نمونہ" : "ایک آسان اصول";
+  if (question.type === "correction-teach") return "دوبارہ کوشش کی تیاری";
   if (question.instructionUrdu || question.instruction || question.label) return question.instructionUrdu || question.instruction || question.label;
-  if (question.type === "concept-teach") return "لفظ کو دیکھیں، سنیں اور مثال سمجھیں";
-  if (question.type === "pattern-teach") return "جملے کا طریقہ سمجھیں";
-  if (question.type === "correction-teach") return "غلطی سمجھیں، پھر دوبارہ جواب دیں";
   if (progress.settings.beginnerMode) {
     if (isInfoQuestion(question)) return "دیکھیں اور سنیں";
     if (question.type === "listen-choice" || question.mode === "listen-reply" || question.mode === "dialogue") return "سنیں";
@@ -1890,7 +1932,121 @@ function renderQuestionCard(question, visual) {
   return renderMultipleChoiceQuestion(question, visual);
 }
 
+function getTeachingStepCount(question) {
+  if (question?.type === "concept-teach") {
+    if (question.teachingMode === "refresh") return 1;
+    const teaching = getConceptTeachingContent(question);
+    return teaching.conciseUsage || teaching.showExample ? 2 : 1;
+  }
+  if (question?.type === "pattern-teach") {
+    const teaching = getPatternTeachingContent(question);
+    return teaching.conciseRule || teaching.highlight ? 2 : 1;
+  }
+  return 1;
+}
+
 function renderConceptTeachingQuestion(question, visual) {
+  const teaching = getConceptTeachingContent(question);
+  const refresh = question.teachingMode === "refresh";
+  const showUsePanel = !refresh && Boolean(teaching.conciseUsage || teaching.showExample);
+  const stepCount = showUsePanel ? 2 : 1;
+  const activeStep = Math.min(teachingStep, stepCount - 1);
+  const stage = activeStep === 0 ? "meet" : "use";
+  return `
+    <article class="learning-teaching-card concept-teaching-card progressive-teaching-card teaching-stage-${stage} ${refresh ? "refresh-teaching-card" : ""}" data-teaching-step="${activeStep + 1}">
+      ${stepCount > 1 ? `<div class="teaching-step-progress" aria-label="وضاحت کا حصہ ${activeStep + 1} از ${stepCount}"><span class="teaching-step-count latin">${activeStep + 1}/${stepCount}</span><span class="teaching-step-name">${activeStep === 0 ? "پہچانیں" : "استعمال کریں"}</span></div>` : ""}
+      ${activeStep === 0 ? `
+        ${renderVisual(visual, "quiz-visual teaching-visual")}
+        <section class="teaching-core" aria-label="لفظ اور مطلب">
+          <span class="teaching-eyebrow">${refresh ? "پچھلی بات یاد کریں" : "پہچانیں اور سنیں"}</span>
+          <div class="teaching-dutch latin">
+            <strong>${escapeHtml(teaching.dutch)}</strong>
+            ${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}
+          </div>
+          <p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p>
+          ${teaching.pronunciation ? `<p class="teaching-pronunciation"><span>اردو میں آواز:</span> ${escapeHtml(teaching.pronunciation)}</p>` : ""}
+          <div class="teaching-actions">${renderSlowSpeakButton(teaching.audioText, true)}</div>
+        </section>
+      ` : `
+        <section class="teaching-use-panel" aria-label="استعمال کی مثال">
+          <span class="teaching-step-label">استعمال کریں</span>
+          ${teaching.conciseUsage ? `<p class="teaching-use-copy">${escapeHtml(teaching.conciseUsage)}</p>` : ""}
+          ${teaching.showExample ? `<div class="teaching-example"><span>ایک مثال</span><strong class="latin">${escapeHtml(teaching.conciseExampleDutch)}</strong><small>${escapeHtml(teaching.conciseExampleUrdu)}</small></div>` : ""}
+        </section>
+        <button class="teaching-step-back" data-action="teaching-back">پچھلا حصہ</button>
+      `}
+      ${teaching.hasOptionalDetail && activeStep === stepCount - 1 ? renderLessonDetailTrigger("concept", refresh ? "مزید یاد دہانی" : "فرق یا مزید وضاحت") : ""}
+    </article>
+  `;
+}
+
+function renderPatternTeachingQuestion(question) {
+  const teaching = getPatternTeachingContent(question);
+  const hasRuleStep = Boolean(teaching.conciseRule || teaching.highlight);
+  const stepCount = hasRuleStep ? 2 : 1;
+  const activeStep = Math.min(teachingStep, stepCount - 1);
+  const stage = activeStep === 0 ? "model" : "rule";
+  return `
+    <article class="learning-teaching-card pattern-teaching-card progressive-teaching-card teaching-stage-${stage}" data-teaching-step="${activeStep + 1}">
+      ${stepCount > 1 ? `<div class="teaching-step-progress" aria-label="وضاحت کا حصہ ${activeStep + 1} از ${stepCount}"><span class="teaching-step-count latin">${activeStep + 1}/${stepCount}</span><span class="teaching-step-name">${activeStep === 0 ? "نمونہ" : "آسان اصول"}</span></div>` : ""}
+      ${activeStep === 0 ? `
+        <section class="pattern-model-panel" aria-label="جملہ اور مطلب">
+          <span class="teaching-eyebrow">پہلے نمونہ دیکھیں</span>
+          <div class="pattern-sentence">
+            <strong class="latin">${escapeHtml(teaching.sentence)}</strong>
+            ${teaching.sentence ? renderSpeakButton(teaching.sentence, "teaching") : ""}
+            ${renderSlowSpeakButton(teaching.sentence, true)}
+            ${teaching.sentenceUrdu ? `<small>${escapeHtml(teaching.sentenceUrdu)}</small>` : ""}
+          </div>
+        </section>
+      ` : `
+        <section class="pattern-rule-panel" aria-label="ایک آسان اصول">
+          <span class="teaching-step-label">ایک آسان اصول</span>
+          ${teaching.highlight ? `<strong class="pattern-highlight latin">${escapeHtml(teaching.highlight)}</strong>` : ""}
+          ${teaching.conciseRule ? `<p class="pattern-explanation">${escapeHtml(teaching.conciseRule)}</p>` : ""}
+        </section>
+        <button class="teaching-step-back" data-action="teaching-back">پچھلا حصہ</button>
+      `}
+      ${teaching.hasOptionalDetail && activeStep === stepCount - 1 ? renderLessonDetailTrigger("pattern", "فرق یا عام غلطی دیکھیں") : ""}
+    </article>
+  `;
+}
+
+function renderCorrectionTeachingQuestion(question) {
+  const original = question.originalQuestion || {};
+  const explanation = question.wrongExplanation || original.wrongExplanation || original.feedback?.wrong || original.explain || `صحیح جواب ${original.answer || ""} ہے۔`;
+  return `
+    <article class="learning-teaching-card correction-teaching-card progressive-teaching-card">
+      <span class="teaching-eyebrow">دوبارہ کوشش کی تیاری</span>
+      <h2>صحیح جواب ایک بار دیکھیں</h2>
+      ${original.answer ? `<div class="teaching-example"><span>صحیح جواب</span><strong class="${isDutchText(original.answer) ? "latin" : ""}">${escapeHtml(original.answer)}</strong></div>` : ""}
+      <p class="correction-next-step">اگلے قدم میں یہی بات خود دوبارہ آزمائیں۔</p>
+      ${explanation ? renderLessonDetailTrigger("correction", "وجہ دوبارہ دیکھیں") : ""}
+    </article>
+  `;
+}
+
+function normalizeTeachingText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[“”"'’`]/g, "")
+    .replace(/[۔.!?؟،,:;؛()\[\]{}]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getConciseTeachingText(value, limit = 130) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  const sentenceEnd = text.search(/[۔.!?؟](?:\s|$)/);
+  const firstSentence = sentenceEnd >= 24 ? text.slice(0, sentenceEnd + 1) : text;
+  if (firstSentence.length <= limit) return firstSentence;
+  const shortened = firstSentence.slice(0, limit + 1);
+  const lastSpace = shortened.lastIndexOf(" ");
+  return `${shortened.slice(0, lastSpace > Math.floor(limit * 0.62) ? lastSpace : limit).trim()}…`;
+}
+
+function getConceptTeachingContent(question) {
   const concept = question.concept || {};
   const dutch = concept.dutch || question.dutch || question.prompt || "";
   const urdu = concept.urdu || question.urdu || "";
@@ -1901,25 +2057,41 @@ function renderConceptTeachingQuestion(question, visual) {
   const exampleUrdu = example?.urdu || concept.exampleUrdu || question.exampleUrdu || "";
   const usage = concept.usageUrdu || concept.usage || question.usageUrdu || "";
   const confusion = concept.commonConfusionUrdu || concept.commonConfusion || question.commonConfusionUrdu || "";
-  return `
-    <article class="learning-teaching-card concept-teaching-card">
-      ${renderVisual(visual, "quiz-visual teaching-visual")}
-      <span class="teaching-eyebrow">${question.teachingMode === "refresh" ? "پچھلی بات یاد کریں" : "نیا لفظ یا جملہ"}</span>
-      <div class="teaching-dutch latin">
-        <strong>${escapeHtml(dutch)}</strong>
-        ${audioText ? renderSpeakButton(audioText, "teaching") : ""}
-      </div>
-      <p class="teaching-urdu">${escapeHtml(urdu)}</p>
-      ${pronunciation ? `<p class="teaching-pronunciation"><span>قریب ترین اردو آواز:</span> ${escapeHtml(pronunciation)}</p>` : ""}
-      <div class="teaching-actions">${renderSlowSpeakButton(audioText, true)}</div>
-      ${usage ? `<p class="teaching-usage"><strong>کب کہیں؟</strong> ${escapeHtml(usage)}</p>` : ""}
-      ${exampleDutch || exampleUrdu ? `<div class="teaching-example"><span>مثال</span><strong class="latin">${escapeHtml(exampleDutch)}</strong><small>${escapeHtml(exampleUrdu)}</small></div>` : ""}
-      ${confusion ? `<p class="teaching-confusion"><strong>یاد رکھیں:</strong> ${escapeHtml(confusion)}</p>` : ""}
-    </article>
-  `;
+  const duplicateExample = Boolean(
+    exampleDutch
+    && exampleUrdu
+    && normalizeTeachingText(exampleDutch) === normalizeTeachingText(dutch)
+    && normalizeTeachingText(exampleUrdu) === normalizeTeachingText(urdu)
+  );
+  const usefulUsage = normalizeTeachingText(usage) !== normalizeTeachingText(urdu) ? usage : "";
+  const conciseUsage = getConciseTeachingText(usefulUsage, 125);
+  const conciseExampleDutch = getConciseTeachingText(exampleDutch, 90);
+  const conciseExampleUrdu = getConciseTeachingText(exampleUrdu, 100);
+  const showExample = Boolean(!duplicateExample && (conciseExampleDutch || conciseExampleUrdu));
+  const visibleDetailIsTruncated = conciseUsage !== usefulUsage
+    || (showExample && (
+      conciseExampleDutch !== String(exampleDutch || "").replace(/\s+/g, " ").trim()
+      || conciseExampleUrdu !== String(exampleUrdu || "").replace(/\s+/g, " ").trim()
+    ));
+  const refresh = question.teachingMode === "refresh";
+  return {
+    dutch,
+    urdu,
+    pronunciation,
+    audioText,
+    usage: usefulUsage,
+    conciseUsage,
+    confusion,
+    exampleDutch,
+    exampleUrdu,
+    conciseExampleDutch,
+    conciseExampleUrdu,
+    showExample,
+    hasOptionalDetail: Boolean(confusion || visibleDetailIsTruncated || (refresh && (usefulUsage || showExample)))
+  };
 }
 
-function renderPatternTeachingQuestion(question) {
+function getPatternTeachingContent(question) {
   const pattern = question.pattern || {};
   const sentence = pattern.modelDutch || pattern.sentence || pattern.exampleDutch || question.prompt || "";
   const sentenceUrdu = pattern.modelUrdu || pattern.sentenceUrdu || pattern.exampleUrdu || "";
@@ -1927,36 +2099,155 @@ function renderPatternTeachingQuestion(question) {
   const explanation = pattern.explanationUrdu || pattern.explanation || question.explain || "";
   const contrast = pattern.contrastUrdu || pattern.contrast || "";
   const mistake = pattern.commonMistakeUrdu || pattern.commonMistake || "";
+  const conciseRule = getConciseTeachingText(explanation, 130);
+  return {
+    sentence,
+    sentenceUrdu,
+    highlight,
+    explanation,
+    conciseRule,
+    contrast,
+    mistake,
+    hasOptionalDetail: Boolean(contrast || mistake || conciseRule !== String(explanation || "").replace(/\s+/g, " ").trim())
+  };
+}
+
+function renderLessonDetailTrigger(kind, label, className = "") {
   return `
-    <article class="learning-teaching-card pattern-teaching-card">
-      <span class="teaching-eyebrow">جملے کا طریقہ</span>
-      <div class="pattern-sentence">
-        <strong class="latin">${escapeHtml(sentence)}</strong>
-        ${sentence ? renderSpeakButton(sentence, "teaching") : ""}
-        ${renderSlowSpeakButton(sentence, true)}
-        ${sentenceUrdu ? `<small>${escapeHtml(sentenceUrdu)}</small>` : ""}
-      </div>
-      ${highlight ? `<p class="pattern-highlight latin">${escapeHtml(highlight)}</p>` : ""}
-      ${explanation ? `<p class="pattern-explanation">${escapeHtml(explanation)}</p>` : ""}
-      ${contrast ? `<p class="pattern-contrast"><strong>فرق:</strong> ${escapeHtml(contrast)}</p>` : ""}
-      ${mistake ? `<p class="pattern-mistake"><strong>عام غلطی:</strong> ${escapeHtml(mistake)}</p>` : ""}
-    </article>
+    <button class="lesson-detail-trigger ${className}" data-action="open-lesson-detail" data-detail-kind="${escapeAttr(kind)}" aria-haspopup="dialog">
+      <span>${escapeHtml(label)}</span><b aria-hidden="true">‹</b>
+    </button>
   `;
 }
 
-function renderCorrectionTeachingQuestion(question) {
-  const original = question.originalQuestion || {};
-  const explanation = question.wrongExplanation || original.wrongExplanation || original.feedback?.wrong || original.explain || `صحیح جواب ${original.answer || ""} ہے۔`;
+function renderLessonDetailSheet(question) {
+  if (!lessonDetailKind) return "";
+  const detail = getLessonDetailContent(question, lessonDetailKind);
+  if (!detail) return "";
   return `
-    <article class="learning-teaching-card correction-teaching-card">
-      <span class="teaching-eyebrow">غلطی سے سیکھیں</span>
-      <h2>${escapeHtml(question.prompt || "اس بات کو ایک بار پھر دیکھیں")}</h2>
-      <p>${escapeHtml(explanation)}</p>
-      ${original.answer ? `<div class="teaching-example"><span>صحیح جواب</span><strong class="${isDutchText(original.answer) ? "latin" : ""}">${escapeHtml(original.answer)}</strong></div>` : ""}
-      ${original.hint ? `<p class="teaching-usage">${escapeHtml(original.hint)}</p>` : ""}
-      <div class="correction-retry-banner">اگلے قدم میں اسی مہارت کو مدد کے ساتھ دوبارہ آزمائیں۔</div>
-    </article>
+    <div class="lesson-detail-layer" data-detail-kind="${escapeAttr(lessonDetailKind)}">
+      <button class="lesson-detail-backdrop" data-action="close-lesson-detail" aria-label="وضاحت بند کریں"></button>
+      <section class="lesson-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="lesson-detail-title" tabindex="-1">
+        <span class="lesson-detail-handle" aria-hidden="true"></span>
+        <header class="lesson-detail-header">
+          <div>
+            <span>${escapeHtml(detail.eyebrow)}</span>
+            <h2 id="lesson-detail-title">${escapeHtml(detail.title)}</h2>
+          </div>
+          <button class="lesson-detail-close" data-action="close-lesson-detail" aria-label="وضاحت بند کر کے واپس جائیں">${renderIcon("close")}</button>
+        </header>
+        <div class="lesson-detail-body" id="lesson-detail-description" role="region" aria-label="تفصیلی وضاحت" tabindex="0">${detail.body}</div>
+      </section>
+    </div>
   `;
+}
+
+function getLessonDetailContent(question, kind) {
+  if (kind === "concept") return getConceptLessonDetail(question);
+  if (kind === "pattern") return getPatternLessonDetail(question);
+  if (kind === "feedback") return getFeedbackLessonDetail(question);
+  if (kind === "correction") return getCorrectionLessonDetail(question);
+  if (kind === "notes") return getLessonNotesDetail();
+  return null;
+}
+
+function renderLessonDetailSection(label, content, className = "") {
+  if (!content) return "";
+  return `<section class="lesson-detail-section ${className}"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(content)}</p></section>`;
+}
+
+function getConceptLessonDetail(question) {
+  const teaching = getConceptTeachingContent(question);
+  const refresh = question.teachingMode === "refresh";
+  const exampleWasShortened = teaching.showExample && (
+    teaching.conciseExampleDutch !== String(teaching.exampleDutch || "").replace(/\s+/g, " ").trim()
+    || teaching.conciseExampleUrdu !== String(teaching.exampleUrdu || "").replace(/\s+/g, " ").trim()
+  );
+  const example = teaching.showExample && (refresh || exampleWasShortened)
+    ? `<section class="lesson-detail-section lesson-detail-example"><strong>مثال</strong><bdi class="latin" dir="ltr">${escapeHtml(teaching.exampleDutch)}</bdi><p>${escapeHtml(teaching.exampleUrdu)}</p></section>`
+    : "";
+  const body = [
+    refresh || teaching.conciseUsage !== teaching.usage
+      ? renderLessonDetailSection("کب استعمال کریں؟", teaching.usage)
+      : "",
+    example,
+    renderLessonDetailSection("فرق یاد رکھیں", teaching.confusion)
+  ].filter(Boolean).join("");
+  if (!body) return null;
+  return { eyebrow: "اختیاری وضاحت", title: teaching.dutch || "مزید سمجھیں", body };
+}
+
+function getPatternLessonDetail(question) {
+  const teaching = getPatternTeachingContent(question);
+  const body = [
+    teaching.explanation && teaching.explanation !== teaching.conciseRule
+      ? renderLessonDetailSection("پورا اصول", teaching.explanation)
+      : "",
+    renderLessonDetailSection("فرق", teaching.contrast),
+    renderLessonDetailSection("عام غلطی", teaching.mistake)
+  ].filter(Boolean).join("");
+  if (!body) return null;
+  return { eyebrow: "اختیاری وضاحت", title: "جملے کا فرق", body };
+}
+
+function getFeedbackLessonDetail(question) {
+  const correct = checked && isCurrentAnswerCorrect(question);
+  const explanation = getFullFeedbackExplanation(question, correct);
+  if (!explanation) return null;
+  return {
+    eyebrow: correct ? "جواب کی وجہ" : "غلطی کی وجہ",
+    title: correct ? "یہ جواب کیوں درست ہے؟" : "یہ جواب کیوں مختلف تھا؟",
+    body: renderLessonDetailSection("آسان وضاحت", explanation)
+  };
+}
+
+function getCorrectionLessonDetail(question) {
+  const original = question.originalQuestion || {};
+  const explanation = question.wrongExplanation || original.wrongExplanation || original.feedback?.wrong || original.explain || "";
+  if (!explanation) return null;
+  return {
+    eyebrow: "غلطی سے سیکھیں",
+    title: "وجہ دوبارہ دیکھیں",
+    body: renderLessonDetailSection("آسان وضاحت", explanation)
+  };
+}
+
+function getLessonNotesDetail() {
+  const lesson = getActiveLesson();
+  if (!lesson) return null;
+  const runConcepts = normalizeIdList(activeLearningRun?.conceptIds)
+    .map((conceptId) => courseConcepts.get(conceptId))
+    .filter(Boolean);
+  const lessonConcepts = (lesson.concepts || [])
+    .map((concept) => typeof concept === "string" ? courseConcepts.get(concept) : concept)
+    .filter(Boolean);
+  const fallbackPairs = getLessonIntroPairs(lesson, sessionQuestions)
+    .map((pair) => ({ dutch: pair.dutch, urdu: pair.urdu }));
+  const seen = new Set();
+  const noteConcepts = runConcepts.length ? runConcepts : [...lessonConcepts, ...fallbackPairs];
+  const concepts = noteConcepts
+    .filter((concept) => {
+      const key = `${normalizeTeachingText(concept?.dutch)}|${normalizeTeachingText(concept?.urdu)}`;
+      if (!key || key === "|" || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 12);
+  const conceptList = concepts.length ? `
+    <section class="lesson-detail-section">
+      <strong>اس حصے کی باتیں</strong>
+      <ul class="lesson-detail-note-list">
+        ${concepts.map((concept) => `<li><bdi class="latin" dir="ltr">${escapeHtml(concept.dutch)}</bdi><span>${escapeHtml(concept.urdu)}</span>${concept.pronunciationUrdu ? `<small>${escapeHtml(concept.pronunciationUrdu)}</small>` : ""}</li>`).join("")}
+      </ul>
+    </section>
+  ` : "";
+  const pattern = activeLearningRun && !activeLearningRun.patternId ? {} : (lesson.pattern || {});
+  const patternSummary = pattern.modelDutch || pattern.sentence || pattern.exampleDutch
+    ? `<section class="lesson-detail-section lesson-detail-example"><strong>جملے کا نمونہ</strong><bdi class="latin" dir="ltr">${escapeHtml(pattern.modelDutch || pattern.sentence || pattern.exampleDutch)}</bdi><p>${escapeHtml(pattern.modelUrdu || pattern.sentenceUrdu || pattern.exampleUrdu || pattern.explanationUrdu || "")}</p></section>`
+    : "";
+  const body = `${conceptList}${patternSummary}`;
+  if (!body) return null;
+  return { eyebrow: "دوبارہ دیکھیں", title: "اس حصے کے نوٹس", body };
 }
 
 function renderDocumentQuestion(question) {
@@ -2029,7 +2320,7 @@ function renderMultipleChoiceQuestion(question, visual) {
           ${speechText && (!helpFreeCheck || intrinsicListening) ? renderSpeakButton(speechText, "prompt") : ""}
           <span>${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
         </div>
-        ${helpFreeCheck ? "" : renderBeginnerSupport(question.prompt)}
+        ${helpFreeCheck || !hintOpen ? "" : renderBeginnerSupport(question.prompt)}
         ${helpFreeCheck ? "" : renderSlowSpeakButton(speechText)}
       </div>
       ${renderChoices(question)}
@@ -2044,11 +2335,9 @@ function renderWordBankQuestion(question, visual) {
       <div class="prompt-scene compact ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
         <div class="speech-bubble">${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
-        ${helpFreeCheck ? "" : renderBeginnerSupport(question.prompt)}
+        ${helpFreeCheck || !hintOpen ? "" : renderBeginnerSupport(question.prompt)}
       </div>
       ${renderBuildExercise(question)}
-      ${helpFreeCheck ? "" : renderHintButton()}
-      ${!helpFreeCheck && hintOpen ? renderHintPopover(question) : ""}
     </div>
   `;
 }
@@ -2090,14 +2379,22 @@ function renderMatchPairButton(id, side, text) {
 function renderQuizFooter(question, infoStep) {
   const correct = checked && isCurrentAnswerCorrect(question);
   if (infoStep) {
-    return `<footer class="quiz-action-bar"><button class="quiz-action enabled" data-action="continue-info">${question.type === "speak-repeat" ? "میں نے کہا" : "آگے بڑھیں"}</button></footer>`;
+    const hasNextTeachingStep = teachingStep < getTeachingStepCount(question) - 1;
+    const label = question.type === "speak-repeat"
+      ? "میں نے کہا"
+      : hasNextTeachingStep && question.type === "concept-teach"
+        ? "استعمال دیکھیں"
+        : hasNextTeachingStep && question.type === "pattern-teach"
+          ? "آسان اصول دیکھیں"
+          : "آگے بڑھیں";
+    return `<footer class="quiz-action-bar"><button class="quiz-action enabled ${hasNextTeachingStep ? "teaching-step-next" : ""}" data-action="continue-info">${label}</button></footer>`;
   }
   if (checked) {
     return `
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
           <span class="feedback-icon">${renderIcon(correct ? "check" : "close")}</span>
-          <div><strong>${correct ? "درست — وجہ بھی دیکھیں" : "اب غلطی سمجھیں"}</strong>${renderFeedbackDetail(question, correct)}</div>
+          <div><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong>${renderFeedbackDetail(question, correct)}</div>
         </div>
         <button class="quiz-action enabled" data-action="next">${getFeedbackNextLabel(question, correct)}</button>
       </footer>
@@ -2126,20 +2423,32 @@ function getFeedbackNextLabel(question, correct) {
 }
 
 function renderFeedbackDetail(question, correct = false) {
-  const selectedOptionExplanation = !correct
-    ? getWrongOptionExplanation(question, selectedAnswer)
-    : "";
-  if (selectedOptionExplanation) return `<small>${escapeHtml(selectedOptionExplanation)}</small>`;
+  const fullExplanation = getFullFeedbackExplanation(question, correct);
+  const conciseReason = getConciseTeachingText(fullExplanation, correct ? 105 : 115);
+  const hasOptionalDetail = String(fullExplanation || "").replace(/\s+/g, " ").trim() !== conciseReason;
+  const answer = String(question.answer || "");
+  return `
+    <div class="feedback-summary">
+      ${answer ? `<p class="feedback-answer"><span>صحیح جواب:</span> <bdi class="${isDutchText(answer) ? "latin" : ""}" dir="auto">${escapeHtml(answer)}</bdi></p>` : ""}
+      ${conciseReason ? `<small class="feedback-reason">${escapeHtml(conciseReason)}</small>` : ""}
+      ${hasOptionalDetail ? renderLessonDetailTrigger("feedback", correct ? "پوری وجہ" : "کیوں؟", "feedback-detail-trigger") : ""}
+    </div>
+  `;
+}
+
+function getFullFeedbackExplanation(question, correct = false) {
+  const selectedOptionExplanation = !correct ? getWrongOptionExplanation(question, selectedAnswer) : "";
+  if (selectedOptionExplanation) return selectedOptionExplanation;
   const authored = correct
     ? question.correctExplanation || question.feedback?.correct
     : question.wrongExplanation || question.feedback?.wrong;
-  if (authored) return `<small>${escapeHtml(authored)}</small>`;
-  if (question.explain) return `<small>${escapeHtml(question.explain)}</small>`;
+  if (authored) return authored;
+  if (question.explain) return question.explain;
   const answerSupport = getBeginnerSupport(question.answer);
   const promptSupport = getBeginnerSupport(question.prompt);
-  if (answerSupport) return `<small>${escapeHtml(question.answer)} = ${escapeHtml(answerSupport.meaning)}</small>`;
-  if (promptSupport) return `<small>${escapeHtml(question.prompt)} کا مطلب ${escapeHtml(promptSupport.meaning)} ہے</small>`;
-  return `<small>صحیح جواب: ${escapeHtml(question.answer)}</small>`;
+  if (answerSupport) return `${question.answer} = ${answerSupport.meaning}`;
+  if (promptSupport) return `${question.prompt} کا مطلب ${promptSupport.meaning} ہے`;
+  return question.answer ? `صحیح جواب ${question.answer} ہے۔` : "";
 }
 
 function getWrongOptionExplanation(question, answer) {
@@ -2161,17 +2470,40 @@ function renderMissingLesson() {
   `;
 }
 
+function renderQuestionCoachmark(question) {
+  if (!question?.contextCoachmark || coachmarkDismissed) return "";
+  return `
+    <aside class="question-coachmark" role="note" aria-label="پہلی مشق کا طریقہ">
+      <span class="question-coachmark-copy"><strong>پہلی مشق:</strong> ${escapeHtml(question.contextCoachmark)}</span>
+      <button class="question-coachmark-dismiss" data-action="dismiss-coachmark" aria-label="یہ مدد بند کریں">${renderIcon("close")}</button>
+    </aside>
+  `;
+}
+
+function renderQuestionHelp(question, phase) {
+  const supportedPhase = ["understand", "guided"].includes(phase) || Boolean(question.correctionRetry);
+  if (!supportedPhase || !question.hint || isInfoQuestion(question) || isHelpFreeCheckQuestion(question)) return "";
+  return `
+    <div class="question-help">
+      ${renderHintButton()}
+      ${hintOpen ? renderHintPopover(question) : ""}
+    </div>
+  `;
+}
+
 function renderHintButton() {
   return `
-    <button class="hint-button ${hintOpen ? "active" : ""}" data-action="hint" title="مدد" aria-label="مدد">؟</button>
+    <button class="hint-button question-help-toggle ${hintOpen ? "active" : ""}" data-action="hint" aria-expanded="${hintOpen}" aria-controls="question-help-panel">
+      <span aria-hidden="true">؟</span><b>${hintOpen ? "مدد بند کریں" : "مدد چاہیے؟"}</b>
+    </button>
   `;
 }
 
 function renderHintPopover(question) {
   return `
-    <div class="hint-popover">
+    <aside class="hint-popover guided-support question-help-panel" id="question-help-panel" role="status">
       ${escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔")}
-    </div>
+    </aside>
   `;
 }
 
@@ -2220,7 +2552,7 @@ function renderChoice(option, question, index) {
   const dutchChoice = isDutchText(option);
   const helpFreeCheck = isHelpFreeCheckQuestion(question);
   const choiceText = dutchChoice && !helpFreeCheck ? renderTextWithWordHelp(option, `choice-${activeQuestionIndex}-${index}`) : escapeHtml(option);
-  const support = dutchChoice && !helpFreeCheck ? renderBeginnerSupport(option, "compact") : "";
+  const support = dutchChoice && !helpFreeCheck && hintOpen ? renderBeginnerSupport(option, "compact") : "";
 
   return `
     <div class="choice-wrap ${dutchChoice ? "has-sound" : ""}">
@@ -2646,6 +2978,10 @@ function bindEvents() {
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
       if (action === "match-pair") selectMatchPair(element.dataset.matchId, element.dataset.matchSide);
       if (action === "hint") toggleHint();
+      if (action === "open-lesson-detail") openLessonDetail(element.dataset.detailKind);
+      if (action === "close-lesson-detail") closeLessonDetail();
+      if (action === "teaching-back") showPreviousTeachingStep();
+      if (action === "dismiss-coachmark") dismissQuestionCoachmark();
       if (action === "check") checkAnswer();
       if (action === "continue-info") continueInfoStep();
       if (action === "next") nextQuestion();
@@ -2682,6 +3018,34 @@ function bindEvents() {
       if (checkButton) checkButton.disabled = !typedAnswer.trim();
     });
   });
+
+  bindLessonDetailAccessibility();
+}
+
+function bindLessonDetailAccessibility() {
+  const dialog = document.querySelector(".lesson-detail-sheet");
+  if (!dialog) return;
+  document.querySelector(".quiz-screen")?.setAttribute("inert", "");
+  const focusable = [...dialog.querySelectorAll("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")]
+    .filter((element) => !element.disabled && element.getAttribute("aria-hidden") !== "true");
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeLessonDetail();
+      return;
+    }
+    if (event.key !== "Tab" || !focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+  requestAnimationFrame(() => (focusable[0] || dialog).focus());
 }
 
 function bindExperienceMotion(screenChanged = false) {
@@ -2898,6 +3262,9 @@ function scrollToTop() {
 
 function goHome() {
   activeWordHelp = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   activeReview = null;
   pathCardLessonId = "";
   pathExpanded = false;
@@ -2908,6 +3275,9 @@ function goHome() {
 
 function goPractice() {
   activeWordHelp = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   activeReview = null;
   screen = "practice";
   render();
@@ -2916,6 +3286,9 @@ function goPractice() {
 
 function goLetters() {
   activeWordHelp = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   activeReview = null;
   screen = "letters";
   render();
@@ -2924,6 +3297,9 @@ function goLetters() {
 
 function goSettings() {
   activeWordHelp = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   activeReview = null;
   screen = "settings";
   render();
@@ -2936,6 +3312,9 @@ function showLessonPreview(id) {
   selectedChapterId = chapter.id;
   previewLessonId = lesson.id;
   activeWordHelp = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   activeReview = null;
   pathCardLessonId = lesson.id;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
@@ -2952,6 +3331,9 @@ function selectChapter(id) {
   activeLessonId = nextLesson.id;
   previewLessonId = nextLesson.id;
   activeReview = null;
+  lessonDetailKind = "";
+  teachingStep = 0;
+  coachmarkDismissed = false;
   pathCardLessonId = "";
   pathExpanded = false;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: activeLessonId });
@@ -3000,6 +3382,9 @@ function startLesson(id) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
+  lessonDetailKind = "";
+  coachmarkDismissed = false;
+  teachingStep = 0;
   answerCombo = 0;
   bestAnswerCombo = 0;
   sessionAnswers = [];
@@ -3040,6 +3425,9 @@ function startReview(kind) {
   matchPairError = "";
   typedAnswer = "";
   typedFallback = false;
+  lessonDetailKind = "";
+  coachmarkDismissed = false;
+  teachingStep = 0;
   answerCombo = 0;
   bestAnswerCombo = 0;
   sessionAnswers = [];
@@ -3056,7 +3444,6 @@ function startReview(kind) {
 function chooseAnswer(answer) {
   if (checked) return;
   activeWordHelp = null;
-  hintOpen = false;
   selectedAnswer = answer;
   updateChoiceSelection();
 }
@@ -3078,7 +3465,7 @@ function updateChoiceSelection() {
     checkButton.disabled = !canCheckQuestion(question);
   }
 
-  document.querySelectorAll(".hint-popover, .word-help-popover").forEach((element) => element.remove());
+  document.querySelectorAll(".word-help-popover").forEach((element) => element.remove());
 }
 
 function selectBuildTile(tileId) {
@@ -3102,6 +3489,91 @@ function toggleHint() {
   activeWordHelp = null;
   render();
 }
+
+function openLessonDetail(kind) {
+  if (!["concept", "pattern", "feedback", "correction", "notes"].includes(kind)) return;
+  if (!lessonDetailKind || lessonDetailReturnScrollTop === null) {
+    lessonDetailReturnScrollTop = getLessonContentScrollTop();
+  }
+  lessonDetailKind = kind;
+  activeWordHelp = null;
+  render();
+  restoreLessonContentScrollTop(lessonDetailReturnScrollTop);
+}
+
+function closeLessonDetail() {
+  if (!lessonDetailKind) return;
+  const closedKind = lessonDetailKind;
+  const returnScrollTop = lessonDetailReturnScrollTop ?? getLessonContentScrollTop();
+  lessonDetailKind = "";
+  render();
+  restoreLessonContentScrollTop(returnScrollTop);
+  requestAnimationFrame(() => {
+    const returnControl = document.querySelector(`[data-action="open-lesson-detail"][data-detail-kind="${closedKind}"]`);
+    try {
+      returnControl?.focus({ preventScroll: true });
+    } catch {
+      returnControl?.focus();
+    }
+    restoreLessonContentScrollTop(returnScrollTop);
+    lessonDetailReturnScrollTop = null;
+  });
+}
+
+function getLessonContentScrollTop() {
+  return Number(document.querySelector(".quiz-content")?.scrollTop || 0);
+}
+
+function restoreLessonContentScrollTop(scrollTop) {
+  if (!Number.isFinite(scrollTop)) return;
+  const restore = () => {
+    const content = document.querySelector(".quiz-content");
+    if (content) content.scrollTop = scrollTop;
+  };
+  restore();
+  requestAnimationFrame(restore);
+}
+
+function showPreviousTeachingStep() {
+  if (teachingStep <= 0) return;
+  teachingStep -= 1;
+  lessonDetailKind = "";
+  hintOpen = false;
+  render();
+  scrollToTop();
+}
+
+function dismissQuestionCoachmark() {
+  coachmarkDismissed = true;
+  render();
+}
+
+function handleNederUrduBack() {
+  if (lessonDetailKind) {
+    closeLessonDetail();
+    return true;
+  }
+  if (screen === "lesson" && teachingStep > 0) {
+    showPreviousTeachingStep();
+    return true;
+  }
+  if (screen === "lesson" && hintOpen) {
+    hintOpen = false;
+    render();
+    return true;
+  }
+  if (screen === "lesson" && getActiveQuestion()?.contextCoachmark && !coachmarkDismissed) {
+    dismissQuestionCoachmark();
+    return true;
+  }
+  if (screen === "lesson") {
+    goHome();
+    return true;
+  }
+  return false;
+}
+
+window.handleNederUrduBack = handleNederUrduBack;
 
 function skipAudioQuestion() {
   audioSkipped = true;
@@ -3141,6 +3613,14 @@ function selectMatchPair(id, side) {
 
 function continueInfoStep() {
   const question = getActiveQuestion();
+  if (teachingStep < getTeachingStepCount(question) - 1) {
+    teachingStep += 1;
+    lessonDetailKind = "";
+    hintOpen = false;
+    render();
+    scrollToTop();
+    return;
+  }
   if (getQuestionPhase(question) === "learn") {
     const skillIds = getQuestionSkillIds(question);
     const phaseComplete = !sessionQuestions.slice(activeQuestionIndex + 1).some((item) => getQuestionPhase(item) === "learn");
@@ -3253,6 +3733,9 @@ function nextQuestion() {
     activeWordHelp = null;
     buildAnswerIds = [];
     hintOpen = false;
+    lessonDetailKind = "";
+    coachmarkDismissed = false;
+    teachingStep = 0;
     audioSkipped = false;
     matchSelection = null;
     matchedPairIds = [];
@@ -3274,8 +3757,8 @@ function buildCorrectionPair(question) {
     id: `${rootId}-correction-${attemptNumber}`,
     type: "correction-teach",
     phase: "correction",
-    instructionUrdu: "غلطی کی وجہ پڑھیں اور صحیح جواب سمجھیں",
-    prompt: "یہ بات دوبارہ سمجھیں",
+    instructionUrdu: "صحیح جواب دیکھیں، پھر اسی بات کو دوبارہ آزمائیں",
+    prompt: "دوبارہ کوشش کی تیاری",
     answer: "سمجھ گیا",
     conceptIds: getQuestionConceptIds(rootQuestion),
     skillIds: getQuestionSkillIds(rootQuestion),
@@ -3621,7 +4104,8 @@ function buildLearningFirstSession(lesson, run) {
     questions.push(makePatternTeachingQuestion(lesson, run, lesson.pattern));
   }
 
-  const understand = getRunPhaseExercises(phaseConfig.understand, exerciseById, run, "understand");
+  const understand = getRunPhaseExercises(phaseConfig.understand, exerciseById, run, "understand")
+    .filter((question) => !(question.type === "uitleg" && question.taskDemonstration));
   const conceptsWithRecognition = new Set(understand.flatMap(getQuestionConceptIds));
   const skillsWithRecognition = new Set(understand.flatMap(getQuestionSkillIds));
   const taughtConcepts = [...taughtConceptIds].map((conceptId) => courseConcepts.get(conceptId)).filter(Boolean);
@@ -3633,6 +4117,16 @@ function buildLearningFirstSession(lesson, run) {
     if (patternSkillIds.some((skillId) => !skillsWithRecognition.has(skillId))) {
       understand.push(makePatternRecognitionQuestion(run, lesson.pattern, runConcepts));
     }
+  }
+  const firstSupportedExerciseIndex = understand.findIndex((question) => !isInfoQuestion(question));
+  if (firstSupportedExerciseIndex >= 0) {
+    const firstSupportedExercise = understand[firstSupportedExerciseIndex];
+    understand[firstSupportedExerciseIndex] = {
+      ...firstSupportedExercise,
+      contextCoachmark: firstSupportedExercise.type === "listen-choice"
+        ? "آواز سنیں، پھر وہی مطلب منتخب کریں جو ابھی سیکھا ہے۔ یہاں نمبر نہیں کٹیں گے۔"
+        : "ابھی سیکھا ہوا مطلب پہچانیں اور جواب منتخب کریں۔ یہاں نمبر نہیں کٹیں گے۔"
+    };
   }
   questions.push(...understand);
 
