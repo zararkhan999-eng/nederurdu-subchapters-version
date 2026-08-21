@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v75-progressive-teaching";
+const CACHE_NAME = "nederurdu-v76-brand-system";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "./experience.css",
   "./immersive.css",
   "./landing.css",
+  "./brand-system.css",
   "./course-data.js",
   "./word-visual-data.js",
   "./assets/word-visuals/offline-manifest.json",

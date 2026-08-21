@@ -12,6 +12,7 @@ const files = [
   "experience.css",
   "immersive.css",
   "landing.css",
+  "brand-system.css",
   "app.js",
   "course-data.js",
   "word-visual-data.js",

@@ -80,7 +80,7 @@ async function makeMissionReady(page, missionId) {
   }, missionId);
 }
 
-test("effects regression: enhanced atmosphere stays behind the app with a bounded motion budget", async ({ page }, testInfo) => {
+test("brand system keeps the dormant atmosphere non-interactive with a zero motion budget", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Run this deterministic effects contract once in desktop Chromium.");
 
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -177,6 +177,7 @@ test("effects regression: enhanced atmosphere stays behind the app with a bounde
       },
       atmosphere: {
         display: getComputedStyle(atmosphere).display,
+        opacity: getComputedStyle(atmosphere).opacity,
         position: getComputedStyle(atmosphere).position,
         pointerEvents: getComputedStyle(atmosphere).pointerEvents,
         zIndex: Number(getComputedStyle(atmosphere).zIndex),
@@ -194,6 +195,7 @@ test("effects regression: enhanced atmosphere stays behind the app with a bounde
 
   expect(contract.counts).toEqual(initialDecorationCounts);
   expect(contract.atmosphere.display).toBe("block");
+  expect(Number(contract.atmosphere.opacity)).toBe(0);
   expect(contract.atmosphere.position).toBe("fixed");
   expect(contract.atmosphere.pointerEvents).toBe("none");
   expect(contract.atmosphere.zIndex).toBeLessThan(contract.appZIndex);
@@ -203,8 +205,7 @@ test("effects regression: enhanced atmosphere stays behind the app with a bounde
   expect(Math.abs(contract.atmosphere.bottom - 900)).toBeLessThanOrEqual(1);
   expect(contract.decorationsIntercepting).toEqual([]);
   expect(contract.blockedControls).toEqual([]);
-  expect(contract.activeInfiniteAnimations.length, JSON.stringify(contract.activeInfiniteAnimations)).toBeGreaterThanOrEqual(2);
-  expect(contract.activeInfiniteAnimations.length, JSON.stringify(contract.activeInfiniteAnimations)).toBeLessThanOrEqual(3);
+  expect(contract.activeInfiniteAnimations).toEqual([]);
 });
 
 test("effects regression: enhanced effects remain responsive beyond twelve seconds", async ({ page }, testInfo) => {
@@ -313,7 +314,7 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
         atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
         atmosphereBehindApp: Number(getComputedStyle(atmosphere).zIndex) < Number(getComputedStyle(app).zIndex),
         navBounds,
-        navOpaque: getComputedStyle(document.querySelector(".bottom-nav")).backgroundImage !== "none",
+        navOpaque: getComputedStyle(document.querySelector(".bottom-nav")).backgroundColor !== "rgba(0, 0, 0, 0)",
         actionOverlapsDock: overlaps(actionBounds, navBounds),
         horizontalFailures,
         navButtonsBlocked
@@ -330,7 +331,9 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
     expect(Math.abs(homeGeometry.atmosphereBounds.bottom - viewport.height), `${viewport.width}px atmosphere bottom`).toBeLessThanOrEqual(1);
     expect(homeGeometry.navBounds.left, `${viewport.width}px dock left`).toBeGreaterThanOrEqual(-1);
     expect(homeGeometry.navBounds.right, `${viewport.width}px dock right`).toBeLessThanOrEqual(viewport.width + 1);
-    expect(Math.abs(homeGeometry.navBounds.bottom - viewport.height), `${viewport.width}px dock bottom`).toBeLessThanOrEqual(1);
+    expect(homeGeometry.navBounds.bottom, `${viewport.width}px dock bottom`).toBeLessThanOrEqual(viewport.height + 1);
+    expect(viewport.height - homeGeometry.navBounds.bottom, `${viewport.width}px dock floating gap`).toBeGreaterThanOrEqual(0);
+    expect(viewport.height - homeGeometry.navBounds.bottom, `${viewport.width}px dock floating gap`).toBeLessThanOrEqual(24);
     expect(homeGeometry.navOpaque, `${viewport.width}px opaque dock`).toBe(true);
     expect(homeGeometry.actionOverlapsDock, `${viewport.width}px home action versus dock`).toBe(false);
     expect(homeGeometry.horizontalFailures, `${viewport.width}px home bounds`).toEqual([]);
@@ -385,13 +388,15 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
     expect(lessonGeometry.topbar.right, `${viewport.width}px lesson topbar right`).toBeLessThanOrEqual(viewport.width + 1);
     expect(lessonGeometry.action.left, `${viewport.width}px lesson action left`).toBeGreaterThanOrEqual(-1);
     expect(lessonGeometry.action.right, `${viewport.width}px lesson action right`).toBeLessThanOrEqual(viewport.width + 1);
-    expect(Math.abs(lessonGeometry.action.bottom - viewport.height), `${viewport.width}px lesson action bottom`).toBeLessThanOrEqual(1);
+    expect(lessonGeometry.action.bottom, `${viewport.width}px lesson action bottom`).toBeLessThanOrEqual(viewport.height + 1);
+    expect(viewport.height - lessonGeometry.action.bottom, `${viewport.width}px lesson action floating gap`).toBeGreaterThanOrEqual(0);
+    expect(viewport.height - lessonGeometry.action.bottom, `${viewport.width}px lesson action floating gap`).toBeLessThanOrEqual(12);
     expect(lessonGeometry.closeOverlapsProgress, `${viewport.width}px close versus progress`).toBe(false);
     expect(lessonGeometry.actionCenterHit, `${viewport.width}px lesson action hit testing`).toBe(true);
   }
 });
 
-test("effects regression: the lite launch is visible, finite, and interactive", async ({ page }, testInfo) => {
+test("the lite signature launch is visible, finite, and interactive", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "The lite profile is the phone and Android WebView contract.");
 
   await openCleanApp(page);
@@ -401,8 +406,6 @@ test("effects regression: the lite launch is visible, finite, and interactive", 
 
   const launchContract = await page.evaluate(() => {
     const selectors = [
-      ".launch-language-urdu",
-      ".launch-language-nl",
       ".launch-logo-shell",
       ".launch-wordmark",
       ".launch-progress"
@@ -422,6 +425,8 @@ test("effects regression: the lite launch is visible, finite, and interactive", 
     const atmosphere = document.querySelector(".responsive-atmosphere");
     return {
       hidden,
+      bilingualLabelsHidden: [".launch-language-urdu", ".launch-language-nl"]
+        .every((selector) => getComputedStyle(document.querySelector(selector)).display === "none"),
       atmosphereDisplay: getComputedStyle(atmosphere).display,
       atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
       heavyLaunchLayers: [...document.querySelectorAll(".launch-orbit,.launch-beam,.launch-particle")]
@@ -431,6 +436,7 @@ test("effects regression: the lite launch is visible, finite, and interactive", 
 
   expect(launchContract).toEqual({
     hidden: [],
+    bilingualLabelsHidden: true,
     atmosphereDisplay: "block",
     atmospherePointerEvents: "none",
     heavyLaunchLayers: 0
@@ -1322,7 +1328,9 @@ test("fixed controls and settings rows stay inside the viewport", async ({ page 
   });
   expect(homeBounds.left).toBeGreaterThanOrEqual(-1);
   expect(homeBounds.right).toBeLessThanOrEqual(homeBounds.width + 1);
-  expect(Math.abs(homeBounds.bottom - homeBounds.height)).toBeLessThanOrEqual(1);
+  expect(homeBounds.bottom).toBeLessThanOrEqual(homeBounds.height + 1);
+  expect(homeBounds.height - homeBounds.bottom).toBeGreaterThanOrEqual(0);
+  expect(homeBounds.height - homeBounds.bottom).toBeLessThanOrEqual(24);
 
   await page.locator('[data-action="settings"]').click();
   const settingsInside = await page.evaluate(() => [...document.querySelectorAll(".utility-action,.setting-row")].every((row) => {
@@ -1342,7 +1350,9 @@ test("fixed controls and settings rows stay inside the viewport", async ({ page 
   expect(quizBounds.closeLeft).toBeLessThan(quizBounds.width / 2);
   expect(quizBounds.footerLeft).toBeGreaterThanOrEqual(-1);
   expect(quizBounds.footerRight).toBeLessThanOrEqual(quizBounds.width + 1);
-  expect(Math.abs(quizBounds.footerBottom - quizBounds.height)).toBeLessThanOrEqual(1);
+  expect(quizBounds.footerBottom).toBeLessThanOrEqual(quizBounds.height + 1);
+  expect(quizBounds.height - quizBounds.footerBottom).toBeGreaterThanOrEqual(0);
+  expect(quizBounds.height - quizBounds.footerBottom).toBeLessThanOrEqual(12);
 });
 
 test("every normal lesson produces a valid phased learning run", async ({ page }) => {
