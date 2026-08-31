@@ -397,8 +397,11 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
 });
 
 test("the lite signature launch is visible, finite, and interactive", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-chromium", "The lite profile is the phone and Android WebView contract.");
+  test.skip(testInfo.project.name !== "mobile-chromium", "Lite is only a low-end phone safety net, not the default phone UI.");
 
+  await page.addInitScript(() => {
+    window.NEDERURDU_EFFECTS_PROFILE = "lite";
+  });
   await openCleanApp(page);
   await expect(page.locator("html")).toHaveAttribute("data-effects", "lite");
   await expect(page.locator(".launch-screen")).toHaveClass(/is-playing/);

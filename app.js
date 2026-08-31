@@ -11,14 +11,13 @@ const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)
 function detectEffectsProfile() {
   if (effectsProfileOverride) return effectsProfileOverride;
   if (reducedMotionQuery?.matches) return "reduced";
-  const constrainedViewport = Boolean(
-    window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
+  // NederUrdu is a phone app. Touch and small screens are the product, not a
+  // downgrade from desktop. Lite is only a safety net for very weak hardware.
+  const veryConstrainedHardware = Boolean(
+    (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 2)
+    || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 2)
   );
-  const constrainedHardware = Boolean(
-    (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
-    || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4)
-  );
-  return constrainedViewport || (constrainedHardware && window.innerWidth <= 1100) ? "lite" : "enhanced";
+  return veryConstrainedHardware ? "lite" : "enhanced";
 }
 
 let effectsProfile = detectEffectsProfile();
