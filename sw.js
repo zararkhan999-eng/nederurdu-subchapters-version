@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v76-brand-system";
+const CACHE_NAME = "nederurdu-v77-readable-lessons";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,11 +7,11 @@ const APP_SHELL = [
   "./experience.css",
   "./immersive.css",
   "./landing.css",
-  "./brand-system.css",
+  "./brand-system.css?v=77",
   "./course-data.js",
   "./word-visual-data.js",
   "./assets/word-visuals/offline-manifest.json",
-  "./app.js",
+  "./app.js?v=77",
   "./manifest.webmanifest",
   "./icon.svg",
   "./assets/visuals/letters-first-words.svg",

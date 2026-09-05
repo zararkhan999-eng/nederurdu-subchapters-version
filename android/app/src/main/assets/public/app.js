@@ -11,14 +11,13 @@ const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)
 function detectEffectsProfile() {
   if (effectsProfileOverride) return effectsProfileOverride;
   if (reducedMotionQuery?.matches) return "reduced";
-  const constrainedViewport = Boolean(
-    window.matchMedia?.("(max-width: 820px), (hover: none), (pointer: coarse)").matches
+  // NederUrdu is a phone app. Touch and small screens are the product, not a
+  // downgrade from desktop. Lite is only a safety net for very weak hardware.
+  const veryConstrainedHardware = Boolean(
+    (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 2)
+    || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 2)
   );
-  const constrainedHardware = Boolean(
-    (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
-    || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4)
-  );
-  return constrainedViewport || (constrainedHardware && window.innerWidth <= 1100) ? "lite" : "enhanced";
+  return veryConstrainedHardware ? "lite" : "enhanced";
 }
 
 let effectsProfile = detectEffectsProfile();
@@ -1296,6 +1295,10 @@ function renderHome() {
               </div>
             </div>
             <div class="mission-art" aria-hidden="true">
+              <span class="mission-motion-orbit orbit-one"></span>
+              <span class="mission-motion-orbit orbit-two"></span>
+              <span class="mission-language-chip chip-dutch latin">NL</span>
+              <span class="mission-language-chip chip-urdu">ا</span>
               ${renderVisual(dailyVisual, "mission-visual")}
               <span class="mission-art-seal">${renderIcon("flag")}</span>
               <span class="mission-art-halo"></span>
@@ -1304,12 +1307,12 @@ function renderHome() {
           <button class="primary-button today-action" data-action="preview" data-lesson="${nextLesson.id}">
             <span class="button-icon">${renderIcon("play")}</span>
             <span>${beginnerFirstHome ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span>
-            <span class="button-progress latin">${chapterPercent}%</span>
+            <span class="button-progress latin" data-count-up="${chapterPercent}" data-count-suffix="%">${chapterPercent}%</span>
           </button>
           ${beginnerFirstHome ? "" : `<div class="today-stats">
-            <span><strong class="latin">${completed}/${total}</strong><small>مکمل</small></span>
-            <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
-            <span><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></span>
+            <span><strong class="latin" data-count-up="${completed}" data-count-suffix="/${total}">${completed}/${total}</strong><small>مکمل</small></span>
+            <span><strong class="latin" data-count-up="${progress.totalXp}">${progress.totalXp}</strong><small>پوائنٹس</small></span>
+            <span><strong class="latin" data-count-up="${progress.practiceDays.length}">${progress.practiceDays.length}</strong><small>مشق کے دن</small></span>
           </div>`}
         </section>
         <div class="rail-note">
@@ -3055,11 +3058,27 @@ function bindExperienceMotion(screenChanged = false) {
     return;
   }
   const revealTargets = document.querySelectorAll([
+    ".progress-header",
+    ".home-rail",
+    ".chapter-switcher-wrap",
+    ".unit-card",
+    ".path-overview",
     ".path-section",
+    ".learning-preview-hero",
+    ".prerequisite-guidance",
+    ".learning-preview-content",
+    ".learning-preview-phases",
+    ".learning-preview-action",
+    ".review-hero",
     ".review-hub-card",
+    ".letters-heading",
     ".letter-card",
+    ".settings-heading",
     ".setting-row",
-    ".utility-action"
+    ".utility-action",
+    ".complete-ring",
+    ".learning-recap",
+    ".complete-metrics"
   ].join(","));
 
   if (screenChanged) {
@@ -4691,6 +4710,6 @@ render();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
+    navigator.serviceWorker.register("sw.js?v=77").catch(() => {});
   });
 }

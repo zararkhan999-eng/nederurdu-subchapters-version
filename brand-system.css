@@ -22,6 +22,7 @@
   --nu-saffron: #f5c85b;
   --nu-saffron-dark: #d6a739;
   --nu-saffron-soft: #fff4ce;
+  --nu-saffron-ink: #6d4d00;
   --nu-blue: #2799c6;
   --nu-blue-dark: #167ca6;
   --nu-blue-soft: #e0f3fb;
@@ -137,12 +138,20 @@ button {
   transform: none;
 }
 
-.screen-changing,
-.experience-reveal,
-.experience-reveal.is-visible {
+.screen-changing {
   animation: none !important;
   transform: none !important;
   opacity: 1 !important;
+}
+
+.experience-reveal {
+  opacity: 0;
+  transform: translateY(16px) scale(0.99);
+}
+
+.experience-reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
 /* Launch: a simple, recognizable signature instead of a visual-effects demo. */
@@ -1719,6 +1728,17 @@ button {
 
 /* Lesson experience */
 .quiz-screen {
+  /* Legacy lesson components still consume the earlier dark-theme tokens.
+     Remap them here so every descendant stays legible on the light surfaces. */
+  --text: var(--nu-ink);
+  --text-soft: var(--nu-muted);
+  --text-faint: var(--nu-muted);
+  --mint: var(--nu-green);
+  --mint-bright: var(--nu-green-deep);
+  --mint-deep: var(--nu-green-dark);
+  --amber: var(--nu-saffron-ink);
+  --amber-soft: var(--nu-saffron-ink);
+  --iris: var(--nu-violet);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1923,6 +1943,11 @@ button {
   padding: 24px;
 }
 
+.learning-teaching-card {
+  border-color: var(--nu-line-strong);
+  box-shadow: 0 6px 0 rgba(36, 51, 46, 0.09), var(--nu-shadow-card);
+}
+
 .learning-teaching-card::before,
 .learning-teaching-card::after,
 .teaching-card::before,
@@ -2013,6 +2038,68 @@ button {
   background: var(--nu-canvas);
   font-family: var(--font-urdu-reading);
   font-size: 0.9rem;
+}
+
+.teaching-use-copy,
+.pattern-explanation,
+.pattern-contrast,
+.pattern-mistake,
+.teaching-usage,
+.teaching-confusion,
+.correction-next-step {
+  color: var(--nu-ink);
+  font-family: var(--font-urdu-reading);
+  font-weight: 700;
+}
+
+.teaching-stage-use .teaching-use-panel,
+.teaching-stage-rule .pattern-rule-panel {
+  padding: clamp(20px, 4vw, 30px);
+  border: 2px solid var(--nu-line-strong);
+  border-radius: 20px;
+  color: var(--nu-ink);
+  background: var(--nu-green-soft);
+}
+
+.teaching-example,
+.teaching-stage-use .teaching-example,
+.teaching-use-panel .teaching-example {
+  padding: 16px 18px;
+  border: 2px solid #ead58f;
+  border-radius: 16px;
+  color: var(--nu-ink);
+  background: var(--nu-saffron-soft);
+}
+
+.teaching-example > span {
+  color: var(--nu-saffron-ink);
+  font-weight: 800;
+}
+
+.teaching-example small,
+.pattern-sentence small {
+  color: var(--nu-ink);
+  font-family: var(--font-urdu-reading);
+  font-weight: 700;
+}
+
+.lesson-detail-trigger,
+.teaching-step-back,
+.question-help-toggle,
+.feedback-detail-trigger {
+  border: 2px solid var(--nu-line-strong);
+  color: var(--nu-green-deep);
+  background: var(--nu-paper);
+  box-shadow: var(--nu-shadow-xs);
+}
+
+.question-help-panel,
+.guided-support.question-help-panel,
+.question-coachmark,
+.correction-retry-banner {
+  border: 2px solid var(--nu-line);
+  color: var(--nu-ink);
+  background: var(--nu-paper-soft);
 }
 
 .teaching-actions {
@@ -2894,4 +2981,284 @@ body[data-screen="complete"] .quiz-action {
 body[data-screen="lesson"] .quiz-action:active:not(:disabled),
 body[data-screen="complete"] .quiz-action:active:not(:disabled) {
   box-shadow: inset 0 -1px 0 var(--nu-green-deep) !important;
+}
+
+/* Brand motion system: purposeful movement for direction, progress, and reward. */
+@media (prefers-reduced-motion: no-preference) {
+  .experience-reveal.is-visible {
+    animation: nu-content-rise 540ms calc(var(--reveal-order, 0) * 54ms) cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  }
+
+  .mission-art {
+    isolation: isolate;
+    animation: nu-mission-float 5.6s ease-in-out infinite !important;
+  }
+
+  .mission-art::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    z-index: 4;
+    border: 0;
+    border-radius: 18px;
+    background: linear-gradient(112deg, transparent 30%, rgba(255, 255, 255, 0.58) 48%, transparent 66%);
+    pointer-events: none;
+    transform: translateX(-155%);
+    animation: nu-visual-sheen 5.8s 1.1s ease-in-out infinite;
+  }
+
+  .mission-motion-orbit {
+    position: absolute;
+    z-index: 0;
+    border: 2px solid transparent;
+    border-radius: 34px;
+    pointer-events: none;
+  }
+
+  .mission-motion-orbit.orbit-one {
+    inset: -10px;
+    border-top-color: rgba(255, 206, 67, 0.9);
+    border-left-color: rgba(255, 255, 255, 0.42);
+    animation: nu-orbit-turn 7s linear infinite;
+  }
+
+  .mission-motion-orbit.orbit-two {
+    inset: -18px;
+    border-right-color: rgba(147, 221, 205, 0.66);
+    border-bottom-color: rgba(255, 255, 255, 0.28);
+    animation: nu-orbit-turn 11s linear infinite reverse;
+  }
+
+  .mission-art .learning-visual,
+  .mission-art > img {
+    position: relative;
+    z-index: 2;
+  }
+
+  .mission-language-chip {
+    position: absolute;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(255, 255, 255, 0.82);
+    border-radius: 12px;
+    color: var(--nu-ink);
+    background: var(--nu-saffron);
+    box-shadow: 0 5px 0 rgba(10, 81, 70, 0.18);
+    font-size: 0.8rem;
+    font-weight: 800;
+    pointer-events: none;
+  }
+
+  .mission-language-chip.chip-dutch {
+    top: -13px;
+    left: 17px;
+    animation: nu-chip-float 3.2s ease-in-out infinite;
+  }
+
+  .mission-language-chip.chip-urdu {
+    right: 12px;
+    bottom: 18px;
+    color: #fff;
+    background: var(--nu-blue);
+    animation: nu-chip-float 3.7s -1.2s ease-in-out infinite reverse;
+  }
+
+  .mission-art-seal {
+    z-index: 6;
+    animation: nu-seal-bob 4.2s ease-in-out infinite;
+  }
+
+  body[data-screen="home"] .today-panel::before {
+    animation: nu-hero-disc 9s ease-in-out infinite alternate !important;
+  }
+
+  .today-action .button-icon,
+  .rail-note > span,
+  .path-overview-mark {
+    animation: nu-icon-breathe 3.2s ease-in-out infinite;
+  }
+
+  .unit-card-meter i,
+  .section-progress i,
+  .complete-meter span,
+  .quiz-progress > span {
+    transform-origin: right center;
+    animation: nu-progress-grow 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .unit-card:hover:not(:disabled) .unit-card-arrow,
+  .path-step:hover .node-trailing {
+    animation: nu-arrow-nudge 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  body[data-screen="home"] .lesson-node.current {
+    position: relative;
+    isolation: isolate;
+  }
+
+  body[data-screen="home"] .lesson-node.current::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    z-index: -1;
+    display: block !important;
+    border: 2px solid rgba(23, 125, 107, 0.38);
+    border-radius: 23px;
+    pointer-events: none;
+    animation: nu-current-pulse 2.35s ease-out infinite !important;
+  }
+
+  .nav-button.active .nav-icon {
+    animation: nu-nav-pop 460ms cubic-bezier(0.16, 1.25, 0.3, 1) both;
+  }
+
+  body[data-screen="preview"] .learning-phase-chip {
+    animation: nu-phase-arrive 480ms calc(180ms + var(--phase-delay, 0ms)) cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  body[data-screen="preview"] .learning-phase-chip:nth-child(1) { --phase-delay: 0ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(2) { --phase-delay: 55ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(3) { --phase-delay: 110ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(4) { --phase-delay: 165ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(5) { --phase-delay: 220ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(6) { --phase-delay: 275ms; }
+  body[data-screen="preview"] .learning-phase-chip:nth-child(7) { --phase-delay: 330ms; }
+
+  body[data-screen="lesson"] .learning-phase-step.active i {
+    animation: nu-phase-pulse 2.1s ease-in-out infinite;
+  }
+
+  body[data-screen="complete"] .complete-celebration {
+    display: block !important;
+    pointer-events: none;
+  }
+
+  body[data-screen="complete"] .complete-ring {
+    animation: nu-complete-pop 720ms cubic-bezier(0.16, 1.22, 0.3, 1) both !important;
+  }
+
+  body[data-screen="complete"] :is(.complete-kicker, .complete-screen h1, .complete-summary, .learning-recap, .complete-actions, .complete-metrics) {
+    animation: nu-complete-copy 520ms calc(130ms + var(--complete-delay, 0ms)) cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  body[data-screen="complete"] .complete-kicker { --complete-delay: 0ms; }
+  body[data-screen="complete"] .complete-screen h1 { --complete-delay: 55ms; }
+  body[data-screen="complete"] .complete-summary { --complete-delay: 110ms; }
+  body[data-screen="complete"] .learning-recap { --complete-delay: 165ms; }
+  body[data-screen="complete"] .complete-actions { --complete-delay: 220ms; }
+  body[data-screen="complete"] .complete-metrics { --complete-delay: 275ms; }
+}
+
+@keyframes nu-content-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes nu-mission-float {
+  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+  50% { transform: translateY(-7px) rotate(0.6deg); }
+}
+
+@keyframes nu-visual-sheen {
+  0%, 58% { transform: translateX(-155%); }
+  78%, 100% { transform: translateX(155%); }
+}
+
+@keyframes nu-orbit-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes nu-chip-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+}
+
+@keyframes nu-seal-bob {
+  0%, 72%, 100% { transform: rotate(0) scale(1); }
+  82% { transform: rotate(-7deg) scale(1.08); }
+  91% { transform: rotate(4deg) scale(1.02); }
+}
+
+@keyframes nu-hero-disc {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(18px, 12px, 0) scale(1.08); }
+}
+
+@keyframes nu-icon-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.04); }
+}
+
+@keyframes nu-progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes nu-arrow-nudge {
+  0%, 100% { transform: translateX(0); }
+  55% { transform: translateX(-5px); }
+}
+
+@keyframes nu-current-pulse {
+  0% { opacity: 0.7; transform: scale(0.88); }
+  72%, 100% { opacity: 0; transform: scale(1.22); }
+}
+
+@keyframes nu-nav-pop {
+  0% { transform: translateY(4px) scale(0.76); }
+  70% { transform: translateY(-1px) scale(1.08); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes nu-phase-arrive {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes nu-phase-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(23, 125, 107, 0.22); }
+  50% { transform: scale(1.16); box-shadow: 0 0 0 5px rgba(23, 125, 107, 0); }
+}
+
+@keyframes nu-complete-pop {
+  from { opacity: 0; transform: scale(0.56) rotate(-18deg); }
+  72% { opacity: 1; transform: scale(1.06) rotate(2deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes nu-complete-copy {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 520px) {
+  .mission-motion-orbit.orbit-two,
+  .mission-language-chip.chip-urdu {
+    display: none;
+  }
+}
+
+html[data-effects="lite"] .mission-motion-orbit,
+html[data-effects="lite"] .mission-language-chip {
+  display: none;
+}
+
+html[data-effects="lite"] :is(.mission-art, .mission-art::before, .mission-art::after, .today-panel::before, .mission-art-seal) {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-reveal,
+  .experience-reveal.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .mission-motion-orbit,
+  .mission-language-chip {
+    display: none !important;
+  }
 }
