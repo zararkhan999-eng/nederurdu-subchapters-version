@@ -2,6 +2,10 @@
 node_modules/
 test-results/
 playwright-report/
+.v2-build/
+.v2-browser-staging/
+.dist-v2-staging/
+dist-v2/
 
 # Android build output
 .gradle/

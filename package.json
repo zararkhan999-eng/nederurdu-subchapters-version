@@ -25,9 +25,15 @@
     "test:ui": "playwright test --ui",
     "android:debug": "./gradlew :app:assembleDebug",
     "android:bundle": "./gradlew :app:bundleRelease",
-    "android:sync-web": "node scripts/sync-android-web.js"
+    "android:sync-web": "node scripts/sync-android-web.js",
+    "v2:typecheck": "node node_modules/typescript/lib/tsc.js -p tsconfig.v2.json --noEmit",
+    "v2:test": "node scripts/test-v2-runtime.js",
+    "v2:build-runtime": "node scripts/build-v2-runtime.js",
+    "v2:build": "node scripts/build-v2.js",
+    "v2:verify": "node scripts/test-v2-runtime.js && node scripts/validate-v2-catalog.js && node scripts/audit-v2-curriculum.js && node scripts/build-v2-runtime.js && node scripts/verify-v2-prototype.js"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1"
+    "@playwright/test": "^1.61.1",
+    "typescript": "^7.0.2"
   }
 }

@@ -1,3 +1,5 @@
+import { runtime, runtimeCatalog } from "./runtime/browser/runtime-bridge.js";
+
 (() => {
   "use strict";
 
@@ -14,7 +16,7 @@
     { id: "complete", label: "تیار", short: "07", description: "جو سیکھا اسے محفوظ کریں" }
   ];
 
-  const PEOPLE_LESSONS = window.NederUrduV2LessonCatalog || [];
+  const PEOPLE_LESSONS = runtimeCatalog;
   if (PEOPLE_LESSONS.length !== 5) throw new Error("NederUrdu V2 lesson catalog did not load.");
 
   const LEVELS = {
@@ -72,12 +74,22 @@
   }
 
   const saved = readSavedState();
+  const progressStore = runtime.createProgressStore(localStorage);
+  const restoredProgress = progressStore.load();
   let lastRenderedView = "";
   let overlayReturnAction = "";
+  let activeSession = null;
   const savedResponses = saved.responses && typeof saved.responses === "object" ? saved.responses : {};
+  Object.entries(restoredProgress.completedLessons).forEach(([lessonId, record]) => {
+    if (!savedResponses[lessonId]) savedResponses[lessonId] = { ...record.responses };
+  });
   if (saved.learnerName && !savedResponses["meet-neighbour"]) {
     savedResponses["meet-neighbour"] = { name: saved.learnerName };
   }
+  const completedLessonIds = new Set([
+    ...(Array.isArray(saved.completedLessons) ? saved.completedLessons : []),
+    ...Object.keys(restoredProgress.completedLessons)
+  ]);
   const state = {
     route: "today",
     level: saved.level || "a1",
@@ -88,7 +100,11 @@
     selectedAnswer: "",
     checked: false,
     responses: savedResponses,
-    completedLessons: Array.isArray(saved.completedLessons) ? saved.completedLessons.filter((id) => PEOPLE_LESSONS.some((lesson) => lesson.id === id)) : [],
+    completedLessons: [...completedLessonIds].filter((id) => PEOPLE_LESSONS.some((lesson) => lesson.id === id)),
+    reviewId: "",
+    reviewSelectedAnswer: "",
+    reviewChecked: false,
+    reviewHadError: false,
     supportOpen: false,
     lessonMapOpen: false,
     lastRoute: saved.lastRoute || "journey"
@@ -280,6 +296,8 @@
 
   function renderToday() {
     const current = getCurrentLesson();
+    const dueReviewCount = progressStore.dueReviews().length;
+    const queuedReviewCount = progressStore.load().reviewQueue.length;
     const brief = current.brief;
     const worldComplete = getPeopleProgress() === 100;
     const stageTitle = worldComplete ? "Mensen ontmoeten voltooid" : current.title;
@@ -337,8 +355,8 @@
             </a>
             <a class="route-card route-review" href="#/practice" data-route="practice">
               <span class="route-icon">${icon("practice")}</span>
-              <span><small>ہلکی دہرائی · <b class="latin">4 min</b></small><strong>پہلی Dutch آوازیں</strong><em>سنیں، پہچانیں، دوبارہ کہیں</em></span>
-              <i class="due-count latin">6</i>
+              <span><small>${dueReviewCount ? "آج واجب" : queuedReviewCount ? "اگلی دہرائی محفوظ" : "پہلا منظر مکمل ہونے کے بعد"} · <b class="latin">4 min</b></small><strong>${dueReviewCount ? `${dueReviewCount} مختصر دہرائی` : queuedReviewCount ? "صحیح وقت پر واپس آئے گی" : "دہرائی خود بنے گی"}</strong><em>${dueReviewCount ? "یاد سے جواب دیں، پھر مخصوص مدد لیں" : "سنیں، پہچانیں، اور نئی مثال میں استعمال کریں"}</em></span>
+              <i class="due-count latin">${dueReviewCount || queuedReviewCount}</i>
             </a>
           </div>
         </section>
@@ -445,24 +463,90 @@
   }
 
   function renderPractice() {
+    const progress = progressStore.load();
+    const due = progressStore.dueReviews();
+    const queue = [...progress.reviewQueue].sort((first, second) => Date.parse(first.dueAt) - Date.parse(second.dueAt));
+    if (state.reviewId) {
+      const activeReview = queue.find((item) => item.id === state.reviewId);
+      if (activeReview) return renderPracticeReview(activeReview);
+      resetReviewState();
+    }
+    const nextReview = due[0] || queue[0] || null;
+    const sourceLesson = nextReview ? getLesson(nextReview.sourceLessonId) : getCurrentLesson();
+    const dueNow = due.length > 0;
+    const lapseCount = queue.reduce((total, item) => total + item.lapses, 0);
+    const focusLabel = dueNow ? "آج کی دہرائی" : nextReview ? "اگلی دہرائی" : "پہلا قدم";
+    const focusTitle = dueNow ? sourceLesson.title : nextReview ? "یاد مضبوط کرنے کا وقت محفوظ ہے" : "پہلے ایک حقیقی منظر سیکھیں";
+    const focusCopy = dueNow
+      ? `${sourceLesson.urduTitle} کی بات اب بغیر سبق دیکھے ایک نئے موقع میں یاد کریں۔`
+      : nextReview
+        ? `${formatReviewDate(nextReview.dueAt)} کو ${sourceLesson.urduTitle} کی مختصر دہرائی خود یہاں آئے گی۔`
+        : "پہلا سبق مکمل کریں؛ ایپ اسی زبان کو ایک دن، چار دن، اور پھر لمبے وقفے کے بعد واپس لائے گی۔";
+    const focusAction = dueNow
+      ? `<button class="primary-action" data-action="start-review" data-review-id="${escapeAttr(nextReview.id)}"><span>${icon("play")}</span><b>دہرائی شروع کریں</b><small class="latin">4 min</small></button>`
+      : nextReview
+        ? `<button class="primary-action" disabled><span>${icon("clock")}</span><b>صحیح وقت پر تیار ہوگی</b><small class="latin">Scheduled</small></button>`
+        : `<a class="primary-action" href="#/lesson/${sourceLesson.id}/brief" data-lesson="${sourceLesson.id}"><span>${icon("route")}</span><b>پہلا منظر سیکھیں</b><small class="latin">${sourceLesson.minutes} min</small></a>`;
     return `
       <section class="utility-screen practice-screen" aria-labelledby="practice-title">
         <div class="screen-heading">
           <div><span class="overline"><i></i> یاد مضبوط کریں</span><h1 id="practice-title">وہی مشق جو ابھی کام آئے</h1><p>ہر دہرائی بتاتی ہے کہ یہ کیوں منتخب ہوئی اور کس حقیقی بات کو مضبوط کرے گی۔</p></div>
-          <div class="utility-orb tone-blue">${icon("practice")}<b class="latin">6</b></div>
+          <div class="utility-orb tone-blue">${icon("practice")}<b class="latin">${due.length}</b></div>
         </div>
         <article class="focus-practice">
-          <div class="focus-practice-copy"><span class="overline">آج کی دہرائی</span><h2>سلام سنیں اور جواب دیں</h2><p>آپ نے یہ آوازیں پہلی ملاقات کے لیے شروع کی تھیں۔ چھ مختصر مثالیں دوبارہ سنیں۔</p><div><span>${icon("speaker")} سننا</span><span>${icon("dialogue")} جواب</span><span>${icon("clock")} <b class="latin">4 min</b></span></div></div>
-          <div class="practice-meter"><span><b class="latin">6</b><small>آج باقی</small></span><i style="--meter:62%"></i></div>
-          <button class="primary-action" data-action="prototype-note"><span>${icon("play")}</span><b>دہرائی شروع کریں</b><small class="latin">4 min</small></button>
+          <div class="focus-practice-copy"><span class="overline">${focusLabel}</span><h2 class="${dueNow ? "latin" : ""}">${focusTitle}</h2><p>${focusCopy}</p><div><span>${icon("route")} یاد سے جواب</span><span>${icon("dialogue")} مخصوص مرمت</span><span>${icon("clock")} <b class="latin">4 min</b></span></div></div>
+          <div class="practice-meter"><span><b class="latin">${due.length}</b><small>آج باقی</small></span><i style="--meter:${due.length ? Math.min(100, 28 + due.length * 18) : 0}%"></i></div>
+          ${focusAction}
         </article>
         <div class="practice-grid">
-          <button class="practice-card tone-rose" data-action="prototype-note"><span>${icon("mistake")}</span><small>سمجھ کر درست کریں</small><strong>دو غلطیاں</strong><em>ماڈل → آسان کوشش → نئی مثال</em><b class="latin">2</b></button>
-          <button class="practice-card tone-blue" data-action="prototype-note"><span>${icon("headphones")}</span><small>سننے کی مشق</small><strong>پہلی آوازیں</strong><em>فرق سنیں اور لفظ پہچانیں</em><b class="latin">8</b></button>
+          <button class="practice-card tone-rose" data-action="prototype-note"><span>${icon("mistake")}</span><small>سمجھ کر درست کریں</small><strong>${lapseCount ? `${lapseCount} مرمت دوبارہ` : "ابھی کوئی ادھوری مرمت نہیں"}</strong><em>ماڈل → آسان کوشش → نئی مثال</em><b class="latin">${lapseCount}</b></button>
+          <button class="practice-card tone-blue" data-action="prototype-note"><span>${icon("headphones")}</span><small>طے شدہ یاد دہانی</small><strong>${queue.length} باتیں قطار میں</strong><em>${nextReview ? `${formatReviewDate(nextReview.dueAt)} سے اگلا دور` : "سبق کے بعد خود بنے گی"}</em><b class="latin">${queue.length}</b></button>
           <button class="practice-card tone-mint" data-action="prototype-note"><span>${icon("mic")}</span><small>بغیر نمبر کے</small><strong>تلفظ اسٹوڈیو</strong><em>سنیں، دہرائیں، اپنے آپ سے ملائیں</em>${icon("arrow")}</button>
         </div>
       </section>
     `;
+  }
+
+  function renderPracticeReview(item) {
+    const lesson = getLesson(item.sourceLessonId);
+    const task = lesson.check;
+    const correct = state.reviewSelectedAnswer === task.correct;
+    return `
+      <section class="utility-screen practice-screen review-session" aria-labelledby="practice-title">
+        <div class="screen-heading review-heading">
+          <div><span class="overline"><i></i> وقفے کے بعد یاد کریں</span><h1 id="practice-title">${lesson.urduTitle}</h1><p>پہلے اپنی یاد سے جواب دیں۔ ضرورت ہو تو جواب کے بعد مخصوص مدد ملے گی۔</p></div>
+          <button class="review-close" data-action="close-review" aria-label="دہرائی بند کریں">${icon("close")}</button>
+        </div>
+        <article class="review-session-card">
+          <div class="review-context">
+            <span class="review-sequence latin">REVIEW · ${item.intervalIndex + 1}</span>
+            <div class="transfer-scene">
+              <div class="transfer-sign"><span>${icon("building")}</span><b class="latin">${task.sign}</b><small>${task.setting}</small></div>
+              <div class="transfer-person">${renderPortrait(task)}<p dir="ltr"><small class="latin">${task.speaker} zegt:</small><strong class="latin">“${task.promptDutch}”</strong><span dir="rtl">${task.promptUrdu}</span></p><button data-action="speak" data-speak="${escapeAttr(task.promptDutch)}" aria-label="${escapeAttr(task.speaker)} کی بات سنیں">${icon("speaker")}</button></div>
+            </div>
+          </div>
+          <p class="question-instruction">${task.instruction}</p>
+          <div class="answer-list" dir="ltr">
+            ${task.options.map((option, index) => `<button class="answer-option ${state.reviewSelectedAnswer === option ? "selected" : ""} ${state.reviewChecked ? option === task.correct ? "correct" : state.reviewSelectedAnswer === option ? "wrong" : "" : ""}" data-action="review-answer" data-answer="${escapeAttr(option)}"><span class="latin">${String.fromCharCode(65 + index)}</span><b class="latin">${option}</b>${state.reviewChecked && option === task.correct ? icon("check") : ""}</button>`).join("")}
+          </div>
+          ${state.reviewChecked ? renderFeedback(correct, task.correctFeedback, task.wrongFeedback) : ""}
+          <div class="review-actions">
+            ${!state.reviewChecked ? `<button class="primary-action" data-action="check-review" ${state.reviewSelectedAnswer ? "" : "disabled"}><span>${icon("check")}</span><b>جواب چیک کریں</b><small class="latin">Check</small></button>` : !correct ? `<button class="primary-action" data-action="retry-review"><span>${icon("route")}</span><b>مدد کے ساتھ دوبارہ</b><small class="latin">Repair</small></button>` : `<button class="primary-action" data-action="finish-review"><span>${icon("arrow")}</span><b>${state.reviewHadError ? "مرمت محفوظ کریں" : "دہرائی مکمل کریں"}</b><small class="latin">Done</small></button>`}
+          </div>
+        </article>
+      </section>
+    `;
+  }
+
+  function formatReviewDate(value) {
+    return new Intl.DateTimeFormat("ur-PK", { weekday: "long", day: "numeric", month: "short" }).format(new Date(value));
+  }
+
+  function resetReviewState() {
+    state.reviewId = "";
+    state.reviewSelectedAnswer = "";
+    state.reviewChecked = false;
+    state.reviewHadError = false;
   }
 
   function renderToolkit() {
@@ -485,220 +569,72 @@
 
   function renderLesson() {
     const lesson = getLesson(state.lessonId);
+    if (state.lessonMode === "run") ensureRuntimeSession(lesson);
     return state.lessonMode === "run" ? renderStructuredLessonRun(lesson) : renderStructuredLessonBrief(lesson);
-  }
-
-  function renderLessonBrief(lesson) {
-    return `
-      <main class="lesson-shell lesson-brief screen-enter">
-        <header class="lesson-topbar">
-          <button data-action="lesson-exit" class="lesson-exit" aria-label="سفر کے نقشے پر واپس جائیں">${icon("back")}</button>
-          <div class="lesson-location"><small>A1 · لوگوں سے ملیں</small><strong>${lesson.urduTitle}</strong></div>
-          <button data-action="lesson-map" class="lesson-map-button" aria-label="سبق کے مرحلے دیکھیں">${icon("journey")}<span>نقشہ</span></button>
-        </header>
-        <section class="brief-world tone-mint">
-          <div class="brief-sky" aria-hidden="true"><i></i><i></i><i></i></div>
-          ${renderNeighbourScene("lesson")}
-          <div class="brief-world-label"><span class="latin">WORLD 01 · SCENE 01</span><b>نئے پڑوسی سے پہلی ملاقات</b></div>
-        </section>
-        <section class="brief-sheet">
-          <div class="brief-handle" aria-hidden="true"></div>
-          <div class="brief-heading"><span class="scene-badge">${icon("wave")}</span><div><small>آج آپ یہ کر سکیں گے</small><h1>${lesson.canDo}</h1></div></div>
-          <div class="brief-model" dir="ltr">
-            <div class="portrait portrait-samira"><span>S</span></div>
-            <div><small class="latin">Samira zegt:</small><strong class="latin">“Goedemorgen, ik ben Samira. Aangenaam.”</strong><span dir="rtl">صبح بخیر، میں سمیرا ہوں۔ آپ سے مل کر خوشی ہوئی۔</span></div>
-            <button data-action="speak" data-speak="Goedemorgen, ik ben Samira. Aangenaam." aria-label="مثال سنیں">${icon("speaker")}</button>
-          </div>
-          <div class="brief-details">
-            <span>${icon("clock")}<b><em class="latin">8 min</em> مختصر منظر</b></span>
-            <span>${icon("speaker")}<b>عام اور آہستہ آواز</b></span>
-            <span>${icon("route")}<b>منظر سے اپنی بات تک</b></span>
-          </div>
-          <div class="brief-new-language"><small>نئی مفید باتیں</small><div dir="ltr"><span class="latin">goedemorgen</span><span class="latin">ik ben…</span><span class="latin">aangenaam</span><span class="latin">hoe heet u?</span></div></div>
-        </section>
-        <div class="lesson-action-dock brief-action-dock">
-          <button class="primary-action" data-action="start-lesson"><span>${icon("play")}</span><b>منظر میں داخل ہوں</b><small class="latin">Start</small></button>
-        </div>
-        ${renderLessonOverlay()}
-      </main>
-    `;
-  }
-
-  function renderLessonRun(lesson) {
-    const phase = PHASES[state.phase] || PHASES[0];
-    const percent = Math.round((state.phase / (PHASES.length - 1)) * 100);
-    return `
-      <main class="lesson-shell lesson-run phase-${phase.id} screen-enter">
-        <header class="lesson-topbar lesson-run-topbar">
-          <button data-action="lesson-back" class="lesson-exit" aria-label="پچھلے مرحلے پر جائیں">${icon("back")}</button>
-          <button class="lesson-progress" data-action="lesson-map" aria-label="سبق کا نقشہ کھولیں، ${percent} فیصد مکمل">
-            <span><i style="width:${percent}%"></i></span>
-            <b class="latin">${phase.short}</b><em>${phase.label}</em>
-          </button>
-          <button data-action="support" class="lesson-help" aria-label="اردو مدد کھولیں">${icon("help")}<span>مدد</span></button>
-        </header>
-        <div class="lesson-breadcrumb"><span class="latin">Mensen ontmoeten</span>${icon("chevron")}<b>${lesson.urduTitle}</b></div>
-        <section class="lesson-stage">
-          ${renderLessonStep(phase, lesson)}
-        </section>
-        ${renderLessonActionDock(phase)}
-        ${renderLessonOverlay()}
-      </main>
-    `;
-  }
-
-  function renderLessonStep(phase, lesson) {
-    if (phase.id === "scene") {
-      return `
-        <div class="lesson-step scene-step">
-          <div class="step-heading"><span class="step-number latin">01</span><div><small>پہلے صرف موقع سمجھیں</small><h1>دروازے پر نئی ملاقات</h1></div><span class="unscored-pill">بغیر نمبر</span></div>
-          <div class="conversation-stage tone-mint">
-            <div class="conversation-setting">${renderNeighbourScene("dialogue")}</div>
-            <div class="conversation-line line-samira" dir="ltr">
-              <div class="portrait portrait-samira"><span>S</span></div>
-              <div><small class="latin">Samira</small><strong class="latin">Goedemorgen, ik ben Samira.</strong><span dir="rtl">صبح بخیر، میں سمیرا ہوں۔</span></div>
-              <button data-action="speak" data-speak="Goedemorgen, ik ben Samira." aria-label="سمیرا کی بات سنیں">${icon("speaker")}</button>
-            </div>
-            <div class="conversation-line line-yusuf" dir="ltr">
-              <div class="portrait portrait-yusuf"><span>Y</span></div>
-              <div><small class="latin">Yusuf</small><strong class="latin">Hallo, ik ben Yusuf. Aangenaam.</strong><span dir="rtl">ہیلو، میں یوسف ہوں۔ آپ سے مل کر خوشی ہوئی۔</span></div>
-              <button data-action="speak" data-speak="Hallo, ik ben Yusuf. Aangenaam." aria-label="یوسف کی بات سنیں">${icon("speaker")}</button>
-            </div>
-          </div>
-          <p class="step-note">ابھی جواب یاد کرنے کی ضرورت نہیں۔ پہلے آواز، لوگوں، اور موقع کو پہچانیں۔</p>
-        </div>
-      `;
-    }
-    if (phase.id === "decode") {
-      const words = [
-        ["goedemorgen", "خودے مورخن", "صبح بخیر", "صبح کے وقت سلام"],
-        ["ik ben…", "اِک بَین", "میں … ہوں", "اپنا نام یا پہچان بتائیں"],
-        ["aangenaam", "آن خَنام", "مل کر خوشی ہوئی", "پہلی ملاقات کا مہذب جواب"],
-        ["hoe heet u?", "ہُو ہَیت اُو", "آپ کا نام کیا ہے؟", "ادب سے نام پوچھیں"]
-      ];
-      return `
-        <div class="lesson-step decode-step">
-          <div class="step-heading"><span class="step-number latin">02</span><div><small>معنی + آواز + موقع</small><h1>چار پوری باتیں سیکھیں</h1></div><span class="unscored-pill">بغیر نمبر</span></div>
-          <div class="word-lens-grid">
-            ${words.map(([dutch, sound, urdu, use], index) => `
-              <article class="word-lens ${index === 0 ? "featured" : ""}">
-                <div><span class="word-index latin">0${index + 1}</span><button data-action="speak" data-speak="${dutch.replace("…", "Yusuf")}" aria-label="${dutch} سنیں">${icon("speaker")}</button></div>
-                <strong class="latin" dir="ltr">${dutch}</strong><b>${urdu}</b>
-                <span class="sound-script">اردو آواز: ${sound}</span><small>${use}</small>
-              </article>
-            `).join("")}
-          </div>
-          <p class="step-note">لفظ الگ نہیں: ہر بات اسی صورت میں یاد کریں جس میں وہ واقعی استعمال ہوتی ہے۔</p>
-        </div>
-      `;
-    }
-    if (phase.id === "notice") {
-      return `
-        <div class="lesson-step notice-step">
-          <div class="step-heading"><span class="step-number latin">03</span><div><small>مثال پہلے، قاعدہ بعد میں</small><h1>اپنا نام جملے میں رکھیں</h1></div><span class="unscored-pill">بغیر نمبر</span></div>
-          <section class="pattern-board">
-            <div class="pattern-model" dir="ltr"><span class="pattern-person latin">Ik</span><span class="pattern-verb latin">ben</span><span class="pattern-open latin">Yusuf</span><button data-action="speak" data-speak="Ik ben Yusuf." aria-label="Ik ben Yusuf سنیں">${icon("speaker")}</button></div>
-            <div class="pattern-meaning"><span>کون؟</span><span>کیا ہے؟</span><span>نام</span></div>
-            <div class="pattern-rule"><span>${icon("eye")}</span><p><strong class="latin" dir="ltr">Ik + ben + naam</strong><b>اپنا تعارف: میں + ہوں + نام</b></p></div>
-            <div class="pattern-contrast" dir="ltr"><span><small>کہنا</small><b class="latin">Ik ben Yusuf.</b></span><i>${icon("arrow")}</i><span><small dir="rtl">پوچھنا</small><b class="latin">Hoe heet u?</b></span></div>
-          </section>
-          <aside class="common-mistake"><span>چھوٹی احتیاط</span><p><b class="latin" dir="ltr">Ik ben heet Yusuf</b> نہ کہیں۔ تعارف کے لیے صرف <b class="latin" dir="ltr">Ik ben Yusuf</b> کافی ہے۔</p></aside>
-        </div>
-      `;
-    }
-    if (phase.id === "rehearse") {
-      const options = ["Aangenaam, ik ben Yusuf.", "Tot ziens, waar is de trein?", "Ik woon een koffie."];
-      return `
-        <div class="lesson-step practice-step">
-          <div class="step-heading"><span class="step-number latin">04</span><div><small>ماڈل سامنے ہے</small><h1>مناسب جواب چنیں</h1></div><span class="support-pill">مدد کے ساتھ</span></div>
-          <div class="prompt-scene">
-            <div class="portrait portrait-samira"><span>S</span></div>
-            <div dir="ltr"><small class="latin">Samira zegt:</small><strong class="latin">“Goedemorgen, ik ben Samira.”</strong><button data-action="speak" data-speak="Goedemorgen, ik ben Samira." aria-label="سوال سنیں">${icon("speaker")}</button></div>
-          </div>
-          <p class="question-instruction">آپ پہلی بار مل رہے ہیں۔ کون سا جواب اس موقع کے لیے درست ہے؟</p>
-          <div class="answer-list" dir="ltr">
-            ${options.map((option, index) => `<button class="answer-option ${state.selectedAnswer === option ? "selected" : ""} ${state.checked ? option === options[0] ? "correct" : state.selectedAnswer === option ? "wrong" : "" : ""}" data-action="answer" data-answer="${escapeAttr(option)}"><span class="latin">${String.fromCharCode(65 + index)}</span><b class="latin">${option}</b>${state.checked && option === options[0] ? icon("check") : ""}</button>`).join("")}
-          </div>
-          ${state.checked ? renderFeedback(state.selectedAnswer === options[0], "Aangenaam پہلی ملاقات کا مناسب جواب ہے، اور ik ben کے بعد آپ اپنا نام رکھتے ہیں۔", "یہ جواب پہلی ملاقات سے متعلق نہیں۔ ماڈل دوبارہ دیکھیں: Aangenaam, ik ben …") : `<div class="model-hint" dir="ltr"><span>${icon("eye")}</span><p><small dir="rtl">ماڈل</small><b class="latin">Aangenaam, ik ben …</b></p></div>`}
-        </div>
-      `;
-    }
-    if (phase.id === "act") {
-      const displayName = state.learnerName.trim() || "…";
-      return `
-        <div class="lesson-step act-step">
-          <div class="step-heading"><span class="step-number latin">05</span><div><small>اپنی محفوظ بات بنائیں</small><h1>اب اپنا نام استعمال کریں</h1></div><span class="support-pill">لفظ سامنے ہیں</span></div>
-          <div class="act-stage tone-saffron">
-            <div class="act-stage-person">${renderPersonFigure()}</div>
-            <div class="act-bubble" dir="ltr"><small class="latin">Uw antwoord</small><strong class="latin">Goedemorgen, ik ben <span>${escapeHtml(displayName)}</span>.</strong><button data-action="speak" data-speak="Goedemorgen, ik ben ${escapeAttr(displayName === "…" ? "Yusuf" : displayName)}." aria-label="اپنا جملہ سنیں">${icon("speaker")}</button></div>
-          </div>
-          <label class="name-field"><span>اپنا نام</span><input class="latin" dir="ltr" type="text" value="${escapeAttr(state.learnerName)}" data-learner-name autocomplete="name" placeholder="Yusuf" maxlength="32"/><small>صرف نام لکھیں؛ باقی جملہ پہلے سے تیار ہے۔</small></label>
-          <div class="speak-rehearsal"><span>${icon("mic")}</span><p><strong>بغیر نمبر کے بولنے کی مشق</strong><small>جملہ سنیں، توقف کریں، پھر اپنی آواز میں کہیں۔</small></p><button data-action="speak" data-speak="Goedemorgen, ik ben ${escapeAttr(displayName === "…" ? "Yusuf" : displayName)}.">${icon("speaker")}<span>سنیں</span></button></div>
-        </div>
-      `;
-    }
-    if (phase.id === "check") {
-      const options = ["Goedemiddag, ik ben Yusuf. Aangenaam.", "Ik ben waar woont u.", "Tot morgen, ik wil een jas."];
-      return `
-        <div class="lesson-step check-step">
-          <div class="step-heading"><span class="step-number latin">06</span><div><small>نیا مگر متعلقہ موقع</small><h1>انتظار گاہ میں تعارف</h1></div><span class="check-pill">خود جانچ</span></div>
-          <div class="transfer-scene">
-            <div class="transfer-sign"><span>${icon("building")}</span><b class="latin">Buurtcentrum</b><small>نئے لوگوں کی ملاقات · دوپہر</small></div>
-            <div class="transfer-person"><span class="portrait portrait-omar">O</span><p dir="ltr"><small class="latin">Omar zegt:</small><strong class="latin">“Goedemiddag, ik ben Omar.”</strong></p><button data-action="speak" data-speak="Goedemiddag, ik ben Omar." aria-label="عمر کی بات سنیں">${icon("speaker")}</button></div>
-          </div>
-          <p class="question-instruction">اب صبح نہیں، دوپہر ہے۔ کون سا جواب موقع اور تعارف دونوں کے مطابق ہے؟</p>
-          <div class="answer-list" dir="ltr">
-            ${options.map((option, index) => `<button class="answer-option ${state.selectedAnswer === option ? "selected" : ""} ${state.checked ? option === options[0] ? "correct" : state.selectedAnswer === option ? "wrong" : "" : ""}" data-action="answer" data-answer="${escapeAttr(option)}"><span class="latin">${String.fromCharCode(65 + index)}</span><b class="latin">${option}</b>${state.checked && option === options[0] ? icon("check") : ""}</button>`).join("")}
-          </div>
-          ${state.checked ? renderFeedback(state.selectedAnswer === options[0], "Goedemiddag دوپہر کے وقت درست سلام ہے۔ ik ben کے ساتھ تعارف اور Aangenaam کے ساتھ پہلی ملاقات مکمل ہوئی۔", "جواب کے حصے ایک دوسرے سے نہیں ملتے۔ دوپہر کا سلام + ik ben + نام + Aangenaam استعمال کریں۔") : ""}
-        </div>
-      `;
-    }
-    return `
-      <div class="lesson-step complete-step">
-        <div class="completion-world tone-mint">
-          <div class="completion-horizon" aria-hidden="true"></div>
-          <span class="completion-seal">${icon("check")}</span>
-          <p class="overline">منظر مکمل</p>
-          <h1 class="latin" dir="ltr">U kunt kennismaken.</h1>
-          <p>آپ سلام کر کے اپنا نام بتا سکتے ہیں اور پہلی ملاقات میں مناسب جواب دے سکتے ہیں۔</p>
-          <div class="can-do-proof">
-            <span>${icon("speaker")}<b>سلام پہچانا</b></span>
-            <span>${icon("dialogue")}<b>اپنا تعارف بنایا</b></span>
-            <span>${icon("route")}<b>نئے موقع پر استعمال کیا</b></span>
-          </div>
-        </div>
-        <div class="next-scene-card"><span class="scene-badge">${icon("letters")}</span><div><small>اگلا منظر</small><strong class="latin">Mijn naam spellen</strong><p>اپنا نام آہستہ کہنا اور حروف میں واضح کرنا۔</p></div><b class="latin">9 min</b></div>
-      </div>
-    `;
   }
 
   function renderFeedback(correct, correctText, wrongText) {
     return `<aside class="answer-feedback ${correct ? "is-correct" : "is-wrong"}" role="status"><span>${icon(correct ? "check" : "mistake")}</span><p><strong>${correct ? "بات اور موقع دونوں درست" : "یہ جواب کیا کہہ رہا تھا؟"}</strong><small>${correct ? correctText : wrongText}</small></p></aside>`;
   }
 
-  function renderLessonActionDock(phase) {
-    if (phase.id === "rehearse" || phase.id === "check") {
-      if (!state.checked) {
-        return `<div class="lesson-action-dock"><button class="secondary-action" data-action="support">${icon("help")}<span>مدد</span></button><button class="primary-action" data-action="check-answer" ${state.selectedAnswer ? "" : "disabled"}><span>${icon("check")}</span><b>جواب چیک کریں</b><small class="latin">Check</small></button></div>`;
-      }
-      const correctAnswer = phase.id === "rehearse" ? "Aangenaam, ik ben Yusuf." : "Goedemiddag, ik ben Yusuf. Aangenaam.";
-      if (state.selectedAnswer !== correctAnswer) {
-        return `<div class="lesson-action-dock feedback-dock"><button class="secondary-action" data-action="support">${icon("eye")}<span>ماڈل دیکھیں</span></button><button class="primary-action" data-action="retry-answer"><span>${icon("route")}</span><b>آسان مدد کے ساتھ دوبارہ</b><small class="latin">Retry</small></button></div>`;
-      }
-      return `<div class="lesson-action-dock feedback-dock"><button class="primary-action" data-action="next-phase"><span>${icon("arrow")}</span><b>${phase.id === "check" ? "نتیجہ دیکھیں" : "اپنی بات بنائیں"}</b><small class="latin">Continue</small></button></div>`;
-    }
-    if (phase.id === "act") {
-      return `<div class="lesson-action-dock"><button class="secondary-action" data-action="support">${icon("help")}<span>مدد</span></button><button class="primary-action" data-action="next-phase" ${state.learnerName.trim() ? "" : "disabled"}><span>${icon("arrow")}</span><b>نئے موقع پر جانچیں</b><small class="latin">Continue</small></button></div>`;
-    }
-    if (phase.id === "complete") {
-      return `<div class="lesson-action-dock"><a class="secondary-action" href="#/journey" data-route="journey">${icon("journey")}<span>سفر</span></a><a class="primary-action" href="#/today" data-route="today"><span>${icon("check")}</span><b>آج کے صفحے پر واپس</b><small class="latin">Done</small></a></div>`;
-    }
-    return `<div class="lesson-action-dock"><button class="secondary-action" data-action="support">${icon("help")}<span>اردو مدد</span></button><button class="primary-action" data-action="next-phase"><span>${icon("arrow")}</span><b>${phase.id === "scene" ? "باتیں سمجھیں" : phase.id === "decode" ? "جملہ دیکھیں" : "مدد کے ساتھ مشق"}</b><small class="latin">Continue</small></button></div>`;
-  }
-
   function getLesson(lessonId = state.lessonId) {
     return PEOPLE_LESSONS.find((item) => item.id === lessonId) || PEOPLE_LESSONS[0];
+  }
+
+  function getResumableSession(lesson) {
+    const snapshot = progressStore.load().sessions[lesson.id];
+    return snapshot && !snapshot.completed && snapshot.phase !== "brief" && snapshot.phase !== "complete" ? snapshot : null;
+  }
+
+  function beginRuntimeSession(lesson) {
+    const resumable = getResumableSession(lesson);
+    if (resumable) {
+      activeSession = runtime.createSession(lesson, resumable);
+    } else {
+      activeSession = runtime.createSession(lesson, {
+        schemaVersion: 5,
+        lessonId: lesson.id,
+        phase: "brief",
+        maxUnlockedIndex: 0,
+        selectedAnswer: null,
+        checked: false,
+        responses: { ...getLessonResponses(lesson) },
+        attempts: { rehearse: 0, check: 0 },
+        completed: false
+      });
+      activeSession.advance();
+    }
+    syncRuntimeSession();
+    persistRuntimeSession();
+    return activeSession;
+  }
+
+  function ensureRuntimeSession(lesson = getLesson()) {
+    if (!activeSession || activeSession.lesson.id !== lesson.id) return beginRuntimeSession(lesson);
+    return activeSession;
+  }
+
+  function syncRuntimeSession() {
+    if (!activeSession) return;
+    const snapshot = activeSession.serialize();
+    const phaseIndex = PHASES.findIndex((phase) => phase.id === snapshot.phase);
+    if (phaseIndex >= 0) state.phase = phaseIndex;
+    state.selectedAnswer = snapshot.selectedAnswer || "";
+    state.checked = snapshot.checked;
+    state.responses[snapshot.lessonId] = { ...snapshot.responses };
+  }
+
+  function persistRuntimeSession(completed = false) {
+    if (!activeSession) return;
+    const snapshot = activeSession.serialize();
+    if (completed) progressStore.completeLesson(activeSession.lesson, snapshot);
+    else progressStore.saveSession(snapshot);
+  }
+
+  function isRuntimePhaseUnlocked(phase, index) {
+    if (state.lessonMode !== "run") return false;
+    if (!activeSession) return index <= state.phase;
+    return activeSession.availablePhases.includes(phase.id);
   }
 
   function getPeopleProgress() {
@@ -752,6 +688,7 @@
 
   function renderStructuredLessonBrief(lesson) {
     const brief = lesson.brief;
+    const resumable = getResumableSession(lesson);
     return `
       <main class="lesson-shell lesson-brief screen-enter" data-lesson-id="${lesson.id}">
         <header class="lesson-topbar">
@@ -783,7 +720,7 @@
           <div class="brief-new-language"><small>${lesson.id === "people-mission" ? "دہرائی کی مفید باتیں" : "نئی مفید باتیں"}</small><div dir="ltr">${brief.newLanguage.map((item) => `<span class="latin">${item}</span>`).join("")}</div></div>
         </section>
         <div class="lesson-action-dock brief-action-dock">
-          <button class="primary-action" data-action="start-lesson"><span>${icon(lesson.id === "people-mission" ? "flag" : "play")}</span><b>${lesson.id === "people-mission" ? "مشن شروع کریں" : "منظر میں داخل ہوں"}</b><small class="latin">Start</small></button>
+          <button class="primary-action" data-action="start-lesson" ${resumable ? 'data-resume="true"' : ""}><span>${icon(resumable ? "route" : lesson.id === "people-mission" ? "flag" : "play")}</span><b>${resumable ? "وہیں سے سبق جاری رکھیں" : lesson.id === "people-mission" ? "مشن شروع کریں" : "منظر میں داخل ہوں"}</b><small class="latin">${resumable ? "Resume" : "Start"}</small></button>
         </div>
         ${renderLessonOverlay()}
       </main>
@@ -972,7 +909,11 @@
           <section class="lesson-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="lesson-map-title" data-dialog-panel data-action="dialog-panel">
             <div class="sheet-heading"><div><span class="overline">آپ کہاں ہیں؟</span><h2 id="lesson-map-title">سبق کا نقشہ</h2></div><button data-action="close-overlay" aria-label="نقشہ بند کریں">${icon("close")}</button></div>
             <div class="phase-map-list">
-              ${PHASES.map((phase, index) => `<button data-action="jump-phase" data-phase="${index}" ${state.lessonMode !== "run" || index > state.phase ? "disabled" : ""} class="${index === state.phase && state.lessonMode === "run" ? "active" : ""} ${index < state.phase ? "done" : ""}"><span class="latin">${phase.short}</span><p><strong>${phase.label}</strong><small>${phase.description}</small></p><i>${index < state.phase ? icon("check") : index === state.phase ? "ابھی" : icon("lock")}</i></button>`).join("")}
+              ${PHASES.map((phase, index) => {
+                const unlocked = isRuntimePhaseUnlocked(phase, index);
+                const active = index === state.phase && state.lessonMode === "run";
+                return `<button data-action="jump-phase" data-phase="${index}" ${unlocked ? "" : "disabled"} class="${active ? "active" : ""} ${unlocked && !active ? "done" : ""}"><span class="latin">${phase.short}</span><p><strong>${phase.label}</strong><small>${phase.description}</small></p><i>${active ? "ابھی" : unlocked ? icon("check") : icon("lock")}</i></button>`;
+              }).join("")}
             </div>
             <p class="sheet-note">اگلا مرحلہ تب کھلتا ہے جب نئی بات پہلے دیکھی اور مشق کی جا چکی ہو۔</p>
           </section>
@@ -1047,6 +988,8 @@
     state.route = route;
     state.supportOpen = false;
     state.lessonMapOpen = false;
+    resetReviewState();
+    activeSession = null;
     location.hash = `#/${route}`;
     if (location.hash === `#/${route}`) render();
   }
@@ -1057,21 +1000,25 @@
     state.route = "lesson";
     state.lessonId = lesson.id;
     state.lessonMode = mode;
-    state.phase = mode === "run" ? state.phase : 0;
+    state.phase = 0;
     state.selectedAnswer = "";
     state.checked = false;
+    if (mode === "run") beginRuntimeSession(lesson);
+    else activeSession = null;
     location.hash = `#/lesson/${state.lessonId}/${mode}`;
     if (location.hash === `#/lesson/${state.lessonId}/${mode}`) render();
   }
 
   function nextPhase() {
-    state.phase = Math.min(PHASES.length - 1, state.phase + 1);
-    if (state.phase === PHASES.length - 1 && !state.completedLessons.includes(state.lessonId)) {
+    const session = ensureRuntimeSession();
+    session.advance();
+    syncRuntimeSession();
+    const completed = session.phase === "complete";
+    if (completed && !state.completedLessons.includes(state.lessonId)) {
       state.completedLessons.push(state.lessonId);
       saveState();
     }
-    state.selectedAnswer = "";
-    state.checked = false;
+    persistRuntimeSession(completed);
     render();
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }
@@ -1083,14 +1030,15 @@
       render();
       return true;
     }
-    if (state.lessonMode === "run" && state.phase > 0) {
-      state.phase -= 1;
-      state.selectedAnswer = "";
-      state.checked = false;
-      render();
-      return true;
-    }
     if (state.lessonMode === "run") {
+      const session = ensureRuntimeSession();
+      if (session.phase !== "scene") {
+        session.back();
+        syncRuntimeSession();
+        persistRuntimeSession();
+        render();
+        return true;
+      }
       openLesson(state.lessonId, "brief");
       return true;
     }
@@ -1164,7 +1112,7 @@
     }
     if (!action) return;
 
-    if (["close-overlay", "support", "lesson-map", "lesson-exit", "lesson-back", "start-lesson", "next-phase", "check-answer", "retry-answer", "open-journey", "world", "level", "answer", "act-choice", "speak", "prototype-note", "profile", "jump-phase"].includes(action)) {
+    if (["close-overlay", "support", "lesson-map", "lesson-exit", "lesson-back", "start-lesson", "next-phase", "check-answer", "retry-answer", "open-journey", "world", "level", "answer", "act-choice", "speak", "prototype-note", "profile", "jump-phase", "start-review", "close-review", "review-answer", "check-review", "retry-review", "finish-review"].includes(action)) {
       event.preventDefault();
     }
 
@@ -1181,27 +1129,36 @@
     if (action === "lesson-exit") setRoute(state.lastRoute || "journey");
     if (action === "lesson-back") previousLessonStep();
     if (action === "start-lesson") {
-      state.phase = 0;
       openLesson(state.lessonId, "run");
     }
     if (action === "next-phase") nextPhase();
     if (action === "answer") {
-      state.selectedAnswer = target.dataset.answer || "";
-      state.checked = false;
+      const session = ensureRuntimeSession();
+      session.chooseAnswer(target.dataset.answer || "");
+      syncRuntimeSession();
+      persistRuntimeSession();
       render();
     }
     if (action === "act-choice") {
-      getLessonResponses(getLesson()).choice = target.dataset.responseValue || "";
+      const session = ensureRuntimeSession();
+      session.chooseAct(target.dataset.responseValue || "");
+      syncRuntimeSession();
+      persistRuntimeSession();
       saveState();
       render();
     }
     if (action === "check-answer") {
-      state.checked = true;
+      const session = ensureRuntimeSession();
+      session.checkAnswer();
+      syncRuntimeSession();
+      persistRuntimeSession();
       render();
     }
     if (action === "retry-answer") {
-      state.selectedAnswer = "";
-      state.checked = false;
+      const session = ensureRuntimeSession();
+      session.retryAnswer();
+      syncRuntimeSession();
+      persistRuntimeSession();
       overlayReturnAction = "support";
       state.supportOpen = true;
       render();
@@ -1223,10 +1180,49 @@
       closeLessonOverlay();
     }
     if (action === "jump-phase") {
-      state.phase = Number(target.dataset.phase || 0);
+      const session = ensureRuntimeSession();
+      const phase = PHASES[Number(target.dataset.phase || 0)];
+      session.jumpTo(phase.id);
+      syncRuntimeSession();
+      persistRuntimeSession();
       state.lessonMapOpen = false;
-      state.selectedAnswer = "";
-      state.checked = false;
+      render();
+    }
+    if (action === "start-review") {
+      state.reviewId = target.dataset.reviewId || "";
+      state.reviewSelectedAnswer = "";
+      state.reviewChecked = false;
+      state.reviewHadError = false;
+      render();
+    }
+    if (action === "close-review") {
+      resetReviewState();
+      render();
+    }
+    if (action === "review-answer") {
+      state.reviewSelectedAnswer = target.dataset.answer || "";
+      state.reviewChecked = false;
+      render();
+    }
+    if (action === "check-review") {
+      const item = progressStore.load().reviewQueue.find((review) => review.id === state.reviewId);
+      const lesson = item ? getLesson(item.sourceLessonId) : null;
+      state.reviewChecked = true;
+      if (lesson && state.reviewSelectedAnswer !== lesson.check.correct) state.reviewHadError = true;
+      render();
+    }
+    if (action === "retry-review") {
+      state.reviewSelectedAnswer = "";
+      state.reviewChecked = false;
+      render();
+    }
+    if (action === "finish-review") {
+      const item = progressStore.load().reviewQueue.find((review) => review.id === state.reviewId);
+      const lesson = item ? getLesson(item.sourceLessonId) : null;
+      if (item && lesson && state.reviewChecked && state.reviewSelectedAnswer === lesson.check.correct) {
+        progressStore.recordReview(item.id, !state.reviewHadError);
+      }
+      resetReviewState();
       render();
     }
     if (action === "speak") speak(target.dataset.speak, target.dataset.speed === "slow");
@@ -1236,7 +1232,10 @@
   app.addEventListener("input", (event) => {
     if (!event.target.matches("[data-response-key]")) return;
     const lesson = getLesson();
-    getLessonResponses(lesson)[event.target.dataset.responseKey] = event.target.value;
+    const session = ensureRuntimeSession(lesson);
+    session.setResponse(event.target.dataset.responseKey, event.target.value);
+    syncRuntimeSession();
+    persistRuntimeSession();
     saveState();
     const preview = interpolateLessonText(lesson.act.preview, lesson);
     const sampleAudio = interpolateLessonText(lesson.act.preview, lesson, true);

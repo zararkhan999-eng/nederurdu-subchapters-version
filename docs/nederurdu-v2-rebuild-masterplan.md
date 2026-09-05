@@ -11,7 +11,10 @@ Created from the live-product, curriculum, and Android audit on 2026-09-04.
 | 1 | Isolated shell, tokens, bilingual composition, responsive navigation, focused lesson controls, and layered scene system implemented | Automated responsive, zoom, motion, focus, and touch checks passed; production component gallery and offline/error states remain |
 | 2 | Today, Journey, Practice, Toolkit, adaptive route model, five-scene People path, resume/progress, and completed-world state implemented | Automated navigation and Back paths passed; moderated three-second orientation check remains |
 | 3 | All five original “Meet people” lessons and the integrated mission implemented from structured data | Curriculum audit and full browser walkthrough passed; two-profile moderated learner test remains |
-| 4–9 | Not started as production migration | Pending |
+| 4 | Typed V5 catalog validation, browser-native session engine, versioned progress migration, exact resume, due-review scheduling, repair, and deterministic static build implemented for the pilot | Runtime, catalog, resume, review-lapse, responsive, and production-bundle gates passed; additional task renderers, offline reload, and Android validation remain |
+| 5–7 | Foundation and remaining A1/A2 world migration not started | Pending |
+| 8 | First scheduler-driven Practice dashboard and review/repair loop implemented | Pilot review behavior passed; pronunciation studio, phrasebook, grammar library, and settings remain |
+| 9 | Hardening, Android parity, and cutover not started | Pending |
 
 The V2 prototype remains isolated under v2-prototype/. No V1 or Android
 shipping file is changed by this phase.
@@ -473,6 +476,20 @@ Deliverables:
 Gate: the pilot passes automated audit, full learner walkthrough, progress
 reload, mistake repair, due review, offline reload, and Android Back.
 
+Current evidence: the pilot catalog now loads through a strict compiled V5
+validator before the interface starts. A browser-native TypeScript session
+engine owns phase locks, checked answers, attempts, personal production,
+fresh transfer, Back, completion, and exact-phase resume. The versioned V5
+store preserves the prototype payload as recovery data, records completion
+evidence, and schedules review links. A real due review can be answered,
+repaired after a lapse, and rescheduled. The deterministic `dist-v2` build runs
+the type, runtime, catalog, and curriculum gates and records SHA-256 hashes for
+every shipping file. The full pilot and generated distribution pass the six
+target viewports, 200% text, focus/modal checks, catalog completion, resume,
+and review-lapse walkthroughs with zero runtime errors. Offline reload, the
+remaining reusable task families, representative V4 migration fixtures, and
+Android-package validation remain before this part can pass completely.
+
 ### Part 5 — Foundation migration
 
 Deliverables:
@@ -539,6 +556,13 @@ Deliverables:
 
 Gate: every surface explains why an item is present and links practice back to
 the learner's communicative goal.
+
+Current evidence: Practice no longer shows invented fixed counts. It reads the
+V5 queue, distinguishes due from scheduled items, names the source lesson,
+uses the lesson's real transfer task, gives specific repair, records a lapse,
+and chooses the next interval from the learner's result. This proves the first
+end-to-end review loop only; the pronunciation studio, phrase and pattern
+libraries, richer mixed-skill queues, and learner settings are still pending.
 
 ### Part 9 — Hardening, Android parity, and cutover
 

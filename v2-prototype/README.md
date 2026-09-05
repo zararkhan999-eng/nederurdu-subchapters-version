@@ -18,6 +18,11 @@ migrated.
 - a structured lesson catalog separated from rendering, with scene, meaning,
   pronunciation, pattern, supported rehearsal, personal production, fresh
   transfer, specific repair, completion evidence, and later-review links;
+- a browser-native typed V5 runtime that validates the real catalog before
+  rendering and owns phase locks, attempts, exact resume, and completion;
+- versioned progress migration with a recovery copy of prototype data, plus a
+  working Practice queue that schedules retrieval, records a repaired lapse,
+  and selects the next interval;
 - focused lesson mode, lesson map, Urdu support sheet, Dutch speech hooks,
   regular/slow audio intent, personalized learner responses, completion
   persistence, Journey progress, completed-world review routing, and Android
@@ -51,16 +56,23 @@ With the local server running:
 node scripts/verify-v2-prototype.js
 node scripts/audit-v2-curriculum.js
 node scripts/capture-v2-prototype.js
+npm run v2:test
+npm run v2:build
 ```
 
 The browser verification walks the four destinations and a complete lesson at
 320x568, 360x800, 390x844, 768x1024, 1024x768, and 1440x900. It also completes
 all five lessons in sequence, reloads persisted progress, verifies the
-completed-world route, and runs a 200% text-size scenario. It checks runtime
+completed-world route, resumes an unfinished lesson at the exact phase, runs a
+due review through mistake repair and rescheduling, and runs a 200% text-size
+scenario. It checks the compiled V5 runtime, runtime
 errors, adaptive navigation, route scroll reset, horizontal overflow,
 fixed-control clearance, 44 px touch targets, phase locks, regular/slow audio
 intent, specific mistake repair, personalized input, fresh transfer,
-completion evidence, and hardware Back.
+completion evidence, and hardware Back. The accessibility pass additionally
+checks document semantics, accessible control names, ten core token contrast
+pairs, visible keyboard focus, modal focus containment, Escape, and focus
+restoration.
 
 The curriculum audit checks all five lesson records for teaching before
 scoring, 4–5 integrated meaning/sound/use items, deterministic answer integrity,
@@ -71,5 +83,6 @@ of learning, next-scene continuity, and later-review links.
 
 The product and migration decisions live in
 `docs/nederurdu-v2-rebuild-masterplan.md`. The prototype is a design and
-interaction artifact; production implementation should follow the modular
-architecture and phase gates specified there.
+interaction artifact backed by the first production runtime modules. The
+remaining product should continue through the modular architecture and phase
+gates specified there; V1 and the Android mirror are not cut over yet.

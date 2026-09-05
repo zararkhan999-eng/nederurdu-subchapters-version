@@ -24,10 +24,35 @@ function check(condition, message, context) {
   if (!condition) failures.push(`${context}: ${message}`);
 }
 
+function relativeLuminance(hex) {
+  const channels = hex.replace("#", "").match(/../g).map((value) => parseInt(value, 16) / 255);
+  const linear = channels.map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+}
+
+function contrastRatio(first, second) {
+  const a = relativeLuminance(first);
+  const b = relativeLuminance(second);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
 async function waitForScreen(page) {
   await page.locator(".screen-enter").first().waitFor({ state: "visible" });
   await page.waitForFunction(() => document.querySelector(".screen-enter")?.classList.contains("is-visible"));
   await page.waitForTimeout(80);
+}
+
+async function verifyTypedRuntime(page, context) {
+  const runtime = await page.evaluate(() => ({
+    schemaVersion: window.NederUrduV2Runtime?.schemaVersion,
+    lessonCount: window.NederUrduV2Runtime?.catalog?.length,
+    phaseCount: window.NederUrduV2Runtime?.phaseOrder?.length,
+    frozen: Object.isFrozen(window.NederUrduV2Runtime)
+  }));
+  check(runtime.schemaVersion === 5, "typed V5 runtime is not active", context);
+  check(runtime.lessonCount === 5, `typed runtime exposes ${runtime.lessonCount || 0} lessons`, context);
+  check(runtime.phaseCount === 8, `typed runtime exposes ${runtime.phaseCount || 0} phases`, context);
+  check(runtime.frozen, "typed runtime boundary is mutable", context);
 }
 
 async function collectGeometry(page, context, expectNavigation = true) {
@@ -116,6 +141,7 @@ async function verifyRoutes(page, viewportName) {
     const context = `${viewportName}/${route}`;
     await page.goto(`${baseUrl}#/${route}`, { waitUntil: "domcontentloaded" });
     await waitForScreen(page);
+    await verifyTypedRuntime(page, context);
     check(await page.evaluate(() => window.scrollY <= 1), `destination opened at scroll position ${await page.evaluate(() => Math.round(window.scrollY))}`, context);
     const current = await page.locator(".nav-item.active").first().getAttribute("data-route");
     check(current === route, `active navigation destination is ${current || "missing"}`, context);
@@ -187,6 +213,13 @@ async function verifyFirstLesson(page, viewportName) {
   await page.locator('[data-response-key="name"]').fill("Zara");
   check(!(await page.locator('[data-action="next-phase"]').isDisabled()), "production continue did not enable after input", context);
   check((await page.locator("[data-live-preview]").textContent()).includes("Zara"), "learner input did not update the model sentence", context);
+  await page.evaluate(() => { location.hash = "#/lesson/meet-neighbour/brief"; });
+  await waitForScreen(page);
+  check(await page.locator('[data-action="start-lesson"][data-resume="true"]').count() === 1, "unfinished session does not expose Resume", context);
+  await page.locator('[data-action="start-lesson"]').click();
+  await waitForScreen(page);
+  check(await page.locator(".act-step").count() === 1, "Resume did not restore the exact personal-production phase", context);
+  check(await page.locator('[data-response-key="name"]').inputValue() === "Zara", "Resume did not restore the personal response", context);
   await page.locator('[data-action="next-phase"]').click();
   await waitForScreen(page);
   check(await page.locator(".check-step").count() === 1, "fresh transfer check did not render", context);
@@ -260,6 +293,9 @@ async function completeCatalogLesson(page, item) {
   }
   const completed = await page.evaluate(() => JSON.parse(localStorage.getItem("nederurdu-v2-prototype-state") || "{}").completedLessons || []);
   check(completed.includes(item.id), "completion was not persisted", context);
+  const progress = await page.evaluate(() => JSON.parse(localStorage.getItem("nederurdu-progress-v5") || "{}"));
+  check(Boolean(progress.completedLessons?.[item.id]), "completion was not persisted in the V5 progress store", context);
+  check(progress.sessions?.[item.id]?.completed === true, "V5 session lacks completion evidence", context);
 }
 
 async function verifyCompleteWorld(browser) {
@@ -296,6 +332,160 @@ async function verifyCompleteWorld(browser) {
   check((await page.locator(".daily-stage h2").textContent()).includes("voltooid"), "completed Today state does not acknowledge world completion", "slice/today-complete");
   check(runtimeErrors.length === 0, `browser errors: ${runtimeErrors.join(" | ")}`, "slice");
   results.push({ viewport: "complete-world", width: 390, height: 844, lessonsCompleted: 5, runtimeErrors: runtimeErrors.length });
+  await context.close();
+}
+
+async function verifyReviewEngine(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "nl-NL", reducedMotion: "reduce" });
+  const page = await context.newPage();
+  const runtimeErrors = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") runtimeErrors.push(message.text());
+  });
+  await page.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("nederurdu-progress-v5", JSON.stringify({
+      schemaVersion: 5,
+      revision: 1,
+      updatedAt: "2026-09-05T08:00:00.000Z",
+      completedLessons: {},
+      sessions: {},
+      reviewQueue: [{
+        id: "practice:greetings:1d",
+        sourceLessonId: "meet-neighbour",
+        dueAt: "2026-09-04T08:00:00.000Z",
+        intervalIndex: 0,
+        lapses: 0
+      }]
+    }));
+  });
+
+  await page.goto(`${baseUrl}#/practice`, { waitUntil: "domcontentloaded" });
+  await waitForScreen(page);
+  await verifyTypedRuntime(page, "review/runtime");
+  check((await page.locator(".utility-orb b").textContent()).trim() === "1", "due review count is not data-driven", "review/dashboard");
+  check(await page.locator('[data-action="start-review"]').count() === 1, "due review has no start action", "review/dashboard");
+  await page.locator('[data-action="start-review"]').click();
+  await waitForScreen(page);
+  check(await page.locator(".review-session-card").count() === 1, "review session did not open", "review/session");
+  await collectGeometry(page, "review/session");
+  await checkBottomClearance(page, "review/session");
+
+  check(await page.locator('[data-action="check-review"]').isDisabled(), "review check is enabled before a response", "review/session");
+  await page.locator('[data-action="review-answer"]').nth(1).click();
+  await page.locator('[data-action="check-review"]').click();
+  check(await page.locator(".answer-feedback.is-wrong").count() === 1, "review mistake lacks specific repair", "review/session");
+  await page.locator('[data-action="retry-review"]').click();
+  await page.locator('[data-action="review-answer"]').first().click();
+  await page.locator('[data-action="check-review"]').click();
+  check(await page.locator(".answer-feedback.is-correct").count() === 1, "repaired review is not accepted", "review/session");
+  await page.locator('[data-action="finish-review"]').click();
+  await waitForScreen(page);
+  check(await page.locator(".focus-practice").count() === 1, "review completion did not return to Practice", "review/completion");
+  check(await page.locator('[data-action="start-review"]').count() === 0, "repaired review remained immediately due", "review/completion");
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("nederurdu-progress-v5") || "{}"));
+  const reviewed = stored.reviewQueue?.find((item) => item.id === "practice:greetings:1d");
+  check(reviewed?.lapses === 1, "review lapse was not recorded", "review/persistence");
+  check(Date.parse(reviewed?.dueAt || "") > Date.now(), "repaired review was not rescheduled", "review/persistence");
+  check(runtimeErrors.length === 0, `browser errors: ${runtimeErrors.join(" | ")}`, "review");
+  results.push({ viewport: "review-engine", width: 390, height: 844, lapsesRecorded: reviewed?.lapses || 0, runtimeErrors: runtimeErrors.length });
+  await context.close();
+}
+
+async function verifyAccessibility(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "nl-NL", reducedMotion: "reduce" });
+  const page = await context.newPage();
+  const runtimeErrors = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+  await page.addInitScript(() => localStorage.clear());
+  await page.goto(baseUrl + "#/today", { waitUntil: "domcontentloaded" });
+  await waitForScreen(page);
+
+  const documentSemantics = await page.evaluate(() => ({
+    language: document.documentElement.lang,
+    direction: document.documentElement.dir,
+    mainCount: document.querySelectorAll("main").length,
+    unlabeledControls: [...document.querySelectorAll("button, a[href], input")]
+      .filter((element) => {
+        const box = element.getBoundingClientRect();
+        if (!box.width || !box.height || getComputedStyle(element).visibility === "hidden") return false;
+        const name = element.getAttribute("aria-label") || element.getAttribute("title") || element.innerText?.trim() || element.labels?.[0]?.innerText?.trim() || element.getAttribute("placeholder");
+        return !name;
+      })
+      .map((element) => element.outerHTML.slice(0, 120))
+  }));
+  check(documentSemantics.language === "ur" && documentSemantics.direction === "rtl", "document language or base direction is incorrect", "accessibility/semantics");
+  check(documentSemantics.mainCount === 1, "screen does not expose exactly one main landmark", "accessibility/semantics");
+  check(documentSemantics.unlabeledControls.length === 0, "visible controls lack accessible names: " + documentSemantics.unlabeledControls.join(" | "), "accessibility/semantics");
+
+  const tokens = await page.evaluate(() => {
+    const styles = getComputedStyle(document.documentElement);
+    const names = ["ink-950", "ink-600", "ink-500", "paper-strong", "paper-soft", "emerald-900", "emerald-700", "blue-800", "saffron-700", "saffron-300", "rose-700", "violet-700"];
+    return Object.fromEntries(names.map((name) => [name, styles.getPropertyValue("--" + name).trim()]));
+  });
+  const contrastPairs = [
+    ["ink-500", "paper-strong", 4.5],
+    ["ink-500", "paper-soft", 4.5],
+    ["ink-600", "paper-strong", 4.5],
+    ["emerald-700", "paper-strong", 4.5],
+    ["blue-800", "paper-strong", 4.5],
+    ["saffron-700", "paper-strong", 4.5],
+    ["rose-700", "paper-strong", 4.5],
+    ["violet-700", "paper-strong", 4.5],
+    ["paper-strong", "emerald-900", 4.5],
+    ["ink-950", "saffron-300", 4.5]
+  ];
+  for (const [foreground, background, minimum] of contrastPairs) {
+    const ratio = contrastRatio(tokens[foreground], tokens[background]);
+    check(ratio >= minimum, foreground + " on " + background + " is " + ratio.toFixed(2) + ":1", "accessibility/contrast");
+  }
+
+  const keyboardStops = [];
+  for (let index = 0; index < 7; index += 1) {
+    await page.keyboard.press("Tab");
+    keyboardStops.push(await page.evaluate(() => {
+      const element = document.activeElement;
+      const style = getComputedStyle(element);
+      return {
+        tag: element?.tagName,
+        action: element?.getAttribute("data-action") || element?.getAttribute("data-route") || element?.getAttribute("href"),
+        outlineWidth: parseFloat(style.outlineWidth) || 0,
+        outlineStyle: style.outlineStyle
+      };
+    }));
+  }
+  check(keyboardStops.every((stop) => ["A", "BUTTON", "INPUT"].includes(stop.tag)), "Tab sequence reaches a non-interactive element", "accessibility/focus");
+  check(keyboardStops.every((stop) => stop.outlineWidth >= 2 && stop.outlineStyle !== "none"), "a keyboard target has no visible focus ring", "accessibility/focus");
+  check(new Set(keyboardStops.map((stop) => stop.action)).size >= 5, "keyboard sequence does not reach enough distinct actions", "accessibility/focus");
+
+  await page.goto(baseUrl + "#/lesson/meet-neighbour/brief", { waitUntil: "domcontentloaded" });
+  await waitForScreen(page);
+  await page.locator('[data-action="lesson-map"]').focus();
+  await page.keyboard.press("Enter");
+  await page.locator('[role="dialog"]').waitFor({ state: "visible" });
+  await page.waitForFunction(() => document.activeElement?.matches('[data-action="close-overlay"]'));
+  check(await page.locator('[role="dialog"][aria-modal="true"]').count() === 1, "lesson map is not exposed as a modal dialog", "accessibility/dialog");
+  await page.keyboard.press("Shift+Tab");
+  check(await page.evaluate(() => document.querySelector('[role="dialog"]')?.contains(document.activeElement)), "Shift+Tab escaped the modal", "accessibility/dialog");
+  await page.keyboard.press("Tab");
+  check(await page.evaluate(() => document.activeElement?.matches('[data-action="close-overlay"]')), "modal focus did not wrap back to its first control", "accessibility/dialog");
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector('[role="dialog"]'));
+  await page.waitForFunction(() => document.activeElement?.matches('[data-action="lesson-map"]'));
+  check(await page.evaluate(() => document.activeElement?.matches('[data-action="lesson-map"]')), "Escape did not restore focus to the map trigger", "accessibility/dialog");
+
+  await page.locator('[data-action="start-lesson"]').click();
+  await waitForScreen(page);
+  await page.locator('[data-action="support"]').first().focus();
+  await page.keyboard.press("Enter");
+  await page.locator(".support-sheet").waitFor({ state: "visible" });
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector(".support-sheet"));
+  await page.waitForFunction(() => document.activeElement?.matches('[data-action="support"]'));
+  check(await page.evaluate(() => document.activeElement?.matches('[data-action="support"]')), "Urdu help did not restore focus to its trigger", "accessibility/dialog");
+  check(runtimeErrors.length === 0, "browser errors: " + runtimeErrors.join(" | "), "accessibility");
+  results.push({ viewport: "accessibility", width: 390, height: 844, contrastPairs: contrastPairs.length, keyboardStops: keyboardStops.length, runtimeErrors: runtimeErrors.length });
   await context.close();
 }
 
@@ -343,6 +533,8 @@ async function verifyTextScale(browser) {
       await context.close();
     }
     await verifyCompleteWorld(browser);
+    await verifyReviewEngine(browser);
+    await verifyAccessibility(browser);
     await verifyTextScale(browser);
   } finally {
     await browser.close();

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "rootDir": "src-v2",
+    "outDir": ".v2-browser-staging",
+    "lib": ["ES2022", "DOM"],
+    "skipLibCheck": true,
+    "removeComments": true
+  },
+  "include": ["src-v2/**/*.ts"]
+}
