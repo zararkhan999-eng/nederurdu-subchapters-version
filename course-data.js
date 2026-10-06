@@ -1542,7 +1542,7 @@ function addBeginnerAuditExpansion2() {
       "mijn verwarming doet het niet = میری ہیٹنگ کام نہیں کر رہی۔"
     ], "مسئلہ صاف، چھوٹے جملے میں بتائیں۔"),
     fillGap("mijn verwarming doet het ___", ["niet", "geen", "nee"], "niet", "doet het niet = کام نہیں کر رہی۔"),
-    reverse("میرے گھر میں پانی کا رساؤ ہے", ["ik heb lekkage in mijn huis", "ik ben lekkage", "ik ga lekkage"], "ik heb lekkage in mijn huis", "lekkage = پانی کا رساؤ۔"),
+    reverse("میرے گھر میں پانی کا رساؤ ہے", ["ik heb een lekkage in mijn huis", "ik ben lekkage", "ik ga lekkage"], "ik heb een lekkage in mijn huis", "lekkage = پانی کا رساؤ۔"),
     situation("حال: ہیٹنگ خراب ہے۔", ["mijn verwarming doet het niet", "ik heb een afspraak", "waar is de kassa?"], "mijn verwarming doet het niet", "خرابی بتانے والا جملہ۔")
   );
 
@@ -8076,32 +8076,6 @@ const a2SchoolAbsenceLessonV4 = {
 };
 insertLessonAfter(a2Lessons, "a2-mission-job-start", a2SchoolAbsenceLessonV4);
 
-const a2GuidanceMomentsV4 = [
-  "صبح پہلی گفتگو شروع ہونے پر", "لکھی ہوئی اطلاع سامنے آنے کے بعد",
-  "ذمہ دار شخص وضاحت مانگے تو", "مقررہ وقت بدلنے سے پہلے",
-  "فون پر جواب دیتے ہوئے", "کاؤنٹر پر اپنی باری آنے پر",
-  "مختصر پیغام بھیجتے وقت", "اگلا قدم طے کرنے سے پہلے",
-  "رسید یا خط دوبارہ پڑھتے ہوئے", "مسئلہ پہلی بار رپورٹ کرتے وقت",
-  "دوسری طرف سے سوال آنے پر", "تحریری تصدیق محفوظ کرتے وقت",
-  "ملاقات ختم ہونے سے پہلے", "غلط فہمی فوراً درست کرتے ہوئے",
-  "مددگار کو مکمل صورت بتاتے وقت", "بعد کی کارروائی پوچھنے کے لیے",
-  "نئی شرط سننے کے فوراً بعد", "اپنی دستیابی واضح کرتے ہوئے",
-  "ثبوت دکھانے کے موقع پر", "جواب کی مدت معلوم کرتے وقت"
-];
-
-const a2GuidanceBoundariesV4 = [
-  "یہ موجودہ حالت بتاتی ہے، پچھلا واقعہ نہیں", "یہ سیدھی درخواست ہے، صرف چیز کا نام نہیں",
-  "یہ وقت کی بات ہے، جگہ کی نہیں", "یہ وجہ واضح کرتی ہے، نتیجہ نہیں",
-  "یہ اجازت پوچھتی ہے، حکم نہیں دیتی", "یہ مسئلہ رپورٹ کرتی ہے، حل کی تصدیق نہیں",
-  "یہ مکمل جواب ہے، صرف آغاز نہیں", "یہ تحریری ثبوت ہے، زبانی وعدہ نہیں",
-  "یہ اگلا قدم پوچھتی ہے، پرانی کارروائی نہیں", "یہ ایک خاص شرط بتاتی ہے، عام امکان نہیں",
-  "یہ متعلقہ شخص سے مدد مانگتی ہے، شکایت ختم نہیں کرتی", "یہ مقررہ مدت بتاتی ہے، اندازہ نہیں",
-  "یہ اپنی ضرورت واضح کرتی ہے، دوسرے شخص کا جواب نہیں", "یہ تبدیلی کی اطلاع ہے، نئی درخواست نہیں",
-  "یہ ایک مکمل عملی حصہ ہے، الگ لفظی ترجمہ نہیں", "یہ رسمی گفتگو کے لیے ہے، غیر واضح اشارہ نہیں",
-  "یہ دستاویز کی معلومات ہے، ذاتی رائے نہیں", "یہ فوری قدم بتاتی ہے، مستقبل کا مبہم منصوبہ نہیں",
-  "یہ شرط پوری نہ ہونے کی بات ہے، انکار نہیں", "یہ پیروی کا سوال ہے، پہلی اطلاع نہیں"
-];
-
 const a2GuidanceMistakesV4 = [
   "فاعل اور فعل دونوں قائم رکھیں", "سوالی ترتیب کو بیان والی ترتیب میں نہ بدلیں",
   "وقت کا حصہ نہ چھوڑیں", "منفی لفظ کو نظر انداز نہ کریں",
@@ -8114,6 +8088,191 @@ const a2GuidanceMistakesV4 = [
   "رسمی اختتام کو سوال نہ سمجھیں", "مسئلے کے مقام کو حذف نہ کریں",
   "ثبوت اور دعوے کو ایک چیز نہ سمجھیں", "صحیح شخص یا ادارہ واضح رکھیں"
 ];
+
+const a2AuthoredPhraseMistakesV4 = {
+  "a2-future-modal-verbs": {
+    "ik ga maandag beginnen": "منصوبے میں ga بدلے گا؛ دوسرا فعل beginnen اصل شکل میں آخر پر رہے گا، دونوں فعل بیک وقت نہ بدلیں",
+    "ik kan op dinsdag werken": "صلاحیت بتانے میں kan بدلے گا؛ werken اصل شکل میں آخر پر رکھیں",
+    "ik moet veiligheidsschoenen dragen": "ضرورت بتانے میں moet بدلے گا؛ dragen کو آخر پر اصل شکل میں رکھیں",
+    "mag ik eerder beginnen": "اجازت کے لیے mag سے سوال شروع کریں؛ امکان یا صلاحیت پوچھنے کے لیے kan کہیں",
+    "ik kan op vrijdag niet werken": "نفی میں niet کو werken سے پہلے رکھیں؛ ik niet kan werken نہ کہیں",
+    "ik moet de manager bellen": "ضرورت کے بعد bellen اصل شکل میں آخر پر رکھیں؛ manager bellen کو الگ جملہ نہ بنائیں",
+    "mag ik thuiswerken": "گھر سے کام کی اجازت کے لیے mag سے سوال کریں؛ اسے kan والے امکان سے نہ ملائیں",
+    "wanneer ga ik beginnen": "سوالی لفظ wanneer کے بعد بدلا ہوا فعل ga، پھر فاعل ik آئے؛ ik ga والی بیان کی ترتیب نہ رکھیں"
+  },
+  "a2-perfect-tense": {
+    "gisteren ben ik gevallen": "gisteren جملے کے شروع میں آئے تو ben فاعل ik سے پہلے آتا ہے؛ gevallen آخر میں رہتا ہے",
+    "de pijn begon gisteravond": "begon سادہ ماضی ہے؛ اسے مددگار فعل کے ساتھ نہ ملائیں، اور وقت gisteravond کو جملے کے آخر میں رکھیں",
+    "ik heb vannacht slecht geslapen": "heb کے بعد geslapen آخر میں رکھیں؛ slecht اس سے پہلے آتا ہے",
+    "ik heb de dokter gebeld": "heb بدلا ہوا مددگار فعل ہے؛ gebeld کو اصل فعل کی طرح نہ بدلیں اور جملے کے آخر میں رکھیں",
+    "ik heb al pijnstillers genomen": "al وقت کی باریکی بتاتا ہے؛ اسے حذف نہ کریں، اور genomen کو آخر میں رکھیں",
+    "ik ben thuis gebleven": "گھر رہنے کے لیے اس جملے میں ben استعمال ہوتا ہے؛ ben gebleven کے بجائے ben thuis gebleven کہیں",
+    "de koorts is vanmorgen begonnen": "یہاں is مددگار فعل ہے اور begonnen آخر میں آتا ہے؛ begon سادہ ماضی کی صورت ہے",
+    "ik heb nog niet gegeten": "نفی میں nog niet کو gegeten سے پہلے رکھیں؛ gegeten کو جملے کے آخر میں رکھیں"
+  },
+  "a2-strong-combined": {
+    "ik ben gisteren naar de huisarts gegaan": "gisteren شروع میں آئے تو ben فاعل ik سے پہلے آتا ہے؛ gegaan آخر میں رہتا ہے",
+    "omdat ik pijn had in mijn rug": "omdat کے بعد بدلا ہوا had ذیلی جملے کے آخر میں آتا ہے؛ یہ وجہ ہے، مکمل الگ اطلاع نہیں",
+    "de dokter heeft gezegd": "یہاں heeft مددگار فعل ہے اور gezegd آخر میں آتا ہے؛ اسے بدلی ہوئی اصل فعل کی صورت نہ بنائیں",
+    "dat ik rust moet nemen": "dat کے بعد ik rust کی ترتیب ہے؛ moet nemen دونوں آخر کے قریب رہتے ہیں اور nemen آخری فعل ہے",
+    "ik moet volgende week terugkomen": "moet کے بعد terugkomen اصل فعلی صورت میں آخر میں آتا ہے؛ اس فعل کو یہاں الگ نہ توڑیں",
+    "als de pijn niet weg is": "als والی شرط میں is آخر میں آتا ہے؛ یہ بتاتا ہے کہ درد ختم نہ ہونے کی صورت میں کیا ہو گا",
+    "ik moet rust nemen": "moet ضرورت بتاتا ہے؛ nemen اصل فعلی صورت میں آخر میں آتا ہے، اسے بدلا ہوا نہ کریں",
+    "omdat ik pijn had": "omdat وجہ کا ذیلی جملہ شروع کرتا ہے اور had آخر میں آتا ہے؛ اسے مکمل الگ جواب کے طور پر نہ چھوڑیں"
+  },
+  "a2-word-order-connectors": {
+    "ik bel omdat de verwarming kapot is": "omdat کے بعد ذیلی جملے میں بدلا ہوا فعل is آخر میں آتا ہے؛ اسے kapot کے فوراً بعد نہ رکھیں",
+    "de kamer is nat omdat er een lekkage is": "دوسرے omdat جملے میں بھی is آخر میں آتا ہے؛ پہلے حصے کا جملہ ترتیب برقرار رکھیں",
+    "ik denk dat de leiding kapot is": "dat کے بعد is آخر میں رکھیں؛ ik denk والی مرکزی شق کی ترتیب کو ذیلی شق میں نہ دہرائیں",
+    "als de monteur komt ben ik thuis": "Als والی شق کے بعد مرکزی شق میں ben، پھر ik آئے گا؛ ben ik کی ترتیب نہ الٹیں",
+    "omdat de muur nat is": "omdat سے شروع ہونے والا یہ وجہ کا ذیلی جملہ ہے؛ اسے تنہا مکمل اطلاع نہ سمجھیں، مکمل جملے سے جوڑیں",
+    "als het water blijft lopen": "als والی شرط میں بدلا ہوا فعل blijft آتا ہے؛ lopen آخر میں رہے گا، شرط کو یقینی نتیجہ نہ سمجھیں",
+    "ik wil dat de lekkage wordt gerepareerd": "dat کے بعد دونوں فعل آخر میں آتے ہیں: wordt gerepareerd؛ مرکزی شق کی ترتیب نہ لگائیں",
+    "de vloer wordt nat als het regent": "als کے بعد ذیلی شق میں regent آخر میں آتا ہے؛ اس سے پہلے مرکزی جملے کی ترتیب مکمل رہتی ہے"
+  },
+  "a2-separable-verbs-routine": {
+    "het formulier": "formulier کے نام کے ساتھ het آتا ہے؛ اسے صرف فارم کی چیز نہ سمجھیں، اصل کام اسے پُر کرنا ہے",
+    "het formulier invullen": "infinitive میں invullen جڑا رہتا ہے؛ اسے het formulier in vullen نہ لکھیں",
+    "vul het formulier in": "ہدایتی جملے میں فعل کا حصہ vul شروع میں اور in آخر میں آئے گا؛ invul het formulier نہ کہیں",
+    "de handtekening": "handtekening کے ساتھ de آتا ہے؛ یہ دستخط کا نام ہے، دستخط کرنے کا فعل نہیں",
+    "het formulier ondertekenen": "اس فعل میں ondertekenen الگ نہیں ہوتا؛ onder یہاں separable prefix نہیں ہے",
+    "onderteken hier": "اس ہدایت میں onderteken ایک ساتھ لکھا جاتا ہے؛ اسے onder ... teken میں نہ توڑیں",
+    "uw identiteitsbewijs meenemen": "infinitive meenemen جڑا رہتا ہے؛ اسے mee nemen میں نہ توڑیں",
+    "neem uw identiteitsbewijs mee": "ہدایتی جملے میں neem شروع اور mee آخر میں آئے گا؛ meenemen کو ایک لفظ نہ رکھیں",
+    "de aanvraag": "aanvraag درخواست ہے؛ اسے بھرنے والے کاغذ formulier کے ساتھ ایک ہی چیز نہ سمجھیں",
+    "de aanvraag opsturen": "opsturen infinitive ایک ساتھ ہے؛ op کو aanvraag سے الگ نہ کریں",
+    "stuur de aanvraag op": "ہدایتی جملے میں stuur پہلے اور separable حصہ op آخر میں آئے گا؛ opstuur de aanvraag نہ کہیں"
+  },
+  "a2-school-absence-notice": {
+    "ik meld mijn kind af": "جملے میں بدلا ہوا meld دوسرے حصے سے پہلے آتا ہے اور af آخر میں؛ meld af کو ایک ساتھ نہ رکھیں",
+    "hij had koorts en moest thuisblijven": "یہاں had اور moest دونوں ماضی کی بدلی ہوئی صورتیں ہیں؛ moest کے بعد thuisblijven فعل کی اصل صورت میں رہتا ہے",
+    "de les begint om tien uur": "یہ باقاعدہ وقتِ آغاز بتاتا ہے؛ begint کو ماضی کی صورت نہ سمجھیں",
+    "de les valt vandaag uit": "اس فعل کے دو حصے ہیں؛ بدلی ہوئی valt پہلے اور uit آخر میں آئے گا",
+    "moet ik de docent bellen": "سوال میں بدلا ہوا moet پہلے اور فاعل ik اس کے بعد آئے گا؛ bellen فعل کی اصل صورت میں آخر پر رہے گا",
+    "wanneer kan mijn kind weer komen": "سوالی لفظ کے بعد بدلا ہوا kan آئے گا؛ komen فعل کی اصل صورت میں آخر پر رہے گا"
+  },
+  "a2-parent-school": {
+    "ik wil graag met de docent praten": "wil کے بعد praten فعل کی اصل صورت میں آخر میں رہتا ہے؛ اسے بدلا ہوا فعل بنا کر docent سے فوراً پہلے نہ رکھیں",
+    "hoe gaat het met mijn kind in de klas": "یہ حال پوچھنے کا پورا مقررہ سوال ہے؛ gaat کا فاعل het ہے، mijn kind نہیں",
+    "mijn kind heeft moeite met lezen": "heeft moeite met کے بعد سرگرمی کا نام آتا ہے؛ بچے کی صلاحیت کو منفی انداز میں بیان نہ کریں",
+    "kan mijn kind extra hulp krijgen": "سوال معاون فعل kan سے شروع ہوتا ہے اور krijgen اصل صورت میں آخر میں آتا ہے؛ مدد ملنے کو یقینی بات نہ کہیں",
+    "wat kunnen we thuis oefenen": "سوالی لفظ wat کے بعد kunnen اور پھر we آتے ہیں؛ oefenen فعل کی اصل صورت میں آخر میں رہے گا",
+    "mijn kind was gisteren afwezig": "یہ کل کی حالت ہے؛ was ماضی ہے، اور gisteren وقت واضح کرتا ہے",
+    "is een ander tijdstip mogelijk": "یہ سوال is سے شروع ہوتا ہے؛ بیان کی ترتیب een ander tijdstip is ممکن نہ رکھیں",
+    "mijn kind voelt zich niet veilig": "اس جملے میں zich والا ضمیر voelt کے ساتھ ضروری ہے؛ اسے حذف نہ کریں، اور نفی کو محفوظ ہونے کے مفہوم سے جوڑیں",
+    "we maken samen een plan": "we کے ساتھ maken جمع کی فعل صورت ہے؛ ایک فرد کے ساتھ آنے والی بدلی ہوئی صورت نہ لگائیں"
+  },
+  "a2-gemeente-official": {
+    "de gemeente": "اس دفتر کے نام سے پہلے de یاد رکھیں؛ het gemeente نہ کہیں",
+    "het loket": "کاؤنٹر کے نام کے ساتھ het آتا ہے؛ de loket نہ کہیں",
+    "het bsn": "شناختی نمبر کے اس مخفف کے ساتھ het آتا ہے؛ de نہ لگائیں",
+    "het paspoort": "پاسپورٹ کے نام کے ساتھ het آتا ہے؛ de paspoort نہ کہیں",
+    "ik heb een afspraak bij de gemeente": "een afspraak کے بعد bij دفتر کا تعلق بتاتا ہے؛ afspraak کو gemeente کے اندر موجود چیز نہ سمجھیں",
+    "waar is loket drie": "سوال میں waar کے بعد is آتا ہے؛ waar loket drie is والی ترتیب نہ رکھیں",
+    "hier is mijn paspoort": "یہاں hier جگہ بتاتا ہے اور mijn ملکیت؛ mijn کے بعد دوبارہ مضمون نہ لگائیں",
+    "kunt u mij helpen met dit formulier": "رسمی سوال میں kunt کے بعد u آتا ہے؛ مدد کا موضوع بتانے والا met dit formulier آخر میں رکھیں"
+  },
+  "a2-gemeente-documents": {
+    "welke documenten heb ik nodig": "سوالی welke documenten کے بعد بدلا ہوا heb، پھر ik آتا ہے؛ خبری ترتیب نہ رکھیں",
+    "is een kopie voldoende": "یہ سوال is سے شروع ہوتا ہے؛ een kopie is والی خبری ترتیب سوال میں نہ دہرائیں",
+    "waar moet ik tekenen": "سوالی لفظ کے بعد بدلا ہوا moet آتا ہے؛ tekenen فعل کی اصل صورت میں آخر میں رہتا ہے",
+    "ik heb mijn bsn niet bij me": "نفی کا niet اس مقررہ جملے میں آخر کے قریب آتا ہے؛ اسے heb کے فوراً بعد نہ رکھیں",
+    "ik begrijp deze vraag niet": "یہاں niet پورے جملے کی نفی کرتا ہے؛ اسے begrijp سے پہلے نہ رکھیں",
+    "kunt u dit uitleggen": "رسمی سوال میں kunt کے بعد u آتا ہے؛ uitleggen فعل کی اصل صورت میں آخر میں رہتا ہے",
+    "het formulier is nog niet compleet": "nog niet مل کر بتاتے ہیں کہ فارم ابھی مکمل نہیں؛ دونوں الفاظ میں سے ایک نہ چھوڑیں",
+    "mijn gegevens zijn niet correct": "gegevens جمع ہے، اس لیے اس کے ساتھ zijn آتا ہے؛ واحد والی فعل صورت نہ لگائیں",
+    "ik wil deze fout laten herstellen": "wil کے بعد دو اصل فعلی صورتیں laten herstellen آخر میں آتی ہیں؛ wil کو درمیان میں دوبارہ نہ دہرائیں",
+    "kan ik de aanvraag online doen": "سوال kan سے شروع ہوتا ہے؛ doen فعل کی اصل صورت میں آخر میں رہتا ہے",
+    "wanneer krijg ik antwoord": "سوالی لفظ کے بعد بدلا ہوا krijg اور پھر ik آتا ہے؛ زمانی جواب کے بجائے خبری ترتیب نہ رکھیں",
+    "u ontvangt binnen twee weken een brief": "رسمی u کے ساتھ ontvangt آتا ہے؛ مدت binnen twee weken کو خط موصول ہونے کے وقت کے طور پر پڑھیں"
+  },
+  "a2-work-school": {
+    "ik zoek een baan": "zoek یہاں نوکری تلاش کرنے کا فعل ہے؛ اسے صرف تلاش کے معنی میں رکھیں، ملازمت شروع کرنے کے معنی میں نہیں",
+    "ik begin maandag met mijn baan": "maandag وقت بتاتا ہے اور met mijn baan کام کا تعلق؛ دونوں معلومات کو جملے میں برقرار رکھیں",
+    "dit is mijn contract": "dit قریب موجود دستاویز کی طرف اشارہ کرتا ہے؛ یہاں 'میرا' بتانے کے لیے mijn کافی ہے",
+    "hoeveel uur staat in mijn contract": "سوال hoeveel uur سے شروع ہوتا ہے اور بدلا ہوا staat فاعل سے پہلے آتا ہے؛ خبری ترتیب نہ رکھیں",
+    "wanneer krijg ik mijn salaris": "سوالی لفظ کے بعد بدلا ہوا krijg اور پھر ik آئے گا؛ krijg ik کی جگہ ik krijg نہ کہیں",
+    "dit is mijn rooster": "rooster کے ساتھ dit is استعمال کریں؛ یہ لفظوں کی فہرست نہیں بلکہ کام کا شیڈول ہے",
+    "mijn collega helpt mij": "ایک ساتھی کے لیے helpt آتا ہے؛ مدد لینے والے کو آخر کے قریب mij سے ظاہر کریں",
+    "mijn rooster is veranderd": "یہاں بدلاؤ کے لیے is veranderd آتا ہے؛ is کے بعد بدلی ہوئی فعل صورت نہ بنائیں"
+  },
+  "a2-work-conditions": {
+    "ik kan op dinsdag niet werken": "niet کام نہ کر سکنے کی نفی کرتا ہے؛ اسے kan سے پہلے رکھ کر جملے کا ربط نہ توڑیں",
+    "kan ik een vrije dag aanvragen": "سوال kan سے شروع ہوتا ہے؛ aanvragen فعل کی اصل صورت میں آخر میں رہتا ہے",
+    "mijn salaris klopt niet": "اس جملے میں niet آخر میں آ کر klopt کی نفی کرتا ہے؛ اسے salaris سے پہلے نہ رکھیں",
+    "ik heb hulp nodig bij deze taak": "nodig bij کے بعد وہ کام آتا ہے جس میں مدد چاہیے؛ bij کو حذف نہ کریں",
+    "wie neemt mijn dienst over": "سوالی لفظ wie کے بعد بدلا ہوا neemt آتا ہے؛ دوسرا فعلی حصہ over آخر میں رہتا ہے",
+    "kunnen we hierover praten": "سوال kunnen سے شروع ہوتا ہے، پھر we آتا ہے؛ praten فعل کی اصل صورت میں آخر میں رہتا ہے",
+    "ik stuur de bevestiging per e-mail": "per e-mail ذریعہ بتاتا ہے؛ اسے وصول کنندہ یا ملاقات کے وقت نہ سمجھیں"
+  },
+  "a2-doctor-advice": {
+    "ik heb sinds drie dagen pijn": "sinds مدت بتاتا ہے جو پہلے شروع ہوئی اور اب بھی جاری ہے؛ اسے صرف آج کے درد کی بات نہ سمجھیں",
+    "de pijn wordt erger als ik loop": "als والی شق میں ik loop کی ترتیب برقرار رکھیں؛ اسے سوال یا یقینی وقت نہ بنائیں",
+    "het medicijn heeft niet geholpen": "niet نے مدد ملنے کی نفی کی ہے؛ اسے صرف دوا کے نام کے ساتھ نہ جوڑیں",
+    "ik ben allergisch voor penicilline": "الرجی کے ساتھ voor استعمال ہوتا ہے؛ اسے دوا لینے کی ہدایت نہ سمجھیں",
+    "zijn er bijwerkingen": "یہ پوچھتا ہے کہ مضر اثرات موجود ہیں یا نہیں؛ اسے اپنے تجربے کی اطلاع نہ بنائیں",
+    "wanneer moet ik terugkomen": "سوالی لفظ کے بعد بدلا ہوا moet اور پھر ik آئے گا؛ terugkomen اصل فعل کی صورت میں آخر میں ہے",
+    "kunt u dat in eenvoudige woorden uitleggen": "رسمی درخواست میں kunt کے بعد u آتا ہے؛ dat وضاحت کا موضوع ہے اور uitleggen آخر میں رہتا ہے"
+  },
+  "a2-health-housing": {
+    "mijn verwarming doet het niet": "یہ مقررہ بول چال کا انداز ہے؛ het کو حذف نہ کریں، کیونکہ doet het niet مل کر خرابی بتاتے ہیں",
+    "de verwarming is sinds gisteren kapot": "sinds gisteren بتاتا ہے خرابی کب سے جاری ہے؛ اسے صرف کل کے ایک لمحے کی بات نہ سمجھیں",
+    "ik heb een lekkage in mijn huis": "een یہاں واحد قابلِ شمار خرابی کے لیے ضروری ہے؛ اسے نہ چھوڑیں",
+    "het water komt uit de keukenmuur": "uit پانی کے آنے کی جگہ بتاتا ہے؛ اسے باورچی خانے کے اندر موجود پانی نہ سمجھیں",
+    "kunt u vandaag een monteur sturen": "یہ مؤدبانہ درخواست ہے؛ kunt کے بعد u آتا ہے اور sturen اصل صورت میں آخر میں رہتا ہے"
+  },
+  "a2-landlord-repairs": {
+    "er is een lekkage in de keuken": "er is بتاتا ہے کہ خرابی موجود ہے؛ اسے 'میں نے دیکھی' کی ذاتی اطلاع نہ بنائیں",
+    "de verwarming werkt al drie dagen niet": "al drie dagen مدت بتاتا ہے اور niet کام نہ کرنے کی نفی کرتا ہے؛ دونوں میں سے ایک نہ چھوڑیں",
+    "het probleem wordt steeds erger": "steeds erger بتاتا ہے کہ مسئلہ مسلسل بڑھ رہا ہے؛ اسے پہلے سے حل شدہ نہ سمجھیں",
+    "wanneer wordt het gerepareerd": "سوال میں wordt پہلے آتا ہے؛ gerepareerd آخر میں رہتا ہے اور سوال یہ ہے کہ مرمت کب ہو گی",
+    "de monteur is niet gekomen": "یہاں niet پورے واقعے کی نفی کرتا ہے؛ is کے بعد رکھیں، اور gekomen آخر میں رہے گا",
+    "kunt u dit schriftelijk bevestigen": "یہ مؤدبانہ درخواست ہے؛ schriftelijk بتاتا ہے تصدیق کس طرح چاہیے، یہ خود تصدیق نہیں",
+    "wie betaalt de reparatie": "سوالی لفظ wie کے بعد بدلا ہوا betaalt آتا ہے؛ یہ پوچھتا ہے خرچ کون دے گا"
+  },
+  "a2-shopping-services": {
+    "ik heb gisteren deze jas gekocht": "gisteren خریداری کا وقت بتاتا ہے؛ gekocht آخر میں رکھیں اور خریداری کو موجودہ وقت کی بات نہ بنائیں",
+    "maar hij is kapot": "maar پچھلی بات کے برخلاف خرابی بتاتا ہے؛ hij اسی jas کی طرف اشارہ کرتا ہے",
+    "hij is kapot": "hij اسی جیکٹ کی طرف اشارہ کرتا ہے؛ اسے کسی شخص کے بارے میں نہ پڑھیں",
+    "ik wil hem ruilen": "hem اس چیز کو بدلنے کے لیے واپس لاتا ہے؛ ruilen wil کے بعد آخر میں آتا ہے",
+    "ik heb de bon": "de bon خریداری کی رسید ہے؛ اسے ادائیگی یا واپسی کی تصدیق کے ساتھ نہ ملائیں"
+  },
+  "a2-customer-complaints": {
+    "ik heb dit vorige week gekocht": "vorige week خریداری کا وقت ہے؛ gekocht آخر میں رکھیں، اسے مستقبل کی خریداری نہ بنائیں",
+    "het product werkt niet goed": "niet goed کام کرنے کی کیفیت بتاتا ہے؛ پورے جملے کی نفی نہ سمجھیں کہ چیز بالکل کام نہیں کرتی",
+    "valt dit onder de garantie": "سوال valt سے شروع ہوتا ہے؛ onder de garantie اس چیز کی کوریج پوچھتا ہے، ضمانت کی مدت نہیں",
+    "ik wil het liever ruilen": "liever ترجیح بتاتا ہے؛ ruilen درخواست کا حل ہے، خریدنے کا واقعہ نہیں",
+    "een onderdeel ontbreekt": "een onderdeel ایک غائب حصے کی اطلاع ہے؛ یہ نہ کہیں کہ پوری چیز غائب ہے",
+    "wanneer krijg ik een oplossing": "سوالی لفظ کے بعد بدلا ہوا krijg اور پھر ik آتا ہے؛ oplossing متوقع حل ہے، موصول شدہ جواب نہیں",
+    "ik wil graag met een leidinggevende spreken": "یہ ذمہ دار شخص سے گفتگو کی مؤدبانہ درخواست ہے؛ spreken wil کے بعد آخر میں رہتا ہے"
+  },
+  "a2-bills-banking": {
+    "ik heb deze rekening al betaald": "al بتاتا ہے کہ ادائیگی پہلے ہو چکی ہے؛ اسے آنے والی ادائیگی کی بات نہ سمجھیں",
+    "wanneer moet ik betalen": "سوالی لفظ کے بعد بدلا ہوا moet آتا ہے؛ betalen اصل فعلی صورت میں آخر میں رہتا ہے",
+    "kan ik in termijnen betalen": "یہ قسطوں میں ادائیگی کی اجازت پوچھتا ہے؛ betalen اصل صورت میں آخر میں آتا ہے",
+    "de automatische betaling is mislukt": "یہ ناکام ادائیگی کی اطلاع ہے؛ is کے بعد mislukt ماضی کی تکمیل بتاتا ہے",
+    "ik ben mijn pinpas kwijt": "یہ کارڈ کے گم ہونے کی بات ہے؛ اسے خراب یا بند کارڈ کی اطلاع سے الگ رکھیں",
+    "blokkeer mijn pas alstublieft": "یہ مؤدبانہ ہدایت ہے کہ کارڈ بند کریں؛ alstublieft درخواست کو نرم کرتا ہے",
+    "ik stuur een bewijs van betaling": "یہ بتاتا ہے کہ ثبوت بھیجا جائے گا؛ اسے ادائیگی کرنے کے عمل سے نہ ملائیں"
+  },
+  "a2-writing-messages": {
+    "beste dokter": "یہ خط کا آغاز اور مخاطب ہے؛ اسے پیغام کے اختتام پر نہ رکھیں",
+    "met vriendelijke groet": "یہ رسمی اختتامی فقرہ ہے؛ اسے سلام کے طور پر استعمال نہ کریں",
+    "ik wil graag een afspraak maken": "یہ ملاقات طے کرنے کی درخواست ہے؛ maken wil کے بعد آخر میں آتا ہے",
+    "mijn zoon kan vandaag niet komen": "niet آج آنے کی نفی کرتا ہے؛ kan کے بعد اور komen سے پہلے رہتا ہے"
+  },
+  "a2-formal-digital-messages": {
+    "onderwerp vraag over mijn afspraak": "onderwerp کے بعد مختصر موضوع لکھیں؛ یہ سلام یا پیغام کا پورا جملہ نہیں",
+    "geachte meneer of mevrouw": "یہ رسمی پیغام کا آغاز ہے؛ اسے نامعلوم مخاطب کے لیے استعمال کریں، اختتام کے طور پر نہیں",
+    "ik schrijf omdat ik een vraag heb": "omdat کے بعد شق میں بدلا ہوا heb آخر میں آتا ہے؛ مرکزی جملے کی ترتیب نقل نہ کریں",
+    "ik kan op die dag niet komen": "niet آنے کی نفی کرتا ہے؛ kan کے بعد اور komen سے پہلے رکھیں",
+    "ik wil graag een nieuwe datum afspreken": "یہ نئی تاریخ طے کرنے کی درخواست ہے؛ afspreken wil کے بعد آخر میں آتا ہے",
+    "het formulier staat in de bijlage": "bijlage میں منسلک فائل ہے؛ staat بتاتا ہے کہ فارم کہاں موجود ہے، یہ فارم بھرنے کی اطلاع نہیں",
+    "ik heb het formulier ingevuld": "یہ مکمل ہو چکے فارم کی اطلاع ہے؛ ingevuld آخر میں رکھیں",
+    "ik heb nog geen antwoord ontvangen": "nog geen بتاتا ہے کہ جواب اب تک نہیں ملا؛ اسے جواب ملنے کی تصدیق نہ سمجھیں",
+    "kunt u mijn bericht bevestigen": "یہ رسمی تصدیق کی درخواست ہے؛ bevestigen اصل صورت میں آخر میں رہتا ہے"
+  }
+};
 
 function a2DocumentFieldLabelV4(lessonId, value, index) {
   const phrase = normalizedTextV4(value);
@@ -8171,9 +8330,164 @@ function a2DocumentFieldLabelV4(lessonId, value, index) {
     || (["متعلقہ بات", "مکمل تفصیل", "اگلا قدم", "اضافی اطلاع"][index % 4]);
 }
 
+const a2UseContextsV4 = {
+  "a2-work-school": {
+    "ik zoek een baan": "آپ ملازمت کے مشیر کو بتا رہے ہیں کہ آپ روزگار ڈھونڈ رہے ہیں۔",
+    "hoeveel uur staat in mijn contract": "معاہدہ پڑھتے ہوئے ہفتہ وار کام کے گھنٹوں کی تعداد واضح نہیں؛ دفتر سے پوچھیں۔",
+    "ik begin maandag met mijn baan": "نئی ملازمت قبول کرنے کے بعد نگران کو اپنی پہلی کام کی تاریخ بتائیں۔",
+    "dit is mijn contract": "دفتر میں دستخط سے پہلے اپنا معاہدہ عملے کے رکن کو دکھائیں۔",
+    "wanneer krijg ik mijn salaris": "پہلی تنخواہ ابھی نہیں آئی؛ ادائیگی کی تاریخ معلوم کرنے کے لیے پوچھیں۔",
+    "mijn rooster is veranderd": "نئی ہفتہ وار فہرست میں آپ کی شفٹ بدل گئی ہے؛ نگران کو اطلاع دیں۔",
+    "dit is mijn rooster": "ساتھی کے ساتھ اگلے ہفتے کے اوقات دیکھتے ہوئے اپنی فہرست دکھائیں۔",
+    "mijn collega helpt mij": "نیا کام سیکھتے ہوئے کسی ساتھی کی مدد کا ذکر نگران سے کریں۔"
+  },
+  "a2-work-conditions": {
+    "ik kan op dinsdag niet werken": "نئی شفٹ کی فہرست میں منگل کی ڈیوٹی ہے، مگر آپ پہلے سے ایک ضروری ملاقات طے کر چکے ہیں؛ نگران کو اپنی دستیابی بتائیں۔",
+    "mijn salaris klopt niet": "تنخواہ کی پرچی پر درج رقم آپ کے معاہدے سے مختلف ہے؛ نگران سے فرق واضح کرنے کو کہیں۔",
+    "kan ik een vrije dag aanvragen": "اگلے مہینے ایک دن چھٹی درکار ہے؛ نگران سے درخواست دینے کا طریقہ مؤدبانہ طور پر پوچھیں۔",
+    "ik heb hulp nodig bij deze taak": "نیا کام اکیلے مکمل کرنا مشکل ہے؛ ساتھی یا نگران سے عملی مدد مانگیں۔",
+    "ik stuur de bevestiging per e-mail": "گفتگو میں طے شدہ کام کے اوقات کی تحریری تصدیق درکار ہے؛ نگران کو اپنا اگلا قدم بتائیں۔",
+    "wie neemt mijn dienst over": "بیماری کی وجہ سے آپ اپنی شفٹ نہیں کر سکتے؛ نگران سے معلوم کریں کہ آپ کی جگہ کون آئے گا۔",
+    "kunnen we hierover praten": "معاہدے کے ایک نکتے سے آپ متفق نہیں؛ نگران سے وقت لے کر بات کرنے کی درخواست کریں۔"
+  },
+  "a2-future-modal-verbs": {
+    "ik ga maandag beginnen": "نئی ملازمت طے ہو گئی ہے؛ فون پر پہلی شفٹ کا منصوبہ بتائیں۔",
+    "mag ik eerder beginnen": "آپ کے پاس صبح وقت ہے اور نگران سے طے شدہ وقت سے پہلے آنے کی اجازت پوچھیں۔",
+    "ik kan op dinsdag werken": "شیڈول بنانے والا شخص منگل کی دستیابی پوچھتا ہے؛ اپنی دستیابی بتائیں۔",
+    "ik moet veiligheidsschoenen dragen": "کام شروع کرنے سے پہلے حفاظتی اصول کی پابندی بتائیں۔",
+    "ik kan op vrijdag niet werken": "جمعہ کی شفٹ کی پیشکش ہوئی ہے، مگر آپ دستیاب نہیں؛ نگران کو جواب دیں۔",
+    "wanneer ga ik beginnen": "معاہدہ طے ہے مگر پہلے دن کی تاریخ نہیں ملی؛ رابطہ شخص سے پوچھیں۔",
+    "ik moet de manager bellen": "کام کی تبدیلی کے بارے میں ہدایت ملی ہے کہ کس سے رابطہ کرنا ہے؛ اپنا اگلا قدم بتائیں۔",
+    "mag ik thuiswerken": "آپ گھر سے کام کرنے کی اجازت چاہتے ہیں؛ نگران سے مؤدبانہ سوال کریں۔"
+  },
+  "a2-school-absence-notice": {
+    "ik meld mijn kind af": "صبح بچہ بیمار ہے؛ اسکول کے دفتر کو آج کی غیر حاضری بتائیں۔",
+    "hij had koorts en moest thuisblijven": "استاد غیر حاضری کی وجہ پوچھتا ہے؛ بچے کی گزشتہ روز کی حالت سمجھائیں۔",
+    "de les begint om tien uur": "اسکول کے نوٹس میں آغاز کا وقت پوچھا گیا ہے؛ درست وقت بتائیں۔",
+    "wanneer kan mijn kind weer komen": "بچہ اب بہتر ہے؛ اسکول سے واپسی کا مناسب دن معلوم کریں۔",
+    "de les valt vandaag uit": "اسکول ایپ کا نوٹس دوسرے والدین کو بتائیں کہ آج کیا ہوا۔",
+    "moet ik de docent bellen": "بیماری کے بعد غیر حاضری درج کرنے کا طریقہ واضح نہیں؛ دفتر سے پوچھیں۔"
+  },
+  "a2-parent-school": {
+    "ik wil graag met de docent praten": "استاد نے بچے کی رپورٹ کے بارے میں نوٹ بھیجا ہے؛ والدین ملاقات طے کرنے کے لیے رابطہ کریں۔",
+    "mijn kind heeft moeite met lezen": "استاد پڑھنے کی مشق کے بارے میں پوچھتا ہے؛ والدین مشکل کی نوعیت بتائیں۔",
+    "hoe gaat het met mijn kind in de klas": "ملاقات میں استاد روزمرہ جماعتی کام کی رپورٹ دکھاتا ہے؛ والدین پیش رفت پوچھیں۔",
+    "kan mijn kind extra hulp krijgen": "استاد بتاتا ہے کہ پڑھنے میں مزید مشق درکار ہے؛ والدین دستیاب مدد کے بارے میں پوچھیں۔",
+    "mijn kind was gisteren afwezig": "استاد حاضری کے اندراج میں کل کی غیر حاضری دیکھتا ہے؛ والدین وجہ واضح کریں۔",
+    "wat kunnen we thuis oefenen": "استاد نے بچے کے لیے اگلا تعلیمی ہدف بتایا ہے؛ والدین گھر پر مناسب مشق پوچھیں۔",
+    "is een ander tijdstip mogelijk": "والدین کی ملاقات کا وقت کام کے شیڈول سے ٹکرا رہا ہے؛ اسکول سے متبادل وقت مانگیں۔",
+    "we maken samen een plan": "استاد اور والدین پڑھنے کی مشق اور اگلی ملاقات پر اتفاق کر رہے ہیں؛ مشترک اگلا قدم کہیں۔",
+    "mijn kind voelt zich niet veilig": "بچہ اسکول کے کھیل کے وقت پریشان ہے؛ والدین استاد کو حفاظت کی تشویش بتائیں۔"
+  },
+  "a2-perfect-tense": {
+    "gisteren ben ik gevallen": "ڈاکٹر پوچھتا ہے کہ چوٹ لگنے سے پہلے کیا واقعہ پیش آیا؛ کل کا واقعہ بتائیں۔",
+    "ik heb de dokter gebeld": "معاون پوچھتا ہے کہ درد کے بعد آپ نے کیا کیا؛ اپنا پچھلا قدم بتائیں۔",
+    "de pijn begon gisteravond": "معائنے میں ڈاکٹر علامت شروع ہونے کا وقت پوچھتا ہے۔",
+    "ik heb vannacht slecht geslapen": "ڈاکٹر نیند کے بارے میں پوچھتا ہے کیونکہ تکلیف رات میں بھی رہی۔",
+    "ik heb al pijnstillers genomen": "ڈاکٹر دوا تجویز کرنے سے پہلے پوچھتا ہے کہ آپ کچھ لے چکے ہیں یا نہیں۔",
+    "ik heb nog niet gegeten": "معائنہ یا دوا سے پہلے عملہ پوچھتا ہے کہ آپ نے کھانا کھایا ہے یا نہیں۔",
+    "ik ben thuis gebleven": "ڈاکٹر پوچھتا ہے کہ طبیعت خراب ہونے پر آپ کام پر گئے یا گھر رہے۔",
+    "de koorts is vanmorgen begonnen": "ڈاکٹر بخار کی ابتدا کا وقت معلوم کرنا چاہتا ہے۔"
+  },
+  "a2-strong-combined": {
+    "ik ben gisteren naar de huisarts gegaan": "فالو اپ میں ڈاکٹر پوچھتا ہے کہ کل آپ نے کس سے معائنہ کروایا۔",
+    "dat ik rust moet nemen": "دوست پوچھتا ہے کہ ڈاکٹر نے آرام کے بارے میں کیا ہدایت دی۔",
+    "omdat ik pijn had in mijn rug": "ڈاکٹر پوچھتا ہے کہ آپ نے ملاقات کیوں لی؛ اپنی وجہ بتائیں۔",
+    "de dokter heeft gezegd": "گھر والے پوچھتے ہیں کہ معائنے میں ڈاکٹر نے کیا بتایا؛ بات شروع کریں۔",
+    "ik moet volgende week terugkomen": "ملاقات کے بعد گھر پر اگلی طبی ہدایت اور وقت بتائیں۔",
+    "omdat ik pijn had": "طبیعت کی وجہ سے غیر حاضری کی وضاحت کرتے ہوئے سبب بتائیں۔",
+    "als de pijn niet weg is": "ڈاکٹر کی ہدایت میں واپسی کا فیصلہ ایک شرط سے جڑا ہے؛ وہ شرط بتائیں।",
+    "ik moet rust nemen": "کام پر فون کر کے ڈاکٹر کی ہدایت کے مطابق آج کا منصوبہ بتائیں۔"
+  },
+  "a2-doctor-advice": {
+    "het medicijn heeft niet geholpen": "ڈاکٹر پوچھتا ہے کہ تجویز کردہ دوا لینے کے بعد فرق پڑا یا نہیں۔",
+    "ik heb sinds drie dagen pijn": "معائنے کے آغاز پر ڈاکٹر پوچھتا ہے کہ تکلیف کب سے ہے؛ مدت بتائیں۔",
+    "ik ben allergisch voor penicilline": "نئی دوا تجویز کرنے سے پہلے ڈاکٹر الرجی پوچھتا ہے؛ اپنی حساسیت بتائیں۔",
+    "de pijn wordt erger als ik loop": "ڈاکٹر پوچھتا ہے کہ حرکت سے درد میں کیا فرق پڑتا ہے؛ چلنے والی حالت بتائیں۔",
+    "zijn er bijwerkingen": "ڈاکٹر دوا لکھ چکا ہے؛ لینے سے پہلے ممکنہ ناپسندیدہ اثرات پوچھیں۔",
+    "kunt u dat in eenvoudige woorden uitleggen": "ڈاکٹر نے ایک طبی لفظ استعمال کیا جو واضح نہیں؛ آسان وضاحت مؤدبانہ طور پر مانگیں۔",
+    "wanneer moet ik terugkomen": "معائنے کے بعد اگلی ملاقات طے نہیں ہوئی؛ ڈاکٹر سے واپسی کا وقت پوچھیں۔"
+  },
+  "a2-health-housing": {
+    "mijn verwarming doet het niet": "سرد دن میں گھر گرم نہیں ہو رہا؛ مرمت دفتر کو خرابی بتائیں۔",
+    "ik heb een lekkage in mijn huis": "گھر میں پانی نظر آ رہا ہے؛ مالک مکان کو مسئلے کی اطلاع دیں۔",
+    "de verwarming is sinds gisteren kapot": "مرمت دفتر مسئلے کا دورانیہ پوچھتا ہے؛ آغاز کا وقت بتائیں۔",
+    "het water komt uit de keukenmuur": "مالک مکان پوچھتا ہے کہ پانی کہاں سے نکل رہا ہے؛ جگہ واضح کریں۔",
+    "kunt u vandaag een monteur sturen": "پانی پھیل رہا ہے؛ مرمت دفتر سے آج کسی کو بھیجنے کی درخواست کریں۔"
+  },
+  "a2-word-order-connectors": {
+    "ik bel omdat de verwarming kapot is": "مرمت دفتر پوچھتا ہے کہ آپ فون کیوں کر رہے ہیں؛ مسئلے کی وجہ سمجھائیں۔",
+    "als de monteur komt ben ik thuis": "مرمت کی ملاقات طے کرتے ہوئے بتائیں کہ کاریگر کے آنے پر آپ گھر ہوں گے۔",
+    "de kamer is nat omdat er een lekkage is": "مالک مکان کمرے کی حالت دیکھتا ہے؛ اسے وجہ کے ساتھ نتیجہ بتائیں۔",
+    "ik denk dat de leiding kapot is": "پلمبر وجہ پوچھتا ہے؛ پانی کی پائپ کے بارے میں اپنا اندازہ بتائیں۔",
+    "omdat de muur nat is": "آپ کو دوسرے کمرے میں سونے کی وجہ پوچھنے پر دیوار کی حالت بتائیں۔",
+    "de vloer wordt nat als het regent": "مالک مکان پوچھتا ہے کہ پانی کب فرش تک آتا ہے؛ بارش والی شرط واضح کریں۔",
+    "als het water blijft lopen": "مرمت دفتر کو بتائیں کہ پانی جاری رہے تو آپ کو فوری کارروائی چاہیے۔",
+    "ik wil dat de lekkage wordt gerepareerd": "مرمت دفتر سے واضح کریں کہ آپ کس کام کی درخواست کر رہے ہیں۔"
+  },
+  "a2-landlord-repairs": {
+    "er is een lekkage in de keuken": "مالک مکان مرمت کی رپورٹ میں رساؤ کی جگہ پوچھتا ہے؛ بتائیں کہ مسئلہ باورچی خانے میں ہے۔",
+    "wanneer wordt het gerepareerd": "شکایت کا نمبر مل گیا مگر مرمت کی تاریخ نہیں؛ کمپنی سے متوقع وقت پوچھیں۔",
+    "de verwarming werkt al drie dagen niet": "مرمت کی پیروی میں مالک مکان خرابی کا دورانیہ پوچھتا ہے؛ ہیٹنگ کی حالت بتائیں۔",
+    "het probleem wordt steeds erger": "پانی کا داغ پھیل رہا ہے اور مرمت میں تاخیر ہے؛ مالک مکان کو بگڑتی حالت بتائیں۔",
+    "de monteur is niet gekomen": "طے شدہ وقت گزر گیا مگر کاریگر نہیں پہنچا؛ مرمت کمپنی کو اطلاع دیں۔",
+    "wie betaalt de reparatie": "کام شروع ہونے سے پہلے مالک مکان خرچ کی ذمہ داری واضح نہیں کرتا؛ براہ راست پوچھیں۔",
+    "kunt u dit schriftelijk bevestigen": "فون پر مرمت کی تاریخ طے ہوئی ہے؛ ریکارڈ کے لیے تحریری تصدیق مانگیں۔"
+  },
+  "a2-shopping-services": {
+    "ik heb gisteren deze jas gekocht": "دکان کا عملہ پوچھتا ہے کہ کوٹ کب خریدا؛ رسید دکھا کر بتائیں۔",
+    "hij is kapot": "سروس کاؤنٹر پر عملہ پوچھتا ہے کہ خریدی ہوئی چیز میں کیا مسئلہ ہے۔",
+    "maar hij is kapot": "ملازم کہتا ہے کہ چیز نئی ہے؛ آپ وضاحت کریں کہ واپسی کیوں چاہتے ہیں۔",
+    "ik wil hem ruilen": "رسید کی جانچ کے بعد ملازم پوچھتا ہے کہ آپ رقم واپس چاہتے ہیں یا دوسری چیز۔",
+    "ik heb de bon": "دکان واپسی کے لیے ثبوت مانگتی ہے؛ بتائیں کہ خریداری کی رسید آپ کے پاس ہے۔"
+  },
+  "a2-customer-complaints": {
+    "ik heb dit vorige week gekocht": "آن لائن آرڈر پچھلے ہفتے پہنچا اور چیز خراب ہے؛ کسٹمر سروس خریداری کا وقت پوچھتی ہے۔",
+    "ik wil het liever ruilen": "سروس نمائندہ رقم واپسی یا دوسری چیز کی پیشکش کرتا ہے؛ آپ متبادل چیز چاہتے ہیں۔",
+    "het product werkt niet goed": "کسٹمر سروس واپسی کی وجہ پوچھتی ہے؛ آلہ آزمانے پر بار بار بند ہو جاتا ہے۔",
+    "valt dit onder de garantie": "رسید پر ضمانت کی مدت درج ہے مگر مرمت کی شرط واضح نہیں؛ نمائندے سے پوچھیں۔",
+    "een onderdeel ontbreekt": "ڈبہ کھولنے پر آرڈر کا ایک پرزہ موجود نہیں؛ سروس کو ترسیل کا مسئلہ بتائیں۔",
+    "ik wil graag met een leidinggevende spreken": "آپ کو پیش کیا گیا حل مسئلہ حل نہیں کرتا؛ اگلے ذمہ دار سے بات مانگیں۔",
+    "wanneer krijg ik een oplossing": "شکایت درج ہو چکی ہے مگر جواب کی تاریخ نہیں ملی؛ متوقع حل کا وقت پوچھیں۔"
+  },
+  "a2-bills-banking": {
+    "ik heb deze rekening al betaald": "اسی رقم کا دوسرا بل آیا ہے؛ بینک یا کمپنی سے بتائیں کہ آپ ادائیگی کر چکے ہیں۔",
+    "kan ik in termijnen betalen": "بل یک مشت ادا کرنا مشکل ہے؛ ادائیگی کی قسطوں کے بارے میں پوچھیں۔",
+    "wanneer moet ik betalen": "بل پر ادائیگی کی تاریخ واضح نہیں؛ کسٹمر سروس سے آخری دن معلوم کریں۔",
+    "de automatische betaling is mislukt": "بینک کا پیغام بتاتا ہے کہ مقررہ کٹوتی نہیں ہوئی؛ کمپنی کو مسئلہ سمجھائیں۔",
+    "ik stuur een bewijs van betaling": "کمپنی ادائیگی کی تصدیق نہیں دیکھ پا رہی؛ آپ ثبوت بھیجنے کا کہیں۔",
+    "ik ben mijn pinpas kwijt": "دکان پر ادائیگی سے پہلے معلوم ہوا کہ بینک کارڈ گم ہے؛ فوراً بینک کو اطلاع دیں۔",
+    "blokkeer mijn pas alstublieft": "کارڈ گم ہونے کے بعد کسی اور کے استعمال کا خدشہ ہے؛ بینک سے اسے بند کرنے کو کہیں۔"
+  },
+  "a2-writing-messages": {
+    "beste dokter": "ڈاکٹر کے دفتر کو مختصر ای میل لکھتے ہوئے مناسب رسمی آغاز کریں۔",
+    "mijn zoon kan vandaag niet komen": "اسکول یا ڈاکٹر کے دفتر کو آج کی غیر حاضری کا پیغام لکھیں۔",
+    "met vriendelijke groet": "مختصر رسمی پیغام کے آخر میں مؤدبانہ اختتام لکھیں۔",
+    "ik wil graag een afspraak maken": "ڈاکٹر کے دفتر کو نئی ملاقات کے وقت کی درخواست بھیجیں۔"
+  },
+  "a2-formal-digital-messages": {
+    "ik kan op die dag niet komen": "ادارے نے ملاقات کی تاریخ بھیجی ہے مگر آپ اس دن نہیں آ سکتے؛ جواب دیں۔",
+    "ik heb het formulier ingevuld": "ای میل میں بتائیں کہ درخواست کا فارم مکمل کر کے تیار ہے۔",
+    "het formulier staat in de bijlage": "وصول کنندہ کو بتائیں کہ مکمل فارم ای میل کے ساتھ بھیجا ہے۔",
+    "onderwerp: vraag over mijn afspraak": "آپ ملاقات کے وقت کے بارے میں ای میل بھیج رہے ہیں؛ موضوع میں سوال کا مقصد واضح کریں۔",
+    "geachte meneer of mevrouw": "سرکاری دفتر کا نامعلوم ملازم پیغام وصول کرے گا؛ مؤدبانہ رسمی آغاز لکھیں۔",
+    "ik schrijf omdat ik een vraag heb": "موضوع میں ملاقات کا ذکر ہے؛ ای میل کے پہلے جملے میں رابطے کی وجہ واضح کریں۔",
+    "ik wil graag een nieuwe datum afspreken": "آپ طے شدہ ملاقات میں نہیں آ سکتے؛ دفتر سے متبادل تاریخ مانگیں۔",
+    "ik heb nog geen antwoord ontvangen": "جواب کی بتائی ہوئی مدت گزر گئی ہے؛ اسی ای میل سلسلے میں مؤدبانہ یاد دہانی دیں۔",
+    "kunt u mijn bericht bevestigen": "منسلک فارم بھیجنے کے بعد رسید کی تصدیق نہیں آئی؛ وصول کنندہ سے پوچھیں۔"
+  }
+};
+
 function makeA2AuthoredProfileSpecV4(profile) {
   const lesson = a2Lessons.find((item) => item.id === profile.lessonId);
   const rawSeeds = profile.seedConcepts || lesson?.seedConcepts || [];
+  const sourceContextByDutch = new Map((lesson?.concepts || []).map((concept) => [
+    normalizedTextV4(concept.dutch),
+    String(concept.context || "").replace(/^حال\s*[:：]\s*/u, "").trim()
+  ]));
+  for (const [dutch, context] of Object.entries(a2UseContextsV4[profile.lessonId] || {})) {
+    sourceContextByDutch.set(normalizedTextV4(dutch), context);
+  }
   const deduped = [];
   const seen = new Set();
   for (const raw of rawSeeds) {
@@ -8201,12 +8515,17 @@ function makeA2AuthoredProfileSpecV4(profile) {
     }
   }
   const teachingRows = deduped.map(([dutch, urdu], index) => {
-    const moment = a2GuidanceMomentsV4[index % a2GuidanceMomentsV4.length];
-    const boundary = a2GuidanceBoundariesV4[(index + profile.guidanceOffset) % a2GuidanceBoundariesV4.length];
-    const mistake = a2GuidanceMistakesV4[(index * 3 + profile.guidanceOffset) % a2GuidanceMistakesV4.length];
+    const sourceContext = sourceContextByDutch.get(normalizedTextV4(dutch));
+    const boundary = sourceContext
+      ? `یہ فقرہ اسی مقصد کے لیے ہے: ${cleanTerminalPunctuationV4(sourceContext)}؛ الگ سوال ہو تو اس کی متعلقہ تفصیل بھی شامل کریں`
+      : `یہ فقرہ اسی موقع پر استعمال کریں: ${profile.settingUrdu}؛ سوال کے مطابق مزید تفصیل شامل کریں`;
+    const mistake = a2AuthoredPhraseMistakesV4[profile.lessonId]?.[normalizedTextV4(dutch)]
+      || a2GuidanceMistakesV4[(index * 3 + profile.guidanceOffset) % a2GuidanceMistakesV4.length];
     return [
       dutch,
-      `${profile.settingUrdu} ${moment} “${urdu}” والی مکمل بات استعمال کریں۔`,
+      sourceContext
+        ? `${profile.settingUrdu} ${cleanTerminalPunctuationV4(sourceContext)}؛ “${urdu}” والی مکمل بات استعمال کریں۔`
+        : `${profile.settingUrdu} آپ “${urdu}” والی بات متعلقہ شخص سے کہیں یا لکھیں۔ ${mistake}۔`,
       `${profile.boundaryLeadUrdu} ${boundary}۔`,
       `${profile.mistakeLeadUrdu} ${mistake}۔`,
       dutch,
@@ -8214,11 +8533,12 @@ function makeA2AuthoredProfileSpecV4(profile) {
       approximateDutchPronunciationUrduV4(dutch)
     ];
   });
-  const scenarios = Object.fromEntries(deduped.map(([dutch], index) => [
+  const scenarios = Object.fromEntries(deduped.map(([dutch, urdu], index) => [
     normalizedTextV4(dutch),
     [
       `${semanticSlugV4(profile.lessonId)}-${index + 1}`,
-      `${profile.scenarioStarts[index % profile.scenarioStarts.length]} ${profile.scenarioActions[index % profile.scenarioActions.length]}۔`
+      sourceContextByDutch.get(normalizedTextV4(dutch))
+        || `${profile.settingUrdu} آپ یوں کہیں: “${urdu}”۔`
     ]
   ]));
   const documents = [];
@@ -8330,7 +8650,7 @@ const a2RemainingLessonProfilesV4 = [
   {
     lessonId: "a2-future-modal-verbs", title: "Werkafspraken, toestemming en plannen", unitLabel: "A2: کام اور نوکری",
     outcomeUrdu: "کام کی آئندہ منصوبہ بندی، امکان، ضرورت، اور اجازت کے مختصر عملی جملے کہنا اور سمجھنا۔",
-    settingUrdu: "کام کے آئندہ منصوبے بناتے ہوئے", boundaryLeadUrdu: "اجازت اور ذمہ داری میں", mistakeLeadUrdu: "معاون فعل کے بعد",
+    settingUrdu: "کام کے آئندہ منصوبے بناتے ہوئے", boundaryLeadUrdu: "اجازت اور ذمہ داری میں", mistakeLeadUrdu: "عام غلطی سے بچیں:",
     scenarioStarts: ["اگلے ہفتے کا کام طے کرتے وقت نگران سوال کرتا ہے؛", "کام کی جگہ کا اصول سننے کے بعد آپ جواب دیتے ہیں؛", "چھٹی کی درخواست سے پہلے دستیابی دیکھی جاتی ہے؛", "نئی شفٹ کی اجازت لینے کے لیے گفتگو ہوتی ہے؛"],
     scenarioActions: ["اپنا منصوبہ بتائیں", "ضرورت والی بات منتخب کریں", "اجازت مؤدبانہ طور پر پوچھیں", "ممکن کام واضح کریں"],
     guidanceOffset: 3,
@@ -8415,7 +8735,7 @@ const a2RemainingLessonProfilesV4 = [
     seedConcepts: [
       { dutch: "mijn verwarming doet het niet", urdu: "میری ہیٹنگ کام نہیں کر رہی" },
       { dutch: "de verwarming is sinds gisteren kapot", urdu: "ہیٹنگ کل سے خراب ہے" },
-      { dutch: "ik heb lekkage in mijn huis", urdu: "میرے گھر میں پانی کا رساؤ ہے" },
+      { dutch: "ik heb een lekkage in mijn huis", urdu: "میرے گھر میں پانی کا رساؤ ہے" },
       { dutch: "het water komt uit de keukenmuur", urdu: "پانی باورچی خانے کی دیوار سے آ رہا ہے" },
       { dutch: "kunt u vandaag een monteur sturen?", urdu: "کیا آپ آج مرمت کرنے والا بھیج سکتے ہیں؟" },
       { dutch: "wanneer komt de monteur?", urdu: "مرمت کرنے والا کب آئے گا؟" }
@@ -8659,7 +8979,7 @@ for (const spec of Object.values(a2AuthoredCurriculumV4.lessons)) {
     // importing untaught Dutch support words.
     const scenario = spec.scenarios[normalizedTextV4(dutch)];
     const scenarioUrdu = Array.isArray(scenario) ? scenario[1] : "";
-    const authoredContext = spec.independentCheckLeadUrdu || spec.settingUrdu || scenarioUrdu;
+    const authoredContext = scenarioUrdu || spec.independentCheckLeadUrdu || spec.settingUrdu;
     const contextClause = cleanTerminalPunctuationV4(
       String(authoredContext || "").split(/[؛۔!?؟]/u)[0].trim()
     );
@@ -11169,7 +11489,7 @@ const a2SupplementalPatternSpecsV4 = {
     modelDutch: "ik ga maandag beginnen",
     titleUrdu: "منصوبہ، ضرورت، اور امکان الگ رکھیں",
     highlight: "ga maandag beginnen",
-    explanationUrdu: "منصوبہ بتانے کے لیے gaan کی بدلی ہوئی شکل کے بعد اصل فعل آخر میں آتا ہے: Ik ga maandag beginnen۔ ضرورت کے لیے moet، امکان یا صلاحیت کے لیے kan، اور اجازت کے لیے mag آتا ہے؛ ان کے بعد بھی اصل فعل آخر میں رہتا ہے۔",
+    explanationUrdu: "منصوبہ: gaan کی بدلی ہوئی شکل کے بعد اصل فعل آخر میں؛ moet/kan/mag کے بعد بھی اصل فعل آخر میں رہتا ہے۔",
     contrastUrdu: "Ik ga maandag beginnen منصوبہ ہے؛ Ik moet maandag beginnen ذمہ داری ہے۔ Mag ik eerder beginnen? اجازت مانگتا ہے، جبکہ Kan ik eerder beginnen? امکان یا صلاحیت پوچھتا ہے۔",
     commonMistakeUrdu: "دونوں فعل نہ بدلیں: Ik ga maandag begint غلط ہے؛ beginnen اصل شکل میں آخر میں آئے گا۔ کان (kan) کو اجازت اور ماگ (mag) کو صلاحیت کے معنی میں نہ بدلیں۔"
   },
@@ -11567,6 +11887,13 @@ function splitTargetsIntoRunsV4(level, conceptIds, hasPattern) {
   if (!chunks.length) chunks.push([]);
   return chunks;
 }
+
+const a2AuthoredRunOutcomesV4 = {
+  "a2-future-modal-verbs": [
+    "کام شروع ہونے کا دن اور اپنی دستیابی بتائیں، کام کی شرط سمجھیں، اور اجازت مؤدبانہ طور پر پوچھیں۔",
+    "جمعہ کی دستیابی یا عدم دستیابی بتائیں، نگران کو فون کرنے کی ضرورت سمجھیں، گھر سے کام کی اجازت پوچھیں، اور آغاز کا وقت معلوم کریں۔"
+  ]
+};
 
 function conceptOptionsForRunV4(lesson, concept, key, allowedConceptIds = lesson.conceptIds) {
   const answer = key === "urdu"
@@ -12014,6 +12341,39 @@ function practicalSituationPromptV4(concept, lesson) {
   return practicalSituationV4(concept, lesson).prompt;
 }
 
+function makeShortProductionV4(question, lesson, concept, mode = "supported") {
+  const practicalPrompt = String(question.prompt || "").trim();
+  const withoutInstruction = practicalPrompt.replace(/\s*(?:مختصر ڈچ جواب(?: بغیر مدد)? لکھیں۔|مناسب جواب منتخب کریں۔)\s*$/u, "");
+  const dutch = String(concept.dutch || "").trim();
+  const urdu = canonicalUrduForDutchV4(lesson, dutch, concept.urdu);
+  const inputInstruction = "جواب ڈچ میں لکھیں؛ مشکل ہو تو لفظوں کی مدد کھولیں۔";
+  const a2ConfusionNote = lesson.chapterId === "a2"
+    ? cleanTerminalPunctuationV4(String(concept.commonConfusionUrdu || "").trim())
+    : "";
+  const confusionCue = a2ConfusionNote
+    ? `عام غلطی سے بچیں: ${a2ConfusionNote}۔ `
+    : "";
+  Object.assign(question, {
+    type: "short-input",
+    prompt: `${withoutInstruction} مختصر ڈچ جواب ${mode === "independent" ? "بغیر مدد " : ""}لکھیں۔`,
+    answer: dutch,
+    acceptedAnswers: uniqueV4([dutch, dutch.replace(/[.!?]+$/gu, "")]),
+    fallbackTiles: dutch.split(/\s+/u).filter(Boolean),
+    optional: true,
+    instructionUrdu: inputInstruction,
+    instruction: inputInstruction,
+    hintUrdu: `موقع کے مقصد پر غور کریں، پھر “${urdu}” کے لیے سیکھی ہوئی ڈچ بات خود لکھیں۔`,
+    hint: `موقع کے مقصد پر غور کریں، پھر “${urdu}” کے لیے سیکھی ہوئی ڈچ بات خود لکھیں۔`,
+    explain: `اس موقع پر “${dutch}” کہیں: “${urdu}”۔`,
+    correctExplanation: `درست۔ “${dutch}” کا مطلب “${urdu}” ہے اور یہ اس موقع کی ضرورت پوری کرتا ہے۔`,
+    wrongExplanation: `${confusionCue}اپنے جواب میں اس موقع کا مقصد پورا کریں۔ درست نمونہ “${dutch}” ہے، یعنی “${urdu}”۔ دوبارہ کوشش میں فعل اور ضروری الفاظ شامل کریں。`
+  });
+  delete question.options;
+  delete question.optionExplanationsUrdu;
+  delete question.wrongExplanationsByOption;
+  return question;
+}
+
 function addSyntheticExerciseV4({
   lesson,
   run,
@@ -12111,6 +12471,15 @@ function cloneForIndependentCheckV4(lesson, run, source, index, requiredSkillId)
       answer: concept.dutch,
       explain: `${concept.dutch} = ${canonicalUrdu}۔`
     };
+  } else if (checkRole === "check-situation" && lesson.chapterId === "a2") {
+    const checkSituation = practicalSituationV4(concept, lesson);
+    checkQuestion = makeShortProductionV4({
+      type: "short-input",
+      label: "نئی صورت میں مختصر جواب خود لکھیں",
+      prompt: checkSituation.prompt,
+      scenarioId: `${checkSituation.scenarioId}:independent`,
+      scenarioSource: `a2-authored:${semanticSlugV4(lesson.id)}:independent:${semanticSlugV4(concept.dutch)}`
+    }, lesson, concept, "independent");
   } else if (checkRole === "check-situation") {
     const checkSituation = practicalSituationV4(concept, lesson);
     checkQuestion = situation(
@@ -12268,11 +12637,12 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
     // A whole-lesson can-do promise overstates a single run in a multi-run
     // lesson. Use it for single-run lessons; make each smaller preview specific
     // to the targets in that run.
-    const runOutcomeUrdu = chunks.length === 1 && lesson.outcomeUrdu
+    const runOutcomeUrdu = a2AuthoredRunOutcomesV4[lesson.id]?.[runIndex]
+      || (chunks.length === 1 && lesson.outcomeUrdu
       ? lesson.outcomeUrdu
       : (runMeaningsUrdu.length
       ? `${runMeaningsUrdu.join("، ")} سن کر سمجھنا اور مناسب روزمرہ موقع میں درست ڈچ بات استعمال کرنا۔`
-      : "اس حصے کی اہم بات سمجھیں اور مناسب روزمرہ موقع میں استعمال کریں۔");
+      : "اس حصے کی اہم بات سمجھیں اور مناسب روزمرہ موقع میں استعمال کریں۔"));
     const runSemanticKey = runConceptIds
       .map((conceptId) => semanticSlugV4(conceptByIdV4.get(conceptId)?.dutch, "target"))
       .join("--");
@@ -12567,7 +12937,7 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
           scope: `guided:word-order:${targetConceptId}`
         }));
       }
-      if (chapterId === "a2" && runIndex % 2 === 1) {
+      if (chapterId === "a2") {
         guided.push(addSyntheticExerciseV4({
           lesson,
           run,
@@ -12787,8 +13157,13 @@ function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId
   const chapterId = String(lessonId).slice(0, 2);
   const source = `${chapterId}-authored:${semanticSlugV4(lessonId)}:${stableId}${sourceSuffix}`;
   const instruction = "صورت پڑھیں اور اسی موقع کی درست ڈچ بات منتخب کریں۔";
-  const correct = `درست۔ “${concept.dutch}” = “${concept.urdu}”۔`;
-  const wrong = `اس صورت میں “${concept.dutch}” کہیں: “${concept.urdu}”۔`;
+  const correction = chapterId === "a2" ? String(concept.commonConfusionUrdu || "").trim() : "";
+  const correct = correction
+    ? `درست۔ ${correction} “${concept.dutch}” = “${concept.urdu}”۔`
+    : `درست۔ “${concept.dutch}” = “${concept.urdu}”۔`;
+  const wrong = correction
+    ? `دوبارہ دیکھیں: ${correction} درست جواب “${concept.dutch}” = “${concept.urdu}” ہے۔`
+    : `اس صورت میں “${concept.dutch}” کہیں: “${concept.urdu}”۔`;
   const lessonSpec = authoredCurriculumForLessonV4(lessonId)?.lessons?.[lessonId] || {};
   const authoredPrompt = suffix === "independent-check"
     ? lessonId === "a1-details-forms"
@@ -12976,6 +13351,32 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
   run.phases.understand.exerciseIds.push(documentQuestion.id);
 }
 
+function applyA2ProductiveUseV4(lesson) {
+  if (lesson.chapterId !== "a2") return;
+  const questionById = new Map((lesson.exercises || []).map((question) => [question.id, question]));
+  for (const run of lesson.learning?.runs || []) {
+    for (const id of run.phases?.independentCheck?.exerciseIds || []) {
+      const checkQuestion = questionById.get(id);
+      if (checkQuestion?.type !== "short-input") continue;
+      const checkConcept = (checkQuestion.conceptIds || [])
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .find(Boolean);
+      if (checkConcept) makeShortProductionV4(checkQuestion, lesson, checkConcept, "independent");
+    }
+    const useQuestions = (run.phases?.use?.exerciseIds || [])
+      .map((id) => questionById.get(id))
+      .filter(Boolean);
+    const question = useQuestions.find((item) => item.type === "situation");
+    if (!question) continue;
+    const concept = (question.conceptIds || [])
+      .map((id) => conceptByIdV4.get(id))
+      .find(Boolean);
+    if (!concept) continue;
+    makeShortProductionV4(question, lesson, concept, "supported");
+    question.label = "حقیقی صورت میں مختصر جواب لکھیں";
+  }
+}
+
 let previousChapterLastLessonV4 = null;
 for (const chapter of chaptersV4) {
   let previousNormalLesson = null;
@@ -13060,6 +13461,7 @@ for (const chapter of chaptersV4) {
       runs
     };
     applyA1AuthoredLessonExperienceV4(lesson);
+    applyA2ProductiveUseV4(lesson);
     previousNormalLesson = lesson;
   }
   previousChapterLastLessonV4 = normalLessons[normalLessons.length - 1] || previousChapterLastLessonV4;

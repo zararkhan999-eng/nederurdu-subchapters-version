@@ -1666,12 +1666,14 @@ function renderLessonPreview() {
           : "سبق دوبارہ کریں";
 
   return `
-    <main class="learning-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
+    <main class="learning-preview chapter-${chapter.id} lesson-${lesson.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
       ${renderProgressHeader()}
       <section class="learning-preview-hero">
         <button class="quiz-close" data-action="home" aria-label="سبق کے نقشے پر واپس جائیں">${renderIcon("close")}</button>
-        <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
-        <span class="mastery-badge mastery-${masteryStatus}">${masteryLabels[masteryStatus]}</span>
+        <div class="preview-kicker-row">
+          <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
+          <span class="mastery-badge mastery-${masteryStatus}">${masteryLabels[masteryStatus]}</span>
+        </div>
         <h1>${escapeHtml(getShortLessonTitle(lesson))}</h1>
         <p class="learning-preview-goal"><strong>اس سبق کے بعد آپ:</strong> ${escapeHtml(run?.outcomeUrdu || getLessonOutcome(lesson))}</p>
         <div class="learning-preview-meta">
@@ -1770,7 +1772,7 @@ function renderLesson() {
   const phase = getQuestionPhase(question);
 
   return `
-    <main class="quiz-screen ${questionTheme.className} learning-phase-${phase} ${lesson.kind === "mission" ? "mission-lesson" : ""}">
+    <main class="quiz-screen lesson-${lesson.id} ${questionTheme.className} learning-phase-${phase} ${lesson.kind === "mission" ? "mission-lesson" : ""}">
       ${renderQuizTopBar(percentage)}
       <section class="quiz-content">
         ${renderLearningPhaseHeader(phase)}

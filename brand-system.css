@@ -3263,6 +3263,266 @@ body[data-screen="complete"] .quiz-action:active:not(:disabled) {
   50% { transform: scale(1.16); box-shadow: 0 0 0 5px rgba(23, 125, 107, 0); }
 }
 
+/* Representative curriculum-first lesson pilot: work plans and modals. */
+.learning-preview.lesson-a2-future-modal-verbs {
+  --pilot-forest: #155d4e;
+  --pilot-leaf: #e4f3ec;
+  --pilot-sun: #fff3d2;
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-preview-hero {
+  border-color: #c9dfd4;
+  background:
+    linear-gradient(110deg, rgba(228, 243, 236, 0.82), transparent 52%),
+    var(--nu-paper);
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .preview-kicker-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-inline-end: 52px;
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-preview-hero h1 {
+  max-width: 700px;
+  margin: 6px 0 16px;
+  color: var(--pilot-forest);
+  font-size: clamp(2.05rem, 4.8vw, 3.45rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-preview-goal {
+  max-width: 760px;
+  padding: 12px 16px;
+  border-inline-start: 4px solid var(--nu-green);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-preview-column:first-child {
+  background: linear-gradient(145deg, var(--nu-paper), #f2f8f4);
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-target {
+  min-height: 40px;
+  border-color: #c9dfd4;
+  border-radius: 999px;
+  color: var(--pilot-forest);
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-preview-phases {
+  border-color: #d4e3dc;
+  background: #f9fcfa;
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-phase-chip {
+  border: 1px solid #e1ebe5;
+  background: var(--nu-paper);
+}
+
+.learning-preview.lesson-a2-future-modal-verbs .learning-phase-chip > b {
+  color: var(--pilot-forest);
+  background: var(--pilot-leaf);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .learning-phase-header {
+  border-color: #c9dfd4 !important;
+  background: #f9fcfa !important;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs {
+  --pilot-forest: #155d4e;
+  --pilot-leaf: #e4f3ec;
+  --pilot-sun: #fff3d2;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .learning-phase-step.active i,
+.quiz-screen.lesson-a2-future-modal-verbs .learning-phase-step.complete i {
+  background: var(--nu-green) !important;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .question-kind-icon {
+  color: var(--pilot-forest);
+  background: var(--pilot-leaf);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .learning-teaching-card,
+.quiz-screen.lesson-a2-future-modal-verbs .question-card,
+.quiz-screen.lesson-a2-future-modal-verbs .question-shell {
+  border-color: #c9dfd4;
+  box-shadow: 0 4px 0 rgba(21, 93, 78, 0.08), 0 14px 34px rgba(21, 93, 78, 0.07);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs :is(
+  .prompt-scene,
+  .teaching-card,
+  .listening-question,
+  .short-input-question,
+  .sequence-question,
+  .speak-repeat-question,
+  .document-question,
+  .match-pairs-question,
+  .listening-card,
+  .document-question,
+  .sequence-question,
+  .question-card,
+  .question-shell
+) {
+  border-color: #d3e4db;
+  color: var(--nu-ink);
+  background: linear-gradient(145deg, #fff, #f5faf7);
+  box-shadow: 0 4px 0 rgba(21, 93, 78, 0.07), 0 14px 34px rgba(21, 93, 78, 0.06);
+  backdrop-filter: none;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs :is(
+  .prompt-scene::before,
+  .teaching-card::before,
+  .listening-question::before,
+  .short-input-question::before,
+  .sequence-question::before,
+  .speak-repeat-question::before,
+  .document-question::before,
+  .match-pairs-question::before
+) {
+  display: none;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .choices {
+  grid-column: 2;
+  width: 100%;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .listening-question {
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .listening-button {
+  grid-column: 1;
+  width: 84px;
+  height: 84px;
+  margin: 0;
+  border: 2px solid #c6dfd4;
+  border-radius: 25px;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .choice-button {
+  border-color: #d3e4db;
+  color: var(--nu-ink);
+  background: #fff;
+  box-shadow: 0 3px 0 #dbe9e2;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .choice-key {
+  color: var(--pilot-forest);
+  background: var(--pilot-leaf);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .teaching-step-progress {
+  padding-bottom: 13px;
+  border-bottom: 1px solid #e4eee8;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .teaching-dutch strong,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-sentence strong,
+.quiz-screen.lesson-a2-future-modal-verbs .teaching-example strong,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-highlight {
+  color: var(--pilot-forest);
+  font-size: clamp(1.9rem, 5vw, 3.15rem);
+  line-height: 1.18;
+  text-wrap: balance;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .teaching-urdu,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-sentence small {
+  max-width: 720px;
+  line-height: 1.85;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .teaching-use-panel,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-rule-panel {
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid #d7e8df;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #f3f9f5, #fff);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-explanation,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-contrast,
+.quiz-screen.lesson-a2-future-modal-verbs .pattern-mistake {
+  max-width: 680px;
+  line-height: 1.8;
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .correction-teaching-card {
+  border-color: #e8d79f;
+  background: linear-gradient(145deg, #fffaf0, #fff);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .correction-teaching-card .teaching-eyebrow {
+  color: #735300;
+  background: var(--pilot-sun);
+}
+
+.quiz-screen.lesson-a2-future-modal-verbs .quiz-feedback-panel {
+  border-color: #c9dfd4 !important;
+}
+
+@media (max-width: 680px) {
+  .learning-preview.lesson-a2-future-modal-verbs .learning-preview-hero h1 {
+    margin-top: 18px;
+    font-size: clamp(1.85rem, 9vw, 2.7rem);
+  }
+
+  .learning-preview.lesson-a2-future-modal-verbs .learning-preview-goal {
+    padding: 10px 12px;
+  }
+
+  .learning-preview.lesson-a2-future-modal-verbs .learning-preview-phases {
+    gap: 6px;
+  }
+
+  .learning-preview.lesson-a2-future-modal-verbs .learning-phase-chip {
+    grid-template-columns: 28px minmax(0, 1fr);
+    min-height: 58px;
+    padding: 7px 5px;
+  }
+
+  .learning-preview.lesson-a2-future-modal-verbs .learning-phase-chip > b {
+    width: 27px;
+    height: 27px;
+  }
+
+  .learning-preview.lesson-a2-future-modal-verbs .learning-phase-chip strong {
+    font-size: 0.68rem;
+  }
+
+  .quiz-screen.lesson-a2-future-modal-verbs .teaching-dutch strong,
+  .quiz-screen.lesson-a2-future-modal-verbs .pattern-sentence strong,
+  .quiz-screen.lesson-a2-future-modal-verbs .teaching-example strong,
+  .quiz-screen.lesson-a2-future-modal-verbs .pattern-highlight {
+    font-size: clamp(1.8rem, 9vw, 2.65rem);
+  }
+
+  .quiz-screen.lesson-a2-future-modal-verbs .listening-question {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quiz-screen.lesson-a2-future-modal-verbs .listening-button,
+  .quiz-screen.lesson-a2-future-modal-verbs .choices {
+    grid-column: 1;
+  }
+}
+
 @keyframes nu-complete-pop {
   from { opacity: 0; transform: scale(0.56) rotate(-18deg); }
   72% { opacity: 1; transform: scale(1.06) rotate(2deg); }
