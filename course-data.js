@@ -5817,7 +5817,7 @@ const a1AuthoredCurriculumV4 = {
       scenarios: {
         "de kinderopvang": ["childcare-recognise-place", "بچے کی روزانہ نگہداشت کے مرکز کا درست مکمل ڈچ نام منتخب کریں۔"],
         "ik breng mijn kind om acht uur naar de kinderopvang": ["childcare-morning-dropoff", "صبح عملے کو بتانا ہے کہ آپ بچے کو آٹھ بجے kinderopvang چھوڑتے ہیں۔ مکمل جملہ منتخب کریں۔"],
-        "ik haal mijn kind om vijf uur op": ["childcare-evening-pickup", "عملے کو واضح کرنا ہے کہ آپ بچے کو پانچ بجے لینے آئیں گے۔ مکمل جملہ منتخب کریں۔"],
+        "ik haal mijn kind om vijf uur op": ["childcare-evening-pickup", "چھٹی کے وقت عملہ پوچھتا ہے کہ آپ بچے کو کب لینے آئیں گے؛ پانچ بجے کا وقت بتائیں۔"],
         "eten mee": ["childcare-card-food-label", "بچے کی حوالگی فہرست میں کھانا ساتھ ہونے والا مختصر خانہ منتخب کریں۔"],
         "mijn kind heeft eten mee": ["childcare-tell-food", "صبح عملے کو بتانا ہے کہ بچے کے پاس کھانا ساتھ ہے۔ مکمل جملہ منتخب کریں۔"],
         "mijn kind heeft water nodig": ["childcare-tell-water", "بچے کو پانی چاہیے، اس لیے عملے کو یہ ضرورت مکمل جملے میں بتائیں۔"],
@@ -7880,9 +7880,9 @@ const a2AuthoredCurriculumV4 = {
         "stuur de aanvraag op": ["send-application-instruction", "سرکاری خط کہتا ہے کہ مکمل درخواست آج بھیج دیں؛ پوری ہدایت منتخب کریں۔"]
       },
       documents: [
-        { documentKind: "form-action-checklist", title: "Formulier", rows: [{ label: "Stap 1", value: "het formulier" }, { label: "Stap 2", value: "vul het formulier in" }, { label: "Klaar", value: "de handtekening" }] },
-        { documentKind: "appointment-document-checklist", title: "Meenemen", rows: [{ label: "Document", value: "neem uw identiteitsbewijs mee" }, { label: "Formulier", value: "het formulier ondertekenen" }, { label: "Plaats", value: "onderteken hier" }] },
-        { documentKind: "application-submission-checklist", title: "Aanvraag", rows: [{ label: "Document", value: "de aanvraag" }, { label: "Actie", value: "de aanvraag opsturen" }, { label: "Vandaag", value: "stuur de aanvraag op" }] }
+        { documentKind: "form-action-checklist", title: "فارم مکمل کرنے کے مراحل", rows: [{ label: "پہلا مرحلہ", value: "het formulier" }, { label: "اگلا مرحلہ", value: "vul het formulier in" }, { label: "مکمل کرنے کے بعد", value: "de handtekening" }] },
+        { documentKind: "appointment-document-checklist", title: "ملاقات کی تیاری", rows: [{ label: "شناختی کاغذ", value: "neem uw identiteitsbewijs mee" }, { label: "فارم", value: "het formulier ondertekenen" }, { label: "جگہ", value: "onderteken hier" }] },
+        { documentKind: "application-submission-checklist", title: "درخواست جمع کرنے کی رسید", rows: [{ label: "درخواست", value: "de aanvraag" }, { label: "عمل", value: "de aanvraag opsturen" }, { label: "آج کا کام", value: "stuur de aanvraag op" }] }
       ]
     },
     "a2-gemeente-official": {
@@ -7924,8 +7924,8 @@ const a2AuthoredCurriculumV4 = {
         "kunt u mij helpen met dit formulier": ["ask-form-help", "فارم کا ایک خانہ سمجھ نہیں آ رہا؛ اسی فارم میں مؤدبانہ مدد مانگیں۔"]
       },
       documents: [
-        { documentKind: "municipality-appointment-letter", title: "Afspraak gemeente", rows: [{ label: "Plaats", value: "de gemeente" }, { label: "Nummer", value: "het BSN" }, { label: "Document", value: "het paspoort" }, { label: "Balie", value: "het loket" }] },
-        { documentKind: "municipality-counter-ticket", title: "Loket 3", rows: [{ label: "Melding", value: "ik heb een afspraak bij de gemeente" }, { label: "Vraag", value: "waar is loket drie?" }, { label: "Document", value: "hier is mijn paspoort" }, { label: "Hulp", value: "kunt u mij helpen met dit formulier?" }] }
+        { documentKind: "municipality-appointment-letter", title: "بلدیہ میں ملاقات کا خط", rows: [{ label: "جگہ", value: "de gemeente" }, { label: "شناختی نمبر", value: "het BSN" }, { label: "شناختی کاغذ", value: "het paspoort" }, { label: "کاؤنٹر", value: "het loket" }] },
+        { documentKind: "municipality-counter-ticket", title: "کاؤنٹر نمبر 3", rows: [{ label: "ملاقات", value: "ik heb een afspraak bij de gemeente" }, { label: "سوال", value: "waar is loket drie?" }, { label: "کاغذ", value: "hier is mijn paspoort" }, { label: "مدد", value: "kunt u mij helpen met dit formulier?" }] }
       ]
     },
     "a2-gemeente-documents": {
@@ -7986,9 +7986,9 @@ const a2AuthoredCurriculumV4 = {
         "u ontvangt binnen twee weken een brief": ["understand-response-deadline", "جمع کرانے کی رسید پر جواب کی مدت لکھی ہے؛ دو ہفتوں کے اندر خط آنے والی مکمل بات منتخب کریں۔"]
       },
       documents: [
-        { documentKind: "required-documents-checklist", title: "Meenemen", rows: [{ label: "Documenten", value: "welke documenten heb ik nodig?" }, { label: "Kopie", value: "is een kopie voldoende?" }, { label: "Handtekening", value: "waar moet ik tekenen?" }, { label: "BSN", value: "ik heb mijn BSN niet bij me" }] },
-        { documentKind: "form-completion-notice", title: "Formulier controleren", rows: [{ label: "Vraag", value: "ik begrijp deze vraag niet" }, { label: "Uitleg", value: "kunt u dit uitleggen?" }, { label: "Status", value: "het formulier is nog niet compleet" }, { label: "Gegevens", value: "mijn gegevens zijn niet correct" }] },
-        { documentKind: "application-receipt", title: "Aanvraag ontvangen", rows: [{ label: "Correctie", value: "ik wil deze fout laten herstellen" }, { label: "Online", value: "kan ik de aanvraag online doen?" }, { label: "Antwoord", value: "wanneer krijg ik antwoord?" }, { label: "Termijn", value: "u ontvangt binnen twee weken een brief" }] }
+        { documentKind: "required-documents-checklist", title: "ضروری کاغذات کی فہرست", rows: [{ label: "ضروری کاغذات", value: "welke documenten heb ik nodig?" }, { label: "نقل", value: "is een kopie voldoende?" }, { label: "دستخط", value: "waar moet ik tekenen?" }, { label: "شناختی نمبر", value: "ik heb mijn BSN niet bij me" }] },
+        { documentKind: "form-completion-notice", title: "فارم کی جانچ", rows: [{ label: "سوال", value: "ik begrijp deze vraag niet" }, { label: "وضاحت", value: "kunt u dit uitleggen?" }, { label: "حالت", value: "het formulier is nog niet compleet" }, { label: "معلومات", value: "mijn gegevens zijn niet correct" }] },
+        { documentKind: "application-receipt", title: "درخواست وصول ہونے کی رسید", rows: [{ label: "درستگی", value: "ik wil deze fout laten herstellen" }, { label: "آن لائن", value: "kan ik de aanvraag online doen?" }, { label: "جواب", value: "wanneer krijg ik antwoord?" }, { label: "مدت", value: "u ontvangt binnen twee weken een brief" }] }
       ]
     }
   },
@@ -8115,6 +8115,62 @@ const a2GuidanceMistakesV4 = [
   "ثبوت اور دعوے کو ایک چیز نہ سمجھیں", "صحیح شخص یا ادارہ واضح رکھیں"
 ];
 
+function a2DocumentFieldLabelV4(lessonId, value, index) {
+  const phrase = normalizedTextV4(value);
+  const rules = {
+    "a2-work-school": [
+      [/rooster.*veranderd/u, "بدلا ہوا کام کا شیڈول"], [/begin|start/u, "کام شروع ہونے کا دن"], [/salaris|loon/u, "تنخواہ"], [/rooster/u, "کام کا شیڈول"], [/collega|helpt/u, "ساتھی کی مدد"], [/hoeveel uur/u, "معاہدے کے گھنٹے"], [/contract/u, "معاہدہ"], [/baan|vacature|werk/u, "نوکری"]
+    ],
+    "a2-work-conditions": [
+      [/rooster.*veranderd/u, "بدلا ہوا کام کا وقت"], [/dienst over/u, "شفٹ کی جگہ لینے والا ساتھی"], [/bevestiging per e-mail/u, "ای میل سے تصدیق"], [/rooster|uur|dienst|dinsdag/u, "اوقات اور شفٹ"], [/vrij|verlof/u, "چھٹی"], [/salaris|loon/u, "تنخواہ"], [/hulp|taak|collega/u, "کام کی مدد"], [/e-mail|praten/u, "تحریری تصدیق اور گفتگو"]
+    ],
+    "a2-school-absence-notice": [
+      [/niet naar school/u, "غیرحاضری"], [/meld.*af/u, "غیرحاضری کی اطلاع"], [/ziek/u, "بیماری کی وجہ"], [/koorts|thuisblijven/u, "آج کی حالت"], [/begint.*uur/u, "سبق شروع ہونے کا وقت"], [/valt.*uit/u, "منسوخ سبق"], [/bellen|docent/u, "اسکول سے رابطہ"], [/weer komen|wanneer/u, "واپسی کا وقت"]
+    ],
+    "a2-parent-school": [
+      [/hoe gaat het/u, "کلاس میں پیش رفت"], [/moeilijk|moeite|probleem/u, "سیکھنے کی مشکل"], [/extra hulp/u, "اضافی مدد کی درخواست"], [/oefen|huiswerk/u, "گھر کی مشق"], [/afspraak|tijdstip|praten/u, "ملاقات کا وقت"], [/veilig/u, "حفاظت کی تشویش"], [/samen een plan/u, "مشترک اگلا قدم"], [/afwezig/u, "غیرحاضری"]
+    ],
+    "a2-future-modal-verbs": [
+      [/ga |wanneer/u, "منصوبہ اور دن"], [/kan/u, "ممکن کام"], [/moet/u, "ضروری کام"], [/mag/u, "اجازت کی درخواست"]
+    ],
+    "a2-perfect-tense": [
+      [/pijnstillers|medicijn.*genomen/u, "لی گئی دوا"], [/thuis gebleven/u, "بیماری کے دوران کہاں رہے"], [/koorts.*begonnen/u, "بخار شروع ہونے کا وقت"], [/niet gegeten/u, "کھانے کی حالت"], [/gevallen/u, "گرنے کا واقعہ"], [/begon/u, "علامت شروع ہونے کا وقت"], [/slecht geslapen/u, "گزشتہ رات کی نیند"], [/gisteren|gisteravond|vannacht|vanmorgen/u, "واقعے کا وقت"], [/pijn|koorts/u, "علامت"], [/gebeld|genomen|gegeten/u, "کیا کیا گیا"]
+    ],
+    "a2-strong-combined": [
+      [/gisteren|vorige|sinds/u, "پچھلا واقعہ"], [/als.*pijn/u, "واپسی کی شرط"], [/omdat|pijn|klacht/u, "علامت اور وجہ"], [/heeft gezegd|advies/u, "ڈاکٹر کی بات"], [/terugkomen/u, "دوبارہ آنے کی ہدایت"], [/rust/u, "آرام کی ہدایت"], [/moet/u, "ضروری ہدایت"]
+    ],
+    "a2-doctor-advice": [
+      [/erger|als ik loop/u, "علامت میں تبدیلی"], [/sinds.*pijn/u, "علامت اور مدت"], [/pijn|koorts/u, "علامت"], [/sinds|dagen|week/u, "مدت"], [/hoe vaak/u, "دوا لینے کی تعداد"], [/bijwerkingen/u, "ممکنہ مضر اثرات"], [/medicijn|nemen/u, "دوا"], [/allergisch/u, "الرجی"], [/terugkomen/u, "دوبارہ رابطے کا وقت"], [/eenvoudige woorden/u, "وضاحت کی درخواست"]
+    ],
+    "a2-health-housing": [
+      [/sinds|gisteren/u, "خرابی شروع ہونے کا وقت"], [/verwarming/u, "ہیٹنگ کی خرابی"], [/lekkage/u, "پانی کا رساؤ"], [/keukenmuur|water/u, "پانی کہاں سے آ رہا ہے"], [/wanneer.*monteur/u, "مرمت کی ملاقات کا وقت"], [/monteur|sturen/u, "مرمت کی درخواست"]
+    ],
+    "a2-word-order-connectors": [
+      [/ik denk dat/u, "خرابی کے بارے میں اندازہ"], [/omdat|leiding/u, "وجہ"], [/nat|vloer|kamer/u, "اثر"], [/als|regent/u, "شرط"], [/repar|oploss/u, "حل کی درخواست"]
+    ],
+    "a2-landlord-repairs": [
+      [/schade|kapot|lekkage/u, "خرابی کی رپورٹ"], [/verwarming|werkt.*dagen/u, "ہیٹنگ کی خرابی اور مدت"], [/afspraak|monteur|komen/u, "مرمت کی ملاقات"], [/foto|bewijs/u, "ثبوت"], [/schriftelijk bevestigen/u, "تحریری تصدیق"], [/kosten|betaalt/u, "خرچ کی ذمہ داری"], [/erger|probleem/u, "مسئلے کی شدت"], [/gerepareerd/u, "مرمت کی حالت"]
+    ],
+    "a2-shopping-services": [
+      [/maar.*kapot/u, "خرابی کے ساتھ اعتراض"], [/gekocht|aankoop|artikel/u, "خریداری"], [/kapot|werkt niet|maat/u, "چیز کی خرابی"], [/bon|bewijs/u, "رسید"], [/ruil|geld terug|garantie/u, "درخواست اور حل"]
+    ],
+    "a2-customer-complaints": [
+      [/vorige week|gekocht/u, "خریداری کا وقت"], [/verkeerd|ontbreekt|kapot|werkt niet/u, "شکایت"], [/nummer|zaak|repar/u, "کیس کی حالت"], [/valt.*garantie/u, "ضمانت کی شرط"], [/wanneer.*oploss/u, "حل کی متوقع تاریخ"], [/leidinggevende/u, "نگران سے بات کی درخواست"], [/ruil/u, "تبدیلی کی درخواست"], [/oploss/u, "مطلوبہ حل"], [/terug|antwoord|ontvangen/u, "پیروی"]
+    ],
+    "a2-bills-banking": [
+      [/al betaald/u, "ادائیگی کی حالت"], [/bedrag/u, "بل کی رقم"], [/rekening/u, "بل"], [/wanneer|datum|moet betalen/u, "ادائیگی کی تاریخ"], [/termijn|termijnen/u, "قسط کی درخواست"], [/mislukt/u, "ناکام خودکار ادائیگی"], [/pinpas kwijt/u, "گم شدہ بینک کارڈ"], [/blokkeer/u, "کارڈ بند کرنے کی ہدایت"], [/bewijs|betaling/u, "ادائیگی کا ثبوت"]
+    ],
+    "a2-writing-messages": [
+      [/beste|geachte|dokter|mevrouw|meneer/u, "مخاطب"], [/groet|dank/u, "اختتام"], [/graag|wil|afspraak/u, "درخواست"], [/omdat|schrijf|niet komen/u, "پیغام کی وجہ"]
+    ],
+    "a2-formal-digital-messages": [
+      [/nog geen antwoord/u, "جواب موصول ہونے کی حالت"], [/vriendelijke groet/u, "رسمی اختتام"], [/heb.*formulier ingevuld/u, "مکمل کیا ہوا فارم"], [/onderwerp/u, "موضوع"], [/geachte|beste/u, "رسمی آغاز"], [/schrijf|omdat/u, "وجہ"], [/nieuwe datum/u, "نئی تاریخ کی درخواست"], [/bijlage/u, "منسلک کاغذ"], [/bevestigen/u, "تصدیق کی درخواست"], [/antwoord|groet|komen/u, "اختتام یا پیروی"]
+    ]
+  }[lessonId] || [];
+  return rules.find(([pattern]) => pattern.test(phrase))?.[1]
+    || (["متعلقہ بات", "مکمل تفصیل", "اگلا قدم", "اضافی اطلاع"][index % 4]);
+}
+
 function makeA2AuthoredProfileSpecV4(profile) {
   const lesson = a2Lessons.find((item) => item.id === profile.lessonId);
   const rawSeeds = profile.seedConcepts || lesson?.seedConcepts || [];
@@ -8166,21 +8222,71 @@ function makeA2AuthoredProfileSpecV4(profile) {
     ]
   ]));
   const documents = [];
+  const documentTitles = {
+    "a2-work-school": "نوکری کا تعارف اور کام کی معلومات",
+    "a2-work-conditions": "اوقات اور تنخواہ کی پرچی",
+    "a2-school-absence-notice": "اسکول کی حاضری کا پیغام",
+    "a2-parent-school": "والدین کی ملاقات کا نوٹ",
+    "a2-future-modal-verbs": "کام کی شرطیں اور منصوبہ",
+    "a2-perfect-tense": "ڈاکٹر کے لیے طبی نوٹ",
+    "a2-strong-combined": "ڈاکٹر کی ہدایت کا خلاصہ",
+    "a2-doctor-advice": "علامات اور دوا کا نوٹ",
+    "a2-health-housing": "گھر کی مرمت کی اطلاع",
+    "a2-word-order-connectors": "مالک مکان کو خرابی کی اطلاع",
+    "a2-landlord-repairs": "مرمت کی درخواست اور پیروی",
+    "a2-shopping-services": "دکان پر واپسی کی رسید",
+    "a2-customer-complaints": "کسٹمر شکایت کی پیروی",
+    "a2-bills-banking": "بل اور بینک کی اطلاع",
+    "a2-writing-messages": "مختصر رسمی پیغام",
+    "a2-formal-digital-messages": "رسمی ای میل کا مسودہ"
+  };
+  const documentKinds = {
+    "a2-work-school": "job-information-notice",
+    "a2-work-conditions": "work-schedule-and-pay-summary",
+    "a2-school-absence-notice": "school-absence-message",
+    "a2-parent-school": "parent-teacher-meeting-note",
+    "a2-future-modal-verbs": "work-plan-and-permission-note",
+    "a2-perfect-tense": "doctor-visit-history-note",
+    "a2-strong-combined": "doctor-follow-up-instructions",
+    "a2-doctor-advice": "medicine-and-symptom-note",
+    "a2-health-housing": "housing-repair-request",
+    "a2-word-order-connectors": "landlord-incident-report",
+    "a2-landlord-repairs": "repair-follow-up-record",
+    "a2-shopping-services": "store-return-receipt",
+    "a2-customer-complaints": "customer-complaint-follow-up",
+    "a2-bills-banking": "bill-payment-notice",
+    "a2-writing-messages": "formal-message-draft",
+    "a2-formal-digital-messages": "formal-email-draft"
+  };
   const chunks = splitTargetsIntoRunsV4("a2", deduped.map(([dutch]) => dutch), false);
   const earlier = [];
   for (const [runIndex, chunk] of chunks.entries()) {
     const available = uniqueV4([...chunk, ...earlier.slice().reverse()]);
     const rows = [];
     let wordCount = 0;
-    for (let index = 0; rows.length < 4 || wordCount < 14; index += 1) {
-      const value = available[index % available.length];
-      if (!value || index > 15) break;
-      rows.push({ label: `خانہ ${rows.length + 1}`, value });
+    for (let index = 0; index < available.length; index += 1) {
+      const value = available[index];
+      if (!value) continue;
+      rows.push({ label: a2DocumentFieldLabelV4(profile.lessonId, value, rows.length), value });
       wordCount += dutchWordsV4(value).length;
+      if (rows.length >= 4 && wordCount >= 14) break;
+    }
+    const rowIndexesByLabel = new Map();
+    rows.forEach((row, rowIndex) => {
+      const indexes = rowIndexesByLabel.get(row.label) || [];
+      indexes.push(rowIndex);
+      rowIndexesByLabel.set(row.label, indexes);
+    });
+    for (const [label, indexes] of rowIndexesByLabel) {
+      if (indexes.length < 2) continue;
+      indexes.forEach((rowIndex, duplicateIndex) => {
+        const ordinal = String(duplicateIndex + 1).replace(/[0-9]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+        rows[rowIndex].label = `${label} (${ordinal})`;
+      });
     }
     documents.push({
-      documentKind: `${semanticSlugV4(profile.lessonId)}-record-${runIndex + 1}`,
-      title: `عملی دستاویز ${runIndex + 1}`,
+      documentKind: `${documentKinds[profile.lessonId] || "practical-record"}-${runIndex + 1}`,
+      title: documentTitles[profile.lessonId] || "روزمرہ کا مختصر ریکارڈ",
       rows
     });
     earlier.push(...chunk);
@@ -8250,11 +8356,11 @@ const a2RemainingLessonProfilesV4 = [
   },
   {
     lessonId: "a2-school-absence-notice", title: "Ziek melden en een schoolbericht lezen", unitLabel: "A2: والدین اور اسکول",
-    outcomeUrdu: "بچے کی بیماری اور غیر حاضری کی اطلاع دینا، استاد سے اگلا قدم پوچھنا، اور سبق کے وقت یا منسوخی کا نوٹس سمجھنا۔",
+    outcomeUrdu: "بچے کی غیر حاضری کی وجہ اسکول کو بتانا، استاد سے اگلا قدم پوچھنا، اور سبق کے وقت یا منسوخی کا نوٹس سمجھنا۔",
     settingUrdu: "اسکول کو بچے کے بارے میں اطلاع دیتے ہوئے", boundaryLeadUrdu: "غیر حاضری اور اسکول نوٹس میں", mistakeLeadUrdu: "بچے کی صورت بتاتے وقت",
     scenarioStarts: ["صبح اسکول شروع ہونے سے پہلے دفتر فون اٹھاتا ہے؛", "اسکول ایپ میں آج کے سبق کا نیا نوٹس آتا ہے؛", "استاد بچے کی بیماری کی وجہ پوچھتا ہے؛", "واپسی سے پہلے اسکول اگلا دن معلوم کرنا چاہتا ہے؛"],
     scenarioActions: ["غیر حاضری کی مکمل اطلاع دیں", "نوٹس کی درست بات پہچانیں", "وجہ صاف بتائیں", "اگلا قدم پوچھیں"],
-    guidanceOffset: 7, seedConcepts: a2SchoolAbsenceLessonV4.seedConcepts, prerequisiteRefs: [["a1-work-school-messages", "mijn kind komt vandaag niet naar school"]], independentCheckLeadUrdu: "دوسرے اسکول کے بیماری والے پیغام میں"
+    guidanceOffset: 7, seedConcepts: a2SchoolAbsenceLessonV4.seedConcepts, prerequisiteLessonIds: ["a2-separable-verbs-routine", "a2-future-modal-verbs"], prerequisiteRefs: [["a1-work-school-messages", "mijn kind komt vandaag niet naar school"]], independentCheckLeadUrdu: "دوسرے اسکول کے بیماری والے پیغام میں"
   },
   {
     lessonId: "a2-parent-school", title: "Voortgang en hulp op school bespreken", unitLabel: "A2: والدین اور اسکول",
@@ -8569,13 +8675,8 @@ for (const spec of Object.values(a2AuthoredCurriculumV4.lessons)) {
           : "authored-scenario-context")
       : "authored-practical-context";
   }
-  for (const [documentIndex, document] of (spec.documents || []).entries()) {
-    document.title = `عملی دستاویز ${documentIndex + 1}`;
-    document.rows = document.rows.map((row, rowIndex) => ({
-      label: `خانہ ${rowIndex + 1}`,
-      value: row.value
-    }));
-  }
+  // Preserve the lesson-specific titles and meaningful row labels authored
+  // with A2 documents; replacing them with anonymous fields hides the task.
 }
 
 for (const [unitId, spec] of Object.entries(a1AuthoredCurriculumV4.units || {})) {
@@ -11055,13 +11156,57 @@ const a0AuthoredPatternSpecsV4 = {
   }
 };
 
+const a2SupplementalPatternSpecsV4 = {
+  "a2-school-absence-notice": {
+    modelDutch: "hij had koorts en moest thuisblijven",
+    titleUrdu: "گزشتہ بیماری اور مجبوری بتائیں",
+    highlight: "had ... moest",
+    explanationUrdu: "ماضی کی اس بات میں had، hebben کی ماضی والی شکل ہے اور moest، moeten کی ماضی والی شکل۔ moest کے بعد فعل اپنی اصل شکل میں آخر پر رہتا ہے: thuisblijven۔",
+    contrastUrdu: "Hij heeft koorts en moet thuisblijven ابھی کی حالت ہے؛ Hij had koorts en moest thuisblijven پہلے کی حالت بتاتا ہے۔ moest کے بعد thuisblijven کی شکل تبدیل نہیں ہوتی۔",
+    commonMistakeUrdu: "پہلے کے واقعے کے لیے صرف heeft/ moet نہ رکھیں؛ had/ moest استعمال کریں۔ moest کے بعد thuisbleef نہ کہیں؛ فعل کی اصل شکل thuisblijven رکھیں۔"
+  },
+  "a2-future-modal-verbs": {
+    modelDutch: "ik ga maandag beginnen",
+    titleUrdu: "منصوبہ، ضرورت، اور امکان الگ رکھیں",
+    highlight: "ga maandag beginnen",
+    explanationUrdu: "منصوبہ بتانے کے لیے gaan کی بدلی ہوئی شکل کے بعد اصل فعل آخر میں آتا ہے: Ik ga maandag beginnen۔ ضرورت کے لیے moet، امکان یا صلاحیت کے لیے kan، اور اجازت کے لیے mag آتا ہے؛ ان کے بعد بھی اصل فعل آخر میں رہتا ہے۔",
+    contrastUrdu: "Ik ga maandag beginnen منصوبہ ہے؛ Ik moet maandag beginnen ذمہ داری ہے۔ Mag ik eerder beginnen? اجازت مانگتا ہے، جبکہ Kan ik eerder beginnen? امکان یا صلاحیت پوچھتا ہے۔",
+    commonMistakeUrdu: "دونوں فعل نہ بدلیں: Ik ga maandag begint غلط ہے؛ beginnen اصل شکل میں آخر میں آئے گا۔ کان (kan) کو اجازت اور ماگ (mag) کو صلاحیت کے معنی میں نہ بدلیں۔"
+  },
+  "a2-perfect-tense": {
+    modelDutch: "ik heb de dokter gebeld",
+    titleUrdu: "ماضی کے واقعے میں معاون فعل پہچانیں",
+    highlight: "heb … gebeld",
+    explanationUrdu: "مکمل ماضی میں hebben یا zijn کے بعد فعل کی ماضی والی شکل، voltooid deelwoord، آخر میں آتی ہے: Ik heb de dokter gebeld۔ عام باقاعدہ فعل میں اکثر ge- + جڑ + d/t آتا ہے: bellen → gebeld، werken → gewerkt۔ کچھ عام فعل کی شکل الگ یاد رکھیں: vallen → gevallen؛ اس فعل کے ساتھ Ik ben gevallen کہیں۔",
+    contrastUrdu: "Ik heb de dokter gebeld موجودہ گفتگو میں مکمل واقعہ بتاتا ہے؛ De pijn begon gisteravond سادہ ماضی میں واقعہ بتاتا ہے۔ دونوں ماضی کی بات ہیں مگر فعل کی بناوٹ مختلف ہے۔",
+    commonMistakeUrdu: "Ik heb de dokter belde نہ کہیں: hebben کے بعد یہاں gebeld چاہیے۔ ہر فعل کے ساتھ heb بھی نہ لگائیں؛ gevallen کے ساتھ اس سبق میں ben استعمال ہوا ہے۔"
+  },
+  "a2-word-order-connectors": {
+    modelDutch: "ik bel omdat de verwarming kapot is",
+    titleUrdu: "omdat والے حصے میں فعل آخر پر رکھیں",
+    highlight: "omdat … is",
+    explanationUrdu: "omdat، dat، als والے تابع حصے میں فعل آخر پر؛ als پہلے آئے تو مرکزی جملے میں فعل فاعل سے پہلے: ben ik thuis۔",
+    contrastUrdu: "Ik bel, want de verwarming is kapot میں want کے بعد عام جملے کی ترتیب رہتی ہے؛ omdat de verwarming kapot is میں is آخر پر جاتا ہے۔ Als de monteur komt, ben ik thuis میں ben مرکزی جملے میں ik سے پہلے ہے۔",
+    commonMistakeUrdu: "omdat de verwarming is kapot نہ کہیں؛ تابع حصے کا فعل آخر میں رکھیں۔ شرط کو پہلے رکھنے پر Als de monteur komt, ik ben thuis بھی نہ کہیں؛ درست ترتیب Als de monteur komt, ben ik thuis ہے۔"
+  },
+  "a2-doctor-advice": {
+    modelDutch: "ik ben allergisch voor penicilline",
+    titleUrdu: "صحت کی بات میں صفت کے ساتھ درست حرفِ جار رکھیں",
+    highlight: "allergisch voor",
+    explanationUrdu: "allergisch voor کا مطلب کسی دوا یا مادے سے الرجی ہونا ہے۔ صفت allergisch کے بعد یہاں voor آتا ہے، پھر اس چیز کا نام: allergisch voor penicilline۔ اس مکمل ترکیب کو ڈاکٹر یا فارماسسٹ کو بتائیں۔",
+    contrastUrdu: "Ik ben allergisch voor penicilline میں صفت allergisch ہے؛ Ik heb een allergie voor penicilline میں اسم allergie ہے۔ دونوں میں متعلقہ مادے سے پہلے voor آتا ہے، مگر جملے کی ابتدا الگ ہے۔",
+    commonMistakeUrdu: "allergisch penicilline نہ کہیں؛ voor نہ چھوڑیں۔ اس سبق کے جملے میں allergisch met بھی درست ترکیب نہیں۔"
+  }
+};
+
 function makePatternV4(lesson, chapterId, conceptIds) {
   const explanation = lesson.questions.find((question) => question.type === "uitleg");
   const chapterAuthoredSpec = authoredCurriculumForLessonV4(lesson.id)?.lessons?.[lesson.id];
-  if (chapterAuthoredSpec?.pattern === false) return null;
+  if (chapterAuthoredSpec?.pattern === false && !a2SupplementalPatternSpecsV4[lesson.id]) return null;
   const authoredSpec = a0AuthoredPatternSpecsV4[lesson.id]
     || a1AuthoredCurriculumV4.lessons[lesson.id]?.pattern
     || a2AuthoredCurriculumV4.lessons[lesson.id]?.pattern
+    || a2SupplementalPatternSpecsV4[lesson.id]
     || null;
   if (!explanation && !authoredSpec) return null;
   const firstRunCap = chapterId === "a0" ? 3 : chapterId === "a1" ? 5 : 4;
@@ -12120,9 +12265,14 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       .map((conceptId) => conceptByIdV4.get(conceptId)?.urdu)
       .filter(Boolean)
       .map(cleanTerminalPunctuationV4);
-    const runOutcomeUrdu = runMeaningsUrdu.length
+    // A whole-lesson can-do promise overstates a single run in a multi-run
+    // lesson. Use it for single-run lessons; make each smaller preview specific
+    // to the targets in that run.
+    const runOutcomeUrdu = chunks.length === 1 && lesson.outcomeUrdu
+      ? lesson.outcomeUrdu
+      : (runMeaningsUrdu.length
       ? `${runMeaningsUrdu.join("، ")} سن کر سمجھنا اور مناسب روزمرہ موقع میں درست ڈچ بات استعمال کرنا۔`
-      : lesson.outcomeUrdu;
+      : "اس حصے کی اہم بات سمجھیں اور مناسب روزمرہ موقع میں استعمال کریں۔");
     const runSemanticKey = runConceptIds
       .map((conceptId) => semanticSlugV4(conceptByIdV4.get(conceptId)?.dutch, "target"))
       .join("--");
@@ -12314,6 +12464,25 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
         ]),
         scope: `understand:pattern:${runPattern.id}`
       }));
+      guided.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: {
+          type: "build",
+          label: "سیکھی ہوئی ساخت سے جملہ بنائیں",
+          prompt: `${canonicalModelUrdu} — نمونہ دیکھ کر الفاظ درست ترتیب دیں۔`,
+          tiles: runPattern.modelDutch.split(/\s+/).filter(Boolean),
+          answer: runPattern.modelDutch,
+          explain: `درست ترتیب: ${runPattern.modelDutch}۔ ${runPattern.explanationUrdu}`
+        },
+        phase: "guided-practice",
+        conceptIds: [anchorConceptId],
+        skillIds: uniqueV4([
+          runPattern.skillId,
+          anchorConceptId ? skillIdByConceptIdV4.get(anchorConceptId) : null
+        ]),
+        scope: `guided:pattern:${runPattern.id}`
+      }));
     }
 
     if (chapterId === "a2" && run.conceptIds.length) {
@@ -12468,6 +12637,38 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
         }));
       }
     });
+
+    // Give every newly taught concept at least one contextual production
+    // opportunity. A pair of sample situations cannot stand in for an entire
+    // run's target vocabulary when the lesson promises learners can use it.
+    for (const conceptId of productionConceptIds) {
+      const alreadyUsed = use.some((question) => (
+        (question.conceptIds || []).includes(conceptId)
+        || (question.skillIds || []).includes(skillIdByConceptIdV4.get(conceptId))
+      ));
+      if (alreadyUsed) continue;
+      const concept = conceptByIdV4.get(conceptId);
+      const skillId = skillIdByConceptIdV4.get(conceptId);
+      if (!concept || !skillId) continue;
+      const practicalSituation = practicalSituationV4(concept, lesson);
+      const useQuestion = situation(
+        practicalSituation.prompt,
+        conceptOptionsForRunV4(lesson, concept, "dutch", runOptionConceptIdsV4(run)),
+        concept.dutch,
+        `اس موقع میں درست Nederlands “${concept.dutch}” ہے۔`
+      );
+      useQuestion.scenarioId = practicalSituation.scenarioId;
+      useQuestion.semanticKey = `${run.id}:use-situation:${concept.id}`;
+      use.push(addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: useQuestion,
+        phase: "use",
+        conceptIds: [conceptId],
+        skillIds: [skillId],
+        scope: `use-situation:${conceptId}`
+      }));
+    }
 
     const earlierExercises = [...understand, ...guided, ...use];
     const desiredChecks = Math.min(6, Math.max(5, run.skillIds.length));
@@ -12656,24 +12857,38 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
         const concept = (question.conceptIds || [])
           .map((conceptId) => conceptByIdV4.get(conceptId))
           .find(Boolean);
-        const correct = concept
-          ? `درست۔ “${concept.dutch}” = “${concept.urdu}”۔`
-          : question.explainCorrectUrdu;
-        const wrong = concept
-          ? `نشان زدہ قطار دوبارہ دیکھیں: “${concept.dutch}” = “${concept.urdu}”۔`
-          : question.explainWrongUrdu;
+        const targetRow = concept && documentSpec.rows.find((row) => (
+          normalizedTextV4(row.value) === normalizedTextV4(concept.dutch)
+        ));
+        const correct = concept && targetRow
+          ? `درست۔ پہلے “${targetRow.label}” کا خانہ تلاش کریں؛ اس کے سامنے “${concept.dutch}” درج ہے، یعنی “${concept.urdu}”۔`
+          : concept
+            ? `درست۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے۔`
+            : question.explainCorrectUrdu;
+        const wrong = concept && targetRow
+          ? `“${targetRow.label}” کا خانہ دوبارہ تلاش کریں، اس کے سامنے والی ڈچ عبارت پڑھیں، پھر اس کا پورا مطلب چنیں۔ “${concept.dutch}” کا مطلب “${concept.urdu}” ہے۔`
+          : concept
+            ? `نشان زدہ قطار دوبارہ دیکھیں: “${concept.dutch}” کا مطلب “${concept.urdu}” ہے۔`
+            : question.explainWrongUrdu;
         Object.assign(question, {
           document: {
             documentKind: documentSpec.documentKind,
             title: documentSpec.title,
             rows: documentSpec.rows.map((row) => ({ ...row }))
           },
-          prompt: `${documentSpec.title} کی قطاریں پڑھیں اور نشان زدہ ڈچ بات کا درست اردو مطلب منتخب کریں۔`,
+          conceptIds: uniqueV4([...(question.conceptIds || []), ...run.conceptIds]),
+          skillIds: uniqueV4([
+            ...(question.skillIds || []),
+            ...run.conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId))
+          ]),
+          prompt: targetRow
+            ? `${documentSpec.title} دیکھیں۔ “${targetRow.label}” کے خانے میں درج بات سے کیا معلوم ہوتا ہے؟ درست اردو مطلب منتخب کریں۔`
+            : `${documentSpec.title} دیکھیں اور مطلوبہ خانے سے حاصل ہونے والی درست معلومات منتخب کریں۔`,
           scenarioId: `${lesson.id}:run-${run.index}:authored-document`,
           scenarioSource: `a2-authored:${semanticSlugV4(lesson.id)}:run-${run.index}:document`,
           authenticDocument: true,
-          instructionUrdu: "نشان زدہ قطار پڑھیں اور درست اردو مطلب منتخب کریں۔",
-          instruction: "نشان زدہ قطار پڑھیں اور درست اردو مطلب منتخب کریں۔",
+          instructionUrdu: "مطلوبہ خانہ تلاش کریں، اس کے سامنے والی ڈچ بات پڑھیں، اور اس سے ملنے والی درست معلومات منتخب کریں۔",
+          instruction: "مطلوبہ خانہ تلاش کریں، اس کے سامنے والی ڈچ بات پڑھیں، اور اس سے ملنے والی درست معلومات منتخب کریں۔",
           explainCorrectUrdu: correct,
           correctExplanation: correct,
           explainWrongUrdu: wrong,
@@ -14400,6 +14615,11 @@ for (let chapterIndex = 0; chapterIndex < chaptersV4.length; chapterIndex += 1) 
     : missions[missions.length - 1] || null;
   if (completionMission) {
     completionMission.completionCheck = true;
+    if (chapter.id === "a0") {
+      completionMission.prerequisiteMissionIds = missions
+        .filter((mission) => mission.id !== completionMission.id)
+        .map((mission) => mission.id);
+    }
     completionMission.completionSkillAreas = [...chapterCompletionAreasV4];
     completionMission.outcomeUrdu = `${chapter.id.toUpperCase()} کے ضروری معنی، سننا، پڑھنا، بولنے کی مدد، اور روزمرہ عملی استعمال مکمل کرنا۔`;
     completionMission.learning.outcomeUrdu = completionMission.outcomeUrdu;

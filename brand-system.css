@@ -2135,10 +2135,50 @@ button {
 }
 
 .choice-button.selected {
-  border-color: var(--nu-blue);
-  color: var(--nu-blue-dark);
-  background: var(--nu-blue-soft);
-  box-shadow: 0 4px 0 rgba(39, 153, 198, 0.25);
+  border-color: #167ca6;
+  color: #103d50;
+  background: linear-gradient(145deg, #f7fcff 0%, #dceff6 100%);
+  box-shadow: 0 4px 0 #6eacc1, 0 0 0 3px rgba(39, 153, 198, 0.14), 0 12px 24px rgba(16, 75, 99, 0.12);
+}
+
+.choice-button.selected .choice-key {
+  border-color: #124e68;
+  color: #fff;
+  background: linear-gradient(145deg, #167ca6, #124e68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 2px 4px rgba(18, 78, 104, 0.18);
+}
+.quiz-screen .choice-button.selected:hover:not(:disabled),
+.quiz-screen .choice-button.selected:focus-visible:not(:disabled) {
+  border-color: #167ca6;
+  color: #103d50;
+  background: linear-gradient(145deg, #f7fcff 0%, #dceff6 100%);
+  box-shadow: 0 4px 0 #6eacc1, 0 0 0 3px rgba(39, 153, 198, 0.16), 0 14px 28px rgba(16, 75, 99, 0.16);
+}
+
+.quiz-screen .choice-button.correct:hover,
+.quiz-screen .choice-button.correct:focus-visible {
+  border-color: #177d6b;
+  color: #064c3e;
+  background: linear-gradient(145deg, #f3fcf7 0%, #d9f5e7 100%);
+}
+
+.quiz-screen .choice-button.correct .choice-key {
+  border-color: #0f695a;
+  color: #fff;
+  background: #0f695a;
+}
+
+.quiz-screen .choice-button.wrong:hover,
+.quiz-screen .choice-button.wrong:focus-visible {
+  border-color: #c74742;
+  color: #762e2a;
+  background: linear-gradient(145deg, #fff6f4 0%, #ffe3df 100%);
+}
+
+.quiz-screen .choice-button.wrong .choice-key {
+  border-color: #a43e38;
+  color: #fff;
+  background: #a43e38;
 }
 
 .choice-button.correct {
@@ -3019,14 +3059,14 @@ body[data-screen="complete"] .quiz-action:active:not(:disabled) {
     inset: -10px;
     border-top-color: rgba(255, 206, 67, 0.9);
     border-left-color: rgba(255, 255, 255, 0.42);
-    animation: nu-orbit-turn 7s linear infinite;
+    animation: nu-orbit-turn 7s linear 1 both;
   }
 
   .mission-motion-orbit.orbit-two {
     inset: -18px;
     border-right-color: rgba(147, 221, 205, 0.66);
     border-bottom-color: rgba(255, 255, 255, 0.28);
-    animation: nu-orbit-turn 11s linear infinite reverse;
+    animation: nu-orbit-turn 11s linear 1 reverse both;
   }
 
   .mission-art .learning-visual,
@@ -3055,7 +3095,7 @@ body[data-screen="complete"] .quiz-action:active:not(:disabled) {
   .mission-language-chip.chip-dutch {
     top: -13px;
     left: 17px;
-    animation: nu-chip-float 3.2s ease-in-out infinite;
+    animation: nu-chip-float 3.2s ease-in-out 2 both;
   }
 
   .mission-language-chip.chip-urdu {
@@ -3063,7 +3103,7 @@ body[data-screen="complete"] .quiz-action:active:not(:disabled) {
     bottom: 18px;
     color: #fff;
     background: var(--nu-blue);
-    animation: nu-chip-float 3.7s -1.2s ease-in-out infinite reverse;
+    animation: nu-chip-float 3.7s -1.2s ease-in-out 2 reverse both;
   }
 
   .mission-art-seal {

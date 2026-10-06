@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 require("./generate-offline-visual-manifest.js");
 
@@ -37,6 +38,23 @@ function copyDirectory(source, destination) {
 
 fs.mkdirSync(target, { recursive: true });
 
+// Remove numbered Finder copies only when a group contains multiple byte-identical files.
+const duplicateName = /^(.+) ([2-9])(\.[^.]+)$/;
+const duplicateGroups = new Map();
+for (const name of fs.readdirSync(target)) {
+  const match = name.match(duplicateName);
+  if (!match) continue;
+  const canonicalPath = path.join(target, `${match[1]}${match[3]}`);
+  if (!fs.existsSync(canonicalPath)) continue;
+  const group = duplicateGroups.get(match[1]) || [];
+  group.push(path.join(target, name));
+  duplicateGroups.set(match[1], group);
+}
+for (const copies of duplicateGroups.values()) {
+  if (copies.length < 2) continue;
+  const hashes = copies.map((file) => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"));
+  if (hashes.every((hash) => hash === hashes[0])) copies.forEach((file) => fs.unlinkSync(file));
+}
 for (const file of files) {
   fs.copyFileSync(path.join(root, file), path.join(target, file));
 }

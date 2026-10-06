@@ -1886,6 +1886,43 @@ function auditV4Run(
     );
   }
 
+  const actualUse = declaredQuestionsByPhase.get("use") || [];
+  const missingTargetUse = newConceptIds.filter((conceptId) => {
+    const conceptSkillIds = skillIdsForConcept(conceptId);
+    return !actualUse.some((question) => (
+      list(question.conceptIds).includes(conceptId)
+      || conceptSkillIds.some((id) => list(question.skillIds).includes(id))
+    ));
+  });
+  if (missingTargetUse.length) {
+    addCourseFinding(
+      findings,
+      "error",
+      "concept-use-coverage",
+      "Every newly taught concept needs a target-linked Use item; phase presence alone is not enough.",
+      missingTargetUse.join(", "),
+      chapter,
+      lesson
+    );
+  }
+  if (run.patternId) {
+    const patternSkillIds = [...skillMap.values()]
+      .filter((skill) => skill.patternId === run.patternId)
+      .map((skill) => skill.id);
+    const actualGuided = declaredQuestionsByPhase.get("guided-practice") || [];
+    if (!actualGuided.some((question) => patternSkillIds.some((id) => list(question.skillIds).includes(id)))) {
+      addCourseFinding(
+        findings,
+        "error",
+        "pattern-guided-practice",
+        "Every explicit pattern needs its own supported Guided Practice item.",
+        run.patternId,
+        chapter,
+        lesson
+      );
+    }
+  }
+
   const recognisedSkills = new Set(understand.flatMap((question) => list(question.skillIds)));
   const understoodConcepts = new Set(understand.flatMap((question) => list(question.conceptIds)));
   const missingRecognition = newConceptIds.filter((id) => !understoodConcepts.has(id));
@@ -2213,7 +2250,7 @@ function auditV4Lesson(findings, chapter, lesson, conceptMap, skillMap, patternM
       ? unitPosition / (list(chapter.unitIds).length - 1)
       : 0;
     const a2MinimumUnits = unitProgress < 0.34 ? 2 : unitProgress < 0.67 ? 3 : 4;
-    const a2MinimumDutchWords = unitProgress < 0.34 ? 6 : unitProgress < 0.67 ? 10 : 14;
+    const a2MinimumDutchWords = unitProgress < 0.34 ? 6 : unitProgress < 0.67 ? 10 : 12;
     const selectedDocuments = getActiveLessonExercises(lesson).filter((question) => (
       question.type === "document-choice"
       && (selectedExerciseIds.has(question.id) || (question.legacyId && selectedExerciseIds.has(question.legacyId)))
@@ -2224,11 +2261,32 @@ function auditV4Lesson(findings, chapter, lesson, conceptMap, skillMap, patternM
       const genericShell = facts.rows.length === 1
         && normalizeSemantic(question.document?.title) === normalizeSemantic("عملی معلومات")
         && normalizeSemantic(facts.rows[0]?.label) === normalizeSemantic("اہم بات");
-      const minimumUnits = chapter.id === "a2" ? a2MinimumUnits : 2;
+      const genericTitle = /^(?:عملی\s+دستاویز|document|information)\s*\d*$/iu
+        .test(text(question.document?.title).trim());
+      const genericLabels = facts.rows.some((row) => {
+        const label = text(row?.label).trim();
+        return /^(?:خانہ|field|row)\s*\d+$/iu.test(label)
+          || (chapter.id === "a2" && ["متعلقہ بات", "مکمل تفصیل", "اگلا قدم", "اضافی اطلاع"].includes(label));
+      });
+      const rowValues = facts.rows.map((row) => normalizeSemantic(row?.value)).filter(Boolean);
+      const repeatedRows = new Set(rowValues).size !== rowValues.length;
+      const rowLabels = facts.rows.map((row) => normalizeSemantic(row?.label)).filter(Boolean);
+      const repeatedLabels = new Set(rowLabels).size !== rowLabels.length;
+      const rowDirectedPrompt = chapter.id !== "a2" || facts.rows.some((row) => (
+        normalizeSemantic(question.prompt).includes(normalizeSemantic(row?.label))
+      ));
+      // Short notes and messages can be authentic with three useful details;
+      // requiring a fourth table row encouraged the generator to repeat lines.
+      const minimumUnits = chapter.id === "a2" ? Math.min(3, a2MinimumUnits) : 2;
       const minimumDutchWords = chapter.id === "a2" ? a2MinimumDutchWords : 4;
       if (
         genericKind
         || genericShell
+        || genericTitle
+        || genericLabels
+        || (chapter.id === "a2" && repeatedRows)
+        || (chapter.id === "a2" && repeatedLabels)
+        || !rowDirectedPrompt
         || facts.informationUnits < minimumUnits
         || facts.dutchWordCount < minimumDutchWords
       ) {
@@ -2237,7 +2295,7 @@ function auditV4Lesson(findings, chapter, lesson, conceptMap, skillMap, patternM
           "error",
           "inauthentic-lesson-document",
           chapter.id === "a2"
-            ? "A2 reading must use a typed practical document whose fields and Dutch length increase across the chapter."
+            ? "A2 reading must use a typed practical document with unique meaningful fields and enough Dutch information for its level."
             : "A1 reading must use a short authentic form, notice, schedule, or message with more than a target-only translation card.",
           `${question.document?.title || ""}; kind=${facts.kind || "missing"}; units=${facts.informationUnits}; Dutch words=${facts.dutchWordCount}; minimum=${minimumUnits}/${minimumDutchWords}`,
           chapter,
