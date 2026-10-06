@@ -1,0 +1,53 @@
+{
+  "product": "NederUrdu V2",
+  "buildVersion": "v2-part4.0",
+  "curriculumSchemaVersion": 5,
+  "entryPoint": "index.html",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1148,
+      "sha256": "ade795af980b44ca909c920ecd92d442fd8b87c63e9e7fc573a5b30d57c99729"
+    },
+    {
+      "path": "lesson-data.js",
+      "bytes": 35877,
+      "sha256": "6349974326b6fd993ef61ddb28041165104b6bca4b5bae9125b13865f5af5c99"
+    },
+    {
+      "path": "runtime/browser/runtime-bridge.js",
+      "bytes": 1147,
+      "sha256": "3785fee20b74395179a1cb3bb78aebbf0d6fa358217a10535483efde2397d7e1"
+    },
+    {
+      "path": "runtime/curriculum/schema.js",
+      "bytes": 148,
+      "sha256": "0bfef56ce9d0e0d2bc5983de0314d6dd7fd32f5e9de097a75d58d162508d17c3"
+    },
+    {
+      "path": "runtime/curriculum/validate.js",
+      "bytes": 9440,
+      "sha256": "35c5a4c3aeb627cdf3a0a723a5bf1bbea51d663df54b2cf671251ad0188c073c"
+    },
+    {
+      "path": "runtime/state/progress-store.js",
+      "bytes": 5450,
+      "sha256": "a395ae5c80fc6aaa9951549d466c191536f1ea26236cd98e639851cf9a87db62"
+    },
+    {
+      "path": "runtime/state/session-engine.js",
+      "bytes": 6691,
+      "sha256": "5f6467ead02578391dc585f222c8e555500702bbacbb161ac86f586fff7b7d3d"
+    },
+    {
+      "path": "v2.css",
+      "bytes": 107893,
+      "sha256": "e52bc73f23fad6d8c23dde3ad46dc866ccd73c28b2a5c86278878f512a95338c"
+    },
+    {
+      "path": "v2.js",
+      "bytes": 77042,
+      "sha256": "a3028bfde2bad6ad42ee8ebfbaf8114f0c7d1744d4c913b265f17672d40d297a"
+    }
+  ]
+}
