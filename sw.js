@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v76-brand-system";
+const CACHE_NAME = "nederurdu-v80-graphic-transitions";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -12,6 +12,15 @@ const APP_SHELL = [
   "./word-visual-data.js",
   "./assets/word-visuals/offline-manifest.json",
   "./app.js",
+  "./app.js?v=80",
+  "./open-door.js",
+  "./open-door.js?v=80",
+  "./open-door-layout.css",
+  "./open-door.css",
+  "./open-door.css?v=80",
+  "./assets/fonts/dm-sans.ttf",
+  "./assets/fonts/noto-sans-arabic.ttf",
+  "./assets/fonts/noto-naskh-arabic.ttf",
   "./manifest.webmanifest",
   "./icon.svg",
   "./assets/visuals/letters-first-words.svg",

@@ -50,9 +50,9 @@ if (effectsProfile === "reduced") {
 } else {
   const playLaunch = () => {
     requestAnimationFrame(() => launchScreen?.classList.add("is-playing"));
-    if (!navigator.webdriver) {
+    {
       launchScreen?.querySelector(".launch-reveal")?.addEventListener("animationend", finishLaunch, { once: true });
-      window.setTimeout(finishLaunch, effectsProfile === "lite" ? 1900 : 3800);
+      window.setTimeout(finishLaunch, 950);
     }
   };
   if (document.readyState === "complete") playLaunch();
@@ -417,7 +417,8 @@ const defaultProgress = {
     beginnerMode: true,
     largeText: false,
     slowAudio: true,
-    extraUrduHelp: true
+    extraUrduHelp: true,
+    reduceMotion: false
   },
   speechProfileVersion: SPEECH_PROFILE_VERSION,
   selectedChapterId: "a0",
@@ -470,7 +471,7 @@ let worldTransitionTimer = 0;
 let effectsProfileRefreshTimer = 0;
 let lastPointerPosition = { x: window.innerWidth / 2, y: window.innerHeight * 0.32 };
 
-const prefersReducedMotion = () => effectsProfile === "reduced" || Boolean(reducedMotionQuery?.matches);
+const prefersReducedMotion = () => effectsProfile === "reduced" || Boolean(reducedMotionQuery?.matches) || Boolean(progress.settings.reduceMotion);
 const enhancedInteractiveEffects = () => (
   effectsProfile === "enhanced"
   && (!navigator.webdriver || effectsProfileOverride === "enhanced")
@@ -1145,9 +1146,10 @@ function render() {
     hintOpen = false;
     lastRenderedQuestionId = "";
   }
+  if (screenChanged) OpenDoor.prepareTransition({ screen, previous: lastRenderedScreen, reduced: prefersReducedMotion() });
   app.classList.toggle("screen-changing", screenChanged);
   document.body.dataset.screen = screen;
-  if (screenChanged) triggerWorldTransition();
+  const previousScreen = lastRenderedScreen;
   try {
     app.innerHTML = `
       ${renderExperienceBackdrop()}
@@ -1156,6 +1158,8 @@ function render() {
       ${screen === "lesson" ? renderLesson() : ""}
       ${screen === "complete" ? renderComplete() : ""}
       ${screen === "practice" ? renderPracticeScreen() : ""}
+      ${screen === "journey" ? renderJourney() : ""}
+      ${screen === "toolkit" ? renderToolkit() : ""}
       ${screen === "letters" ? renderLetters() : ""}
       ${screen === "settings" ? renderSettings() : ""}
       ${renderBottomNav()}
@@ -1175,7 +1179,7 @@ function render() {
     `;
   }
   bindEvents();
-  bindExperienceMotion(screenChanged);
+  bindExperienceMotion(screenChanged, previousScreen);
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -1184,26 +1188,7 @@ function render() {
   }
 }
 
-function renderExperienceBackdrop() {
-  return `
-    <div class="experience-backdrop" aria-hidden="true">
-      <span class="ambient-orb orb-green"></span>
-      <span class="ambient-orb orb-blue"></span>
-      <span class="ambient-orb orb-gold"></span>
-      <span class="ambient-ribbon ribbon-one"></span>
-      <span class="ambient-ribbon ribbon-two"></span>
-      <span class="ambient-grid"></span>
-      <span class="ambient-grain"></span>
-      <span class="ambient-spark spark-one"></span>
-      <span class="ambient-spark spark-two"></span>
-      <span class="ambient-spark spark-three"></span>
-      <span class="ambient-spark spark-four"></span>
-      <span class="ambient-glyph glyph-urdu">ا</span>
-      <span class="ambient-glyph glyph-latin latin">N</span>
-      <span class="experience-scroll-meter"><i></i></span>
-    </div>
-  `;
-}
+function renderExperienceBackdrop() { return navigator.onLine ? "" : '<div class="od-offline" role="status">انٹرنیٹ دستیاب نہیں — محفوظ اسباق استعمال کریں۔</div>'; }
 
 function applyDisplaySettings() {
   document.body.classList.toggle("large-text", Boolean(progress.settings.largeText));
@@ -1240,96 +1225,54 @@ function renderIcon(name, className = "") {
 }
 
 function renderProgressHeader() {
-  const activeDays = progress.practiceDays.length;
-  const totalLessons = getAllLessons().length || 1;
-  const totalCompleted = getAllLessons().filter((lesson) => progress.completedLessons.includes(lesson.id)).length;
-  const coursePercent = Math.round((totalCompleted / totalLessons) * 100);
-  return `
-    <header class="progress-header" aria-label="زبان" style="--course-progress:${coursePercent * 3.6}deg">
-      <div class="brand-lockup">
-        <span class="header-logo-wrap"><img class="header-logo" src="icon.svg" alt="" /><i></i></span>
-        <span class="brand-lockup-copy">
-          <strong class="latin">NederUrdu</strong>
-          <small>اردو سے Nederlands تک</small>
-        </span>
-      </div>
-      <div class="header-journey" aria-label="سیکھنے کی زبانیں">
-        <span class="journey-language"><b>اردو</b><small>سمجھیں</small></span>
-        <span class="journey-line" aria-hidden="true"><i></i></span>
-        <span class="journey-language latin"><b>NL</b><small>Nederlands</small></span>
-      </div>
-      <div class="header-days" title="مشق کے دن">
-        <span class="header-days-orbit">${renderIcon("calendar")}</span>
-        <span><strong class="latin">${activeDays}</strong><small>دن</small></span>
-      </div>
-    </header>
-  `;
+  return `<header class="progress-header">
+    <button class="brand-lockup" data-action="home" aria-label="آج — NederUrdu"><span class="od-mark" aria-hidden="true"></span><span class="brand-lockup-copy"><strong class="latin">NederUrdu</strong><small>اردو سے Nederlands تک</small></span></button>
+    <button class="od-level latin" data-action="journey" aria-label="اپنی سطح اور سفر دیکھیں">${escapeHtml(getSelectedChapter().id.toUpperCase())}</button>
+    <button class="od-profile" data-action="settings" aria-label="ترتیبات">${renderIcon("settings")}</button>
+  </header>`;
 }
 
 function renderHome() {
   const chapter = getSelectedChapter();
   const nextLesson = getNextLessonForChapter(chapter);
-  const completed = chapterCompletedCount(chapter);
-  const total = chapter.lessons.length || 1;
-  const chapterPercent = Math.round((completed / total) * 100);
-  const beginnerFirstHome = isBeginnerFirstHome();
-  const dailyVisual = getVisualForLesson(nextLesson);
   activeLessonId = nextLesson.id;
+  const completed = chapterCompletedCount(chapter);
+  return `<main class="learn-screen od-today">
+    ${renderProgressHeader()}
+    <div class="od-intro"><span class="eyeline">آج کا قدم</span><h1>ایک نئی بات، ایک نیا دروازہ۔</h1></div>
+    <section class="today-panel">
+      ${OpenDoor.scene(nextLesson)}
+      <div class="od-hero-copy"><div class="od-section-top"><span class="eyeline">${chapter.id.toUpperCase()} · ${getLessonMinutes(nextLesson)} منٹ</span><span class="od-small-mark" aria-hidden="true">↗</span></div>
+      <h2>${getShortLessonTitle(nextLesson)}</h2><p>${escapeHtml(getLessonOutcome(nextLesson) || nextLesson.description)}</p>
+      <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button></div>
+    </section>
+    <section class="od-progress"><div><strong>آپ کا سفر</strong><small>${completed} / ${chapter.lessons.length} سبق مکمل</small></div><button class="text-button" data-action="journey">سفر دیکھیں ${renderIcon("arrow")}</button><div class="od-progress-track"><span style="width:${Math.round(completed / Math.max(1,chapter.lessons.length)*100)}%"></span></div></section>
+    <section class="od-support"><span>${renderIcon("speaker")}</span><p><strong>پہلے سمجھیں، پھر کہیں۔</strong><small>معنی، آواز اور مثال کے بعد اپنی بات کہیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف اور آوازیں">${renderIcon("chevron")}</button></section>
+  </main>`;
+}
 
-  return `
-    <main class="learn-screen ${beginnerFirstHome ? "beginner-home" : ""}">
-      ${renderProgressHeader()}
-      <aside class="home-rail">
-        <section class="today-panel">
-          <div class="mission-atmosphere" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="mission-topline">
-            <span class="eyeline">${beginnerFirstHome ? "آپ کا پہلا قدم" : "آج کی سمت"}</span>
-            <span class="mission-level latin">${chapter.id.toUpperCase()} · ${String(getLessonIndexInChapter(nextLesson.id, chapter) + 1).padStart(2, "0")}</span>
-          </div>
-          <div class="today-main">
-            <div class="today-copy">
-              <h1>${getShortLessonTitle(nextLesson)}</h1>
-              <p>${beginnerFirstHome ? "آواز سنیں، مطلب سمجھیں، اور اپنی پہلی روزمرہ Nederlands بات کہیں۔" : nextLesson.description}</p>
-              <div class="mission-details">
-                <span>${renderIcon("spark")} سیکھنے کے <b class="latin">${getLessonDisplayPhases(nextLesson).length}</b> واضح مرحلے</span>
-                <span>${renderIcon("speaker")} آواز کے ساتھ</span>
-              </div>
-            </div>
-            <div class="mission-art" aria-hidden="true">
-              ${renderVisual(dailyVisual, "mission-visual")}
-              <span class="mission-art-seal">${renderIcon("flag")}</span>
-              <span class="mission-art-halo"></span>
-            </div>
-          </div>
-          <button class="primary-button today-action" data-action="preview" data-lesson="${nextLesson.id}">
-            <span class="button-icon">${renderIcon("play")}</span>
-            <span>${beginnerFirstHome ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span>
-            <span class="button-progress latin">${chapterPercent}%</span>
-          </button>
-          ${beginnerFirstHome ? "" : `<div class="today-stats">
-            <span><strong class="latin">${completed}/${total}</strong><small>مکمل</small></span>
-            <span><strong class="latin">${progress.totalXp}</strong><small>پوائنٹس</small></span>
-            <span><strong class="latin">${progress.practiceDays.length}</strong><small>مشق کے دن</small></span>
-          </div>`}
-        </section>
-        <div class="rail-note">
-          <span>${renderIcon("spark")}</span>
-          <p><strong>روز تھوڑا، مگر مسلسل</strong><small>ایک سیکھنے کا حصہ تقریباً آٹھ منٹ میں مکمل ہوتا ہے۔</small></p>
-        </div>
-      </aside>
-      <div class="home-world">
-        <div class="world-sky" aria-hidden="true">
-          <span class="cloud cloud-one"></span>
-          <span class="cloud cloud-two"></span>
-          <span class="hill hill-one"></span>
-          <span class="hill hill-two"></span>
-        </div>
-        ${renderChapterSwitcher()}
-        ${renderUnitCard(chapter, nextLesson)}
-        ${renderLessonPath(chapter, nextLesson)}
-      </div>
-    </main>
-  `;
+function renderJourney() {
+  const chapter = getSelectedChapter();
+  const next = getNextLessonForChapter(chapter);
+  return `<main class="utility-screen journey-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">قدم بہ قدم</span><h1>آپ کا سفر</h1><p>ہر سبق روزمرہ کی ایک نئی بات کے لیے۔</p></div>${renderChapterSwitcher()}<section class="od-world-cover">${OpenDoor.scene(next, true)}<div><span class="eyeline latin">${chapter.id.toUpperCase()}</span><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.subtitle || "")}</p><button class="primary-button" data-action="preview" data-lesson="${escapeAttr(next.id)}">${renderIcon("play")} اگلا قدم</button></div></section>${renderSubchapters(chapter)}</main>`;
+}
+
+function renderToolkit() {
+  const learned = [...courseConcepts.values()].filter(concept => {
+    const skills = getConceptSkillIds(concept, { skillIds: [...courseSkills.keys()] });
+    return skills.length && skills.some(id => statusAtLeast(getSkillStatus(id), "introduced"));
+  });
+  const allSkills = { skillIds: [...courseSkills.keys()] };
+  const patterns = (Array.isArray(course?.patterns) ? course.patterns : Object.values(course?.patterns || {})).filter(pattern => normalizeIdList(getPatternSkillIds(pattern, allSkills), pattern.skillId).some(id => statusAtLeast(getSkillStatus(id), "introduced")));
+  return `<main class="utility-screen toolkit-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">اپنی بات ساتھ رکھیں</span><h1>مددگار</h1><p>سیکھی ہوئی باتیں، معنی اور آواز ایک جگہ۔</p></div>
+    <section class="od-support"><span>${renderIcon("alphabet")}</span><p><strong>Nederlands کی آوازیں</strong><small>حروف سنیں، لفظ کے ساتھ دہرائیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف کھولیں">${renderIcon("chevron")}</button></section>
+    <section class="od-tool-section"><h2>آپ کے الفاظ <small class="latin">${learned.length}</small></h2>${learned.length ? `<div class="od-word-list">${learned.map(concept => `<article class="od-word"><div><strong class="latin">${escapeHtml(concept.dutch || "")}</strong><p>${escapeHtml(concept.urdu || "")}</p>${concept.pronunciationUrdu ? `<small>${escapeHtml(concept.pronunciationUrdu)}</small>` : ""}</div>${renderSpeakButton(concept.audioText || concept.dutch, "toolkit")}</article>`).join("")}</div>` : `<div class="od-empty"><span class="od-mark" aria-hidden="true"></span><h3>پہلے سبق سے آغاز کریں</h3><p>سیکھنے کے بعد آپ کے الفاظ اور ان کی آوازیں یہاں آ جائیں گی۔</p><button class="primary-button" data-action="home">آج کا سبق</button></div>`}</section>
+    <section class="od-tool-section"><h2>گرامر کی یاد دہانی</h2>${patterns.length ? patterns.map(pattern => `<article class="od-word od-grammar"><h3 class="latin">${escapeHtml(pattern.modelDutch || pattern.modelSentence || pattern.sentence || pattern.title || pattern.dutch || "")}</h3><p>${escapeHtml(pattern.ruleUrdu || pattern.explanationUrdu || pattern.urdu || "")}</p>${renderSpeakButton(pattern.audioText || pattern.modelDutch, "toolkit")}</article>`).join("") : `<p class="od-muted">گرامر سیکھنے کے بعد اس کی یاد دہانی یہاں نظر آئے گی۔</p>`}</section></main>`;
+}
+
+function goDestination(destination) {
+  activeWordHelp = null; lessonDetailKind = ""; teachingStep = 0; coachmarkDismissed = false; activeReview = null;
+  screen = destination; render(); scrollToTop();
 }
 
 function renderChapterSwitcher() {
@@ -1602,7 +1545,7 @@ function renderUnitRow(lesson, index) {
     <button class="unit-row ${locked ? "locked" : ""}" data-action="preview" data-lesson="${lesson.id}">
       <span class="unit-number">${icon}</span>
       <span>
-        <strong class="unit-title">${lesson.unit}</strong>
+        <strong class="unit-title ${isDutchText(getShortLessonTitle(lesson)) ? "latin" : ""}" dir="auto">${getShortLessonTitle(lesson)}</strong>
         <p class="unit-meta">تقریباً ${getLessonMinutes(lesson)} منٹ · ${getLessonStatus(lesson.id) === "secure" ? "مہارت پکی" : lesson.kind === "mission" ? "عملی مشن کے 4 مرحلے" : "سیکھنے کے 6 مرحلے"}</p>
       </span>
       <span class="status-dot ${done ? "done" : ""}"></span>
@@ -1665,6 +1608,7 @@ function renderLessonPreview() {
   return `
     <main class="learning-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
       ${renderProgressHeader()}
+      ${OpenDoor.scene(lesson, true)}
       <section class="learning-preview-hero">
         <button class="quiz-close" data-action="home" aria-label="سبق کے نقشے پر واپس جائیں">${renderIcon("close")}</button>
         <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
@@ -1993,7 +1937,7 @@ function renderPatternTeachingQuestion(question) {
         <section class="pattern-model-panel" aria-label="جملہ اور مطلب">
           <span class="teaching-eyebrow">پہلے نمونہ دیکھیں</span>
           <div class="pattern-sentence">
-            <strong class="latin">${escapeHtml(teaching.sentence)}</strong>
+            <strong class="latin">${OpenDoor.tokens(teaching.sentence)}</strong>
             ${teaching.sentence ? renderSpeakButton(teaching.sentence, "teaching") : ""}
             ${renderSlowSpeakButton(teaching.sentence, true)}
             ${teaching.sentenceUrdu ? `<small>${escapeHtml(teaching.sentenceUrdu)}</small>` : ""}
@@ -2756,6 +2700,7 @@ function renderComplete() {
     <main class="complete-screen">
       <div class="complete-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
       <div class="complete-celebration" aria-hidden="true">${renderCelebrationPieces(28)}</div>
+      <span class="od-completion-door od-mark" aria-hidden="true"></span>
       <div class="complete-ring" style="--score:${percent * 3.6}deg">
         <span class="complete-ring-glow" aria-hidden="true"></span>
         <div class="complete-mark">${renderIcon("check")}<i></i></div>
@@ -2898,6 +2843,7 @@ function renderSettings() {
       <div class="settings-section-heading"><strong>آپ کے لیے آسانی</strong><span></span></div>
       <div class="settings-list">
         ${renderToggleRow("beginnerMode", "شروع سے سیکھنے والا انداز", "نئے طالب علم کے لیے آسان راستہ")}
+        ${renderToggleRow("reduceMotion", "کم حرکت", "مناظر اور تبدیلیاں بغیر حرکت کے دکھائیں")}
         ${renderToggleRow("largeText", "بڑا متن", "الفاظ اور بٹن کچھ بڑے دکھائیں")}
         ${renderToggleRow("slowAudio", "آہستہ آواز", "Dutch آواز تھوڑی آہستہ سنائیں")}
         ${renderToggleRow("extraUrduHelp", "زیادہ Urdu مدد", "آواز، معنی، اور چھوٹی مدد زیادہ دکھائیں")}
@@ -2927,18 +2873,17 @@ function renderToggleRow(key, title, subtitle) {
 }
 
 function renderBottomNav() {
-  if (["lesson", "complete"].includes(screen)) return "";
-  return `
-    <nav class="bottom-nav" aria-label="اصل راستے">
-      ${renderNavButton("settings", "settings", "ترتیبات", ["settings", "letters"].includes(screen))}
-      ${renderNavButton("practice", "dumbbell", "دہرائی", screen === "practice")}
-      ${renderNavButton("home", "book", "سبق", screen === "home" || screen === "preview")}
-    </nav>
-  `;
+  if (["lesson", "complete", "preview"].includes(screen)) return "";
+  return `<nav class="bottom-nav" aria-label="اصل راستے">
+    ${renderNavButton("home", "book", "آج", screen === "home")}
+    ${renderNavButton("journey", "flag", "سفر", screen === "journey")}
+    ${renderNavButton("practice", "dumbbell", "مشق", screen === "practice")}
+    ${renderNavButton("toolkit", "notebook", "مددگار", ["toolkit", "letters"].includes(screen))}
+  </nav>`;
 }
 
 function renderNavButton(action, icon, label, active) {
-  return `<button class="nav-button ${active ? "active" : ""}" data-action="${action}"><span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
+  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}"><span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
 }
 
 function bindEvents() {
@@ -2965,6 +2910,8 @@ function bindEvents() {
         speakDutch(element.dataset.speak, true);
       }
       if (action === "home") goHome();
+      if (action === "journey") goDestination("journey");
+      if (action === "toolkit") goDestination("toolkit");
       if (action === "practice") goPractice();
       if (action === "letters") goLetters();
       if (action === "settings") goSettings();
@@ -3048,44 +2995,9 @@ function bindLessonDetailAccessibility() {
   requestAnimationFrame(() => (focusable[0] || dialog).focus());
 }
 
-function bindExperienceMotion(screenChanged = false) {
+function bindExperienceMotion(screenChanged = false, previousScreen = "") {
   experienceObserver?.disconnect();
-  if (prefersReducedMotion()) {
-    updateScrollMotion();
-    return;
-  }
-  const revealTargets = document.querySelectorAll([
-    ".path-section",
-    ".review-hub-card",
-    ".letter-card",
-    ".setting-row",
-    ".utility-action"
-  ].join(","));
-
-  if (screenChanged) {
-    revealTargets.forEach((element, index) => {
-      element.classList.add("experience-reveal");
-      element.style.setProperty("--reveal-order", String(index % 6));
-    });
-
-    if (enhancedInteractiveEffects() && "IntersectionObserver" in window) {
-      experienceObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          experienceObserver?.unobserve(entry.target);
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -24px" });
-      revealTargets.forEach((element) => experienceObserver.observe(element));
-    } else {
-      revealTargets.forEach((element) => element.classList.add("is-visible"));
-    }
-
-    animateCountUpMetrics();
-  }
-
-  if (enhancedInteractiveEffects()) bindGlobalPointerGlow();
-  updateScrollMotion();
+  OpenDoor.choreograph({ screen, question: screen === "lesson" ? getActiveQuestion()?.id : "", step: teachingStep, detail: lessonDetailKind, selected: selectedAnswer, checked, reduced: prefersReducedMotion(), portal: screenChanged && screen === "lesson" && previousScreen !== "lesson" });
 }
 
 function updateScrollMotion() {
@@ -3216,29 +3128,7 @@ function animateSpeakingControl(element) {
 
 function triggerAnswerMoment(correct, compact = false) {
   if (prefersReducedMotion()) return;
-  document.body.classList.remove("answer-correct-flash", "answer-wrong-flash");
-  requestAnimationFrame(() => document.body.classList.add(correct ? "answer-correct-flash" : "answer-wrong-flash"));
-  window.setTimeout(() => document.body.classList.remove("answer-correct-flash", "answer-wrong-flash"), correct ? 900 : 650);
-  document.querySelectorAll(".answer-moment").forEach((element) => element.remove());
-  const anchor = document.querySelector(".quiz-feedback-panel .feedback-icon, .question-kind-icon");
-  if (anchor) {
-    anchor.classList.add("effect-burst-anchor");
-    const moment = document.createElement("span");
-    moment.className = `answer-moment ${correct ? "is-correct" : "is-wrong"} ${compact ? "is-compact" : ""}`;
-    moment.setAttribute("aria-hidden", "true");
-    moment.innerHTML = correct
-      ? Array.from({ length: compact ? 5 : 9 }, (_, index) => `<span style="--burst-index:${index};--burst-angle:${(360 / (compact ? 5 : 9)) * index}deg"></span>`).join("")
-      : "<span></span><span></span><span></span>";
-    anchor.append(moment);
-    requestAnimationFrame(() => moment.classList.add("is-active"));
-    window.setTimeout(() => moment.remove(), correct ? 1200 : 720);
-  }
-
-  try {
-    navigator.vibrate?.(correct ? 18 : [12, 36, 12]);
-  } catch {
-    // Haptics are optional and may be blocked by the host browser.
-  }
+  try { navigator.vibrate?.(correct ? 18 : [12, 36, 12]); } catch { /* Optional haptics. */ }
 }
 
 function triggerLessonCelebration() {
@@ -3337,7 +3227,7 @@ function selectChapter(id) {
   pathCardLessonId = "";
   pathExpanded = false;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: activeLessonId });
-  screen = "home";
+  screen = "journey";
   render();
   scrollToTop();
 }
@@ -3521,17 +3411,20 @@ function closeLessonDetail() {
 }
 
 function getLessonContentScrollTop() {
-  return Number(document.querySelector(".quiz-content")?.scrollTop || 0);
+  const content = document.querySelector(".quiz-content");
+  const internal = content && /auto|scroll/.test(getComputedStyle(content).overflowY) && content.scrollHeight > content.clientHeight;
+  return internal ? content.scrollTop : window.scrollY;
 }
 
 function restoreLessonContentScrollTop(scrollTop) {
   if (!Number.isFinite(scrollTop)) return;
   const restore = () => {
     const content = document.querySelector(".quiz-content");
-    if (content) content.scrollTop = scrollTop;
+    const internal = content && /auto|scroll/.test(getComputedStyle(content).overflowY) && content.scrollHeight > content.clientHeight;
+    if (internal) content.scrollTop = scrollTop;
+    else window.scrollTo(0, scrollTop);
   };
-  restore();
-  requestAnimationFrame(restore);
+  restore(); requestAnimationFrame(restore);
 }
 
 function showPreviousTeachingStep() {
@@ -3570,6 +3463,8 @@ function handleNederUrduBack() {
     goHome();
     return true;
   }
+  if (screen === "letters") { goDestination("toolkit"); return true; }
+  if (screen !== "home") { goHome(); return true; }
   return false;
 }
 
@@ -4694,3 +4589,6 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
+
+window.addEventListener("online", render);
+window.addEventListener("offline", render);

@@ -2,88 +2,23 @@
 <html lang="ur" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#174d3a" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#2047ed" />
     <meta
       name="description"
       content="NederUrdu اردو بولنے والے نو آموز لوگوں کے لیے Nederlands سیکھنے کی ایپ ہے۔"
     />
     <title>NederUrdu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script>
-      if (!navigator.webdriver) {
-        window.addEventListener("load", () => {
-          const fonts = document.createElement("link");
-          fonts.rel = "stylesheet";
-          fonts.href = "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800&family=Noto+Naskh+Arabic:wght@600;700&family=Outfit:wght@500;600;700;800&display=swap";
-          document.head.append(fonts);
-        }, { once: true });
-      }
-    </script>
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800&family=Noto+Naskh+Arabic:wght@600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" /></noscript>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="duo.css" />
-    <link rel="stylesheet" href="experience.css" />
-    <link rel="stylesheet" href="immersive.css" />
-    <link rel="stylesheet" href="landing.css" />
-    <link rel="stylesheet" href="brand-system.css" />
+    <link rel="stylesheet" href="open-door.css?v=80" />
   </head>
   <body class="launching">
-    <div class="launch-screen" aria-hidden="true">
-      <div class="launch-aurora">
-        <span></span><span></span><span></span>
-      </div>
-      <div class="launch-grid"></div>
-      <div class="launch-stage">
-        <div class="launch-language launch-language-urdu">
-          <small>آپ کی زبان</small>
-          <strong>اردو</strong>
-        </div>
-        <div class="launch-bridge">
-          <span class="launch-beam"></span>
-          <span class="launch-orbit launch-orbit-one"></span>
-          <span class="launch-orbit launch-orbit-two"></span>
-          <span class="launch-orbit launch-orbit-three"></span>
-          <span class="launch-particle launch-particle-one"></span>
-          <span class="launch-particle launch-particle-two"></span>
-          <span class="launch-particle launch-particle-three"></span>
-          <span class="launch-logo-shell">
-            <span class="launch-logo-glow"></span>
-            <img class="launch-logo" src="icon.svg" alt="" />
-            <span class="launch-scan"></span>
-          </span>
-        </div>
-        <div class="launch-language launch-language-nl latin">
-          <small>JOUW TOEKOMST</small>
-          <strong>Nederlands</strong>
-        </div>
-        <div class="launch-wordmark">
-          <strong class="latin">Neder<span>Urdu</span></strong>
-          <small>اردو سے Nederlands تک</small>
-        </div>
-        <div class="launch-progress"><span></span><i></i></div>
-      </div>
-      <div class="launch-reveal"></div>
-    </div>
-    <div class="responsive-atmosphere" aria-hidden="true">
-      <span class="atmosphere-aurora aurora-primary"></span>
-      <span class="atmosphere-aurora aurora-secondary"></span>
-      <span class="atmosphere-aurora aurora-warm"></span>
-      <span class="atmosphere-mesh"></span>
-      <span class="atmosphere-stars stars-near"></span>
-      <span class="atmosphere-stars stars-far"></span>
-      <span class="atmosphere-beam"></span>
-      <span class="atmosphere-spotlight"></span>
-      <span class="atmosphere-lens"><i></i><i></i></span>
-      <span class="atmosphere-wash"></span>
-      <span class="atmosphere-vignette"></span>
-    </div>
-    <main id="app" class="app-shell"></main>
+    <div class="launch-screen" aria-hidden="true"><span class="od-mark"></span><strong class="latin">NederUrdu</strong><small>ایک نئی بات، ایک نیا دروازہ۔</small><div class="launch-reveal"></div></div>
+    <div id="app" class="app-shell"></div>
     <script src="course-data.js"></script>
     <script src="word-visual-data.js"></script>
-    <script src="app.js"></script>
+    <script src="open-door.js?v=80"></script>
+    <script src="app.js?v=80"></script>
   </body>
 </html>
