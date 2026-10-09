@@ -27,19 +27,19 @@ npm run android:sync-web
 
 ## Command-Line Builds
 
-The repository includes its own Gradle wrapper (`./gradlew`), so a separate
-system Gradle installation is not required. On macOS, point the command line at
-Android Studio's bundled Java runtime before building:
+The repository includes its own Gradle wrapper (`./gradlew`). The Gradle
+daemon runs on Java 21 (see `gradle/gradle-daemon-jvm.properties`); Gradle
+finds an installed JDK 21 automatically, whatever `java` is on your PATH.
+Install one with Android Studio or from adoptium.net if it is missing.
 
 ```bash
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 npm run android:debug
 npm run android:bundle
 ```
 
-The first command-line build may download the wrapper's pinned Gradle version
-and Android dependencies. Android Studio can also run the same wrapper and use
-its bundled Java runtime automatically.
+The project targets Android 16 (API 36). Install the SDK platform with
+`sdkmanager "platforms;android-36" "build-tools;36.0.0"` if Gradle reports it
+missing.
 
 ## Production Signing
 

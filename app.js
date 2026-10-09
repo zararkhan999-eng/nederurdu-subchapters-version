@@ -1695,7 +1695,7 @@ function renderLessonPreview() {
         </div>
         ${unit?.title ? `<span class="pl-preview-unit">${escapeHtml(unit.title)}</span>` : ""}
         <h1>${escapeHtml(getShortLessonTitle(lesson))}</h1>
-        <p class="learning-preview-goal"><strong>اس سبق کے بعد آپ:</strong> ${escapeHtml(run?.outcomeUrdu || getLessonOutcome(lesson))}</p>
+        <p class="learning-preview-goal"><strong>اس سبق کے بعد آپ:</strong> ${escapeMixedText(run?.outcomeUrdu || getLessonOutcome(lesson))}</p>
         <div class="learning-preview-meta">
           <span>${renderIcon("calendar")} تقریباً <b class="latin">${getLessonMinutes(lesson)}</b> منٹ</span>
           <span>${renderIcon("book")} <b class="latin">${targetCount || 1}</b> سیکھنے کے ہدف${lessonRuns.length > 1 ? ` · حصہ <b class="latin">${runNumber}/${lessonRuns.length}</b>` : ""}</span>
@@ -2019,7 +2019,7 @@ function renderConceptTeachingQuestion(question, visual) {
       ` : `
         <section class="teaching-use-panel" aria-label="استعمال کی مثال">
           <span class="teaching-step-label">استعمال کریں</span>
-          ${teaching.conciseUsage ? `<p class="teaching-use-copy">${escapeHtml(teaching.conciseUsage)}</p>` : ""}
+          ${teaching.conciseUsage ? `<p class="teaching-use-copy">${escapeMixedText(teaching.conciseUsage)}</p>` : ""}
           ${teaching.showExample ? `<div class="teaching-example"><span>ایک مثال</span><div class="pl-example-line"><strong class="latin" data-karaoke>${NU.lesson.karaokeHTML(teaching.conciseExampleDutch)}</strong>${isDutchText(teaching.conciseExampleDutch) ? renderSpeakButton(teaching.conciseExampleDutch, "teaching") : ""}</div><small>${escapeHtml(teaching.conciseExampleUrdu)}</small></div>` : ""}
         </section>
         <button class="teaching-step-back" data-action="teaching-back">پچھلا حصہ</button>
@@ -2052,7 +2052,7 @@ function renderPatternTeachingQuestion(question) {
         <section class="pattern-rule-panel" aria-label="ایک آسان اصول">
           <span class="teaching-step-label">ایک آسان اصول</span>
           ${teaching.highlight ? `<strong class="pattern-highlight latin">${escapeHtml(teaching.highlight)}</strong>` : ""}
-          ${teaching.conciseRule ? `<p class="pattern-explanation">${escapeHtml(teaching.conciseRule)}</p>` : ""}
+          ${teaching.conciseRule ? `<p class="pattern-explanation">${escapeMixedText(teaching.conciseRule)}</p>` : ""}
         </section>
         <button class="teaching-step-back" data-action="teaching-back">پچھلا حصہ</button>
       `}
@@ -2202,7 +2202,7 @@ function getLessonDetailContent(question, kind) {
 
 function renderLessonDetailSection(label, content, className = "") {
   if (!content) return "";
-  return `<section class="lesson-detail-section ${className}"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(content)}</p></section>`;
+  return `<section class="lesson-detail-section ${className}"><strong>${escapeHtml(label)}</strong><p>${escapeMixedText(content)}</p></section>`;
 }
 
 function getConceptLessonDetail(question) {
@@ -2307,7 +2307,7 @@ function renderDocumentQuestion(question) {
         <strong>${escapeHtml(document.title || "")}</strong>
         ${(document.rows || []).map((row) => `<div><span>${escapeHtml(row.label)}</span><b>${escapeHtml(row.value)}</b></div>`).join("")}
       </article>
-      <p class="document-prompt">${escapeHtml(question.prompt)}</p>
+      <p class="document-prompt">${escapeMixedText(question.prompt)}</p>
       ${renderChoices(question)}
     </div>
   `;
@@ -2488,7 +2488,7 @@ function renderFeedbackDetail(question, correct = false) {
   return `
     <div class="feedback-summary">
       ${answer ? `<p class="feedback-answer"><span>صحیح جواب:</span> <bdi class="${isDutchText(answer) ? "latin" : ""}" dir="auto">${escapeHtml(answer)}</bdi></p>` : ""}
-      ${conciseReason ? `<small class="feedback-reason">${escapeHtml(conciseReason)}</small>` : ""}
+      ${conciseReason ? `<small class="feedback-reason">${escapeMixedText(conciseReason)}</small>` : ""}
       ${hasOptionalDetail ? renderLessonDetailTrigger("feedback", correct ? "پوری وجہ" : "کیوں؟", "feedback-detail-trigger") : ""}
     </div>
   `;
@@ -2533,7 +2533,7 @@ function renderQuestionCoachmark(question) {
   if (!question?.contextCoachmark || coachmarkDismissed) return "";
   return `
     <aside class="question-coachmark" role="note" aria-label="پہلی مشق کا طریقہ">
-      ${NU.lesson.tip(`<span class="question-coachmark-copy"><strong>پہلی مشق:</strong> ${escapeHtml(question.contextCoachmark)}</span>
+      ${NU.lesson.tip(`<span class="question-coachmark-copy"><strong>پہلی مشق:</strong> ${escapeMixedText(question.contextCoachmark)}</span>
       <button class="question-coachmark-dismiss" data-action="dismiss-coachmark" aria-label="یہ مدد بند کریں">${renderIcon("close")}</button>`)}
     </aside>
   `;
@@ -2561,7 +2561,7 @@ function renderHintButton() {
 function renderHintPopover(question) {
   return `
     <aside class="hint-popover guided-support question-help-panel" id="question-help-panel" role="status">
-      ${NU.lesson.tip(escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔"))}
+      ${NU.lesson.tip(escapeMixedText(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔"))}
     </aside>
   `;
 }
@@ -4232,6 +4232,16 @@ function escapeAttr(value) {
 
 function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
+// Urdu prose often quotes Dutch: درست۔ “deur” = “دروازہ”۔ Inside right-to-left
+// text the quote marks around the Dutch word end up reversed (”deur“), so
+// isolate each quoted Dutch phrase, marks included, as left-to-right.
+function escapeMixedText(value) {
+  return escapeHtml(value).replace(
+    /“([^“”؀-ۿ]*[A-Za-zÀ-ÿ][^“”؀-ۿ]*)”/g,
+    '<bdi class="latin" dir="ltr">“$1”</bdi>'
+  );
 }
 
 function normalizeWord(value) {
