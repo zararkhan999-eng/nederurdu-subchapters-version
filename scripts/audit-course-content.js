@@ -789,8 +789,20 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
   return true;
 }
 
+// Sound lessons name Dutch spelling units (oo, ui, sch) to explain how a word
+// is pronounced. These are letter groups, not untaught vocabulary.
+const phonicsGraphemeTokens = new Set([
+  "a", "aa", "e", "ee", "i", "o", "oo", "u", "uu", "oe", "eu", "ui", "ei", "ij",
+  "b", "d", "g", "ch", "sch", "h", "s", "t", "v", "w", "z"
+]);
+
+function phonicsLessonV4(lesson) {
+  return /^a0-sounds-/.test(String(lesson?.id || ""));
+}
+
 function auditLexicalOwnership(findings, chapter, lesson, question, allowedConceptIds, conceptMap) {
   const allowedTokens = new Set(lexicalScaffoldTokens);
+  if (phonicsLessonV4(lesson)) phonicsGraphemeTokens.forEach((token) => allowedTokens.add(token));
   for (const conceptId of allowedConceptIds) {
     const concept = conceptMap.get(conceptId);
     for (const token of latinTokens(concept?.dutch)) allowedTokens.add(token);

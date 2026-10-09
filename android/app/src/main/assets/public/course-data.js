@@ -88,6 +88,40 @@ const a0Lessons = [
     ]
   },
   {
+    id: "a0-sounds-vowels",
+    unit: "A0: آوازیں 1",
+    title: "Klanken: oo, oe, eu, ui, ei",
+    description: "وہ ڈچ آوازیں جو اردو میں نہیں: لمبی اور چھوٹی آواز، اور گول ہونٹ والی آوازیں۔",
+    xp: 35,
+    questions: [
+      meaning("boot", ["کشتی", "ہڈی", "پاؤں"], "کشتی", "boot = کشتی۔"),
+      meaning("bot", ["ہڈی", "کشتی", "ٹوپی"], "ہڈی", "bot = ہڈی۔"),
+      meaning("voet", ["پاؤں", "ٹوپی", "ناک"], "پاؤں", "voet = پاؤں۔"),
+      meaning("hoed", ["ٹوپی", "پاؤں", "انگوٹھا"], "ٹوپی", "hoed = ٹوپی۔"),
+      meaning("neus", ["ناک", "چوہا", "انڈا"], "ناک", "neus = ناک۔"),
+      meaning("muis", ["چوہا", "ناک", "انگوٹھا"], "چوہا", "muis = چوہا۔"),
+      meaning("duim", ["انگوٹھا", "چوہا", "انڈا"], "انگوٹھا", "duim = انگوٹھا۔"),
+      meaning("ei", ["انڈا", "ناک", "کشتی"], "انڈا", "ei = انڈا۔")
+    ]
+  },
+  {
+    id: "a0-sounds-consonants",
+    unit: "A0: آوازیں 2",
+    title: "Klanken: g, ch, sch, uu, w, v, z",
+    description: "گلے سے نکلنے والی ‘خ’ جیسی آواز، اور ملتی جلتی آوازوں کا فرق۔",
+    xp: 35,
+    questions: [
+      meaning("geel", ["پیلا", "سفید", "ہنسنا"], "پیلا", "geel = پیلا۔"),
+      meaning("lachen", ["ہنسنا", "پیلا", "جوتا"], "ہنسنا", "lachen = ہنسنا۔"),
+      meaning("schoen", ["جوتا", "آگ", "پیلا"], "جوتا", "schoen = جوتا۔"),
+      meaning("vuur", ["آگ", "جوتا", "مچھلی"], "آگ", "vuur = آگ۔"),
+      meaning("wit", ["سفید", "مچھلی", "سورج"], "سفید", "wit = سفید۔"),
+      meaning("vis", ["مچھلی", "سفید", "صابن"], "مچھلی", "vis = مچھلی۔"),
+      meaning("zon", ["سورج", "صابن", "مچھلی"], "سورج", "zon = سورج۔"),
+      meaning("zeep", ["صابن", "سورج", "سفید"], "صابن", "zeep = صابن۔")
+    ]
+  },
+  {
     id: "a0-ik-jij-u",
     unit: "A0: personen 1",
     title: "A0 les 4: ik, jij, u",
@@ -3482,7 +3516,7 @@ a0Lessons.push(...a0DailyLessons);
 
 const a0LessonOrder = [
   "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help",
-  "a0-letters-1", "a0-letters-2", "a0-letters-3",
+  "a0-letters-1", "a0-letters-2", "a0-letters-3", "a0-sounds-vowels", "a0-sounds-consonants",
   "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-date-appointment",
   "a0-people-nouns", "a0-things-nouns", "a0-dit-dat-questions", "a0-een-de-het",
   "a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1",
@@ -4811,6 +4845,8 @@ const a0LearningFirstUnitsV4 = [
       "a0-letters-1",
       "a0-letters-2",
       "a0-letters-3",
+      "a0-sounds-vowels",
+      "a0-sounds-consonants",
       "a0-letters-sounds-mission"
     ]
   },
@@ -4917,6 +4953,8 @@ const a0LessonLabelsV4 = {
   "a0-letters-1": "آواز: a اور b",
   "a0-letters-2": "آواز: h اور i",
   "a0-letters-3": "آسان پڑھے ہوئے لفظ",
+  "a0-sounds-vowels": "اردو سے مختلف آوازیں",
+  "a0-sounds-consonants": "گلے کی g اور دوسری آوازیں",
   "a0-ik-jij-u": "میں، تم، اور آپ",
   "a0-people-nouns": "لوگ اور قریبی خاندان",
   "a0-hij-zij-wij": "وہ اور ہم",
@@ -4989,6 +5027,28 @@ replaceSeedConceptsV4("a0-letters-3", [
   ["tafel", "میز"],
   ["water", "پانی"]
 ]);
+// Sound lessons: each word carries one Dutch sound that Urdu does not have,
+// and paired words in the same run differ by that sound.
+replaceSeedConceptsV4("a0-sounds-vowels", [
+  ["boot", "کشتی"],
+  ["bot", "ہڈی"],
+  ["voet", "پاؤں"],
+  ["hoed", "ٹوپی"],
+  ["neus", "ناک"],
+  ["muis", "چوہا"],
+  ["duim", "انگوٹھا"],
+  ["ei", "انڈا"]
+]);
+replaceSeedConceptsV4("a0-sounds-consonants", [
+  ["geel", "پیلا"],
+  ["lachen", "ہنسنا"],
+  ["schoen", "جوتا"],
+  ["vuur", "آگ"],
+  ["wit", "سفید"],
+  ["vis", "مچھلی"],
+  ["zon", "سورج"],
+  ["zeep", "صابن"]
+]);
 replaceSeedConceptsV4("a0-people-nouns", [
   ["man", "آدمی"],
   ["vrouw", "عورت"],
@@ -5044,6 +5104,32 @@ replaceSeedConceptsV4("a0-geen", [
   ["zij heeft geen pen", "اس کے پاس قلم نہیں ہے"],
   ["wij hebben geen huis", "ہمارے پاس گھر نہیں ہے"],
   ["het is niet goed", "یہ ٹھیک نہیں ہے"]
+]);
+// Each grammar lesson needs one complete sentence that models its rule.
+replaceSeedConceptsV4("a0-een-de-het", [
+  ["een", "ایک"],
+  ["de man", "آدمی"],
+  ["het boek", "کتاب"],
+  ["een man", "ایک آدمی"],
+  ["een boek", "ایک کتاب"],
+  ["het huis", "گھر"],
+  ["een vrouw", "ایک عورت"],
+  ["de deur", "دروازہ"],
+  ["het boek is hier", "کتاب یہاں ہے"]
+]);
+replaceSeedConceptsV4("a0-possessive", [
+  ["mijn", "میرا"],
+  ["jouw", "تمہارا"],
+  ["zijn", "اس مرد کا"],
+  ["haar", "اس عورت کا"],
+  ["mijn naam", "میرا نام"],
+  ["zijn boek", "اس مرد کی کتاب"],
+  ["mijn huis", "میرا گھر"],
+  ["haar pen", "اس عورت کا قلم"],
+  ["haar boek", "اس عورت کی کتاب"],
+  ["zijn huis", "اس مرد کا گھر"],
+  ["jouw naam", "تمہارا نام"],
+  ["zijn naam is Ali", "اس کا نام Ali ہے"]
 ]);
 replaceSeedConceptsV4("a0-spelling-personal-details", [
   ["mijn naam is Sara", "میرا نام Sara ہے"],
@@ -5463,7 +5549,13 @@ const a1AuthoredCurriculumV4 = {
         highlight: "dit is mijn …",
         explanationUrdu: "تصویر میں اپنے خاندان کے فرد کا تعارف دیتے وقت dit is mijn کے بعد رشتہ رکھیں: dit is mijn vader۔",
         contrastUrdu: "een vader کسی ایک والد، de vader معلوم والد، اور mijn vader اپنے والد کو بتاتا ہے؛ mijn کے ساتھ de یا het نہیں آتا۔",
-        commonMistakeUrdu: "dit mijn vader یا dit is de mijn vader نہ کہیں؛ مکمل ترتیب dit is mijn vader رکھیں۔"
+        commonMistakeUrdu: "dit mijn vader یا dit is de mijn vader نہ کہیں؛ مکمل ترتیب dit is mijn vader رکھیں۔",
+        drills: [
+          pickDrillV4("dit is mijn moeder", ["dit mijn moeder", "dit is de mijn moeder"], "یہ میری والدہ ہیں", {"dit mijn moeder": "is ضروری ہے: dit is mijn moeder۔", "dit is de mijn moeder": "mijn کے ساتھ de نہیں آتا۔"}),
+          pickDrillV4("dit is mijn broer", ["dit mijn broer is", "dit is de mijn broer"], "یہ میرا بھائی ہے", {"dit mijn broer is": "is دوسرے نمبر پر آتا ہے، آخر میں نہیں۔", "dit is de mijn broer": "mijn کے ساتھ de نہیں آتا۔"}),
+          pickDrillV4("het kind", ["de kind", "kind het"], "وہ بچہ", {"de kind": "kind کے ساتھ het آتا ہے۔", "kind het": "چھوٹا لفظ اسم سے پہلے آتا ہے۔"}),
+          pickDrillV4("de zus", ["het zus", "zus de"], "وہ بہن", {"het zus": "zus کے ساتھ de آتا ہے۔", "zus de": "چھوٹا لفظ اسم سے پہلے آتا ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "خاندان کی پہلی مدد والی تصویر کے بعد دوسری تصویر میں",
       prerequisiteLessonIds: [
@@ -5587,7 +5679,13 @@ const a1AuthoredCurriculumV4 = {
         highlight: "ik heb …",
         explanationUrdu: "اپنے پاس موجود رشتہ یا تعداد بتانے کے لیے ik heb کے بعد معلومات رکھیں: ik heb twee kinderen۔",
         contrastUrdu: "اسم یا مقدار نہ ہو تو geen کہیں: ik heb geen kinderen؛ کیفیت کی نفی میں niet آتا ہے، جیسے het is niet goed۔",
-        commonMistakeUrdu: "ik ben twee kinderen یا ik heb niet kinderen نہ کہیں؛ مثبت میں ik heb … اور اسم کی نفی میں ik heb geen … رکھیں۔"
+        commonMistakeUrdu: "ik ben twee kinderen یا ik heb niet kinderen نہ کہیں؛ مثبت میں ik heb … اور اسم کی نفی میں ik heb geen … رکھیں۔",
+        drills: [
+          gapDrillV4("ik ___ twee kinderen", "heb", ["heeft", "is"], "میرے دو بچے ہیں", {"heeft": "heeft u یا hij کے ساتھ ہے؛ ik کے ساتھ heb۔", "is": "رشتے یا تعداد کے لیے hebben آتا ہے، is نہیں۔"}),
+          gapDrillV4("u ___ een zoon", "heeft", ["heb", "is"], "آپ کا ایک بیٹا ہے", {"heb": "heb صرف ik کے ساتھ ہے؛ u کے ساتھ heeft۔", "is": "u is een zoon کا مطلب ‘آپ ایک بیٹا ہیں’ بن جاتا ہے۔"}),
+          pickDrillV4("ik heb geen kinderen", ["ik heb niet kinderen", "ik geen heb kinderen"], "میرے بچے نہیں ہیں", {"ik heb niet kinderen": "kinderen اسم ہے؛ اسم کی نفی geen سے ہوتی ہے۔", "ik geen heb kinderen": "geen اسم سے پہلے آتا ہے، فعل سے پہلے نہیں۔"}),
+          pickDrillV4("ik heb geen broer", ["ik heb niet broer", "ik niet heb broer"], "میرا کوئی بھائی نہیں", {"ik heb niet broer": "broer اسم ہے؛ اس سے پہلے geen آتا ہے۔", "ik niet heb broer": "نفی اسم کے ساتھ geen broer سے بنتی ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "خاندان کے پہلے مدد والے سوال کے بعد نئی رجسٹریشن میں",
       prerequisiteLessonIds: [
@@ -5886,7 +5984,12 @@ const a1AuthoredCurriculumV4 = {
         highlight: "vandaag + werk + ik",
         explanationUrdu: "سادہ جملہ ik werk vandaag ہے۔ vandaag کو پہلے لائیں تو فعل werk دوسرے نمبر پر اور شخص ik اس کے بعد آتا ہے: vandaag werk ik۔",
         contrastUrdu: "ik werk vandaag میں شخص پہلے ہے؛ vandaag werk ik میں وقت پہلے ہے، مگر دونوں میں فعل اپنی درست جگہ پر رہتا ہے۔",
-        commonMistakeUrdu: "vandaag ik werk نہ کہیں؛ وقت پہلے آنے کے بعد فوراً فعل رکھیں: vandaag werk ik۔"
+        commonMistakeUrdu: "vandaag ik werk نہ کہیں؛ وقت پہلے آنے کے بعد فوراً فعل رکھیں: vandaag werk ik۔",
+        drills: [
+          pickDrillV4("nu leer ik Nederlands", ["nu ik leer Nederlands", "nu Nederlands ik leer"], "اب میں ڈچ سیکھ رہا ہوں", {"nu ik leer Nederlands": "nu پہلے آئے تو فعل فوراً دوسرے نمبر پر آتا ہے: nu leer ik۔", "nu Nederlands ik leer": "فعل آخر میں نہیں جاتا؛ وقت کے لفظ کے فوراً بعد leer۔"}),
+          gapDrillV4("nu ___ wij Nederlands", "leren", ["leer", "werk"], "اب ہم ڈچ سیکھتے ہیں", {"leer": "wij کے ساتھ فعل کی جمع شکل leren آتی ہے۔", "werk": "werk کا مطلب کام کرنا ہے؛ یہاں سیکھنا ہے۔"}),
+          pickDrillV4("nu werk ik", ["nu ik werk", "werk nu ik"], "اب میں کام کر رہا ہوں", {"nu ik werk": "nu پہلے ہو تو فعل werk فوراً اس کے بعد آتا ہے۔", "werk nu ik": "جملہ وقت یا شخص سے شروع ہوتا ہے، فعل سے نہیں۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی گفتگو کے بعد دوسرے دن کا منصوبہ بتاتے وقت",
       prerequisiteLessonIds: [
@@ -6008,7 +6111,13 @@ const a1AuthoredCurriculumV4 = {
         highlight: "ik sta … op",
         explanationUrdu: "لغت میں فعل opstaan ہے۔ سادہ جملے میں sta شخص کے بعد آتا ہے، وقت درمیان میں، اور op آخر میں جاتا ہے: ik sta om zeven uur op۔",
         contrastUrdu: "opstaan فعل کا بنیادی نام ہے؛ مکمل جملے میں ik sta … op بنتا ہے۔ beginnen الگ فعل ہے اور کام شروع کرنے کے لیے آتا ہے۔",
-        commonMistakeUrdu: "ik opsta om zeven uur نہ کہیں؛ sta کو شخص کے بعد اور op کو آخر میں رکھیں۔"
+        commonMistakeUrdu: "ik opsta om zeven uur نہ کہیں؛ sta کو شخص کے بعد اور op کو آخر میں رکھیں۔",
+        drills: [
+          pickDrillV4("ik sta om acht uur op", ["ik om acht uur sta op", "ik sta om acht op uur"], "میں آٹھ بجے اٹھتا ہوں", {"ik om acht uur sta op": "فعل sta دوسرے نمبر پر، ik کے فوراً بعد آتا ہے؛ op آخر میں۔", "ik sta om acht op uur": "op سب سے آخر میں آتا ہے، وقت کے درمیان نہیں۔"}),
+          pickDrillV4("om half acht ontbijt ik", ["om half acht ik ontbijt", "ik om half acht ontbijt"], "ساڑھے سات بجے میں ناشتہ کرتا ہوں", {"om half acht ik ontbijt": "وقت پہلے ہو تو فعل ontbijt فوراً اس کے بعد آتا ہے۔", "ik om half acht ontbijt": "ik کے بعد فعل دوسرے نمبر پر آتا ہے: ik ontbijt om half acht۔"}),
+          pickDrillV4("daarna ga ik naar huis", ["daarna ik ga naar huis", "daarna naar huis ik ga"], "اس کے بعد میں گھر جاتا ہوں", {"daarna ik ga naar huis": "daarna پہلے ہو تو فعل ga فوراً اس کے بعد آتا ہے۔", "daarna naar huis ik ga": "فعل دوسرے نمبر پر آتا ہے، آخر میں نہیں۔"}),
+          pickDrillV4("om vijf uur stop ik", ["om vijf uur ik stop", "ik om vijf uur stop"], "پانچ بجے میں کام ختم کرتا ہوں", {"om vijf uur ik stop": "وقت پہلے ہو تو فعل stop فوراً اس کے بعد آتا ہے۔", "ik om vijf uur stop": "ik کے بعد فعل دوسرے نمبر پر آتا ہے: ik stop om vijf uur۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلے مدد والے روزمرہ منصوبے کے بعد اگلے کام والے دن میں",
       prerequisiteLessonIds: [
@@ -6108,7 +6217,14 @@ const a1AuthoredCurriculumV4 = {
         highlight: "op maandag",
         explanationUrdu: "ہفتے کے دن سے پہلے op رکھیں: op maandag۔ دن کے حصے سے پہلے in de رکھیں: in de middag۔",
         contrastUrdu: "op maandag ایک دن بتاتا ہے؛ in de middag دن کا حصہ بتاتا ہے؛ om negen uur گھڑی کا خاص وقت بتاتا ہے۔",
-        commonMistakeUrdu: "in maandag یا op de middag نہ کہیں؛ op + دن اور in de + دن کا حصہ یاد رکھیں۔"
+        commonMistakeUrdu: "in maandag یا op de middag نہ کہیں؛ op + دن اور in de + دن کا حصہ یاد رکھیں۔",
+        drills: [
+          gapDrillV4("ik werk ___ maandag", "op", ["in", "te"], "میں پیر کو کام کرتا ہوں", {"in": "دن کے ساتھ op آتا ہے: op maandag۔", "te": "te وقت کے ساتھ نہیں آتا؛ دن کے لیے op۔"}),
+          pickDrillV4("in het weekend werk ik", ["in het weekend ik werk", "in weekend werk ik"], "ویک اینڈ پر میں کام کرتا ہوں", {"in het weekend ik werk": "وقت پہلے ہو تو فعل werk فوراً اس کے بعد آتا ہے۔", "in weekend werk ik": "weekend کے ساتھ het آتا ہے: in het weekend۔"}),
+          pickDrillV4("op vrijdag ben ik thuis", ["op vrijdag ik ben thuis", "in vrijdag ben ik thuis"], "جمعہ کو میں گھر پر ہوتا ہوں", {"op vrijdag ik ben thuis": "وقت پہلے ہو تو فعل ben فوراً اس کے بعد آتا ہے۔", "in vrijdag ben ik thuis": "دن کے ساتھ op آتا ہے، in نہیں۔"}),
+          gapDrillV4("ik heb tijd ___ de middag", "in", ["op", "te"], "دوپہر میں میرے پاس وقت ہے", {"op": "دن کے حصے کے ساتھ in de آتا ہے: in de middag۔", "te": "دن کے حصے کے لیے in de middag کہیں۔"}),
+          gapDrillV4("ik ben ___ tijd", "op", ["in", "te"], "میں وقت پر ہوں", {"in": "وقت پر کے لیے مقررہ جوڑا op tijd ہے۔", "te": "te laat کا مطلب دیر ہے؛ وقت پر = op tijd۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلا مدد والا شیڈول دیکھنے کے بعد نئی ہفتہ وار تبدیلی میں",
       prerequisiteLessonIds: [
@@ -6320,7 +6436,15 @@ const a1AuthoredCurriculumV4 = {
         highlight: "waar + woont + u",
         explanationUrdu: "waar، wat، یا wanneer کے بعد بدلا ہوا فعل اور پھر شخص رکھیں: waar woont u?۔",
         contrastUrdu: "سوال لفظ نہ ہو تو فعل پہلے آتا ہے: komt u morgen?؛ سوال لفظ ہو تو وہ سب سے پہلے رہتا ہے۔",
-        commonMistakeUrdu: "waar u woont یا u komt morgen? کو سوال نہ بنائیں؛ سوال میں فعل کی جگہ واضح رکھیں۔"
+        commonMistakeUrdu: "waar u woont یا u komt morgen? کو سوال نہ بنائیں؛ سوال میں فعل کی جگہ واضح رکھیں۔",
+        drills: [
+          pickDrillV4("waar woont u?", ["waar u woont?", "u woont waar?"], "آپ کہاں رہتے ہیں؟", {"waar u woont?": "سوال میں فعل woont فوراً waar کے بعد آتا ہے۔", "u woont waar?": "سوالی لفظ waar سب سے پہلے آتا ہے۔"}),
+          pickDrillV4("hoeveel kost dit?", ["hoeveel dit kost?", "dit kost hoeveel?"], "یہ کتنے کا ہے؟", {"hoeveel dit kost?": "سوال میں فعل kost فوراً hoeveel کے بعد آتا ہے۔", "dit kost hoeveel?": "سوالی لفظ hoeveel سب سے پہلے آتا ہے۔"}),
+          gapDrillV4("waarom ___ u niet?", "komt", ["kom", "woont"], "آپ کیوں نہیں آتے؟", {"kom": "u کے ساتھ فعل کے آخر میں t لگتا ہے: komt۔", "woont": "woont کا مطلب رہنا ہے؛ یہاں آنا ہے۔"}),
+          pickDrillV4("wanneer komt u?", ["wanneer u komt?", "u komt wanneer?"], "آپ کب آئیں گے؟", {"wanneer u komt?": "سوال میں فعل komt فوراً wanneer کے بعد آتا ہے۔", "u komt wanneer?": "سوالی لفظ wanneer سب سے پہلے آتا ہے۔"}),
+          pickDrillV4("komt u morgen?", ["komt morgen u?", "morgen u komt?"], "کیا آپ کل آئیں گے؟", {"komt morgen u?": "ہاں/نہیں والے سوال میں پہلے فعل، پھر شخص: komt u۔", "morgen u komt?": "ہاں/نہیں والا سوال فعل سے شروع ہوتا ہے: komt u morgen?"}),
+          pickDrillV4("wat is uw naam?", ["wat uw naam is?", "uw naam is wat?"], "آپ کا نام کیا ہے؟", {"wat uw naam is?": "سوال میں is فوراً wat کے بعد آتا ہے۔", "uw naam is wat?": "سوالی لفظ wat سب سے پہلے آتا ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی گفتگو کے بعد دوسرے استقبالی کاؤنٹر پر",
       prerequisiteLessonIds: ["a0-dit-dat-questions", "a0-time-days", "a0-shopping-payment", "a1-details-forms", "a1-calendar-time"],
@@ -6413,7 +6537,12 @@ const a1AuthoredCurriculumV4 = {
         highlight: "kunt u mij helpen",
         explanationUrdu: "رسمی مدد مانگتے وقت kunt u سے شروع کریں، پھر mij helpen اور آخر میں alstublieft رکھیں۔",
         contrastUrdu: "mag ik … اپنی اجازت پوچھتا ہے؛ kunt u … سامنے والے سے مؤدبانہ کام مانگتا ہے۔",
-        commonMistakeUrdu: "صرف helpen نہ کہیں؛ kunt u mij helpen والا مکمل سوال استعمال کریں۔"
+        commonMistakeUrdu: "صرف helpen نہ کہیں؛ kunt u mij helpen والا مکمل سوال استعمال کریں۔",
+        drills: [
+          pickDrillV4("kunt u mij helpen?", ["kunt u helpen mij?", "kunt helpen u mij?"], "کیا آپ میری مدد کر سکتے ہیں؟", {"kunt u helpen mij?": "mij فعل سے پہلے آتا ہے؛ helpen سب سے آخر میں۔", "kunt helpen u mij?": "kunt کے فوراً بعد u آتا ہے۔"}),
+          pickDrillV4("mag ik iets vragen?", ["mag ik vragen iets?", "mag iets ik vragen?"], "کیا میں کچھ پوچھ سکتا ہوں؟", {"mag ik vragen iets?": "mag کے ساتھ vragen آخر میں آتا ہے۔", "mag iets ik vragen?": "mag کے فوراً بعد ik آتا ہے۔"}),
+          pickDrillV4("dank u wel voor uw hulp", ["dank u wel uw hulp voor", "dank u voor wel uw hulp"], "آپ کی مدد کا بہت شکریہ", {"dank u wel uw hulp voor": "voor چیز سے پہلے آتا ہے: voor uw hulp۔", "dank u voor wel uw hulp": "dank u wel ایک ساتھ رہتا ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی صورت کے بعد دوسری عوامی جگہ پر",
       prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-questions"],
@@ -6508,7 +6637,11 @@ const a1AuthoredCurriculumV4 = {
         highlight: "zullen we + om drie uur + afspreken",
         explanationUrdu: "مشترک تجویز کے لیے zullen we سے شروع کریں، پھر وقت اور آخر میں afspreken رکھیں۔",
         contrastUrdu: "zullen we … وقت تجویز کرتا ہے؛ waar spreken we af? جگہ پوچھتا ہے۔",
-        commonMistakeUrdu: "afspreken کو درمیان میں نہ توڑیں؛ سوال کے آخر میں پورا رکھیں۔"
+        commonMistakeUrdu: "afspreken کو درمیان میں نہ توڑیں؛ سوال کے آخر میں پورا رکھیں۔",
+        drills: [
+          pickDrillV4("wil je koffie drinken?", ["wil je drinken koffie?", "wil koffie je drinken?"], "کیا تم کافی پینا چاہتے ہو؟", {"wil je drinken koffie?": "wil کے ساتھ drinken سب سے آخر میں آتا ہے۔", "wil koffie je drinken?": "سوال میں wil کے فوراً بعد je آتا ہے۔"}),
+          pickDrillV4("zullen we morgen afspreken?", ["zullen afspreken we morgen?", "zullen we afspreken om morgen?"], "کیا ہم کل ملیں؟", {"zullen afspreken we morgen?": "zullen کے فوراً بعد we آتا ہے اور afspreken آخر میں۔", "zullen we afspreken om morgen?": "دن کے ساتھ om نہیں آتا اور afspreken آخر میں رہتا ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی دعوت کے بعد دوسرے جان پہچان والے شخص کے ساتھ",
       prerequisiteLessonIds: ["a0-food-drink", "a0-time-days", "a0-numbers-0-10", "a1-polite-chunks"],
@@ -6635,7 +6768,13 @@ const a1AuthoredCurriculumV4 = {
         highlight: "bel … terug",
         explanationUrdu: "terugbellen کے عام جملے میں bel شخص کے بعد آتا ہے اور terug آخر میں جاتا ہے: ik bel u vanavond terug۔",
         contrastUrdu: "سوال kunt u later terugbellen? میں پورا terugbellen آخر میں رہتا ہے؛ سیدھے جملے میں bel اور terug الگ ہوتے ہیں۔",
-        commonMistakeUrdu: "ik terugbel u نہ کہیں؛ سیدھے جملے میں bel اندر اور terug آخر میں رکھیں۔"
+        commonMistakeUrdu: "ik terugbel u نہ کہیں؛ سیدھے جملے میں bel اندر اور terug آخر میں رکھیں۔",
+        drills: [
+          pickDrillV4("ik bel u terug", ["ik bel terug u", "ik u bel terug"], "میں آپ کو واپس فون کرتا ہوں", {"ik bel terug u": "terug سب سے آخر میں آتا ہے، u سے پہلے نہیں۔", "ik u bel terug": "فعل bel دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔"}),
+          pickDrillV4("ik bel Sara vanavond terug", ["ik bel terug Sara vanavond", "ik bel Sara terug vanavond"], "میں آج شام Sara کو واپس فون کروں گا", {"ik bel terug Sara vanavond": "terug سب سے آخر میں آتا ہے، شخص سے پہلے نہیں۔", "ik bel Sara terug vanavond": "وقت vanavond پہلے آتا ہے اور terug سب سے آخر میں۔"}),
+          pickDrillV4("kunt u het nummer herhalen?", ["kunt u herhalen het nummer?", "kunt herhalen u het nummer?"], "کیا آپ نمبر دہرا سکتے ہیں؟", {"kunt u herhalen het nummer?": "kunt کے ساتھ دوسرا فعل herhalen آخر میں آتا ہے۔", "kunt herhalen u het nummer?": "سوال میں kunt کے فوراً بعد u آتا ہے۔"}),
+          pickDrillV4("ik bel u later terug", ["ik bel terug u later", "ik bel u terug later"], "میں آپ کو بعد میں واپس فون کروں گا", {"ik bel terug u later": "terug سب سے آخر میں آتا ہے۔", "ik bel u terug later": "later پہلے آتا ہے اور terug سب سے آخر میں۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی فون کال کے بعد دوسری کال میں",
       prerequisiteLessonIds: ["a0-understanding-help", "a0-address-phone", "a0-time-days", "a1-polite-chunks", "a1-plans-invitations"],
@@ -6709,7 +6848,14 @@ const a1AuthoredCurriculumV4 = {
         highlight: "het boek is in de kamer",
         explanationUrdu: "پہلے چیز، پھر is، اور آخر میں جگہ رکھیں: het boek is in de kamer۔",
         contrastUrdu: "waar is de tas? جگہ پوچھتا ہے؛ het boek is in de kamer جگہ کا جواب دیتا ہے۔",
-        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in de kamer مکمل ڈچ جملہ نہیں۔"
+        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in de kamer مکمل ڈچ جملہ نہیں۔",
+        drills: [
+          pickDrillV4("de tafel is in de keuken", ["de tafel in de keuken", "de tafel in de keuken is"], "میز کچن میں ہے", {"de tafel in de keuken": "مکمل جملے میں is ضروری ہے۔", "de tafel in de keuken is": "is دوسرے نمبر پر آتا ہے، آخر میں نہیں۔"}),
+          pickDrillV4("waar is de stoel?", ["waar de stoel is?", "de stoel waar is?"], "کرسی کہاں ہے؟", {"waar de stoel is?": "سوال میں is فوراً waar کے بعد آتا ہے۔", "de stoel waar is?": "سوال waar سے شروع ہوتا ہے۔"}),
+          pickDrillV4("het boek is in de badkamer", ["het boek in de badkamer is", "het boek is de badkamer in"], "کتاب باتھ روم میں ہے", {"het boek in de badkamer is": "is دوسرے نمبر پر آتا ہے۔", "het boek is de badkamer in": "جگہ کا لفظ in جگہ سے پہلے آتا ہے: in de badkamer۔"}),
+          gapDrillV4("twee ___", "boeken", ["boek", "tafel"], "دو کتابیں", {"boek": "ایک سے زیادہ کے لیے جمع شکل boeken آتی ہے۔", "tafel": "tafel کا مطلب میز ہے؛ یہاں کتابیں ہیں۔"}),
+          pickDrillV4("waar is de tas?", ["waar de tas is?", "de tas is waar?"], "بیگ کہاں ہے؟", {"waar de tas is?": "سوال میں is فوراً waar کے بعد آتا ہے۔", "de tas is waar?": "سوال waar سے شروع ہوتا ہے۔"})
+        ]
       },
       prerequisiteLessonIds: ["a0-een-de-het", "a0-numbers-0-10", "a0-dit-dat-questions", "a0-place-1", "a0-home-needs"],
       prerequisiteRefs: [
@@ -6871,7 +7017,13 @@ const a1AuthoredCurriculumV4 = {
         highlight: "ik moet de kamer schoonmaken",
         explanationUrdu: "ضرورت بتانے کے لیے ik moet سے شروع کریں، پھر چیز یا جگہ اور آخر میں کام رکھیں۔",
         contrastUrdu: "ik moet de kamer schoonmaken ضروری کام بتاتا ہے؛ de keuken is schoon مکمل صاف حالت بتاتا ہے۔",
-        commonMistakeUrdu: "کام schoonmaken کو kamer سے پہلے نہ رکھیں؛ اس نمونے میں یہ آخر میں آتا ہے۔"
+        commonMistakeUrdu: "کام schoonmaken کو kamer سے پہلے نہ رکھیں؛ اس نمونے میں یہ آخر میں آتا ہے۔",
+        drills: [
+          pickDrillV4("ik moet de keuken schoonmaken", ["ik moet schoonmaken de keuken", "ik schoonmaken moet de keuken"], "مجھے کچن صاف کرنا ہے", {"ik moet schoonmaken de keuken": "moet کے ساتھ schoonmaken جملے کے آخر میں جاتا ہے۔", "ik schoonmaken moet de keuken": "moet دوسرے نمبر پر اور schoonmaken آخر میں آتا ہے۔"}),
+          pickDrillV4("ik moet vandaag de badkamer schoonmaken", ["ik moet schoonmaken vandaag de badkamer", "ik moet vandaag schoonmaken de badkamer"], "مجھے آج باتھ روم صاف کرنا ہے", {"ik moet schoonmaken vandaag de badkamer": "schoonmaken سب سے آخر میں آتا ہے۔", "ik moet vandaag schoonmaken de badkamer": "de badkamer فعل سے پہلے آتا ہے؛ schoonmaken آخر میں۔"}),
+          pickDrillV4("vandaag doe ik de was", ["vandaag ik doe de was", "vandaag de was ik doe"], "آج میں کپڑے دھوتا ہوں", {"vandaag ik doe de was": "vandaag پہلے ہو تو فعل doe فوراً اس کے بعد آتا ہے۔", "vandaag de was ik doe": "فعل دوسرے نمبر پر آتا ہے، آخر میں نہیں۔"}),
+          gapDrillV4("de keuken ___ schoon", "is", ["moet", "doe"], "کچن صاف ہے", {"moet": "moet کے ساتھ دوسرا فعل چاہیے؛ حالت بتانے کے لیے is۔", "doe": "doe کام کرنے کا فعل ہے؛ حالت کے لیے is۔"})
+        ]
       },
       prerequisiteLessonIds: ["a0-time-days", "a1-house-food-plurals", "a1-home-repairs"],
       prerequisiteRefs: [
@@ -7195,7 +7347,11 @@ const a1AuthoredCurriculumV4 = {
         ["de ingang is daar","عمارت کے داخلے کی جگہ وہاں بتائیں یا سمجھیں۔","ingang داخلہ ہے؛ uitgang باہر جانے کا راستہ ہے۔","is کو نہ چھوڑیں؛ مکمل جگہ والا جملہ کہیں۔","De ingang is daar.","داخلہ وہاں ہے۔","دَ اِن خانخ اِس دار"],
         ["ik heb hulp nodig","فوری مدد درکار ہو تو واضح مکمل جملہ کہیں۔","یہ مدد کی ضرورت ہے؛ صرف خطرے کی کیفیت نہیں۔","hulp nodig کو ساتھ رکھیں۔","Ik heb hulp nodig.","مجھے مدد چاہیے۔","اِک ہَپ ہُلپ نو دَخ"]
       ]),
-      pattern:{modelDutch:"mag ik hier wachten?",titleUrdu:"عوامی جگہ پر اجازت پوچھنا",highlight:"mag ik hier wachten",explanationUrdu:"اجازت پوچھنے کے لیے mag ik سے شروع کریں، پھر جگہ اور آخر میں کام رکھیں۔",contrastUrdu:"mag ik اجازت پوچھتا ہے؛ u moet ضروری ہدایت دیتا ہے۔",commonMistakeUrdu:"اجازت کے سوال کو moet سے شروع نہ کریں؛ یہاں mag ik استعمال کریں۔"},
+      pattern:{modelDutch:"mag ik hier wachten?",titleUrdu:"عوامی جگہ پر اجازت پوچھنا",highlight:"mag ik hier wachten",explanationUrdu:"اجازت پوچھنے کے لیے mag ik سے شروع کریں، پھر جگہ اور آخر میں کام رکھیں۔",contrastUrdu:"mag ik اجازت پوچھتا ہے؛ u moet ضروری ہدایت دیتا ہے۔",commonMistakeUrdu:"اجازت کے سوال کو moet سے شروع نہ کریں؛ یہاں mag ik استعمال کریں۔",drills:[
+        pickDrillV4("u moet hier wachten", ["u moet wachten hier", "u wachten moet hier"], "آپ کو یہاں انتظار کرنا ہے", {"u moet wachten hier": "moet کے ساتھ wachten سب سے آخر میں آتا ہے۔", "u wachten moet hier": "moet دوسرے نمبر پر اور wachten آخر میں آتا ہے۔"}),
+        gapDrillV4("___ ik hier wachten?", "mag", ["moet", "is"], "کیا میں یہاں انتظار کر سکتا ہوں؟", {"moet": "moet ik پوچھتا ہے کہ کیا انتظار ضروری ہے؛ اجازت کے لیے mag ik۔", "is": "is کے ساتھ wachten نہیں آتا؛ اجازت کے لیے mag ik۔"}),
+        pickDrillV4("ik heb hulp nodig", ["ik heb nodig hulp", "ik nodig heb hulp"], "مجھے مدد چاہیے", {"ik heb nodig hulp": "nodig جملے کے آخر میں آتا ہے: ik heb hulp nodig۔", "ik nodig heb hulp": "heb دوسرے نمبر پر اور nodig آخر میں۔"})
+      ]},
       prerequisiteLessonIds:["a0-weather-clothing-safety","a0-transport-directions","a0-daily-actions","a1-polite-chunks"],prerequisiteRefs:[["a0-weather-clothing-safety","verboden"],["a0-weather-clothing-safety","waar is de uitgang"],["a0-transport-directions","ingang"],["a0-daily-actions","wachten"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
       scenarios:{toegestaan:["safety-recognise-allowed","اجازت والا نشان پہچانیں۔"],"mag ik hier wachten":["safety-ask-wait","یہاں انتظار کی اجازت پوچھیں۔"],gevaarlijk:["safety-recognise-danger","خطرے والا نشان پہچانیں۔"],veilig:["safety-recognise-safe","محفوظ جگہ کا لفظ پہچانیں۔"],"het is hier verboden":["safety-read-forbidden","یہاں منع ہونے کی اطلاع سمجھیں۔"],"u moet hier wachten":["safety-follow-wait","یہاں انتظار کی ہدایت سمجھیں۔"],"de ingang is daar":["safety-locate-entrance","داخلے کی جگہ وہاں بتائیں۔"],"ik heb hulp nodig":["safety-request-help","فوری مدد کی ضرورت واضح کریں۔"]},
       document:{stableId:"safety-signs-card",sourceKey:"safety-signs-card",documentKind:"public-safety-signs",targetDutch:"het is hier verboden",title:"verboden",labelUrdu:"عوامی جگہ کے حفاظتی نشان پڑھیں",promptUrdu:"نشان میں verboden دیکھیں، پھر یہاں منع ہونے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نشانوں میں toegestaan، gevaarlijk، veilig، اور verboden الگ پہچانیں، پھر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ het is hier verboden یہاں ممانعت بتاتا ہے۔",wrongUrdu:"یہ دوسری حفاظتی بات ہے۔ verboden کا مطلب منع ہے۔",rows:[{label:"toegestaan",value:"toegestaan"},{label:"gevaarlijk",value:"gevaarlijk"},{label:"verboden",value:"het is hier verboden"}]}
@@ -7331,7 +7487,11 @@ const a1AuthoredCurriculumV4 = {
         ["voor of na het eten","دوا کھانے سے پہلے یا بعد لینی ہے یہ پوچھیں۔","یہ خوراک کا وقت ہے؛ کتنی بار کے لیے hoe vaak ہے۔","voor اور na کو الٹ نہ سمجھیں۔","Voor of na het eten?","کھانے سے پہلے یا بعد؟","فور اوف نا ہَت اے تَن"],
         ["lees de bijsluiter","دوا کے ساتھ معلومات اور احتیاط والا پرچہ پڑھنے کی ہدایت سمجھیں۔","bijsluiter معلومات کا پرچہ ہے؛ recept دوا کا نسخہ ہے۔","lees ہدایت ہے؛ اسے سوال نہ سمجھیں۔","Lees de bijsluiter.","دوا کی معلومات والا پرچہ پڑھیں۔","لےس دَ بَے سْلاؤ تَر"]
       ]),
-      pattern:{modelDutch:"hoe vaak moet ik dit nemen?",titleUrdu:"دوا کی تعداد پوچھنا",highlight:"hoe vaak moet ik dit nemen",explanationUrdu:"کتنی بار پوچھنے کے لیے hoe vaak سے شروع کریں، پھر moet ik dit اور آخر میں nemen رکھیں۔",contrastUrdu:"hoe vaak تعداد پوچھتا ہے؛ voor of na het eten خوراک کا وقت پوچھتا ہے۔",commonMistakeUrdu:"hoe vaak کے جواب میں دن یا گھڑی نہیں؛ twee keer per dag جیسی تعداد دیں۔"},
+      pattern:{modelDutch:"hoe vaak moet ik dit nemen?",titleUrdu:"دوا کی تعداد پوچھنا",highlight:"hoe vaak moet ik dit nemen",explanationUrdu:"کتنی بار پوچھنے کے لیے hoe vaak سے شروع کریں، پھر moet ik dit اور آخر میں nemen رکھیں۔",contrastUrdu:"hoe vaak تعداد پوچھتا ہے؛ voor of na het eten خوراک کا وقت پوچھتا ہے۔",commonMistakeUrdu:"hoe vaak کے جواب میں دن یا گھڑی نہیں؛ twee keer per dag جیسی تعداد دیں۔",drills:[
+        pickDrillV4("u moet rust nemen", ["u moet nemen rust", "u nemen moet rust"], "آپ کو آرام کرنا چاہیے", {"u moet nemen rust": "moet کے ساتھ nemen سب سے آخر میں آتا ہے۔", "u nemen moet rust": "moet دوسرے نمبر پر اور nemen آخر میں۔"}),
+        pickDrillV4("hoe vaak moet ik dit nemen?", ["hoe vaak ik moet dit nemen?", "hoe vaak moet ik nemen dit?"], "مجھے یہ کتنی بار لینا ہے؟", {"hoe vaak ik moet dit nemen?": "سوال میں moet فوراً hoe vaak کے بعد آتا ہے۔", "hoe vaak moet ik nemen dit?": "nemen سب سے آخر میں آتا ہے۔"}),
+        pickDrillV4("moet ik dit medicijn nemen?", ["moet ik nemen dit medicijn?", "moet dit medicijn ik nemen?"], "کیا مجھے یہ دوا لینی ہے؟", {"moet ik nemen dit medicijn?": "nemen سب سے آخر میں آتا ہے۔", "moet dit medicijn ik nemen?": "سوال میں moet کے فوراً بعد ik آتا ہے۔"})
+      ]},
       prerequisiteLessonIds:["a0-health-emergency","a0-food-drink","a0-numbers-0-10","a1-doctor-symptoms"],prerequisiteRefs:[["a0-health-emergency","medicijn"],["a0-health-emergency","apotheek"],["a0-food-drink","eten"],["a0-numbers-0-10","twee"],["a1-doctor-symptoms","u moet rust nemen"]],
       scenarios:{apotheek:["medicine-recognise-pharmacy","دوا لینے والی جگہ پہچانیں۔"],medicijn:["medicine-recognise-drug","درد کے علاج والی چیز پہچانیں۔"],recept:["medicine-present-prescription","ڈاکٹر کی لکھی دوا کی پرچی پہچانیں۔"],allergisch:["medicine-state-allergy","دوا دینے سے پہلے حساسیت کا لفظ پہچانیں۔"],"heeft u iets tegen de pijn":["medicine-request-pain-relief","دواخانے میں درد کے لیے دوا مانگیں۔"],"hoe vaak moet ik dit nemen":["medicine-ask-frequency","دوا کتنی بار لینی ہے پوچھیں۔"],"twee keer per dag":["medicine-read-frequency","لیبل پر دن میں دو بار کی مقدار سمجھیں۔"],"voor of na het eten":["medicine-ask-meal-time","دوا کھانے سے پہلے یا بعد لینی ہے پوچھیں۔"],"lees de bijsluiter":["medicine-follow-leaflet","دوا کی معلومات والا پرچہ پڑھنے کی ہدایت سمجھیں۔"]},
       document:{stableId:"medicine-read-label",sourceKey:"medicine-dose-label",documentKind:"medicine-label",targetDutch:"twee keer per dag",title:"Medicijn",labelUrdu:"دوا کا لیبل پڑھیں",promptUrdu:"لیبل میں twee keer per dag دیکھیں، پھر خوراک کی درست اردو ہدایت منتخب کریں۔",instructionUrdu:"دوا کے لیبل میں twee keer per dag، voor of na het eten، اور lees de bijsluiter الگ پڑھیں، پھر مقدار والی سیکھی ہوئی بات کا مطلب چنیں۔",correctUrdu:"درست۔ twee keer per dag کا مطلب دن میں دو بار ہے۔",wrongUrdu:"یہ دوسری دوا کی ہدایت ہے۔ twee keer مقدار اور per dag روزانہ کی مدت بتاتا ہے۔",rows:[{label:"twee keer per dag",value:"twee keer per dag"},{label:"voor of na het eten?",value:"na het eten"},{label:"lees de bijsluiter",value:"lees de bijsluiter"}]}
@@ -7419,7 +7579,14 @@ const a1AuthoredCurriculumV4 = {
         highlight: "ik wil + een afspraak + maken",
         explanationUrdu: "نئی ملاقات لینے کے لیے ik wil کے بعد een afspraak اور آخر میں maken رکھیں۔",
         contrastUrdu: "maken نئی ملاقات بناتا ہے، veranderen موجود ملاقات بدلتا ہے، اور annuleren اسے ختم کرتا ہے۔",
-        commonMistakeUrdu: "نئی ملاقات کے لیے de afspraak نہ کہیں؛ اس نمونے میں een afspraak maken رکھیں۔"
+        commonMistakeUrdu: "نئی ملاقات کے لیے de afspraak نہ کہیں؛ اس نمونے میں een afspraak maken رکھیں۔",
+        drills: [
+          pickDrillV4("ik wil de afspraak veranderen", ["ik wil veranderen de afspraak", "ik veranderen wil de afspraak"], "میں ملاقات کا وقت بدلنا چاہتا ہوں", {"ik wil veranderen de afspraak": "wil کے ساتھ دوسرا فعل جملے کے آخر میں جاتا ہے۔", "ik veranderen wil de afspraak": "wil دوسرے نمبر پر اور veranderen آخر میں آتا ہے۔"}),
+          pickDrillV4("kunt u mij later terugbellen?", ["kunt u terugbellen mij later?", "kunt u mij terugbellen later?"], "کیا آپ مجھے بعد میں واپس فون کر سکتے ہیں؟", {"kunt u terugbellen mij later?": "kunt کے ساتھ دوسرا فعل آخر میں آتا ہے۔", "kunt u mij terugbellen later?": "later فعل سے پہلے آتا ہے؛ terugbellen سب سے آخر میں۔"}),
+          pickDrillV4("ik moet de afspraak annuleren", ["ik moet annuleren de afspraak", "ik annuleren moet de afspraak"], "مجھے ملاقات منسوخ کرنی ہے", {"ik moet annuleren de afspraak": "moet کے ساتھ دوسرا فعل جملے کے آخر میں جاتا ہے۔", "ik annuleren moet de afspraak": "moet دوسرے نمبر پر اور annuleren آخر میں آتا ہے۔"}),
+          gapDrillV4("kunt u de afspraak ___?", "bevestigen", ["annuleren", "maken"], "کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟", {"annuleren": "annuleren کا مطلب منسوخ کرنا ہے؛ یہاں تصدیق ہے۔", "maken": "maken نئی ملاقات بنانا ہے؛ یہاں تصدیق ہے۔"}),
+          pickDrillV4("ik kan maandag niet komen", ["ik kan komen maandag niet", "ik komen kan maandag niet"], "میں پیر کو نہیں آ سکتا", {"ik kan komen maandag niet": "kan کے ساتھ komen سب سے آخر میں آتا ہے۔", "ik komen kan maandag niet": "kan دوسرے نمبر پر اور komen آخر میں آتا ہے۔"})
+        ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی ملاقات کے بعد دوسرے ادارے سے بات کرتے وقت",
       prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-questions", "a1-polite-chunks", "a1-phone-calls"],
@@ -8117,6 +8284,59 @@ const a2GuidanceMistakesV4 = [
 
 // One hand-written situation per A2 phrase. The situation describes the need
 // without giving the Urdu translation, so only the matching phrase fits.
+// A2 grammar cards. Drills use only Dutch already taught in the same lesson.
+const a2PatternSpecsV4 = {
+  "a2-perfect-tense": {
+    modelDutch: "ik heb de dokter gebeld",
+    titleUrdu: "گزری بات: heb یا ben، اور آخر میں ge- والی شکل",
+    highlight: "heb gebeld",
+    explanationUrdu: "جو کام ہو چکا ہو، اس کے دو حصے ہوتے ہیں: پہلے heb یا ben، اور جملے کے آخر میں فعل کی ge- والی شکل۔ ik heb de dokter gebeld = میں نے ڈاکٹر کو فون کیا۔",
+    contrastUrdu: "اکثر فعل heb کے ساتھ آتے ہیں: ik heb geslapen۔ گرنا، جانا، رہنا، اور شروع ہونا ben یا is کے ساتھ آتے ہیں: ik ben gevallen، de koorts is begonnen۔",
+    commonMistakeUrdu: "ik heb gevallen یا ik heb gebeld de dokter نہ کہیں۔ vallen کے ساتھ ben آتا ہے، اور ge- والی شکل ہمیشہ جملے کے آخر میں جاتی ہے۔",
+    drills: [
+      pickDrillV4("gisteren ben ik gevallen", ["gisteren heb ik gevallen", "gisteren ik ben gevallen"], "میں کل گر گیا تھا", { "gisteren heb ik gevallen": "vallen کے ساتھ heb نہیں، ben آتا ہے۔", "gisteren ik ben gevallen": "gisteren پہلے ہو تو فعل ben فوراً اس کے بعد آتا ہے۔" }),
+      pickDrillV4("ik heb gisteravond de dokter gebeld", ["ik heb gebeld de dokter gisteravond", "ik ben gisteravond de dokter gebeld"], "میں نے کل شام ڈاکٹر کو فون کیا", { "ik heb gebeld de dokter gisteravond": "gebeld جملے کے آخر میں جاتا ہے۔", "ik ben gisteravond de dokter gebeld": "bellen کے ساتھ ben نہیں، heb آتا ہے۔" }),
+      gapDrillV4("ik ___ thuis gebleven", "ben", ["heb", "is"], "میں گھر پر رہا", { heb: "blijven (رہنا) کے ساتھ heb نہیں، ben آتا ہے۔", is: "is دوسرے شخص یا چیز کے لیے ہے؛ ik کے ساتھ ben۔" }),
+      pickDrillV4("ik heb al pijnstillers genomen", ["ik heb al genomen pijnstillers", "ik ben al pijnstillers genomen"], "میں درد کی دوا پہلے ہی لے چکا ہوں", { "ik heb al genomen pijnstillers": "genomen جملے کے آخر میں جاتا ہے۔", "ik ben al pijnstillers genomen": "nemen (لینا) کے ساتھ heb آتا ہے۔" }),
+      gapDrillV4("de koorts ___ vanmorgen begonnen", "is", ["heb", "ben"], "بخار آج صبح شروع ہوا", { heb: "beginnen (شروع ہونا) کے ساتھ is یا ben آتا ہے، heb نہیں۔", ben: "ben صرف ik کے ساتھ ہے؛ de koorts کے ساتھ is۔" }),
+      gapDrillV4("ik ___ vannacht slecht geslapen", "heb", ["ben", "is"], "میں رات کو اچھی طرح نہیں سویا", { ben: "slapen (سونا) کے ساتھ ben نہیں، heb آتا ہے۔", is: "is دوسرے شخص کے لیے ہے؛ ik کے ساتھ heb۔" }),
+      pickDrillV4("ik heb nog niet gegeten", ["ik ben nog niet gegeten", "ik heb gegeten nog niet"], "میں نے ابھی کھانا نہیں کھایا", { "ik ben nog niet gegeten": "eten (کھانا) کے ساتھ heb آتا ہے۔", "ik heb gegeten nog niet": "gegeten جملے کے آخر میں جاتا ہے۔" })
+    ]
+  },
+  "a2-future-modal-verbs": {
+    modelDutch: "ik moet veiligheidsschoenen dragen",
+    titleUrdu: "ga، kan، moet، mag کے ساتھ اصل فعل آخر میں",
+    highlight: "moet dragen",
+    explanationUrdu: "ga (کرنے والا ہوں)، kan (سکتا ہوں)، moet (ضروری ہے) اور mag (اجازت ہے) دوسرے نمبر پر آتے ہیں، اور اصل کام والا فعل اپنی پوری شکل میں جملے کے آخر میں جاتا ہے۔",
+    contrastUrdu: "ik kan werken = میں کام کر سکتا ہوں؛ ik moet werken = مجھے کام کرنا ہے؛ mag ik werken? = کیا مجھے اجازت ہے؟؛ ik ga werken = میں کام کرنے والا ہوں۔",
+    commonMistakeUrdu: "ik moet dragen veiligheidsschoenen نہ کہیں۔ دوسرا فعل ہمیشہ آخر میں: ik moet veiligheidsschoenen dragen۔",
+    drills: [
+      pickDrillV4("ik kan op maandag werken", ["ik werken kan op maandag", "ik kan maandag op werken"], "میں پیر کو کام کر سکتا ہوں", { "ik werken kan op maandag": "kan دوسرے نمبر پر اور werken آخر میں آتا ہے۔", "ik kan maandag op werken": "op دن سے پہلے آتا ہے: op maandag۔" }),
+      pickDrillV4("mag ik eerder beginnen?", ["mag ik beginnen eerder?", "mag eerder ik beginnen?"], "کیا میں پہلے شروع کر سکتا ہوں؟", { "mag ik beginnen eerder?": "beginnen سب سے آخر میں آتا ہے۔", "mag eerder ik beginnen?": "سوال میں mag کے فوراً بعد ik آتا ہے۔" }),
+      pickDrillV4("ik ga dinsdag beginnen", ["ik ga beginnen dinsdag", "ik beginnen ga dinsdag"], "میں منگل کو شروع کرنے والا ہوں", { "ik ga beginnen dinsdag": "beginnen سب سے آخر میں آتا ہے۔", "ik beginnen ga dinsdag": "ga دوسرے نمبر پر اور beginnen آخر میں آتا ہے۔" }),
+      pickDrillV4("ik moet vrijdag de manager bellen", ["ik moet bellen de manager vrijdag", "ik moet vrijdag bellen de manager"], "مجھے جمعہ کو نگران کو فون کرنا ہے", { "ik moet bellen de manager vrijdag": "bellen سب سے آخر میں آتا ہے۔", "ik moet vrijdag bellen de manager": "de manager فعل سے پہلے آتا ہے؛ bellen آخر میں۔" }),
+      pickDrillV4("wanneer kan ik beginnen?", ["wanneer ik kan beginnen?", "wanneer kan beginnen ik?"], "میں کب شروع کر سکتا ہوں؟", { "wanneer ik kan beginnen?": "سوال میں kan فوراً wanneer کے بعد آتا ہے۔", "wanneer kan beginnen ik?": "kan کے بعد ik، اور beginnen آخر میں۔" }),
+      pickDrillV4("ik kan maandag niet werken", ["ik kan maandag werken niet", "ik werken kan maandag niet"], "میں پیر کو کام نہیں کر سکتا", { "ik kan maandag werken niet": "niet اصل فعل سے پہلے آتا ہے؛ werken سب سے آخر میں۔", "ik werken kan maandag niet": "kan دوسرے نمبر پر اور werken آخر میں آتا ہے۔" })
+    ]
+  },
+  "a2-word-order-connectors": {
+    modelDutch: "ik bel omdat de verwarming kapot is",
+    titleUrdu: "omdat، dat، als کے بعد فعل آخر میں",
+    highlight: "omdat is",
+    explanationUrdu: "omdat (کیونکہ)، dat (کہ) اور als (اگر یا جب) کے بعد والے حصے میں فعل جملے کے بالکل آخر میں جاتا ہے: ik bel omdat de verwarming kapot is۔ یہ ترتیب اردو سے ملتی جلتی ہے۔",
+    contrastUrdu: "اکیلا جملہ: de verwarming is kapot (is دوسرے نمبر پر)۔ omdat کے بعد: omdat de verwarming kapot is (is آخر میں)۔",
+    commonMistakeUrdu: "omdat de verwarming is kapot نہ کہیں۔ اور als والا حصہ پہلے آئے تو اگلا فعل فوراً آتا ہے: als de monteur komt, ben ik thuis۔",
+    drills: [
+      pickDrillV4("ik bel omdat de kamer nat is", ["ik bel omdat de kamer is nat", "ik bel omdat is de kamer nat"], "میں فون کر رہا ہوں کیونکہ کمرہ گیلا ہے", { "ik bel omdat de kamer is nat": "omdat کے بعد فعل is آخر میں جاتا ہے۔", "ik bel omdat is de kamer nat": "omdat کے بعد پہلے چیز، پھر آخر میں is۔" }),
+      pickDrillV4("ik denk dat de verwarming kapot is", ["ik denk dat de verwarming is kapot", "ik denk dat is de verwarming kapot"], "میرا خیال ہے کہ ہیٹنگ خراب ہے", { "ik denk dat de verwarming is kapot": "dat کے بعد فعل is آخر میں جاتا ہے۔", "ik denk dat is de verwarming kapot": "dat کے بعد پہلے چیز، پھر آخر میں is۔" }),
+      pickDrillV4("als de verwarming kapot is, bel ik", ["als de verwarming kapot is, ik bel", "als de verwarming is kapot, bel ik"], "اگر ہیٹنگ خراب ہو تو میں فون کرتا ہوں", { "als de verwarming kapot is, ik bel": "als والا حصہ پہلے ہو تو اگلا فعل bel فوراً آتا ہے: bel ik۔", "als de verwarming is kapot, bel ik": "als کے بعد فعل is آخر میں جاتا ہے۔" }),
+      pickDrillV4("de vloer is nat omdat het regent", ["de vloer is nat omdat regent het", "de vloer omdat het regent is nat"], "فرش گیلا ہے کیونکہ بارش ہو رہی ہے", { "de vloer is nat omdat regent het": "omdat کے بعد پہلے het، پھر آخر میں regent۔", "de vloer omdat het regent is nat": "پہلا مکمل جملہ de vloer is nat پہلے آتا ہے، پھر omdat۔" }),
+      pickDrillV4("ik wil dat de monteur komt", ["ik wil dat komt de monteur", "ik wil komt dat de monteur"], "میں چاہتا ہوں کہ مرمت والا آئے", { "ik wil dat komt de monteur": "dat کے بعد فعل komt آخر میں جاتا ہے۔", "ik wil komt dat de monteur": "پہلے ik wil dat، پھر de monteur، اور آخر میں komt۔" }),
+      pickDrillV4("als het regent, is de vloer nat", ["als het regent, de vloer is nat", "als regent het, is de vloer nat"], "جب بارش ہوتی ہے تو فرش گیلا ہو جاتا ہے", { "als het regent, de vloer is nat": "als والا حصہ پہلے ہو تو اگلا فعل is فوراً آتا ہے: is de vloer۔", "als regent het, is de vloer nat": "als کے بعد پہلے het، پھر آخر میں regent۔" })
+    ]
+  }
+};
+
 const a2ScenarioByDutchV4 = {
   // a2-work-school
   "ik zoek een baan": "روزگار دفتر میں ملازم پوچھتا ہے کہ آپ کیوں آئے ہیں۔ ابھی آپ کے پاس کوئی کام نہیں؛ اپنا مقصد بتائیں۔",
@@ -8335,7 +8555,7 @@ function makeA2AuthoredProfileSpecV4(profile) {
     settingUrdu: profile.settingUrdu,
     seedConcepts: deduped,
     teaching: authoredA1TeachingV4(teachingRows),
-    pattern: false,
+    pattern: a2PatternSpecsV4[profile.lessonId] || false,
     prerequisiteLessonIds: profile.prerequisiteLessonIds || [],
     prerequisiteRefs: profile.prerequisiteRefs || [],
     independentCheckLeadUrdu: profile.independentCheckLeadUrdu,
@@ -10959,6 +11179,25 @@ for (const concept of conceptByIdV4.values()) {
   }
 }
 
+const a0SoundTeachingV4 = {
+  boot: ["لمبی oo: آواز کو کھینچ کر پڑھیں۔ دو o کا مطلب لمبی آواز ہے۔", "boot اور bot میں صرف لمبائی کا فرق ہے، مگر مطلب بدل جاتا ہے: کشتی اور ہڈی۔", "boot — bot", "لمبی oo والی کشتی، چھوٹی o والی ہڈی۔", "بووٹ"],
+  bot: ["چھوٹی o: جلدی اور منہ تھوڑا زیادہ کھول کر پڑھیں۔ ایک o کا مطلب چھوٹی آواز ہے۔", "bot کو کھینچ کر پڑھیں گے تو boot (کشتی) سنائی دے گا۔", "bot — boot", "چھوٹی o والی ہڈی، لمبی oo والی کشتی۔", "بَٹ"],
+  voet: ["oe کو اردو ‘او’ نہیں بلکہ ‘اُو’ پڑھیں، جیسے ‘دُور’ میں۔ شروع کا v نرم ‘و’ یا ‘ف’ جیسا ہے۔", "oe کو انگریزی کی طرح ‘او-ای’ نہ پڑھیں؛ یہ ایک ہی ‘اُو’ آواز ہے۔", "voet — hoed", "دونوں لفظوں میں وہی ‘اُو’ آواز ہے۔", "وُوت"],
+  hoed: ["oe کی ‘اُو’ آواز، اور شروع میں صاف h۔ آخر کا d ‘ت’ جیسا سنائی دیتا ہے۔", "آخر میں d لکھا ہے مگر ڈچ میں آخری d کو ‘ت’ کی طرح بولتے ہیں۔", "hoed — voet", "دونوں لفظوں میں وہی ‘اُو’ آواز ہے۔", "ہُوت"],
+  neus: ["eu اردو میں نہیں: ‘اے’ کہیں اور ساتھ ہونٹ گول کر لیں۔", "eu کو ‘یو’ یا ‘ای-او’ نہ پڑھیں؛ یہ ایک گول ‘اے’ ہے۔", "neus — voet", "گول ‘اے’ والی ناک، اور ‘اُو’ والا پاؤں۔", "نُوس"],
+  muis: ["ui اردو میں نہیں: ‘آؤ’ سے شروع کریں مگر منہ کم کھولیں اور ہونٹ گول رکھیں۔", "ui کو ‘وئی’ یا انگریزی ‘وی’ نہ پڑھیں؛ یہ ایک ہی گول آواز ہے۔", "muis — duim", "دونوں لفظوں میں وہی ui آواز ہے۔", "مَؤس"],
+  duim: ["ui والی گول آواز: ‘آؤ’ جیسی، مگر منہ کم کھلا۔", "duim کو ‘ڈوئم’ نہ پڑھیں؛ d کے بعد ایک ہی گول ui آواز ہے۔", "duim — muis", "دونوں لفظوں میں وہی ui آواز ہے۔", "دَؤم"],
+  ei: ["ei اور ij کی آواز ایک ہے: ‘اَے’ جیسی، منہ کھول کر۔", "ei کو ‘ای’ نہ پڑھیں؛ یہی آواز ij لکھ کر بھی آتی ہے۔", "ei — duim", "ei کی کھلی ‘اَے’ اور ui کی گول آواز کا فرق: انڈا اور انگوٹھا۔", "اَے"],
+  geel: ["ڈچ g انگریزی g نہیں؛ یہ اردو ‘خ’ جیسی گلے کی آواز ہے۔ ee لمبی ‘اے’ ہے۔", "geel کو ‘گیل’ نہ پڑھیں؛ شروع میں ‘خ’ جیسی آواز آتی ہے۔", "geel — lachen", "g اور ch دونوں میں وہی ‘خ’ جیسی آواز ہے۔", "خیل"],
+  lachen: ["ch بھی ‘خ’ جیسی گلے کی آواز ہے، جیسے g۔", "ch کو ‘چ’ نہ پڑھیں؛ ڈچ ch ہمیشہ ‘خ’ جیسی ہے۔", "lachen — geel", "ch اور g دونوں میں ‘خ’ جیسی آواز ہے۔", "لاخَن"],
+  schoen: ["sch کو ‘ش’ نہ پڑھیں: پہلے ‘س’، پھر ‘خ’۔ آخر میں oe کی ‘اُو’ آواز۔", "schoen کو ‘شُون’ پڑھنا عام غلطی ہے؛ درست ‘سخُون’ ہے۔", "schoen — lachen", "sch اور ch دونوں میں وہی ‘خ’ جیسی آواز ہے: جوتا اور ہنسنا۔", "سخُون"],
+  vuur: ["uu اردو میں نہیں: ‘ای’ کہیں اور ساتھ ہونٹ گول کر لیں۔", "uu کو ‘او’ نہ پڑھیں؛ ‘او’ کی آواز oe ہے، uu نہیں۔", "vuur — schoen", "uu کی گول ‘ای’ اور oe کی ‘اُو’ کا فرق: آگ اور جوتا۔", "وِیور"],
+  wit: ["ڈچ w انگریزی w سے نرم ہے، تقریباً اردو ‘و’ جیسی۔", "wit اور vis کا پہلا حرف الگ ہے: w نرم ‘و’، v ‘ف’ سے قریب۔", "wit — vis", "w اور v کا فرق: سفید اور مچھلی۔", "وِت"],
+  vis: ["شروع کا v اکثر ‘ف’ جیسا سنائی دیتا ہے، مگر تھوڑا نرم۔", "vis کو w سے نہ پڑھیں؛ v میں اوپر کے دانت نیچے کے ہونٹ کو چھوتے ہیں۔", "vis — wit", "v اور w کا فرق: مچھلی اور سفید۔", "فِس"],
+  zon: ["z کو صاف ‘ز’ پڑھیں، ‘س’ نہیں۔ o چھوٹی آواز ہے۔", "zon کو ‘سون’ پڑھیں گے تو z کی آواز ختم ہو جائے گی۔", "zon — zeep", "دونوں لفظ صاف ‘ز’ سے شروع ہوتے ہیں۔", "زَن"],
+  zeep: ["z صاف ‘ز’، اور ee لمبی ‘اے’: زیپ۔", "ee کو ‘ای’ نہ پڑھیں؛ یہ لمبی ‘اے’ ہے۔", "zeep — zon", "دونوں لفظ صاف ‘ز’ سے شروع ہوتے ہیں۔", "زیپ"]
+};
+
 const a0ReviewedTeachingOverridesV4 = {
   "a0-ik-jij-u|ik": {
     exampleDutch: "ik — jij",
@@ -11076,6 +11315,15 @@ const a0ReviewedTeachingOverridesV4 = {
   }
 };
 
+for (const [dutch, [usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu]] of Object.entries(a0SoundTeachingV4)) {
+  const lessonId = ["boot", "bot", "voet", "hoed", "neus", "muis", "duim", "ei"].includes(dutch)
+    ? "a0-sounds-vowels"
+    : "a0-sounds-consonants";
+  a0ReviewedTeachingOverridesV4[`${lessonId}|${dutch}`] = {
+    usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu
+  };
+}
+
 for (const concept of conceptByIdV4.values()) {
   const lessonId = concept.introducedInLessonId;
   if (!lessonId?.startsWith("a0-")) continue;
@@ -11099,6 +11347,8 @@ for (const concept of conceptByIdV4.values()) {
       concept.commonConfusionUrdu = a0ConceptConfusionGuidanceV4(concept, lesson, partner);
     }
   }
+  if (override.usageUrdu) concept.usageUrdu = override.usageUrdu;
+  if (override.commonConfusionUrdu) concept.commonConfusionUrdu = override.commonConfusionUrdu;
   if (override.exampleDutch) concept.exampleDutch = override.exampleDutch;
   if (override.exampleUrdu) concept.exampleUrdu = override.exampleUrdu;
   if (override.pronunciationUrdu) concept.pronunciationUrdu = override.pronunciationUrdu;
@@ -11140,13 +11390,75 @@ function registerConceptSkillV4(concept) {
 for (const concept of conceptByIdV4.values()) registerConceptSkillV4(concept);
 
 const a0AuthoredPatternSpecsV4 = {
+  "a0-een-de-het": {
+    modelDutch: "het boek is hier",
+    titleUrdu: "een، de، اور het کا فرق",
+    highlight: "het",
+    explanationUrdu: "ڈچ میں ہر اسم کے ساتھ ایک چھوٹا لفظ آتا ہے۔ کسی بھی ایک چیز کے لیے een کہیں۔ کسی خاص، معلوم چیز کے لیے de یا het کہیں۔ کون سا اسم de لیتا ہے اور کون سا het، یہ ہر لفظ کے ساتھ یاد کرنا ہوتا ہے: de man، het boek۔",
+    contrastUrdu: "een boek = کوئی ایک کتاب؛ het boek = وہی خاص کتاب۔ een ہر اسم کے ساتھ چلتا ہے، مگر de یا het لفظ کے ساتھ طے ہے۔",
+    commonMistakeUrdu: "het man یا de boek نہ کہیں۔ نیا اسم ہمیشہ اس کے چھوٹے لفظ کے ساتھ یاد کریں: de man، het boek، het huis، de deur۔",
+    drills: [
+      gapDrillV4("___ man", "de", ["het", "een"], "وہ خاص آدمی", { het: "man کے ساتھ het نہیں، de آتا ہے: de man۔", een: "een کا مطلب کوئی ایک ہے؛ یہاں خاص آدمی کی بات ہے۔" }),
+      gapDrillV4("___ boek", "het", ["de", "een"], "وہ خاص کتاب", { de: "boek کے ساتھ de نہیں، het آتا ہے: het boek۔", een: "een کا مطلب کوئی ایک ہے؛ یہاں خاص کتاب کی بات ہے۔" }),
+      pickDrillV4("het huis", ["de huis", "huis het"], "وہ خاص گھر", { "de huis": "huis کے ساتھ het آتا ہے، de نہیں۔", "huis het": "چھوٹا لفظ اسم سے پہلے آتا ہے: het huis۔" }),
+      gapDrillV4("___ vrouw", "een", ["de", "het"], "ایک عورت (کوئی بھی)", { de: "de vrouw کا مطلب وہ خاص عورت ہے؛ یہاں کوئی ایک عورت ہے۔", het: "vrouw کے ساتھ het نہیں آتا؛ اور یہاں کوئی ایک عورت ہے، اس لیے een۔" }),
+      pickDrillV4("de deur", ["het deur", "deur de"], "وہ خاص دروازہ", { "het deur": "deur کے ساتھ de آتا ہے، het نہیں۔", "deur de": "چھوٹا لفظ اسم سے پہلے آتا ہے: de deur۔" })
+    ]
+  },
+  "a0-first-sentences": {
+    modelDutch: "ik ben een man",
+    titleUrdu: "پہلا مکمل جملہ: شخص، فعل، پھر باقی",
+    highlight: "ben",
+    explanationUrdu: "ڈچ جملے میں پہلے شخص آتا ہے، پھر فوراً فعل، پھر باقی بات: ik ben een man۔ اردو کی طرح فعل آخر میں نہیں جاتا۔",
+    contrastUrdu: "اردو: میں ایک آدمی ہوں (فعل آخر میں)۔ ڈچ: ik ben een man (فعل دوسرے نمبر پر)۔",
+    commonMistakeUrdu: "ik een man ben نہ کہیں۔ سادہ جملے میں فعل دوسرے نمبر پر آتا ہے۔",
+    drills: [
+      pickDrillV4("hij is een man", ["hij een man is", "hij is man een"], "وہ ایک آدمی ہے", { "hij een man is": "یہ اردو ترتیب ہے؛ ڈچ میں is دوسرے نمبر پر آتا ہے۔", "hij is man een": "een اسم سے پہلے آتا ہے: een man۔" }),
+      gapDrillV4("zij ___ een vrouw", "is", ["ben", "bent"], "وہ ایک عورت ہے", { ben: "ben صرف ik کے ساتھ آتا ہے۔", bent: "bent jij یا u کے ساتھ آتا ہے؛ zij کے ساتھ is۔" }),
+      pickDrillV4("ik ben een vrouw", ["ik een vrouw ben", "ik bent een vrouw"], "میں ایک عورت ہوں", { "ik een vrouw ben": "فعل آخر میں نہیں جاتا؛ ik کے فوراً بعد ben۔", "ik bent een vrouw": "اپنے لیے ik ben، bent نہیں۔" })
+    ]
+  },
+  "a0-possessive": {
+    modelDutch: "zijn naam is Ali",
+    titleUrdu: "کس کی چیز ہے: mijn، jouw، zijn، haar",
+    highlight: "zijn",
+    explanationUrdu: "ملکیت کا لفظ چیز کے نام سے پہلے آتا ہے: mijn huis = میرا گھر۔ کسی مرد کی چیز کے لیے zijn اور کسی عورت کی چیز کے لیے haar کہیں۔",
+    contrastUrdu: "اردو میں ‘اس کا’ مرد اور عورت دونوں کے لیے ایک ہے۔ ڈچ میں مالک مرد ہو تو zijn، عورت ہو تو haar۔ چیز کون سی ہے، اس سے فرق نہیں پڑتا۔",
+    commonMistakeUrdu: "عورت کی کتاب کے لیے zijn boek نہ کہیں؛ haar boek کہیں۔ ملکیت کا لفظ نام کے بعد نہیں، پہلے آتا ہے۔",
+    drills: [
+      gapDrillV4("___ boek", "haar", ["zijn", "mijn"], "اس عورت کی کتاب", { zijn: "zijn مرد مالک کے لیے ہے؛ عورت کے لیے haar۔", mijn: "mijn کا مطلب میرا ہے؛ یہاں عورت کی کتاب ہے۔" }),
+      gapDrillV4("___ huis", "zijn", ["haar", "jouw"], "اس مرد کا گھر", { haar: "haar عورت مالک کے لیے ہے؛ مرد کے لیے zijn۔", jouw: "jouw کا مطلب تمہارا ہے؛ یہاں مرد کا گھر ہے۔" }),
+      pickDrillV4("jouw naam", ["naam jouw", "haar naam"], "تمہارا نام", { "naam jouw": "ملکیت کا لفظ نام سے پہلے آتا ہے: jouw naam۔", "haar naam": "haar کا مطلب اس عورت کا ہے؛ تمہارا = jouw۔" }),
+      pickDrillV4("haar pen", ["zijn pen", "pen haar"], "اس عورت کا قلم", { "zijn pen": "zijn مرد مالک کے لیے ہے؛ عورت کے لیے haar۔", "pen haar": "ملکیت کا لفظ چیز سے پہلے آتا ہے: haar pen۔" })
+    ]
+  },
+  "a0-dit-dat-questions": {
+    modelDutch: "wat is dit",
+    titleUrdu: "سوال: سوالی لفظ پہلے، پھر فعل",
+    highlight: "wat is",
+    explanationUrdu: "سوال میں سوالی لفظ سب سے پہلے آتا ہے، پھر فوراً فعل: wat is dit? یعنی یہ کیا ہے؟ جواب میں عام ترتیب آتی ہے: dit is een boek۔",
+    contrastUrdu: "dit is een boek بیان ہے؛ wat is dit? سوال ہے۔ دونوں میں is دوسرے نمبر پر ہے۔",
+    commonMistakeUrdu: "wat dit is? نہ کہیں۔ سوال میں فعل سوالی لفظ کے فوراً بعد آتا ہے: wat is dit?",
+    drills: [
+      pickDrillV4("waar is het toilet", ["waar het toilet is", "is waar het toilet"], "ٹوائلٹ کہاں ہے؟", { "waar het toilet is": "سوال میں is فوراً waar کے بعد آتا ہے۔", "is waar het toilet": "سوالی لفظ waar سب سے پہلے آتا ہے۔" }),
+      pickDrillV4("wat is dat", ["wat dat is", "dat is wat"], "وہ کیا ہے؟", { "wat dat is": "سوال میں is فوراً wat کے بعد آتا ہے۔", "dat is wat": "سوالی لفظ wat سب سے پہلے آتا ہے۔" }),
+      pickDrillV4("waar is mijn huis", ["waar mijn huis is", "mijn huis waar is"], "میرا گھر کہاں ہے؟", { "waar mijn huis is": "سوال میں is فوراً waar کے بعد آتا ہے۔", "mijn huis waar is": "یہ اردو ترتیب ہے؛ ڈچ سوال waar سے شروع ہوتا ہے۔" })
+    ]
+  },
   "a0-ben-bent-is": {
     modelDutch: "ik ben Ali",
     titleUrdu: "شخص کے ساتھ ہوں، ہیں، یا ہے کی شکل",
     highlight: "ben",
     explanationUrdu: "پہلے دیکھیں بات کس شخص کے بارے میں ہے۔ اپنے لیے ik ben اور جان پہچان والے سامنے کے شخص کے لیے jij bent کہیں۔",
     contrastUrdu: "ik کے ساتھ ben آتا ہے، مگر jij کے ساتھ bent؛ پہلے شخص دیکھیں، پھر درست جوڑا بولیں۔",
-    commonMistakeUrdu: "ik bent یا jij ben نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ben اور jij bent پوری یاد رکھیں۔"
+    commonMistakeUrdu: "ik bent یا jij ben نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ben اور jij bent پوری یاد رکھیں۔",
+    drills: [
+      gapDrillV4("jij ___ een vrouw", "bent", ["ben", "is"], "تم ایک عورت ہو", { ben: "ben صرف ik کے ساتھ آتا ہے۔", is: "is صرف hij، zij، یا کسی چیز کے ساتھ آتا ہے۔" }),
+      pickDrillV4("ik ben Ali", ["ik bent Ali", "ik is Ali"], "میں Ali ہوں", { "ik bent Ali": "bent سامنے والے کے لیے ہے؛ اپنے لیے ik ben۔", "ik is Ali": "is دوسرے کے لیے ہے؛ اپنے لیے ik ben۔" }),
+      gapDrillV4("zij ___ een vrouw", "is", ["ben", "bent"], "وہ ایک عورت ہے", { ben: "ben صرف ik کے ساتھ آتا ہے۔", bent: "bent صرف jij اور u کے ساتھ آتا ہے۔" }),
+      pickDrillV4("u bent een vrouw", ["u ben een vrouw", "u is een vrouw"], "آپ ایک عورت ہیں", { "u ben een vrouw": "ben صرف ik کے ساتھ ہے؛ u کے ساتھ bent۔", "u is een vrouw": "is دوسرے شخص یا چیز کے لیے ہے؛ سامنے والے u کے ساتھ bent۔" }),
+      pickDrillV4("hij is hier", ["hij bent hier", "hij ben hier"], "وہ یہاں ہے", { "hij bent hier": "bent صرف jij اور u کے ساتھ ہے؛ hij کے ساتھ is۔", "hij ben hier": "ben صرف ik کے ساتھ ہے؛ hij کے ساتھ is۔" })
+    ]
   },
   "a0-hebben-1": {
     modelDutch: "ik heb een boek",
@@ -11154,7 +11466,12 @@ const a0AuthoredPatternSpecsV4 = {
     highlight: "heb",
     explanationUrdu: "حقیقی چیز سے شروع کریں: ik heb een boek یعنی میرے پاس ایک کتاب ہے۔ سامنے والا بدلنے پر jij hebt اور دوسرے شخص کے لیے hij heeft یا zij heeft آتا ہے۔",
     contrastUrdu: "ik heb اپنے پاس ہونے کی بات ہے؛ hij heeft کسی دوسرے مرد کے پاس ہونے کی بات ہے۔",
-    commonMistakeUrdu: "ik heeft یا hij heb نہ کہیں۔ پہلے شخص دیکھیں، پھر heb، hebt، یا heeft چنیں۔"
+    commonMistakeUrdu: "ik heeft یا hij heb نہ کہیں۔ پہلے شخص دیکھیں، پھر heb، hebt، یا heeft چنیں۔",
+    drills: [
+      gapDrillV4("jij ___ een boek", "hebt", ["heb", "heeft"], "تمہارے پاس ایک کتاب ہے", { heb: "heb صرف ik کے ساتھ آتا ہے۔", heeft: "heeft hij یا zij کے ساتھ آتا ہے؛ jij کے ساتھ hebt۔" }),
+      gapDrillV4("hij ___ een pen", "heeft", ["heb", "hebt"], "اس کے پاس ایک قلم ہے", { heb: "heb صرف ik کے ساتھ آتا ہے۔", hebt: "hebt jij کے ساتھ آتا ہے؛ hij کے ساتھ heeft۔" }),
+      pickDrillV4("ik heb een huis", ["ik heeft een huis", "ik hebt een huis"], "میرے پاس ایک گھر ہے", { "ik heeft een huis": "heeft دوسرے شخص کے لیے ہے؛ اپنے لیے ik heb۔", "ik hebt een huis": "hebt jij کے ساتھ ہے؛ اپنے لیے ik heb۔" })
+    ]
   },
   "a0-gaan-komen": {
     modelDutch: "ik ga naar huis",
@@ -11162,7 +11479,12 @@ const a0AuthoredPatternSpecsV4 = {
     highlight: "ga",
     explanationUrdu: "جگہ کی طرف اپنی روانگی کے لیے ik ga کہیں۔ ایک دوسرے مرد کے جانے کی بات میں hij gaat آتا ہے۔",
     contrastUrdu: "اپنے لیے ik ga، دوسرے مرد کے لیے hij gaat؛ شخص بدلنے سے آخر میں چھوٹی تبدیلی آتی ہے۔",
-    commonMistakeUrdu: "ik gaat یا hij ga نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ga اور hij gaat پوری یاد رکھیں۔"
+    commonMistakeUrdu: "ik gaat یا hij ga نہ کہیں۔ پہلے سیکھی ہوئی جوڑی ik ga اور hij gaat پوری یاد رکھیں۔",
+    drills: [
+      gapDrillV4("hij ___ naar huis", "gaat", ["ga", "komt"], "وہ گھر جاتا ہے", { ga: "ga صرف ik کے ساتھ ہے؛ hij کے ساتھ آخر میں t لگتا ہے: gaat۔", komt: "komt کا مطلب آنا ہے؛ یہاں جانا ہے۔" }),
+      gapDrillV4("ik ___ naar huis", "kom", ["komt", "gaat"], "میں گھر آتا ہوں", { komt: "komt hij کے ساتھ ہے؛ ik کے ساتھ آخر میں t نہیں: kom۔", gaat: "gaat کا مطلب جانا ہے اور یہ hij کے ساتھ آتا ہے۔" }),
+      pickDrillV4("hij komt naar huis", ["hij kom naar huis", "hij gaat naar huis"], "وہ گھر آتا ہے", { "hij kom naar huis": "hij کے ساتھ فعل کے آخر میں t لگتا ہے: komt۔", "hij gaat naar huis": "gaat کا مطلب جانا ہے؛ یہاں آنا ہے۔" })
+    ]
   },
   "a0-geen": {
     modelDutch: "ik heb geen boek",
@@ -11170,7 +11492,13 @@ const a0AuthoredPatternSpecsV4 = {
     highlight: "geen",
     explanationUrdu: "جب کوئی شخص یا چیز موجود نہ ہو تو اس کے نام سے پہلے geen رکھیں: ik heb geen boek یعنی میرے پاس کتاب نہیں ہے۔",
     contrastUrdu: "geen چیز کے نام سے پہلے آتا ہے، جیسے geen boek؛ کیفیت کے ساتھ پہلے سیکھا ہوا niet آتا ہے، جیسے niet goed۔",
-    commonMistakeUrdu: "ik heb niet boek نہ کہیں۔ کتاب نہ ہونے کے لیے ik heb geen boek کہیں۔"
+    commonMistakeUrdu: "ik heb niet boek نہ کہیں۔ کتاب نہ ہونے کے لیے ik heb geen boek کہیں۔",
+    drills: [
+      gapDrillV4("ik heb ___ pen", "geen", ["niet", "een"], "میرے پاس قلم نہیں ہے", { niet: "pen چیز کا نام ہے؛ چیز نہ ہو تو geen آتا ہے، niet نہیں۔", een: "een کا مطلب ایک ہے؛ یہ نفی نہیں بناتا۔" }),
+      pickDrillV4("het is niet goed", ["het is geen goed", "het niet is goed"], "یہ ٹھیک نہیں ہے", { "het is geen goed": "goed چیز کا نام نہیں، کیفیت ہے؛ اس لیے niet۔", "het niet is goed": "niet فعل is کے بعد آتا ہے: het is niet goed۔" }),
+      gapDrillV4("hij heeft ___ boek", "geen", ["niet", "een"], "اس کے پاس کتاب نہیں ہے", { niet: "boek چیز کا نام ہے؛ اس سے پہلے geen آتا ہے۔", een: "een سے مطلب بنتا ہے کہ کتاب ہے؛ یہاں کتاب نہیں ہے۔" }),
+      pickDrillV4("jij hebt geen huis", ["jij hebt niet huis", "jij hebt niet een huis"], "تمہارے پاس گھر نہیں ہے", { "jij hebt niet huis": "چیز کے نام سے پہلے niet نہیں، geen آتا ہے۔", "jij hebt niet een huis": "niet een کے بجائے ایک لفظ geen استعمال کریں۔" })
+    ]
   },
   "a0-spelling-personal-details": {
     modelDutch: "mijn naam is Sara",
@@ -11194,9 +11522,141 @@ const a0AuthoredPatternSpecsV4 = {
     highlight: "naar",
     explanationUrdu: "کسی منزل کی طرف جانے کے لیے naar استعمال کریں: ik ga naar huis یعنی میں گھر جاتا یا جاتی ہوں۔",
     contrastUrdu: "naar منزل بتاتا ہے، جیسے naar huis؛ met ساتھ موجود شخص بتاتا ہے، جیسے met mijn kind۔",
-    commonMistakeUrdu: "ساتھ کے لیے naar اور منزل کے لیے met نہ کہیں۔ منزل کے ساتھ naar، شخص کے ساتھ met رکھیں۔"
+    commonMistakeUrdu: "ساتھ کے لیے naar اور منزل کے لیے met نہ کہیں۔ منزل کے ساتھ naar، شخص کے ساتھ met رکھیں۔",
+    drills: [
+      pickDrillV4("ik ga met mijn kind naar huis", ["ik ga naar mijn kind met huis", "ik ga met mijn kind met huis"], "میں اپنے بچے کے ساتھ گھر جاتا ہوں", { "ik ga naar mijn kind met huis": "ساتھ والے شخص کے لیے met اور منزل کے لیے naar؛ یہاں دونوں الٹ گئے ہیں۔", "ik ga met mijn kind met huis": "گھر منزل ہے، اس لیے naar huis۔" }),
+      pickDrillV4("zij gaat naar school", ["zij gaat met school", "zij gaat school naar"], "وہ اسکول جاتی ہے", { "zij gaat met school": "اسکول منزل ہے؛ منزل کے لیے naar۔", "zij gaat school naar": "naar منزل سے پہلے آتا ہے: naar school۔" }),
+      pickDrillV4("hij komt met mijn kind", ["hij komt naar mijn kind", "hij komt mijn kind met"], "وہ میرے بچے کے ساتھ آتا ہے", { "hij komt naar mijn kind": "naar mijn kind کا مطلب بچے کی طرف ہے؛ ساتھ کے لیے met۔", "hij komt mijn kind met": "met شخص سے پہلے آتا ہے: met mijn kind۔" })
+    ]
   }
 };
+
+// Grammar drills make a pattern testable: the learner fills the changing slot
+// or picks the one correct sentence from real mistake forms. Each wrong option
+// carries its own Urdu explanation.
+// Function declarations so pattern specs earlier in the file can use them.
+function gapDrillV4(sentence, answer, options, urdu, why = {}) {
+  return { kind: "gap", sentence, answer, options: [answer, ...options.filter((option) => option !== answer)], urdu, why };
+}
+
+function pickDrillV4(answer, wrongSentences, urdu, why = {}) {
+  return { kind: "pick", answer, options: [answer, ...wrongSentences], urdu, why };
+}
+
+function drillFullSentenceV4(drill) {
+  return drill.kind === "gap" ? drill.sentence.replace("___", drill.answer) : drill.answer;
+}
+
+// Split on letters so one-letter words such as "u" are checked too.
+function drillWordTokensV4(value) {
+  return String(value || "").toLowerCase().match(/[a-zà-ÿ']+/g) || [];
+}
+
+function drillTokensV4(drill) {
+  const texts = drill.kind === "gap"
+    ? [drill.sentence.replace("___", " "), ...drill.options]
+    : drill.options;
+  return uniqueV4(texts.flatMap(drillWordTokensV4));
+}
+
+function makePatternDrillQuestionV4(drill, pattern) {
+  const full = drillFullSentenceV4(drill);
+  const question = drill.kind === "gap"
+    ? {
+      type: "fill-gap",
+      label: "اصول استعمال کریں",
+      prompt: drill.sentence,
+      speak: drillFullSentenceV4(drill),
+      options: [...drill.options],
+      answer: drill.answer,
+      explain: `${full} = ${drill.urdu}۔`
+    }
+    : {
+      type: "reverse",
+      label: "درست جملہ پہچانیں",
+      prompt: `درست ڈچ جملہ چنیں: ${drill.urdu}`,
+      options: [...drill.options],
+      answer: drill.answer,
+      explain: `${full} = ${drill.urdu}۔`
+    };
+  question.patternDrill = true;
+  return question;
+}
+
+function applyPatternDrillFeedbackV4(question, drill, pattern) {
+  const full = drillFullSentenceV4(drill);
+  const instruction = drill.kind === "gap"
+    ? `خالی جگہ کے لیے درست لفظ چنیں۔ مطلب: “${drill.urdu}”`
+    : "جملے ایک جیسے لگتے ہیں، مگر صرف ایک درست ڈچ ہے۔ اصول یاد کرکے چنیں۔";
+  const correct = `درست۔ “${full}” = “${drill.urdu}”۔`;
+  const wrong = `${pattern.commonMistakeUrdu} درست: “${full}”۔`;
+  const byOption = Object.fromEntries(drill.options
+    .filter((option) => option !== drill.answer)
+    .map((option) => [option, `“${option}” درست نہیں۔ ${drill.why?.[option] || pattern.commonMistakeUrdu} درست: “${full}”۔`]));
+  Object.assign(question, {
+    instructionUrdu: instruction,
+    instruction,
+    hintUrdu: pattern.contrastUrdu || pattern.explanationUrdu,
+    hint: pattern.contrastUrdu || pattern.explanationUrdu,
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    optionExplanationsUrdu: byOption,
+    wrongExplanationsByOption: { ...byOption }
+  });
+  return question;
+}
+
+// Sound lessons: the learner hears one word and picks it from the most
+// similar-sounding words in the same run (boot / bot, wit / vis).
+function soundSimilarityV4(left, right) {
+  const a = String(left).toLowerCase();
+  const b = String(right).toLowerCase();
+  let score = a[0] === b[0] ? 2 : 0;
+  for (const unit of ["oo", "oe", "eu", "ui", "ei", "ij", "uu", "ee", "ch", "sch", "o"]) {
+    if (a.includes(unit) && b.includes(unit)) score += unit.length;
+  }
+  return score - Math.abs(a.length - b.length) * 0.1;
+}
+
+function makeSoundDiscriminationV4(concept, runConcepts) {
+  const others = runConcepts
+    .filter((candidate) => candidate.id !== concept.id)
+    .sort((left, right) => soundSimilarityV4(concept.dutch, right.dutch) - soundSimilarityV4(concept.dutch, left.dutch))
+    .slice(0, 2);
+  const question = {
+    type: "listen-choice",
+    label: "آواز سے لفظ پہچانیں",
+    prompt: "آواز غور سے سنیں۔ کون سا لفظ سنائی دیا؟",
+    speak: concept.dutch,
+    mode: "listen-dutch",
+    options: [concept.dutch, ...others.map((candidate) => candidate.dutch)],
+    answer: concept.dutch,
+    explain: `سنائی دینے والا لفظ “${concept.dutch}” تھا۔ ${concept.usageUrdu || ""}`.trim()
+  };
+  const correct = `درست۔ آپ نے “${concept.dutch}” صحیح سنا۔`;
+  const byOption = Object.fromEntries(others.map((candidate) => [
+    candidate.dutch,
+    `“${candidate.dutch}” نہیں، “${concept.dutch}” سنائی دیا تھا۔ ${concept.commonConfusionUrdu || concept.usageUrdu || ""}`.trim()
+  ]));
+  return { question, correct, byOption };
+}
+
+function applySoundFeedbackV4(question, sound) {
+  const wrong = Object.values(sound.byOption)[0];
+  Object.assign(question, {
+    instructionUrdu: "پہلے آواز سنیں، پھر وہی لکھا ہوا لفظ چنیں۔ ضرورت ہو تو آہستہ آواز دوبارہ سنیں۔",
+    instruction: "پہلے آواز سنیں، پھر وہی لکھا ہوا لفظ چنیں۔ ضرورت ہو تو آہستہ آواز دوبارہ سنیں۔",
+    explainCorrectUrdu: sound.correct,
+    correctExplanation: sound.correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    optionExplanationsUrdu: sound.byOption,
+    wrongExplanationsByOption: { ...sound.byOption }
+  });
+  return question;
+}
 
 function makePatternV4(lesson, chapterId, conceptIds) {
   const explanation = lesson.questions.find((question) => question.type === "uitleg");
@@ -11213,7 +11673,7 @@ function makePatternV4(lesson, chapterId, conceptIds) {
     .map((conceptId) => conceptByIdV4.get(conceptId))
     .find((concept) => isCompletePatternModelV4(concept?.dutch));
   const authoredModelConcept = authoredSpec
-    ? (["a1", "a2"].includes(chapterId) ? conceptIds : firstRunConceptIds)
+    ? conceptIds
       .map((conceptId) => conceptByIdV4.get(conceptId))
       .find((concept) => (
         normalizedTextV4(concept?.dutch) === normalizedTextV4(authoredSpec.modelDutch)
@@ -12052,7 +12512,7 @@ function cloneForIndependentCheckV4(lesson, run, source, index, requiredSkillId)
     ? patternsV4.find((item) => item.id === requiredSkill.patternId)
     : null;
   const requiredConceptId = requiredSkill?.conceptId
-    || pattern?.modelConceptId
+    || (run.conceptIds.includes(pattern?.modelConceptId) ? pattern.modelConceptId : null)
     || source.conceptIds.find((conceptId) => run.conceptIds.includes(conceptId))
     || run.conceptIds[index % Math.max(1, run.conceptIds.length)];
   const concept = conceptByIdV4.get(requiredConceptId);
@@ -12188,7 +12648,20 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       conceptIds.slice(16, 20),
       conceptIds.slice(20)
     ].filter((ids) => ids.length)
-    : splitTargetsIntoRunsV4(level, conceptIds, Boolean(pattern));
+    // A0 keeps a small first run only when that run teaches the pattern model.
+    : splitTargetsIntoRunsV4(level, conceptIds, Boolean(pattern) && (
+      level !== "a0" || conceptIds.slice(0, 3).includes(pattern.modelConceptId)
+    ));
+  // An A0 pattern taught in a later run must fit the 3-item cap: split only
+  // that run, keeping neighbouring concepts (and their paired examples) together.
+  if (level === "a0" && pattern) {
+    const modelChunkIndex = targetChunks.findIndex((ids) => ids.includes(pattern.modelConceptId));
+    const modelChunk = targetChunks[modelChunkIndex];
+    if (modelChunkIndex > 0 && modelChunk.length > 3) {
+      const half = Math.ceil(modelChunk.length / 2);
+      targetChunks.splice(modelChunkIndex, 1, modelChunk.slice(0, half), modelChunk.slice(half));
+    }
+  }
   const prerequisiteConceptIds = prerequisiteSkillIds
     .map((skillId) => skillByIdV4.get(skillId)?.conceptId)
     .filter(Boolean);
@@ -12224,9 +12697,40 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
     question.adaptiveReviewEligible = false;
   });
 
+  const patternRunIndex = pattern
+    ? Math.max(0, chunks.findIndex((chunk) => chunk.conceptIds.includes(pattern.modelConceptId)))
+    : -1;
+  // A drill may only use Dutch the learner has met: this lesson's runs so far
+  // plus the declared prerequisites.
+  const drillRunIndexes = new Map();
+  if (pattern?.drills?.length) {
+    const knownTokens = new Set(prerequisiteConceptIds
+      .flatMap((conceptId) => drillWordTokensV4(conceptByIdV4.get(conceptId)?.dutch)));
+    const tokensByRun = chunks.map((chunk) => {
+      chunk.conceptIds.forEach((conceptId) => drillWordTokensV4(conceptByIdV4.get(conceptId)?.dutch)
+        .forEach((word) => knownTokens.add(word)));
+      return new Set(knownTokens);
+    });
+    pattern.drills.forEach((drill, drillIndex) => {
+      const runIndex = tokensByRun.findIndex((tokens, index) => (
+        index >= patternRunIndex && drillTokensV4(drill).every((token) => tokens.has(token))
+      ));
+      if (runIndex >= 0) drillRunIndexes.set(drillIndex, runIndex);
+    });
+    // A later run needs at least two drills: one to practise, one to check.
+    const countByRun = new Map();
+    drillRunIndexes.forEach((runIndex) => countByRun.set(runIndex, (countByRun.get(runIndex) || 0) + 1));
+    drillRunIndexes.forEach((runIndex, drillIndex) => {
+      if (runIndex !== patternRunIndex && countByRun.get(runIndex) < 2) drillRunIndexes.delete(drillIndex);
+    });
+  }
+  const drillsForRun = (runIndex) => (pattern?.drills || [])
+    .filter((_, drillIndex) => drillRunIndexes.get(drillIndex) === runIndex);
+
   const runs = chunks.map((chunk, runIndex) => {
     const runConceptIds = chunk.conceptIds;
-    const runPattern = runIndex === 0 ? pattern : null;
+    const runPattern = runIndex === patternRunIndex ? pattern : null;
+    const refreshPattern = !runPattern && pattern && drillsForRun(runIndex).length ? pattern : null;
     const newConceptIds = runConceptIds.filter((conceptId) => (
       chunk.targetIds.includes(conceptId)
       && conceptByIdV4.get(conceptId)?.introducedInLessonId === lesson.id
@@ -12244,11 +12748,18 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
         type: "pattern",
         patternId: runPattern.id,
         mode: "teach"
+      }] : []),
+      ...(refreshPattern ? [{
+        id: `${lesson.id}:refresh:${refreshPattern.id}:run-${runIndex + 1}`,
+        type: "pattern",
+        patternId: refreshPattern.id,
+        mode: "refresh"
       }] : [])
     ];
     const skillIds = uniqueV4([
       ...runConceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)),
-      runPattern?.skillId
+      runPattern?.skillId,
+      refreshPattern?.skillId
     ]);
     const reviewPrerequisiteSkillIds = reviewConceptIds
       .map((conceptId) => skillIdByConceptIdV4.get(conceptId))
@@ -12459,6 +12970,110 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       }));
     }
 
+    if (/^a0-sounds-/.test(lesson.id)) {
+      const runConcepts = run.conceptIds.map((conceptId) => conceptByIdV4.get(conceptId)).filter(Boolean);
+      run.newConceptIds.forEach((conceptId) => {
+        const concept = conceptByIdV4.get(conceptId);
+        const skillId = skillIdByConceptIdV4.get(conceptId);
+        if (!concept || !skillId || runConcepts.length < 3) return;
+        const sound = makeSoundDiscriminationV4(concept, runConcepts);
+        const question = addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: sound.question,
+          phase: "guided-practice",
+          conceptIds: [conceptId],
+          skillIds: [skillId],
+          scope: `guided:sound:${conceptId}`
+        });
+        guided.push(applySoundFeedbackV4(question, sound));
+      });
+    }
+
+    const runDrills = drillsForRun(runIndex);
+    // The check drill must reuse a format the learner already practised here.
+    const checkDrillIndex = runDrills.length > 1
+      ? [...runDrills.keys()].reverse().find((index) => (
+        runDrills.some((other, otherIndex) => otherIndex !== index && other.kind === runDrills[index].kind)
+      ))
+      : undefined;
+    const checkDrill = checkDrillIndex === undefined ? null : runDrills[checkDrillIndex];
+    const guidedDrills = runDrills.filter((drill) => drill !== checkDrill).slice(0, 3);
+    // Anchor each drill to the run concept that shares the most words with it.
+    const drillAnchorIdsFor = (drill) => {
+      if (pattern?.modelConceptId && run.conceptIds.includes(pattern.modelConceptId)) return [pattern.modelConceptId];
+      const tokens = new Set(drillTokensV4(drill));
+      const ranked = run.conceptIds
+        .map((conceptId) => ({
+          conceptId,
+          overlap: dutchWordsV4(conceptByIdV4.get(conceptId)?.dutch || "")
+            .filter((word) => tokens.has(normalizedTextV4(word))).length
+        }))
+        .sort((left, right) => right.overlap - left.overlap);
+      return ranked.length ? [ranked[0].conceptId] : [];
+    };
+    if (runDrills.length && !run.patternId) {
+      // A run that only refreshes the pattern recognises it before producing it.
+      const isLessonPhrase = (drill) => run.conceptIds.some((conceptId) => (
+        normalizedTextV4(conceptByIdV4.get(conceptId)?.dutch) === normalizedTextV4(drillFullSentenceV4(drill))
+      ));
+      const recognitionDrill = runDrills.find((drill) => !isLessonPhrase(drill)) || runDrills[0];
+      const recognitionSentence = drillFullSentenceV4(recognitionDrill);
+      const sameConcept = [...conceptByIdV4.values()]
+        .find((concept) => normalizedTextV4(concept.dutch) === normalizedTextV4(recognitionSentence));
+      const recognitionUrdu = sameConcept
+        ? canonicalUrduForDutchV4(lesson, sameConcept.dutch, sameConcept.urdu)
+        : recognitionDrill.urdu;
+      const otherMeanings = uniqueV4([
+        ...runDrills.filter((drill) => drill !== recognitionDrill).map((drill) => drill.urdu),
+        ...run.conceptIds.map((conceptId) => {
+          const concept = conceptByIdV4.get(conceptId);
+          return concept ? canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu) : "";
+        })
+      ]).filter((value) => value && value !== recognitionUrdu);
+      const recognitionOptions = [recognitionUrdu, ...otherMeanings].slice(0, 3);
+      const recognition = addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: meaning(
+          recognitionSentence,
+          recognitionOptions,
+          recognitionUrdu,
+          `${recognitionSentence} = ${recognitionUrdu}۔ ${pattern.explanationUrdu}`
+        ),
+        phase: "understand",
+        conceptIds: drillAnchorIdsFor(recognitionDrill),
+        skillIds: [pattern.skillId],
+        scope: `understand:pattern-refresh:${pattern.id}`
+      });
+      const recognitionCorrect = `درست۔ “${recognitionSentence}” = “${recognitionUrdu}”۔`;
+      const recognitionWrong = `“${recognitionSentence}” کا مطلب “${recognitionUrdu}” ہے۔ ${pattern.explanationUrdu}`;
+      Object.assign(recognition, {
+        explainCorrectUrdu: recognitionCorrect,
+        correctExplanation: recognitionCorrect,
+        explainWrongUrdu: recognitionWrong,
+        wrongExplanation: recognitionWrong,
+        optionExplanationsUrdu: Object.fromEntries(recognitionOptions.slice(1).map((option) => [
+          option,
+          `“${option}” اس جملے کا مطلب نہیں۔ “${recognitionSentence}” = “${recognitionUrdu}”۔`
+        ]))
+      });
+      recognition.wrongExplanationsByOption = { ...recognition.optionExplanationsUrdu };
+      understand.push(recognition);
+    }
+    guidedDrills.forEach((drill, drillIndex) => {
+      const question = addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: makePatternDrillQuestionV4(drill, pattern),
+        phase: "guided-practice",
+        conceptIds: drillAnchorIdsFor(drill),
+        skillIds: [pattern.skillId],
+        scope: `guided:pattern-drill-${drillIndex + 1}:${pattern.id}`
+      });
+      guided.push(applyPatternDrillFeedbackV4(question, drill, pattern));
+    });
+
     if (chapterId === "a2" && run.conceptIds.length) {
       const documentConceptId = run.conceptIds[0];
       const documentConcept = conceptByIdV4.get(documentConceptId);
@@ -12615,8 +13230,42 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
     const earlierExercises = [...understand, ...guided, ...use];
     const desiredChecks = Math.min(6, Math.max(5, run.skillIds.length));
     const checks = [];
+    if (/^a0-sounds-/.test(lesson.id) && run.newConceptIds.length) {
+      // Check a word heard against its closest-sounding neighbours.
+      const runConcepts = run.conceptIds.map((conceptId) => conceptByIdV4.get(conceptId)).filter(Boolean);
+      const checkConceptId = run.newConceptIds[run.newConceptIds.length - 1 - (runIndex % run.newConceptIds.length)];
+      const checkConcept = conceptByIdV4.get(checkConceptId);
+      if (checkConcept && runConcepts.length >= 3) {
+        const sound = makeSoundDiscriminationV4(checkConcept, runConcepts);
+        sound.question.prompt = "بغیر مدد کے سنیں: کون سا لفظ سنائی دیا؟";
+        const question = addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: sound.question,
+          phase: "independent-check",
+          conceptIds: [checkConceptId],
+          skillIds: [skillIdByConceptIdV4.get(checkConceptId)],
+          scope: `check-sound:${checkConceptId}`
+        });
+        checks.push(applySoundFeedbackV4(question, sound));
+      }
+    }
+    if (checkDrill) {
+      // The pattern is checked with a sentence the learner has not practised.
+      const question = addSyntheticExerciseV4({
+        lesson,
+        run,
+        question: makePatternDrillQuestionV4(checkDrill, pattern),
+        phase: "independent-check",
+        conceptIds: drillAnchorIdsFor(checkDrill),
+        skillIds: [pattern.skillId],
+        scope: `check-pattern-drill:${pattern.id}`
+      });
+      checks.push(applyPatternDrillFeedbackV4(question, checkDrill, pattern));
+    }
     run.skillIds.forEach((skillId) => {
       if (checks.length >= desiredChecks) return;
+      if (checkDrill && skillId === pattern.skillId) return;
       const source = earlierExercises.find((question) => question.skillIds.includes(skillId))
         || earlierExercises[checks.length % Math.max(1, earlierExercises.length)];
       if (source) checks.push(cloneForIndependentCheckV4(lesson, run, source, checks.length, skillId));
@@ -13231,10 +13880,10 @@ const a0MissionPlansV4 = {
         "لفظی کارڈ پر پہلا سکھایا ہوا حرف لکھا ہے۔ درست حرف پہچانیں۔",
         "تصویری فہرست میں پہلے سکھائے ہوئے حرف کا خانہ مکمل کرنا ہے۔ درست حرف چنیں۔"
       ]),
-      a0MissionTargetV4("a0-letters-1", "b", [
-        "کتاب کے کارڈ پر دوسرا سکھایا ہوا حرف ہے۔ درست حرف پہچانیں۔",
-        "دکان کی چھوٹی فہرست میں دوسرا سکھایا ہوا حرف سنائی دیتا ہے۔ درست حرف چنیں۔",
-        "کمرے کی مشق میں دوسرے سکھائے ہوئے حرف کا کارڈ الگ رکھنا ہے۔ درست حرف پہچانیں۔"
+      a0MissionTargetV4("a0-sounds-vowels", "muis", [
+        "دیوار کے پاس ایک چوہا دکھائی دیتا ہے۔ اس کا ڈچ لفظ پہچانیں۔",
+        "دکان کی فہرست میں چوہے کی تصویر ہے۔ گول ہونٹ والی آواز کا درست لفظ چنیں۔",
+        "کمرے کی تصویری فہرست میں چوہے کے لیے صحیح لفظ لگائیں۔"
       ]),
       a0MissionTargetV4("a0-letters-2", "huis", [
         "گھر کی تصویر کے نیچے صحیح ڈچ لفظ لگانا ہے۔ درست لفظ چنیں۔",
@@ -13251,10 +13900,10 @@ const a0MissionPlansV4 = {
         "دکان میں چاول کے کارڈ پر لکھا لفظ پہچانیں۔",
         "کھانے کی تصویری فہرست میں چاول کے لیے صحیح لفظ لگائیں۔"
       ]),
-      a0MissionTargetV4("a0-letters-3", "water", [
-        "گھر کی فہرست میں پانی شامل کرنا ہے۔ صحیح ڈچ لفظ چنیں۔",
-        "دکان میں پانی کی بوتل کے کارڈ پر لکھا لفظ پہچانیں۔",
-        "تصویری فہرست میں پانی کے لیے صحیح لفظ لگائیں۔"
+      a0MissionTargetV4("a0-sounds-consonants", "schoen", [
+        "دروازے کے پاس ایک جوتا رکھا ہے۔ اس کا ڈچ لفظ چنیں۔",
+        "دکان کی فہرست میں جوتے کا لفظ پہچانیں۔",
+        "کمرے کی تصویری فہرست میں جوتے کے لیے صحیح لفظ لگائیں۔"
       ])
     ]
   },

@@ -12,6 +12,12 @@
       "port": 4174
     },
     {
+      "name": "node-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "process.env.PORT='4182'; require('./server.js')"],
+      "port": 4182
+    },
+    {
       "name": "attach",
       "url": "http://127.0.0.1:4173",
       "port": 4173
