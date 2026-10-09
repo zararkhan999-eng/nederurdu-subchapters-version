@@ -8,7 +8,7 @@
         <item name="android:statusBarColor">@color/app_background</item>
         <item name="android:navigationBarColor">@color/app_background</item>
         <!-- System splash screen leads straight into the blue web launch screen. -->
-        <item name="android:windowSplashScreenBackground">@color/brand_blue</item>
+        <item name="android:windowSplashScreenBackground">@color/brand_orange</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
     </style>
 </resources>

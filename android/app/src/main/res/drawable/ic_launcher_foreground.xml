@@ -4,11 +4,15 @@
     android:viewportWidth="192"
     android:viewportHeight="192">
     <group
-        android:pivotX="96"
-        android:pivotY="94.5"
+        android:pivotX="99.5"
+        android:pivotY="98.5"
         android:scaleX="0.7"
         android:scaleY="0.7"
-        android:translateY="1.5">
+        android:translateX="-3.5"
+        android:translateY="-2.5">
+        <path
+            android:fillColor="@color/brand_navy"
+            android:pathData="M54,161V93a49,49 0,0 1,98 0v68h-26V93a23,23 0,0 0,-46 0v68Z" />
         <path
             android:fillColor="@color/brand_gold"
             android:pathData="M47,153V85a49,49 0,0 1,98 0v68h-26V85a23,23 0,0 0,-46 0v68Z" />

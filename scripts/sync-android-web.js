@@ -6,13 +6,16 @@ require("./generate-offline-visual-manifest.js");
 const root = path.resolve(__dirname, "..");
 const target = path.join(root, "android", "app", "src", "main", "assets", "public");
 
-// Only the files index.html actually loads. Older stylesheets (styles.css,
-// duo.css, open-door-layout.css, ...) stay in the repo but are not shipped.
-// sw.js is left out too: service workers do not run from file:///android_asset.
+// Only the files index.html loads, directly or through a CSS @import
+// (open-door.css imports open-door-layout.css as its foundation layer).
+// Older stylesheets (styles.css, duo.css, ...) stay in the repo but are not
+// shipped. sw.js is left out too: service workers do not run from
+// file:///android_asset.
 const files = [
   "index.html",
   "manifest.webmanifest",
   "icon.svg",
+  "open-door-layout.css",
   "open-door.css",
   "playful.css",
   "world.css",
@@ -49,9 +52,12 @@ function copyDirectory(source, destination) {
   }
 }
 
-const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
-const referenced = [...indexHtml.matchAll(/(?:href|src)="([^"?#]+)/g)].map((match) => match[1]);
-const missing = referenced.filter((file) => !files.includes(file));
+const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+const referenced = [...read("index.html").matchAll(/(?:href|src)="([^"?#]+)/g)].map((match) => match[1]);
+for (const file of files.filter((name) => name.endsWith(".css"))) {
+  for (const match of read(file).matchAll(/@import\s+url\(\s*["']?([^"')?#]+)/g)) referenced.push(match[1]);
+}
+const missing = [...new Set(referenced)].filter((file) => !files.includes(file));
 if (missing.length) {
   throw new Error(`index.html loads files the Android sync does not copy: ${missing.join(", ")}`);
 }

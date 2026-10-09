@@ -1,7 +1,8 @@
 <resources>
-    <!-- Matches the web app: page background and the cobalt door brand. -->
+    <!-- Matches the web app: page background and the launch screen (oranje, gold door, navy shadow). -->
     <color name="app_background">#FFFDF9</color>
-    <color name="brand_blue">#2047ED</color>
+    <color name="brand_orange">#FF7A1A</color>
+    <color name="brand_navy">#10298F</color>
     <color name="brand_gold">#F1D27A</color>
     <color name="brand_door">#D87D5C</color>
 </resources>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ur">
+<head>
+<meta charset="utf-8">
+<title>NederUrdu feature graphic</title>
+<style>
+  @font-face{font-family:'DM Sans';src:url('../../../assets/fonts/dm-sans.ttf') format('truetype');font-weight:100 1000}
+  @font-face{font-family:'Noto Naskh Arabic';src:url('../../../assets/fonts/noto-naskh-arabic.ttf') format('truetype');font-weight:400 700}
+  html,body{margin:0}
+  /* Google Play feature graphic: exactly 1024 x 500. */
+  .graphic{position:relative;width:1024px;height:500px;overflow:hidden;background:#2047ed;color:#fff;font-family:'DM Sans',sans-serif}
+  .glow{position:absolute;right:-120px;top:-160px;width:620px;height:620px;border-radius:50%;background:#3a5ff5}
+  .street{position:absolute;left:0;right:0;bottom:0;height:86px;background:#10298f}
+  .street::before{content:"";position:absolute;left:0;right:0;top:40px;border-top:6px dashed #f1d27a;opacity:.55}
+  .door{position:absolute;right:96px;bottom:86px;width:190px}
+  .cat{position:absolute;right:250px;bottom:40px}
+  .copy{position:absolute;left:72px;top:92px;width:520px}
+  .copy h1{margin:0;font-size:84px;font-weight:800;letter-spacing:-1px;line-height:1}
+  .copy .ur{margin:22px 0 0;font:700 40px/1.7 'Noto Naskh Arabic',serif;direction:rtl;text-align:left;color:#f1d27a}
+  .copy .nl{margin:6px 0 0;font-size:26px;font-weight:600;opacity:.92}
+  .chips{display:flex;gap:10px;margin-top:22px}
+  .chips span{padding:6px 14px;border-radius:99px;background:#ffffff22;font-size:18px;font-weight:700}
+</style>
+</head>
+<body>
+  <div class="graphic" id="capture">
+    <div class="glow"></div>
+    <svg class="door" viewBox="47 36 98 117" aria-hidden="true">
+      <path d="M47 153V85a49 49 0 0 1 98 0v68h-26V85a23 23 0 0 0-46 0v68Z" fill="#f1d27a"/>
+      <path d="m73 153 36-14V70L73 85Z" fill="#d87d5c"/>
+      <circle cx="99" cy="108" r="3" fill="#f1d27a"/>
+    </svg>
+    <div class="street"></div>
+    <div class="cat" id="cat"></div>
+    <div class="copy">
+      <h1>NederUrdu</h1>
+      <p class="ur">اردو کے ذریعے ڈچ سیکھیں</p>
+      <p class="nl">Leer Nederlands, stap voor stap</p>
+      <div class="chips"><span>A0 · A1 · A2</span><span>Offline</span><span>Urdu ↔ Nederlands</span></div>
+    </div>
+  </div>
+  <script src="../../../motion.js"></script>
+  <script src="../../../cat.js"></script>
+  <script>document.getElementById("cat").innerHTML = NU.cat.render({ size: 300, mood: "happy" });</script>
+</body>
+</html>
