@@ -19,7 +19,7 @@ NU.map = (() => {
   const SIGNS = {
     cafe: '<path d="M-7-4h12v6a6 6 0 0 1-12 0Z" fill="#fff"/><path d="M5-2h3a2.5 2.5 0 0 1 0 5H5" fill="none" stroke="#fff" stroke-width="2"/>',
     school: '<text x="0" y="4" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" font-family="DM Sans,sans-serif">ABC</text>',
-    home: '<path d="M-7 1 0-6l7 7v6h-14Z" fill="#fff"/><path d="M-6 0A4 4 0 0 1 0-2a4 4 0 0 1 6 2c0 3-6 6-6 6s-6-3-6-6Z" fill="#ff5ca8" transform="translate(0 -1) scale(.5)"/>',
+    home: '<path d="M-8 0 0-7l8 7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M-5.5-1v8h11v-8" fill="#fff"/><rect x="-1.8" y="2" width="3.6" height="5" rx="1.2" fill="#2a2f45"/>',
     clock: '<circle r="7" fill="#fff"/><path d="M0-4V0l3 2" stroke="#2a2f45" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
     station: '<rect x="-8" y="-6" width="16" height="11" rx="3" fill="#fff"/><path d="M-6-2h12" stroke="#2b6bff" stroke-width="2"/><circle cx="-4" cy="7" r="1.6" fill="#fff"/><circle cx="4" cy="7" r="1.6" fill="#fff"/>',
     shop: '<path d="M-8-5h3l2 9h9l2-6H-4" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><circle cx="-2" cy="7" r="1.6" fill="#fff"/><circle cx="5" cy="7" r="1.6" fill="#fff"/>',
@@ -86,7 +86,7 @@ NU.map = (() => {
     return "";
   }
 
-  function render({ chapter, units, completed, total }) {
+  function render({ chapter, units, completed, total, nextChapter = null }) {
     const percent = total ? Math.round((completed / total) * 100) : 0;
     let lessonNumber = 0;
     const sections = units.map((unit, u) => {
@@ -97,7 +97,7 @@ NU.map = (() => {
       const left = u % 2 === 0;                       // building side
       const centre = left ? 64 : 36, amp = 14;
       const n = unit.lessons.length;
-      const height = PAD * 2 + (n - 1) * GAP;
+      const height = Math.max(PAD * 2 + (n - 1) * GAP, 236);   // short units still need room for their building
       const points = unit.lessons.map((_, i) => ({ x: centre + amp * Math.sin(i * 1.15 + (left ? 0.4 : 2.2)), y: PAD + i * GAP }));
       const pathFrom = (pts, startY, endY) => {
         let d = `M${pts[0].x.toFixed(2)} ${startY}L${pts[0].x.toFixed(2)} ${pts[0].y}`;
@@ -126,9 +126,9 @@ NU.map = (() => {
       }).join("");
       const midY = PAD + ((n - 1) * GAP) / 2;
       const scenery = n >= 3
-        ? `${tree(left ? 12 : 88, Math.max(26, midY - 96))}${tulips(left ? 24 : 76, Math.min(height - 22, midY + 92))}`
+        ? `${tree(left ? 10 : 90, Math.max(30, midY - 92))}${tulips(left ? 25 : 75, Math.max(40, midY - 82))}`
         : "";
-      return `<section class="map-unit map-unit-${state}" style="--unit:${color}" data-unit="${esc(unit.id)}">
+      return `<section class="map-unit map-unit-${state} ${unit.trophy ? "map-unit-trophy" : ""}" style="--unit:${color}" data-unit="${esc(unit.id)}">
         <header class="map-banner">
           <span class="map-banner-num latin">${unit.trophy ? "★" : u + 1}</span>
           <div><strong>${esc(unit.title)}</strong>${unit.goal ? `<small>${esc(unit.goal)}</small>` : ""}</div>
@@ -149,9 +149,15 @@ NU.map = (() => {
     return `<section class="map" data-chapter="${esc(chapter.id)}">
       <header class="map-hero">
         <div class="map-hero-ring" style="--p:${percent}"><span class="latin">${percent}%</span></div>
-        <div><span class="map-hero-kicker latin">${esc(chapter.id.toUpperCase())}</span><h1>${esc(chapter.title)}</h1><p>${esc(chapter.subtitle || "")}</p><small>${completed} / ${total} سبق مکمل</small></div>
+        <div><span class="map-hero-kicker">آپ کا سفر</span><h1>${esc(chapter.title)}</h1><p>${esc(chapter.subtitle || "")}</p><small>${completed} / ${total} سبق مکمل</small></div>
       </header>
       ${sections}
+      <footer class="map-finish">
+        <svg class="map-finish-flag" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 44V6" stroke="#2a2f45" stroke-width="3" stroke-linecap="round"/><path d="M11 7h28v20H11Z" fill="#fff" stroke="#2a2f45" stroke-width="2"/><path d="M11 7h7v5h-7Zm14 0h7v5h-7Zm-7 5h7v5h-7Zm14 0h7v5h-7Zm-21 5h7v5h-7Zm14 0h7v5h-7Zm-7 5h7v5h-7Zm14 0h7v5h-7Z" fill="#2a2f45"/></svg>
+        <strong>${completed >= total ? `${esc(chapter.id.toUpperCase())} مکمل — شاباش!` : `${esc(chapter.id.toUpperCase())} کی منزل`}</strong>
+        <small>${nextChapter ? `اس کے بعد ${esc(nextChapter.id.toUpperCase())} کا سفر شروع ہوتا ہے۔` : "یہ آخری باب ہے۔ آپ نے بہت لمبا سفر طے کیا!"}</small>
+        ${nextChapter ? `<button class="secondary-button map-finish-next" data-action="chapter" data-chapter="${esc(nextChapter.id)}"><span class="latin">${esc(nextChapter.id.toUpperCase())}</span> کا نقشہ دیکھیں</button>` : ""}
+      </footer>
       <div class="map-pim" aria-hidden="true"><span class="map-pim-say">یہاں سے شروع!</span>${NU.cat.render({ size: 92 })}</div>
     </section>`;
   }
@@ -184,6 +190,9 @@ NU.map = (() => {
     trail.append(card);
     card.querySelector(".map-card-go").addEventListener("click", (e) => { e.stopPropagation(); closeCard(); onOpen(lesson); });
     NU.motion.drop(card);
+    // Keyboard users land on the card's action; Escape returns them to the stop.
+    card.querySelector(".map-card-go").focus({ preventScroll: true });
+    card.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeCard(); node.focus(); } });
     if (card.getBoundingClientRect().bottom > innerHeight - 90) card.scrollIntoView({ block: "center", behavior: NU.motion.level() === "off" ? "auto" : "smooth" });
   }
 
@@ -196,7 +205,7 @@ NU.map = (() => {
     const width = trail.clientWidth, nodeX = current.offsetLeft, nodeY = current.offsetTop;
     const toLeft = nodeX > width / 2;                       // park on the roomier side of the stop
     const x = toLeft ? nodeX - 52 - 92 : nodeX + 52;
-    const y = Math.max(nodeY - 58, 38);                     // keep the speech label clear of the unit banner
+    const y = Math.max(nodeY - 58, 48);                     // keep the speech label clear of the unit banner
     const cat = pim.querySelector(".nu-cat");
     cat.classList.toggle("cat-facing-left", !toLeft);
     pim.classList.toggle("is-left", toLeft);

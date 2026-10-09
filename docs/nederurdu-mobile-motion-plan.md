@@ -135,3 +135,13 @@ Pim's face (`NU.cat.render({ face: true })`) replaces the old doorway mark in th
 - On opening, the map scrolls to the next lesson and Pim rides in, parks beside it and says "یہاں سے شروع!". Tapping a stop opens a small card with its title, time and a start/review button that opens the preview.
 - Chapter header shows a progress ring; chapter chips are chunky tabs. All lessons stay browseable (curriculum rule).
 - Checked at 375 px with progress states, all three chapters, the trophy stop, stop cards and reduced motion (Pim parked, nothing running). `motion-lab.html` now shows Pim's moods and every building.
+
+### Phase 2 polish
+
+- Mastered mission stops stay gold (the purple mission style applies only to stops ahead); the house sign is a clear house; tulips sit beside the tree instead of on building doors; Pim's label keeps clear of unit banners.
+- Single-lesson units (the trophy) reserve room for their building; the trophy unit stays golden while ahead.
+- Every map ends with a finish card: a checkered flag and a button to the next chapter's map, or a closing message on the last chapter.
+- Hero chip reads "آپ کا سفر" instead of repeating the chapter id; the chapter row lost an old dark shadow.
+- Stop cards take keyboard focus and close with Escape, returning focus to the stop.
+- Fix: settling animations when the app is backgrounded no longer throws on endless loops (blink, clouds), which previously stopped the remaining transitions from settling.
+- Checked at 375 and 320 px in A0, A1 and A2 with mixed progress; Android debug build passes.

@@ -1297,7 +1297,7 @@ function renderJourney() {
   if (chapter.subchapters?.length && finale.length) {
     units.push({ id: `${chapter.id}-finale`, title: `${chapter.id.toUpperCase()} آخری مشن`, goal: "پورے باب کی باتیں ایک مسلسل روزمرہ مشن میں استعمال کریں۔", trophy: true, lessons: finale.map((lesson) => toStop(lesson, true)) });
   }
-  return `<main class="utility-screen journey-screen pl-journey">${renderProgressHeader()}${renderChapterSwitcher()}${NU.map.render({ chapter, units, completed: chapterCompletedCount(chapter), total: chapter.lessons.length })}</main>`;
+  return `<main class="utility-screen journey-screen pl-journey">${renderProgressHeader()}${renderChapterSwitcher()}${NU.map.render({ chapter, units, completed: chapterCompletedCount(chapter), total: chapter.lessons.length, nextChapter: chapters[chapters.indexOf(chapter) + 1] || null })}</main>`;
 }
 
 function renderToolkit() {

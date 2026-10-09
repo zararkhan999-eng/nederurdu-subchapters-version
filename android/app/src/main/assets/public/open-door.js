@@ -135,6 +135,7 @@ window.OpenDoor = (() => {
     lastKey=key;lastSelected=state.selected;lastChecked=state.checked;lastDetail=state.detail;
   }
   media.addEventListener("change", () => {if(media.matches) document.getAnimations().forEach(a=>a.cancel());});
-  document.addEventListener("visibilitychange",()=>{if(document.hidden) document.getAnimations().forEach(a=>a.finish());});
+  // Settle one-off motion when the app is backgrounded; endless loops (blinks, clouds) cannot be finished.
+  document.addEventListener("visibilitychange",()=>{if(document.hidden) document.getAnimations().forEach(a=>{if(a.effect?.getComputedTiming().endTime!==Infinity) a.finish();});});
   return {scene,situation,skipNextTransition:()=>{skipNext=true;},choreograph,prepareTransition,tokens: text => String(text || "").trim().split(/\s+/).map(word=>`<span class="od-grammar-token">${safe(word)}</span>`).join(" ")};
 })();

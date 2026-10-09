@@ -109,7 +109,15 @@ body.od-reduced .nu-cat *,body.od-reduced #app .street *{animation:none!importan
 #app .pl-today .od-support strong{font-weight:800}
 
 /* ---- Journey map ---------------------------------------------------------- */
-#app .pl-journey .chapter-switcher-wrap{margin-bottom:14px}
+#app .pl-journey .chapter-switcher-wrap{margin-bottom:16px}
+#app .pl-journey .chapter-switcher{box-shadow:none;background:none}
+#app .pl-journey .chapter-switcher-label span{font-weight:800;font-size:18px;color:var(--pl-ink)}
+#app .pl-journey .chapter-switcher-label small{color:var(--pl-muted)}
+#app .map-finish{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 10px;padding:22px 18px;border:2px dashed #e0d6c6;border-radius:var(--pl-radius-lg);text-align:center}
+#app .map-finish-flag{width:56px;height:56px}
+#app .map-finish strong{font-size:19px;font-weight:800;color:var(--pl-ink)}
+#app .map-finish small{color:var(--pl-muted);line-height:1.7}
+#app .map-finish-next{margin-top:10px;width:auto;padding-inline:22px}
 #app .pl-journey .chapter-chip{border:2px solid var(--pl-line);border-radius:16px;box-shadow:0 4px 0 var(--pl-line);background:#fff}
 #app .pl-journey .chapter-chip.active{border-color:var(--pl-blue);background:var(--pl-blue-soft);box-shadow:0 4px 0 var(--pl-blue)}
 #app .pl-journey .chapter-chip:active{transform:translateY(4px);box-shadow:none}
@@ -128,7 +136,8 @@ body.od-reduced .nu-cat *,body.od-reduced #app .street *{animation:none!importan
 #app .map-banner>div{flex:1;min-width:0}
 #app .map-banner-num{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#ffffff33;font-weight:800;font-size:18px}
 #app .map-banner-count{flex-shrink:0;padding:3px 10px;border-radius:99px;background:#ffffff33;font-weight:800;font-size:13px}
-#app .map-unit-ahead .map-banner{filter:saturate(.55)}
+#app .map-unit-ahead:not(.map-unit-trophy) .map-banner{filter:saturate(.55)}
+#app .map-unit-trophy .map-building-ahead{filter:none}
 #app .map-trail{position:relative;margin:0 -6px}
 #app .map-road{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 #app .map-road path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
@@ -160,7 +169,7 @@ body.od-reduced .nu-cat *,body.od-reduced #app .street *{animation:none!importan
 #app .map-node-current{width:80px;height:80px}
 #app .map-node-current .map-node-face{background:var(--pl-oranje);border-color:#ffa463;box-shadow:0 7px 0 var(--pl-oranje-dark);color:#fff}
 #app .map-node-current .map-node-face svg{width:36px;height:36px}
-#app .map-node.is-mission:not(.map-node-done):not(.map-node-current) .map-node-face{border-color:#c9b6ff;color:var(--pl-purple)}
+#app .map-node-ahead.is-mission .map-node-face{border-color:#c9b6ff;color:var(--pl-purple)}
 #app .map-node.is-open .map-node-face{transform:scale(1.08)}
 #app .map-node-ring{position:absolute;inset:-9px;border-radius:50%;border:4px solid var(--pl-oranje);opacity:.5}
 :root:not([data-effects=reduced]) #app .map-node-ring{animation:map-ring 1.8s ease-out infinite}
