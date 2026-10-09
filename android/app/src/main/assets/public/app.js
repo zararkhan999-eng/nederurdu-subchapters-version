@@ -1200,6 +1200,7 @@ function render() {
   animatePreviewScene(screenChanged);
   if (screen === "journey") NU.map.mount(app.querySelector(".map"), { entered: screenChanged || chapterChanged, onOpen: showLessonPreview });
   animateLessonProgress();
+  reserveLessonFooterSpace();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -1207,6 +1208,34 @@ function render() {
     restoreLessonContentScrollTop(sameQuestionScrollTop);
   }
 }
+
+// The lesson footer is fixed. A long feedback explanation can make it taller
+// than the space CSS reserves under the lesson, which hid the answers on small
+// phones; grow the reserve to the footer's real height.
+function reserveLessonFooterSpace() {
+  const content = app.querySelector(".quiz-content");
+  const footer = app.querySelector(".quiz-feedback-panel, .quiz-action-bar");
+  if (!content || !footer) return;
+  content.style.paddingBottom = "";
+  const reserved = parseFloat(getComputedStyle(content).paddingBottom) || 0;
+  const needed = Math.ceil(footer.getBoundingClientRect().height) + 24;
+  if (needed > reserved) content.style.paddingBottom = `${needed}px`;
+}
+
+// When the on-screen keyboard opens the viewport shrinks, and the answer field
+// can end up behind the fixed lesson footer. Bring it back into view.
+// Scroll only as far as needed so the question above the field stays visible.
+window.addEventListener("resize", () => {
+  const field = document.activeElement;
+  if (screen !== "lesson" || !field?.matches?.("input, textarea")) return;
+  requestAnimationFrame(() => {
+    const content = app.querySelector(".quiz-content");
+    const footer = app.querySelector(".quiz-feedback-panel, .quiz-action-bar");
+    if (!content || !footer) return;
+    const overlap = field.getBoundingClientRect().bottom - (footer.getBoundingClientRect().top - 12);
+    if (overlap > 0) content.scrollTop += overlap;
+  });
+});
 
 function renderExperienceBackdrop() {
   return navigator.onLine ? "" : `<div class="od-offline pl-offline" role="status"><span aria-hidden="true">${NU.cat.render({ face: true, size: 30 })}</span>آف لائن ہیں — اسباق پھر بھی چلتے ہیں۔</div>`;
@@ -3032,7 +3061,7 @@ function renderSettings() {
       <button class="secondary-button danger-button" data-action="reset">${renderIcon("trash")}<span>پیش رفت دوبارہ شروع کریں</span></button>
       <div class="settings-section-heading"><strong>ایپ کے بارے میں</strong><span></span></div>
       <div class="settings-about">
-        <p><b>رازداری:</b> آپ کی پیش رفت صرف اسی فون میں محفوظ ہوتی ہے۔ کوئی اکاؤنٹ، اشتہار، یا ٹریکنگ نہیں، اور ایپ انٹرنیٹ استعمال نہیں کرتی۔</p>
+        <p><b>رازداری:</b> سیکھنے کا ریکارڈ صرف اسی فون میں محفوظ ہوتا ہے۔ کوئی اکاؤنٹ، اشتہار، یا ٹریکنگ نہیں، اور ایپ انٹرنیٹ استعمال نہیں کرتی۔</p>
         <p><b>ورژن:</b> <span class="latin" dir="ltr">${APP_VERSION}</span></p>
       </div>
       <p class="pl-settings-foot"><span aria-hidden="true">${NU.cat.render({ face: true, size: 34 })}</span>NederUrdu · <b class="latin">${NU.cat.NAME}</b> کے ساتھ ڈچ سیکھیں</p>
@@ -4240,7 +4269,8 @@ function escapeHtml(value) {
 function escapeMixedText(value) {
   return escapeHtml(value).replace(
     /“([^“”؀-ۿ]*[A-Za-zÀ-ÿ][^“”؀-ۿ]*)”/g,
-    '<bdi class="latin" dir="ltr">“$1”</bdi>'
+    // Short phrases stay on one line; longer ones may wrap on narrow phones.
+    (match, phrase) => `<bdi class="mixed-latin${phrase.length <= 24 ? " is-short" : ""}" dir="ltr">“${phrase}”</bdi>`
   );
 }
 

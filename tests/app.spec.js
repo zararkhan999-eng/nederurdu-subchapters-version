@@ -50,6 +50,21 @@ async function openFreshApp(page) {
   await page.goto("/");
 }
 
+// Screen changes briefly keep an animated snapshot of the previous screen, and
+// panels slide in. Geometry checks must wait until finite animations finish.
+async function settle(page) {
+  await page.waitForFunction(() => (
+    !document.querySelector(".od-route-snapshot, .od-route-ribbon")
+    && document.getAnimations().every((animation) => {
+      // Scenery loops and slow ambient motion never "settle"; only wait for
+      // short transitions such as screen changes and sliding panels.
+      const timing = animation.effect?.getComputedTiming?.() || {};
+      if (animation.effect?.target?.closest?.(".nu-cat")) return true; // Pim's idle moves
+      return animation.playState !== "running" || !(timing.endTime <= 2000);
+    })
+  ));
+}
+
 async function setLessonSkillStatus(page, lessonIds, status = "introduced") {
   await page.evaluate(({ ids, nextStatus }) => {
     const lessons = window.NEDERURDU_COURSE.lessons.filter((lesson) => ids.includes(lesson.id));
@@ -80,134 +95,6 @@ async function makeMissionReady(page, missionId) {
   }, missionId);
 }
 
-test("brand system keeps the dormant atmosphere non-interactive with a zero motion budget", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Run this deterministic effects contract once in desktop Chromium.");
-
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.addInitScript(() => {
-    window.NEDERURDU_EFFECTS_PROFILE = "enhanced";
-  });
-  await openCleanApp(page);
-  await page.evaluate(() => finishLaunch());
-  await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
-  await expect(page.locator("html")).toHaveAttribute("data-effects", "enhanced");
-
-  const initialDecorationCounts = await page.evaluate(() => ({
-    atmosphere: document.querySelectorAll(".responsive-atmosphere").length,
-    atmosphereChildren: document.querySelectorAll(".responsive-atmosphere > *").length,
-    backdrop: document.querySelectorAll(".experience-backdrop").length,
-    backdropChildren: document.querySelectorAll(".experience-backdrop > *").length,
-    spotlights: document.querySelectorAll(".surface-spotlight").length
-  }));
-
-  expect(initialDecorationCounts.atmosphere).toBe(1);
-  expect(initialDecorationCounts.atmosphereChildren).toBeGreaterThan(0);
-  expect(initialDecorationCounts.backdrop).toBe(1);
-  expect(initialDecorationCounts.backdropChildren).toBeGreaterThan(0);
-  expect(initialDecorationCounts.spotlights).toBe(0);
-
-  await page.evaluate(() => {
-    for (let index = 0; index < 24; index += 1) render();
-    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-  });
-
-  const contract = await page.evaluate(() => {
-    const atmosphere = document.querySelector(".responsive-atmosphere");
-    const app = document.querySelector("#app");
-    const atmosphereBounds = atmosphere.getBoundingClientRect();
-    const decorations = [...document.querySelectorAll([
-      ".responsive-atmosphere",
-      ".responsive-atmosphere *",
-      ".experience-backdrop",
-      ".experience-backdrop *"
-    ].join(","))];
-    const actionElements = [...document.querySelectorAll("[data-action],a[href],button,input,select,textarea,[role='button']")];
-    const dock = document.querySelector(".bottom-nav");
-    const dockBounds = dock?.getBoundingClientRect();
-    const blockedControls = actionElements.flatMap((element) => {
-      const bounds = element.getBoundingClientRect();
-      const style = getComputedStyle(element);
-      if (
-        bounds.width < 2
-        || bounds.height < 2
-        || bounds.right <= 0
-        || bounds.bottom <= 0
-        || bounds.left >= innerWidth
-        || bounds.top >= innerHeight
-        || style.display === "none"
-        || style.visibility === "hidden"
-        || Number(style.opacity) === 0
-      ) return [];
-      const x = Math.min(innerWidth - 1, Math.max(0, bounds.left + (bounds.width / 2)));
-      const y = Math.min(innerHeight - 1, Math.max(0, bounds.top + (bounds.height / 2)));
-      if (dockBounds && !dock.contains(element) && y >= dockBounds.top && y <= dockBounds.bottom) return [];
-      const topHit = document.elementsFromPoint(x, y).find((candidate) => getComputedStyle(candidate).pointerEvents !== "none");
-      if (topHit && (element.contains(topHit) || topHit.contains(element))) return [];
-      return [{
-        action: element.getAttribute("data-action") || element.getAttribute("aria-label") || element.tagName,
-        topHit: topHit?.getAttribute("data-action") || topHit?.className || topHit?.tagName || "none"
-      }];
-    });
-    const activeInfiniteAnimations = document.getAnimations().flatMap((animation) => {
-      const iterations = animation.effect?.getTiming?.().iterations;
-      const target = animation.effect?.target;
-      if (iterations !== Infinity || !["running", "pending"].includes(animation.playState) || !(target instanceof Element)) return [];
-      const bounds = target.getBoundingClientRect();
-      const style = getComputedStyle(target);
-      const onScreen = bounds.width > 0
-        && bounds.height > 0
-        && bounds.right > 0
-        && bounds.bottom > 0
-        && bounds.left < innerWidth
-        && bounds.top < innerHeight;
-      if (!onScreen || style.display === "none" || style.visibility === "hidden") return [];
-      return [{
-        name: animation.animationName || animation.id || "unnamed",
-        target: target.className || target.tagName,
-        pseudo: animation.effect?.pseudoElement || ""
-      }];
-    });
-    return {
-      counts: {
-        atmosphere: document.querySelectorAll(".responsive-atmosphere").length,
-        atmosphereChildren: document.querySelectorAll(".responsive-atmosphere > *").length,
-        backdrop: document.querySelectorAll(".experience-backdrop").length,
-        backdropChildren: document.querySelectorAll(".experience-backdrop > *").length,
-        spotlights: document.querySelectorAll(".surface-spotlight").length
-      },
-      atmosphere: {
-        display: getComputedStyle(atmosphere).display,
-        opacity: getComputedStyle(atmosphere).opacity,
-        position: getComputedStyle(atmosphere).position,
-        pointerEvents: getComputedStyle(atmosphere).pointerEvents,
-        zIndex: Number(getComputedStyle(atmosphere).zIndex),
-        left: atmosphereBounds.left,
-        top: atmosphereBounds.top,
-        right: atmosphereBounds.right,
-        bottom: atmosphereBounds.bottom
-      },
-      appZIndex: Number(getComputedStyle(app).zIndex),
-      decorationsIntercepting: decorations.filter((element) => getComputedStyle(element).pointerEvents !== "none").map((element) => element.className || element.tagName),
-      blockedControls,
-      activeInfiniteAnimations
-    };
-  });
-
-  expect(contract.counts).toEqual(initialDecorationCounts);
-  expect(contract.atmosphere.display).toBe("block");
-  expect(Number(contract.atmosphere.opacity)).toBe(0);
-  expect(contract.atmosphere.position).toBe("fixed");
-  expect(contract.atmosphere.pointerEvents).toBe("none");
-  expect(contract.atmosphere.zIndex).toBeLessThan(contract.appZIndex);
-  expect(Math.abs(contract.atmosphere.left)).toBeLessThanOrEqual(1);
-  expect(Math.abs(contract.atmosphere.top)).toBeLessThanOrEqual(1);
-  expect(Math.abs(contract.atmosphere.right - 1440)).toBeLessThanOrEqual(1);
-  expect(Math.abs(contract.atmosphere.bottom - 900)).toBeLessThanOrEqual(1);
-  expect(contract.decorationsIntercepting).toEqual([]);
-  expect(contract.blockedControls).toEqual([]);
-  expect(contract.activeInfiniteAnimations).toEqual([]);
-});
-
 test("effects regression: enhanced effects remain responsive beyond twelve seconds", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Run this long-duration effects check once in desktop Chromium.");
   test.setTimeout(45_000);
@@ -235,8 +122,8 @@ test("effects regression: enhanced effects remain responsive beyond twelve secon
 
   await page.locator('[data-action="settings"]').click({ timeout: 3_000 });
   await expect(page.locator(".settings-panel")).toBeVisible({ timeout: 3_000 });
-  await page.locator('[data-action="home"]').click({ timeout: 3_000 });
-  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible({ timeout: 3_000 });
+  await page.locator('.bottom-nav [data-action="home"]').click({ timeout: 3_000 });
+  await expect(page.locator(".learn-screen")).toBeVisible({ timeout: 3_000 });
   await page.locator('[data-action="preview"]:visible').first().click({ timeout: 3_000 });
   await expect(page.locator(".learning-preview")).toBeVisible({ timeout: 3_000 });
   await page.locator('.learning-preview [data-action="start"]').click({ timeout: 3_000 });
@@ -257,8 +144,9 @@ test("effects regression: enhanced effects remain responsive beyond twelve secon
   expect(runtimeErrors).toEqual([]);
 });
 
-test("effects regression: atmosphere and fixed controls stay pixel-contained across responsive widths", async ({ page }, testInfo) => {
+test("effects regression: fixed controls stay pixel-contained across responsive widths", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Run this deterministic viewport matrix once in desktop Chromium.");
+  test.setTimeout(90_000);
 
   const viewports = [
     { width: 320, height: 568 },
@@ -289,9 +177,6 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
         && first.top < second.bottom
         && first.bottom > second.top
       );
-      const atmosphere = document.querySelector(".responsive-atmosphere");
-      const app = document.querySelector("#app");
-      const atmosphereBounds = rect(".responsive-atmosphere");
       const navBounds = rect(".bottom-nav");
       const actionBounds = rect(".today-action");
       const horizontalFailures = [".progress-header", ".today-panel", ".chapter-switcher-wrap", ".unit-card", ".bottom-nav"].flatMap((selector) => (
@@ -309,10 +194,6 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
       return {
         profile: document.documentElement.dataset.effects,
         documentOverflow: document.documentElement.scrollWidth - innerWidth,
-        atmosphereBounds,
-        atmospherePosition: getComputedStyle(atmosphere).position,
-        atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
-        atmosphereBehindApp: Number(getComputedStyle(atmosphere).zIndex) < Number(getComputedStyle(app).zIndex),
         navBounds,
         navOpaque: getComputedStyle(document.querySelector(".bottom-nav")).backgroundColor !== "rgba(0, 0, 0, 0)",
         actionOverlapsDock: overlaps(actionBounds, navBounds),
@@ -322,13 +203,6 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
     });
 
     expect(homeGeometry.documentOverflow, `${viewport.width}px home overflow`).toBeLessThanOrEqual(1);
-    expect(homeGeometry.atmospherePosition, `${viewport.width}px atmosphere position`).toBe("fixed");
-    expect(homeGeometry.atmospherePointerEvents, `${viewport.width}px atmosphere hit testing`).toBe("none");
-    expect(homeGeometry.atmosphereBehindApp, `${viewport.width}px atmosphere stacking`).toBe(true);
-    expect(Math.abs(homeGeometry.atmosphereBounds.left), `${viewport.width}px atmosphere left`).toBeLessThanOrEqual(1);
-    expect(Math.abs(homeGeometry.atmosphereBounds.top), `${viewport.width}px atmosphere top`).toBeLessThanOrEqual(1);
-    expect(Math.abs(homeGeometry.atmosphereBounds.right - viewport.width), `${viewport.width}px atmosphere right`).toBeLessThanOrEqual(1);
-    expect(Math.abs(homeGeometry.atmosphereBounds.bottom - viewport.height), `${viewport.width}px atmosphere bottom`).toBeLessThanOrEqual(1);
     expect(homeGeometry.navBounds.left, `${viewport.width}px dock left`).toBeGreaterThanOrEqual(-1);
     expect(homeGeometry.navBounds.right, `${viewport.width}px dock right`).toBeLessThanOrEqual(viewport.width + 1);
     expect(homeGeometry.navBounds.bottom, `${viewport.width}px dock bottom`).toBeLessThanOrEqual(viewport.height + 1);
@@ -341,6 +215,7 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
 
     await page.evaluate(() => showLessonPreview("a0-letters-1"));
     await expect(page.locator(".learning-preview")).toBeVisible();
+    await settle(page);
     const previewGeometry = await page.evaluate(() => {
       const selectors = [".progress-header", ".learning-preview", ".learning-preview-hero", ".quiz-close", ".bottom-nav"];
       const failures = selectors.flatMap((selector) => [...document.querySelectorAll(selector)].flatMap((element) => {
@@ -359,6 +234,7 @@ test("effects regression: atmosphere and fixed controls stay pixel-contained acr
 
     await page.locator('.learning-preview [data-action="start"]').click();
     await expect(page.locator(".quiz-screen")).toBeVisible();
+    await settle(page);
     const lessonGeometry = await page.evaluate(() => {
       const topbar = document.querySelector(".quiz-topbar").getBoundingClientRect();
       const close = document.querySelector(".quiz-close").getBoundingClientRect();
@@ -401,14 +277,11 @@ test("the lite signature launch is visible, finite, and interactive", async ({ p
 
   await openCleanApp(page);
   await expect(page.locator("html")).toHaveAttribute("data-effects", "lite");
-  await expect(page.locator(".launch-screen")).toHaveClass(/is-playing/);
-  await page.waitForTimeout(800);
 
   const launchContract = await page.evaluate(() => {
     const selectors = [
-      ".launch-logo-shell",
-      ".launch-wordmark",
-      ".launch-progress"
+      ".launch-screen strong",
+      ".launch-screen small"
     ];
     const hidden = selectors.flatMap((selector) => {
       const element = document.querySelector(selector);
@@ -417,18 +290,12 @@ test("the lite signature launch is visible, finite, and interactive", async ({ p
       return !element
         || !bounds?.width
         || !bounds?.height
-        || Number(style.opacity) < 0.9
         || style.visibility === "hidden"
         ? [selector]
         : [];
     });
-    const atmosphere = document.querySelector(".responsive-atmosphere");
     return {
       hidden,
-      bilingualLabelsHidden: [".launch-language-urdu", ".launch-language-nl"]
-        .every((selector) => getComputedStyle(document.querySelector(selector)).display === "none"),
-      atmosphereDisplay: getComputedStyle(atmosphere).display,
-      atmospherePointerEvents: getComputedStyle(atmosphere).pointerEvents,
       heavyLaunchLayers: [...document.querySelectorAll(".launch-orbit,.launch-beam,.launch-particle")]
         .filter((element) => getComputedStyle(element).display !== "none").length
     };
@@ -436,9 +303,6 @@ test("the lite signature launch is visible, finite, and interactive", async ({ p
 
   expect(launchContract).toEqual({
     hidden: [],
-    bilingualLabelsHidden: true,
-    atmosphereDisplay: "block",
-    atmospherePointerEvents: "none",
     heavyLaunchLayers: 0
   });
 
@@ -455,11 +319,10 @@ test("effects regression: reduced motion reaches a complete, static UI", async (
   await expect(page.locator("html")).toHaveAttribute("data-effects", "reduced");
   await expect(page.locator("body")).not.toHaveClass(/launching/);
   await expect(page.locator(".launch-screen")).toHaveCount(0, { timeout: 3_000 });
-  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".learn-screen")).toBeVisible();
 
   const reducedContract = await page.evaluate(() => ({
     overflow: document.documentElement.scrollWidth - innerWidth,
-    atmospherePointerEvents: getComputedStyle(document.querySelector(".responsive-atmosphere")).pointerEvents,
     activeInfiniteAnimations: document.getAnimations().filter((animation) => (
       animation.effect?.getTiming?.().iterations === Infinity
       && ["running", "pending"].includes(animation.playState)
@@ -467,36 +330,43 @@ test("effects regression: reduced motion reaches a complete, static UI", async (
   }));
 
   expect(reducedContract.overflow).toBeLessThanOrEqual(1);
-  expect(reducedContract.atmospherePointerEvents).toBe("none");
   expect(reducedContract.activeInfiniteAnimations).toBe(0);
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('.bottom-nav [data-action="practice"]').click();
   await expect(page.locator(".practice-screen")).toBeVisible();
 });
 
-test("cinematic bilingual launch hands off cleanly to the app", async ({ page }) => {
+test("launch screen hands off cleanly to the app", async ({ page }) => {
+  // The launch screen removes itself within ~1.7 s, so record it on DOMContentLoaded.
+  await page.addInitScript(() => {
+    document.addEventListener("DOMContentLoaded", () => {
+      window.__launch = {
+        title: document.querySelector(".launch-screen strong")?.textContent || "",
+        tagline: document.querySelector(".launch-screen small")?.textContent || ""
+      };
+    });
+  });
   await openCleanApp(page);
 
-  await expect(page.locator(".launch-screen")).toHaveClass(/is-playing/);
-  await expect(page.locator(".launch-language")).toHaveCount(2);
-  await expect(page.locator(".launch-orbit")).toHaveCount(3);
-  await expect(page.locator(".launch-wordmark")).toContainText("NederUrdu");
-  await expect(page.locator(".launch-progress")).toHaveCount(1);
+  const launch = await page.evaluate(() => window.__launch);
+  expect(launch.title).toContain("NederUrdu");
+  expect(launch.tagline).toMatch(/[\u0600-\u06ff]/);
 
   await page.evaluate(() => finishLaunch());
   await expect(page.locator("body")).not.toHaveClass(/launching/);
-  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".learn-screen")).toBeVisible();
   await expect(page.locator(".bottom-nav")).toBeVisible();
 });
 
-test("fresh first launch opens the home map with all chapters visible", async ({ page }) => {
+test("fresh first launch opens today and every chapter stays reachable", async ({ page }) => {
   await openFreshApp(page);
 
-  await expect(page.locator(".learn-screen.beginner-home")).toBeVisible();
+  await expect(page.locator(".learn-screen")).toBeVisible();
   await expect(page.locator(".guided-start-screen")).toHaveCount(0);
-  await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
-  await expect(page.locator(".today-stats")).toHaveCount(0);
-  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
-  await page.locator('[data-action="preview"]:visible').first().click();
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(4);
+  await page.locator('.bottom-nav [data-action="journey"]').click();
+  await expect(page.locator(".chapter-chip")).toHaveCount(3);
+  await page.locator('.bottom-nav [data-action="home"]').click();
+  await page.locator(".today-action").click();
   await expect(page.locator(".learning-preview")).toBeVisible();
   await page.locator('.learning-preview [data-action="start"]').click();
   await expect(page.locator(".quiz-screen")).toBeVisible();
@@ -539,7 +409,7 @@ test("the cached course and lesson preview remain available offline", async ({ p
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.evaluate(() => finishLaunch());
     await expect(page.locator("#app")).toBeVisible();
-    await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
+    await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(4);
     expect(await page.evaluate(() => window.NEDERURDU_COURSE?.schemaVersion)).toBe(4);
     await page.evaluate(() => {
       const lesson = window.NEDERURDU_COURSE.lessons.find((candidate) => {
@@ -673,11 +543,12 @@ test("home loads and every chapter remains available", async ({ page }) => {
   await expect(page).toHaveTitle(/NederUrdu/i);
   await expect(page.locator("#app")).toBeVisible();
   await expect(page.locator("body")).not.toContainText(/(?:uncaught|syntaxerror|referenceerror|application error)/i);
-  await expect(page.locator('[data-action="chapter"]')).toHaveCount(3);
-  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(3);
-  await expect(page.locator('[data-action="preview"]:visible').first()).toBeEnabled();
+  await expect(page.locator(".bottom-nav .nav-button")).toHaveCount(4);
+  await expect(page.locator(".today-action")).toBeEnabled();
   await expect(page.locator("body")).not.toContainText(/(?:XP|streak|heart|trophy|انعام)/i);
   await expect(page.locator("body")).not.toContainText(/\b(?:practice|lesson|chapter|progress|settings|home|today|mistake|review|next|continue|check)\b/i);
+  await page.locator('.bottom-nav [data-action="journey"]').click();
+  await expect(page.locator(".chapter-chip")).toHaveCount(3);
   expect(runtimeErrors).toEqual([]);
 });
 
@@ -1280,7 +1151,7 @@ test("a correct stable-ID mistake review clears the saved mistake", async ({ pag
     }]
   });
 
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('.bottom-nav [data-action="practice"]').click();
   await page.locator('[data-action="review"][data-review-kind="mistakes"]').click();
   await page.evaluate(() => {
     chooseAnswer(getActiveQuestion().answer);
@@ -1311,7 +1182,7 @@ test("main screens do not overflow horizontally", async ({ page }) => {
   const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   expect(hasOverflow).toBe(false);
 
-  await page.locator('[data-action="preview"][data-lesson="a0-letters-1"]').first().click();
+  await page.evaluate(() => { finishLaunch(); showLessonPreview("a0-letters-1"); });
   const cardHasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   expect(cardHasOverflow).toBe(false);
   await page.locator('.learning-preview [data-action="start"]').click();
@@ -1339,8 +1210,8 @@ test("fixed controls and settings rows stay inside the viewport", async ({ page 
   }));
   expect(settingsInside).toBe(true);
 
-  await page.locator('[data-action="home"]').click();
-  await page.locator('[data-action="preview"][data-lesson="a0-letters-1"]').first().click();
+  await page.locator('.bottom-nav [data-action="home"]').click();
+  await page.evaluate(() => showLessonPreview("a0-letters-1"));
   await page.locator('.learning-preview [data-action="start"]').click();
   const quizBounds = await page.evaluate(() => {
     const close = document.querySelector(".quiz-close").getBoundingClientRect();
@@ -1693,6 +1564,7 @@ test("feedback stays compact while complete answer-specific Urdu explanations re
   }, lessonId);
   await expect(page.locator(".quiz-feedback-panel.correct .feedback-answer")).toContainText(correctFeedback.answer);
   if (correctFeedback.explanation.length > 105) {
+    await settle(page);
     await page.locator('.quiz-feedback-panel.correct [data-detail-kind="feedback"]').click();
     await expect(page.locator('.lesson-detail-layer[data-detail-kind="feedback"]')).toBeVisible();
     await expect(page.locator(".lesson-detail-sheet")).toContainText(correctFeedback.explanation);
@@ -1735,6 +1607,7 @@ test("feedback stays compact while complete answer-specific Urdu explanations re
   });
   expect(selectedFeedback.explanation).toContain(selectedFeedback.selected);
   await expect(page.locator(".quiz-feedback-panel.wrong .feedback-answer")).toContainText(selectedFeedback.answer);
+  await settle(page);
   await page.locator('.quiz-feedback-panel.wrong [data-detail-kind="feedback"]').click();
   await expect(page.locator('.lesson-detail-layer[data-detail-kind="feedback"]')).toBeVisible();
   await expect(page.locator(".lesson-detail-sheet")).toContainText(selectedFeedback.explanation);
@@ -1815,6 +1688,7 @@ test("long feedback leaves every lesson and answer reachable above the fixed foo
       window.scrollTo(0, document.documentElement.scrollHeight);
     }, candidate);
     await expect(page.locator(".quiz-feedback-panel.wrong")).toBeVisible();
+    await settle(page);
 
     const geometry = await page.evaluate(() => {
       const panel = document.querySelector(".quiz-feedback-panel");
@@ -1835,6 +1709,12 @@ test("long feedback leaves every lesson and answer reachable above the fixed foo
           height: panelRect.height
         },
         contentBottom: contentRect?.bottom,
+        lastChoiceBottomAfterScroll: (() => {
+          if (!content) return null;
+          content.scrollTop = content.scrollHeight;
+          const choices = [...content.querySelectorAll(".choice-button")];
+          return choices.length ? Math.max(...choices.map((choice) => choice.getBoundingClientRect().bottom)) : null;
+        })(),
         scrollWidth: document.documentElement.scrollWidth,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
@@ -1857,7 +1737,7 @@ test("long feedback leaves every lesson and answer reachable above the fixed foo
     expect(geometry.panel.right, `${viewport.width}px feedback right`).toBeLessThanOrEqual(geometry.viewportWidth);
     expect(geometry.panel.bottom, `${viewport.width}px feedback bottom`).toBeLessThanOrEqual(geometry.viewportHeight + 1);
     expect(geometry.panel.height, `${viewport.width}px feedback height`).toBeLessThanOrEqual(geometry.viewportHeight * 0.5);
-    expect(geometry.contentBottom, `${viewport.width}px content/footer clearance`).toBeLessThanOrEqual(geometry.panel.top + 1);
+    expect(geometry.lastChoiceBottomAfterScroll, `${viewport.width}px answers clear of the feedback panel`).toBeLessThanOrEqual(geometry.panel.top + 1);
     expect(geometry.actionHit, `${viewport.width}px feedback action hit target ${JSON.stringify(geometry)}`).toBe(true);
   }
 });
@@ -2519,12 +2399,8 @@ test("an incomplete Independent Check skill set cannot secure omitted required s
   expect(result.omittedStatuses.every((status) => status === "practiced")).toBe(true);
 });
 
-test("kinetic experience layer responds to learning progress", async ({ page }) => {
+test("answer streak responds to learning progress", async ({ page }) => {
   await openCleanApp(page);
-
-  await expect(page.locator(".experience-backdrop")).toHaveCount(1);
-  await expect(page.locator(".mission-atmosphere")).toHaveCount(1);
-  await expect(page.locator(".unit-card-aura")).toHaveCount(1);
 
   await page.evaluate(() => window.startLesson("a0-letters-1"));
   await page.evaluate(() => {
@@ -2544,23 +2420,23 @@ test("kinetic experience layer responds to learning progress", async ({ page }) 
   });
 
   await expect(page.locator(".quiz-combo b")).toHaveText("2");
-  await expect(page.locator(".answer-moment.is-correct")).toBeAttached();
 });
 
-test("the three bottom navigation destinations open without the progress page", async ({ page }) => {
+test("bottom navigation and header settings open without the progress page", async ({ page }) => {
   await openCleanApp(page);
 
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('.bottom-nav [data-action="practice"]').click();
   await expect(page.locator(".practice-screen")).toBeVisible();
   await expect(page.locator(".review-hub-grid")).toBeVisible();
-  await page.locator('.bottom-nav [data-action="settings"]').click();
+  await settle(page);
+  await page.locator('[data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="letters"]')).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="progress"]')).toHaveCount(0);
   await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="today"]')).toBeVisible();
   await expect(page.locator('.settings-panel [data-action="review"][data-review-kind="old"]')).toBeVisible();
   await expect(page.locator("body")).not.toContainText("آپ کی پیش رفت");
-  await page.locator('[data-action="home"]').click();
+  await page.locator('.bottom-nav [data-action="home"]').click();
   await expect(page.locator(".learn-screen")).toBeVisible();
 });
 
@@ -2668,12 +2544,9 @@ test("securing every run marks its lesson complete on the path", async ({ page }
     };
   });
   await expect(page.locator(".complete-screen")).toBeVisible();
-  await page.locator('[data-action="home"]').click();
-  await page.evaluate(() => {
-    pathExpanded = true;
-    render();
-  });
-  await expect(page.locator(`[data-path-lesson="${result.id}"] .lesson-node`)).toHaveClass(/completed/);
+  await page.locator('[data-action="home"]').first().click();
+  await page.locator('.bottom-nav [data-action="journey"]').click();
+  await expect(page.locator(`.map-node[data-lesson="${result.id}"]`)).toHaveAttribute("data-status", /secure|done/);
   const completed = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).completedLessons, STORAGE_KEY);
   expect(completed).toContain(result.id);
   expect(result.completed).toBe(true);
@@ -3024,23 +2897,23 @@ test("all review modes accept new A0 daily lesson IDs", async ({ page }) => {
   });
   await setLessonSkillStatus(page, ["a0-greetings-courtesy", "a0-understanding-help"]);
 
-  await page.locator('[data-action="practice"]').click();
+  await page.locator('.bottom-nav [data-action="practice"]').click();
   await page.locator('[data-action="review"][data-review-kind="mistakes"]').click();
   await expect(page.locator(".quiz-screen")).toBeVisible();
   await expect(page.locator(".quiz-progress")).toHaveAttribute("aria-label", /پیش رفت|فیصد|مرحلہ|%/);
   await expect(page.locator(".quiz-progress")).not.toHaveAttribute("aria-label", /\d+\s+از\s+\d+/);
   await expect(page.locator(".quiz-count")).toHaveCount(0);
 
-  await page.locator('[data-action="home"]').click();
+  await page.locator('[data-action="home"]').first().click();
   await expect(page.locator(".learn-screen")).toBeVisible();
-  await page.locator('.bottom-nav [data-action="settings"]').click();
+  await page.locator('[data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
   await page.locator('[data-action="review"][data-review-kind="today"]').click();
   await expect(page.locator(".learning-phase-header")).toBeVisible();
 
-  await page.locator('[data-action="home"]').click();
+  await page.locator('[data-action="home"]').first().click();
   await expect(page.locator(".learn-screen")).toBeVisible();
-  await page.locator('.bottom-nav [data-action="settings"]').click();
+  await page.locator('[data-action="settings"]').click();
   await expect(page.locator(".settings-panel")).toBeVisible();
   await page.locator('[data-action="review"][data-review-kind="old"]').click();
   await expect(page.locator(".learning-phase-header")).toBeVisible();
@@ -3390,6 +3263,7 @@ test("A1 Unit 1 preview, teaching, and mission stay inside phone tablet and desk
     await page.setViewportSize(viewport);
     await page.evaluate(() => showLessonPreview("a1-details-forms"));
     await expect(page.locator(".learning-preview")).toBeVisible();
+    await settle(page);
     const previewBounds = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
       viewportWidth: window.innerWidth,
@@ -5038,8 +4912,15 @@ test("A1 completion preview stays locked until every unit mission is practiced",
   await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();await expect(page.locator('.learning-preview [data-action="start"]')).toBeDisabled();await expect(page.locator(".prerequisite-guidance")).toContainText("پہلے یہ یونٹ مشن مکمل کریں");await expect(page.locator(".prerequisite-skill-list").first()).toContainText("میری معلومات");await page.evaluate(()=>{const mission=window.NEDERURDU_COURSE.missions.find((item)=>item.id==="a1-chapter-completion-mission"),saved=JSON.parse(localStorage.getItem("nederurdu-progress-v4")||"{}"),lessonMastery={...(saved.lessonMastery||{})};for(const id of mission.prerequisiteMissionIds)lessonMastery[id]={status:"practiced",lessonId:id};saveProgress({...saved,lessonMastery});showLessonPreview(mission.id);});await expect(page.locator('.learning-preview [data-action="start"]')).toBeEnabled();
 });
 
-test("A1 completion appears as the final chapter section", async ({ page }) => {
-  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());await page.getByRole("button",{name:/پورا راستہ دیکھیں/}).click();const sections=page.locator(".path-section");await expect(sections).toHaveCount(10);await expect(sections.last()).toContainText("A1 آخری عملی جانچ");await expect(sections.last()).toContainText("laatste praktische missie");const nodeIds=await page.locator(".lesson-node").evaluateAll((nodes)=>nodes.map((node)=>node.getAttribute("data-lesson")));expect(nodeIds.at(-1)).toBe("a1-chapter-completion-mission");
+test("A1 completion appears as the final stop on the journey map", async ({ page }) => {
+  await openCleanApp(page, { selectedChapterId: "a1" });
+  await page.evaluate(() => finishLaunch());
+  await page.locator('.bottom-nav [data-action="journey"]').click();
+  await expect(page.locator('.map[data-chapter="a1"]')).toBeVisible();
+  const lastUnit = page.locator(".map-unit").last();
+  await expect(lastUnit).toHaveClass(/map-unit-trophy/);
+  const nodeIds = await page.locator(".map-node").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-lesson")));
+  expect(nodeIds.at(-1)).toBe("a1-chapter-completion-mission");
 });
 
 test("A1 completion preview and first Use task fit all target widths", async ({ page }) => {

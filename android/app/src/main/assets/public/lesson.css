@@ -140,7 +140,7 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
 #app .document-prompt{font:600 19px/1.8 var(--font-urdu-reading);color:var(--pl-ink);margin:16px 2px 4px}
 
 /* ---- Feedback: Pim reacts -------------------------------------------------- */
-#app .quiz-feedback-panel .feedback-copy{display:flex;align-items:flex-start;gap:12px}
+#app .quiz-feedback-panel .feedback-copy{display:flex;align-items:flex-start;gap:12px;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 #app .quiz-feedback-panel .pl-feedback-face{flex-shrink:0;display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 3px 0 #00000012}
 #app .quiz-feedback-panel .pl-feedback-face svg{margin-top:8px}
 #app .pl-feedback-title{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
@@ -299,3 +299,10 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
 #app .uitleg-point{position:relative;display:flex;align-items:center;gap:10px;padding:11px 14px;border:2px solid #cfdcff;border-radius:16px;background:var(--pl-blue-soft);font:600 17px/1.8 var(--font-urdu-reading);color:var(--pl-ink);counter-increment:uitleg}
 #app .uitleg-point>span{flex-shrink:0;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--pl-blue);box-shadow:none}
 #app .uitleg-point>span::before{content:counter(uitleg);color:#fff;font:800 13px var(--font-ui)}
+/* Short phones: keep the feedback panel within half the screen with the
+   "more" link visible; the full explanation stays one tap away. */
+@media (max-height:720px){
+  #app .quiz-feedback-panel .feedback-reason{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
+  #app .quiz-feedback-panel .feedback-copy{gap:8px}
+  #app .quiz-feedback-panel .pl-praise{display:none}
+}

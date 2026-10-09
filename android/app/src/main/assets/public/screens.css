@@ -135,3 +135,7 @@
 #app .settings-about p{margin:0;font-size:14px;line-height:1.9;color:var(--pl-muted)}
 #app .settings-about p+p{margin-top:6px}
 #app .settings-about b{color:var(--pl-ink)}
+
+/* Quoted Dutch inside Urdu explanations: Latin glyphs at the surrounding size. */
+.mixed-latin{font-family:var(--font-ui);font-size:.92em;font-weight:inherit}
+.mixed-latin.is-short{white-space:nowrap}

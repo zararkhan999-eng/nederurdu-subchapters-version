@@ -26,6 +26,17 @@ node scripts/sync-android-web.js
 
 Then open this folder in Android Studio and build the `app` module. See `docs/mobile-build.md` and `docs/store-listing/release-checklist.md` for release steps.
 
+## Google Play release
+
+- Release checklist (what is done, and the signing and Play Console steps): `docs/store-listing/release-checklist.md`
+- Listing text, data safety, and content rating answers: `docs/store-listing/google-play.md`
+- Store icon, feature graphic, and phone screenshots: `docs/store-listing/`
+  (`node scripts/render-store-graphics.js` regenerates the icon and feature graphic)
+- Privacy policy page to host: `docs/privacy-policy.html`
+
+Before every release: `npm run audit:course`, `npm test`, `npm run android:sync-web`,
+then raise `versionCode` in `android/app/build.gradle`.
+
 ## Learning design
 
 The permanent curriculum rules live in
