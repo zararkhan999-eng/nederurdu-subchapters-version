@@ -298,11 +298,11 @@ const a0Lessons = [
       meaning("in", ["میں / اندر", "اوپر", "نیچے"], "میں / اندر", "in = اندر/میں۔"),
       meaning("op", ["اوپر", "میں", "نیچے"], "اوپر", "op = اوپر۔"),
       meaning("onder", ["نیچے", "اوپر", "ساتھ"], "نیچے", "onder = نیچے۔"),
-      meaning("in huis", ["گھر میں", "گھر کے اوپر", "گھر کے نیچے"], "گھر میں", "in + huis۔"),
-      meaning("op tafel", ["میز پر", "میز کے اندر", "میز کے نیچے"], "میز پر", "op + tafel۔"),
-      meaning("onder tafel", ["میز کے نیچے", "میز پر", "میز کے پاس"], "میز کے نیچے", "onder + tafel۔"),
-      reverse("گھر میں", ["in huis", "op huis", "onder huis"], "in huis", "میں = in۔"),
-      reverse("میز پر", ["op tafel", "in tafel", "onder tafel"], "op tafel", "پر = op۔")
+      meaning("in het huis", ["گھر میں", "گھر کے اوپر", "گھر کے نیچے"], "گھر میں", "in + huis۔"),
+      meaning("op de tafel", ["میز پر", "میز کے اندر", "میز کے نیچے"], "میز پر", "op + tafel۔"),
+      meaning("onder de tafel", ["میز کے نیچے", "میز پر", "میز کے پاس"], "میز کے نیچے", "onder + tafel۔"),
+      reverse("گھر میں", ["in het huis", "op het huis", "onder het huis"], "in het huis", "میں = in۔"),
+      reverse("میز پر", ["op de tafel", "in de tafel", "onder de tafel"], "op de tafel", "پر = op۔")
     ]
   },
   {
@@ -352,7 +352,7 @@ const a0Lessons = [
       meaning("zij gaat naar school", ["وہ اسکول جا رہی ہے", "وہ اسکول میں ہے", "اس کے پاس اسکول ہے"], "وہ اسکول جا رہی ہے", "gaat naar = جا رہی ہے۔"),
       meaning("ik ben met mijn kind", ["میں اپنے بچے کے ساتھ ہوں", "میں بچہ ہوں", "میرے پاس بچہ نہیں"], "میں اپنے بچے کے ساتھ ہوں", "met = ساتھ۔"),
       meaning("met mijn kind", ["میرے بچے کے ساتھ", "میرے بچے کی طرف", "میرے بچے کے نیچے"], "میرے بچے کے ساتھ", "met = ساتھ۔"),
-      reverse("گھر کی طرف", ["naar huis", "met huis", "in huis"], "naar huis", "سمت = naar۔"),
+      reverse("گھر کی طرف", ["naar huis", "met huis", "in het huis"], "naar huis", "سمت = naar۔"),
       reverse("ساتھ", ["met", "naar", "onder"], "met", "ساتھ = met۔")
     ]
   },
@@ -903,7 +903,7 @@ a1Lessons.find((lesson) => lesson.id === "a1-questions").questions.push(
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-house-food-plurals").questions.push(
-  build("کتاب گھر میں ہے", ["het", "boek", "is", "in", "huis"], "het boek is in huis", "چیز پہلے، پھر فعل `is`، پھر جگہ۔")
+  build("کتاب کمرے میں ہے", ["het", "boek", "is", "in", "de", "kamer"], "het boek is in de kamer", "چیز پہلے، پھر فعل `is`، پھر جگہ۔")
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-shopping-transport").questions.push(
@@ -4205,7 +4205,7 @@ const a1Subchapters = [
     id: "a1-home-objects",
     title: "گھر اور چیزیں",
     goal: "گھر، کمرہ، فرنیچر، اور چیز کہاں ہے بتانا۔",
-    practice: "het boek is in huis جیسے جگہ جملے۔",
+    practice: "het boek is in de kamer جیسے جگہ جملے۔",
     lessonIds: ["a1-house-food-plurals", ...a1Expanded("a1-neighbour-talk", "a1-home-repairs", "a1-cleaning-house", "a1-house-search-extra"), "a1-mission-house-search"]
   },
   {
@@ -5043,7 +5043,7 @@ replaceSeedConceptsV4("a0-geen", [
   ["ik heb geen boek", "میرے پاس کتاب نہیں ہے"],
   ["zij heeft geen pen", "اس کے پاس قلم نہیں ہے"],
   ["wij hebben geen huis", "ہمارے پاس گھر نہیں ہے"],
-  ["ik ben niet goed", "میں ٹھیک نہیں ہوں"]
+  ["het is niet goed", "یہ ٹھیک نہیں ہے"]
 ]);
 replaceSeedConceptsV4("a0-spelling-personal-details", [
   ["mijn naam is Sara", "میرا نام Sara ہے"],
@@ -5586,7 +5586,7 @@ const a1AuthoredCurriculumV4 = {
         titleUrdu: "اپنے خاندان کے بارے میں مکمل جواب دینا",
         highlight: "ik heb …",
         explanationUrdu: "اپنے پاس موجود رشتہ یا تعداد بتانے کے لیے ik heb کے بعد معلومات رکھیں: ik heb twee kinderen۔",
-        contrastUrdu: "اسم یا مقدار نہ ہو تو geen کہیں: ik heb geen kinderen؛ کیفیت کی نفی میں niet آتا ہے، جیسے ik ben niet goed۔",
+        contrastUrdu: "اسم یا مقدار نہ ہو تو geen کہیں: ik heb geen kinderen؛ کیفیت کی نفی میں niet آتا ہے، جیسے het is niet goed۔",
         commonMistakeUrdu: "ik ben twee kinderen یا ik heb niet kinderen نہ کہیں؛ مثبت میں ik heb … اور اسم کی نفی میں ik heb geen … رکھیں۔"
       },
       independentCheckLeadUrdu: "خاندان کے پہلے مدد والے سوال کے بعد نئی رجسٹریشن میں",
@@ -5817,7 +5817,7 @@ const a1AuthoredCurriculumV4 = {
       scenarios: {
         "de kinderopvang": ["childcare-recognise-place", "بچے کی روزانہ نگہداشت کے مرکز کا درست مکمل ڈچ نام منتخب کریں۔"],
         "ik breng mijn kind om acht uur naar de kinderopvang": ["childcare-morning-dropoff", "صبح عملے کو بتانا ہے کہ آپ بچے کو آٹھ بجے kinderopvang چھوڑتے ہیں۔ مکمل جملہ منتخب کریں۔"],
-        "ik haal mijn kind om vijf uur op": ["childcare-evening-pickup", "عملے کو واضح کرنا ہے کہ آپ بچے کو پانچ بجے لینے آئیں گے۔ مکمل جملہ منتخب کریں۔"],
+        "ik haal mijn kind om vijf uur op": ["childcare-evening-pickup", "شام کو عملے کو بتائیں کہ آپ بچے کو پانچ بجے لینے آئیں گے۔ مکمل جملہ منتخب کریں۔"],
         "eten mee": ["childcare-card-food-label", "بچے کی حوالگی فہرست میں کھانا ساتھ ہونے والا مختصر خانہ منتخب کریں۔"],
         "mijn kind heeft eten mee": ["childcare-tell-food", "صبح عملے کو بتانا ہے کہ بچے کے پاس کھانا ساتھ ہے۔ مکمل جملہ منتخب کریں۔"],
         "mijn kind heeft water nodig": ["childcare-tell-water", "بچے کو پانی چاہیے، اس لیے عملے کو یہ ضرورت مکمل جملے میں بتائیں۔"],
@@ -5909,7 +5909,7 @@ const a1AuthoredCurriculumV4 = {
         "ik woon in nederland": ["present-tell-country", "کلاس میں مختصر تعارف دیتے ہوئے بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔"],
         "ik leer nu nederlands": ["present-tell-current-study", "زبان کے استاد کو بتانا ہے کہ آپ ابھی Nederlands سیکھ رہے ہیں۔ مکمل جملہ منتخب کریں۔"],
         "wij leren nederlands": ["present-tell-group-study", "کلاس کی مشترک سرگرمی بتاتے ہوئے کہیں کہ ہم Nederlands سیکھتے ہیں۔"],
-        "vandaag werk ik": ["present-time-first-work", "ہفتہ وار منصوبے میں آج کو نمایاں کرکے بتانا ہے کہ آج آپ کام کرتے ہیں۔ درست ترتیب منتخب کریں۔"]
+        "vandaag werk ik": ["present-time-first-work", "ہفتہ وار منصوبے میں آج کو نمایاں کرنا ہے: جملہ vandaag سے شروع کریں اور بتائیں کہ آج آپ کام کرتے ہیں۔ vandaag کے فوراً بعد فعل آتا ہے۔"]
       }
     },
     "a1-daily-routine": {
@@ -6682,7 +6682,7 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts: [
         ["het huis", "گھر"],
         ["kamer", "کمرہ"],
-        ["het boek is in huis", "کتاب گھر میں ہے"],
+        ["het boek is in de kamer", "کتاب کمرے میں ہے"],
         ["keuken", "کچن"],
         ["badkamer", "باتھ روم"],
         ["tafel", "میز"],
@@ -6694,7 +6694,7 @@ const a1AuthoredCurriculumV4 = {
       teaching: authoredA1TeachingV4([
         ["het huis", "اپنے یا کسی معلوم گھر کی بات میں het huis استعمال کریں۔", "یہ پورا گھر ہے؛ kamer گھر کے اندر ایک کمرہ ہے۔", "huis کے ساتھ het آتا ہے، de نہیں۔", "Dit is het huis.", "یہ گھر ہے۔", "ہَت ہاؤس"],
         ["kamer", "گھر کے اندر ایک کمرہ پہچاننے یا بتانے کے لیے kamer کہیں۔", "kamer ایک حصہ ہے؛ پورے گھر کے لیے huis کہیں۔", "اس سبق میں ایک کمرے کے لیے kamer ہے؛ کئی کمروں کی شکل ابھی جواب میں نہ بنائیں۔", "Dit is een kamer.", "یہ ایک کمرہ ہے۔", "کا مَر"],
-        ["het boek is in huis", "کتاب گھر کے اندر ہونے کی جگہ مکمل جملے میں بتائیں۔", "in huis اندر کی جگہ بتاتا ہے؛ گھر کی طرف حرکت نہیں۔", "is کو چھوڑ کر صرف het boek in huis نہ کہیں؛ مکمل جملے میں is ضروری ہے۔", "Het boek is in huis.", "کتاب گھر میں ہے۔", "ہَت بوک اِس اِن ہاؤس"],
+        ["het boek is in de kamer", "کتاب کی جگہ ایک مکمل جملے میں بتائیں۔", "in de kamer اندر کی جگہ بتاتا ہے؛ کمرے کی طرف حرکت نہیں۔", "is کو چھوڑ کر صرف het boek in de kamer نہ کہیں؛ مکمل جملے میں is ضروری ہے۔", "Het boek is in de kamer.", "کتاب کمرے میں ہے۔", "ہَت بوک اِس اِن دَ کامَر"],
         ["keuken", "کھانا بنانے والی جگہ پہچاننے کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "Dit is de keuken.", "یہ کچن ہے۔", "کو کَن"],
         ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "اسے صرف بیت الخلا کے معنی تک محدود نہ کریں؛ یہ پورا باتھ روم ہے۔", "Dit is de badkamer.", "یہ باتھ روم ہے۔", "بات کا مَر"],
         ["tafel", "گھر میں میز کی چیز پہچاننے کے لیے tafel کہیں۔", "یہ فرنیچر ہے؛ stoel بیٹھنے کی کرسی ہے۔", "tafel اور stoel کو نہ ملائیں: tafel میز، stoel کرسی ہے۔", "Het boek ligt op de tafel.", "کتاب میز پر ہے۔", "تا فَل"],
@@ -6704,12 +6704,12 @@ const a1AuthoredCurriculumV4 = {
         ["waar is de tas", "بیگ نہ ملے تو اس کی جگہ پوچھنے کے لیے مکمل سوال کہیں۔", "یہ جگہ پوچھتا ہے؛ بیگ کی ملکیت یا تعداد نہیں۔", "سوال میں waar پہلے اور is اس کے بعد رکھیں۔", "Waar is de tas?", "بیگ کہاں ہے؟", "وار اِس دَ تاس"]
       ]),
       pattern: {
-        modelDutch: "het boek is in huis",
+        modelDutch: "het boek is in de kamer",
         titleUrdu: "چیز کی جگہ بتانے والا مکمل جملہ",
-        highlight: "het boek is in huis",
-        explanationUrdu: "پہلے چیز، پھر is، اور آخر میں جگہ رکھیں: het boek is in huis۔",
-        contrastUrdu: "waar is de tas? جگہ پوچھتا ہے؛ het boek is in huis جگہ کا جواب دیتا ہے۔",
-        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in huis مکمل ڈچ جملہ نہیں۔"
+        highlight: "het boek is in de kamer",
+        explanationUrdu: "پہلے چیز، پھر is، اور آخر میں جگہ رکھیں: het boek is in de kamer۔",
+        contrastUrdu: "waar is de tas? جگہ پوچھتا ہے؛ het boek is in de kamer جگہ کا جواب دیتا ہے۔",
+        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in de kamer مکمل ڈچ جملہ نہیں۔"
       },
       prerequisiteLessonIds: ["a0-een-de-het", "a0-numbers-0-10", "a0-dit-dat-questions", "a0-place-1", "a0-home-needs"],
       prerequisiteRefs: [
@@ -6719,13 +6719,13 @@ const a1AuthoredCurriculumV4 = {
         ["a0-numbers-0-10", "twee"],
         ["a0-dit-dat-questions", "waar"],
         ["a0-dit-dat-questions", "dit is een boek"],
-        ["a0-place-1", "in huis"],
+        ["a0-place-1", "in het huis"],
         ["a0-home-needs", "kamer"]
       ],
       scenarios: {
         "het huis": ["home-recognise-house", "تصویر میں پورا گھر پہچانیں، اندر کا ایک کمرہ نہیں۔"],
         kamer: ["home-recognise-room", "گھر کے نقشے میں ایک کمرہ نشان زد ہے۔ درست لفظ چنیں۔"],
-        "het boek is in huis": ["home-locate-book", "کتاب گھر کے اندر ہے۔ مکمل جگہ والا جملہ کہیں۔"],
+        "het boek is in de kamer": ["home-locate-book", "کتاب سونے والے کمرے میں رکھی ہے۔ مکمل جگہ والا جملہ کہیں۔"],
         keuken: ["home-recognise-kitchen", "گھر کے نقشے میں کھانا بنانے والی جگہ پہچانیں۔"],
         badkamer: ["home-recognise-bathroom", "گھر کے نقشے میں نہانے والی جگہ پہچانیں۔"],
         tafel: ["home-recognise-table", "کتاب جس میز پر ہے اس چیز کا درست لفظ چنیں۔"],
@@ -7580,7 +7580,7 @@ const a1AuthoredCurriculumV4 = {
         "مکان کا اشتہار پڑھیں، کرایہ اور دستیابی سمجھیں، اور گھر دیکھنے کی گفتگو مکمل کریں"
       ],
       targets: [
-        { lessonId: "a1-house-food-plurals", dutch: "het boek is in huis", patternLessonId: "a1-house-food-plurals" },
+        { lessonId: "a1-house-food-plurals", dutch: "het boek is in de kamer", patternLessonId: "a1-house-food-plurals" },
         { lessonId: "a1-neighbour-talk", dutch: "kunt u zachter zijn?", patternLessonId: "a1-neighbour-talk" },
         { lessonId: "a1-home-repairs", dutch: "kunt u iemand sturen?", patternLessonId: "a1-home-repairs" },
         { lessonId: "a1-cleaning-house", dutch: "ik moet de kamer schoonmaken", patternLessonId: "a1-cleaning-house" },
@@ -8115,6 +8115,148 @@ const a2GuidanceMistakesV4 = [
   "ثبوت اور دعوے کو ایک چیز نہ سمجھیں", "صحیح شخص یا ادارہ واضح رکھیں"
 ];
 
+// One hand-written situation per A2 phrase. The situation describes the need
+// without giving the Urdu translation, so only the matching phrase fits.
+const a2ScenarioByDutchV4 = {
+  // a2-work-school
+  "ik zoek een baan": "روزگار دفتر میں ملازم پوچھتا ہے کہ آپ کیوں آئے ہیں۔ ابھی آپ کے پاس کوئی کام نہیں؛ اپنا مقصد بتائیں۔",
+  "ik begin maandag met mijn baan": "دوست پوچھتا ہے کہ نیا کام کب سے ہے۔ آپ کا پہلا دن ہفتے کا پہلا دن ہے؛ بتائیں۔",
+  "dit is mijn contract": "دفتر کا ملازم دستخط شدہ کام کا کاغذ مانگتا ہے۔ کاغذ دیتے ہوئے کیا کہیں؟",
+  "hoeveel uur staat in mijn contract?": "آپ کو یاد نہیں کہ کاغذ کے مطابق ہفتے میں کتنا کام کرنا ہے؛ نگران سے پوچھیں۔",
+  "wanneer krijg ik mijn salaris?": "مہینہ ختم ہو رہا ہے اور آپ کو معلوم نہیں کہ کام کے پیسے کس دن آئیں گے؛ پوچھیں۔",
+  "dit is mijn rooster": "نیا ساتھی پوچھتا ہے کہ آپ کن دنوں کام کرتے ہیں۔ فون پر اپنے کام کے دنوں کی فہرست دکھاتے ہوئے کیا کہیں؟",
+  "mijn collega helpt mij": "نگران پوچھتا ہے کہ نیا کام آپ کو کون سکھا رہا ہے۔ ساتھ کام کرنے والا سکھا رہا ہے؛ بتائیں۔",
+  "mijn rooster is veranderd": "اس ہفتے آپ کے کام کے دن اور وقت پہلے جیسے نہیں رہے؛ زبان کے استاد کو یہ تبدیلی بتائیں۔",
+  // a2-future-modal-verbs
+  "ik ga maandag beginnen": "نگران پوچھتا ہے کہ آپ نیا کام کس دن شروع کریں گے۔ آپ کا منصوبہ ہفتے کا پہلا دن ہے؛ بتائیں۔",
+  "ik kan op dinsdag werken": "نگران کو منگل کے لیے ایک اضافی آدمی چاہیے اور آپ اس دن فارغ ہیں۔ بتائیں کہ یہ ممکن ہے۔",
+  "ik moet veiligheidsschoenen dragen": "گودام کے اصول کے مطابق پاؤں کی حفاظت لازمی ہے۔ ساتھی کو بتائیں کہ آپ پر کیا لازم ہے۔",
+  "mag ik eerder beginnen?": "آپ صبح جلدی آ کر کام شروع کرنا چاہتے ہیں؛ نگران سے اجازت مانگیں۔",
+  "ik kan op vrijdag niet werken": "جمعہ کو آپ کی ایک ضروری مصروفیت ہے۔ نگران کو بتائیں کہ اس دن آپ کے لیے کام ممکن نہیں۔",
+  "ik moet de manager bellen": "ساتھی ایک ایسا فیصلہ مانگتا ہے جو صرف نگران کر سکتا ہے۔ بتائیں کہ پہلے آپ کو نگران سے فون پر بات کرنی ضروری ہے۔",
+  "mag ik thuiswerken?": "کل آپ کا بچہ بیمار ہے؛ آپ دفتر نہیں آ سکتے مگر کام کر سکتے ہیں۔ گھر سے کام کی اجازت مانگیں۔",
+  "wanneer ga ik beginnen?": "نوکری مل گئی ہے مگر کسی نے پہلا دن نہیں بتایا؛ نگران سے پوچھیں۔",
+  // a2-work-conditions
+  "ik kan op dinsdag niet werken": "نگران آپ کو منگل کی شفٹ دیتا ہے مگر اس دن آپ کی ڈاکٹر سے ملاقات ہے؛ بتائیں۔",
+  "kan ik een vrije dag aanvragen": "اگلے مہینے آپ کو ایک شادی میں جانا ہے؛ نگران سے پوچھیں کہ کیا ایک دن کی چھٹی کی درخواست دی جا سکتی ہے۔",
+  "mijn salaris klopt niet": "تنخواہ کی پرچی پر رقم آپ کے حساب سے کم ہے؛ دفتر کو مسئلہ بتائیں۔",
+  "ik heb hulp nodig bij deze taak": "آپ کو نئی مشین چلانی ہے مگر طریقہ نہیں آتا؛ ساتھی سے کہیں۔",
+  "wie neemt mijn dienst over": "آپ بیمار ہیں اور کل کام پر نہیں آ سکتے؛ نگران سے پوچھیں کہ آپ کی جگہ کون کام کرے گا۔",
+  "kunnen we hierover praten": "نگران کا نیا فیصلہ آپ کے لیے مشکل ہے؛ اس موضوع پر گفتگو کی درخواست کریں۔",
+  "ik stuur de bevestiging per e-mail": "فون پر نئی شفٹ طے ہو گئی اور نگران تحریری ثبوت چاہتا ہے۔ بتائیں کہ آپ یہ کیسے بھیجیں گے۔",
+  // a2-school-absence-notice
+  "mijn kind komt vandaag niet naar school": "صبح اسکول کے دفتر کو فون کرتے ہیں۔ پورا جملہ کہیں کہ آج آپ کا بچہ کلاس میں نہیں ہوگا۔",
+  "ik meld mijn kind af": "اسکول کا فون نمبر غیر حاضری درج کرنے کے لیے ہے۔ رسمی طور پر کہیں کہ آپ بچے کی غیر حاضری درج کروا رہے ہیں۔",
+  "mijn kind is ziek": "استاد پوچھتا ہے کہ بچہ کیوں نہیں آیا۔ آج اسے بخار ہے؛ وجہ ایک چھوٹے جملے میں بتائیں۔",
+  "hij had koorts en moest thuisblijven": "بیٹا آج واپس اسکول آیا ہے۔ استاد پوچھتا ہے کہ وہ پچھلے دن کیوں نہیں آیا تھا؛ گزرے دن کی وجہ بتائیں۔",
+  "de les begint om tien uur": "اسکول ایپ کہتی ہے کہ آج پہلی کلاس 10:00 پر ہے۔ بچے کو کلاس کا وقت بتائیں۔",
+  "de les valt vandaag uit": "ایپ میں لکھا ہے کہ آج استاد بیمار ہے اور کلاس نہیں ہوگی۔ یہ اطلاع پہچانیں۔",
+  "moet ik de docent bellen?": "آپ نے دفتر کو اطلاع دے دی، مگر یقین نہیں کہ استاد کو بھی خود فون کرنا ضروری ہے؛ پوچھیں۔",
+  "wanneer kan mijn kind weer komen?": "بچے کو ایسی بیماری ہے جو دوسروں کو لگ سکتی ہے۔ اسکول سے پوچھیں کہ وہ کس دن واپس آ سکتا ہے۔",
+  // a2-parent-school
+  "ik wil graag met de docent praten": "اسکول کے دفتر میں بتائیں کہ آپ بچے کے استاد سے گفتگو کرنا چاہتے ہیں۔",
+  "hoe gaat het met mijn kind in de klas?": "والدین کی ملاقات شروع ہوئی ہے۔ استاد سے بچے کی کلاس میں عمومی حالت کے بارے میں پہلا سوال کریں۔",
+  "mijn kind heeft moeite met lezen": "گھر پر آپ دیکھتے ہیں کہ بچہ کتاب کے الفاظ بہت مشکل سے پڑھتا ہے؛ استاد کو یہ مسئلہ بتائیں۔",
+  "kan mijn kind extra hulp krijgen": "بچہ کلاس میں پیچھے رہ گیا ہے؛ پوچھیں کہ کیا اسکول اسے زیادہ مدد دے سکتا ہے۔",
+  "wat kunnen we thuis oefenen": "استاد کہتا ہے کہ بچے کو مزید مشق چاہیے۔ پوچھیں کہ آپ گھر میں بچے کے ساتھ کیا کر سکتے ہیں۔",
+  "mijn kind was gisteren afwezig": "استاد پوچھتا ہے کہ بچے نے پچھلے دن کا ٹیسٹ کیوں نہیں دیا۔ وہ اس دن اسکول نہیں آیا تھا؛ بتائیں۔",
+  "is een ander tijdstip mogelijk": "استاد ملاقات کے لیے دوپہر دو بجے کہتا ہے مگر اس وقت آپ کام پر ہیں؛ متبادل وقت کا پوچھیں۔",
+  "mijn kind voelt zich niet veilig": "بچہ کہتا ہے کہ کھیل کے میدان میں کچھ بچے اسے تنگ کرتے ہیں اور وہ ڈرتا ہے؛ استاد کو بتائیں۔",
+  "we maken samen een plan": "ملاقات کے آخر میں آپ اور استاد بچے کی مدد کا طریقہ مل کر طے کرنا چاہتے ہیں؛ اس فیصلے کو ایک جملے میں کہیں۔",
+  // a2-perfect-tense
+  "gisteren ben ik gevallen": "ڈاکٹر پوچھتا ہے کہ گھٹنے پر چوٹ کیسے لگی۔ پچھلے دن آپ سیڑھیوں پر پھسل گئے تھے؛ بتائیں۔",
+  "de pijn begon gisteravond": "ڈاکٹر پوچھتا ہے کہ درد کب شروع ہوا۔ یہ پچھلے دن رات کے کھانے کے بعد شروع ہوا تھا؛ بتائیں۔",
+  "ik heb vannacht slecht geslapen": "صبح ڈاکٹر پوچھتا ہے کہ رات کیسی گزری۔ آپ بار بار جاگتے رہے؛ بتائیں۔",
+  "ik heb de dokter gebeld": "فارمیسی کا ملازم پوچھتا ہے کہ کیا آپ نے ڈاکٹر سے رابطہ کیا۔ آپ صبح فون کر چکے ہیں؛ بتائیں۔",
+  "ik heb al pijnstillers genomen": "ڈاکٹر درد کی گولی دینا چاہتا ہے، مگر آپ گھر سے پہلے ہی گولی کھا کر آئے ہیں؛ بتائیں۔",
+  "ik ben thuis gebleven": "نگران پوچھتا ہے کہ آپ پچھلے دن کام پر کیوں نہیں آئے۔ بیماری کی وجہ سے آپ باہر نہیں نکلے؛ بتائیں کہ آپ کہاں تھے۔",
+  "de koorts is vanmorgen begonnen": "ڈاکٹر پوچھتا ہے کہ بخار کب سے ہے۔ یہ آج صبح اٹھتے وقت شروع ہوا؛ بتائیں۔",
+  "ik heb nog niet gegeten": "ڈاکٹر خون کا ٹیسٹ کرنا چاہتا ہے اور پوچھتا ہے کہ کیا آج آپ نے کچھ کھایا ہے۔ آپ خالی پیٹ ہیں؛ جواب دیں۔",
+  // a2-strong-combined
+  "ik ben gisteren naar de huisarts gegaan": "نگران پوچھتا ہے کہ آپ پچھلے دن دوپہر کہاں تھے۔ آپ اپنے عام ڈاکٹر کے پاس گئے تھے؛ بتائیں۔",
+  "omdat ik pijn had in mijn rug": "جملہ مکمل کریں: “ik ben naar de huisarts gegaan …”۔ وجہ کمر کی تکلیف تھی؛ پورا وجہ والا حصہ چنیں۔",
+  "de dokter heeft gezegd": "ساتھی کو ڈاکٹر کی ہدایت بتانی ہے۔ جملہ اس حصے سے شروع کریں جو بتائے کہ بات ڈاکٹر نے کہی ہے۔",
+  "dat ik rust moet nemen": "جملہ مکمل کریں: “de dokter heeft gezegd …”۔ ہدایت آرام کی تھی، اور “dat” کے بعد فعل آخر میں جاتا ہے۔",
+  "ik moet volgende week terugkomen": "استقبالیہ پوچھتا ہے کہ اگلی ملاقات کب رکھنی ہے۔ ڈاکٹر نے سات دن بعد دوبارہ بلایا ہے؛ بتائیں۔",
+  "als de pijn niet weg is": "جملہ مکمل کریں: “ik moet terugkomen …”۔ واپسی صرف اس صورت میں ہے جب تکلیف باقی رہے؛ شرط والا حصہ چنیں۔",
+  "ik moet rust nemen": "نگران پوچھتا ہے کہ کیا آپ اگلے دن کام کر سکتے ہیں۔ ڈاکٹر نے آرام لازمی کیا ہے؛ ایک مکمل جملے میں بتائیں۔",
+  "omdat ik pijn had": "دوست پوچھتا ہے کہ آپ ڈاکٹر کے پاس کیوں گئے۔ صرف مختصر وجہ دیں؛ جسم کا حصہ نہ بتائیں۔",
+  // a2-doctor-advice
+  "ik heb sinds drie dagen pijn": "ڈاکٹر پوچھتا ہے کہ تکلیف کتنے عرصے سے ہے۔ یہ پیر سے ہے اور آج جمعرات ہے؛ بتائیں۔",
+  "de pijn wordt erger als ik loop": "ڈاکٹر پوچھتا ہے کہ تکلیف کب بڑھتی ہے۔ بیٹھے ہوئے ٹھیک ہیں مگر قدم اٹھاتے ہی بڑھتی ہے؛ بتائیں۔",
+  "het medicijn heeft niet geholpen": "پچھلی بار ڈاکٹر نے گولیاں دی تھیں مگر حالت ویسی ہی ہے؛ بتائیں۔",
+  "ik ben allergisch voor penicilline": "نسخہ لکھنے سے پہلے ڈاکٹر پوچھتا ہے کہ کیا کسی دوا سے آپ کو مسئلہ ہوتا ہے۔ penicilline سے آپ کو خارش ہوتی ہے؛ بتائیں۔",
+  "hoe vaak moet ik dit nemen?": "فارمیسی سے دوا مل گئی مگر لیبل سے سمجھ نہیں آیا کہ دن میں کتنی بار لینی ہے؛ پوچھیں۔",
+  "zijn er bijwerkingen": "نئی دوا لینے سے پہلے آپ جاننا چاہتے ہیں کہ کیا اس سے کوئی ناخوشگوار اثر ہو سکتا ہے؛ پوچھیں۔",
+  "wanneer moet ik terugkomen": "معائنہ ختم ہو گیا ہے؛ پوچھیں کہ اگلی بار کس دن آنا ہے۔",
+  "kunt u dat in eenvoudige woorden uitleggen": "ڈاکٹر مشکل طبی الفاظ استعمال کرتا ہے اور آپ سمجھ نہیں پاتے؛ آسان وضاحت مانگیں۔",
+  // a2-health-housing
+  "mijn verwarming doet het niet": "سرد صبح گھر کے ریڈی ایٹر ٹھنڈے ہیں۔ مالک مکان کو فون پر صرف مسئلہ بتائیں؛ کب سے، یہ ابھی نہ بتائیں۔",
+  "de verwarming is sinds gisteren kapot": "مالک مکان پوچھتا ہے کہ گھر کو گرم کرنے کا نظام کب سے خراب ہے۔ پچھلے دن سے؛ مکمل جملے میں بتائیں۔",
+  "ik heb lekkage in mijn huis": "گھر کے فرش پر پانی جمع ہو رہا ہے۔ مرمت دفتر کو پہلے عمومی مسئلہ بتائیں؛ جگہ ابھی نہ بتائیں۔",
+  "het water komt uit de keukenmuur": "مرمت دفتر پوچھتا ہے کہ پانی کہاں سے آ رہا ہے۔ یہ کھانا پکانے والے کمرے کی دیوار سے نکل رہا ہے؛ بتائیں۔",
+  "kunt u vandaag een monteur sturen?": "مسئلہ فوری ہے؛ مالک مکان سے پوچھیں کہ کیا آج ہی کوئی مرمت والا آ سکتا ہے۔",
+  "wanneer komt de monteur?": "مالک مکان کہتا ہے کہ مرمت والا آئے گا مگر وقت نہیں بتاتا؛ پوچھیں۔",
+  // a2-word-order-connectors
+  "ik bel omdat de verwarming kapot is": "مرمت دفتر فون اٹھاتا ہے۔ ایک جملے میں بتائیں کہ آپ کے فون کرنے کی وجہ گھر کو گرم کرنے والے نظام کی خرابی ہے۔",
+  "de kamer is nat omdat er een lekkage is": "مالک مکان پوچھتا ہے کہ کمرے میں نمی کیوں ہے؛ وجہ کے ساتھ پورا جملہ کہیں۔",
+  "ik denk dat de leiding kapot is": "آپ کو یقین نہیں، مگر لگتا ہے کہ پانی کا پائپ ٹوٹا ہے؛ اپنی رائے بتائیں۔",
+  "als de monteur komt, ben ik thuis": "مالک مکان پوچھتا ہے کہ کیا مرمت والے کے آنے پر کوئی گھر پر ہوگا؛ جواب دیں۔",
+  "omdat de muur nat is": "مالک مکان پوچھتا ہے کہ دیوار پر پھپھوندی کیوں ہے۔ صرف مختصر وجہ والا حصہ دیں۔",
+  "als het water blijft lopen": "مالک مکان کہتا ہے کہ ہنگامی نمبر پر فون کب کرنا ہے۔ جواب کا شرط والا حصہ چنیں: پانی بند نہ ہو تو۔",
+  "ik wil dat de lekkage wordt gerepareerd": "مالک مکان کو ای میل میں صاف لکھنا ہے کہ آپ کا اصل مطالبہ کیا ہے: رسنے والی جگہ ٹھیک ہو۔",
+  "de vloer wordt nat als het regent": "مالک مکان پوچھتا ہے کہ مسئلہ کب ہوتا ہے۔ صرف بارش کے دنوں میں فرش پر پانی آتا ہے؛ بتائیں۔",
+  // a2-landlord-repairs
+  "er is een lekkage in de keuken": "مرمت فارم میں لکھنا ہے کہ مسئلہ کیا اور کہاں ہے: کھانا پکانے والے کمرے میں پانی رس رہا ہے۔",
+  "de verwarming werkt al drie dagen niet": "مرمت فارم میں لکھیں کہ گھر کو گرم کرنے کا مسئلہ ہفتے کی صبح سے ہے اور آج منگل ہے۔",
+  "het probleem wordt steeds erger": "پہلی اطلاع کو ایک ہفتہ گزر گیا اور حالت ہر دن پہلے سے خراب ہو رہی ہے؛ مالک کو بتائیں۔",
+  "wanneer wordt het gerepareerd": "مالک مکان نے مسئلہ مان لیا ہے مگر کوئی تاریخ نہیں دی؛ پوچھیں کہ کام کب ہوگا۔",
+  "de monteur is niet gekomen": "مرمت والے کو دس بجے آنا تھا۔ آپ سارا دن گھر پر رہے مگر کوئی نہیں آیا؛ مالک کو بتائیں۔",
+  "kunt u dit schriftelijk bevestigen": "مالک مکان فون پر وعدہ کرتا ہے؛ آپ اس وعدے کا ثبوت ای میل یا خط میں چاہتے ہیں۔ درخواست کریں۔",
+  "wie betaalt de reparatie": "مرمت مہنگی ہے اور معلوم نہیں کہ خرچ آپ کا ہے یا مالک کا؛ پوچھیں۔",
+  // a2-shopping-services
+  "ik heb gisteren deze jas gekocht": "دکان کے کاؤنٹر پر بات شروع کریں: بتائیں کہ یہ جیکٹ آپ نے پچھلے دن یہیں سے لی تھی۔",
+  "maar hij is kapot": "جملہ مکمل کریں: “ik heb gisteren deze jas gekocht, …”۔ مسئلہ یہ ہے کہ زپ ٹوٹی ہوئی ہے؛ “لیکن” والا حصہ چنیں۔",
+  "hij is kapot": "ملازم جیکٹ کی طرف اشارہ کرکے پوچھتا ہے کہ مسئلہ کیا ہے۔ “لیکن” کے بغیر مختصر جواب دیں۔",
+  "ik wil hem ruilen": "ملازم پوچھتا ہے کہ آپ پیسے واپس چاہتے ہیں یا دوسری جیکٹ۔ آپ دوسری جیکٹ چاہتے ہیں؛ بتائیں۔",
+  "ik heb de bon": "ملازم پوچھتا ہے کہ کیا آپ کے پاس خریداری کی پرچی ہے۔ وہ آپ کے بیگ میں ہے؛ جواب دیں۔",
+  // a2-customer-complaints
+  "ik heb dit vorige week gekocht": "سروس کا ملازم پوچھتا ہے کہ آپ نے یہ چیز کب خریدی۔ آٹھ دن پہلے؛ بتائیں۔",
+  "het product werkt niet goed": "نئی کیتلی آن تو ہوتی ہے مگر پانی ٹھیک سے گرم نہیں کرتی؛ مسئلہ بتائیں۔",
+  "valt dit onder de garantie": "چیز چھ مہینے پرانی ہے اور خراب ہو گئی؛ پوچھیں کہ کیا مفت مرمت کا وعدہ اس پر لاگو ہوتا ہے۔",
+  "ik wil het liever ruilen": "ملازم پیسے واپس دینے کی پیشکش کرتا ہے، مگر آپ کو وہی چیز نئی حالت میں چاہیے؛ اپنی پسند بتائیں۔",
+  "kan ik mijn geld terugkrijgen?": "آپ کو یہ چیز اب بالکل نہیں چاہیے؛ پوچھیں کہ کیا پیسے لوٹائے جا سکتے ہیں۔",
+  "een onderdeel ontbreekt": "ڈبہ کھولا تو الماری کا ایک ٹکڑا ڈبے میں نہیں ہے؛ بتائیں۔",
+  "wanneer krijg ik een oplossing": "آپ تین بار فون کر چکے ہیں مگر مسئلہ ابھی تک حل نہیں ہوا؛ پوچھیں کہ یہ کب ہوگا۔",
+  "ik wil graag met een leidinggevende spreken": "ملازم آپ کی مدد نہیں کر پا رہا؛ اس سے اوپر والے شخص سے بات کرنے کو کہیں۔",
+  // a2-bills-banking
+  "ik heb deze rekening al betaald": "یاد دہانی کا خط آیا ہے، مگر آپ پچھلے ہفتے یہ بل دے چکے ہیں؛ کمپنی کو بتائیں۔",
+  "het bedrag klopt niet": "بل پر 180 یورو لکھا ہے مگر معاہدے کے مطابق 80 ہونا چاہیے؛ بتائیں۔",
+  "wanneer moet ik betalen": "بل پر آخری تاریخ نظر نہیں آ رہی؛ پوچھیں۔",
+  "kan ik in termijnen betalen": "بل بہت بڑا ہے اور آپ ایک ساتھ پوری رقم نہیں دے سکتے؛ پوچھیں کہ کیا ہر مہینے تھوڑا دیا جا سکتا ہے۔",
+  "de automatische betaling is mislukt": "بینک ایپ میں سرخ پیغام ہے کہ اس مہینے رقم خود بخود نہیں کٹی؛ کمپنی کو بتائیں۔",
+  "ik ben mijn pinpas kwijt": "آپ بینک کو فون کرتے ہیں کیونکہ آپ کا بینک کارڈ کہیں نہیں مل رہا؛ پہلے مسئلہ بتائیں۔",
+  "blokkeer mijn pas alstublieft": "کارڈ گم ہو گیا ہے اور آپ چاہتے ہیں کہ کوئی دوسرا اسے استعمال نہ کر سکے؛ بینک سے فوری قدم کی درخواست کریں۔",
+  "ik stuur een bewijs van betaling": "کمپنی کہتی ہے کہ آپ کی رقم نہیں ملی۔ آپ کے پاس بینک کی رسید کی تصویر ہے؛ بتائیں کہ آپ کیا بھیجیں گے۔",
+  // a2-writing-messages / a2-formal-digital-messages
+  "beste dokter": "ڈاکٹر کو ای میل لکھنی ہے؛ پہلی سطر میں مؤدبانہ مخاطب لکھیں۔",
+  "met vriendelijke groet": "ای میل کا متن مکمل ہے؛ اپنے نام سے پہلے آخری مؤدبانہ سطر لکھیں۔",
+  "ik wil graag een afspraak maken": "ای میل کا مقصد ڈاکٹر سے ملنے کا وقت لینا ہے؛ اصل درخواست والا جملہ لکھیں۔",
+  "mijn zoon kan vandaag niet komen": "آج آپ کے بیٹے کی ملاقات ہے مگر وہ نہیں پہنچ پائے گا؛ دفتر کو یہ اطلاع لکھیں۔",
+  "onderwerp: vraag over mijn afspraak": "ای میل کے عنوان والے خانے میں مختصر لکھیں کہ پیغام آپ کی ملاقات کے بارے میں ایک سوال ہے۔",
+  "geachte meneer of mevrouw": "سرکاری دفتر کو ای میل لکھ رہے ہیں اور پڑھنے والے کا نام معلوم نہیں؛ رسمی آغاز لکھیں۔",
+  "ik schrijf omdat ik een vraag heb": "رسمی آغاز کے بعد پہلا جملہ بتائے کہ آپ کیوں لکھ رہے ہیں: آپ کو کچھ پوچھنا ہے۔",
+  "ik kan op die dag niet komen": "دفتر نے ملاقات کی تاریخ بھیجی ہے مگر اس دن آپ مصروف ہیں؛ جواب میں لکھیں۔",
+  "ik wil graag een nieuwe datum afspreken": "پہلی تاریخ ممکن نہیں؛ ای میل میں کوئی دوسرا دن طے کرنے کی درخواست لکھیں۔",
+  "het formulier staat in de bijlage": "آپ ای میل کے ساتھ فارم کی فائل لگا رہے ہیں؛ متن میں بتائیں کہ فارم کہاں ملے گا۔",
+  "ik heb het formulier ingevuld": "دفتر نے فارم بھرنے کو کہا تھا؛ بتائیں کہ یہ کام آپ کر چکے ہیں۔",
+  "ik heb nog geen antwoord ontvangen": "دو ہفتے پہلے ای میل بھیجی تھی مگر کوئی جواب نہیں آیا؛ پیروی کی ای میل میں جواب نہ ملنے کا ذکر کریں۔",
+  "kunt u mijn bericht bevestigen": "آپ یقین چاہتے ہیں کہ دفتر کو آپ کی ای میل مل گئی ہے؛ تصدیق کی درخواست لکھیں۔"
+};
+
+const a2ScenarioLookupV4 = new Map(Object.entries(a2ScenarioByDutchV4)
+  .map(([dutch, scenario]) => [normalizedTextV4(dutch), scenario]));
+
 function makeA2AuthoredProfileSpecV4(profile) {
   const lesson = a2Lessons.find((item) => item.id === profile.lessonId);
   const rawSeeds = profile.seedConcepts || lesson?.seedConcepts || [];
@@ -8162,7 +8304,8 @@ function makeA2AuthoredProfileSpecV4(profile) {
     normalizedTextV4(dutch),
     [
       `${semanticSlugV4(profile.lessonId)}-${index + 1}`,
-      `${profile.scenarioStarts[index % profile.scenarioStarts.length]} ${profile.scenarioActions[index % profile.scenarioActions.length]}۔`
+      a2ScenarioLookupV4.get(normalizedTextV4(dutch))
+        || `${profile.scenarioStarts[index % profile.scenarioStarts.length]} ${profile.scenarioActions[index % profile.scenarioActions.length]}۔`
     ]
   ]));
   const documents = [];
@@ -12531,7 +12674,7 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
 }
 
 const a0StartUseScenesV4 = {
-  hallo: "آپ پہلی بار نئے پڑوسی سے ملے ہیں۔ گفتگو کس سلام سے شروع کریں؟",
+  hallo: "سیڑھیوں پر نئے پڑوسی سے ملاقات ہوتی ہے۔ ایسا عام سلام چنیں جو صبح، دوپہر، یا شام ہر وقت چلتا ہے۔",
   goedenavond: "شام کو عمارت کے نگہبان سے ملاقات ہوئی ہے۔ کون سا سلام مناسب ہے؟",
   dag: "جان پہچان والے دکاندار کو مختصر سلام کہنا ہے۔ کیا کہیں؟",
   alstublieft: "آپ کاؤنٹر پر کسی کو اپنا کاغذ دے رہے ہیں۔ کاغذ دیتے وقت کیا کہیں؟",
@@ -12591,10 +12734,10 @@ function applyA1AuthoredQuestionFeedbackV4(question, concept, scenario, lessonId
   const lessonSpec = authoredCurriculumForLessonV4(lessonId)?.lessons?.[lessonId] || {};
   const authoredPrompt = suffix === "independent-check"
     ? lessonId === "a1-details-forms"
-      ? `فارم جمع کرنے سے پہلے دوسرا ملازم ${prompt.replace(/[۔؟]+$/u, "")} دوبارہ خود جواب دیں۔`
+      ? `فارم جمع کرنے سے پہلے دوسرا ملازم ${prompt.replace(/^ملازم\s+/u, "").replace(/[۔؟]+$/u, "")}۔ اب مدد کے بغیر جواب دیں۔`
       : lessonSpec.independentCheckLeadUrdu
-        ? `${lessonSpec.independentCheckLeadUrdu} ${prompt.replace(/[۔؟]+$/u, "")} اب مدد کے بغیر جواب دیں۔`
-        : `پہلا تعارف مکمل ہونے کے بعد دوسرے کاؤنٹر پر ${prompt.replace(/[۔؟]+$/u, "")} اب مدد کے بغیر جواب دیں۔`
+        ? `${lessonSpec.independentCheckLeadUrdu}: ${prompt.replace(/[۔؟]+$/u, "")}۔ اب مدد کے بغیر جواب دیں۔`
+        : `${prompt.replace(/[۔؟]+$/u, "")}۔ اب مدد کے بغیر جواب دیں۔`
     : prompt;
   Object.assign(question, {
     prompt: `حال: ${authoredPrompt}`,
@@ -13237,7 +13380,7 @@ const a0MissionPlansV4 = {
     documentTitles: ["گھر کی مختصر فہرست", "مرمت کا پیغام", "گھر سے نکلنے کی فہرست"],
     documentLabels: ["جگہ", "ضروری کام"],
     targets: [
-      a0MissionTargetV4("a0-place-1", "op tafel", [
+      a0MissionTargetV4("a0-place-1", "op de tafel", [
         "چابی میز کے اوپر ہے۔ جگہ کی درست ڈچ بات کہیں۔",
         "مرمت والے کے کاغذ میز کے اوپر رکھے ہیں۔ جگہ بتائیں۔",
         "نکلنے سے پہلے کارڈ میز کے اوپر رکھا ہے۔ جگہ بتائیں۔"
@@ -13508,7 +13651,9 @@ function buildA0MissionQuestionV4({
   } else if (type === "listen-choice") {
     question = {
       ...common,
-      prompt: `${situationUrdu} آواز سن کر درست اردو مطلب چنیں۔`,
+      // The situation tells the learner what to say, so it is not repeated
+      // on items that ask for the meaning of what they hear or read.
+      prompt: "عملی موقع میں یہ ڈچ بات سنیں اور اس کا درست اردو مطلب چنیں۔",
       speak: primary.audioText || primary.dutch,
       mode: "listen-meaning",
       options: urduOptions,
@@ -13518,7 +13663,7 @@ function buildA0MissionQuestionV4({
   } else if (type === "document-choice") {
     question = {
       ...common,
-      prompt: `${situationUrdu} سامنے موجود مختصر دستاویز کی اہم بات کا درست مطلب چنیں۔`,
+      prompt: `دستاویز میں “${primary.dutch}” والی قطار پڑھیں اور اس کا درست اردو مطلب چنیں۔`,
       document: a0MissionDocumentV4(plan, targets, targetIndex, variantIndex),
       options: urduOptions,
       answer: primary.urdu,
@@ -13561,7 +13706,9 @@ function buildA0MissionQuestionV4({
     sequence: "سکھائی ہوئی مکمل باتوں کو اس عملی کام کی درست ترتیب میں رکھیں",
     situation: "صورت پڑھیں اور اسی موقع میں بولی جانے والی درست ڈچ بات منتخب کریں"
   }[question.type];
-  question.authoredInstructionUrdu = `${situationUrdu} ${action}۔`;
+  question.authoredInstructionUrdu = ["listen-choice", "document-choice", "meaning"].includes(question.type)
+    ? `${action}۔`
+    : `${situationUrdu} ${action}۔`;
   question.authoredHintUrdu = phase === "use"
     ? `مدد: “${primary.dutch}” کا مطلب “${primary.urdu}” ہے۔`
     : `جواب دینے کے بعد ضرورت ہو تو یاد کریں: “${primary.dutch}” = “${primary.urdu}”۔`;
@@ -13951,23 +14098,29 @@ function resolveA1MissionTargetV4(target) {
   };
 }
 
-function a1MissionDocumentV4(plan = {}) {
+function a1MissionDocumentV4(plan = {}, targetDutch = "") {
   const document = plan.document;
   if (document) {
+    const rows = document.rows.map((row) => ({ ...row }));
+    if (targetDutch && !rows.some((row) => normalizedTextV4(row.value) === normalizedTextV4(targetDutch))) {
+      rows.push({ label: `خانہ ${rows.length + 1}`, value: targetDutch });
+    }
     return {
       documentKind: document.documentKind || "practical-document",
       title: document.title,
-      rows: document.rows.map((row) => ({ ...row }))
+      rows
     };
   }
+  const rows = [
+    { label: "Voornaam", value: "Sara" },
+    { label: "Geboortedatum", value: "12 mei" },
+    { label: "Telefoonnummer", value: "nul zes" }
+  ];
+  if (targetDutch) rows.push({ label: `خانہ ${rows.length + 1}`, value: targetDutch });
   return {
     documentKind: "personal-details-form",
     title: "Voornaam",
-    rows: [
-      { label: "Voornaam", value: "Sara" },
-      { label: "Geboortedatum", value: "12 mei" },
-      { label: "Telefoonnummer", value: "nul zes" }
-    ]
+    rows
   };
 }
 
@@ -13980,12 +14133,27 @@ function makeA1AuthoredMissionQuestionV4({
   phase,
   type,
   context,
-  plan
+  plan,
+  targets = [target]
 }) {
   const { concept, skillIds } = target;
-  const targetDutch = target.compoundDutch || concept.dutch;
-  const canonicalUrdu = target.compoundUrdu || canonicalUrduForDutchV4(mission, concept.dutch, concept.urdu);
-  const taskContext = [context, target.taskUrdu].filter(Boolean).join(" ");
+  const answerDutchFor = (item) => item.compoundDutch || item.concept.dutch;
+  const answerUrduFor = (item) => item.compoundUrdu || canonicalUrduForDutchV4(mission, item.concept.dutch, item.concept.urdu);
+  const targetDutch = answerDutchFor(target);
+  const canonicalUrdu = answerUrduFor(target);
+  // The variant context describes the whole mission and does not fit every
+  // phrase, so prompts use only the situation written for this phrase.
+  const lessonScenario = authoredCurriculumForLessonV4(concept.introducedInLessonId)
+    ?.lessons?.[concept.introducedInLessonId]?.scenarios?.[normalizedTextV4(concept.dutch)]?.[1]
+    || a2ScenarioLookupV4.get(normalizedTextV4(concept.dutch))
+    || "";
+  const situationUrdu = target.taskUrdu || (target.compoundDutch ? "" : lessonScenario);
+  const missionSettingUrdu = plan.scenarioTitleUrdu ? `${plan.scenarioTitleUrdu}:` : context;
+  if (target.compoundDutch && type === "document-choice") type = "meaning";
+  const taskContext = target.taskUrdu
+    || ((type === "build" || type === "reverse") && situationUrdu)
+    || missionSettingUrdu
+    || "";
   const sourceKey = plan.sourceKey || "personal-info-mission";
   const speakerUrdu = plan.speakerUrdu || "ملازم";
   const chapterId = mission.chapterId || String(mission.id).slice(0, 2);
@@ -13997,13 +14165,20 @@ function makeA1AuthoredMissionQuestionV4({
   let question;
   const optionsFor = (mode) => {
     const answer = mode === "dutch" ? targetDutch : canonicalUrdu;
-    const alternatives = missionConceptOptionsV4(conceptIds, concept.id, mode)
-      .filter((option) => normalizedTextV4(option) !== normalizedTextV4(answer));
+    const others = targets.filter((item) => item !== target);
+    const offset = (slotIndex + variantIndex) % Math.max(1, others.length);
+    const alternatives = uniqueV4([
+      ...[...others.slice(offset), ...others.slice(0, offset)]
+        .map((item) => (mode === "dutch" ? answerDutchFor(item) : answerUrduFor(item))),
+      ...missionConceptOptionsV4(conceptIds, concept.id, mode)
+    ]).filter((option) => normalizedTextV4(option) !== normalizedTextV4(answer));
     return [answer, ...alternatives].slice(0, 3);
   };
   if (type === "situation") {
     question = situation(
-      `حال: ${taskContext} اب “${canonicalUrdu}” والی مناسب بات منتخب کریں۔`,
+      situationUrdu
+        ? `حال: ${situationUrdu}`
+        : `حال: ${taskContext} اب “${canonicalUrdu}” والی مناسب بات منتخب کریں۔`,
       optionsFor("dutch"),
       targetDutch,
       `اس موقع میں کہیں: ${targetDutch}۔`
@@ -14021,9 +14196,9 @@ function makeA1AuthoredMissionQuestionV4({
       type: "document-choice",
       label: plan.document?.labelUrdu || "ذاتی معلومات کا فارم پڑھیں",
       prompt: plan.document?.promptUrdu
-        ? `${taskContext} ${plan.document.promptUrdu}`
-        : `${taskContext} بھرے ہوئے فارم میں Voornaam: Sara پڑھیں اور درست اردو مطلب منتخب کریں۔`,
-      document: a1MissionDocumentV4(plan),
+        ? `${taskContext} دستاویز میں “${targetDutch}” والی قطار پڑھیں اور اس کا درست اردو مطلب منتخب کریں۔`.trim()
+        : `${taskContext} بھرے ہوئے فارم میں “${targetDutch}” والی قطار پڑھیں اور اس کا درست اردو مطلب منتخب کریں۔`.trim(),
+      document: a1MissionDocumentV4(plan, targetDutch),
       options: optionsFor("urdu"),
       answer: canonicalUrdu,
       explain: `${targetDutch} = ${canonicalUrdu}۔`
@@ -14140,8 +14315,14 @@ function applyA1AuthoredMissionV4(mission, plan) {
   const useTypes = plan.useTypes || ["situation", "situation", "document-choice", "build", "build"];
   const checkTypes = plan.checkTypes || ["meaning", "listen-choice", "document-choice", "reverse", "build"];
   if (useTypes.length !== targets.length || checkTypes.length !== targets.length) return;
+  // Replays rotate which skill each phrase is practised with. Missions with
+  // combined phrases keep a fixed order so every variant still has reading.
+  const canRotate = !targets.some((target) => target.compoundDutch);
+  const rotate = (items, by) => (canRotate ? items.map((_, index) => items[(index + by) % items.length]) : items);
   mission.variants = plan.variantTitles.map((title, variantIndex) => {
     const context = plan.variantContexts[variantIndex];
+    const variantUseTypes = rotate(useTypes, variantIndex);
+    const variantCheckTypes = rotate(checkTypes, variantIndex);
     const use = targets.map((target, slotIndex) => makeA1AuthoredMissionQuestionV4({
       mission,
       conceptIds,
@@ -14149,9 +14330,10 @@ function applyA1AuthoredMissionV4(mission, plan) {
       variantIndex,
       slotIndex,
       phase: "use",
-      type: useTypes[slotIndex],
+      type: variantUseTypes[slotIndex],
       context,
-      plan
+      plan,
+      targets
     }));
     const checks = targets.map((target, slotIndex) => makeA1AuthoredMissionQuestionV4({
       mission,
@@ -14160,9 +14342,10 @@ function applyA1AuthoredMissionV4(mission, plan) {
       variantIndex,
       slotIndex,
       phase: "independent-check",
-      type: checkTypes[slotIndex],
+      type: variantCheckTypes[slotIndex],
       context,
-      plan
+      plan,
+      targets
     }));
     const questions = [...use, ...checks];
     const id = `${mission.id}-variant-${variantIndex + 1}`;
