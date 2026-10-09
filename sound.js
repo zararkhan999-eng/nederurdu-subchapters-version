@@ -115,6 +115,11 @@ NU.sound = (() => {
       osc.start(start);
       osc.stop(start + 0.5);
     },
+    // Rubber stamp: a low thump with a papery slap.
+    stamp: () => {
+      tone(140, { duration: 0.18, volume: 0.22, type: "sine", glide: 0.5, attack: 0.004, wet: false });
+      noise({ duration: 0.12, volume: 0.08, from: 1800, to: 600 });
+    },
     // Bicycle bell: two quick metallic "tring"s.
     bell: () => [0, 0.16].forEach((at) => {
       tone(2350, { at, duration: 0.28, volume: 0.06, type: "sine", attack: 0.004 });

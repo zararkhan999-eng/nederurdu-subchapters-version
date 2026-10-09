@@ -410,6 +410,7 @@ const defaultProgress = {
   lessonRunProgress: {},
   totalXp: 0,
   practiceDays: [],
+  stamps: {},
   mistakes: [],
   settings: {
     soundEffects: true,
@@ -1170,6 +1171,7 @@ function render() {
       ${screen === "toolkit" ? renderToolkit() : ""}
       ${screen === "letters" ? renderLetters() : ""}
       ${screen === "settings" ? renderSettings() : ""}
+      ${screen === "passport" ? renderPassport() : ""}
       ${renderBottomNav()}
     `;
   } catch (error) {
@@ -2765,6 +2767,43 @@ function renderSlowSpeakButton(text, forceVisible = false) {
   return `<button class="slow-speak-button" data-action="slow-speak" data-speak="${escapeAttr(text)}">آہستہ سنیں</button>`;
 }
 
+// Every unit (and each chapter's final mission) earns one passport stamp.
+function getChapterStampUnits(chapter) {
+  const grouped = new Set((chapter.subchapters || []).flatMap((unit) => unit.lessonIds));
+  const finale = chapter.lessons.filter((lesson) => !grouped.has(lesson.id)).map((lesson) => lesson.id);
+  const units = (chapter.subchapters || []).map((unit, index) => ({
+    id: unit.id,
+    title: unit.title,
+    lessonIds: unit.lessonIds,
+    kind: NU.map.kindFor(unit.id),
+    color: NU.map.unitColor(index),
+    number: String(index + 1)
+  }));
+  if (finale.length && units.length) {
+    units.push({ id: `${chapter.id}-finale`, title: `${chapter.id.toUpperCase()} آخری مشن`, lessonIds: finale, kind: "townhall", color: "#e09b00", number: "★" });
+  }
+  return units.map((unit) => ({
+    ...unit,
+    code: `${chapter.id.toUpperCase()} · ${unit.number}`,
+    earned: unit.lessonIds.length > 0 && unit.lessonIds.every((id) => progress.completedLessons.includes(id)),
+    date: progress.stamps?.[unit.id] || ""
+  }));
+}
+
+function getStampUnitForLesson(lesson) {
+  const chapter = getChapterForLesson(lesson.id);
+  return chapter ? getChapterStampUnits(chapter).find((unit) => unit.lessonIds.includes(lesson.id)) || null : null;
+}
+
+function formatStampDate(key) {
+  const [year, month, day] = String(key || "").split("-");
+  return year && month && day ? `${day}.${month}.${year}` : "";
+}
+
+function renderStamp(unit, size = 120) {
+  return NU.rewards.stamp({ kind: unit.kind, color: unit.color, label: unit.title, code: unit.code, number: unit.number, date: formatStampDate(unit.date), earned: unit.earned, size });
+}
+
 function renderComplete() {
   const result = lessonResult || { correct: 0, total: 1, xp: 0 };
   const percent = Math.round((result.correct / result.total) * 100);
@@ -2772,6 +2811,8 @@ function renderComplete() {
   const isReview = Boolean(result.reviewKind);
   const secure = result.masteryStatus === "secure";
   const hasMoreLearning = !isReview && Number(result.remainingRuns || 0) > 0;
+  const streak = getPracticeStreak();
+  const stampUnit = result.newStamp ? getStampUnitForLesson(getLesson(result.lessonId) || { id: result.lessonId }) : null;
   const summary = isReview
     ? "آپ نے پہلے سیکھی ہوئی باتیں دوبارہ مضبوط کیں۔"
     : secure
@@ -2779,23 +2820,40 @@ function renderComplete() {
       : hasMoreLearning
         ? "اس سبق کا یہ حصہ مکمل ہوا؛ اگلا سیکھنے والا حصہ ابھی باقی ہے۔"
         : "سیکھنے اور مشق کا مرحلہ مکمل ہوا؛ آزاد جانچ دوبارہ کر کے مہارت پکی کریں۔";
+  const learned = (result.learnedConcepts || []).filter(Boolean);
   return `
-    <main class="complete-screen">
-      <div class="complete-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="complete-celebration" aria-hidden="true">${renderCelebrationPieces(28)}</div>
-      <span class="od-completion-door od-mark" aria-hidden="true"></span>
-      <div class="complete-ring" style="--score:${percent * 3.6}deg">
-        <span class="complete-ring-glow" aria-hidden="true"></span>
-        <div class="complete-mark">${renderIcon("check")}<i></i></div>
+    <main class="complete-screen pl-complete ${isReview ? "is-review" : ""}">
+      <section class="pl-complete-hero">
+        <div class="pl-complete-rays" aria-hidden="true"></div>
+        <div class="pl-complete-pim" aria-hidden="true">${NU.cat.render({ size: 176, mood: "happy" })}</div>
+        <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : hasMoreLearning ? "سیکھنے کا ایک حصہ مکمل" : "آج کا قدم مکمل"}</span>
+        <h1>${isReview ? "دہرائی مکمل!" : hasMoreLearning ? "اگلے حصے کے لیے تیار" : "سبق مکمل!"}</h1>
+        <p class="pl-complete-nl latin" dir="ltr">${secure ? "Fantastisch!" : "Goed gedaan!"}</p>
+        <p class="complete-summary">${summary}</p>
+      </section>
+
+      <div class="pl-stat-row complete-metrics" aria-label="نتیجہ">
+        <span class="pl-stat pl-stat-xp"><small>پوائنٹس</small><strong class="latin" data-count-up="${result.xp || 0}" data-count-prefix="+">+${result.xp || 0}</strong><i aria-hidden="true">${renderStatIcon("star")}</i></span>
+        <span class="pl-stat pl-stat-score"><small>آزاد جانچ</small><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><i aria-hidden="true">${renderStatIcon("target")}</i></span>
+        <span class="pl-stat pl-stat-right"><small>درست</small><strong class="latin">${result.correct}/${result.total}</strong><i aria-hidden="true">${renderStatIcon("check")}</i></span>
       </div>
-      <span class="complete-kicker">${isReview ? "دہرائی محفوظ ہو گئی" : hasMoreLearning ? "سیکھنے کا ایک حصہ مکمل" : "آج کا قدم مکمل"}</span>
-      <h1>${isReview ? "دہرائی مکمل!" : hasMoreLearning ? "اگلے حصے کے لیے تیار" : "سبق مکمل!"}</h1>
-      <p class="complete-summary">${summary}</p>
+
+      ${stampUnit ? `
+        <section class="pl-stamp-reveal" aria-label="نئی مہر">
+          <div class="pl-stamp-page"><div class="pl-stamp-slot">${renderStamp({ ...stampUnit, earned: true, date: todayKey() }, 132)}</div></div>
+          <div class="pl-stamp-copy"><span>نئی مہر!</span><strong>${escapeHtml(stampUnit.title)}</strong><p>یہ یونٹ مکمل ہوا۔ مہر آپ کے پاسپورٹ میں لگ گئی۔</p><button class="secondary-button" data-action="passport">پاسپورٹ دیکھیں</button></div>
+        </section>` : ""}
+
+      <section class="pl-streak-card ${result.firstPracticeToday ? "is-new" : ""}">
+        <div class="pl-streak-tulip">${NU.rewards.tulip(streak, { size: 92 })}</div>
+        <div><span>روزانہ کا سلسلہ</span><strong><b class="latin">${streak}</b> ${streak === 1 ? "دن" : "دن مسلسل"}</strong><p>${streak >= 7 ? "پورا گلدستہ! ہر روز تھوڑا سا سیکھنا سب سے مؤثر ہے۔" : "ہر روز مشق کریں اور گل لالہ بڑھتا جائے گا۔"}</p></div>
+      </section>
+
       ${isReview ? "" : `
         <section class="learning-recap">
           <span class="mastery-result mastery-${result.masteryStatus || "practiced"}">${secure ? "مہارت پکی" : "مشق مکمل"}</span>
           <h2>آج آپ نے کیا سیکھا؟</h2>
-          <p class="latin">${escapeHtml((result.learnedConcepts || []).join(" · ") || "اس سبق کی عملی مہارت")}</p>
+          ${learned.length ? `<div class="pl-recap-words">${learned.map((word) => `<span class="${isDutchText(word) ? "latin" : ""}" dir="auto">${escapeHtml(word)}</span>`).join("")}</div>` : `<p>اس سبق کی عملی مہارت</p>`}
           <div>
             <span><strong class="latin">${result.correctedCount || 0}</strong><small>غلطیاں درست کیں</small></span>
             <span><strong class="latin">${result.unresolvedCount || 0}</strong><small>دوبارہ دہرائیں</small></span>
@@ -2811,24 +2869,42 @@ function renderComplete() {
           : `<button class="quiz-action enabled" data-action="home">اسباق پر واپس</button>`}
         ${incorrect ? `<button class="secondary-button" data-action="practice">تجویز کردہ دہرائی · ${incorrect}</button>` : ""}
       </div>
-      <div class="complete-metrics complete-metrics-secondary" aria-label="ثانوی نتیجہ">
-        <span><strong class="latin">${result.correct}/${result.total}</strong><small>درست</small></span>
-        <span><strong class="latin" data-count-up="${percent}" data-count-suffix="%">${percent}%</strong><small>آزاد جانچ</small></span>
-        <span><strong class="latin" data-count-up="${result.xp || 0}">${result.xp || 0}</strong><small>پوائنٹس</small></span>
-      </div>
-      <div class="complete-meter"><span style="width:${percent}%"></span></div>
     </main>
   `;
 }
 
-function renderCelebrationPieces(count) {
-  return Array.from({ length: count }, (_, index) => {
-    const x = (index * 37 + 11) % 100;
-    const delay = ((index * 13) % 17) / 10;
-    const duration = 2.2 + ((index * 7) % 9) / 10;
-    const rotation = (index * 47) % 180;
-    return `<span style="--piece-x:${x}%;--piece-delay:${delay}s;--piece-duration:${duration}s;--piece-rotation:${rotation}deg"></span>`;
-  }).join("");
+function renderStatIcon(kind) {
+  const icons = {
+    star: '<path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8Z" fill="currentColor"/>',
+    target: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="4.5" fill="currentColor"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
+  };
+  return `<svg viewBox="0 0 24 24">${icons[kind]}</svg>`;
+}
+
+// The passport collects one stamp per finished unit, chapter by chapter.
+function renderPassport() {
+  const pages = chapters.map((chapter) => ({ chapter, units: getChapterStampUnits(chapter) }));
+  const earned = pages.reduce((sum, page) => sum + page.units.filter((unit) => unit.earned).length, 0);
+  const total = pages.reduce((sum, page) => sum + page.units.length, 0);
+  return `<main class="utility-screen pl-passport">
+    ${renderProgressHeader()}
+    <section class="pl-passport-cover">
+      <button class="quiz-close" data-action="journey" aria-label="سفر پر واپس جائیں">${renderIcon("close")}</button>
+      <span class="pl-passport-crest" aria-hidden="true">${NU.cat.render({ face: true, size: 64, mood: "happy" })}</span>
+      <span class="pl-passport-word latin" dir="ltr">PASPOORT</span>
+      <h1>میرا ڈچ پاسپورٹ</h1>
+      <p>ہر مکمل یونٹ پر ایک مہر</p>
+      <span class="pl-passport-count"><b class="latin">${earned}</b> / <b class="latin">${total}</b> مہریں</span>
+    </section>
+    ${pages.map(({ chapter, units }) => `
+      <section class="pl-passport-page" aria-label="${escapeAttr(chapter.title)}">
+        <header><strong class="latin">${escapeHtml(chapter.id.toUpperCase())}</strong><span>${escapeHtml(chapter.title)}</span><small class="latin">${units.filter((unit) => unit.earned).length}/${units.length}</small></header>
+        <div class="pl-passport-grid">
+          ${units.map((unit, index) => `<figure class="pl-passport-stamp ${unit.earned ? "is-earned" : ""}" style="--tilt:${[-8, 6, -3, 9, -6, 4, -10, 7, -2, 5][index % 10]}deg">${renderStamp(unit, 96)}<figcaption>${escapeHtml(unit.title)}</figcaption></figure>`).join("")}
+        </div>
+      </section>`).join("")}
+  </main>`;
 }
 
 function renderPracticeScreen() {
@@ -3003,6 +3079,7 @@ function bindEvents() {
       if (action === "home") goHome();
       if (action === "journey") goDestination("journey");
       if (action === "toolkit") goDestination("toolkit");
+      if (action === "passport") goDestination("passport");
       if (action === "practice") goPractice();
       if (action === "letters") goLetters();
       if (action === "settings") goSettings();
@@ -3190,9 +3267,13 @@ function triggerWorldTransition() {
 
 function animateCountUpMetrics() {
   document.querySelectorAll("[data-count-up]").forEach((element, index) => {
-    window.setTimeout(() => NU.motion.countUp(element, Number(element.dataset.countUp || 0), {
-      suffix: element.dataset.countSuffix || ""
-    }), 500 + index * 250);
+    window.setTimeout(() => {
+      NU.motion.countUp(element, Number(element.dataset.countUp || 0), {
+        suffix: element.dataset.countSuffix || "",
+        prefix: element.dataset.countPrefix || ""
+      });
+      NU.sound.play("xp");
+    }, 600 + index * 260);
   });
 }
 
@@ -3250,8 +3331,18 @@ function triggerLessonCelebration() {
   requestAnimationFrame(() => document.body.classList.add("celebrating-lesson"));
   window.setTimeout(() => document.body.classList.remove("celebrating-lesson"), 2400);
   NU.motion.confetti();
-  NU.motion.burst(document.querySelector(".complete-mark"), { count: 26, spread: 160 });
+  const pim = document.querySelector(".pl-complete-pim .nu-cat");
+  NU.cat.act(pim, "hop");
+  window.setTimeout(() => NU.cat.act(pim, "wave"), 650);
+  NU.motion.stagger(".pl-stat", "pop", { each: 120, from: 200 });
   animateCountUpMetrics();
+  // The stamp lands once the numbers have counted; a first practice of the day grows the tulip.
+  const stampSlot = document.querySelector(".pl-stamp-slot");
+  if (stampSlot) {
+    stampSlot.style.opacity = "0";
+    window.setTimeout(() => { stampSlot.style.opacity = ""; NU.rewards.revealStamp(stampSlot); }, 1500);
+  }
+  if (lessonResult?.firstPracticeToday) NU.rewards.growTulip(document.querySelector(".pl-streak-tulip svg"));
 }
 
 // Moving to a teaching card's next step turns the card over like a flashcard.
@@ -3622,6 +3713,7 @@ function handleNederUrduBack() {
     return true;
   }
   if (screen === "letters") { goDestination("toolkit"); return true; }
+  if (screen === "passport") { goDestination("journey"); return true; }
   if (screen !== "home") { goHome(); return true; }
   return false;
 }
@@ -3949,8 +4041,19 @@ function completeLesson(lesson) {
       : allRunsPracticed
         ? "practiced"
         : "introduced";
+  const nextCompletedLessons = isReview || alreadyCompleted || !completedNow
+    ? progress.completedLessons
+    : [...progress.completedLessons, lesson.id];
+  const stampUnit = isReview ? null : getStampUnitForLesson(lesson);
+  const newStamp = stampUnit
+    && !progress.stamps?.[stampUnit.id]
+    && stampUnit.lessonIds.every((id) => nextCompletedLessons.includes(id))
+    ? stampUnit.id
+    : "";
   lessonResult = {
     lessonId: lesson.id,
+    newStamp,
+    firstPracticeToday: !progress.practiceDays.includes(todayKey()),
     correct,
     total: Math.max(1, total),
     xp: earnedXp,
@@ -3998,7 +4101,8 @@ function completeLesson(lesson) {
 
   saveProgress({
     ...progress,
-    completedLessons: isReview || alreadyCompleted || !completedNow ? progress.completedLessons : [...progress.completedLessons, lesson.id],
+    completedLessons: nextCompletedLessons,
+    stamps: newStamp ? { ...(progress.stamps || {}), [newStamp]: todayKey() } : (progress.stamps || {}),
     scores: isReview ? progress.scores : {
       ...progress.scores,
       [lesson.id]: Math.max(progress.scores[lesson.id] || 0, correct)

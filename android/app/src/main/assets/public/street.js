@@ -145,7 +145,7 @@ NU.street = (() => {
         </g>
       </svg>
       <div class="street-hud">
-        <span class="street-chip street-chip-streak" aria-label="${streak} دن مسلسل"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9Z" fill="#ff7a1a"/><path d="M12 12c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2Z" fill="#ffc23d"/></svg><b class="latin">${streak}</b></span>
+        <span class="street-chip street-chip-streak" aria-label="${streak} دن مسلسل"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22v-8" stroke="#3a9a4a" stroke-width="2.2" stroke-linecap="round"/><path d="M12 19c-3 0-5-2-6-4 3 0 5 1 6 4Z" fill="#58c26b"/><path d="M7 9c-1-4 1-6 2-7 1 1.5 2 2 3 0 1 2 2 1.5 3 0 1 1 3 3 2 7-1 3-9 3-10 0Z" fill="#ff4d4d"/></svg><b class="latin">${streak}</b></span>
         <span class="street-chip street-chip-xp" aria-label="${xp} پوائنٹس"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8Z" fill="#ffc23d" stroke="#e09b00" stroke-width="1.5" stroke-linejoin="round"/></svg><b class="latin">${xp}</b></span>
       </div>
       <div class="street-cat" data-action="street-cat" role="button" tabindex="0" aria-label="${NU.cat.NAME} سے بات کریں">${NU.cat.render({ size: 150 })}</div>

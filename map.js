@@ -149,7 +149,7 @@ NU.map = (() => {
     return `<section class="map" data-chapter="${esc(chapter.id)}">
       <header class="map-hero">
         <div class="map-hero-ring" style="--p:${percent}"><span class="latin">${percent}%</span></div>
-        <div><span class="map-hero-kicker">آپ کا سفر</span><h1>${esc(chapter.title)}</h1><p>${esc(chapter.subtitle || "")}</p><small>${completed} / ${total} سبق مکمل</small></div>
+        <div><span class="map-hero-kicker">آپ کا سفر</span><h1>${esc(chapter.title)}</h1><p>${esc(chapter.subtitle || "")}</p><small>${completed} / ${total} سبق مکمل</small><button class="map-passport" data-action="passport"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="11" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>پاسپورٹ</button></div>
       </header>
       ${sections}
       <footer class="map-finish">
@@ -256,5 +256,5 @@ NU.map = (() => {
 
   const unitColor = (index) => UNIT_COLORS[Math.max(0, index) % UNIT_COLORS.length];
 
-  return { render, mount, building, kindFor, unitColor };
+  return { render, mount, building, kindFor, unitColor, signIcon: (kind) => SIGNS[kind] || SIGNS.home };
 })();

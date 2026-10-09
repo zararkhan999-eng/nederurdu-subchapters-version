@@ -25,6 +25,8 @@ const files = [
   "street.js",
   "map.js",
   "lesson.js",
+  "rewards.js",
+  "rewards.css",
   "lesson.css",
   "course-data.js",
   "word-visual-data.js",

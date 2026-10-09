@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="open-door.css" />
     <link rel="stylesheet" href="playful.css" />
     <link rel="stylesheet" href="world.css" />
+    <link rel="stylesheet" href="rewards.css" />
     <style>
       body{font-family:var(--font-ui);padding:20px 16px 60px;max-width:460px;margin:0 auto}
       h1{font-size:26px;font-weight:800;margin:0 0 4px}
@@ -58,6 +59,14 @@
       <h2>Map buildings</h2>
       <div class="grid" id="buildings"></div>
 
+      <h2>Tulip streak stages (0, 1, 2–3, 4–6, 7+ days)</h2>
+      <div class="grid" id="tulips" style="grid-template-columns:repeat(5,1fr);align-items:end"></div>
+      <button class="secondary-button" id="grow" style="margin-top:10px">grow again</button>
+
+      <h2>Passport stamps</h2>
+      <div class="grid" id="stamps"></div>
+      <button class="primary-button" id="slam">stamp!</button>
+
       <h2>Answer tiles</h2>
       <div class="choices" style="display:grid;gap:12px">
         <button class="choice-button"><span class="choice-key">1</span><span class="choice-text">goedemorgen</span></button>
@@ -70,6 +79,7 @@
     <script src="sound.js"></script>
     <script src="cat.js"></script>
     <script src="map.js"></script>
+    <script src="rewards.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
       const add = (host, label, run, kind = "secondary-button") => {
@@ -115,6 +125,20 @@
         cell.innerHTML = NU.map.building(kind, ["#ff7a1a", "#2b6bff", "#3dc25d", "#8a5cff", "#ff5ca8", "#e09b00"][i % 6], i % 3 === 0 ? "lit" : "open") + `<p style="text-align:center;font-size:12px">${kind}</p>`;
         $("buildings").append(cell);
       });
+
+      [0, 1, 2, 4, 7].forEach((days) => {
+        const cell = document.createElement("div");
+        cell.innerHTML = NU.rewards.tulip(days, { size: 64 }) + `<p style="text-align:center;font-size:12px">${days} ${days === 1 ? "day" : "days"}</p>`;
+        $("tulips").append(cell);
+      });
+      $("grow").onclick = () => document.querySelectorAll("#tulips svg").forEach((svg) => NU.rewards.growTulip(svg));
+      [["cafe", "#ff7a1a", "A0 · 1"], ["school", "#2b6bff", "A0 · 2"], ["clinic", "#3dc25d", "A1 · 8"], ["townhall", "#e09b00", "A2 · ★"], ["station", "#8a5cff", "A1 · 7"]].forEach(([kind, color, code]) => {
+        const cell = document.createElement("div");
+        cell.innerHTML = NU.rewards.stamp({ kind, color, code, date: "09.10.2026", label: kind, size: 100 });
+        $("stamps").append(cell);
+      });
+      { const cell = document.createElement("div"); cell.innerHTML = NU.rewards.stamp({ earned: false, number: "6", size: 100 }); $("stamps").append(cell); }
+      $("slam").onclick = () => NU.rewards.revealStamp($("stamps").firstElementChild);
 
       document.querySelectorAll(".choice-button").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("wrong")) { NU.sound.play("wrong"); NU.motion.shake(button); }

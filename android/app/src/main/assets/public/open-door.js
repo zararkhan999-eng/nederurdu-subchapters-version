@@ -2,7 +2,7 @@
 window.OpenDoor = (() => {
   let lastKey = "", lastSelected = "", lastChecked = false, lastDetail = "";
   let pendingPage = null, skipNext = false;
-  const routeOrder = ["home", "journey", "practice", "toolkit", "letters", "settings", "preview", "lesson", "complete"];
+  const routeOrder = ["home", "journey", "passport", "practice", "toolkit", "letters", "settings", "preview", "lesson", "complete"];
   const media = matchMedia("(prefers-reduced-motion: reduce)");
   const situations = [
     [/shop|food|eten|boodsch|winkel|money|cafe|restaurant/i, "WINKEL", "دکان میں گفتگو", "Goedemorgen!", "shop"],

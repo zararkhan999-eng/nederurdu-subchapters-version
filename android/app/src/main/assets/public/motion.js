@@ -78,13 +78,13 @@ NU.motion = (() => {
     });
   }
 
-  function countUp(element, to, { from = 0, duration = 900, suffix = "" } = {}) {
+  function countUp(element, to, { from = 0, duration = 900, suffix = "", prefix = "" } = {}) {
     if (!element) return;
-    if (level() === "off") { element.textContent = `${to}${suffix}`; return; }
+    if (level() === "off") { element.textContent = `${prefix}${to}${suffix}`; return; }
     const start = performance.now();
     const tick = now => {
       const p = Math.min(1, (now - start) / duration);
-      element.textContent = `${Math.round(from + (to - from) * (1 - (1 - p) ** 4))}${suffix}`;
+      element.textContent = `${prefix}${Math.round(from + (to - from) * (1 - (1 - p) ** 4))}${suffix}`;
       if (p < 1) requestAnimationFrame(tick);
       else moves.bump(element);
     };

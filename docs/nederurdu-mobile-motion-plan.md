@@ -157,3 +157,13 @@ Pim's face (`NU.cat.render({ face: true })`) replaces the old doorway mark in th
 - The lesson notes sheet, choice tiles and prompt cards lost leftover dark-theme styling (mint text, decorative circles, mint scrollbars).
 - Checked at 375 and 320 px for every exercise type the course uses (teaching, pattern, meaning, reverse, situation, picture, listening, speak-repeat, build, document), correct and wrong feedback, correction cards, notes, the preview and reduced motion. Four complete lessons across A0–A2 played through to completion with a wrong answer and no errors. Android debug build passes.
 - Not yet redesigned: the lesson completion screen (Phase 4).
+
+## Phase 4 — Rewards — 9 October 2026
+
+- `rewards.js` (`NU.rewards`) and `rewards.css`.
+- Lesson complete: an orange hero with slowly turning rays, Pim hopping and waving on the bike, "سبق مکمل!" with Dutch praise ("Goed gedaan!" / "Fantastisch!"), confetti, and three chunky stat tiles (points, independent-check score, correct answers) that count up with a tick.
+- Passport stamps: finishing every lesson of a unit (or a chapter's final mission) earns a stamp, saved as `progress.stamps[unitId] = date`. The stamp drops from above and slams onto a passport page with a thud, haptic and ink dust. Stamps are scalloped postage seals with "NEDERURDU" arched in Latin letters (Urdu cannot follow a curved path reliably), the unit's icon, the unit code (e.g. "A0 · 2") and the date.
+- Passport page (`screen = "passport"`, opened from the Journey hero or the new-stamp card; Android Back returns to Journey): a navy cover with gold lettering and Pim's crest, then a cream page per chapter with earned stamps and dashed numbered spaces for the rest.
+- Tulip streak: the daily streak grows a tulip (seed, sprout, bud, bloom, a bunch from 7 days). It grows in on the completion screen on the first practice of the day, and the Today streak chip now shows a tulip (the in-lesson combo keeps the flame).
+- "What you learned" shows the lesson's Dutch words as chips; review sessions skip the recap.
+- Checked at 375 and 320 px (the stamp card stacks on narrow phones), review completion, passport navigation and Back, reduced motion, and lessons completing a unit across runs. `motion-lab.html` shows the tulip stages and stamps. Android debug build passes.
