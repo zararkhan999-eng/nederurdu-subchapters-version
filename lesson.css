@@ -291,3 +291,11 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
 #app .correction-teaching-card .pl-pim-tip-bubble b{font-family:var(--font-ui);font-weight:800}
 #app .teaching-actions{flex-wrap:nowrap}
 #app .teaching-actions .slow-speak-button,#app .pl-listen-stage .slow-speak-button,#app .speak-repeat-question .slow-speak-button{width:auto;flex:0 0 auto}
+
+/* Explanation (uitleg) cards: chunky numbered points in the playful style. */
+#app .teaching-card{padding:18px;border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 5px 0 var(--pl-line);background:#fff}
+#app .teaching-card>h2{margin:0 0 12px;font-size:20px;font-weight:800;color:var(--pl-ink);line-height:1.7}
+#app .uitleg-card{display:grid;gap:8px;counter-reset:uitleg}
+#app .uitleg-point{position:relative;display:flex;align-items:center;gap:10px;padding:11px 14px;border:2px solid #cfdcff;border-radius:16px;background:var(--pl-blue-soft);font:600 17px/1.8 var(--font-urdu-reading);color:var(--pl-ink);counter-increment:uitleg}
+#app .uitleg-point>span{flex-shrink:0;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--pl-blue);box-shadow:none}
+#app .uitleg-point>span::before{content:counter(uitleg);color:#fff;font:800 13px var(--font-ui)}

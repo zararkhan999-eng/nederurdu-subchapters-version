@@ -36,7 +36,8 @@ window.OpenDoor = (() => {
   function decorate(app, state) {
     // Decorative SVGs stay outside teaching and answer surfaces.
     const target = {practice: ".review-hero .utility-heading", toolkit: ".toolkit-screen .od-support", settings: ".settings-panel .settings-intro", letters: ".letters-panel .letters-heading"}[state.screen];
-    if (target && !app.querySelector(".od-graphic")) app.querySelector(target)?.insertAdjacentHTML("beforebegin", graphic(state.screen));
+    // Screens with the playful hero (Pim) no longer take the old cobalt artwork.
+    if (target && !app.querySelector(".od-graphic") && !app.querySelector(".pl-hero")) app.querySelector(target)?.insertAdjacentHTML("beforebegin", graphic(state.screen));
     if (state.screen === "journey" && !app.querySelector(".od-editorial-line")) app.querySelector(".od-world-cover > div:last-child")?.insertAdjacentHTML("afterbegin", '<div class="od-editorial-line" aria-hidden="true"><span class="od-mini-arch"></span><span>ELKE STAP OPENT IETS NIEUWS</span></div>');
     if (state.screen === "home" && !app.querySelector(".od-language-strip")) app.querySelector(".od-hero-copy")?.insertAdjacentHTML("afterbegin", '<div class="od-language-strip" aria-hidden="true"><span>NL</span><i></i><span>اردو</span><b>↗</b></div>');
   }

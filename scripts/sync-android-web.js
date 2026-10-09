@@ -27,6 +27,7 @@ const files = [
   "lesson.js",
   "rewards.js",
   "rewards.css",
+  "screens.css",
   "lesson.css",
   "course-data.js",
   "word-visual-data.js",

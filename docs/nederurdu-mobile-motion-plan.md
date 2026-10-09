@@ -167,3 +167,14 @@ Pim's face (`NU.cat.render({ face: true })`) replaces the old doorway mark in th
 - Tulip streak: the daily streak grows a tulip (seed, sprout, bud, bloom, a bunch from 7 days). It grows in on the completion screen on the first practice of the day, and the Today streak chip now shows a tulip (the in-lesson combo keeps the flame).
 - "What you learned" shows the lesson's Dutch words as chips; review sessions skip the recap.
 - Checked at 375 and 320 px (the stamp card stacks on narrow phones), review completion, passport navigation and Back, reduced motion, and lessons completing a unit across runs. `motion-lab.html` shows the tulip stages and stamps. Android debug build passes.
+
+## Phase 5 — Remaining screens — 9 October 2026
+
+- `screens.css` plus a shared `renderScreenHero()` (coloured card with Pim's face, title, subtitle, stat chips, optional close button) used by Practice (green), Toolkit (purple), Letters (blue) and Settings (ink).
+- Practice: four colour-coded chunky cards in a 2×2 grid (today orange, mistakes red, old lessons blue, letters purple) with icon tiles and count badges; empty modes are greyed with their message.
+- Toolkit: letters shortcut row, word search that filters Dutch and Urdu in place (with a "nothing found" message), chunky word and pattern cards, and a Pim empty state before the first lesson.
+- Letters: colourful letter tiles with aligned speakers (row-stretched cards now pack content to the top), title "حروف اور آوازیں".
+- Settings: grouped list cards, green switches mirrored for RTL (on = knob left), a progress section with the reset button, and a small Pim footer.
+- Offline banner and error/missing-lesson states use Pim (sad for errors); explanation (uitleg) cards got numbered blue points.
+- The old cobalt artwork is no longer injected on screens with the new hero.
+- Checked at 375 and 320 px (no horizontal overflow on Practice, Toolkit, Letters, Settings, Passport), search behaviour, toggles, empty/offline/error states. Android debug build passes.

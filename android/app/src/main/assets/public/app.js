@@ -1180,7 +1180,8 @@ function render() {
     activeReview = null;
     app.innerHTML = `
       ${renderTopbar()}
-      <section class="state-panel">
+      <section class="state-panel pl-state">
+        <span class="pl-empty-pim" aria-hidden="true">${NU.cat.render({ size: 120, mood: "sad" })}</span>
         <h1>سبق کھل نہیں سکا</h1>
         <p class="lead">براہ کرم دوبارہ کوشش کریں۔</p>
         <button class="primary-button" data-action="home">گھر جائیں</button>
@@ -1205,7 +1206,9 @@ function render() {
   }
 }
 
-function renderExperienceBackdrop() { return navigator.onLine ? "" : '<div class="od-offline" role="status">انٹرنیٹ دستیاب نہیں — محفوظ اسباق استعمال کریں۔</div>'; }
+function renderExperienceBackdrop() {
+  return navigator.onLine ? "" : `<div class="od-offline pl-offline" role="status"><span aria-hidden="true">${NU.cat.render({ face: true, size: 30 })}</span>آف لائن ہیں — اسباق پھر بھی چلتے ہیں۔</div>`;
+}
 
 function applyDisplaySettings() {
   document.body.classList.toggle("large-text", Boolean(progress.settings.largeText));
@@ -1312,10 +1315,34 @@ function renderToolkit() {
   });
   const allSkills = { skillIds: [...courseSkills.keys()] };
   const patterns = (Array.isArray(course?.patterns) ? course.patterns : Object.values(course?.patterns || {})).filter(pattern => normalizeIdList(getPatternSkillIds(pattern, allSkills), pattern.skillId).some(id => statusAtLeast(getSkillStatus(id), "introduced")));
-  return `<main class="utility-screen toolkit-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">اپنی بات ساتھ رکھیں</span><h1>مددگار</h1><p>سیکھی ہوئی باتیں، معنی اور آواز ایک جگہ۔</p></div>
-    <section class="od-support"><span>${renderIcon("alphabet")}</span><p><strong>Nederlands کی آوازیں</strong><small>حروف سنیں، لفظ کے ساتھ دہرائیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف کھولیں">${renderIcon("chevron")}</button></section>
-    <section class="od-tool-section"><h2>آپ کے الفاظ <small class="latin">${learned.length}</small></h2>${learned.length ? `<div class="od-word-list">${learned.map(concept => `<article class="od-word"><div><strong class="latin">${escapeHtml(concept.dutch || "")}</strong><p>${escapeHtml(concept.urdu || "")}</p>${concept.pronunciationUrdu ? `<small>${escapeHtml(concept.pronunciationUrdu)}</small>` : ""}</div>${renderSpeakButton(concept.audioText || concept.dutch, "toolkit")}</article>`).join("")}</div>` : `<div class="od-empty"><span class="od-mark" aria-hidden="true"></span><h3>پہلے سبق سے آغاز کریں</h3><p>سیکھنے کے بعد آپ کے الفاظ اور ان کی آوازیں یہاں آ جائیں گی۔</p><button class="primary-button" data-action="home">آج کا سبق</button></div>`}</section>
-    <section class="od-tool-section"><h2>گرامر کی یاد دہانی</h2>${patterns.length ? patterns.map(pattern => `<article class="od-word od-grammar"><h3 class="latin">${escapeHtml(pattern.modelDutch || pattern.modelSentence || pattern.sentence || pattern.title || pattern.dutch || "")}</h3><p>${escapeHtml(pattern.ruleUrdu || pattern.explanationUrdu || pattern.urdu || "")}</p>${renderSpeakButton(pattern.audioText || pattern.modelDutch, "toolkit")}</article>`).join("") : `<p class="od-muted">گرامر سیکھنے کے بعد اس کی یاد دہانی یہاں نظر آئے گی۔</p>`}</section></main>`;
+  return `<main class="utility-screen toolkit-screen pl-utility">${renderProgressHeader()}
+    ${renderScreenHero({ tone: "purple", title: "مددگار", subtitle: "سیکھی ہوئی باتیں، معنی اور آواز ایک جگہ۔", stats: [[learned.length, "الفاظ"], [patterns.length, "جملوں کے نمونے"]] })}
+    <button class="pl-row-link pl-row-purple" data-action="letters"><span class="pl-row-icon">${renderIcon("alphabet")}</span><span class="pl-row-copy"><strong>Nederlands حروف اور آوازیں</strong><small>حروف سنیں، لفظ کے ساتھ دہرائیں۔</small></span><b aria-hidden="true">‹</b></button>
+    <section class="od-tool-section">
+      <h2>آپ کے الفاظ <small class="latin">${learned.length}</small></h2>
+      ${learned.length ? `
+        <label class="pl-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><input type="search" data-word-filter placeholder="لفظ یا مطلب تلاش کریں" aria-label="الفاظ تلاش کریں" autocomplete="off" /></label>
+        <div class="od-word-list">${learned.map(concept => `<article class="od-word" data-search="${escapeAttr(`${concept.dutch || ""} ${concept.urdu || ""}`.toLowerCase())}"><div><strong class="latin">${escapeHtml(concept.dutch || "")}</strong><p>${escapeHtml(concept.urdu || "")}</p>${concept.pronunciationUrdu ? `<small>${escapeHtml(concept.pronunciationUrdu)}</small>` : ""}</div>${renderSpeakButton(concept.audioText || concept.dutch, "toolkit")}</article>`).join("")}</div>
+        <p class="pl-search-empty" hidden>اس تلاش سے کوئی لفظ نہیں ملا۔</p>`
+      : renderEmptyState("پہلے سبق سے آغاز کریں", "سیکھنے کے بعد آپ کے الفاظ اور ان کی آوازیں یہاں آ جائیں گی۔", "home", "آج کا سبق")}
+    </section>
+    <section class="od-tool-section">
+      <h2>گرامر کی یاد دہانی <small class="latin">${patterns.length}</small></h2>
+      ${patterns.length ? patterns.map(pattern => `<article class="od-word od-grammar"><div><h3 class="latin">${escapeHtml(pattern.modelDutch || pattern.modelSentence || pattern.sentence || pattern.title || pattern.dutch || "")}</h3><p>${escapeHtml(pattern.ruleUrdu || pattern.explanationUrdu || pattern.urdu || "")}</p></div>${renderSpeakButton(pattern.audioText || pattern.modelDutch, "toolkit")}</article>`).join("") : `<p class="od-muted">گرامر سیکھنے کے بعد اس کی یاد دہانی یہاں نظر آئے گی۔</p>`}
+    </section></main>`;
+}
+
+function renderEmptyState(title, text, action, label) {
+  return `<div class="od-empty pl-empty"><span class="pl-empty-pim" aria-hidden="true">${NU.cat.render({ size: 120 })}</span><h3>${title}</h3><p>${text}</p><button class="primary-button" data-action="${action}">${label}</button></div>`;
+}
+
+// Shared header for the utility screens: a coloured card with Pim, a title and optional stat chips.
+function renderScreenHero({ tone, title, subtitle, mood = "idle", stats = [], back = "", className = "" }) {
+  return `<section class="pl-hero pl-hero-${tone} ${className}">
+    ${back ? `<button class="quiz-close pl-hero-back" data-action="${back}" aria-label="واپس جائیں">${renderIcon("close")}</button>` : ""}
+    <span class="pl-hero-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 62, mood })}</span>
+    <div class="pl-hero-copy"><h1>${title}</h1><p>${subtitle}</p>${stats.length ? `<div class="pl-hero-stats">${stats.map(([value, label]) => `<span><b class="latin">${value}</b>${label}</span>`).join("")}</div>` : ""}</div>
+  </section>`;
 }
 
 function goDestination(destination) {
@@ -2491,7 +2518,8 @@ function getWrongOptionExplanation(question, answer) {
 function renderMissingLesson() {
   return `
     ${renderTopbar()}
-    <section class="state-panel">
+    <section class="state-panel pl-state">
+      <span class="pl-empty-pim" aria-hidden="true">${NU.cat.render({ size: 120, mood: "sad" })}</span>
       <h1>سبق نہیں ملا</h1>
       <p class="lead">یہ سبق اس وقت دستیاب نہیں ہے۔</p>
       <button class="primary-button" data-action="home">گھر جائیں</button>
@@ -2913,17 +2941,14 @@ function renderPracticeScreen() {
   const old = getReviewConfig("old");
   const reviewSkillCount = getReviewSkillCount([...today.questions, ...mistakes.questions, ...old.questions]);
   return `
-    <main class="utility-screen practice-screen review-screen">
+    <main class="utility-screen practice-screen review-screen pl-utility">
       ${renderProgressHeader()}
-      <section class="review-hero">
-        <div class="utility-heading"><span>${renderIcon("dumbbell")}</span><div><h1>دہرائی</h1><p>آج کی مشق، پرانے سبق، اور مشکل سوالات ایک جگہ</p></div></div>
-        <div class="review-total"><strong class="latin">${reviewSkillCount}</strong><span>دہرائی کی مہارتیں</span></div>
-      </section>
+      ${renderScreenHero({ tone: "green", title: "دہرائی", subtitle: "آج کی مشق، پرانے سبق اور مشکل سوالات ایک جگہ۔", mood: "happy", stats: [[reviewSkillCount, "دہرائی کی مہارتیں"]], className: "review-hero" })}
       <div class="review-hub-grid">
         ${renderReviewHubCard("today", today, "dumbbell")}
         ${renderReviewHubCard("mistakes", mistakes, "mistake")}
         ${renderReviewHubCard("old", old, "book")}
-        <button class="review-hub-card accent-blue review-letters" data-action="letters">
+        <button class="review-hub-card review-letters" data-action="letters">
           <span class="review-hub-icon">${renderIcon("alphabet")}</span>
           <span class="review-hub-copy"><strong>Nederlands حروف</strong><small>سنیں اور دہرائیں</small></span>
           <b class="review-hub-count latin">26</b>
@@ -2953,14 +2978,8 @@ function getReviewSkillCount(questions) {
 function renderLetters() {
   return `
     ${renderTopbar()}
-    <section class="letters-panel">
-      <div class="letters-heading">
-        <button class="circle-action" data-action="home" title="گھر">←</button>
-        <div>
-          <h1>Nederlands حروف اور تلفظ</h1>
-          <p class="lead">ہر حرف کے ساتھ ایک آسان مثال دی گئی ہے۔ آواز کا بٹن دبانے سے صرف حرف کا Nederlands نام سنائی دے گا۔</p>
-        </div>
-      </div>
+    <section class="letters-panel pl-utility">
+      ${renderScreenHero({ tone: "blue", title: "حروف اور آوازیں", subtitle: "ہر حرف کے ساتھ ایک آسان مثال۔ آواز کا بٹن حرف کا ڈچ نام سناتا ہے۔", stats: [[dutchLetters.length, "حروف"]], back: "toolkit", className: "letters-heading" })}
       <h2>حروف تہجی</h2>
       <div class="letters-grid">
         ${dutchLetters.map(renderLetterCard).join("")}
@@ -2972,7 +2991,7 @@ function renderLetters() {
 function renderLetterCard(item) {
   const support = getBeginnerSupport(item.word);
   return `
-    <article class="letter-card">
+    <article class="letter-card" style="--tone:${["#ff7a1a", "#2b6bff", "#3dc25d", "#8a5cff", "#ff5ca8", "#e09b00"][dutchLetters.indexOf(item) % 6]}">
       <div class="letter-dot latin">${item.letter}</div>
       <div class="letter-info">
         <strong>${item.sound}</strong>
@@ -2987,11 +3006,8 @@ function renderLetterCard(item) {
 function renderSettings() {
   return `
     ${renderTopbar()}
-    <section class="settings-panel">
-      <div class="settings-intro">
-        <span>${renderIcon("settings")}</span>
-        <div><h1>ترتیبات</h1><p>اپنی رفتار اور مدد کا انداز منتخب کریں</p></div>
-      </div>
+    <section class="settings-panel pl-utility">
+      ${renderScreenHero({ tone: "ink", title: "ترتیبات", subtitle: "اپنی رفتار اور مدد کا انداز منتخب کریں۔", className: "settings-intro" })}
       <div class="settings-section-heading"><strong>سیکھنے کے راستے</strong><span></span></div>
       <div class="settings-links">
         ${renderSettingsLink("practice", "dumbbell", "دہرائی", "آج، غلطیاں، اور پرانے سبق")}
@@ -3010,7 +3026,9 @@ function renderSettings() {
         ${renderToggleRow("haptics", "لرزش", "جواب اور انعام پر فون ہلکا سا لرزے")}
         ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}
       </div>
+      <div class="settings-section-heading"><strong>پیش رفت</strong><span></span></div>
       <button class="secondary-button danger-button" data-action="reset">${renderIcon("trash")}<span>پیش رفت دوبارہ شروع کریں</span></button>
+      <p class="pl-settings-foot"><span aria-hidden="true">${NU.cat.render({ face: true, size: 34 })}</span>NederUrdu · <b class="latin">${NU.cat.NAME}</b> کے ساتھ ڈچ سیکھیں</p>
     </section>
   `;
 }
@@ -3134,6 +3152,21 @@ function bindEvents() {
       selectedAnswer = typedAnswer;
       const checkButton = document.querySelector('[data-action="check"]');
       if (checkButton) checkButton.disabled = !typedAnswer.trim();
+    });
+  });
+
+  // Toolkit word search filters in place, without re-rendering the list.
+  document.querySelectorAll("[data-word-filter]").forEach((input) => {
+    input.addEventListener("input", () => {
+      const term = input.value.trim().toLowerCase();
+      let shown = 0;
+      document.querySelectorAll(".od-word-list .od-word").forEach((word) => {
+        const match = !term || word.dataset.search.includes(term);
+        word.hidden = !match;
+        if (match) shown += 1;
+      });
+      const empty = document.querySelector(".pl-search-empty");
+      if (empty) empty.hidden = shown > 0;
     });
   });
 
