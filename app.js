@@ -453,6 +453,7 @@ let pathExpanded = false;
 let lastRenderedScreen = "";
 let lastRenderedQuestionId = "";
 let lastLessonProgress = null;
+let lastRenderedChapterId = "";
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -1141,6 +1142,8 @@ function render() {
     ? getLessonContentScrollTop()
     : null;
   const screenChanged = screen !== lastRenderedScreen;
+  const chapterChanged = selectedChapterId !== lastRenderedChapterId;
+  lastRenderedChapterId = selectedChapterId;
   if (screenChanged && screen !== "lesson") {
     lessonDetailKind = "";
     lessonDetailReturnScrollTop = null;
@@ -1187,6 +1190,7 @@ function render() {
   // Callers scroll to the top after rendering; measure destinations after that but before paint.
   queueMicrotask(() => NU.motion.morph(app));
   if (screen === "home") NU.street.mount(app.querySelector(".street"), { entered: screenChanged });
+  if (screen === "journey") NU.map.mount(app.querySelector(".map"), { entered: screenChanged || chapterChanged, onOpen: showLessonPreview });
   animateLessonProgress();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
@@ -1234,7 +1238,7 @@ function renderIcon(name, className = "") {
 
 function renderProgressHeader() {
   return `<header class="progress-header">
-    <button class="brand-lockup" data-action="home" aria-label="آج — NederUrdu"><span class="od-mark" aria-hidden="true"></span><span class="brand-lockup-copy"><strong class="latin">NederUrdu</strong><small>اردو سے Nederlands تک</small></span></button>
+    <button class="brand-lockup" data-action="home" aria-label="آج — NederUrdu"><span class="pl-brand-face">${NU.cat.render({ face: true, size: 40 })}</span><span class="brand-lockup-copy"><strong class="latin">NederUrdu</strong><small>اردو سے Nederlands تک</small></span></button>
     <button class="od-level latin" data-action="journey" aria-label="اپنی سطح اور سفر دیکھیں">${escapeHtml(getSelectedChapter().id.toUpperCase())}</button>
     <button class="od-profile" data-action="settings" aria-label="ترتیبات">${renderIcon("settings")}</button>
   </header>`;
@@ -1275,7 +1279,25 @@ function renderHome() {
 function renderJourney() {
   const chapter = getSelectedChapter();
   const next = getNextLessonForChapter(chapter);
-  return `<main class="utility-screen journey-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">قدم بہ قدم</span><h1>آپ کا سفر</h1><p>ہر سبق روزمرہ کی ایک نئی بات کے لیے۔</p></div>${renderChapterSwitcher()}<section class="od-world-cover">${OpenDoor.scene(next, true, "lesson-scene")}<div><span class="eyeline latin">${chapter.id.toUpperCase()}</span><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.subtitle || "")}</p><button class="primary-button" data-action="preview" data-lesson="${escapeAttr(next.id)}">${renderIcon("play")} اگلا قدم</button></div></section>${renderSubchapters(chapter)}</main>`;
+  const toStop = (lesson, trophy = false) => ({
+    id: lesson.id,
+    title: getShortLessonTitle(lesson),
+    minutes: getLessonMinutes(lesson),
+    done: progress.completedLessons.includes(lesson.id),
+    secure: getLessonStatus(lesson.id) === "secure",
+    current: lesson.id === next.id,
+    mission: lesson.kind === "mission",
+    trophy
+  });
+  const grouped = new Set((chapter.subchapters || []).flatMap((unit) => unit.lessonIds));
+  const units = (chapter.subchapters?.length ? chapter.subchapters : [{ id: chapter.id, title: chapter.title, lessonIds: chapter.lessons.map((l) => l.id) }])
+    .map((unit) => ({ id: unit.id, title: unit.title, goal: unit.goal, lessons: subchapterLessons(unit).map((lesson) => toStop(lesson)) }));
+  // Lessons outside the units (the chapter's final mission) become the trophy stop at the end of the road.
+  const finale = chapter.lessons.filter((lesson) => !grouped.has(lesson.id));
+  if (chapter.subchapters?.length && finale.length) {
+    units.push({ id: `${chapter.id}-finale`, title: `${chapter.id.toUpperCase()} آخری مشن`, goal: "پورے باب کی باتیں ایک مسلسل روزمرہ مشن میں استعمال کریں۔", trophy: true, lessons: finale.map((lesson) => toStop(lesson, true)) });
+  }
+  return `<main class="utility-screen journey-screen pl-journey">${renderProgressHeader()}${renderChapterSwitcher()}${NU.map.render({ chapter, units, completed: chapterCompletedCount(chapter), total: chapter.lessons.length })}</main>`;
 }
 
 function renderToolkit() {

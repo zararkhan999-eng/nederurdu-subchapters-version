@@ -37,10 +37,14 @@ NU.cat = (() => {
     </g>`;
   }
 
-  function render({ mood = "idle", facing = "right", size = 180, label = `${NAME}, بلی جو سائیکل چلاتی ہے` } = {}) {
+  // `face: true` crops to Pim's head for logos and small avatars.
+  function render({ mood = "idle", facing = "right", size = 180, face = false, label = `${NAME}, بلی جو سائیکل چلاتی ہے` } = {}) {
     const id = `cat${++uid}`;
     const near = pedal(Math.PI * 0.3), far = pedal(Math.PI * 1.3);
-    return `<svg class="nu-cat cat-mood-${mood} ${facing === "left" ? "cat-facing-left" : ""}" viewBox="0 0 240 190" width="${size}" height="${Math.round(size * 190 / 240)}" role="img" aria-label="${label}" data-crank="${Math.PI * 0.3}">
+    const box = face ? "110 3 58 66" : "0 0 240 190";
+    const height = face ? Math.round(size * 66 / 58) : Math.round(size * 190 / 240);
+    const a11y = face ? 'aria-hidden="true"' : `role="img" aria-label="${label}"`;
+    return `<svg class="nu-cat ${face ? "nu-cat-face" : ""} cat-mood-${mood} ${facing === "left" ? "cat-facing-left" : ""}" viewBox="${box}" width="${size}" height="${height}" ${a11y} data-crank="${Math.PI * 0.3}">
       <defs>
         <radialGradient id="${id}-fur" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ffbd6e"/><stop offset="1" stop-color="${fur}"/></radialGradient>
       </defs>
@@ -187,6 +191,10 @@ NU.cat = (() => {
   };
 
   function act(svg, name, ...args) { return actions[name]?.(svg, ...args); }
+
+  // The launch screen is static HTML; give it Pim's face as soon as this script runs.
+  const launchMark = document.querySelector(".launch-screen .od-mark");
+  if (launchMark) launchMark.outerHTML = `<span class="launch-face">${render({ face: true, size: 112, mood: "happy" })}</span>`;
 
   return { NAME, render, mood, act, pedalFor, setCrank };
 })();

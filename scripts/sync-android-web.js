@@ -23,6 +23,7 @@ const files = [
   "world.css",
   "cat.js",
   "street.js",
+  "map.js",
   "course-data.js",
   "word-visual-data.js",
   "manifest.webmanifest",

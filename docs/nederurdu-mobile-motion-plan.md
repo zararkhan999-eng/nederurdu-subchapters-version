@@ -123,3 +123,15 @@ Direction changed to a bolder, playful identity closer to Duolingo, with a guide
 - `world.css` holds the cat and street styles. Ambient loops run only at the full motion level; reduced motion shows Pim parked with the greeting open.
 - New sounds: `meow`, `bell`.
 - Checked in the phone browser at 375 and 320 px (no horizontal overflow), all four times of day, door entry, cat taps and reduced motion.
+
+### Phase 0–1 polish
+
+Pim's face (`NU.cat.render({ face: true })`) replaces the old doorway mark in the header, on an orange launch screen, and in the lesson-entry portal. Header level and settings buttons, the Today lesson card and the support row use the chunky style; the lesson card no longer inherits the old stretched grid.
+
+## Phase 2 — Journey town map — 9 October 2026
+
+- `map.js` (`NU.map`): Journey is a vertical town map. Each unit is a coloured banner plus a building that matches its theme (café, school, home, clock tower, station, shop, clinic, office, town hall, bank, post office), set beside a winding road. Lessons are chunky round stops: green with a tick when done, gold star when secure, a large pulsing orange play stop for the next lesson, white numbered stops ahead, purple flags for missions, and a gold trophy stop for the chapter's final mission.
+- The road is paved red bike path up to the learner's position and a dotted track beyond it. Buildings are grey while ahead, coloured once started, and lit (glowing windows, flag, sparkles) when the unit is complete; units completed since the map was last seen pop with stars and the unlock sound the first time they scroll into view (remembered per device in `localStorage`).
+- On opening, the map scrolls to the next lesson and Pim rides in, parks beside it and says "یہاں سے شروع!". Tapping a stop opens a small card with its title, time and a start/review button that opens the preview.
+- Chapter header shows a progress ring; chapter chips are chunky tabs. All lessons stay browseable (curriculum rule).
+- Checked at 375 px with progress states, all three chapters, the trophy stop, stop cards and reduced motion (Pim parked, nothing running). `motion-lab.html` now shows Pim's moods and every building.

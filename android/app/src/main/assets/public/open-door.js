@@ -126,7 +126,7 @@ window.OpenDoor = (() => {
       if (state.detail && state.detail !== lastDetail) animate(app.querySelector(".lesson-detail-sheet"),[{translate:"0 40px",opacity:.6},{translate:"0 0",opacity:1}],{duration:600});
       if (state.portal) {
         NU.sound.play("whoosh");
-        const cover=document.createElement("div");cover.className="od-portal";cover.setAttribute("aria-hidden","true");cover.innerHTML='<span class="od-mark"></span>';app.append(cover);
+        const cover=document.createElement("div");cover.className="od-portal";cover.setAttribute("aria-hidden","true");cover.innerHTML=`<span class="od-mark">${NU.cat.render({face:true,size:120,mood:"happy"})}</span>`;app.append(cover);
         const arrival=animate(cover,[{opacity:0},{opacity:1,offset:.2},{opacity:1,offset:.4},{opacity:0}],{duration:900});
         animate(cover.firstChild,[{transform:"perspective(550px) rotateY(-30deg) scale(.7)"},{transform:"perspective(550px) rotateY(0) scale(1.6)"}],{duration:900});
         arrival?.finished.then(()=>cover.remove(),()=>cover.remove());

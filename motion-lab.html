@@ -6,6 +6,7 @@
     <title>NederUrdu Motion Lab</title>
     <link rel="stylesheet" href="open-door.css" />
     <link rel="stylesheet" href="playful.css" />
+    <link rel="stylesheet" href="world.css" />
     <style>
       body{font-family:var(--font-ui);padding:20px 16px 60px;max-width:460px;margin:0 auto}
       h1{font-size:26px;font-weight:800;margin:0 0 4px}
@@ -51,6 +52,12 @@
       <h2>Haptics (Android)</h2>
       <div class="grid" id="haptics"></div>
 
+      <h2>Pim</h2>
+      <div class="grid" id="pim-moods" style="grid-template-columns:repeat(2,1fr)"></div>
+
+      <h2>Map buildings</h2>
+      <div class="grid" id="buildings"></div>
+
       <h2>Answer tiles</h2>
       <div class="choices" style="display:grid;gap:12px">
         <button class="choice-button"><span class="choice-key">1</span><span class="choice-text">goedemorgen</span></button>
@@ -61,6 +68,8 @@
     </div>
     <script src="motion.js"></script>
     <script src="sound.js"></script>
+    <script src="cat.js"></script>
+    <script src="map.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
       const add = (host, label, run, kind = "secondary-button") => {
@@ -95,6 +104,17 @@
         NU.sound.play(name, { combo });
       }));
       NU.haptics.names.forEach((name) => add("haptics", name, () => NU.haptics.play(name)));
+
+      ["idle", "happy", "talk", "sad", "surprised"].forEach((mood) => {
+        const cell = document.createElement("div");
+        cell.innerHTML = NU.cat.render({ mood, size: 150 }) + `<p style="text-align:center">${mood}</p>`;
+        $("pim-moods").append(cell);
+      });
+      ["cafe", "school", "home", "clock", "station", "shop", "clinic", "office", "townhall", "bank", "post"].forEach((kind, i) => {
+        const cell = document.createElement("div");
+        cell.innerHTML = NU.map.building(kind, ["#ff7a1a", "#2b6bff", "#3dc25d", "#8a5cff", "#ff5ca8", "#e09b00"][i % 6], i % 3 === 0 ? "lit" : "open") + `<p style="text-align:center;font-size:12px">${kind}</p>`;
+        $("buildings").append(cell);
+      });
 
       document.querySelectorAll(".choice-button").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("wrong")) { NU.sound.play("wrong"); NU.motion.shake(button); }

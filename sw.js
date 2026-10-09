@@ -23,6 +23,8 @@ const APP_SHELL = [
   "./cat.js",
   "./cat.js?v=82",
   "./street.js",
+  "./map.js",
+  "./map.js?v=82",
   "./street.js?v=82",
   "./playful.css?v=82",
   "./open-door.js",
