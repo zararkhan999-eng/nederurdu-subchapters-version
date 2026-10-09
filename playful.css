@@ -1,0 +1,105 @@
+/* NederUrdu Playful — bold design tokens and chunky, tactile primitives.
+   Loaded after open-door.css; later phases restyle individual screens on top of these primitives. */
+:root{
+  --pl-oranje:#ff7a1a;--pl-oranje-dark:#d9580a;--pl-oranje-soft:#fff1e6;
+  --pl-blue:#2b6bff;--pl-blue-dark:#1a4ed1;--pl-blue-soft:#e8f0ff;
+  --pl-green:#3dc25d;--pl-green-dark:#26963f;--pl-green-soft:#e4f8e9;--pl-green-ink:#1d7a33;
+  --pl-red:#ff4d4d;--pl-red-dark:#d63434;--pl-red-soft:#ffe9e9;--pl-red-ink:#b42323;
+  --pl-yellow:#ffc23d;--pl-yellow-dark:#e09b00;--pl-yellow-soft:#fff6dc;
+  --pl-purple:#8a5cff;--pl-pink:#ff5ca8;
+  --pl-ink:#1f2433;--pl-muted:#6b7280;--pl-line:#e5e7eb;--pl-line-strong:#d1d5db;
+  --pl-bg:#fffdf9;--pl-surface:#fff;
+  --pl-radius:16px;--pl-radius-lg:22px;
+  --pl-lift:4px;
+  --pl-weight-bold:800;
+}
+
+body{background:var(--pl-bg);color:var(--pl-ink)}
+
+/* Chunky 3D buttons: a solid darker base that the face presses into. */
+#app .primary-button,#app .quiz-action.enabled,#app .quiz-action:not(:disabled){
+  background:var(--pl-oranje);color:#fff;border:0;border-radius:var(--pl-radius);
+  box-shadow:0 var(--pl-lift) 0 var(--pl-oranje-dark);font-weight:var(--pl-weight-bold);font-size:16px;letter-spacing:.01em;
+  transition:transform 90ms ease-out,box-shadow 90ms ease-out,filter 120ms;
+  -webkit-tap-highlight-color:transparent
+}
+#app .primary-button:hover,#app .quiz-action:not(:disabled):hover{filter:brightness(1.05)}
+#app .primary-button:active,#app .quiz-action:not(:disabled):active{transform:translateY(var(--pl-lift));box-shadow:0 0 0 var(--pl-oranje-dark)}
+#app .quiz-action:disabled,#app .primary-button:disabled{background:#e9eaee;color:#9aa0ab;box-shadow:0 var(--pl-lift) 0 #d3d6dc;border-radius:var(--pl-radius)}
+#app .secondary-button{
+  background:#fff;color:var(--pl-blue);border:2px solid var(--pl-line);border-radius:var(--pl-radius);
+  box-shadow:0 var(--pl-lift) 0 var(--pl-line);font-weight:var(--pl-weight-bold);
+  transition:transform 90ms ease-out,box-shadow 90ms ease-out
+}
+#app .secondary-button:active{transform:translateY(var(--pl-lift));box-shadow:0 0 0 var(--pl-line)}
+
+/* Answer tiles */
+#app .choice-button,#app .choice-button.latin,#app .choice-button:not(.latin),#app .word-bank-token,#app .match-pair-card,#app .sequence-token{
+  border:2px solid var(--pl-line);border-radius:var(--pl-radius);box-shadow:0 var(--pl-lift) 0 var(--pl-line);
+  transition:transform 90ms ease-out,box-shadow 90ms ease-out,background 120ms,border-color 120ms;-webkit-tap-highlight-color:transparent
+}
+#app .choice-button:active:not(:disabled),#app .word-bank-token:active,#app .match-pair-card:active,#app .sequence-token:active{transform:translateY(var(--pl-lift));box-shadow:0 0 0 var(--pl-line)}
+#app .choice-button:hover:not(:disabled){background:#fafbff;border-color:var(--pl-line-strong)}
+#app .choice-button.selected,#app .word-bank-token.selected,#app .match-pair-card.selected{
+  background:var(--pl-blue-soft);border:2px solid var(--pl-blue);padding:14px 16px;box-shadow:0 var(--pl-lift) 0 var(--pl-blue);color:var(--pl-blue-dark)
+}
+#app .choice-button.correct,#app .match-pair-card.matched{background:var(--pl-green-soft);border-color:var(--pl-green);color:var(--pl-green-ink);box-shadow:0 var(--pl-lift) 0 var(--pl-green)}
+#app .choice-button.wrong{background:var(--pl-red-soft);border-color:var(--pl-red);color:var(--pl-red-ink);box-shadow:0 var(--pl-lift) 0 var(--pl-red)}
+#app .choice-key{border-radius:10px;border:2px solid var(--pl-line);font-weight:var(--pl-weight-bold)}
+#app .choice-button.selected .choice-key{background:var(--pl-blue);border-color:var(--pl-blue);color:#fff}
+#app .choice-button.correct .choice-key{background:var(--pl-green);border-color:var(--pl-green);color:#fff}
+#app .choice-button.wrong .choice-key{background:var(--pl-red);border-color:var(--pl-red);color:#fff}
+
+/* Cards */
+#app .learning-teaching-card,#app .teaching-card,#app .listen-card,#app .document-card,#app .short-input-card,#app .build-card,#app .sequence-card,#app .match-pairs-card,#app .question-card,#app .prompt-scene{
+  border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 var(--pl-lift) 0 var(--pl-line)
+}
+#app .learning-teaching-card{border-top:2px solid var(--pl-line)}
+
+/* Lesson progress: thick rounded bar with a highlight stripe. */
+#app .quiz-progress{height:16px;border-radius:99px;background:#eceef2;overflow:hidden}
+#app .quiz-progress span{position:relative;display:block;height:100%;border-radius:99px;background:linear-gradient(var(--pl-green),var(--pl-green));transition:none}
+#app .quiz-progress span::after{content:"";position:absolute;inset:3px 8px auto;height:4px;border-radius:99px;background:#ffffff59}
+#app .quiz-combo{background:var(--pl-oranje);color:#fff;border-radius:99px;padding:2px 10px;font-weight:var(--pl-weight-bold);box-shadow:0 3px 0 var(--pl-oranje-dark)}
+
+/* Feedback panel: full-colour band that slides up from the bottom. */
+#app .quiz-feedback-panel.correct{background:var(--pl-green-soft);color:var(--pl-green-ink);border-top:0}
+#app .quiz-feedback-panel.wrong{background:var(--pl-red-soft);color:var(--pl-red-ink);border-top:0}
+#app .quiz-feedback-panel strong{font-size:20px;font-weight:var(--pl-weight-bold)}
+#app .quiz-feedback-panel .feedback-icon{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 0 #0000000f}
+#app .quiz-feedback-panel.correct .feedback-icon{color:var(--pl-green)}
+#app .quiz-feedback-panel.wrong .feedback-icon{color:var(--pl-red)}
+#app .quiz-feedback-panel.correct .quiz-action{background:var(--pl-green);box-shadow:0 var(--pl-lift) 0 var(--pl-green-dark)}
+#app .quiz-feedback-panel.correct .quiz-action:active{box-shadow:0 0 0 var(--pl-green-dark)}
+#app .quiz-feedback-panel.wrong .quiz-action{background:var(--pl-red);box-shadow:0 var(--pl-lift) 0 var(--pl-red-dark)}
+#app .quiz-feedback-panel.wrong .quiz-action:active{box-shadow:0 0 0 var(--pl-red-dark)}
+
+/* Bottom navigation: a single indicator glides between destinations (see data-morph). */
+#app .bottom-nav{border-top:2px solid var(--pl-line)}
+#app .nav-button{position:relative;isolation:isolate;color:#8b93a1;font-weight:700}
+#app .nav-button.active{background:transparent;color:var(--pl-blue);box-shadow:none}
+#app .nav-indicator{position:absolute;inset:2px 6px;z-index:-1;border:2px solid #b9cdff;border-radius:14px;background:var(--pl-blue-soft)}
+
+/* Page-change ribbon in the playful palette */
+#app .od-route-ribbon{height:6px}
+#app .od-route-ribbon span{background:var(--pl-oranje)}
+#app .od-route-ribbon i{background:var(--pl-yellow)}
+#app .od-route-ribbon b{background:var(--pl-blue)}
+#app .nu-flyer,#app .nu-flyer *{animation:none!important;transition:none!important}
+
+/* Particles from NU.motion.burst / confetti */
+.nu-fx-layer{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.nu-particle{position:absolute;display:block;width:10px;height:10px;background:var(--c);will-change:transform,opacity}
+.nu-particle-dot{border-radius:50%}
+.nu-particle-bar{width:6px;height:14px;border-radius:3px}
+.nu-particle-star{width:14px;height:14px;clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%)}
+
+/* Fixes: the notes chip was squeezed into the flexible grid column, and the RTL reading scroller showed a desktop scrollbar. */
+#app .learning-phase-header{grid-template-columns:auto minmax(0,1fr) auto}
+#app .learning-phase-header > .lesson-notes-button{grid-column:3;justify-self:end;width:max-content;flex-shrink:0}
+#app .quiz-content{scrollbar-width:none}
+#app .quiz-content::-webkit-scrollbar{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  #app .primary-button,#app .quiz-action,#app .secondary-button,#app .choice-button,#app .word-bank-token,#app .match-pair-card,#app .sequence-token{transition:none}
+}

@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "start",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-I",
+        "-c",
+        "import functools,http.server;h=functools.partial(http.server.SimpleHTTPRequestHandler,directory='/Users/zararkhan/Documents/Documents - zarar’s MacBook Air/nederurdu-subchapters-version');http.server.ThreadingHTTPServer(('127.0.0.1',4174),h).serve_forever()"
+      ],
+      "port": 4174
+    },
+    {
+      "name": "attach",
+      "url": "http://127.0.0.1:4173",
+      "port": 4173
+    }
+  ]
+}

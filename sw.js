@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v80-graphic-transitions";
+const CACHE_NAME = "nederurdu-v81-playful-foundation";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -12,12 +12,18 @@ const APP_SHELL = [
   "./word-visual-data.js",
   "./assets/word-visuals/offline-manifest.json",
   "./app.js",
-  "./app.js?v=80",
+  "./app.js?v=81",
+  "./motion.js",
+  "./motion.js?v=81",
+  "./sound.js",
+  "./sound.js?v=81",
+  "./playful.css",
+  "./playful.css?v=81",
   "./open-door.js",
-  "./open-door.js?v=80",
+  "./open-door.js?v=81",
   "./open-door-layout.css",
   "./open-door.css",
-  "./open-door.css?v=80",
+  "./open-door.css?v=81",
   "./assets/fonts/dm-sans.ttf",
   "./assets/fonts/noto-sans-arabic.ttf",
   "./assets/fonts/noto-naskh-arabic.ttf",

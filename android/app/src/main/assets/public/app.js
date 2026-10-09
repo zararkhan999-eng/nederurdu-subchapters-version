@@ -418,7 +418,8 @@ const defaultProgress = {
     largeText: false,
     slowAudio: true,
     extraUrduHelp: true,
-    reduceMotion: false
+    reduceMotion: false,
+    haptics: true
   },
   speechProfileVersion: SPEECH_PROFILE_VERSION,
   selectedChapterId: "a0",
@@ -426,6 +427,8 @@ const defaultProgress = {
 };
 
 let progress = loadProgress();
+NU.sound.configure({ enabled: () => Boolean(progress.settings.soundEffects) });
+NU.haptics.configure({ enabled: () => progress.settings.haptics !== false });
 let selectedChapterId = progress.selectedChapterId || chapters[0].id;
 let screen = "home";
 let activeLessonId = progress.lastLessonId || getCurrentLessons()[0].id;
@@ -444,12 +447,12 @@ let lessonProgressSteps = 0;
 let activeWordHelp = null;
 let buildAnswerIds = [];
 let hintOpen = false;
-let audioContext = null;
 let activeReview = null;
 let pathCardLessonId = "";
 let pathExpanded = false;
 let lastRenderedScreen = "";
 let lastRenderedQuestionId = "";
+let lastLessonProgress = null;
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -1150,6 +1153,7 @@ function render() {
   app.classList.toggle("screen-changing", screenChanged);
   document.body.dataset.screen = screen;
   const previousScreen = lastRenderedScreen;
+  NU.motion.capture(app);
   try {
     app.innerHTML = `
       ${renderExperienceBackdrop()}
@@ -1180,6 +1184,9 @@ function render() {
   }
   bindEvents();
   bindExperienceMotion(screenChanged, previousScreen);
+  // Callers scroll to the top after rendering; measure destinations after that but before paint.
+  queueMicrotask(() => NU.motion.morph(app));
+  animateLessonProgress();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -1241,7 +1248,7 @@ function renderHome() {
     ${renderProgressHeader()}
     <div class="od-intro"><span class="eyeline">آج کا قدم</span><h1>ایک نئی بات، ایک نیا دروازہ۔</h1></div>
     <section class="today-panel">
-      ${OpenDoor.scene(nextLesson)}
+      ${OpenDoor.scene(nextLesson, false, "lesson-scene")}
       <div class="od-hero-copy"><div class="od-section-top"><span class="eyeline">${chapter.id.toUpperCase()} · ${getLessonMinutes(nextLesson)} منٹ</span><span class="od-small-mark" aria-hidden="true">↗</span></div>
       <h2>${getShortLessonTitle(nextLesson)}</h2><p>${escapeHtml(getLessonOutcome(nextLesson) || nextLesson.description)}</p>
       <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button></div>
@@ -1254,7 +1261,7 @@ function renderHome() {
 function renderJourney() {
   const chapter = getSelectedChapter();
   const next = getNextLessonForChapter(chapter);
-  return `<main class="utility-screen journey-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">قدم بہ قدم</span><h1>آپ کا سفر</h1><p>ہر سبق روزمرہ کی ایک نئی بات کے لیے۔</p></div>${renderChapterSwitcher()}<section class="od-world-cover">${OpenDoor.scene(next, true)}<div><span class="eyeline latin">${chapter.id.toUpperCase()}</span><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.subtitle || "")}</p><button class="primary-button" data-action="preview" data-lesson="${escapeAttr(next.id)}">${renderIcon("play")} اگلا قدم</button></div></section>${renderSubchapters(chapter)}</main>`;
+  return `<main class="utility-screen journey-screen">${renderProgressHeader()}<div class="od-intro"><span class="eyeline">قدم بہ قدم</span><h1>آپ کا سفر</h1><p>ہر سبق روزمرہ کی ایک نئی بات کے لیے۔</p></div>${renderChapterSwitcher()}<section class="od-world-cover">${OpenDoor.scene(next, true, "lesson-scene")}<div><span class="eyeline latin">${chapter.id.toUpperCase()}</span><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.subtitle || "")}</p><button class="primary-button" data-action="preview" data-lesson="${escapeAttr(next.id)}">${renderIcon("play")} اگلا قدم</button></div></section>${renderSubchapters(chapter)}</main>`;
 }
 
 function renderToolkit() {
@@ -1608,7 +1615,7 @@ function renderLessonPreview() {
   return `
     <main class="learning-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
       ${renderProgressHeader()}
-      ${OpenDoor.scene(lesson, true)}
+      ${OpenDoor.scene(lesson, true, "lesson-scene")}
       <section class="learning-preview-hero">
         <button class="quiz-close" data-action="home" aria-label="سبق کے نقشے پر واپس جائیں">${renderIcon("close")}</button>
         <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
@@ -2847,7 +2854,8 @@ function renderSettings() {
         ${renderToggleRow("largeText", "بڑا متن", "الفاظ اور بٹن کچھ بڑے دکھائیں")}
         ${renderToggleRow("slowAudio", "آہستہ آواز", "Dutch آواز تھوڑی آہستہ سنائیں")}
         ${renderToggleRow("extraUrduHelp", "زیادہ Urdu مدد", "آواز، معنی، اور چھوٹی مدد زیادہ دکھائیں")}
-        ${renderToggleRow("soundEffects", "درست/غلط کی آوازیں", "جواب چیک کرتے وقت چھوٹی آوازیں")}
+        ${renderToggleRow("soundEffects", "ایپ کی آوازیں", "جواب، انعام اور سبق مکمل ہونے کی آوازیں")}
+        ${renderToggleRow("haptics", "لرزش", "جواب اور انعام پر فون ہلکا سا لرزے")}
         ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}
       </div>
       <button class="secondary-button danger-button" data-action="reset">${renderIcon("trash")}<span>پیش رفت دوبارہ شروع کریں</span></button>
@@ -2883,7 +2891,8 @@ function renderBottomNav() {
 }
 
 function renderNavButton(action, icon, label, active) {
-  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}"><span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
+  const indicator = active ? '<span class="nav-indicator" data-morph="nav-indicator" aria-hidden="true"></span>' : "";
+  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}">${indicator}<span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
 }
 
 function bindEvents() {
@@ -2892,6 +2901,10 @@ function bindEvents() {
       if (document.body.classList.contains("launching")) finishLaunch();
       const action = element.dataset.action;
       triggerPressRipple(element, event);
+      if (element.closest(".bottom-nav") && !element.classList.contains("active")) {
+        NU.sound.play("tap");
+        NU.haptics.play("tap");
+      }
       if (action === "word-help") {
         event.preventDefault();
         event.stopPropagation();
@@ -3088,20 +3101,10 @@ function triggerWorldTransition() {
 }
 
 function animateCountUpMetrics() {
-  if (prefersReducedMotion()) return;
-  document.querySelectorAll("[data-count-up]").forEach((element) => {
-    const target = Number(element.dataset.countUp || 0);
-    const suffix = element.dataset.countSuffix || "";
-    const start = performance.now();
-    const duration = 760;
-    const update = (now) => {
-      const elapsed = Math.min(1, (now - start) / duration);
-      const eased = 1 - ((1 - elapsed) ** 3);
-      element.textContent = `${Math.round(target * eased)}${suffix}`;
-      if (elapsed < 1) requestAnimationFrame(update);
-    };
-    element.textContent = `0${suffix}`;
-    requestAnimationFrame(update);
+  document.querySelectorAll("[data-count-up]").forEach((element, index) => {
+    window.setTimeout(() => NU.motion.countUp(element, Number(element.dataset.countUp || 0), {
+      suffix: element.dataset.countSuffix || ""
+    }), 500 + index * 250);
   });
 }
 
@@ -3127,20 +3130,53 @@ function animateSpeakingControl(element) {
 }
 
 function triggerAnswerMoment(correct, compact = false) {
-  if (prefersReducedMotion()) return;
-  try { navigator.vibrate?.(correct ? 18 : [12, 36, 12]); } catch { /* Optional haptics. */ }
+  if (compact) {
+    NU.sound.play("pop");
+    NU.haptics.play("select");
+    return;
+  }
+  const panel = document.querySelector(".quiz-feedback-panel");
+  const icon = panel?.querySelector(".feedback-icon");
+  if (!correct) {
+    NU.sound.play("wrong");
+    NU.haptics.play("error");
+    NU.motion.shake(document.querySelector(".choice-button.wrong") || icon);
+    return;
+  }
+  const streak = answerCombo >= 3 && answerCombo % 3 === 0;
+  NU.sound.play("correct", { combo: answerCombo });
+  if (streak) window.setTimeout(() => NU.sound.play("streak"), 260);
+  NU.haptics.play(streak ? "streak" : "success");
+  NU.motion.jelly(icon);
+  NU.motion.burst(icon, { count: streak ? 28 : 14, spread: streak ? 150 : 90 });
+  NU.motion.bump(document.querySelector(".choice-button.correct"));
+  NU.motion.pop(document.querySelector(".quiz-combo"));
 }
 
 function triggerLessonCelebration() {
+  NU.sound.play("complete");
+  NU.haptics.play("celebrate");
   if (prefersReducedMotion()) return;
   document.body.classList.remove("celebrating-lesson");
   requestAnimationFrame(() => document.body.classList.add("celebrating-lesson"));
   window.setTimeout(() => document.body.classList.remove("celebrating-lesson"), 2400);
-  try {
-    navigator.vibrate?.([24, 48, 24]);
-  } catch {
-    // Haptics are optional and may be blocked by the host browser.
+  NU.motion.confetti();
+  NU.motion.burst(document.querySelector(".complete-mark"), { count: 26, spread: 160 });
+  animateCountUpMetrics();
+}
+
+// The lesson bar is re-rendered on every step, so carry its old width forward and spring to the new one.
+function animateLessonProgress() {
+  const bar = screen === "lesson" ? document.querySelector(".quiz-progress span") : null;
+  if (!bar) {
+    lastLessonProgress = null;
+    return;
   }
+  const next = bar.style.width;
+  if (lastLessonProgress !== null && lastLessonProgress !== next) {
+    NU.motion.animate(bar, [{ width: lastLessonProgress }, { width: next }], { spring: "bouncy" });
+  }
+  lastLessonProgress = next;
 }
 
 function scrollToTop() {
@@ -3334,8 +3370,13 @@ function startReview(kind) {
 function chooseAnswer(answer) {
   if (checked) return;
   activeWordHelp = null;
+  const changed = selectedAnswer !== answer;
   selectedAnswer = answer;
   updateChoiceSelection();
+  if (!changed) return;
+  NU.sound.play("select");
+  NU.haptics.play("select");
+  NU.motion.pop(document.querySelector(".choice-button.selected .choice-key"));
 }
 
 function updateChoiceSelection() {
@@ -3498,12 +3539,16 @@ function selectMatchPair(id, side) {
     const question = getActiveQuestion();
     if (matchedPairIds.length === getMatchPairs(question).length) selectedAnswer = question.answer;
     render();
-    requestAnimationFrame(() => triggerAnswerMoment(true, true));
+    triggerAnswerMoment(true, true);
+    document.querySelectorAll(`.match-pair-card[data-match-id="${CSS.escape(id)}"]`).forEach((card) => NU.motion.jelly(card));
     return;
   }
   matchPairError = id;
   matchSelection = null;
   render();
+  NU.sound.play("deselect");
+  NU.haptics.play("error");
+  document.querySelectorAll(".match-pair-card.wrong").forEach((card) => NU.motion.shake(card));
 }
 
 function continueInfoStep() {
@@ -3597,7 +3642,6 @@ function checkAnswer() {
       pendingCorrectionQuestions.push(correctionQuestion);
     }
   }
-  playAnswerSound(correct ? "correct" : "wrong");
   checked = true;
   render();
   requestAnimationFrame(() => triggerAnswerMoment(correct));
@@ -4516,49 +4560,6 @@ function speakDutch(text, forceSlow = false, forceRegular = false) {
 if ("speechSynthesis" in window) {
   window.speechSynthesis.addEventListener?.("voiceschanged", refreshPreferredDutchVoice);
   refreshPreferredDutchVoice();
-}
-
-function getAudioContext() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return null;
-  if (!audioContext) audioContext = new AudioContextClass();
-  return audioContext;
-}
-
-function playTone(context, frequency, startTime, duration, volume, type = "sine") {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-
-  oscillator.type = type;
-  oscillator.frequency.setValueAtTime(frequency, startTime);
-  gain.gain.setValueAtTime(0.0001, startTime);
-  gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.018);
-  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start(startTime);
-  oscillator.stop(startTime + duration + 0.03);
-}
-
-function playAnswerSound(kind) {
-  if (!progress.settings.soundEffects) return;
-  const context = getAudioContext();
-  if (!context) return;
-
-  if (context.state === "suspended") {
-    context.resume().catch(() => {});
-  }
-
-  const now = context.currentTime;
-  if (kind === "correct") {
-    playTone(context, 660, now, 0.11, 0.13, "triangle");
-    playTone(context, 880, now + 0.1, 0.14, 0.12, "triangle");
-    return;
-  }
-
-  playTone(context, 210, now, 0.16, 0.12, "sine");
-  playTone(context, 165, now + 0.12, 0.18, 0.1, "sine");
 }
 
 function refreshEffectsProfile() {

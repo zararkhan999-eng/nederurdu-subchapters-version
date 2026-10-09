@@ -94,3 +94,22 @@ Page navigation now captures an inert outgoing page, slides and fades it away, a
 The offline shell and linked assets advance to v80. Android uses the same files through the canonical sync script.
 
 Focused rendered review: graphics were inspected in the phone browser, with no observed horizontal overflow at 390 px and on the 320 px Toolkit view. Page-change snapshots and ribbons were present during navigation and removed after settling. Lesson exit and rapid navigation were inspected; no transition layers remained after completion. Rebinding motion did not duplicate graphic compositions. The app setting and OS reduced-motion preference produced zero running animations in the focused review. No automated test suite or physical-device performance review was run for this extension.
+
+## Playful direction — Phase 0 foundation — 9 October 2026
+
+Direction changed to a bolder, playful identity closer to Duolingo, with a guide character (designed in a later phase). Phase 0 builds the shared base:
+
+- `motion.js` (`NU.motion`): spring easings generated as CSS `linear()` curves, reusable moves (pop, press, bump, rise, drop, shake, wiggle, jelly, float), stagger, count-up, particle bursts, full-screen confetti, and `data-morph` shared-element glides captured before and played after each render. `level()` returns `off` for either reduced-motion control, `lite` for the lite effects profile (half the particles, no loops), otherwise `full`.
+- `sound.js` (`NU.sound`, `NU.haptics`): synthesised Web Audio UI sounds (tap, select, pop, correct with streak pitch climb, wrong, whoosh, unlock, xp, complete, streak) and named vibration patterns. No audio files; works offline. Controlled by the existing sound setting and a new `haptics` setting.
+- `playful.css`: bold tokens (Oranje primary, blue, green/red feedback, yellow, purple) and chunky 3D primitives — buttons, answer tiles, cards, lesson progress bar, feedback band, gliding bottom-nav indicator, particles.
+- Wired into the app: answer select, correct (burst, jelly icon, combo sound), wrong (shake, buzz), match pairs, lesson entry whoosh, completion confetti with count-up metrics, spring-animated lesson progress.
+- Fixes: lesson notes chip no longer clipped; RTL reading scroller no longer shows a desktop scrollbar line.
+- `motion-lab.html` previews every primitive (dev only; not shipped to Android).
+
+### Phase 0 completion
+
+- Shared-element flights: `data-morph-fly` elements travel as a settled copy above the page transition and resize by layout, so scenes never stretch. The lesson scene flies between Today, Journey and the lesson preview. Snapshot copies become `data-morph-ghost` and hide only when a flight happens. Flights skip hidden pages and always land after a timeout.
+- Page changes: incoming pages use the snappy spring; the route ribbon uses the playful palette.
+- Motion level judges hardware (≤4 cores or ≤3 GB) instead of screen size, so capable phones get full effects even though the CSS profile still marks phones as lite.
+- Android: `VIBRATE` permission and a `NederUrduHaptics` bridge (system haptics for tap/select/success/error, waveforms for streak/celebrate). The WebView no longer forces a software layer, which blocked smooth motion. **Needs a device check**: the software layer was originally added to avoid stale GPU tiles on long Urdu lesson screens.
+- Not verified here: native build (no JDK/Android SDK on this machine), Playwright suite (no Node).

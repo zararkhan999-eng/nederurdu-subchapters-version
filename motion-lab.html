@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NederUrdu Motion Lab</title>
+    <link rel="stylesheet" href="open-door.css" />
+    <link rel="stylesheet" href="playful.css" />
+    <style>
+      body{font-family:var(--font-ui);padding:20px 16px 60px;max-width:460px;margin:0 auto}
+      h1{font-size:26px;font-weight:800;margin:0 0 4px}
+      h2{font-size:15px;font-weight:800;color:var(--pl-muted);text-transform:uppercase;letter-spacing:.06em;margin:28px 0 10px}
+      p{color:var(--pl-muted);margin:0 0 8px}
+      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+      .grid button{min-height:46px;font-size:14px;margin:0}
+      .stage{display:grid;place-items:center;height:150px;border:2px dashed var(--pl-line);border-radius:22px;margin-bottom:12px}
+      .sample{width:110px;height:110px;border-radius:22px;background:var(--pl-oranje);box-shadow:0 6px 0 var(--pl-oranje-dark);display:grid;place-items:center;color:#fff;font-weight:800;font-size:28px}
+      .counter{font-size:44px;font-weight:800;color:var(--pl-blue)}
+      .bar{height:16px;border-radius:99px;background:#eceef2;overflow:hidden}
+      .bar span{display:block;height:100%;width:20%;border-radius:99px;background:var(--pl-green)}
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Motion lab</h1>
+      <p>Phase 0 building blocks. Tap to try each one. Sounds need your device volume on.</p>
+
+      <h2>Moves</h2>
+      <div class="stage"><div class="sample" id="sample">NL</div></div>
+      <div class="grid" id="moves"></div>
+
+      <h2>Springs</h2>
+      <div class="bar"><span id="bar"></span></div>
+      <div class="grid" style="margin-top:12px" id="springs"></div>
+
+      <h2>Particles</h2>
+      <div class="grid">
+        <button class="secondary-button" id="burst">burst</button>
+        <button class="secondary-button" id="stars">stars</button>
+        <button class="secondary-button" id="confetti">confetti</button>
+      </div>
+
+      <h2>Count up</h2>
+      <div class="stage" style="height:100px"><span class="counter" id="counter">0</span></div>
+      <button class="primary-button" id="count">+ 50 XP</button>
+
+      <h2>Sounds</h2>
+      <div class="grid" id="sounds"></div>
+      <p style="margin-top:10px">correct: tap repeatedly to hear the streak climb.</p>
+
+      <h2>Haptics (Android)</h2>
+      <div class="grid" id="haptics"></div>
+
+      <h2>Answer tiles</h2>
+      <div class="choices" style="display:grid;gap:12px">
+        <button class="choice-button"><span class="choice-key">1</span><span class="choice-text">goedemorgen</span></button>
+        <button class="choice-button selected"><span class="choice-key">2</span><span class="choice-text">goedenavond</span></button>
+        <button class="choice-button correct"><span class="choice-key">3</span><span class="choice-text">hallo</span></button>
+        <button class="choice-button wrong"><span class="choice-key">4</span><span class="choice-text">dank u</span></button>
+      </div>
+    </div>
+    <script src="motion.js"></script>
+    <script src="sound.js"></script>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const add = (host, label, run, kind = "secondary-button") => {
+        const button = document.createElement("button");
+        button.className = kind;
+        button.textContent = label;
+        button.addEventListener("click", run);
+        $(host).append(button);
+      };
+      ["pop", "press", "bump", "rise", "drop", "shake", "wiggle", "jelly"].forEach((move) =>
+        add("moves", move, () => { NU.sound.play("tap"); NU.motion[move]($("sample")); }));
+      add("moves", "float ⟳", () => NU.motion.float($("sample")));
+
+      let full = false;
+      Object.keys(NU.motion.springs).forEach((name) => add("springs", name, () => {
+        full = !full;
+        const from = full ? "20%" : "90%", to = full ? "90%" : "20%";
+        $("bar").style.width = to;
+        NU.motion.animate($("bar"), [{ width: from }, { width: to }], { spring: name });
+      }));
+
+      $("burst").onclick = (e) => { NU.sound.play("pop"); NU.motion.burst(e.currentTarget); };
+      $("stars").onclick = (e) => { NU.sound.play("streak"); NU.motion.burst(e.currentTarget, { shapes: ["star"], count: 22, spread: 160, colors: ["#ffc23d", "#ff7a1a"] }); };
+      $("confetti").onclick = () => { NU.sound.play("complete"); NU.motion.confetti(); };
+
+      let xp = 0;
+      $("count").onclick = () => { const from = xp; xp += 50; NU.sound.play("xp"); NU.motion.countUp($("counter"), xp, { from }); };
+
+      let combo = 0;
+      NU.sound.names.forEach((name) => add("sounds", name, () => {
+        combo = name === "correct" ? combo + 1 : 0;
+        NU.sound.play(name, { combo });
+      }));
+      NU.haptics.names.forEach((name) => add("haptics", name, () => NU.haptics.play(name)));
+
+      document.querySelectorAll(".choice-button").forEach((button) => button.addEventListener("click", () => {
+        if (button.classList.contains("wrong")) { NU.sound.play("wrong"); NU.motion.shake(button); }
+        else if (button.classList.contains("correct")) { NU.sound.play("correct"); NU.motion.bump(button); NU.motion.burst(button, { count: 12 }); }
+        else { NU.sound.play("select"); NU.motion.pop(button.querySelector(".choice-key")); }
+      }));
+    </script>
+  </body>
+</html>

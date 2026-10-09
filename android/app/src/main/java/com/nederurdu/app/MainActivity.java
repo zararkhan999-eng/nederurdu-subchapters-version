@@ -4,9 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.util.Log;
@@ -46,11 +50,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
         });
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        // Long Urdu lesson screens can be split into stale GPU tiles on some
-        // Android WebView builds. The phone layout already uses the static
-        // performance-lite presentation, so a software layer keeps those
-        // screens stable without removing any learning content or controls.
-        webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        // Hardware rendering is required for smooth motion. An earlier build
+        // forced a software layer to avoid stale GPU tiles on long Urdu lesson
+        // screens; if that returns on a device, restore
+        // webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null) here.
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -62,6 +65,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         textToSpeech = new TextToSpeech(this, this);
         webView.addJavascriptInterface(new NederUrduTtsBridge(), "NederUrduTts");
+        webView.addJavascriptInterface(new NederUrduHapticsBridge(), "NederUrduHaptics");
 
         setContentView(webView);
         webView.loadUrl("file:///android_asset/public/index.html");
@@ -150,6 +154,50 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             textToSpeech.shutdown();
         }
         super.onDestroy();
+    }
+
+    private class NederUrduHapticsBridge {
+        // Short cues use the system haptic engine; celebrations use a waveform.
+        @JavascriptInterface
+        public void play(String name) {
+            if (name == null) return;
+            runOnUiThread(() -> {
+                switch (name) {
+                    case "tap":
+                        webView.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
+                        break;
+                    case "select":
+                        webView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        break;
+                    case "success":
+                        webView.performHapticFeedback(Build.VERSION.SDK_INT >= 30
+                                ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.VIRTUAL_KEY);
+                        break;
+                    case "error":
+                        webView.performHapticFeedback(Build.VERSION.SDK_INT >= 30
+                                ? HapticFeedbackConstants.REJECT : HapticFeedbackConstants.LONG_PRESS);
+                        break;
+                    case "streak":
+                        vibrate(new long[] {0, 12, 40, 12, 40, 30});
+                        break;
+                    case "celebrate":
+                        vibrate(new long[] {0, 20, 50, 20, 50, 70});
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        private void vibrate(long[] pattern) {
+            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (vibrator == null || !vibrator.hasVibrator()) return;
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
+            } else {
+                vibrator.vibrate(pattern, -1);
+            }
+        }
     }
 
     private class NederUrduTtsBridge {
