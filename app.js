@@ -454,6 +454,7 @@ let lastRenderedScreen = "";
 let lastRenderedQuestionId = "";
 let lastLessonProgress = null;
 let lastRenderedChapterId = "";
+let lastTeachingFace = { id: "", step: 0 };
 let audioSkipped = false;
 let matchSelection = null;
 let matchedPairIds = [];
@@ -1190,6 +1191,8 @@ function render() {
   // Callers scroll to the top after rendering; measure destinations after that but before paint.
   queueMicrotask(() => NU.motion.morph(app));
   if (screen === "home") NU.street.mount(app.querySelector(".street"), { entered: screenChanged });
+  flipTeachingCard();
+  animatePreviewScene(screenChanged);
   if (screen === "journey") NU.map.mount(app.querySelector(".map"), { entered: screenChanged || chapterChanged, onOpen: showLessonPreview });
   animateLessonProgress();
   lastRenderedScreen = screen;
@@ -1648,14 +1651,18 @@ function renderLessonPreview() {
           ? "سیکھنا شروع کریں"
           : "سبق دوبارہ کریں";
 
+  const unit = getSubchapterForLesson(chapter, lesson.id);
   return `
-    <main class="learning-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
+    <main class="learning-preview pl-preview chapter-${chapter.id} ${lesson.kind === "mission" ? "mission-preview" : ""}">
       ${renderProgressHeader()}
-      ${OpenDoor.scene(lesson, true, "lesson-scene")}
+      ${renderPreviewScene(lesson, chapter, unit)}
       <section class="learning-preview-hero">
         <button class="quiz-close" data-action="home" aria-label="سبق کے نقشے پر واپس جائیں">${renderIcon("close")}</button>
-        <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
-        <span class="mastery-badge mastery-${masteryStatus}">${masteryLabels[masteryStatus]}</span>
+        <div class="pl-preview-tags">
+          <span class="eyeline">${lesson.kind === "mission" ? "عملی مشن" : "اگلا سیکھنے کا قدم"}</span>
+          <span class="mastery-badge mastery-${masteryStatus}">${masteryLabels[masteryStatus]}</span>
+        </div>
+        ${unit?.title ? `<span class="pl-preview-unit">${escapeHtml(unit.title)}</span>` : ""}
         <h1>${escapeHtml(getShortLessonTitle(lesson))}</h1>
         <p class="learning-preview-goal"><strong>اس سبق کے بعد آپ:</strong> ${escapeHtml(run?.outcomeUrdu || getLessonOutcome(lesson))}</p>
         <div class="learning-preview-meta">
@@ -1698,6 +1705,32 @@ function renderLessonPreview() {
       </div>
     </main>
   `;
+}
+
+// The lesson's place on the map: its unit building on a little street, with Pim parked outside.
+function renderPreviewScene(lesson, chapter, unit) {
+  const index = (chapter.subchapters || []).findIndex((item) => item.id === unit?.id);
+  const trophy = lesson.id === chapter.contract?.completionMissionId;
+  const color = trophy ? "#e09b00" : NU.map.unitColor(index);
+  const kind = trophy ? "townhall" : NU.map.kindFor(unit?.id || lesson.id);
+  return `<div class="pl-preview-scene" style="--unit:${color}" aria-hidden="true">
+    <svg class="pl-preview-clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><g fill="#fff"><ellipse cx="70" cy="40" rx="34" ry="13"/><ellipse cx="88" cy="32" rx="18" ry="14"/><ellipse cx="320" cy="62" rx="28" ry="11"/><ellipse cx="334" cy="55" rx="15" ry="12"/></g></svg>
+    <div class="pl-preview-building">${NU.map.building(kind, color, "open")}</div>
+    <div class="pl-preview-pim">${NU.cat.render({ size: 132 })}</div>
+    <div class="pl-preview-ground"></div>
+  </div>`;
+}
+
+// Pim rides up to the building and waves when the preview opens.
+function animatePreviewScene(entered) {
+  const scene = screen === "preview" && entered ? document.querySelector(".pl-preview-scene") : null;
+  if (!scene || NU.motion.level() === "off") return;
+  const pim = scene.querySelector(".pl-preview-pim");
+  const cat = pim?.querySelector(".nu-cat");
+  NU.motion.pop(scene.querySelector(".map-building"));
+  NU.motion.animate(pim, [{ transform: "translateX(-110vw)" }, { transform: "translateX(0)" }], { duration: 1050, easing: "cubic-bezier(.2,.7,.3,1)" })
+    ?.finished.then(() => { NU.cat.act(cat, "brake"); setTimeout(() => NU.cat.act(cat, "wave"), 260); }, () => {});
+  NU.cat.pedalFor(cat, { duration: 1050, distance: 320 });
 }
 
 function renderPrerequisiteGuidance(lesson, prerequisiteIds, missingIds, missingMissionIds = []) {
@@ -1758,12 +1791,7 @@ function renderLesson() {
       ${renderQuizTopBar(percentage)}
       <section class="quiz-content">
         ${renderLearningPhaseHeader(phase)}
-        <div class="question-meta">
-          <span>${lesson.reviewKind ? "دہرائی" : getShortLessonTitle(lesson)}</span>
-          <b class="latin">${percentage}%</b>
-        </div>
         <div class="question-heading">
-          <span class="question-kind-icon" aria-hidden="true">${renderIcon(questionTheme.icon)}</span>
           <h1 class="question-title">${escapeHtml(getQuestionTitle(question))}</h1>
         </div>
         ${renderQuestionCoachmark(question)}
@@ -1856,10 +1884,14 @@ function renderQuizTopBar(percentage) {
         <span class="quiz-progress-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       </div>
       <div class="quiz-status">
-        ${answerCombo >= 2 ? `<span class="quiz-combo latin">${renderIcon("spark")}<b>${answerCombo}</b></span>` : ""}
+        ${answerCombo >= 2 ? `<span class="quiz-combo pl-streak heat-${Math.min(3, Math.floor(answerCombo / 3))} latin" aria-label="لگاتار ${answerCombo} صحیح جواب">${renderFlame()}<b>${answerCombo}</b></span>` : ""}
       </div>
     </header>
   `;
+}
+
+function renderFlame() {
+  return '<svg class="pl-flame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9Z" fill="currentColor"/><path d="M12 12c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2Z" fill="#ffd56b"/></svg>';
 }
 
 function getQuestionTitle(question) {
@@ -1947,18 +1979,17 @@ function renderConceptTeachingQuestion(question, visual) {
         <section class="teaching-core" aria-label="لفظ اور مطلب">
           <span class="teaching-eyebrow">${refresh ? "پچھلی بات یاد کریں" : "پہچانیں اور سنیں"}</span>
           <div class="teaching-dutch latin">
-            <strong>${escapeHtml(teaching.dutch)}</strong>
-            ${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}
+            <strong data-karaoke>${NU.lesson.karaokeHTML(teaching.dutch)}</strong>
           </div>
-          <p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p>
+          <div class="teaching-actions">${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
+          <div class="pl-meaning"><span>مطلب</span><p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p></div>
           ${teaching.pronunciation ? `<p class="teaching-pronunciation"><span>اردو میں آواز:</span> ${escapeHtml(teaching.pronunciation)}</p>` : ""}
-          <div class="teaching-actions">${renderSlowSpeakButton(teaching.audioText, true)}</div>
         </section>
       ` : `
         <section class="teaching-use-panel" aria-label="استعمال کی مثال">
           <span class="teaching-step-label">استعمال کریں</span>
           ${teaching.conciseUsage ? `<p class="teaching-use-copy">${escapeHtml(teaching.conciseUsage)}</p>` : ""}
-          ${teaching.showExample ? `<div class="teaching-example"><span>ایک مثال</span><strong class="latin">${escapeHtml(teaching.conciseExampleDutch)}</strong><small>${escapeHtml(teaching.conciseExampleUrdu)}</small></div>` : ""}
+          ${teaching.showExample ? `<div class="teaching-example"><span>ایک مثال</span><div class="pl-example-line"><strong class="latin" data-karaoke>${NU.lesson.karaokeHTML(teaching.conciseExampleDutch)}</strong>${isDutchText(teaching.conciseExampleDutch) ? renderSpeakButton(teaching.conciseExampleDutch, "teaching") : ""}</div><small>${escapeHtml(teaching.conciseExampleUrdu)}</small></div>` : ""}
         </section>
         <button class="teaching-step-back" data-action="teaching-back">پچھلا حصہ</button>
       `}
@@ -1980,7 +2011,7 @@ function renderPatternTeachingQuestion(question) {
         <section class="pattern-model-panel" aria-label="جملہ اور مطلب">
           <span class="teaching-eyebrow">پہلے نمونہ دیکھیں</span>
           <div class="pattern-sentence">
-            <strong class="latin">${OpenDoor.tokens(teaching.sentence)}</strong>
+            <strong class="latin" data-karaoke>${OpenDoor.tokens(teaching.sentence)}</strong>
             ${teaching.sentence ? renderSpeakButton(teaching.sentence, "teaching") : ""}
             ${renderSlowSpeakButton(teaching.sentence, true)}
             ${teaching.sentenceUrdu ? `<small>${escapeHtml(teaching.sentenceUrdu)}</small>` : ""}
@@ -2004,7 +2035,7 @@ function renderCorrectionTeachingQuestion(question) {
   const explanation = question.wrongExplanation || original.wrongExplanation || original.feedback?.wrong || original.explain || `صحیح جواب ${original.answer || ""} ہے۔`;
   return `
     <article class="learning-teaching-card correction-teaching-card progressive-teaching-card">
-      <span class="teaching-eyebrow">دوبارہ کوشش کی تیاری</span>
+      ${NU.lesson.tip('<span><b class="latin" dir="ltr">Geen zorgen!</b> غلطی سے ہی سیکھتے ہیں۔ صحیح جواب دیکھیں اور پھر خود آزمائیں۔</span>')}
       <h2>صحیح جواب ایک بار دیکھیں</h2>
       ${original.answer ? `<div class="teaching-example"><span>صحیح جواب</span><strong class="${isDutchText(original.answer) ? "latin" : ""}">${escapeHtml(original.answer)}</strong></div>` : ""}
       <p class="correction-next-step">اگلے قدم میں یہی بات خود دوبارہ آزمائیں۔</p>
@@ -2271,8 +2302,8 @@ function renderSpeakRepeatQuestion(question) {
   const support = renderBeginnerSupport(question.answer, "large");
   return `
     <div class="speak-repeat-question">
-      <button class="listening-button" data-action="speak" data-speak="${escapeAttr(question.speak || question.answer)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}</button>
-      <strong class="latin">${escapeHtml(question.answer)}</strong>
+      <button class="listening-button" data-action="speak" data-speak="${escapeAttr(question.speak || question.answer)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}<i aria-hidden="true"></i><i aria-hidden="true"></i></button>
+      <strong class="latin" data-karaoke>${NU.lesson.karaokeHTML(question.answer)}</strong>
       ${support}
       ${renderSlowSpeakButton(question.speak || question.answer)}
       <p>${escapeHtml(question.prompt)}</p>
@@ -2288,7 +2319,10 @@ function renderListeningQuestion(question) {
   const speechText = getQuestionSpeechText(question);
   return `
     <div class="listening-question">
-      <button class="listening-button" data-action="speak" data-speak="${escapeAttr(speechText)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}</button>
+      <div class="pl-listen-stage">
+        <button class="listening-button" data-action="speak" data-speak="${escapeAttr(speechText)}" aria-label="Nederlands آواز سنیں">${renderIcon("speaker")}<i aria-hidden="true"></i><i aria-hidden="true"></i></button>
+        ${renderSlowSpeakButton(speechText, true)}
+      </div>
       ${audioSkipped ? `<p class="audio-fallback latin">${escapeHtml(speechText)}</p>` : ""}
       ${renderChoices(question)}
     </div>
@@ -2303,12 +2337,15 @@ function renderMultipleChoiceQuestion(question, visual) {
     <div class="multiple-choice-question ${question.type === "image-choice" ? "image-prompt" : ""}">
       <div class="prompt-scene ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
-        <div class="speech-bubble ${isPromptLatin(question) ? "latin" : ""}">
-          ${speechText && (!helpFreeCheck || intrinsicListening) ? renderSpeakButton(speechText, "prompt") : ""}
-          <span>${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
+        <div class="pl-prompt-row">
+          <span class="pl-prompt-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 56 })}</span>
+          <div class="speech-bubble ${isPromptLatin(question) ? "latin" : ""}">
+            ${speechText && (!helpFreeCheck || intrinsicListening) ? renderSpeakButton(speechText, "prompt") : ""}
+            <span>${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</span>
+            ${helpFreeCheck ? "" : renderSlowSpeakButton(speechText)}
+          </div>
         </div>
         ${helpFreeCheck || !hintOpen ? "" : renderBeginnerSupport(question.prompt)}
-        ${helpFreeCheck ? "" : renderSlowSpeakButton(speechText)}
       </div>
       ${renderChoices(question)}
     </div>
@@ -2321,7 +2358,10 @@ function renderWordBankQuestion(question, visual) {
     <div class="word-bank-question">
       <div class="prompt-scene compact ${visual ? "has-visual" : "no-visual"}">
         ${renderVisual(visual, "quiz-visual")}
-        <div class="speech-bubble">${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+        <div class="pl-prompt-row">
+          <span class="pl-prompt-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 56 })}</span>
+          <div class="speech-bubble">${helpFreeCheck ? escapeHtml(question.prompt) : renderTextWithWordHelp(question.prompt, `prompt-${activeQuestionIndex}`)}</div>
+        </div>
         ${helpFreeCheck || !hintOpen ? "" : renderBeginnerSupport(question.prompt)}
       </div>
       ${renderBuildExercise(question)}
@@ -2380,8 +2420,8 @@ function renderQuizFooter(question, infoStep) {
     return `
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
-          <span class="feedback-icon">${renderIcon(correct ? "check" : "close")}</span>
-          <div><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong>${renderFeedbackDetail(question, correct)}</div>
+          <span class="feedback-icon pl-feedback-face">${NU.cat.render({ face: true, size: 48, mood: correct ? "happy" : "sad" })}</span>
+          <div><div class="pl-feedback-title"><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong><span class="pl-praise latin" dir="ltr">${NU.lesson.phrase(correct, activeQuestionIndex)[0]}</span></div>${renderFeedbackDetail(question, correct)}</div>
         </div>
         <button class="quiz-action enabled" data-action="next">${getFeedbackNextLabel(question, correct)}</button>
       </footer>
@@ -2461,8 +2501,8 @@ function renderQuestionCoachmark(question) {
   if (!question?.contextCoachmark || coachmarkDismissed) return "";
   return `
     <aside class="question-coachmark" role="note" aria-label="پہلی مشق کا طریقہ">
-      <span class="question-coachmark-copy"><strong>پہلی مشق:</strong> ${escapeHtml(question.contextCoachmark)}</span>
-      <button class="question-coachmark-dismiss" data-action="dismiss-coachmark" aria-label="یہ مدد بند کریں">${renderIcon("close")}</button>
+      ${NU.lesson.tip(`<span class="question-coachmark-copy"><strong>پہلی مشق:</strong> ${escapeHtml(question.contextCoachmark)}</span>
+      <button class="question-coachmark-dismiss" data-action="dismiss-coachmark" aria-label="یہ مدد بند کریں">${renderIcon("close")}</button>`)}
     </aside>
   `;
 }
@@ -2489,7 +2529,7 @@ function renderHintButton() {
 function renderHintPopover(question) {
   return `
     <aside class="hint-popover guided-support question-help-panel" id="question-help-panel" role="status">
-      ${escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔")}
+      ${NU.lesson.tip(escapeHtml(question.hint || "Nederlands الفاظ کو صحیح ترتیب میں دبائیں۔"))}
     </aside>
   `;
 }
@@ -2568,7 +2608,7 @@ function renderBuildExercise(question) {
     <div class="build-exercise">
       <div class="build-answer ${answerState}">
         ${selectedTiles.length ? selectedTiles.map((tile, index) => `
-          <button class="word-tile selected-tile latin" data-action="build-remove" data-build-index="${index}">
+          <button class="word-tile selected-tile latin" data-action="build-remove" data-build-index="${index}" data-morph="tile-${escapeAttr(tile.id)}">
             ${escapeHtml(tile.word)}
           </button>
         `).join("") : `<span class="build-placeholder">Nederlands الفاظ یہاں بنائیں</span>`}
@@ -2576,7 +2616,7 @@ function renderBuildExercise(question) {
       </div>
       <div class="build-bank">
         ${remainingTiles.map((tile) => `
-          <button class="word-tile latin" data-action="build-select" data-tile-id="${escapeAttr(tile.id)}">
+          <button class="word-tile latin" data-action="build-select" data-tile-id="${escapeAttr(tile.id)}" data-morph="tile-${escapeAttr(tile.id)}">
             ${escapeHtml(tile.word)}
           </button>
         `).join("")}
@@ -2951,12 +2991,14 @@ function bindEvents() {
         event.stopPropagation();
         animateSpeakingControl(element);
         speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
+        NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio });
       }
       if (action === "slow-speak") {
         event.preventDefault();
         event.stopPropagation();
         animateSpeakingControl(element);
         speakDutch(element.dataset.speak, true);
+        NU.lesson.karaoke(getKaraokeTarget(element), { slow: true });
       }
       if (action === "home") goHome();
       if (action === "journey") goDestination("journey");
@@ -2996,6 +3038,7 @@ function bindEvents() {
       event.preventDefault();
       event.stopPropagation();
       speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
+      NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio });
     });
   });
 
@@ -3018,6 +3061,13 @@ function bindEvents() {
   });
 
   bindLessonDetailAccessibility();
+}
+
+// The words that light up when a speak button plays: the nearest example, else the card's main word.
+function getKaraokeTarget(button) {
+  return button.closest(".teaching-example")?.querySelector("[data-karaoke]")
+    || button.closest(".learning-teaching-card,.speak-repeat-question")?.querySelector("[data-karaoke]")
+    || null;
 }
 
 function bindLessonDetailAccessibility() {
@@ -3189,6 +3239,7 @@ function triggerAnswerMoment(correct, compact = false) {
   NU.motion.burst(icon, { count: streak ? 28 : 14, spread: streak ? 150 : 90 });
   NU.motion.bump(document.querySelector(".choice-button.correct"));
   NU.motion.pop(document.querySelector(".quiz-combo"));
+  NU.lesson.streakToast(answerCombo);
 }
 
 function triggerLessonCelebration() {
@@ -3201,6 +3252,22 @@ function triggerLessonCelebration() {
   NU.motion.confetti();
   NU.motion.burst(document.querySelector(".complete-mark"), { count: 26, spread: 160 });
   animateCountUpMetrics();
+}
+
+// Moving to a teaching card's next step turns the card over like a flashcard.
+function flipTeachingCard() {
+  const card = screen === "lesson" ? document.querySelector(".progressive-teaching-card[data-teaching-step]") : null;
+  const face = card ? { id: String(getActiveQuestion()?.id || ""), step: Number(card.dataset.teachingStep) } : { id: "", step: 0 };
+  if (card && face.id === lastTeachingFace.id && face.step !== lastTeachingFace.step) {
+    card.getAnimations().forEach((animation) => animation.cancel());
+    const forward = face.step > lastTeachingFace.step;
+    NU.motion.animate(card, [
+      { transform: `perspective(1000px) rotateY(${forward ? -88 : 88}deg)`, opacity: 0.3 },
+      { transform: "perspective(1000px) rotateY(0deg)", opacity: 1 }
+    ], { spring: "snappy" });
+    NU.sound.play("swish");
+  }
+  lastTeachingFace = face;
 }
 
 // The lesson bar is re-rendered on every step, so carry its old width forward and spring to the new one.

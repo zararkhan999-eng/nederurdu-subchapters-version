@@ -150,7 +150,7 @@ NU.street = (() => {
       </div>
       <div class="street-cat" data-action="street-cat" role="button" tabindex="0" aria-label="${NU.cat.NAME} سے بات کریں">${NU.cat.render({ size: 150 })}</div>
       <div class="street-bubble" role="status" aria-live="polite">
-        <strong class="latin street-bubble-nl">${t.greet}</strong><small>${t.urdu}</small>
+        <strong class="latin street-bubble-nl" dir="ltr">${t.greet}</strong><small>${t.urdu}</small>
         <button class="street-bubble-speak" data-action="speak" data-speak="${esc(t.greet.replace("!", ""))}" data-regular="true" aria-label="Nederlands آواز سنیں"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg></button>
       </div>
     </section>`;

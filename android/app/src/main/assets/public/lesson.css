@@ -1,0 +1,293 @@
+/* NederUrdu lesson scenes: chunky playful lesson chrome, karaoke teaching cards, Pim prompts and feedback. */
+
+/* ---- Chrome --------------------------------------------------------------- */
+body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
+#app .quiz-topbar{background:var(--pl-bg);align-items:center}
+#app .quiz-close{border:2px solid var(--pl-line);box-shadow:0 3px 0 var(--pl-line);color:var(--pl-muted)}
+#app .quiz-close:active{transform:translateY(3px);box-shadow:none}
+#app .quiz-status{display:flex;justify-content:center}
+#app .pl-streak{display:inline-flex;align-items:center;gap:3px;padding:3px 9px 3px 6px;border-radius:99px;background:var(--pl-oranje-soft);color:var(--pl-oranje);box-shadow:none;font-weight:800;font-size:15px}
+#app .pl-streak b{color:var(--pl-oranje-dark)}
+#app .pl-flame{width:20px;height:20px}
+#app .pl-streak.heat-1{background:#ffe2c8}
+#app .pl-streak.heat-2{background:var(--pl-oranje);color:#ffd56b}
+#app .pl-streak.heat-2 b,#app .pl-streak.heat-3 b{color:#fff}
+#app .pl-streak.heat-3{background:linear-gradient(135deg,#ff4d4d,#ff7a1a);color:#ffd56b;box-shadow:0 0 0 3px #ffb38066}
+:root:not([data-effects=reduced]) #app .pl-streak.heat-3 .pl-flame{animation:pl-flicker .5s ease-in-out infinite alternate}
+@keyframes pl-flicker{from{transform:scale(1) rotate(-4deg)}to{transform:scale(1.12) rotate(4deg)}}
+
+#app .learning-phase-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:10px 12px;background:#fff;border:2px solid var(--pl-line);border-radius:16px;box-shadow:0 3px 0 var(--pl-line)}
+#app .learning-phase-name{grid-column:1;padding:3px 10px;border-radius:99px;background:var(--pl-oranje-soft);color:var(--pl-oranje-dark);font-weight:800;font-size:13px;white-space:nowrap}
+#app .learning-phase-header>.lesson-notes-button{grid-column:3;min-height:34px;padding:4px 10px;border:2px solid var(--pl-line);border-radius:12px;background:#fff;color:var(--pl-blue);font-weight:700;box-shadow:0 2px 0 var(--pl-line)}
+#app .learning-phase-track{grid-column:1/-1;display:flex;gap:5px}
+#app .learning-phase-step{flex:1;height:8px;border-radius:99px;background:#eceef2;padding:0;border:0}
+#app .learning-phase-step i,#app .learning-phase-step b{display:none}
+#app .learning-phase-step.complete{background:var(--pl-green)}
+#app .learning-phase-step.active{background:var(--pl-oranje)}
+
+#app .question-heading{margin:16px 2px 12px}
+#app .question-title{font-size:21px;font-weight:800;line-height:1.7;color:var(--pl-ink)}
+
+/* ---- Pim tips (coachmarks and hints) -------------------------------------- */
+#app .pl-pim-tip{display:flex;align-items:flex-end;gap:8px}
+#app .pl-pim-tip-face{flex-shrink:0;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--pl-oranje-soft);border:2px solid #ffd9bd;overflow:hidden}
+#app .pl-pim-tip-face svg{margin-top:8px}
+#app .pl-pim-tip-bubble{position:relative;flex:1;min-width:0;display:flex;align-items:flex-start;gap:8px;padding:11px 14px;border-radius:16px;background:#fff;border:2px solid var(--pl-line);box-shadow:0 3px 0 var(--pl-line);font:500 16px/1.85 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .pl-pim-tip-bubble::before{content:"";position:absolute;bottom:12px;inset-inline-start:-8px;width:12px;height:12px;background:#fff;border:solid var(--pl-line);border-width:0 0 2px 2px;transform:rotate(45deg)}
+#app .question-coachmark,#app .hint-popover{margin:10px 0;padding:0;border:0;background:none;box-shadow:none;font:inherit}
+#app .question-coachmark-copy{flex:1}
+#app .question-coachmark-dismiss{flex-shrink:0;width:32px;height:32px;min-height:32px;padding:0;border:0;border-radius:10px;background:#f2f3f6;color:var(--pl-muted);box-shadow:none}
+#app .question-coachmark-dismiss .ui-icon{width:16px;height:16px}
+#app .question-help-toggle{border:2px solid #cfdcff;border-radius:14px;background:var(--pl-blue-soft);box-shadow:0 3px 0 #cfdcff;color:var(--pl-blue)}
+#app .question-help-toggle:active{transform:translateY(3px);box-shadow:none}
+#app .question-help-toggle>span{color:var(--pl-blue)}
+
+/* ---- Teaching cards ------------------------------------------------------- */
+#app .learning-teaching-card{padding:18px 18px 20px;border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 5px 0 var(--pl-line);background:#fff;transform-origin:center;backface-visibility:hidden}
+#app .teaching-step-progress{display:flex;align-items:center;gap:8px;padding:0 0 10px}
+#app .teaching-step-count{padding:2px 10px;border-radius:99px;background:var(--pl-blue-soft);color:var(--pl-blue);font-weight:800}
+#app .teaching-step-name{font-weight:700;color:var(--pl-muted);font-size:13px}
+#app .teaching-eyebrow,#app .teaching-step-label{display:inline-block;padding:2px 10px;border-radius:99px;background:#f2f3f6;color:var(--pl-muted);font-size:12px;font-weight:700}
+#app .teaching-core{text-align:center}
+#app .learning-visual{margin:4px auto 10px;max-width:240px;border-radius:20px;overflow:hidden;border:2px solid var(--pl-line);box-shadow:0 4px 0 var(--pl-line);background:#fff}
+#app .learning-visual img{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+#app .teaching-dutch{margin:14px 0 10px}
+#app .teaching-dutch strong{font:800 clamp(32px,10vw,46px)/1.25 var(--font-ui);color:var(--pl-ink);letter-spacing:-.01em}
+#app .teaching-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:4px 0 16px}
+
+/* Karaoke: syllables light up as Pim says them. */
+#app .kw-word{display:inline-block;white-space:nowrap}
+#app .kw-syl,#app [data-karaoke] .od-grammar-token{display:inline-block;transition:color .15s,transform .2s cubic-bezier(.34,1.56,.64,1),background-color .15s}
+#app .kw-syl.is-lit{color:var(--pl-oranje);transform:translateY(-4px) scale(1.08)}
+#app .kw-syl.is-done{color:var(--pl-blue)}
+#app [data-karaoke] .od-grammar-token.is-lit{background:var(--pl-oranje);border-color:var(--pl-oranje-dark);color:#fff;transform:translateY(-4px)}
+#app [data-karaoke] .od-grammar-token.is-done{background:var(--pl-blue-soft)}
+
+/* Big round speak button and the slow "snail" pill. */
+#app .speak-button,#app .pl-example-line .speak-button{display:inline-grid;place-items:center;width:52px;height:52px;min-width:52px;border-radius:50%;background:var(--pl-blue);color:#fff;border:0;box-shadow:0 4px 0 var(--pl-blue-dark);cursor:pointer;transition:transform 90ms,box-shadow 90ms}
+#app .speak-button .ui-icon{width:24px;height:24px}
+#app .speak-button:active{transform:translateY(4px);box-shadow:none}
+#app .speak-button.is-speaking{background:var(--pl-oranje);box-shadow:0 4px 0 var(--pl-oranje-dark)}
+#app .slow-speak-button{min-height:44px;padding:8px 16px;border:2px solid var(--pl-line);border-radius:99px;background:#fff;color:var(--pl-blue);font-weight:700;box-shadow:0 3px 0 var(--pl-line)}
+#app .slow-speak-button::before{content:"🐢";margin-inline-end:6px}
+#app .slow-speak-button:active{transform:translateY(3px);box-shadow:none}
+#app .slow-speak-button.is-speaking{background:var(--pl-blue-soft);border-color:#b9cdff}
+
+#app .pl-meaning{margin:2px 0 12px;padding:12px 14px;border-radius:16px;background:var(--pl-blue-soft);text-align:center}
+#app .pl-meaning>span{display:block;font-size:12px;font-weight:800;color:var(--pl-blue)}
+#app .pl-meaning .teaching-urdu{margin:2px 0 0;font:600 26px/1.7 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .teaching-pronunciation{display:inline-block;margin:0;padding:6px 14px;border-radius:99px;background:var(--pl-oranje-soft);color:var(--pl-oranje-dark);font-weight:600}
+#app .teaching-pronunciation span{color:var(--pl-muted);font-weight:500}
+#app .teaching-use-copy{font:500 19px/1.9 var(--font-urdu-reading);color:var(--pl-ink);margin:12px 0}
+#app .teaching-example{margin:14px 0 6px;padding:14px 16px;border-radius:18px;background:var(--pl-oranje-soft);border:2px solid #ffd9bd}
+#app .teaching-example>span{display:inline-block;padding:1px 10px;border-radius:99px;background:#fff;color:var(--pl-oranje-dark);font-size:12px;font-weight:800}
+#app .pl-example-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 2px;direction:ltr}
+#app .pl-example-line strong{font:800 22px/1.4 var(--font-ui);color:var(--pl-ink)}
+#app .pl-example-line .speak-button{width:44px;height:44px;min-width:44px}
+#app .teaching-example small{display:block;font:500 17px/1.8 var(--font-urdu-reading);color:var(--pl-muted)}
+#app .teaching-step-back{margin-top:12px;border:0;background:none;color:var(--pl-blue);font-weight:700}
+
+#app .pattern-sentence{text-align:center}
+#app .pattern-sentence>strong{gap:8px;margin-bottom:14px}
+#app .od-grammar-token{padding:6px 12px;border-radius:12px;border:2px solid #cfdcff;background:#fff;box-shadow:0 3px 0 #cfdcff;font-weight:800;color:var(--pl-ink)}
+#app .pattern-highlight{display:inline-block;margin:10px 0;padding:8px 16px;border-radius:14px;background:var(--pl-yellow-soft);border:2px solid #ffe08a;font-size:22px;font-weight:800;color:var(--pl-ink)}
+#app .pattern-explanation{font:500 19px/1.9 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .correction-teaching-card h2{font-size:21px;font-weight:800;margin:10px 0}
+#app .correction-next-step{color:var(--pl-muted)}
+
+/* ---- Exercises ------------------------------------------------------------ */
+#app .prompt-scene{padding:16px;border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 5px 0 var(--pl-line);background:#fff}
+#app .pl-prompt-row{display:flex;align-items:flex-end;gap:10px}
+#app .pl-prompt-pim{flex-shrink:0;display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:var(--pl-oranje-soft);border:2px solid #ffd9bd;overflow:hidden}
+#app .pl-prompt-pim svg{margin-top:10px}
+#app .pl-prompt-row .speech-bubble{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:18px;background:#fff;border:2px solid var(--pl-line);box-shadow:0 3px 0 var(--pl-line);font-size:20px;font-weight:600;color:var(--pl-ink)}
+#app .pl-prompt-row .speech-bubble::before{content:"";position:absolute;bottom:14px;inset-inline-start:-8px;width:12px;height:12px;background:#fff;border:solid var(--pl-line);border-width:0 0 2px 2px;transform:rotate(45deg)}
+#app .pl-prompt-row .speech-bubble .speak-button{width:42px;height:42px;min-width:42px}
+#app .prompt-scene .learning-visual{max-width:200px;margin-bottom:14px}
+#app .prompt-scene .slow-speak-button{margin-top:12px}
+
+#app .listening-question{text-align:center}
+#app .pl-listen-stage{display:flex;flex-direction:column;align-items:center;gap:14px;margin:12px 0 22px}
+#app .listening-button{position:relative;width:118px;height:118px;margin:0;border:0;border-radius:50%;background:var(--pl-blue);color:#fff;box-shadow:0 7px 0 var(--pl-blue-dark)}
+#app .listening-button .ui-icon{width:46px;height:46px}
+#app .listening-button:active{transform:translateY(7px);box-shadow:none}
+#app .listening-button.is-speaking{background:var(--pl-oranje);color:#fff;box-shadow:0 7px 0 var(--pl-oranje-dark)}
+#app .listening-button>i{position:absolute;inset:0;border-radius:50%;border:3px solid var(--pl-blue);opacity:0;pointer-events:none}
+:root:not([data-effects=reduced]) #app .listening-button.is-speaking>i{animation:pl-ring 1.1s ease-out 2}
+:root:not([data-effects=reduced]) #app .listening-button.is-speaking>i+i{animation-delay:.35s}
+@keyframes pl-ring{0%{transform:scale(1);opacity:.7;border-color:var(--pl-oranje)}100%{transform:scale(1.55);opacity:0;border-color:var(--pl-oranje)}}
+
+#app .speak-repeat-question{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 16px;border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 5px 0 var(--pl-line);background:#fff;text-align:center}
+#app .speak-repeat-question>strong{font:800 clamp(28px,8vw,38px)/1.3 var(--font-ui);color:var(--pl-ink);direction:ltr}
+#app .speak-repeat-question>p{margin:0;color:var(--pl-muted);font:500 17px/1.8 var(--font-urdu-reading)}
+
+/* Word tiles: chunky, light, and they glide between the bank and the answer line. */
+#app .build-exercise{margin-top:16px}
+#app .build-answer{display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;min-height:116px;padding:8px 4px;border:0;border-radius:0;background:repeating-linear-gradient(to bottom,transparent 0 55px,var(--pl-line) 55px 57px);direction:ltr}
+#app .build-answer.correct{background:repeating-linear-gradient(to bottom,transparent 0 55px,var(--pl-green) 55px 57px)}
+#app .build-answer.wrong{background:repeating-linear-gradient(to bottom,transparent 0 55px,var(--pl-red) 55px 57px)}
+#app .build-placeholder{align-self:center;width:100%;text-align:center;color:#aab0bb;font-size:14px;direction:rtl}
+#app .build-bank{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:22px;direction:ltr}
+#app .word-tile{min-height:46px;padding:8px 16px;border:2px solid var(--pl-line);border-radius:14px;background:#fff;color:var(--pl-ink);box-shadow:0 4px 0 var(--pl-line);font:700 18px/1.2 var(--font-ui);transition:transform 90ms,box-shadow 90ms;text-shadow:none}
+#app .word-tile:active{transform:translateY(4px);box-shadow:none}
+#app .word-tile.selected-tile{background:#fff}
+
+/* Documents read like a Dutch letter. */
+#app .practice-document{padding:0;border:2px solid var(--pl-line);border-radius:18px;background:#fff;box-shadow:0 5px 0 var(--pl-line);overflow:hidden}
+#app .practice-document>strong{margin:0;padding:12px 16px;border:0;background:var(--pl-blue);color:#fff;font-weight:800}
+#app .practice-document>div{margin:0 16px;padding:11px 0;border-bottom:1px dashed var(--pl-line)}
+#app .practice-document>div:last-child{border-bottom:0}
+#app .document-prompt{font:600 19px/1.8 var(--font-urdu-reading);color:var(--pl-ink);margin:16px 2px 4px}
+
+/* ---- Feedback: Pim reacts -------------------------------------------------- */
+#app .quiz-feedback-panel .feedback-copy{display:flex;align-items:flex-start;gap:12px}
+#app .quiz-feedback-panel .pl-feedback-face{flex-shrink:0;display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 3px 0 #00000012}
+#app .quiz-feedback-panel .pl-feedback-face svg{margin-top:8px}
+#app .pl-feedback-title{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+#app .pl-praise{padding:1px 10px;border-radius:99px;background:#fff;font-weight:800;font-size:14px}
+#app .quiz-feedback-panel.correct .pl-praise{color:var(--pl-green-ink)}
+#app .quiz-feedback-panel.wrong .pl-praise{color:var(--pl-red-ink)}
+#app .feedback-answer{margin:4px 0 0}
+
+/* Streak milestone banner */
+.pl-streak-toast{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;z-index:250;display:flex;align-items:center;gap:10px;padding:8px 18px 8px 8px;border-radius:99px;background:linear-gradient(135deg,#ff7a1a,#ff4d4d);color:#fff;box-shadow:0 5px 0 #c0391b,0 14px 30px #ff4d4d55;transform:translate(-50%,-120%);direction:rtl;white-space:nowrap}
+.pl-streak-toast-face{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#fff;overflow:hidden}
+.pl-streak-toast-face svg{margin-top:7px}
+.pl-streak-toast b{display:block;font-size:17px;font-weight:800;line-height:1.2;font-family:var(--font-ui)}
+.pl-streak-toast small{font-size:12px;opacity:.95}
+
+/* ---- Fixes over the inherited layout -------------------------------------- */
+#app .quiz-screen{background:transparent}
+#app .teaching-core>.pl-meaning{justify-self:stretch}
+#app .progressive-teaching-card:has(.teaching-step-progress) .teaching-eyebrow{display:none}
+#app .quiz-action::before,#app .quiz-action::after,#app .teaching-step-next::before,#app .teaching-step-next::after{display:none}
+#app .progressive-teaching-card:has(.teaching-step-progress) .teaching-step-label{display:none}
+#app .teaching-example>span{display:table}
+#app .lesson-detail-trigger{display:inline-flex;align-items:center;gap:6px;min-height:40px;margin-top:10px;padding:6px 14px;border:2px solid #cfdcff;border-radius:99px;background:var(--pl-blue-soft);color:var(--pl-blue);font-weight:700;box-shadow:0 3px 0 #cfdcff}
+#app .lesson-detail-trigger:active{transform:translateY(3px);box-shadow:none}
+#app .speak-button .ui-icon,#app .listening-button .ui-icon{stroke-width:2.4}
+/* The old prompt card was a two-column grid with decorative circles; it is now a vertical stack. */
+#app .prompt-scene{display:flex;flex-direction:column;align-items:stretch;gap:12px;grid-template-columns:none}
+#app .prompt-scene>.learning-visual{align-self:center;margin:0}
+#app .prompt-scene>.slow-speak-button,#app .prompt-scene>.beginner-support{align-self:center;margin:0}
+#app .prompt-scene::before,#app .prompt-scene::after,#app .learning-visual::before,#app .learning-visual::after,#app .choice-button::before,#app .choice-button::after,#app .choice-confetti{display:none}
+/* Compact prompt: smaller picture, the slow button becomes a round turtle inside the bubble. */
+#app .prompt-scene>.learning-visual{max-width:min(170px,52vw)}
+#app .prompt-scene .learning-visual img{max-height:150px}
+#app .pl-prompt-row .speech-bubble>span{flex:1;min-width:0}
+#app .speech-bubble .slow-speak-button{flex-shrink:0;width:42px;height:42px;min-height:42px;padding:0;margin:0;border-radius:50%;font-size:0;display:inline-grid;place-items:center}
+#app .speech-bubble .slow-speak-button::before{margin:0;font-size:20px}
+#app .question-help{margin:4px 0 12px}
+#app .question-help-toggle{min-height:38px;min-width:0;padding:5px 14px;border-radius:99px;gap:6px}
+#app .question-help-toggle>span{font-size:16px}
+#app .question-help-toggle>b{font-size:14px}
+#app .pl-prompt-row .speech-bubble .speak-button,#app .speech-bubble .slow-speak-button{flex:0 0 42px;width:42px;min-width:42px;max-width:42px;padding:0}
+#app .pl-prompt-row .speech-bubble{gap:8px;padding:10px 10px 10px 12px;font-size:19px}
+#app .pl-prompt-row .speech-bubble>span{overflow-wrap:anywhere}
+/* The turtle sits on the bubble's corner like a sticker, leaving the full width to the Dutch words. */
+#app .pl-prompt-row .speech-bubble .slow-speak-button{position:absolute;top:-14px;inset-inline-end:-8px;flex:none;width:36px;height:36px;min-width:36px;min-height:36px;max-width:36px;box-shadow:0 2px 0 var(--pl-line)}
+#app .pl-prompt-row .speech-bubble .slow-speak-button::before{font-size:17px}
+#app .pl-prompt-row .speech-bubble>span{overflow-wrap:break-word}
+#app .pl-prompt-row .speech-bubble>span{text-align:start}
+/* Feedback text grows with its content (the panel itself still has a ceiling); no inner scrollbar. */
+#app .quiz-feedback-panel .feedback-copy>div{max-height:none;overflow:visible;min-width:0;flex:1}
+#app,#app *{scrollbar-color:#d1d5db transparent}
+#app .pattern-sentence .speak-button{width:52px;height:52px;min-width:52px;padding:0;border-radius:50%}
+#app .pattern-sentence .slow-speak-button{min-height:44px;padding:8px 16px;border-radius:99px;font-size:15px}
+#app .choice-audio{display:grid;place-items:center;width:46px;height:46px;min-width:46px;padding:0;border:2px solid #cfdcff;border-radius:50%;background:var(--pl-blue-soft);color:var(--pl-blue);box-shadow:0 3px 0 #cfdcff}
+#app .choice-audio:active{transform:translateY(3px);box-shadow:none}
+#app .choice-audio .ui-icon{width:20px;height:20px;stroke-width:2.4}
+/* Dutch answers: the tile and its speaker sit side by side instead of overlapping. */
+#app .choice-wrap.has-sound{display:flex;align-items:center;gap:8px}
+#app .choice-wrap.has-sound .choice-button{flex:1;min-width:0;width:auto}
+#app .choice-wrap.has-sound .choice-audio{position:static;inset:auto;transform:none;flex-shrink:0;margin:0}
+#app .choice-wrap.has-sound .choice-audio:active{transform:translateY(3px)}
+
+/* ---- Lesson preview: the unit's building, Pim, and a chunky summary -------- */
+#app .pl-preview{padding-bottom:24px}
+#app .pl-preview-scene{position:relative;height:200px;margin:0 -20px;overflow:hidden;border-radius:0 0 30px 30px;background:linear-gradient(#7cc8ff,#d6efff 70%,#fff3d9)}
+@media(max-width:360px){#app .pl-preview-scene{margin-inline:-14px}}
+#app .pl-preview-clouds{position:absolute;inset:0 0 auto;width:100%;height:120px;opacity:.95}
+#app .pl-preview-building{position:absolute;bottom:34px;right:14%;width:150px}
+#app .pl-preview-pim{position:absolute;bottom:22px;left:9%;width:132px;z-index:2}
+#app .pl-preview-ground{position:absolute;inset:auto 0 0;height:44px;background:linear-gradient(#c5c9d3 0 10px,#c9573c 10px)}
+#app .pl-preview-ground::after{content:"";position:absolute;left:0;right:0;top:26px;border-top:2.5px dashed #ffffff99}
+
+#app .pl-preview .learning-preview-hero{position:relative;z-index:2;margin:-30px 4px 0;padding:18px 18px 20px;border:2px solid var(--pl-line);border-radius:var(--pl-radius-lg);box-shadow:0 5px 0 var(--pl-line);background:#fff}
+#app .pl-preview .learning-preview-hero .quiz-close{position:absolute;top:14px;left:14px;width:40px;height:40px}
+#app .pl-preview-tags{display:flex;flex-wrap:wrap;gap:6px;padding-inline-end:48px}
+#app .pl-preview-tags .eyeline{padding:3px 10px;border-radius:99px;background:var(--pl-oranje-soft);color:var(--pl-oranje-dark);font-size:12px;font-weight:800}
+#app .mastery-badge{padding:3px 10px;border-radius:99px;background:#f2f3f6;color:var(--pl-muted);font-size:12px;font-weight:800}
+#app .mastery-badge.mastery-practiced,#app .mastery-badge.mastery-introduced{background:var(--pl-blue-soft);color:var(--pl-blue-dark)}
+#app .mastery-badge.mastery-secure{background:var(--pl-yellow-soft);color:#8a5a00}
+#app .pl-preview-unit{display:block;margin-top:12px;color:var(--pl-muted);font-weight:700;font-size:13px}
+#app .pl-preview .learning-preview-hero h1{margin:2px 0 10px;font-family:var(--font-ui);font-size:28px;font-weight:800;line-height:1.25;color:var(--pl-ink)}
+#app .learning-preview-goal{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:var(--pl-blue-soft);font:500 17px/1.85 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .learning-preview-goal strong{color:var(--pl-blue-dark)}
+#app .learning-preview-meta{display:flex;flex-wrap:wrap;gap:6px}
+#app .learning-preview-meta>span{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;border:2px solid var(--pl-line);background:#fff;font-size:12px;color:var(--pl-muted);font-weight:600}
+#app .learning-preview-meta .ui-icon{width:15px;height:15px;color:var(--pl-blue)}
+#app .learning-preview-meta b{color:var(--pl-ink)}
+
+#app .prerequisite-guidance{display:flex;gap:12px;margin:14px 4px 0;padding:14px 16px;border-radius:18px;border:2px solid #bfeccb;background:var(--pl-green-soft);box-shadow:0 3px 0 #bfeccb}
+#app .prerequisite-guidance>span{flex-shrink:0;display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--pl-green);color:#fff}
+#app .prerequisite-guidance.needs-preparation{border-color:#ffe08a;background:var(--pl-yellow-soft);box-shadow:0 3px 0 #ffe08a}
+#app .prerequisite-guidance.needs-preparation>span{background:var(--pl-yellow-dark)}
+#app .prerequisite-guidance strong{font-weight:800;color:var(--pl-ink)}
+#app .prerequisite-guidance p{margin:4px 0 0;color:var(--pl-muted);font-size:13px;line-height:1.8}
+#app .prerequisite-skill{display:inline-block;margin:4px 0 0 4px;padding:2px 9px;border-radius:99px;background:#fff;font-size:12px;font-weight:700}
+
+#app .pl-preview .learning-preview-content{display:grid;gap:12px;margin:14px 4px 0}
+#app .pl-preview .learning-preview-column{padding:14px 16px;border:2px solid var(--pl-line);border-radius:18px;background:#fff;box-shadow:0 3px 0 var(--pl-line)}
+#app .pl-preview .learning-preview-column>.eyeline{display:block;margin-bottom:8px;color:var(--pl-muted);font-size:12px;font-weight:800}
+#app .pl-preview .learning-preview-column p{margin:0;color:var(--pl-ink);line-height:1.85}
+#app .pl-preview .learning-preview-targets{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;border:0;background:none;box-shadow:none}
+#app .learning-target{padding:6px 13px;border-radius:12px;border:2px solid #ffd9bd;background:var(--pl-oranje-soft);color:var(--pl-ink);font-weight:800;box-shadow:0 3px 0 #ffd9bd}
+#app .learning-target.latin{font-size:16px}
+
+#app .pl-preview .learning-preview-phases{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 4px 0;padding:0;border:0;background:none;box-shadow:none}
+#app .pl-preview .learning-phase-chip{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border:2px solid var(--pl-line);border-radius:16px;background:#fff;box-shadow:0 3px 0 var(--pl-line)}
+#app .pl-preview .learning-phase-chip>b{flex-shrink:0;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--pl-blue);color:#fff;font-size:13px;font-weight:800}
+#app .pl-preview .learning-phase-chip strong{display:block;font-size:14px;font-weight:800;color:var(--pl-ink);line-height:1.5}
+#app .pl-preview .learning-phase-chip small{display:block;font-size:11px;color:var(--pl-muted);line-height:1.6}
+
+#app .pl-preview .learning-preview-action{position:sticky;bottom:0;z-index:5;margin:10px -20px 0;padding:14px 20px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(#fffdf900,var(--pl-bg) 22%)}
+@media(max-width:360px){#app .pl-preview .learning-preview-action{margin-inline:-14px;padding-inline:14px}}
+#app .pl-preview .learning-preview-action .primary-button{margin:0}
+#app .pl-preview .learning-preview-action small{text-align:center;margin:10px 0 0;color:var(--pl-muted)}
+#app .pl-preview .learning-preview-hero{display:block;overflow:visible}
+#app .pl-preview .learning-preview-hero .quiz-close{right:auto;inset-inline-end:auto;left:14px}
+#app .pl-preview .learning-preview-meta>span{flex:0 0 auto;width:auto}
+/* html/body clip overflow, so "sticky" never engages; the start button is a fixed bar like the lesson's. */
+#app .pl-preview{padding-bottom:128px}
+#app .pl-preview .learning-preview-action{display:block;position:fixed;inset:auto auto 0 50%;transform:translateX(-50%);width:min(460px,100%);margin:0;padding:22px 20px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(#fffdf900,var(--pl-bg) 26%)}
+#app .pl-preview .learning-preview-action{border:0;box-shadow:none}
+#app .pl-preview .learning-preview-action .button-icon{background:none;box-shadow:none;border:0;width:auto;height:auto}
+#app .pl-preview .learning-preview-column>.eyeline{padding:0;background:none;border:0;border-radius:0}
+
+/* ---- Lesson notes / explanation sheet (was still in the old dark palette) - */
+#app .lesson-detail-backdrop{background:#1f243366}
+#app .lesson-detail-sheet{background:#fff;color:var(--pl-ink);border:0;border-radius:28px 28px 0 0;box-shadow:0 -6px 0 var(--pl-line),0 -20px 50px #1f24332e;padding:10px 20px calc(22px + env(safe-area-inset-bottom))}
+#app .lesson-detail-handle{display:block;width:44px;height:5px;margin:0 auto 12px;border-radius:99px;background:var(--pl-line)}
+#app .lesson-detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;border:0;padding:0}
+#app .lesson-detail-header span{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--pl-oranje-soft);color:var(--pl-oranje-dark);font-size:12px;font-weight:800}
+#app .lesson-detail-header h2{margin:6px 0 0;font-size:22px;font-weight:800;color:var(--pl-ink);line-height:1.5}
+#app .lesson-detail-close{flex-shrink:0;display:grid;place-items:center;width:42px;height:42px;min-height:42px;padding:0;border:2px solid var(--pl-line);border-radius:50%;background:#fff;color:var(--pl-muted);box-shadow:0 3px 0 var(--pl-line)}
+#app .lesson-detail-close:active{transform:translateY(3px);box-shadow:none}
+#app .lesson-detail-body{color:var(--pl-ink)}
+#app .lesson-detail-section{margin:0 0 14px;padding:14px 16px;border:2px solid var(--pl-line);border-radius:18px;background:#fff;box-shadow:0 3px 0 var(--pl-line);color:var(--pl-ink)}
+#app .lesson-detail-section>strong{display:block;margin-bottom:8px;color:var(--pl-blue);font-size:13px;font-weight:800}
+#app .lesson-detail-section p{margin:0;font:500 17px/1.9 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .lesson-detail-note-list{list-style:none;margin:0;padding:0}
+#app .lesson-detail-note-list li{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:2px 12px;padding:9px 0;border-bottom:1px dashed var(--pl-line);color:var(--pl-ink)}
+#app .lesson-detail-note-list li:last-child{border-bottom:0}
+#app .lesson-detail-note-list li::before,#app .lesson-detail-note-list li::marker{display:none;content:none}
+#app .lesson-detail-note-list bdi{grid-row:span 2;font-weight:800;font-size:18px;color:var(--pl-ink)}
+#app .lesson-detail-note-list span{font:600 17px/1.7 var(--font-urdu-reading);color:var(--pl-ink)}
+#app .lesson-detail-note-list small{color:var(--pl-oranje-dark);font-size:13px}
+#app .lesson-detail-example bdi{display:block;margin-bottom:4px;font-weight:800;font-size:20px;color:var(--pl-ink)}
+#app .teaching-example>span{justify-self:start;width:max-content}
+#app .correction-teaching-card .pl-pim-tip{margin-bottom:6px;text-align:start}
+#app .correction-teaching-card .pl-pim-tip-bubble b{font-family:var(--font-ui);font-weight:800}
+#app .teaching-actions{flex-wrap:nowrap}
+#app .teaching-actions .slow-speak-button,#app .pl-listen-stage .slow-speak-button,#app .speak-repeat-question .slow-speak-button{width:auto;flex:0 0 auto}

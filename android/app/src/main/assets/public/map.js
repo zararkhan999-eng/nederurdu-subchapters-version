@@ -254,5 +254,7 @@ NU.map = (() => {
     if (NU.motion.level() !== "off") NU.motion.stagger([...map.querySelectorAll(".map-banner")].slice(0, 3), "rise", { each: 90 });
   }
 
-  return { render, mount, building, kindFor };
+  const unitColor = (index) => UNIT_COLORS[Math.max(0, index) % UNIT_COLORS.length];
+
+  return { render, mount, building, kindFor, unitColor };
 })();

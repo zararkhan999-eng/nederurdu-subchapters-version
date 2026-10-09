@@ -111,7 +111,7 @@ NU.cat = (() => {
           </g>
           <g class="cat-eyes cat-eyes-sad">
             <ellipse cx="136" cy="43" rx="3.4" ry="4" fill="${ink}"/><ellipse cx="152" cy="42" rx="3.2" ry="3.8" fill="${ink}"/>
-            <path d="M131 36l8 2M157 35l-8 2" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
+            <path d="M131 37.5l7-3M157 36.5l-7-3" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
           </g>
           <path d="M145.5 48.5h5l-2.5 3Z" fill="#e0567a"/>
           <path class="cat-mouth cat-mouth-closed" d="M143 53q2.5 3 5 0q2.5 3 5 0" fill="none" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/>

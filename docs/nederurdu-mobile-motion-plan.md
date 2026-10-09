@@ -145,3 +145,15 @@ Pim's face (`NU.cat.render({ face: true })`) replaces the old doorway mark in th
 - Stop cards take keyboard focus and close with Escape, returning focus to the stop.
 - Fix: settling animations when the app is backgrounded no longer throws on endless loops (blink, clouds), which previously stopped the remaining transitions from settling.
 - Checked at 375 and 320 px in A0, A1 and A2 with mixed progress; Android debug build passes.
+
+## Phase 3 — Lessons as scenes — 9 October 2026
+
+- `lesson.js` (`NU.lesson`): Dutch syllable splitting and karaoke (syllables light orange, then blue, in time with speech; pacing is estimated because native TTS gives no word timings), Pim's praise/comfort lines in Dutch with Urdu, Pim tip bubbles, and streak milestone banners ("3 op rij!" at 3/5/10/15/20).
+- `lesson.css`: chunky lesson chrome — flame streak chip that heats up with the combo, slim phase track with an orange current phase, bold question titles.
+- Teaching cards: large karaoke Dutch word, round speak button and turtle slow button, a meaning block, pronunciation chip, and an example box with its own speak button. Moving to a card's second step flips the card like a flashcard. Pattern cards light their word tiles in sequence.
+- Exercises: Pim delivers the prompt in a speech bubble (speaker inside, turtle as a corner badge); pictures are smaller so answers stay closer to the fold; listening uses a large speaker with rings; Dutch answers have a round speaker beside the tile; word tiles glide between bank and the ruled answer line; documents read like a Dutch note with a blue header.
+- Pim reacts in the feedback panel (happy or worried face plus "Goed zo!", "Bijna!" etc.), gives first-exercise coachmarks and hints as tips, and encourages on the correction card ("Geen zorgen!").
+- Lesson preview: the unit's building from the map on a small street with Pim riding up, a summary card (tags, unit, title, goal, chips), word chips for what is new, a 2×3 phase grid, and a fixed start bar (html/body clip overflow, so sticky positioning cannot engage).
+- The lesson notes sheet, choice tiles and prompt cards lost leftover dark-theme styling (mint text, decorative circles, mint scrollbars).
+- Checked at 375 and 320 px for every exercise type the course uses (teaching, pattern, meaning, reverse, situation, picture, listening, speak-repeat, build, document), correct and wrong feedback, correction cards, notes, the preview and reduced motion. Four complete lessons across A0–A2 played through to completion with a wrong answer and no errors. Android debug build passes.
+- Not yet redesigned: the lesson completion screen (Phase 4).

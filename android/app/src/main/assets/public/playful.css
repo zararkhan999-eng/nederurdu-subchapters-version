@@ -103,3 +103,6 @@ body{background:var(--pl-bg);color:var(--pl-ink)}
 @media (prefers-reduced-motion:reduce){
   #app .primary-button,#app .quiz-action,#app .secondary-button,#app .choice-button,#app .word-bank-token,#app .match-pair-card,#app .sequence-token{transition:none}
 }
+
+/* The old dark theme tinted every scrollbar mint. */
+html,body{scrollbar-color:#d1d5db transparent}

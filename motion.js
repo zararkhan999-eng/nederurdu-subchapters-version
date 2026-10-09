@@ -126,6 +126,7 @@ NU.motion = (() => {
         { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1) rotate(${spin / 2}deg)`, opacity: 1, offset: .55 },
         { transform: `translate(calc(-50% + ${dx * 1.15}px), calc(-50% + ${dy + gravity}px)) scale(.6) rotate(${spin}deg)`, opacity: 0 }
       ], { duration: 700 + Math.random() * 350, easing: ease.out }).finished.then(() => piece.remove(), () => piece.remove());
+      setTimeout(() => piece.remove(), 1400);             // paused pages never finish the animation
     }
   }
 
@@ -146,6 +147,7 @@ NU.motion = (() => {
         { transform: `translate(${sway}px, ${innerHeight + 60}px) rotate(${(Math.random() - .5) * 900}deg)`, opacity: .9 }
       ], { duration: duration * (.6 + Math.random() * .5), delay: Math.random() * 500, easing: "cubic-bezier(.3,.1,.6,1)" })
         .finished.then(() => piece.remove(), () => piece.remove());
+      setTimeout(() => piece.remove(), duration * 1.2 + 800);
     }
   }
 

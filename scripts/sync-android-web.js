@@ -24,6 +24,8 @@ const files = [
   "cat.js",
   "street.js",
   "map.js",
+  "lesson.js",
+  "lesson.css",
   "course-data.js",
   "word-visual-data.js",
   "manifest.webmanifest",
