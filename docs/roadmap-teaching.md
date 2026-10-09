@@ -90,6 +90,52 @@ Eight illustrated images teach the wrong meaning:
   the prompt and the answer).
 - Rewrite the flagged prompts in Urdu without the key word.
 
+**Done (9 October 2026).** `applyDistractorEngineV4()` at the end of
+`course-data.js` rewrites the wrong options of every choice exercise once
+the course is built. Rules as built:
+- Wrong options use only Dutch taught before that point: earlier lessons,
+  or earlier runs of the same lesson.
+- Near-misses: verb form (`ik bent`, `u hebben`), word order
+  (`daarna ik ga`, `dat ik moet rust nemen`), article (`de formulier`; `het`
+  as "it" is left alone), `niet`/`geen`, and `om`/`op`/`in` with times, days,
+  and months. Each has its own Urdu explanation.
+- Understand and all of A0 keep 3 options; A1/A2 practice uses 4.
+- Letters only compete with letters, sound items use sound-alike words, and
+  pictures take wrong words from a different picture group.
+- When the answer is a greeting, other greetings from outside the run are not
+  used as wrong options in situations, because they could also fit.
+
+New audit checks: `consecutive-option-set`, `repeated-option-set`, and
+`prompt-gives-answer`. One case of the repeat check is allowed: a run whose
+whole option pool is the set plus one word (the first greetings run teaches
+only 4 words, so its 9 questions can't avoid repeating a set). Back-to-back
+grammar gap drills with the same closed set (`de / het / een`) are also
+allowed. The audit now accepts any Dutch taught in an earlier lesson in
+wrong options.
+
+The giveaways were mostly names and places written in Latin letters inside
+Urdu. They are now written in Urdu script (پاکستان، خان، سارہ، یوٹریکٹ،
+نیدرلینڈز، ڈچ، 1234 اے بی). The letter-mission prompt now names the row by
+its label, and a mission title says فیملی ڈاکٹر instead of `huisarts`.
+
+| Measured on the same script | Before | After |
+|---|---|---|
+| Next question shows the same option set | 1,446 | 2 (grammar gap drills) |
+| Lessons reusing one set 3+ times | 107 | 1 (first greetings run) |
+| Prompt contains a Dutch word only the answer has | 45 | 0 |
+| Wrong Dutch options that are near-misses* | 42% | 70% |
+| …of which grammar-form near-misses | 4% | 16% |
+| Wrong options from outside the run | 0% | 46% |
+| Choice items with 4 options | 0% | 42% |
+
+\*Shares a content word with the answer, is one word or form off, or looks
+alike as a single word. This is a broader measure than the 14% in the table
+at the top.
+
+Cost: about 0.26 s added to building the course in Node (about 0.5 s in a
+desktop browser). Check app start-up time on a low-end Android phone before
+shipping 1.1.
+
 ### 1.3 Survival content (new A0/A1 lessons)
 1. **Language and help:** `ik spreek Urdu / Engels / een beetje Nederlands`,
    `ik heb een tolk nodig`, `spreekt u Engels?`

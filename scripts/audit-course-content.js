@@ -800,6 +800,28 @@ function phonicsLessonV4(lesson) {
   return /^a0-sounds-/.test(String(lesson?.id || ""));
 }
 
+// Wrong options may reuse any Dutch introduced in an earlier lesson: the
+// distractor engine draws near-misses from the whole course taught so far.
+let priorTaughtTokensByLesson = new Map();
+
+function buildPriorTaughtTokens(concepts, lessonPositionMap) {
+  const byPosition = new Map();
+  for (const concept of concepts) {
+    const position = lessonPositionMap.get(concept?.introducedInLessonId);
+    if (!Number.isFinite(position)) continue;
+    if (!byPosition.has(position)) byPosition.set(position, []);
+    byPosition.get(position).push(...latinTokens(concept.dutch), ...latinTokens(concept.audioText));
+  }
+  const result = new Map();
+  const seen = new Set();
+  const ordered = [...lessonPositionMap].sort((left, right) => left[1] - right[1]);
+  for (const [lessonId, position] of ordered) {
+    result.set(lessonId, new Set(seen));
+    for (const token of byPosition.get(position) || []) seen.add(token);
+  }
+  return result;
+}
+
 function auditLexicalOwnership(findings, chapter, lesson, question, allowedConceptIds, conceptMap) {
   const allowedTokens = new Set(lexicalScaffoldTokens);
   if (phonicsLessonV4(lesson)) phonicsGraphemeTokens.forEach((token) => allowedTokens.add(token));
@@ -808,11 +830,17 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
     for (const token of latinTokens(concept?.dutch)) allowedTokens.add(token);
     for (const token of latinTokens(concept?.audioText)) allowedTokens.add(token);
   }
-  const unownedTokens = [...new Set(
-    questionLexicalValues(question)
+  const priorTokens = priorTaughtTokensByLesson.get(lesson?.id) || new Set();
+  const answerKey = normalizeSemantic(question.answer);
+  const wrongOptions = list(question.options).filter((option) => normalizeSemantic(option) !== answerKey);
+  const unownedTokens = [...new Set([
+    ...questionLexicalValues({ ...question, options: list(question.options).filter((option) => !wrongOptions.includes(option)) })
       .flatMap(latinTokens)
-      .filter((token) => !allowedTokens.has(token))
-  )];
+      .filter((token) => !allowedTokens.has(token)),
+    ...wrongOptions
+      .flatMap(latinTokens)
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token))
+  ])];
   if (unownedTokens.length) {
     addCourseFinding(
       findings,
@@ -824,6 +852,101 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
       lesson,
       question
     );
+  }
+}
+
+// Teaching roadmap 1.1: wrong options must vary. Learners stop reading when
+// the same three or four options keep coming back.
+function optionSetKey(question) {
+  return list(question.options).map(normalizeSemantic).sort().join("|");
+}
+
+function isScoredChoice(question) {
+  return choiceTypes.has(question?.type)
+    && question.scored !== false
+    && list(question.options).length >= 2;
+}
+
+function runSequences(lessonOrMission) {
+  if (lessonOrMission.kind === "mission") {
+    const variants = list(lessonOrMission.variants);
+    return (variants.length ? variants : [{ questions: lessonOrMission.questions }])
+      .map((variant) => list(variant.questions));
+  }
+  const questionMap = new Map(getActiveLessonExercises(lessonOrMission).map((question) => [question.id, question]));
+  return list(lessonOrMission.learning?.runs).map((run) => {
+    const phases = run.phases || {};
+    return [
+      ...list(phases.understand?.exerciseIds),
+      ...list((phases.guidedPractice || phases.guided)?.exerciseIds),
+      ...list(phases.use?.exerciseIds),
+      ...list((phases.independentCheck || phases.check)?.exerciseIds)
+    ].map((id) => questionMap.get(id)).filter(Boolean);
+  });
+}
+
+function auditOptionVariety(findings, chapter, lesson) {
+  const sequences = runSequences(lesson);
+  const uses = new Map();
+  const seen = new Set();
+  sequences.forEach((sequence, sequenceIndex) => {
+    let previous = null;
+    for (const question of sequence) {
+      if (!isScoredChoice(question)) {
+        previous = null;
+        continue;
+      }
+      const key = optionSetKey(question);
+      // A grammar gap drill offers the same closed set on purpose (de / het / een).
+      const closedSetDrills = previous?.patternDrill && question.patternDrill
+        && previous.type === "fill-gap" && question.type === "fill-gap";
+      if (previous && optionSetKey(previous) === key && !closedSetDrills) {
+        addCourseFinding(findings, "error", "consecutive-option-set", "Two questions in a row show the same option set.", list(question.options).join(" / "), chapter, lesson, question);
+      }
+      previous = question;
+      if (seen.has(question)) continue;
+      seen.add(question);
+      if (!uses.has(key)) uses.set(key, []);
+      uses.get(key).push({ question, sequenceIndex });
+    }
+  });
+  for (const [key, entries] of uses) {
+    if (entries.length < 3) continue;
+    // Allowed only when a run has no other material: its whole option pool
+    // is the set plus one word (the first greetings of the course).
+    const scriptOf = (value) => (hasUrdu(value) ? "urdu" : "latin");
+    const setScript = scriptOf(list(entries[0].question.options)[0]);
+    const unavoidable = entries.every(({ sequenceIndex }) => {
+      const pool = new Set(sequences[sequenceIndex]
+        .filter(isScoredChoice)
+        .flatMap((question) => list(question.options))
+        .filter((option) => scriptOf(option) === setScript)
+        .map(normalizeSemantic));
+      return pool.size <= list(entries[0].question.options).length + 1;
+    });
+    if (unavoidable) continue;
+    addCourseFinding(findings, "error", "repeated-option-set", "Three or more questions in this lesson reuse an identical option set.", `${entries.length}x ${key}`, chapter, lesson, entries[2].question);
+  }
+}
+
+// Teaching roadmap 1.2: a prompt must not contain a Dutch word that only the
+// correct option contains (for example "penicilline" in both the situation
+// and the answer).
+function auditPromptGiveaway(findings, chapter, lesson) {
+  const seen = new Set();
+  for (const question of runSequences(lesson).flat()) {
+    if (seen.has(question) || !isScoredChoice(question) || !hasUrdu(question.prompt)) continue;
+    seen.add(question);
+    const answerKey = normalizeSemantic(question.answer);
+    const answerTokens = new Set(latinTokens(question.answer));
+    const wrongTokens = new Set(list(question.options)
+      .filter((option) => normalizeSemantic(option) !== answerKey)
+      .flatMap(latinTokens));
+    const leaked = [...new Set(latinTokens(question.prompt))]
+      .filter((token) => answerTokens.has(token) && !wrongTokens.has(token));
+    if (leaked.length) {
+      addCourseFinding(findings, "error", "prompt-gives-answer", "The prompt contains a Dutch word that appears only in the correct option.", leaked.join(", "), chapter, lesson, question);
+    }
   }
 }
 
@@ -2640,6 +2763,7 @@ function auditV4Course(course, chapters, visuals) {
   const missionMap = new Map(missions.map((mission) => [mission.id, mission]));
   const conceptLessonMap = new Map([...lessonMap, ...missionMap]);
   const conceptMap = new Map(values(course.concepts).map((concept) => [concept.id, concept]));
+  priorTaughtTokensByLesson = buildPriorTaughtTokens(values(course.concepts), lessonPositionMap);
   const skillMap = new Map(values(course.skills).map((skill) => [skill.id, skill]));
   const patternMap = new Map(values(course.patterns).map((pattern) => [pattern.id, pattern]));
   const unitMap = new Map(values(course.units).map((unit) => [unit.id, unit]));
@@ -2894,6 +3018,8 @@ function auditV4Course(course, chapters, visuals) {
     for (const lessonId of list(chapter.lessonIds)) {
       const lesson = lessonMap.get(lessonId);
       if (lesson) {
+        auditOptionVariety(findings, chapter, lesson);
+        auditPromptGiveaway(findings, chapter, lesson);
         auditV4Lesson(
           findings,
           chapter,
@@ -2909,6 +3035,8 @@ function auditV4Course(course, chapters, visuals) {
     for (const missionId of list(chapter.missionIds)) {
       const mission = missionMap.get(missionId);
       if (mission) {
+        auditOptionVariety(findings, chapter, mission);
+        auditPromptGiveaway(findings, chapter, mission);
         auditV4Mission(
           findings,
           chapter,
