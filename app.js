@@ -3020,8 +3020,8 @@ function renderSettings() {
         ${renderToggleRow("beginnerMode", "شروع سے سیکھنے والا انداز", "نئے طالب علم کے لیے آسان راستہ")}
         ${renderToggleRow("reduceMotion", "کم حرکت", "مناظر اور تبدیلیاں بغیر حرکت کے دکھائیں")}
         ${renderToggleRow("largeText", "بڑا متن", "الفاظ اور بٹن کچھ بڑے دکھائیں")}
-        ${renderToggleRow("slowAudio", "آہستہ آواز", "Dutch آواز تھوڑی آہستہ سنائیں")}
-        ${renderToggleRow("extraUrduHelp", "زیادہ Urdu مدد", "آواز، معنی، اور چھوٹی مدد زیادہ دکھائیں")}
+        ${renderToggleRow("slowAudio", "آہستہ آواز", "ڈچ آواز تھوڑی آہستہ سنائیں")}
+        ${renderToggleRow("extraUrduHelp", "زیادہ اردو مدد", "آواز، معنی، اور چھوٹی مدد زیادہ دکھائیں")}
         ${renderToggleRow("soundEffects", "ایپ کی آوازیں", "جواب، انعام اور سبق مکمل ہونے کی آوازیں")}
         ${renderToggleRow("haptics", "لرزش", "جواب اور انعام پر فون ہلکا سا لرزے")}
         ${renderToggleRow("pronunciation", "Nederlands تلفظ کے بٹن", "آواز کے بٹن اور لفظ کا تلفظ")}

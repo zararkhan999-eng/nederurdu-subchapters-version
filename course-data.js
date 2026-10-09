@@ -488,11 +488,11 @@ const a1Lessons = [
       meaning("hij is", ["وہ مرد ہے", "وہ عورت ہے", "ہم ہیں"], "وہ مرد ہے", "hij is = وہ ہے۔"),
       meaning("zij is", ["وہ عورت ہے", "وہ مرد ہے", "ہم ہیں"], "وہ عورت ہے", "zij is = وہ عورت ہے۔"),
       meaning("ik ben goed", ["میں اچھا ہوں", "تم اچھے ہو", "وہ اچھا ہے"], "میں اچھا ہوں", "A1 ترتیب: شخص + فعل + باقی حصہ۔"),
-      meaning("ik ben niet goed", ["میں اچھا نہیں ہوں", "میں اچھا ہوں", "تم اچھے نہیں ہو"], "میں اچھا نہیں ہوں", "صحیح ترتیب niet goed ہے۔"),
+      meaning("het is niet goed", ["یہ اچھا نہیں ہے", "یہ اچھا ہے", "تم اچھے نہیں ہو"], "یہ اچھا نہیں ہے", "صحیح ترتیب niet goed ہے۔"),
       reverse("میں ہوں", ["ik ben", "jij bent", "hij is"], "ik ben", "میں ہوں = ik ben۔"),
       reverse("آپ ہیں", ["u bent", "jij bent", "ik ben"], "u bent", "آپ ہیں = u bent۔"),
       reverse("وہ عورت ہے", ["zij is", "hij is", "ik ben"], "zij is", "zij is = وہ عورت ہے۔"),
-      reverse("میں اچھا نہیں ہوں", ["ik ben niet goed", "ik ben goed", "jij bent niet goed"], "ik ben niet goed", "نفی جملہ ساتھ niet۔")
+      reverse("یہ اچھا نہیں ہے", ["het is niet goed", "het is goed", "jij bent niet goed"], "het is niet goed", "نفی جملہ ساتھ niet۔")
     ]
   },
   {
@@ -913,7 +913,7 @@ a1Lessons.find((lesson) => lesson.id === "a1-zero-tiny-words").questions.push(
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-zijn-first-sentences").questions.push(
-  build("میں اچھا نہیں ہوں", ["ik", "ben", "niet", "goed"], "ik ben niet goed", "بنیادی ترتیب: ik + ben + niet + goed۔")
+  build("یہ اچھا نہیں ہے", ["het", "is", "niet", "goed"], "het is niet goed", "بنیادی ترتیب: het + is + niet + goed۔")
 );
 
 a1Lessons.find((lesson) => lesson.id === "a1-greetings-personal-info").questions.push(
@@ -1350,14 +1350,14 @@ addRevisionExpansion(a2Lessons, 45);
 function addBeginnerAuditExpansion() {
   a0Lessons.find((lesson) => lesson.id === "a0-ja-nee-goed-niet").questions.push(
     listenChoice("niet", ["نہیں (جملے کے اندر)", "ہاں", "اچھا"], "نہیں (جملے کے اندر)", "niet جملے کے اندر نہیں کا مطلب دیتا ہے۔"),
-    fillGap("ik ben ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
+    fillGap("het is ___ goed", ["niet", "ja", "een"], "niet", "اچھا نہیں = niet goed۔")
   );
 
   a0Lessons.find((lesson) => lesson.id === "a0-geen").questions.push(
     meaning("geen pen", ["کوئی قلم نہیں", "اچھا قلم", "ایک قلم"], "کوئی قلم نہیں", "geen + pen = کوئی قلم نہیں۔"),
     meaning("geen huis", ["کوئی گھر نہیں", "گھر میں", "اچھا گھر"], "کوئی گھر نہیں", "geen + huis = کوئی گھر نہیں۔"),
     reverse("کوئی قلم نہیں", ["geen pen", "niet pen", "nee pen"], "geen pen", "اسم کے ساتھ geen آتا ہے۔"),
-    reverse("میں اچھا نہیں ہوں", ["ik ben niet goed", "ik ben geen goed", "ik nee goed"], "ik ben niet goed", "اچھا نہیں کے لیے niet۔"),
+    reverse("یہ اچھا نہیں ہے", ["het is niet goed", "het is geen goed", "het nee goed"], "het is niet goed", "اچھا نہیں کے لیے niet۔"),
     fillGap("ik heb ___ boek", ["geen", "niet", "nee"], "geen", "کتاب اسم ہے، اس لیے geen۔"),
   );
 
@@ -1571,7 +1571,7 @@ function addBeginnerAuditExpansion2() {
 
   a2Lessons.find((lesson) => lesson.id === "a2-health-housing").questions.push(
     uitleg("صحت اور گھر کی خرابی", [
-      "huisarts گھر کا ڈاکٹر ہے۔",
+      "huisarts فیملی ڈاکٹر ہے۔",
       "verwarming ہیٹنگ ہے، lekkage پانی کا رساؤ ہے۔",
       "mijn verwarming doet het niet = میری ہیٹنگ کام نہیں کر رہی۔"
     ], "مسئلہ صاف، چھوٹے جملے میں بتائیں۔"),
@@ -2544,7 +2544,7 @@ a0DailyLessons.push(
       dailyConcept("contact-no-email", "ik heb geen e-mail", "میرے پاس ای میل نہیں ہے", "telefoon", "phrase")
     ],
     listenReplies: [
-      ["wat is uw adres?", ["ik woon op Marktstraat 12", "mijn nummer is nul zes", "ik ben dertig jaar"], "ik woon op Marktstraat 12", "پتے کے سوال کا جواب سڑک اور نمبر سے دیں۔"],
+      ["wat is uw adres?", ["ik woon aan de Marktstraat 12", "mijn nummer is nul zes", "ik ben dertig jaar"], "ik woon aan de Marktstraat 12", "پتے کے سوال کا جواب سڑک اور نمبر سے دیں۔"],
       ["wat is uw telefoonnummer?", ["mijn nummer is nul zes", "mijn postcode is 1234 AB", "ik woon in Zwolle"], "mijn nummer is nul zes", "فون نمبر کے سوال کا مناسب جواب۔"],
       ["wat is uw postcode?", ["mijn postcode is 1234 AB", "mijn naam is Ali", "ik heb geen e-mail"], "mijn postcode is 1234 AB", "پوسٹ کوڈ صاف بتائیں۔"]
     ],
@@ -2552,14 +2552,14 @@ a0DailyLessons.push(
       ["wat is uw ___?", ["adres", "straat", "huis"], "adres", "پتہ پوچھنے کا سوال۔"],
       ["mijn ___ is 12", ["huisnummer", "postcode", "woonplaats"], "huisnummer", "گھر نمبر = huisnummer۔"],
       ["mijn ___ is 1234 AB", ["postcode", "telefoonnummer", "straat"], "postcode", "پوسٹ کوڈ کا جملہ۔"],
-      ["ik woon ___ Marktstraat 12", ["op", "naar", "met"], "op", "پتہ بتاتے وقت op آتا ہے۔"],
+      ["ik woon ___ de Marktstraat 12", ["aan", "naar", "met"], "aan", "پتہ بتاتے وقت aan de اور پھر سڑک کا نام آتا ہے۔"],
       ["mijn ___ is nul zes", ["nummer", "adres", "straat"], "nummer", "فون نمبر بتانے کا فقرہ۔"],
       ["wat is uw telefoon___?", ["nummer", "straat", "plaats"], "nummer", "telefoonnummer ایک لفظ ہے۔"],
       ["ik heb geen ___", ["e-mail", "postcode", "straat"], "e-mail", "ای میل نہ ہونے کا جملہ۔"],
       ["mijn woon___ is Zwolle", ["plaats", "nummer", "straat"], "plaats", "woonplaats = رہنے کا شہر۔"]
     ],
     situations: [
-      ["حال: دفتر میں پتہ پوچھا گیا۔", ["ik woon op Marktstraat 12", "ik ga naar Marktstraat", "ik ben een adres"], "ik woon op Marktstraat 12", "مکمل پتہ بتائیں۔", { mode: "dialogue", speak: "wat is uw adres?" }],
+      ["حال: دفتر میں پتہ پوچھا گیا۔", ["ik woon aan de Marktstraat 12", "ik ga naar de Marktstraat", "ik ben een adres"], "ik woon aan de Marktstraat 12", "مکمل پتہ بتائیں۔", { mode: "dialogue", speak: "wat is uw adres?" }],
       ["حال: گھر نمبر بتانا ہے۔", ["mijn huisnummer is 12", "mijn postcode is 12", "ik heb 12 jaar"], "mijn huisnummer is 12", "گھر نمبر کے لیے huisnummer۔"],
       ["حال: پوسٹ کوڈ پوچھا گیا۔", ["mijn postcode is 1234 AB", "mijn straat is AB", "mijn nummer is Zwolle"], "mijn postcode is 1234 AB", "پوسٹ کوڈ بتائیں۔"],
       ["حال: فون نمبر پوچھنا ہے۔", ["wat is uw telefoonnummer?", "wat is uw huisnummer?", "hoe heet u?"], "wat is uw telefoonnummer?", "فون نمبر کا سوال۔"],
@@ -2571,7 +2571,7 @@ a0DailyLessons.push(
     ],
     builds: [
       ["آپ کا پتہ کیا ہے؟", ["wat", "is", "uw", "adres"], "wat is uw adres", "پتہ پوچھنے کا سوال۔"],
-      ["میں Marktstraat 12 پر رہتا / رہتی ہوں", ["ik", "woon", "op", "Marktstraat", "12"], "ik woon op Marktstraat 12", "پتہ بتانے کا جملہ۔"],
+      ["میں Marktstraat 12 پر رہتا / رہتی ہوں", ["ik", "woon", "aan", "de", "Marktstraat", "12"], "ik woon aan de Marktstraat 12", "پتہ بتانے کا جملہ۔"],
       ["میرا نمبر صفر چھ ہے", ["mijn", "nummer", "is", "nul", "zes"], "mijn nummer is nul zes", "فون نمبر کا آغاز۔"],
       ["میرے پاس ای میل نہیں ہے", ["ik", "heb", "geen", "e-mail"], "ik heb geen e-mail", "ای میل نہ ہونے کا جملہ۔"]
     ]
@@ -2877,7 +2877,7 @@ a1Lessons.push(
       dailyConcept("routine-school", "school", "اسکول", "school"), dailyConcept("routine-wait", "wachten", "انتظار کرنا", "wachten"),
       a1Phrase("routine-p1", "ik sta om zeven uur op", "میں سات بجے اٹھتا / اٹھتی ہوں", "حال: صبح اٹھنے کا وقت بتانا ہے۔"),
       a1Phrase("routine-p2", "ik ontbijt om half acht", "میں ساڑھے سات بجے ناشتہ کرتا / کرتی ہوں", "حال: ناشتے کا وقت بتانا ہے۔"),
-      a1Phrase("routine-p3", "ik ga met de bus naar werk", "میں بس سے کام پر جاتا / جاتی ہوں", "حال: کام پر جانے کا طریقہ بتانا ہے۔"),
+      a1Phrase("routine-p3", "ik ga met de bus naar mijn werk", "میں بس سے کام پر جاتا / جاتی ہوں", "حال: کام پر جانے کا طریقہ بتانا ہے۔"),
       a1Phrase("routine-p4", "ik begin om negen uur", "میں نو بجے شروع کرتا / کرتی ہوں", "حال: کام شروع ہونے کا وقت بتانا ہے۔"),
       a1Phrase("routine-p5", "ik heb om twaalf uur pauze", "میرا بارہ بجے وقفہ ہے", "حال: وقفے کا وقت بتانا ہے۔"),
       a1Phrase("routine-p6", "ik stop om vijf uur", "میں پانچ بجے کام ختم کرتا / کرتی ہوں", "حال: کام ختم ہونے کا وقت بتانا ہے۔"),
@@ -2889,8 +2889,8 @@ a1Lessons.push(
       a1Phrase("routine-p12", "dan ga ik naar mijn werk", "پھر میں اپنے کام پر جاتا / جاتی ہوں", "حال: ترتیب میں دوسرا کام بتانا ہے۔"),
       a1Phrase("routine-p13", "vandaag werk ik niet", "آج میں کام نہیں کرتا / کرتی", "حال: آج چھٹی ہونے کی بات بتانا ہے۔")
     ],
-    listenReplies: [["hoe laat staat u op?", ["om zeven uur", "met de bus", "in de avond"], "om zeven uur", "اٹھنے کا وقت بتائیں۔"], ["hoe gaat u naar werk?", ["met de bus", "om negen uur", "na het eten"], "met de bus", "سفر کا طریقہ بتائیں۔"], ["wat doet u daarna?", ["daarna ga ik naar huis", "ik begin om negen uur", "dit is mijn werk"], "daarna ga ik naar huis", "اگلا کام بتائیں۔"]],
-    builds: [["میں سات بجے اٹھتا / اٹھتی ہوں", ["ik", "sta", "om", "zeven", "uur", "op"], "ik sta om zeven uur op", "opstaan جملے میں الگ ہوتا ہے۔"], ["میں بس سے کام پر جاتا / جاتی ہوں", ["ik", "ga", "met", "de", "bus", "naar", "werk"], "ik ga met de bus naar werk", "سفر کا جملہ۔"], ["میرا بارہ بجے وقفہ ہے", ["ik", "heb", "om", "twaalf", "uur", "pauze"], "ik heb om twaalf uur pauze", "وقفے کا وقت۔"], ["پھر میں گھر جاتا / جاتی ہوں", ["daarna", "ga", "ik", "naar", "huis"], "daarna ga ik naar huis", "ترتیب والا جملہ۔"], ["میں شام کو کھانا پکاتا / پکاتی ہوں", ["ik", "kook", "in", "de", "avond"], "ik kook in de avond", "شام کا معمول۔"], ["میں گیارہ بجے سوتا / سوتی ہوں", ["ik", "ga", "om", "elf", "uur", "slapen"], "ik ga om elf uur slapen", "سونے کا وقت۔"]]
+    listenReplies: [["hoe laat staat u op?", ["om zeven uur", "met de bus", "in de avond"], "om zeven uur", "اٹھنے کا وقت بتائیں۔"], ["hoe gaat u naar uw werk?", ["met de bus", "om negen uur", "na het eten"], "met de bus", "سفر کا طریقہ بتائیں۔"], ["wat doet u daarna?", ["daarna ga ik naar huis", "ik begin om negen uur", "dit is mijn werk"], "daarna ga ik naar huis", "اگلا کام بتائیں۔"]],
+    builds: [["میں سات بجے اٹھتا / اٹھتی ہوں", ["ik", "sta", "om", "zeven", "uur", "op"], "ik sta om zeven uur op", "opstaan جملے میں الگ ہوتا ہے۔"], ["میں بس سے کام پر جاتا / جاتی ہوں", ["ik", "ga", "met", "de", "bus", "naar", "mijn", "werk"], "ik ga met de bus naar mijn werk", "سفر کا جملہ۔"], ["میرا بارہ بجے وقفہ ہے", ["ik", "heb", "om", "twaalf", "uur", "pauze"], "ik heb om twaalf uur pauze", "وقفے کا وقت۔"], ["پھر میں گھر جاتا / جاتی ہوں", ["daarna", "ga", "ik", "naar", "huis"], "daarna ga ik naar huis", "ترتیب والا جملہ۔"], ["میں شام کو کھانا پکاتا / پکاتی ہوں", ["ik", "kook", "in", "de", "avond"], "ik kook in de avond", "شام کا معمول۔"], ["میں گیارہ بجے سوتا / سوتی ہوں", ["ik", "ga", "om", "elf", "uur", "slapen"], "ik ga om elf uur slapen", "سونے کا وقت۔"]]
   }),
   makeA1PracticalLesson({
     id: "a1-plans-invitations",
@@ -3040,7 +3040,7 @@ a1Lessons.push(
     explanation: practicalExplanation("علامت اور مدت واضح بتائیں", ["ik heb... سے درد یا علامت بتائیں۔", "sinds gisteren سے بتائیں کہ مسئلہ کل سے ہے۔", "hoe vaak? دوا کتنی بار لینی ہے، یہ پوچھتا ہے۔"]),
     concepts: [
       dailyConcept("health-pharmacy", "apotheek", "دواخانہ", "apotheek"), dailyConcept("health-medicine", "medicijn", "دوا", "medicijn"),
-      dailyConcept("health-doctor", "huisarts", "گھر کا ڈاکٹر", "huisarts"), dailyConcept("health-pain", "pijn", "درد", "pijn"),
+      dailyConcept("health-doctor", "huisarts", "فیملی ڈاکٹر", "huisarts"), dailyConcept("health-pain", "pijn", "درد", "pijn"),
       dailyConcept("health-head", "hoofdpijn", "سر درد", "hoofdpijn"), dailyConcept("health-cough", "hoesten", "کھانسی کرنا", "hoesten"),
       dailyConcept("health-sick", "ziek", "بیمار", "ziek"), dailyConcept("health-rest", "rust", "آرام", "rust"),
       a1Phrase("health-p1", "ik heb hoofdpijn", "میرے سر میں درد ہے", "حال: سر درد بتانا ہے۔"),
@@ -3126,10 +3126,10 @@ a2Lessons.push(
   makeA2PracticalLesson({
     id: "a2-doctor-advice", unit: "A2: ڈاکٹر اور مشورہ", title: "Bij de huisarts", description: "علامات، مدت، شدت، ڈاکٹر کی ہدایت، دوا، اور فالو اپ۔",
     explanation: practicalExplanation("علامت کو جگہ، مدت، اور شدت کے ساتھ بیان کریں", ["sinds کب سے، erger بدتر، اور minder کم ہونے کو بتاتے ہیں۔", "ڈاکٹر کی ہدایت میں moet، mag، اور niet mogen اہم ہیں۔", "اگر حالت بہتر نہ ہو تو فالو اپ کا وقت پوچھیں۔"]),
-    concepts: [dailyConcept("doctor","huisarts","گھر کا ڈاکٹر","huisarts"),dailyConcept("doctor-pain","pijn","درد","pijn"),dailyConcept("doctor-medicine","medicijn","دوا","medicijn"),dailyConcept("doctor-cough","hoesten","کھانسی","hoesten"),dailyConcept("doctor-head","hoofdpijn","سر درد","hoofdpijn"),dailyConcept("doctor-rest","rust","آرام","rust"),
-      a2Phrase("doctor-p1","ik heb sinds drie dagen pijn","مجھے تین دن سے درد ہے","حال: درد کی مدت بتانی ہے۔"),a2Phrase("doctor-p2","de pijn wordt erger als ik loop","چلنے پر درد بڑھ جاتا ہے","حال: درد کب بڑھتا ہے، بتانا ہے۔"),a2Phrase("doctor-p3","ik heb ook koorts en moet hoesten","مجھے بخار بھی ہے اور کھانسی بھی","حال: ایک سے زیادہ علامات بتانی ہیں۔"),a2Phrase("doctor-p4","ik heb dit medicijn al gebruikt","میں یہ دوا پہلے استعمال کر چکا / چکی ہوں","حال: پہلے استعمال کی دوا بتانی ہے۔"),a2Phrase("doctor-p5","het heeft niet geholpen","اس سے فائدہ نہیں ہوا","حال: دوا بے اثر ہونے کی بات بتانی ہے۔"),a2Phrase("doctor-p6","bent u ergens allergisch voor?","کیا آپ کو کسی چیز سے حساسیت ہے؟","حال: حساسیت کا سوال سمجھنا ہے۔"),a2Phrase("doctor-p7","ik ben allergisch voor penicilline","مجھے penicilline سے حساسیت ہے","حال: دوا کی حساسیت بتانی ہے۔"),a2Phrase("doctor-p8","u moet een week rust nemen","آپ کو ایک ہفتہ آرام کرنا چاہیے","حال: ڈاکٹر کی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p9","u mag voorlopig niet werken","آپ فی الحال کام نہیں کر سکتے","حال: کام سے متعلق طبی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p10","hoe vaak moet ik dit medicijn nemen?","یہ دوا کتنی بار لینی ہے؟","حال: دوا کی مقدار پوچھنی ہے۔"),a2Phrase("doctor-p11","zijn er bijwerkingen?","کیا اس کے مضر اثرات ہیں؟","حال: دوا کے اثرات پوچھنے ہیں۔"),a2Phrase("doctor-p12","wanneer moet ik terugkomen?","مجھے دوبارہ کب آنا ہے؟","حال: فالو اپ کا وقت پوچھنا ہے۔"),a2Phrase("doctor-p13","bel direct als het erger wordt","اگر حالت بگڑے تو فوراً فون کریں","حال: فوری ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p14","ik heb een verklaring voor mijn werk nodig","مجھے کام کے لیے طبی کاغذ چاہیے","حال: کام کے لیے کاغذ مانگنا ہے۔"),a2Phrase("doctor-p15","kunt u dat in eenvoudige woorden uitleggen?","کیا آپ آسان الفاظ میں سمجھا سکتے ہیں؟","حال: طبی بات آسان کروانی ہے۔")],
-    listenReplies: [["hoe lang heeft u al pijn?",["sinds drie dagen","als ik loop","twee keer per dag"],"sinds drie dagen","مدت بتائیں۔"],["heeft het medicijn geholpen?",["nee het heeft niet geholpen","ik ben allergisch","ik moet rusten"],"nee het heeft niet geholpen","اثر بتائیں۔"],["wanneer wordt het erger?",["als ik loop","sinds maandag","na een week"],"als ik loop","حالت بتائیں۔"]],
-    builds: [["مجھے تین دن سے درد ہے",["ik","heb","sinds","drie","dagen","pijn"],"ik heb sinds drie dagen pijn","مدت۔"],["چلنے پر درد بڑھتا ہے",["de","pijn","wordt","erger","als","ik","loop"],"de pijn wordt erger als ik loop","شرط۔"],["دوا سے فائدہ نہیں ہوا",["het","medicijn","heeft","niet","geholpen"],"het medicijn heeft niet geholpen","نتیجہ۔"],["مجھے penicilline سے حساسیت ہے",["ik","ben","allergisch","voor","penicilline"],"ik ben allergisch voor penicilline","حساسیت۔"],["مجھے یہ کتنی بار لینی ہے؟",["hoe","vaak","moet","ik","dit","nemen"],"hoe vaak moet ik dit nemen","دوا کی مقدار۔"],["کیا مضر اثرات ہیں؟",["zijn","er","bijwerkingen"],"zijn er bijwerkingen","اثرات۔"],["مجھے دوبارہ کب آنا ہے؟",["wanneer","moet","ik","terugkomen"],"wanneer moet ik terugkomen","فالو اپ۔"],["آسان الفاظ میں سمجھائیں",["kunt","u","dat","in","eenvoudige","woorden","uitleggen"],"kunt u dat in eenvoudige woorden uitleggen","آسان وضاحت۔"]]
+    concepts: [dailyConcept("doctor","huisarts","فیملی ڈاکٹر","huisarts"),dailyConcept("doctor-pain","pijn","درد","pijn"),dailyConcept("doctor-medicine","medicijn","دوا","medicijn"),dailyConcept("doctor-cough","hoesten","کھانسی","hoesten"),dailyConcept("doctor-head","hoofdpijn","سر درد","hoofdpijn"),dailyConcept("doctor-rest","rust","آرام","rust"),
+      a2Phrase("doctor-p1","ik heb al drie dagen pijn","مجھے تین دن سے درد ہے","حال: درد کی مدت بتانی ہے۔"),a2Phrase("doctor-p2","de pijn wordt erger als ik loop","چلنے پر درد بڑھ جاتا ہے","حال: درد کب بڑھتا ہے، بتانا ہے۔"),a2Phrase("doctor-p3","ik heb ook koorts en moet hoesten","مجھے بخار بھی ہے اور کھانسی بھی","حال: ایک سے زیادہ علامات بتانی ہیں۔"),a2Phrase("doctor-p4","ik heb dit medicijn al gebruikt","میں یہ دوا پہلے استعمال کر چکا / چکی ہوں","حال: پہلے استعمال کی دوا بتانی ہے۔"),a2Phrase("doctor-p5","het heeft niet geholpen","اس سے فائدہ نہیں ہوا","حال: دوا بے اثر ہونے کی بات بتانی ہے۔"),a2Phrase("doctor-p6","bent u ergens allergisch voor?","کیا آپ کو کسی چیز سے حساسیت ہے؟","حال: حساسیت کا سوال سمجھنا ہے۔"),a2Phrase("doctor-p7","ik ben allergisch voor penicilline","مجھے penicilline سے حساسیت ہے","حال: دوا کی حساسیت بتانی ہے۔"),a2Phrase("doctor-p8","u moet een week rust nemen","آپ کو ایک ہفتہ آرام کرنا چاہیے","حال: ڈاکٹر کی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p9","u mag voorlopig niet werken","آپ فی الحال کام نہیں کر سکتے","حال: کام سے متعلق طبی ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p10","hoe vaak moet ik dit medicijn nemen?","یہ دوا کتنی بار لینی ہے؟","حال: دوا کی مقدار پوچھنی ہے۔"),a2Phrase("doctor-p11","zijn er bijwerkingen?","کیا اس کے مضر اثرات ہیں؟","حال: دوا کے اثرات پوچھنے ہیں۔"),a2Phrase("doctor-p12","wanneer moet ik terugkomen?","مجھے دوبارہ کب آنا ہے؟","حال: فالو اپ کا وقت پوچھنا ہے۔"),a2Phrase("doctor-p13","bel direct als het erger wordt","اگر حالت بگڑے تو فوراً فون کریں","حال: فوری ہدایت سمجھنی ہے۔"),a2Phrase("doctor-p14","ik heb een verklaring voor mijn werk nodig","مجھے کام کے لیے طبی کاغذ چاہیے","حال: کام کے لیے کاغذ مانگنا ہے۔"),a2Phrase("doctor-p15","kunt u dat in eenvoudige woorden uitleggen?","کیا آپ آسان الفاظ میں سمجھا سکتے ہیں؟","حال: طبی بات آسان کروانی ہے۔")],
+    listenReplies: [["hoe lang heeft u al pijn?",["al drie dagen","als ik loop","twee keer per dag"],"al drie dagen","مدت بتائیں۔"],["heeft het medicijn geholpen?",["nee het heeft niet geholpen","ik ben allergisch","ik moet rusten"],"nee het heeft niet geholpen","اثر بتائیں۔"],["wanneer wordt het erger?",["als ik loop","sinds maandag","na een week"],"als ik loop","حالت بتائیں۔"]],
+    builds: [["مجھے تین دن سے درد ہے",["ik","heb","al","drie","dagen","pijn"],"ik heb al drie dagen pijn","مدت۔"],["چلنے پر درد بڑھتا ہے",["de","pijn","wordt","erger","als","ik","loop"],"de pijn wordt erger als ik loop","شرط۔"],["دوا سے فائدہ نہیں ہوا",["het","medicijn","heeft","niet","geholpen"],"het medicijn heeft niet geholpen","نتیجہ۔"],["مجھے penicilline سے حساسیت ہے",["ik","ben","allergisch","voor","penicilline"],"ik ben allergisch voor penicilline","حساسیت۔"],["مجھے یہ کتنی بار لینی ہے؟",["hoe","vaak","moet","ik","dit","nemen"],"hoe vaak moet ik dit nemen","دوا کی مقدار۔"],["کیا مضر اثرات ہیں؟",["zijn","er","bijwerkingen"],"zijn er bijwerkingen","اثرات۔"],["مجھے دوبارہ کب آنا ہے؟",["wanneer","moet","ik","terugkomen"],"wanneer moet ik terugkomen","فالو اپ۔"],["آسان الفاظ میں سمجھائیں",["kunt","u","dat","in","eenvoudige","woorden","uitleggen"],"kunt u dat in eenvoudige woorden uitleggen","آسان وضاحت۔"]]
   }),
   makeA2PracticalLesson({
     id: "a2-bills-banking", unit: "A2: بل اور بینک", title: "Rekeningen betalen", description: "بل، آخری تاریخ، خودکار ادائیگی، غلط رقم، اور قسط کی درخواست۔",
@@ -3165,7 +3165,7 @@ const a1ExpansionTopics = [
     description: "فارم میں نام، پتہ، تاریخ پیدائش، فون نمبر، اور ای میل سمجھنا۔",
     focus: "فارم میں ذاتی معلومات آہستہ اور صحیح جگہ پر بھری جاتی ہیں۔",
     words: [["voornaam","پہلا نام","naam"],["achternaam","خاندانی نام","naam"],["geboortedatum","تاریخ پیدائش","number-12"],["adres","پتہ","adres"],["postcode","پوسٹ کوڈ","adres"],["woonplaats","رہنے کا شہر","stad"],["telefoonnummer","فون نمبر","telefoon"],["e-mailadres","ای میل پتہ","telefoon"]],
-    phrases: [["mijn voornaam is Sara","میرا پہلا نام Sara ہے","حال: فارم میں پہلا نام بتانا ہے۔"],["mijn achternaam is Khan","میرا خاندانی نام Khan ہے","حال: خاندانی نام بتانا ہے۔"],["mijn geboortedatum is 12 mei","میری تاریخ پیدائش 12 مئی ہے","حال: تاریخ پیدائش بتانی ہے۔"],["ik woon op Marktstraat 12","میں Marktstraat 12 پر رہتا / رہتی ہوں","حال: پتہ بتانا ہے۔"],["mijn postcode is 1234 AB","میرا پوسٹ کوڈ 1234 AB ہے","حال: پوسٹ کوڈ بتانا ہے۔"],["mijn woonplaats is Utrecht","میرا رہنے کا شہر Utrecht ہے","حال: شہر بتانا ہے۔"],["mijn telefoonnummer is nul zes","میرا فون نمبر صفر چھ سے شروع ہوتا ہے","حال: فون نمبر بتانا ہے۔"],["ik heb geen e-mailadres","میرے پاس ای میل پتہ نہیں ہے","حال: ای میل نہ ہونے کی بات بتانی ہے۔"]]
+    phrases: [["mijn voornaam is Sara","میرا پہلا نام Sara ہے","حال: فارم میں پہلا نام بتانا ہے۔"],["mijn achternaam is Khan","میرا خاندانی نام Khan ہے","حال: خاندانی نام بتانا ہے۔"],["mijn geboortedatum is 12 mei","میری تاریخ پیدائش 12 مئی ہے","حال: تاریخ پیدائش بتانی ہے۔"],["ik woon aan de Marktstraat 12","میں Marktstraat 12 پر رہتا / رہتی ہوں","حال: پتہ بتانا ہے۔"],["mijn postcode is 1234 AB","میرا پوسٹ کوڈ 1234 AB ہے","حال: پوسٹ کوڈ بتانا ہے۔"],["mijn woonplaats is Utrecht","میرا رہنے کا شہر Utrecht ہے","حال: شہر بتانا ہے۔"],["mijn telefoonnummer is nul zes","میرا فون نمبر صفر چھ سے شروع ہوتا ہے","حال: فون نمبر بتانا ہے۔"],["ik heb geen e-mailadres","میرے پاس ای میل پتہ نہیں ہے","حال: ای میل نہ ہونے کی بات بتانی ہے۔"]]
   },
   {
     id: "a1-phone-calls",
@@ -3290,7 +3290,7 @@ const a1ExpansionTopics = [
     title: "Klachten vertellen",
     description: "درد کہاں ہے، کب سے ہے، بخار، کھانسی، اور ملاقات کا وقت۔",
     focus: "ڈاکٹر کے پاس waar, sinds wanneer, ik heb... سے بات شروع کریں۔",
-    words: [["huisarts","گھر کا ڈاکٹر","huisarts"],["pijn","درد","pijn"],["hoofd","سر","hoofd"],["buik","پیٹ","buik"],["koorts","بخار","ziek"],["hoesten","کھانسی","hoesten"],["moe","تھکا ہوا","slapen"],["afspraak","ملاقات","rooster"]],
+    words: [["huisarts","فیملی ڈاکٹر","huisarts"],["pijn","درد","pijn"],["hoofd","سر","hoofd"],["buik","پیٹ","buik"],["koorts","بخار","ziek"],["hoesten","کھانسی","hoesten"],["moe","تھکا ہوا","slapen"],["afspraak","ملاقات","rooster"]],
     phrases: [["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ڈاکٹر سے وقت لینا ہے۔"],["ik heb pijn in mijn hoofd","میرے سر میں درد ہے","حال: سر درد بتانا ہے۔"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے","حال: پیٹ درد بتانا ہے۔"],["ik heb koorts","مجھے بخار ہے","حال: بخار بتانا ہے۔"],["ik moet veel hoesten","مجھے بہت کھانسی ہے","حال: کھانسی بتانی ہے۔"],["ik ben erg moe","میں بہت تھکا / تھکی ہوں","حال: تھکن بتانی ہے۔"],["sinds gisteren","کل سے","حال: مدت بتانی ہے۔"],["wanneer kan ik komen?","میں کب آ سکتا / سکتی ہوں؟","حال: ملاقات کا وقت پوچھنا ہے۔"]]
   },
   {
@@ -4086,7 +4086,7 @@ const missionSpecs = [
   }),
   missionSpec({
     level: "a1", id: "a1-mission-doctor", unit: "A1: ڈاکٹر کے پاس", title: "Naar de huisarts", description: "ملاقات، علامات، ہدایات، دوا، مقدار، اور دوبارہ رابطہ۔",
-    concepts: [["doctor","huisarts","گھر کا ڈاکٹر","huisarts"],["pain","pijn","درد","pijn"],["medicine","medicijn","دوا","medicijn"],["pharmacy","apotheek","دواخانہ","apotheek"],["cough","hoesten","کھانسی","hoesten"],["rest","rust","آرام","rust"]],
+    concepts: [["doctor","huisarts","فیملی ڈاکٹر","huisarts"],["pain","pijn","درد","pijn"],["medicine","medicijn","دوا","medicijn"],["pharmacy","apotheek","دواخانہ","apotheek"],["cough","hoesten","کھانسی","hoesten"],["rest","rust","آرام","rust"]],
     phrases: [["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں"],["ik ben sinds gisteren ziek","میں کل سے بیمار ہوں"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے"],["waar doet het pijn?","کہاں درد ہے؟"],["hier in mijn buik","یہاں میرے پیٹ میں"],["u moet veel water drinken","آپ کو بہت پانی پینا چاہیے"],["neem dit medicijn twee keer per dag","یہ دوا دن میں دو بار لیں"],["voor of na het eten?","کھانے سے پہلے یا بعد؟"],["haal het medicijn bij de apotheek","دوا دواخانے سے لیں"],["wanneer moet ik terugkomen?","مجھے دوبارہ کب آنا ہے؟"],["bel als het erger wordt","اگر حالت بگڑے تو فون کریں"],["ik begrijp de instructies","مجھے ہدایات سمجھ آ گئی ہیں"]],
     cues: ["hoe lang bent u al ziek?","waar doet het pijn?","hoe vaak moet u dit nemen?"], variants: ["ملاقات لینا","علامت بتانا","دوا اور فالو اپ"], documents: ["Afspraakkaart","Medicijnetiket","Advies huisarts"]
   }),
@@ -5147,7 +5147,7 @@ replaceSeedConceptsV4("a0-spelling-personal-details", [
 ]);
 replaceSeedConceptsV4("a0-address-phone", [
   ["wat is uw adres?", "آپ کا پتہ کیا ہے؟"],
-  ["ik woon op Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
+  ["ik woon aan de Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
   ["adres", "پتہ"],
   ["straat", "سڑک"],
   ["huisnummer", "گھر نمبر"],
@@ -5348,7 +5348,7 @@ const a1AuthoredCurriculumV4 = {
         ["geboortedatum", "تاریخ پیدائش"],
         ["mijn geboortedatum is 12 mei", "میری تاریخ پیدائش 12 مئی ہے"],
         ["adres", "پتہ"],
-        ["ik woon op Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
+        ["ik woon aan de Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
         ["postcode", "پوسٹ کوڈ"],
         ["mijn postcode is 1234 AB", "میرا پوسٹ کوڈ 1234 AB ہے"],
         ["woonplaats", "رہنے کا شہر"],
@@ -5448,7 +5448,7 @@ const a1AuthoredCurriculumV4 = {
         ["a0-address-phone", "woonplaats"],
         ["a0-address-phone", "telefoonnummer"],
         ["a0-address-phone", "e-mailadres"],
-        ["a0-address-phone", "ik woon op Marktstraat 12"],
+        ["a0-address-phone", "ik woon aan de Marktstraat 12"],
         ["a0-numbers-0-10", "nul"],
         ["a0-ja-nee-goed-niet", "niet"]
       ],
@@ -6022,7 +6022,7 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts: [
         ["ik sta om zeven uur op", "میں سات بجے اٹھتا / اٹھتی ہوں"],
         ["ik ontbijt om half acht", "میں ساڑھے سات بجے ناشتہ کرتا / کرتی ہوں"],
-        ["ik ga met de bus naar werk", "میں بس سے کام پر جاتا / جاتی ہوں"],
+        ["ik ga met de bus naar mijn werk", "میں بس سے کام پر جاتا / جاتی ہوں"],
         ["ik begin om negen uur", "میں نو بجے شروع کرتا / کرتی ہوں"],
         ["ik heb om twaalf uur pauze", "میرا بارہ بجے وقفہ ہے"],
         ["ik stop om vijf uur", "میں پانچ بجے کام ختم کرتا / کرتی ہوں"],
@@ -6048,11 +6048,11 @@ const a1AuthoredCurriculumV4 = {
           exampleUrdu: "میں ساڑھے سات بجے ناشتہ کرتا یا کرتی ہوں۔",
           pronunciationUrdu: "اِک اونت بَیت اوم ہالف آخت"
         },
-        "ik ga met de bus naar werk": {
-          usageUrdu: "کام تک روزانہ کا سفر بتانے کے لیے مکمل جملہ “ik ga met de bus naar werk” استعمال کریں۔",
-          usageBoundaryUrdu: "met de bus ذریعے کو بتاتا ہے؛ naar werk منزل کو بتاتا ہے۔",
-          commonConfusionUrdu: "بس کے بعد منزل مت چھوڑیں؛ مکمل ترتیب met de bus naar werk رکھیں۔",
-          exampleDutch: "Ik ga met de bus naar werk.",
+        "ik ga met de bus naar mijn werk": {
+          usageUrdu: "کام تک روزانہ کا سفر بتانے کے لیے مکمل جملہ “ik ga met de bus naar mijn werk” استعمال کریں۔",
+          usageBoundaryUrdu: "met de bus ذریعے کو بتاتا ہے؛ naar mijn werk منزل کو بتاتا ہے۔",
+          commonConfusionUrdu: "بس کے بعد منزل مت چھوڑیں؛ مکمل ترتیب met de bus naar mijn werk رکھیں۔",
+          exampleDutch: "Ik ga met de bus naar mijn werk.",
           exampleUrdu: "میں بس سے کام پر جاتا یا جاتی ہوں۔",
           pronunciationUrdu: "اِک خا مَت دَ بُس نار وَیرک"
         },
@@ -6139,7 +6139,7 @@ const a1AuthoredCurriculumV4 = {
       scenarios: {
         "ik sta om zeven uur op": ["routine-wake-time", "کام کے دن کا منصوبہ بناتے ہوئے بتائیں کہ آپ سات بجے اٹھتے ہیں۔"],
         "ik ontbijt om half acht": ["routine-breakfast-time", "گھر کے صبح والے معمول میں ساڑھے سات بجے ناشتے کی بات مکمل کریں۔"],
-        "ik ga met de bus naar werk": ["routine-travel-to-work", "ساتھی پوچھتا ہے کہ آپ کام تک کیسے جاتے ہیں۔ بس والا مکمل جواب منتخب کریں۔"],
+        "ik ga met de bus naar mijn werk": ["routine-travel-to-work", "ساتھی پوچھتا ہے کہ آپ کام تک کیسے جاتے ہیں۔ بس والا مکمل جواب منتخب کریں۔"],
         "ik begin om negen uur": ["routine-work-start", "نئے کام کے پہلے دن ملازم کو اپنے شروع ہونے کا وقت نو بجے بتائیں۔"],
         "ik heb om twaalf uur pauze": ["routine-lunch-break", "ساتھی کے ساتھ ملاقات طے کرتے ہوئے بتائیں کہ بارہ بجے آپ کا وقفہ ہے۔"],
         "ik stop om vijf uur": ["routine-work-finish", "گھر والوں کو بتانا ہے کہ آپ پانچ بجے کام ختم کرتے ہیں۔"],
@@ -7437,10 +7437,10 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-health-appointments": {
       title:"Een afspraak bij de huisarts",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"huisarts کے استقبالی ملازم سے ملاقات مانگنا، ذاتی معلومات کی تصدیق کرنا، فوری ضرورت بتانا، اور مناسب وقت یا واپسی کال طے کرنا۔",
-      seedConcepts:[["huisarts","گھر کا ڈاکٹر"],["assistente","ڈاکٹر کی استقبالی ملازمہ"],["ik wil een afspraak bij de huisarts","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں"],["wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟"],["wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟"],["ik kan morgen niet komen","میں کل نہیں آ سکتا یا سکتی"],["is het dringend?","کیا یہ فوری ہے؟"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟"]],
+      seedConcepts:[["huisarts","فیملی ڈاکٹر"],["assistente","ڈاکٹر کی استقبالی ملازمہ"],["ik wil een afspraak bij de huisarts","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں"],["wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟"],["wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟"],["ik kan morgen niet komen","میں کل نہیں آ سکتا یا سکتی"],["is het dringend?","کیا یہ فوری ہے؟"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟"]],
       teaching:authoredA1TeachingV4([
-        ["huisarts","عام صحت کے مسئلے کے لیے پہلے گھر کے ڈاکٹر کو huisarts کہیں۔","یہ عام ڈاکٹر ہے؛ tandarts دانتوں کا ڈاکٹر ہے۔","huisarts کو ہسپتال یا دواخانے کے معنی میں نہ لیں۔","huisarts — dokter","گھر کا ڈاکٹر — ڈاکٹر۔","ہاؤس آرتس"],
-        ["assistente","huisarts کی کال سنبھالنے اور وقت دینے والی ملازمہ کو assistente کہیں۔","یہ استقبالی ملازمہ ہے؛ خود huisarts نہیں۔","assistente سے بات کرتے ہوئے اسے dokter نہ کہیں۔","assistente — huisarts","استقبالی ملازمہ — گھر کا ڈاکٹر۔","آ سِس تَنتَ"],
+        ["huisarts","عام صحت کے مسئلے کے لیے پہلے فیملی ڈاکٹر کو huisarts کہیں۔","یہ عام ڈاکٹر ہے؛ tandarts دانتوں کا ڈاکٹر ہے۔","huisarts کو ہسپتال یا دواخانے کے معنی میں نہ لیں۔","huisarts — dokter","فیملی ڈاکٹر — ڈاکٹر۔","ہاؤس آرتس"],
+        ["assistente","huisarts کی کال سنبھالنے اور وقت دینے والی ملازمہ کو assistente کہیں۔","یہ استقبالی ملازمہ ہے؛ خود huisarts نہیں۔","assistente سے بات کرتے ہوئے اسے dokter نہ کہیں۔","assistente — huisarts","استقبالی ملازمہ — فیملی ڈاکٹر۔","آ سِس تَنتَ"],
         ["ik wil een afspraak bij de huisarts","فون پر huisarts سے ملاقات مانگنے کا مقصد مکمل جملے میں کہیں۔","bij de huisarts جگہ بتاتا ہے؛ صرف afspraak عام ملاقات ہو سکتی ہے۔","huisarts سے پہلے bij de رکھیں اور ملاقات کو een afspraak کہیں۔","Ik wil een afspraak bij de huisarts.","میں huisarts سے ملاقات چاہتا یا چاہتی ہوں۔","اِک وِل اَن آف سپراک بَے دَ ہاؤس آرتس"],
         ["wat is uw geboortedatum","استقبالی ملازم تاریخ پیدائش کی تصدیق کے لیے یہ سوال پوچھتا ہے۔","geboortedatum تاریخ پیدائش ہے؛ afspraak کی تاریخ نہیں۔","uw ذاتی معلومات کے احترام والا لفظ ہے؛ اسے دن کے نام سے نہ بدلیں۔","Wat is uw geboortedatum?","آپ کی تاریخ پیدائش کیا ہے؟","وات اِس یو خَ بور تَ دا تُم"],
         ["wanneer kan ik komen","ملاقات ملنے کا دن یا وقت پوچھنے کے لیے یہ مکمل سوال کہیں۔","wanneer وقت یا دن پوچھتا ہے؛ waar جگہ پوچھتا ہے۔","wanneer سے شروع کریں اور komen آخر میں رکھیں۔","Wanneer kan ik komen?","میں کب آ سکتا یا سکتی ہوں؟","وا نیر کان اِک کو مَن"],
@@ -8402,7 +8402,7 @@ const a2ScenarioByDutchV4 = {
   "ik moet rust nemen": "نگران پوچھتا ہے کہ کیا آپ اگلے دن کام کر سکتے ہیں۔ ڈاکٹر نے آرام لازمی کیا ہے؛ ایک مکمل جملے میں بتائیں۔",
   "omdat ik pijn had": "دوست پوچھتا ہے کہ آپ ڈاکٹر کے پاس کیوں گئے۔ صرف مختصر وجہ دیں؛ جسم کا حصہ نہ بتائیں۔",
   // a2-doctor-advice
-  "ik heb sinds drie dagen pijn": "ڈاکٹر پوچھتا ہے کہ تکلیف کتنے عرصے سے ہے۔ یہ پیر سے ہے اور آج جمعرات ہے؛ بتائیں۔",
+  "ik heb al drie dagen pijn": "ڈاکٹر پوچھتا ہے کہ تکلیف کتنے عرصے سے ہے۔ یہ پیر سے ہے اور آج جمعرات ہے؛ بتائیں۔",
   "de pijn wordt erger als ik loop": "ڈاکٹر پوچھتا ہے کہ تکلیف کب بڑھتی ہے۔ بیٹھے ہوئے ٹھیک ہیں مگر قدم اٹھاتے ہی بڑھتی ہے؛ بتائیں۔",
   "het medicijn heeft niet geholpen": "پچھلی بار ڈاکٹر نے گولیاں دی تھیں مگر حالت ویسی ہی ہے؛ بتائیں۔",
   "ik ben allergisch voor penicilline": "نسخہ لکھنے سے پہلے ڈاکٹر پوچھتا ہے کہ کیا کسی دوا سے آپ کو مسئلہ ہوتا ہے۔ penicilline سے آپ کو خارش ہوتی ہے؛ بتائیں۔",
@@ -8635,7 +8635,7 @@ const a2RemainingLessonProfilesV4 = [
     scenarioActions: ["واقعہ مکمل ترتیب سے بتائیں", "صحیح پچھلی بات منتخب کریں", "وقت اور عمل واضح کریں", "مختصر طبی جواب دیں"],
     guidanceOffset: 11,
     seedConcepts: [
-      { dutch: "gisteren ben ik gevallen", urdu: "میں کل گر گیا / گئی تھا" },
+      { dutch: "gisteren ben ik gevallen", urdu: "میں کل گر گیا تھا / گر گئی تھی" },
       { dutch: "de pijn begon gisteravond", urdu: "درد کل شام شروع ہوا" },
       { dutch: "ik heb vannacht slecht geslapen", urdu: "میں رات کو اچھی طرح نہیں سویا / سوئی" },
       { dutch: "ik heb de dokter gebeld", urdu: "میں نے ڈاکٹر کو فون کیا" },
@@ -11512,7 +11512,7 @@ const a0AuthoredPatternSpecsV4 = {
     modelDutch: "wat is uw adres?",
     titleUrdu: "پتہ پوچھنا اور مکمل جواب دینا",
     highlight: "uw adres",
-    explanationUrdu: "کاؤنٹر پر پتہ پوچھنے کے لیے wat is uw adres? کہیں۔ جواب میں مکمل سڑک اور گھر نمبر دیں: ik woon op Marktstraat 12۔",
+    explanationUrdu: "کاؤنٹر پر پتہ پوچھنے کے لیے wat is uw adres? کہیں۔ جواب میں مکمل سڑک اور گھر نمبر دیں: ik woon aan de Marktstraat 12۔",
     contrastUrdu: "adres پورا پتہ ہے؛ postcode صرف پوسٹ کوڈ اور telefoonnummer صرف فون نمبر ہے۔",
     commonMistakeUrdu: "صرف adres? کہنے کے بجائے مکمل سوال wat is uw adres? کہیں، پھر جواب میں سڑک اور گھر نمبر نہ چھوڑیں۔"
   },
