@@ -1,4 +1,7 @@
 <resources>
-    <color name="brand_green">#177D6B</color>
-    <color name="splash_background">#F7F8F4</color>
+    <!-- Matches the web app: page background and the cobalt door brand. -->
+    <color name="app_background">#FFFDF9</color>
+    <color name="brand_blue">#2047ED</color>
+    <color name="brand_gold">#F1D27A</color>
+    <color name="brand_door">#D87D5C</color>
 </resources>

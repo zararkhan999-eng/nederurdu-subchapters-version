@@ -122,3 +122,16 @@
 #app .setting-row .toggle>span{inset:3px 3px auto auto;margin:0;transform:none}
 #app .setting-row .toggle.on>span{transform:translateX(-22px)}
 #app .pl-offline{border-radius:18px;line-height:1.6}
+
+/* Android: shown once when the phone has no Dutch text-to-speech voice. */
+.voice-missing-notice{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:260;width:min(440px,calc(100% - 32px));padding:16px;border-radius:18px;background:#fff;color:var(--pl-ink);border:2px solid var(--pl-line);box-shadow:0 5px 0 var(--pl-line-strong),0 14px 30px #1f243322}
+.voice-missing-notice p{margin:0 0 12px;line-height:1.8}
+.voice-missing-notice b{display:block;font-size:17px}
+.voice-missing-notice small{display:block;font-size:14px;color:var(--pl-muted)}
+.voice-missing-actions{display:flex;gap:10px;align-items:center}
+.voice-missing-actions .primary-button{flex:1}
+.voice-missing-close{background:none;border:0;color:var(--pl-muted);padding:0 8px}
+#app .settings-about{padding:14px 16px;border-radius:18px;background:#fff;border:2px solid var(--pl-line);margin-bottom:16px}
+#app .settings-about p{margin:0;font-size:14px;line-height:1.9;color:var(--pl-muted)}
+#app .settings-about p+p{margin-top:6px}
+#app .settings-about b{color:var(--pl-ink)}

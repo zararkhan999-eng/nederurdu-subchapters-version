@@ -1,3 +1,5 @@
+// Keep in step with versionName in android/app/build.gradle.
+const APP_VERSION = "1.0.0";
 const STORAGE_KEY = "nederurdu-progress-v4";
 const LEGACY_STORAGE_KEY = "nederurdu-progress-v3";
 const PROGRESS_SCHEMA_VERSION = 4;
@@ -3028,6 +3030,11 @@ function renderSettings() {
       </div>
       <div class="settings-section-heading"><strong>پیش رفت</strong><span></span></div>
       <button class="secondary-button danger-button" data-action="reset">${renderIcon("trash")}<span>پیش رفت دوبارہ شروع کریں</span></button>
+      <div class="settings-section-heading"><strong>ایپ کے بارے میں</strong><span></span></div>
+      <div class="settings-about">
+        <p><b>رازداری:</b> آپ کی پیش رفت صرف اسی فون میں محفوظ ہوتی ہے۔ کوئی اکاؤنٹ، اشتہار، یا ٹریکنگ نہیں، اور ایپ انٹرنیٹ استعمال نہیں کرتی۔</p>
+        <p><b>ورژن:</b> <span class="latin" dir="ltr">${APP_VERSION}</span></p>
+      </div>
       <p class="pl-settings-foot"><span aria-hidden="true">${NU.cat.render({ face: true, size: 34 })}</span>NederUrdu · <b class="latin">${NU.cat.NAME}</b> کے ساتھ ڈچ سیکھیں</p>
     </section>
   `;
@@ -4782,6 +4789,28 @@ function getDutchSpeechRate(text, forceSlow = false, forceRegular = false) {
   return singleLetter ? 0.82 : singleWord ? 0.92 : 0.96;
 }
 
+let missingVoiceNoticeShown = false;
+
+function showMissingVoiceNotice() {
+  if (missingVoiceNoticeShown) return;
+  missingVoiceNoticeShown = true;
+  const notice = document.createElement("div");
+  notice.className = "voice-missing-notice";
+  notice.setAttribute("role", "alert");
+  notice.innerHTML = `
+    <p><b>اس فون میں ڈچ آواز موجود نہیں۔</b><small>آواز سننے کے لیے فون کی ترتیبات سے Nederlands آواز ڈاؤن لوڈ کریں، پھر ایپ دوبارہ کھولیں۔</small></p>
+    <div class="voice-missing-actions">
+      <button type="button" class="primary-button" data-voice-action="install">ڈچ آواز حاصل کریں</button>
+      <button type="button" class="voice-missing-close" data-voice-action="close">بعد میں</button>
+    </div>`;
+  notice.addEventListener("click", (event) => {
+    const action = event.target.closest("[data-voice-action]")?.dataset.voiceAction;
+    if (action === "install") window.NederUrduTts?.openVoiceSettings?.();
+    if (action) notice.remove();
+  });
+  document.body.append(notice);
+}
+
 function speakDutch(text, forceSlow = false, forceRegular = false) {
   if (!progress.settings.pronunciation || !text) return;
 
@@ -4793,6 +4822,12 @@ function speakDutch(text, forceSlow = false, forceRegular = false) {
   try {
     if (window.NederUrduTts?.speakNatural?.(spokenText, rate, pitch)) return;
     if (window.NederUrduTts?.speak?.(spokenText)) return;
+    // Android WebView has no browser voice to fall back on, so tell the
+    // learner how to add a Dutch voice instead of staying silent.
+    if (window.NederUrduTts?.voiceStatus?.() === "missing") {
+      showMissingVoiceNotice();
+      return;
+    }
   } catch {
     // Continue with the browser voice when the native bridge is unavailable.
   }

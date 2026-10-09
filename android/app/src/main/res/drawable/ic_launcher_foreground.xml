@@ -1,20 +1,22 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-    <path
-        android:fillColor="#FFFFFF"
-        android:fillAlpha="0.95"
-        android:pathData="M126,154c0,-18 14,-32 32,-32h58c31,0 56,25 56,56v196c0,7 -8,11 -14,7c-16,-11 -35,-17 -56,-17h-44c-18,0 -32,-14 -32,-32V154Z" />
-    <path
-        android:fillColor="#DCEEE9"
-        android:pathData="M286,178c0,-31 25,-56 56,-56h14c18,0 32,14 32,32v178c0,18 -14,32 -32,32h-44c-21,0 -40,6 -56,17c-6,4 -14,0 -14,-7V178Z" />
-    <path
-        android:strokeColor="#177D6B"
-        android:strokeWidth="18"
-        android:strokeLineCap="round"
-        android:strokeAlpha="0.65"
-        android:fillColor="@android:color/transparent"
-        android:pathData="M165,178h63M165,222h63M165,266h63M315,178h57M315,222h57M315,266h57" />
+    android:viewportWidth="192"
+    android:viewportHeight="192">
+    <group
+        android:pivotX="96"
+        android:pivotY="94.5"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:translateY="1.5">
+        <path
+            android:fillColor="@color/brand_gold"
+            android:pathData="M47,153V85a49,49 0,0 1,98 0v68h-26V85a23,23 0,0 0,-46 0v68Z" />
+        <path
+            android:fillColor="@color/brand_door"
+            android:pathData="M73,153l36,-14V70L73,85Z" />
+        <path
+            android:fillColor="@color/brand_gold"
+            android:pathData="M99,108m-3,0a3,3 0,1 0,6 0a3,3 0,1 0,-6 0" />
+    </group>
 </vector>
