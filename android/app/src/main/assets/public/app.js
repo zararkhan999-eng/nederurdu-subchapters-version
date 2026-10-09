@@ -1186,6 +1186,7 @@ function render() {
   bindExperienceMotion(screenChanged, previousScreen);
   // Callers scroll to the top after rendering; measure destinations after that but before paint.
   queueMicrotask(() => NU.motion.morph(app));
+  if (screen === "home") NU.street.mount(app.querySelector(".street"), { entered: screenChanged });
   animateLessonProgress();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
@@ -1239,19 +1240,32 @@ function renderProgressHeader() {
   </header>`;
 }
 
+// Consecutive practice days ending today (or yesterday, so the streak survives until tonight).
+function getPracticeStreak() {
+  const days = new Set(progress.practiceDays || []);
+  const cursor = new Date();
+  if (!days.has(cursor.toISOString().slice(0, 10))) cursor.setUTCDate(cursor.getUTCDate() - 1);
+  let streak = 0;
+  while (days.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return streak;
+}
+
 function renderHome() {
   const chapter = getSelectedChapter();
   const nextLesson = getNextLessonForChapter(chapter);
   activeLessonId = nextLesson.id;
   const completed = chapterCompletedCount(chapter);
-  return `<main class="learn-screen od-today">
+  const situation = OpenDoor.situation(nextLesson);
+  return `<main class="learn-screen od-today pl-today">
     ${renderProgressHeader()}
-    <div class="od-intro"><span class="eyeline">آج کا قدم</span><h1>ایک نئی بات، ایک نیا دروازہ۔</h1></div>
+    ${NU.street.render({ lesson: { id: nextLesson.id, title: getShortLessonTitle(nextLesson) }, situation: situation[1], streak: getPracticeStreak(), xp: progress.totalXp || 0 })}
     <section class="today-panel">
-      ${OpenDoor.scene(nextLesson, false, "lesson-scene")}
-      <div class="od-hero-copy"><div class="od-section-top"><span class="eyeline">${chapter.id.toUpperCase()} · ${getLessonMinutes(nextLesson)} منٹ</span><span class="od-small-mark" aria-hidden="true">↗</span></div>
+      <div class="today-kicker"><span class="today-tag latin">${chapter.id.toUpperCase()}</span><span class="today-tag blue">${renderIcon("calendar")}${getLessonMinutes(nextLesson)} منٹ</span><span class="today-tag blue latin">${escapeHtml(situation[1])}</span></div>
       <h2>${getShortLessonTitle(nextLesson)}</h2><p>${escapeHtml(getLessonOutcome(nextLesson) || nextLesson.description)}</p>
-      <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button></div>
+      <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button>
     </section>
     <section class="od-progress"><div><strong>آپ کا سفر</strong><small>${completed} / ${chapter.lessons.length} سبق مکمل</small></div><button class="text-button" data-action="journey">سفر دیکھیں ${renderIcon("arrow")}</button><div class="od-progress-track"><span style="width:${Math.round(completed / Math.max(1,chapter.lessons.length)*100)}%"></span></div></section>
     <section class="od-support"><span>${renderIcon("speaker")}</span><p><strong>پہلے سمجھیں، پھر کہیں۔</strong><small>معنی، آواز اور مثال کے بعد اپنی بات کہیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف اور آوازیں">${renderIcon("chevron")}</button></section>
@@ -2931,6 +2945,8 @@ function bindEvents() {
       if (action === "chapter") selectChapter(element.dataset.chapter);
       if (action === "toggle-path") togglePath();
       if (action === "preview") showLessonPreview(element.dataset.lesson);
+      if (action === "street-cat") NU.street.poke(element.closest(".street"));
+      if (action === "street-door") enterLessonDoor(element);
       if (action === "start") startLesson(element.dataset.lesson);
       if (action === "review") startReview(element.dataset.reviewKind);
       if (action === "choose") chooseAnswer(element.dataset.answer);
@@ -3230,6 +3246,18 @@ function goSettings() {
   screen = "settings";
   render();
   scrollToTop();
+}
+
+// The street door opens, the camera pushes in, and the preview appears out of the light.
+function enterLessonDoor(door) {
+  const lessonId = door?.dataset.lesson;
+  if (!lessonId || door.dataset.entering) return;
+  door.dataset.entering = "true";
+  NU.street.enterDoor(door).then((fadeLight) => {
+    OpenDoor.skipNextTransition();
+    showLessonPreview(lessonId);
+    fadeLight();
+  });
 }
 
 function showLessonPreview(id) {

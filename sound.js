@@ -93,6 +93,34 @@ NU.sound = (() => {
     swish: () => noise({ duration: 0.2, volume: 0.025, from: 1800, to: 600 }),
     unlock: () => [0, 4, 7, 12, 16].forEach((step, i) => tone(semitone(523.25, step), { at: i * 0.06, duration: 0.22, volume: 0.07, type: "triangle" })),
     xp: () => tone(1760, { duration: 0.05, volume: 0.03, type: "square", wet: false }),
+    // Pim's voice: a sawtooth glide through a vowel-like filter.
+    meow: () => {
+      const c = ctx();
+      if (!c) return;
+      const start = c.currentTime;
+      const osc = c.createOscillator(), filter = c.createBiquadFilter(), gain = c.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(520, start);
+      osc.frequency.exponentialRampToValueAtTime(820, start + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(480, start + 0.42);
+      filter.type = "bandpass";
+      filter.Q.value = 3;
+      filter.frequency.setValueAtTime(900, start);
+      filter.frequency.exponentialRampToValueAtTime(1700, start + 0.14);
+      filter.frequency.exponentialRampToValueAtTime(800, start + 0.42);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.22, start + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.46);
+      osc.connect(filter).connect(gain).connect(master);
+      osc.start(start);
+      osc.stop(start + 0.5);
+    },
+    // Bicycle bell: two quick metallic "tring"s.
+    bell: () => [0, 0.16].forEach((at) => {
+      tone(2350, { at, duration: 0.28, volume: 0.06, type: "sine", attack: 0.004 });
+      tone(3150, { at, duration: 0.22, volume: 0.035, type: "sine", attack: 0.004 });
+      tone(4700, { at, duration: 0.08, volume: 0.02, type: "triangle", attack: 0.002 });
+    }),
     complete: () => {
       const notes = [[0, 0], [4, 0.12], [7, 0.24], [12, 0.36]];
       notes.forEach(([step, at]) => tone(semitone(523.25, step), { at, duration: 0.2, volume: 0.11, type: "triangle" }));
@@ -128,7 +156,7 @@ NU.haptics = (() => {
     try {
       // The Android app exposes native system haptics; browsers fall back to the Vibration API.
       if (window.NederUrduHaptics?.play) window.NederUrduHaptics.play(name);
-      else navigator.vibrate?.(patterns[name]);
+      else if (navigator.userActivation?.hasBeenActive !== false) navigator.vibrate?.(patterns[name]);
     } catch { /* Haptics are optional and may be blocked. */ }
   }
   return { play, names: Object.keys(patterns), configure: ({ enabled }) => { if (enabled) isEnabled = enabled; } };

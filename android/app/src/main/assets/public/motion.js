@@ -10,11 +10,13 @@ NU.motion = (() => {
   const constrainedHardware = (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
     || (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 3);
 
+  document.documentElement.dataset.nuMotion = constrainedHardware ? "lite" : "full";
+
   // "off" honours both reduced-motion controls.
   function level() {
     const root = document.documentElement;
     if (reducedQuery.matches || root.dataset.effects === "reduced" || document.body.classList.contains("od-reduced")) return "off";
-    return constrainedHardware || root.dataset.nuMotion === "lite" ? "lite" : "full";
+    return constrainedHardware ? "lite" : "full";
   }
 
   // Simulates a damped spring and samples it into a CSS linear() easing.

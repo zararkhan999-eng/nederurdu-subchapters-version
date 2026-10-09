@@ -1,7 +1,7 @@
 /* Open Door: original architectural scenes and finite, preference-aware motion. */
 window.OpenDoor = (() => {
   let lastKey = "", lastSelected = "", lastChecked = false, lastDetail = "";
-  let pendingPage = null;
+  let pendingPage = null, skipNext = false;
   const routeOrder = ["home", "journey", "practice", "toolkit", "letters", "settings", "preview", "lesson", "complete"];
   const media = matchMedia("(prefers-reduced-motion: reduce)");
   const situations = [
@@ -13,9 +13,12 @@ window.OpenDoor = (() => {
     [/home|family|house|wonen|familie|huis/i, "THUIS", "گھر میں گفتگو", "Kom binnen!", "home"]
   ];
   const safe = text => String(text || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function scene(lesson, compact = false, morph = "") {
+  function situation(lesson) {
     const key = [lesson?.id, lesson?.visual, lesson?.unit, lesson?.worldId].join(" ");
-    const setting = situations.find(([match]) => match.test(key)) || [null, "BUURTHUIS", "محلے کے مرکز میں دو بالغ افراد سلام کرتے ہیں", "Hallo!", "community"];
+    return situations.find(([match]) => match.test(key)) || [null, "BUURTHUIS", "محلے کے مرکز میں دو بالغ افراد سلام کرتے ہیں", "Hallo!", "community"];
+  }
+  function scene(lesson, compact = false, morph = "") {
+    const setting = situation(lesson);
     const [ ,label, description, greeting, kind] = setting;
     return `<div class="nu-scene nu-depth-scene ${compact ? 'mini' : ''} scene-${kind}" ${morph ? `data-morph="${safe(morph)}" data-morph-fly` : ""} role="img" aria-label="${safe(description)}"><span class="nu-scene-label latin">NEDERURDU / ${label}</span><div class="nu-scene-world" aria-hidden="true"><div class="nu-sky-halo"></div><div class="nu-city"><span></span><span></span><span></span></div><div class="nu-floor"></div><div class="nu-ground-shadow"></div><div class="nu-arch-shadow"></div><div class="nu-arch-shell"><div class="nu-room"><span class="nu-room-window"></span><span class="nu-room-light"></span><span class="od-room-detail"></span><div class="nu-door-leaf"><span></span></div></div></div><div class="nu-light-beam"></div><div class="nu-person"><span class="nu-person-arm"></span></div><div class="nu-person other"><span class="nu-person-arm"></span></div><div class="nu-plant"><span></span><span></span><span></span></div><div class="nu-greeting latin">${safe(greeting)}</div><div class="nu-front-step"></div><span class="od-situation-sign latin">${label}</span></div></div>`;
   }
@@ -40,6 +43,8 @@ window.OpenDoor = (() => {
   function prepareTransition({screen, previous, reduced}) {
     pendingPage = null;
     document.querySelectorAll(".od-route-snapshot,.od-route-ribbon").forEach(el => el.remove());
+    // Entering through the street door brings its own camera move and light, so skip the page slide.
+    if (skipNext) { skipNext = false; return; }
     if (!previous || previous === screen || reduced || media.matches || screen === "lesson") return;
     const app = document.querySelector("#app");
     const snapshot = document.createElement("div");
@@ -131,5 +136,5 @@ window.OpenDoor = (() => {
   }
   media.addEventListener("change", () => {if(media.matches) document.getAnimations().forEach(a=>a.cancel());});
   document.addEventListener("visibilitychange",()=>{if(document.hidden) document.getAnimations().forEach(a=>a.finish());});
-  return {scene,choreograph,prepareTransition,tokens: text => String(text || "").trim().split(/\s+/).map(word=>`<span class="od-grammar-token">${safe(word)}</span>`).join(" ")};
+  return {scene,situation,skipNextTransition:()=>{skipNext=true;},choreograph,prepareTransition,tokens: text => String(text || "").trim().split(/\s+/).map(word=>`<span class="od-grammar-token">${safe(word)}</span>`).join(" ")};
 })();

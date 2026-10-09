@@ -113,3 +113,13 @@ Direction changed to a bolder, playful identity closer to Duolingo, with a guide
 - Motion level judges hardware (≤4 cores or ≤3 GB) instead of screen size, so capable phones get full effects even though the CSS profile still marks phones as lite.
 - Android: `VIBRATE` permission and a `NederUrduHaptics` bridge (system haptics for tap/select/success/error, waveforms for streak/celebrate). The WebView no longer forces a software layer, which blocked smooth motion. **Needs a device check**: the software layer was originally added to avoid stale GPU tiles on long Urdu lesson screens.
 - Not verified here: native build (no JDK/Android SDK on this machine), Playwright suite (no Node).
+
+## Phase 1 — Pim and the living street — 9 October 2026
+
+- `cat.js` (`NU.cat`): Pim, a ginger cat on a blue Dutch omafiets with a red scarf and tulips in the basket. SVG rig with moods (idle, happy, talk, sad, surprised), blinking, tail and scarf sway, actions (hop, wave, nod, shake, brake, talk) and real pedalling: legs are solved from hip to pedal each frame while wheels and cranks turn. The name lives in `NU.cat.NAME`.
+- `street.js` (`NU.street`): the Today scene. Sky, sun/moon, stars, clouds, birds, church spire, turning windmill, seven gabled canal houses with water reflections, a drifting boat, lamp post, tulip planter and red bike path. Follows the real time of day (morning/afternoon/evening/night; preview any with `?time=`), each teaching its Dutch greeting. Layers parallax on scroll, pointer and device tilt.
+- Arrival: Pim rides in, rings the bell, brakes, waves and greets in Dutch with Urdu and a speak button. Tapping Pim meows and cycles A0 phrases. The lesson house shows the lesson's situation sign and a glowing door; tapping it opens the door, Pim rides off, the camera pushes into the doorway and warm light fills the screen before the preview appears (page slide skipped for this entry).
+- Today layout: street with streak and points chips, a chunky lesson card overlapping it, chunky journey progress card. Streak counts consecutive practice days.
+- `world.css` holds the cat and street styles. Ambient loops run only at the full motion level; reduced motion shows Pim parked with the greeting open.
+- New sounds: `meow`, `bell`.
+- Checked in the phone browser at 375 and 320 px (no horizontal overflow), all four times of day, door entry, cat taps and reduced motion.
