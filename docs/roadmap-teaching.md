@@ -136,6 +136,22 @@ Cost: about 0.26 s added to building the course in Node (about 0.5 s in a
 desktop browser). Check app start-up time on a low-end Android phone before
 shipping 1.1.
 
+**Start-up speed (13 October 2026).** Measured in Node on the development
+Mac, building the course took 1.3 s before 1.1, 1.8 s after the distractor
+engine, and about 2.0 s with the 1.3 lessons. Slow loads made three
+launch-screen tests flaky. Fixes, all with byte-identical course output
+(checked by hashing the built course):
+- cache `optionKey`, `normalizedTextV4`, `dutchWordsV4`, and
+  `distractorSeedV4` (called up to 1.4 million times on about 8,000 strings);
+- `uniqueV4` skips building a Set for short lists;
+- the distractor engine scores and sorts earlier concepts once per lesson
+  instead of once per run.
+
+Result: about 1.36 s, back to the pre-1.1 time with 7 more lessons. The
+lite launch test now measures the launch screen on `DOMContentLoaded`, so a
+slow load can't make it miss the screen. Still to do: time start-up on a
+low-end Android phone.
+
 ### 1.3 Survival content (new A0/A1 lessons)
 1. **Language and help:** `ik spreek Urdu / Engels / een beetje Nederlands`,
    `ik heb een tolk nodig`, `spreekt u Engels?`
@@ -153,6 +169,36 @@ shipping 1.1.
 Each new lesson follows the existing format: teaching cards, a grammar card,
 guided practice, use, check, a mission, images per Stage 0 rules, and an
 audit pass.
+
+**Done (12 October 2026).** Seven new A0 lessons, all at A0 because the A0
+lesson format builds the teaching runs from a short spec:
+
+| Lesson | Unit | Placed after |
+|---|---|---|
+| `a0-language-help` (Talen en tolk) | Start speaking | `a0-ja-nee-goed-niet` |
+| `a0-family-status` (Mijn gezin) | First sentences | `a0-name-land-city` |
+| `a0-telling-time` (Hoe laat is het?) | Numbers and time | `a0-time-days` |
+| `a0-months-dates` (Maanden en data) | Numbers and time | `a0-date-appointment` |
+| `a0-colours-clothes` (Kleuren) | Daily life and shopping | `a0-food-drink` |
+| `a0-body-health` (Het lichaam) | Travel and health | `a0-health-emergency` |
+| `a0-emergency-police` (Noodgevallen) | Travel and health | `a0-body-health` |
+
+- Every item has hand-written teaching in `a0SurvivalTeachingV4`
+  (usage, common confusion, an example using only words already met, and an
+  Urdu pronunciation) and its own situation in `exactScenes`.
+- Teacher points built in: `half acht` = 7:30, tested against "ساڑھے آٹھ"
+  (8:30); `mijn man` / `mijn vrouw` vs `man` / `vrouw`; `opa` / `oma` cover
+  both grandparents; `arm` also means "poor"; `juni` / `juli`; colours taught
+  predicatively first (`de jas is blauw`), so adjective endings stay in Stage 3.
+- Each unit mission now tests one item from its new lesson. Missions are
+  capped at 6 targets, so some older items moved to "related"
+  (`familie`, `om acht uur`, `ik heb een afspraak`) and three duplicates were
+  dropped (`tot ziens`, `ga rechtdoor`, `waar is de apotheek`).
+- No pictures yet: these items wait for the Stage 0 image session.
+- Notes: `ik spreek een beetje Nederlands` was already taught in
+  `a0-understanding-help`, and `bel 112` and `ambulance` stay in
+  `a0-health-emergency`. Ordinals stop at `de tweede`; `de derde` and above
+  can come with the A1 calendar lesson.
 
 ---
 

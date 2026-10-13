@@ -275,31 +275,36 @@ test("effects regression: fixed controls stay pixel-contained across responsive 
 test("the lite signature launch is visible, finite, and interactive", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "The lite profile is the phone and Android WebView contract.");
 
+  // The launch screen removes itself within ~1.7 s, which a slow page load can
+  // outlast, so measure it on DOMContentLoaded (the stylesheets are applied by then).
+  await page.addInitScript(() => {
+    document.addEventListener("DOMContentLoaded", () => {
+      const selectors = [
+        ".launch-screen strong",
+        ".launch-screen small"
+      ];
+      const hidden = selectors.flatMap((selector) => {
+        const element = document.querySelector(selector);
+        const bounds = element?.getBoundingClientRect();
+        const style = element ? getComputedStyle(element) : null;
+        return !element
+          || !bounds?.width
+          || !bounds?.height
+          || style.visibility === "hidden"
+          ? [selector]
+          : [];
+      });
+      window.__launchContract = {
+        hidden,
+        heavyLaunchLayers: [...document.querySelectorAll(".launch-orbit,.launch-beam,.launch-particle")]
+          .filter((element) => getComputedStyle(element).display !== "none").length
+      };
+    });
+  });
   await openCleanApp(page);
   await expect(page.locator("html")).toHaveAttribute("data-effects", "lite");
 
-  const launchContract = await page.evaluate(() => {
-    const selectors = [
-      ".launch-screen strong",
-      ".launch-screen small"
-    ];
-    const hidden = selectors.flatMap((selector) => {
-      const element = document.querySelector(selector);
-      const bounds = element?.getBoundingClientRect();
-      const style = element ? getComputedStyle(element) : null;
-      return !element
-        || !bounds?.width
-        || !bounds?.height
-        || style.visibility === "hidden"
-        ? [selector]
-        : [];
-    });
-    return {
-      hidden,
-      heavyLaunchLayers: [...document.querySelectorAll(".launch-orbit,.launch-beam,.launch-particle")]
-        .filter((element) => getComputedStyle(element).display !== "none").length
-    };
-  });
+  const launchContract = await page.evaluate(() => window.__launchContract);
 
   expect(launchContract).toEqual({
     hidden: [],

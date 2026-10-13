@@ -1044,14 +1044,25 @@ function uniq(items) {
   return [...new Set(items.filter(Boolean))];
 }
 
+// optionKey and normalizedTextV4 run on the same strings many thousands of
+// times while the course is built, so their results are cached. The cache is
+// a function property because both functions are called before top-level
+// constants further down the file are initialised.
 function optionKey(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
-    .trim()
-    .replace(/\s+/g, " ");
+  const text = String(value || "");
+  const cache = optionKey.cache || (optionKey.cache = new Map());
+  let key = cache.get(text);
+  if (key === undefined) {
+    key = text
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
+      .trim()
+      .replace(/\s+/g, " ");
+    cache.set(text, key);
+  }
+  return key;
 }
 
 function uniqueOptions(items) {
@@ -3512,18 +3523,322 @@ a0DailyLessons.push(makeA0DailyLesson({
   ]
 }));
 
+const survivalMonthsV4 = [
+  ["januari", "جنوری", "یانُواری", "نئے سال کا پہلا مہینہ: januari۔", "januari کی شروع کی آواز ی جیسی ہے: یانُواری، ج نہیں۔"],
+  ["februari", "فروری", "فےبرُواری", "سال کا سب سے چھوٹا مہینہ: februari۔", "februari بھی ‘واری’ پر ختم ہوتا ہے: فےبرُواری۔"],
+  ["maart", "مارچ", "مارٹ", "تیسرا مہینہ؛ اس میں بہار شروع ہوتی ہے: maart۔", "maart میں لمبی آ کی آواز ہے اور آخر میں ٹ: مارٹ۔"],
+  ["april", "اپریل", "اَپرِل", "چوتھا مہینہ: april۔", "april کا نام اردو جیسا ہے؛ لکھتے وقت پہلا حرف چھوٹا رکھیں۔"],
+  ["mei", "مئی", "مَے", "پانچواں مہینہ: mei؛ اسکولوں میں اس میں چھٹیاں ہوتی ہیں۔", "mei کی آواز مَے جیسی ہے، ‘می’ نہیں۔"],
+  ["juni", "جون", "یُونی", "چھٹا مہینہ: juni؛ گرمیاں شروع ہوتی ہیں۔", "juni (جون) اور juli (جولائی) کی آواز ملتی ہے؛ جون میں ن ہے اور جولائی میں ل۔"],
+  ["juli", "جولائی", "یُولی", "ساتواں مہینہ: juli؛ اسکول کی گرمیوں کی چھٹیاں اسی میں شروع ہوتی ہیں۔", "juli (جولائی) کو juni (جون) سے الگ سنیں: یُولی میں ل کی آواز ہے۔"],
+  ["augustus", "اگست", "آؤخُستُس", "آٹھواں مہینہ: augustus؛ گرمیوں کی چھٹیاں جاری رہتی ہیں۔", "augustus کی شروع کی آواز آؤ جیسی ہے: آؤخُستُس۔"],
+  ["september", "ستمبر", "سَپتَمبَر", "نواں مہینہ: september؛ نیا اسکولی سال اسی کے قریب شروع ہوتا ہے۔", "september انگریزی جیسا ہے، مگر پہلا حرف چھوٹا لکھا جاتا ہے۔"],
+  ["oktober", "اکتوبر", "اوکٹوبَر", "دسواں مہینہ: oktober؛ خزاں کا موسم۔", "oktober کا ہجا انگریزی سے مختلف ہے؛ پہلے حصے میں ک کی آواز ہے۔"],
+  ["november", "نومبر", "نووَمبَر", "گیارہواں مہینہ: november؛ دن چھوٹے ہونے لگتے ہیں۔", "november کی آواز نووَمبَر ہے، انگریزی جیسی۔"],
+  ["december", "دسمبر", "دےسَمبَر", "سال کا آخری مہینہ: december۔", "december کی آواز دےسَمبَر ہے، اردو کے دسمبر جیسی۔"]
+];
+
+// Survival lessons (teaching roadmap 1.3). No pictures yet: images come from
+// the Stage 0 image session, and a wrong picture is worse than none.
+a0DailyLessons.push(
+  makeA0DailyLesson({
+    id: "a0-language-help",
+    unit: "A0: زبان اور ترجمان",
+    title: "Talen en tolk",
+    description: "اپنی زبان بتانا، انگریزی کا پوچھنا، اور ضرورت ہو تو ترجمان مانگنا۔",
+    explanation: practicalExplanation("جب ڈچ ابھی مشکل ہو تو اپنی زبان بتائیں یا ترجمان مانگیں", [
+      "ik spreek Urdu = میں اردو بولتا / بولتی ہوں۔ ik spreek Engels = میں انگریزی بولتا / بولتی ہوں۔",
+      "spreekt u Engels? سوال ہے: فعل پہلے، پھر u۔",
+      "ik heb een tolk nodig کا مطلب ہے مجھے ترجمان چاہیے؛ ہسپتال اور بلدیہ میں یہ حق مانگ سکتے ہیں۔"
+    ]),
+    concepts: [
+      dailyConcept("language-speak-urdu", "ik spreek Urdu", "میں اردو بولتا / بولتی ہوں", "", "phrase"),
+      dailyConcept("language-speak-english", "ik spreek Engels", "میں انگریزی بولتا / بولتی ہوں", "", "phrase"),
+      dailyConcept("language-do-you-speak-english", "spreekt u Engels?", "کیا آپ انگریزی بولتے ہیں؟", "", "phrase"),
+      dailyConcept("language-no-dutch", "ik spreek geen Nederlands", "میں ڈچ نہیں بولتا / بولتی", "", "phrase"),
+      dailyConcept("language-interpreter", "tolk", "ترجمان"),
+      dailyConcept("language-need-interpreter", "ik heb een tolk nodig", "مجھے ترجمان چاہیے", "", "phrase"),
+      dailyConcept("language-is-there-interpreter", "is er een tolk?", "کیا یہاں کوئی ترجمان ہے؟", "", "phrase"),
+      dailyConcept("language-how-say-dutch", "hoe zeg je dat in het Nederlands?", "اسے ڈچ میں کیسے کہتے ہیں؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["spreekt u Nederlands?", ["ik spreek geen Nederlands", "ik heb een tolk", "ik spreek tolk"], "ik spreek geen Nederlands", "ڈچ نہ آنے کا صاف جواب۔"],
+      ["welke taal spreekt u?", ["ik spreek Urdu", "ik heb een tolk nodig", "spreekt u Engels?"], "ik spreek Urdu", "زبان کے سوال کا جواب۔"]
+    ],
+    fills: [
+      ["ik ___ Urdu", ["spreek", "spreekt", "tolk"], "spreek", "ik کے ساتھ spreek۔"],
+      ["___ u Engels?", ["spreekt", "spreek", "is"], "spreekt", "u کے ساتھ spreekt۔"],
+      ["ik heb een ___ nodig", ["tolk", "Urdu", "spreek"], "tolk", "ترجمان = tolk۔"],
+      ["ik spreek ___ Nederlands", ["geen", "een", "is"], "geen", "زبان کی نفی geen سے۔"]
+    ],
+    situations: [
+      ["حال: ہسپتال میں ڈاکٹر کی بات سمجھ نہیں آ رہی۔ ترجمان مانگیں۔", ["ik heb een tolk nodig", "ik spreek Urdu", "is er een tolk?"], "ik heb een tolk nodig", "ترجمان کی ضرورت بتائیں۔"],
+      ["حال: فارمیسی میں پوچھیں کہ کیا ملازم انگریزی بولتا ہے۔", ["spreekt u Engels?", "ik spreek Engels", "ik spreek geen Nederlands"], "spreekt u Engels?", "ادب سے سوال۔"]
+    ],
+    builds: [
+      ["میں اردو بولتا / بولتی ہوں", ["ik", "spreek", "Urdu"], "ik spreek Urdu", "زبان بتانے کا جملہ۔"],
+      ["مجھے ترجمان چاہیے", ["ik", "heb", "een", "tolk", "nodig"], "ik heb een tolk nodig", "nodig آخر میں۔"],
+      ["کیا آپ انگریزی بولتے ہیں؟", ["spreekt", "u", "Engels"], "spreekt u Engels", "سوال میں فعل پہلے۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-family-status",
+    unit: "A0: شوہر، بیوی، اور بچے",
+    title: "Mijn gezin",
+    description: "شوہر، بیوی، بیٹا، بیٹی، دادا دادی بتانا اور شادی شدہ ہونا یا نہ ہونا کہنا۔",
+    explanation: practicalExplanation("mijn کے ساتھ خاندان کا رشتہ بتائیں", [
+      "mijn man = میرا شوہر، mijn vrouw = میری بیوی۔ اکیلے man اور vrouw کا مطلب آدمی اور عورت ہے۔",
+      "ik ben getrouwd = میں شادی شدہ ہوں؛ ik ben niet getrouwd = میں شادی شدہ نہیں ہوں۔",
+      "ڈچ میں دادا اور نانا دونوں opa ہیں، اور دادی اور نانی دونوں oma۔"
+    ]),
+    concepts: [
+      dailyConcept("family-my-husband", "mijn man", "میرا شوہر", "", "phrase"),
+      dailyConcept("family-my-wife", "mijn vrouw", "میری بیوی", "", "phrase"),
+      dailyConcept("family-married", "ik ben getrouwd", "میں شادی شدہ ہوں", "", "phrase"),
+      dailyConcept("family-not-married", "ik ben niet getrouwd", "میں شادی شدہ نہیں ہوں", "", "phrase"),
+      dailyConcept("family-my-son", "mijn zoon", "میرا بیٹا", "", "phrase"),
+      dailyConcept("family-my-daughter", "mijn dochter", "میری بیٹی", "", "phrase"),
+      dailyConcept("family-grandfather", "opa", "دادا / نانا"),
+      dailyConcept("family-grandmother", "oma", "دادی / نانی")
+    ],
+    listenReplies: [
+      ["bent u getrouwd?", ["ja, ik ben getrouwd", "ja, mijn zoon", "ik ben opa"], "ja, ik ben getrouwd", "ہاں میں جواب اور پورا جملہ۔"]
+    ],
+    fills: [
+      ["ik ben ___", ["getrouwd", "mijn", "oma"], "getrouwd", "شادی شدہ = getrouwd۔"],
+      ["ik ben ___ getrouwd", ["niet", "geen", "mijn"], "niet", "صفت کی نفی niet سے۔"],
+      ["dit is mijn ___", ["dochter", "getrouwd", "niet"], "dochter", "بیٹی = dochter۔"]
+    ],
+    situations: [
+      ["حال: فارم پر پوچھا گیا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے۔", ["ik ben getrouwd", "ik ben niet getrouwd", "mijn man"], "ik ben getrouwd", "ازدواجی حالت کا جملہ۔"],
+      ["حال: بچہ تصویر میں آپ کی والدہ کو دکھاتا ہے۔ بچے کے لیے وہ دادی ہیں۔", ["oma", "opa", "mijn vrouw"], "oma", "دادی = oma۔"]
+    ],
+    builds: [
+      ["میں شادی شدہ ہوں", ["ik", "ben", "getrouwd"], "ik ben getrouwd", "حالت بتانے کا جملہ۔"],
+      ["میں شادی شدہ نہیں ہوں", ["ik", "ben", "niet", "getrouwd"], "ik ben niet getrouwd", "niet فعل کے بعد۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-telling-time",
+    unit: "A0: سوا، ساڑھے، پونے",
+    title: "Hoe laat is het?",
+    description: "پورا گھنٹہ، ساڑھے، سوا، اور پونے کا وقت سمجھنا اور بتانا۔",
+    explanation: practicalExplanation("ڈچ میں آدھا گھنٹہ اگلے گھنٹے سے گنا جاتا ہے", [
+      "half acht = 7:30، یعنی ساڑھے سات؛ ساڑھے آٹھ نہیں۔",
+      "kwart over drie = 3:15 (سوا تین)؛ kwart voor vier = 3:45 (پونے چار)۔",
+      "کسی کام کا وقت بتانے کے لیے om لگائیں: om half negen۔"
+    ]),
+    concepts: [
+      // half acht and om half negen share a run so 7:30 is tested against
+      // 8:30, the usual mistake for Urdu speakers.
+      dailyConcept("time-quarter", "kwart", "پندرہ منٹ (پاؤ گھنٹہ)"),
+      dailyConcept("time-half-eight", "half acht", "ساڑھے سات (7:30)", "", "phrase"),
+      dailyConcept("time-at-half-nine", "om half negen", "ساڑھے آٹھ بجے (8:30)", "", "phrase"),
+      dailyConcept("time-three-oclock", "het is drie uur", "تین بجے ہیں", "", "phrase"),
+      dailyConcept("time-quarter-past-three", "kwart over drie", "سوا تین (3:15)", "", "phrase"),
+      dailyConcept("time-quarter-to-four", "kwart voor vier", "پونے چار (3:45)", "", "phrase")
+    ],
+    listenReplies: [
+      ["hoe laat begint de les?", ["om half negen", "kwart", "het is drie"], "om half negen", "وقت کے سوال کا جواب om کے ساتھ۔"]
+    ],
+    fills: [
+      ["___ over drie", ["kwart", "half", "uur"], "kwart", "3:15 = kwart over drie۔"],
+      ["kwart ___ vier", ["voor", "over", "om"], "voor", "3:45 = kwart voor vier۔"],
+      ["om ___ negen", ["half", "kwart", "uur"], "half", "8:30 = half negen۔"]
+    ],
+    situations: [
+      ["حال: اسکول کا خط کہتا ہے کہ کلاس 7:30 پر شروع ہوگی۔", ["half acht", "om half negen", "kwart over drie"], "half acht", "7:30 = half acht۔"],
+      ["حال: بچے کی چھٹی 3:45 پر ہوتی ہے۔", ["kwart voor vier", "kwart over drie", "half acht"], "kwart voor vier", "3:45 = kwart voor vier۔"]
+    ],
+    builds: [
+      ["تین بجے ہیں", ["het", "is", "drie", "uur"], "het is drie uur", "پورے گھنٹے کا جملہ۔"],
+      ["سوا تین", ["kwart", "over", "drie"], "kwart over drie", "پندرہ منٹ بعد۔"],
+      ["ساڑھے آٹھ بجے", ["om", "half", "negen"], "om half negen", "کام کا وقت۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-months-dates",
+    unit: "A0: مہینے اور تاریخ",
+    title: "Maanden en data",
+    description: "بارہ مہینے، پہلی اور دوسری تاریخ، اور تاریخ بتانا یا پوچھنا۔",
+    explanation: practicalExplanation("تاریخ: op + دن + مہینہ", [
+      "ڈچ میں مہینوں کے نام چھوٹے حرف سے لکھے جاتے ہیں: januari، maart، mei۔",
+      "op drie maart = تین مارچ کو۔ صرف مہینہ ہو تو in آتا ہے۔",
+      "de eerste = پہلی تاریخ، de tweede = دوسری تاریخ۔"
+    ]),
+    concepts: [
+      dailyConcept("month-january", "januari", "جنوری"),
+      dailyConcept("month-february", "februari", "فروری"),
+      dailyConcept("month-march", "maart", "مارچ"),
+      dailyConcept("month-april", "april", "اپریل"),
+      dailyConcept("month-may", "mei", "مئی"),
+      dailyConcept("month-june", "juni", "جون"),
+      dailyConcept("month-july", "juli", "جولائی"),
+      dailyConcept("month-august", "augustus", "اگست"),
+      dailyConcept("month-september", "september", "ستمبر"),
+      dailyConcept("month-october", "oktober", "اکتوبر"),
+      dailyConcept("month-november", "november", "نومبر"),
+      dailyConcept("month-december", "december", "دسمبر"),
+      dailyConcept("date-first", "de eerste", "پہلی تاریخ", "", "phrase"),
+      dailyConcept("date-second", "de tweede", "دوسری تاریخ", "", "phrase"),
+      dailyConcept("date-on-third-march", "op drie maart", "تین مارچ کو", "", "phrase"),
+      dailyConcept("date-which-today", "welke datum is het vandaag?", "آج کون سی تاریخ ہے؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["wanneer is de afspraak?", ["op drie maart", "de tweede maart is", "maart drie op"], "op drie maart", "تاریخ op کے ساتھ۔"]
+    ],
+    fills: [
+      ["___ drie maart", ["op", "in", "om"], "op", "تاریخ سے پہلے op۔"],
+      ["de ___", ["eerste", "januari", "datum"], "eerste", "پہلی تاریخ = de eerste۔"]
+    ],
+    situations: [
+      ["حال: ملاقات تین مارچ کو ہے۔ استقبالیہ کو بتائیں۔", ["op drie maart", "de eerste", "de tweede"], "op drie maart", "تاریخ کا جواب۔"]
+    ],
+    builds: [
+      ["تین مارچ کو", ["op", "drie", "maart"], "op drie maart", "op + دن + مہینہ۔"],
+      ["آج کون سی تاریخ ہے؟", ["welke", "datum", "is", "het", "vandaag"], "welke datum is het vandaag", "تاریخ کا سوال۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-body-health",
+    unit: "A0: جسم اور درد کی جگہ",
+    title: "Het lichaam",
+    description: "جسم کے حصے پہچاننا اور ڈاکٹر کو درد کی جگہ بتانا۔",
+    explanation: practicalExplanation("درد کی جگہ بتائیں: mijn + حصہ + doet pijn", [
+      "hand ہاتھ، arm بازو، been ٹانگ، rug کمر، tand دانت، keel گلا۔",
+      "mijn rug doet pijn = میری کمر میں درد ہے۔",
+      "دانت کے درد میں tandarts کے پاس جائیں۔"
+    ]),
+    concepts: [
+      dailyConcept("body-hand", "hand", "ہاتھ"),
+      dailyConcept("body-arm", "arm", "بازو"),
+      dailyConcept("body-leg", "been", "ٹانگ"),
+      dailyConcept("body-back", "rug", "کمر"),
+      dailyConcept("body-tooth", "tand", "دانت"),
+      dailyConcept("body-throat", "keel", "گلا"),
+      dailyConcept("body-dentist", "tandarts", "دانتوں کا ڈاکٹر"),
+      dailyConcept("body-back-hurts", "mijn rug doet pijn", "میری کمر میں درد ہے", "", "phrase"),
+      dailyConcept("body-sore-throat", "ik heb keelpijn", "میرے گلے میں درد ہے", "", "phrase"),
+      dailyConcept("body-must-dentist", "ik moet naar de tandarts", "مجھے دانتوں کے ڈاکٹر کے پاس جانا ہے", "", "phrase")
+    ],
+    listenReplies: [
+      ["waar doet het pijn?", ["mijn rug doet pijn", "ik moet naar de tandarts", "mijn rug is pijn"], "mijn rug doet pijn", "درد کی جگہ بتائیں۔"]
+    ],
+    fills: [
+      ["mijn rug doet ___", ["pijn", "keel", "arm"], "pijn", "درد کی جگہ: doet pijn۔"],
+      ["ik heb ___pijn", ["keel", "rug", "tand"], "keel", "گلے کا درد = keelpijn۔"],
+      ["ik moet naar de ___", ["tandarts", "tand", "keel"], "tandarts", "دانتوں کا ڈاکٹر = tandarts۔"]
+    ],
+    situations: [
+      ["حال: بھاری کام کے بعد کمر میں درد ہے۔ ڈاکٹر کو بتائیں۔", ["mijn rug doet pijn", "ik heb keelpijn", "mijn arm doet pijn"], "mijn rug doet pijn", "درد کی جگہ۔"],
+      ["حال: کام پر بتانا ہے کہ آج دانتوں کے ڈاکٹر کے پاس جانا ہے۔", ["ik moet naar de tandarts", "ik heb keelpijn", "mijn rug doet pijn"], "ik moet naar de tandarts", "ملاقات کی اطلاع۔"]
+    ],
+    builds: [
+      ["میری کمر میں درد ہے", ["mijn", "rug", "doet", "pijn"], "mijn rug doet pijn", "حصہ، پھر doet pijn۔"],
+      ["میرے گلے میں درد ہے", ["ik", "heb", "keelpijn"], "ik heb keelpijn", "گلے کا درد۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-emergency-police",
+    unit: "A0: پولیس، آگ، اور حادثہ",
+    title: "Noodgevallen",
+    description: "پولیس، آگ بجھانے والے، حادثہ، اور زخمی کی فوری اطلاع دینا۔",
+    explanation: {
+      title: "112 پر پہلے بتائیں کہ کیا ہوا ہے",
+      points: [
+        "er is brand = آگ لگی ہے؛ er is een ongeluk = حادثہ ہوا ہے۔",
+        "iemand is gewond = کوئی زخمی ہے۔",
+        "bel de politie = پولیس کو فون کریں۔ پولیس، آگ، اور ایمبولینس سب کا نمبر 112 ہے۔"
+      ],
+      note: "یہ زبان کی مشق ہے؛ حقیقی ہنگامی حالت میں 112 پر رابطہ کریں۔"
+    },
+    concepts: [
+      dailyConcept("emergency-police", "politie", "پولیس"),
+      dailyConcept("emergency-fire-brigade", "brandweer", "فائر بریگیڈ (آگ بجھانے والا عملہ)"),
+      dailyConcept("emergency-accident", "ongeluk", "حادثہ"),
+      dailyConcept("emergency-fire", "brand", "آگ"),
+      dailyConcept("emergency-injured", "gewond", "زخمی"),
+      dailyConcept("emergency-there-is-fire", "er is brand", "آگ لگی ہے", "", "phrase"),
+      dailyConcept("emergency-there-is-accident", "er is een ongeluk", "حادثہ ہوا ہے", "", "phrase"),
+      dailyConcept("emergency-someone-injured", "iemand is gewond", "کوئی زخمی ہے", "", "phrase"),
+      dailyConcept("emergency-call-police", "bel de politie", "پولیس کو فون کریں", "", "phrase")
+    ],
+    listenReplies: [
+      ["112, wat is er gebeurd?", ["er is een ongeluk", "bel de politie", "ik ben gewond politie"], "er is een ongeluk", "پہلے بتائیں کیا ہوا ہے۔"]
+    ],
+    fills: [
+      ["er is ___", ["brand", "politie", "gewond"], "brand", "آگ لگی ہے = er is brand۔"],
+      ["iemand is ___", ["gewond", "brand", "ongeluk"], "gewond", "زخمی = gewond۔"],
+      ["bel de ___", ["politie", "brand", "gewond"], "politie", "پولیس کو فون۔"]
+    ],
+    situations: [
+      ["حال: باورچی خانے میں آگ لگ گئی ہے۔ 112 کو بتائیں۔", ["er is brand", "er is een ongeluk", "bel de politie"], "er is brand", "آگ کی اطلاع۔"],
+      ["حال: حادثے میں ایک شخص کو چوٹ لگی ہے۔ 112 کو بتائیں۔", ["iemand is gewond", "er is brand", "bel de politie"], "iemand is gewond", "زخمی کی اطلاع۔"]
+    ],
+    builds: [
+      ["حادثہ ہوا ہے", ["er", "is", "een", "ongeluk"], "er is een ongeluk", "فوری اطلاع۔"],
+      ["پولیس کو فون کریں", ["bel", "de", "politie"], "bel de politie", "حکم میں فعل پہلے۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-colours-clothes",
+    unit: "A0: رنگ اور کپڑے",
+    title: "Kleuren",
+    description: "چھ عام رنگ پہچاننا اور کپڑے یا چیز کا رنگ بتانا اور پوچھنا۔",
+    explanation: practicalExplanation("رنگ کا لفظ چیز کے بعد آئے تو اس میں کوئی تبدیلی نہیں ہوتی", [
+      "rood سرخ، blauw نیلا، groen سبز، geel پیلا، zwart کالا، wit سفید۔",
+      "de jas is blauw کا مطلب ہے جیکٹ نیلی ہے: پہلے چیز، پھر is، پھر رنگ۔",
+      "دکان میں رنگ پوچھنے کے لیے: heeft u dit in het zwart?"
+    ]),
+    concepts: [
+      dailyConcept("colour-red", "rood", "سرخ"),
+      dailyConcept("colour-blue", "blauw", "نیلا"),
+      dailyConcept("colour-green", "groen", "سبز"),
+      dailyConcept("colour-yellow", "geel", "پیلا"),
+      dailyConcept("colour-black", "zwart", "کالا"),
+      dailyConcept("colour-white", "wit", "سفید"),
+      dailyConcept("colour-colour", "kleur", "رنگ"),
+      dailyConcept("colour-which", "welke kleur?", "کون سا رنگ؟", "", "phrase"),
+      dailyConcept("colour-coat-blue", "de jas is blauw", "جیکٹ نیلی ہے", "", "phrase"),
+      dailyConcept("colour-in-black", "heeft u dit in het zwart?", "کیا یہ آپ کے پاس کالے رنگ میں ہے؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["welke kleur is de jas?", ["de jas is blauw", "ik heb geen jas", "de jas is groot"], "de jas is blauw", "رنگ کے سوال کا جواب رنگ سے دیں۔"],
+      ["welke kleur wilt u?", ["zwart, alstublieft", "twee, alstublieft", "ja, graag"], "zwart, alstublieft", "پسند کا رنگ بتائیں۔"]
+    ],
+    fills: [
+      ["de jas is ___", ["blauw", "jas", "kleur"], "blauw", "چیز کے بعد is، پھر رنگ۔"],
+      ["welke ___?", ["kleur", "rood", "jas"], "kleur", "رنگ پوچھنے کا سوال۔"],
+      ["heeft u dit in het ___?", ["zwart", "kleur", "jas"], "zwart", "دکان میں دوسرا رنگ پوچھنا۔"],
+      ["de tas is ___", ["rood", "tas", "welke"], "rood", "چیز کا رنگ بتائیں۔"]
+    ],
+    situations: [
+      ["حال: دکان میں جیکٹ پسند ہے مگر آپ کو کالی چاہیے۔ ملازم سے پوچھیں۔", ["heeft u dit in het zwart?", "de jas is zwart", "welke kleur?"], "heeft u dit in het zwart?", "دوسرا رنگ پوچھنے کا جملہ۔"],
+      ["حال: بیٹے کی جیکٹ گم ہو گئی ہے۔ اسکول کے ملازم کو بتائیں کہ جیکٹ نیلی ہے۔", ["de jas is blauw", "welke kleur?", "heeft u dit in het zwart?"], "de jas is blauw", "رنگ بتانے کا مکمل جملہ۔"],
+      ["حال: دوست نیا اسکارف دکھاتا ہے مگر رنگ نہیں بتاتا۔ رنگ پوچھیں۔", ["welke kleur?", "de jas is blauw", "kleur"], "welke kleur?", "رنگ کا سوال۔"],
+      ["حال: ٹریفک کی بتی پر چلنے کا رنگ بتانا ہے۔", ["groen", "rood", "geel"], "groen", "چلنے کی بتی سبز ہوتی ہے۔"],
+      ["حال: ٹریفک کی بتی پر رکنے کا رنگ بتانا ہے۔", ["rood", "groen", "wit"], "rood", "رکنے کی بتی سرخ ہوتی ہے۔"]
+    ],
+    builds: [
+      ["جیکٹ نیلی ہے", ["de", "jas", "is", "blauw"], "de jas is blauw", "چیز، is، رنگ۔"],
+      ["کون سا رنگ؟", ["welke", "kleur"], "welke kleur", "رنگ پوچھنے کا سوال۔"],
+      ["کیا یہ آپ کے پاس کالے رنگ میں ہے؟", ["heeft", "u", "dit", "in", "het", "zwart"], "heeft u dit in het zwart", "دکان کا سوال۔"]
+    ]
+  })
+);
+
 a0Lessons.push(...a0DailyLessons);
 
 const a0LessonOrder = [
-  "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help",
+  "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help", "a0-language-help",
   "a0-letters-1", "a0-letters-2", "a0-letters-3", "a0-sounds-vowels", "a0-sounds-consonants",
-  "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-date-appointment",
+  "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-telling-time", "a0-date-appointment", "a0-months-dates",
   "a0-people-nouns", "a0-things-nouns", "a0-dit-dat-questions", "a0-een-de-het",
   "a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1",
-  "a0-geen", "a0-possessive", "a0-name-land-city", "a0-spelling-personal-details", "a0-address-phone", "a0-checkpoint",
+  "a0-geen", "a0-possessive", "a0-name-land-city", "a0-family-status", "a0-spelling-personal-details", "a0-address-phone", "a0-checkpoint",
   "a0-place-1", "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs",
-  "a0-daily-actions", "a0-food-drink", "a0-shopping-payment", "a0-transport-directions",
-  "a0-health-emergency", "a0-child-school", "a0-work-basics", "a0-weather-clothing-safety",
+  "a0-daily-actions", "a0-food-drink", "a0-colours-clothes", "a0-shopping-payment", "a0-transport-directions",
+  "a0-health-emergency", "a0-body-health", "a0-emergency-police", "a0-child-school", "a0-work-basics", "a0-weather-clothing-safety",
   "a0-daily-checkpoint"
 ];
 
@@ -4167,7 +4482,7 @@ const a0Subchapters = [
     title: "میرے پہلے جملے",
     goal: "اپنے، دوسرے لوگوں، چیزوں، اور رہنے کی جگہ کے بارے میں چھوٹے جملے کہنا۔",
     practice: "ik ben، ik heb، wij zijn، mijn naam is جیسے جملے بنائیں۔",
-    lessonIds: ["a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1", "a0-geen", "a0-possessive", "a0-name-land-city", "a0-spelling-personal-details", "a0-address-phone"]
+    lessonIds: ["a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1", "a0-geen", "a0-possessive", "a0-name-land-city", "a0-family-status", "a0-spelling-personal-details", "a0-address-phone"]
   },
   {
     id: "a0-foundation-review",
@@ -4392,23 +4707,45 @@ function semanticSlugV4(value, fallback = "item") {
 }
 
 function normalizedTextV4(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFKC")
-    .replace(/[.!?,;:()[\]{}"'’`|/\\]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const text = String(value || "");
+  const cache = normalizedTextV4.cache || (normalizedTextV4.cache = new Map());
+  let normalized = cache.get(text);
+  if (normalized === undefined) {
+    normalized = text
+      .toLowerCase()
+      .normalize("NFKC")
+      .replace(/[.!?,;:()[\]{}"'’`|/\\]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    cache.set(text, normalized);
+  }
+  return normalized;
 }
 
 function uniqueV4(items) {
-  return [...new Set((items || []).filter(Boolean))];
+  // Same result as [...new Set(items.filter(Boolean))], without building a
+  // Set for the short lists this is almost always called with.
+  const list = items || [];
+  if (list.length > 16) return [...new Set(list.filter(Boolean))];
+  const result = [];
+  for (const item of list) {
+    if (item && !result.includes(item)) result.push(item);
+  }
+  return result;
 }
 
 function dutchWordsV4(value) {
-  return uniqueV4(
-    (String(value || "").toLowerCase().match(/[a-zà-ÿ0-9-]+/g) || [])
-      .filter((word) => word.length > 1)
-  );
+  const text = String(value || "");
+  const cache = dutchWordsV4.cache || (dutchWordsV4.cache = new Map());
+  let words = cache.get(text);
+  if (words === undefined) {
+    words = uniqueV4(
+      (text.toLowerCase().match(/[a-zà-ÿ0-9-]+/g) || [])
+        .filter((word) => word.length > 1)
+    );
+    cache.set(text, words);
+  }
+  return words.slice();
 }
 
 function hasUsefulOverlapV4(left, right) {
@@ -4833,6 +5170,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-greetings-courtesy",
       "a0-understanding-help",
       "a0-ja-nee-goed-niet",
+      "a0-language-help",
       "a0-start-speaking-mission"
     ]
   },
@@ -4863,6 +5201,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-ben-bent-is",
       "a0-first-sentences",
       "a0-name-land-city",
+      "a0-family-status",
       "a0-first-sentences-mission"
     ]
   },
@@ -4888,9 +5227,11 @@ const a0LearningFirstUnitsV4 = [
       "a0-numbers-0-10",
       "a0-numbers-11-100",
       "a0-time-days",
+      "a0-telling-time",
       "a0-spelling-personal-details",
       "a0-address-phone",
       "a0-date-appointment",
+      "a0-months-dates",
       "a0-numbers-time-mission"
     ]
   },
@@ -4916,6 +5257,7 @@ const a0LearningFirstUnitsV4 = [
     lessonIds: [
       "a0-daily-actions",
       "a0-food-drink",
+      "a0-colours-clothes",
       "a0-shopping-payment",
       "a0-mission-neighbourhood"
     ]
@@ -4928,6 +5270,8 @@ const a0LearningFirstUnitsV4 = [
     lessonIds: [
       "a0-transport-directions",
       "a0-health-emergency",
+      "a0-body-health",
+      "a0-emergency-police",
       "a0-mission-help"
     ]
   },
@@ -4949,6 +5293,12 @@ a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
 const a0LessonLabelsV4 = {
   "a0-greetings-courtesy": "سلام اور ادب",
   "a0-understanding-help": "سمجھ اور مدد",
+  "a0-language-help": "زبان اور ترجمان",
+  "a0-family-status": "شوہر، بیوی، اور بچے",
+  "a0-telling-time": "سوا، ساڑھے، پونے",
+  "a0-months-dates": "مہینے اور تاریخ",
+  "a0-body-health": "جسم اور درد کی جگہ",
+  "a0-emergency-police": "پولیس، آگ، اور حادثہ",
   "a0-ja-nee-goed-niet": "چھوٹے جواب",
   "a0-letters-1": "آواز: a اور b",
   "a0-letters-2": "آواز: h اور i",
@@ -4979,6 +5329,7 @@ const a0LessonLabelsV4 = {
   "a0-home-needs": "گھر کی فوری ضرورت",
   "a0-daily-actions": "روزمرہ کام",
   "a0-food-drink": "کھانا اور پینا",
+  "a0-colours-clothes": "رنگ اور کپڑے",
   "a0-shopping-payment": "دکان اور ادائیگی",
   "a0-transport-directions": "سفر اور راستہ",
   "a0-health-emergency": "صحت اور فوری مدد",
@@ -11198,6 +11549,89 @@ const a0SoundTeachingV4 = {
   zeep: ["z صاف ‘ز’، اور ee لمبی ‘اے’: زیپ۔", "ee کو ‘ای’ نہ پڑھیں؛ یہ لمبی ‘اے’ ہے۔", "zeep — zon", "دونوں لفظ صاف ‘ز’ سے شروع ہوتے ہیں۔", "زیپ"]
 };
 
+// Survival lessons (roadmap 1.3): hand-written teaching per item.
+// [usage, common confusion, example Dutch, example Urdu, pronunciation]
+const a0SurvivalTeachingV4 = {
+  "a0-colours-clothes": {
+    "rood": ["رنگ بتاتے ہوئے سرخ کے لیے rood کہیں، جیسے ٹریفک کی رکنے والی بتی۔", "آخر کی آواز ٹ جیسی سنائی دیتی ہے: روٹ۔ rood (سرخ) کو groen (سبز) سے نہ ملائیں۔", "rood — groen", "رکنے کی بتی سرخ، چلنے کی بتی سبز۔", "روٹ"],
+    "blauw": ["آسمان یا جینز جیسے نیلے رنگ کے لیے blauw کہیں۔", "blauw (نیلا) اور rood (سرخ) دونوں رنگ ہیں؛ blauw کی آواز بلاؤ جیسی ہے۔", "blauw — rood", "نیلا — سرخ۔", "بلاؤ"],
+    "groen": ["پتے، گھاس، یا چلنے والی بتی کے سبز رنگ کے لیے groen کہیں۔", "شروع کی آواز گلے سے خ جیسی ہے: خرون۔", "groen — rood", "سبز بتی پر چلیں، سرخ بتی پر رکیں۔", "خْرون"],
+    "zwart": ["کالے کپڑے، جوتے، یا بیگ کے لیے zwart کہیں۔", "شروع میں ز اور و کی آواز ساتھ بولیں اور آخر کی ٹ صاف بولیں۔ zwart (کالا) کا الٹ wit (سفید) ہے۔", "zwart — wit", "کالا اور سفید: الٹے رنگ۔", "زْوارٹ"],
+    "kleur": ["کسی چیز کے رنگ کی بات کرتے ہوئے kleur کہیں۔", "درمیان کی آواز اردو میں نہیں؛ ہونٹ گول کرکے بولیں: کلُور۔ kleur خود رنگ ہے، کوئی خاص رنگ نہیں۔", "kleur: zwart", "رنگ: کالا۔", "کْلُور"],
+    "welke kleur?": ["کسی سے کسی چیز کا رنگ پوچھنا ہو تو welke kleur? کہیں۔", "سوال welke سے شروع ہوتا ہے؛ جواب میں صرف رنگ کہہ دینا کافی ہے۔", "welke kleur? — zwart.", "کون سا رنگ؟ — کالا۔", "وَیلکَ کْلُور"],
+    "de jas is blauw": ["کسی چیز کا رنگ بتانا ہو: پہلے چیز، پھر is، پھر رنگ۔", "is کے بعد رنگ کا لفظ نہیں بدلتا: de jas is blauw۔", "de jas is zwart", "جیکٹ کالی ہے۔", "دَ یاس اِس بلاؤ"],
+    "heeft u dit in het zwart?": ["دکان میں کوئی چیز دوسرے رنگ میں چاہیے تو یہ سوال پوچھیں۔", "رنگ سے پہلے in het آتا ہے: in het zwart، in het blauw۔", "heeft u dit in het blauw?", "کیا یہ آپ کے پاس نیلے رنگ میں ہے؟", "ہیفٹ یو دِٹ اِن اَٹ زْوارٹ"]
+  },
+  "a0-language-help": {
+    "ik spreek Urdu": ["کوئی پوچھے کہ آپ کون سی زبان بولتے ہیں تو اپنی زبان بتائیں۔", "spreek کے بعد سیدھا زبان کا نام آتا ہے؛ درمیان میں کوئی اور لفظ نہیں۔", "spreekt u Engels? — ik spreek Urdu.", "کیا آپ انگریزی بولتے ہیں؟ — میں اردو بولتا ہوں۔", "اِک سپریک اُردو"],
+    "ik spreek Engels": ["اگر ڈچ مشکل ہو اور آپ انگریزی جانتے ہیں تو یہ بتائیں۔", "Engels کا مطلب انگریزی زبان ہے؛ زبان کا نام بڑے حرف سے لکھا جاتا ہے۔", "ik spreek Urdu — ik spreek Engels", "میں اردو بولتا ہوں — میں انگریزی بولتا ہوں۔", "اِک سپریک اینگلس"],
+    "spreekt u Engels?": ["دکان، فارمیسی، یا دفتر میں ادب سے پوچھیں کہ کیا سامنے والا انگریزی بولتا ہے۔", "سوال میں فعل پہلے آتا ہے اور u کے ساتھ فعل کے آخر میں ٹ کی آواز لگتی ہے: spreekt u۔", "spreekt u Engels? — ik spreek Engels.", "کیا آپ انگریزی بولتے ہیں؟ — میں انگریزی بولتا ہوں۔", "سپریکٹ یو اینگلس"],
+    "ik spreek geen Nederlands": ["جب کوئی تیزی سے ڈچ بولے اور آپ ابھی ڈچ نہیں جانتے تو یہ کہیں۔", "زبان کی نفی geen سے ہوتی ہے: ik spreek geen Nederlands۔", "ik spreek geen Nederlands — ik spreek Engels", "میں ڈچ نہیں بولتا — میں انگریزی بولتا ہوں۔", "اِک سپریک خین نیدرلانڈس"],
+    "tolk": ["ایسا شخص جو دو زبانوں میں بات سمجھا دے؛ ہسپتال یا بلدیہ میں مانگا جا سکتا ہے۔", "tolk بولی ہوئی بات کا ترجمان ہے؛ اسے کسی زبان کا نام نہ سمجھیں۔", "een tolk — ik heb een tolk nodig", "ترجمان — مجھے ترجمان چاہیے۔", "ٹولک"],
+    "ik heb een tolk nodig": ["جب ڈاکٹر یا ملازم کی بات بالکل سمجھ نہ آئے اور ترجمان چاہیے۔", "nodig جملے کے آخر میں آتا ہے: ik heb een tolk nodig۔", "ik spreek geen Nederlands. ik heb een tolk nodig.", "میں ڈچ نہیں بولتا۔ مجھے ترجمان چاہیے۔", "اِک ہیپ اَن ٹولک نودِخ"],
+    "is er een tolk?": ["کسی کاؤنٹر پر پوچھنا ہو کہ کیا یہاں ترجمان موجود ہے۔", "سوال is سے شروع ہوتا ہے؛ er کا مطلب یہاں ‘موجود’ ہے۔", "is er een tolk? — ik spreek Urdu.", "کیا یہاں ترجمان ہے؟ — میں اردو بولتا ہوں۔", "اِس اَر اَن ٹولک"],
+    "hoe zeg je dat in het Nederlands?": ["جب کوئی لفظ ڈچ میں نہ آتا ہو تو استاد یا ساتھی سے یہ پوچھیں۔", "hoe کا مطلب کیسے ہے؛ یہ سوال ڈچ میں کہنے کا طریقہ پوچھتا ہے۔", "hoe zeg je dat in het Nederlands? — tolk.", "اسے ڈچ میں کیسے کہتے ہیں؟ — tolk۔", "ہُو زَخ یَ دَٹ اِن اَٹ نیدرلانڈس"]
+  },
+  "a0-family-status": {
+    "mijn man": ["اپنے شوہر کے بارے میں بات کرتے ہوئے mijn man کہیں۔", "اکیلے man کا مطلب آدمی ہے، مگر mijn man کا مطلب میرا شوہر ہے۔", "mijn man — mijn vrouw", "میرا شوہر — میری بیوی۔", "مَین مان"],
+    "mijn vrouw": ["اپنی بیوی کے بارے میں بات کرتے ہوئے mijn vrouw کہیں۔", "اکیلے vrouw کا مطلب عورت ہے، مگر mijn vrouw کا مطلب میری بیوی ہے۔", "mijn vrouw — mijn man", "میری بیوی — میرا شوہر۔", "مَین وْراؤ"],
+    "ik ben getrouwd": ["فارم یا تعارف میں پوچھا جائے کہ آپ شادی شدہ ہیں تو یہ کہیں۔", "getrouwd کی آواز خَتراؤٹ ہے: شروع گلے سے خ جیسا اور آخر ٹ جیسا۔", "ik ben getrouwd — mijn man", "میں شادی شدہ ہوں — میرا شوہر۔", "اِک بَن خَتراؤٹ"],
+    "ik ben niet getrouwd": ["شادی نہیں ہوئی تو فارم یا تعارف میں یہ کہیں۔", "niet فعل ben کے بعد آتا ہے: ik ben niet getrouwd۔", "ik ben niet getrouwd — ik ben getrouwd", "میں شادی شدہ نہیں ہوں — میں شادی شدہ ہوں۔", "اِک بَن نیٹ خَتراؤٹ"],
+    "mijn zoon": ["اسکول یا ڈاکٹر کو اپنے بیٹے کے بارے میں بتاتے ہوئے mijn zoon کہیں۔", "zoon بیٹا ہے، dochter بیٹی؛ ہر لڑکا zoon نہیں، صرف کسی کا بیٹا۔", "mijn zoon — mijn dochter", "میرا بیٹا — میری بیٹی۔", "مَین زون"],
+    "mijn dochter": ["اسکول یا ڈاکٹر کو اپنی بیٹی کے بارے میں بتاتے ہوئے mijn dochter کہیں۔", "درمیان کی آواز گلے سے خ جیسی ہے: دوختَر۔", "mijn dochter — mijn zoon", "میری بیٹی — میرا بیٹا۔", "مَین دوختَر"],
+    "opa": ["دادا یا نانا دونوں کے لیے ڈچ میں ایک لفظ opa ہے۔", "ڈچ میں دادا اور نانا میں فرق نہیں؛ دونوں opa ہیں۔", "opa — oma", "دادا یا نانا — دادی یا نانی۔", "اوپا"],
+    "oma": ["دادی یا نانی دونوں کے لیے ڈچ میں oma کہیں۔", "opa مرد ہے اور oma عورت؛ درمیان کی آواز سنیں: پ یا م۔", "oma — opa", "دادی یا نانی — دادا یا نانا۔", "اوما"]
+  },
+  "a0-telling-time": {
+    "kwart": ["گھڑی میں پندرہ منٹ کو kwart کہتے ہیں۔", "kwart پندرہ منٹ ہے، آدھا گھنٹہ نہیں؛ آدھے کے لیے half آتا ہے۔", "kwart: 0:15", "پاؤ گھنٹہ: پندرہ منٹ۔", "کْوارٹ"],
+    "het is drie uur": ["کوئی وقت پوچھے تو پورے گھنٹے کا جواب: het is ... uur۔", "uur گھڑی کا گھنٹہ ہے؛ جواب het is سے شروع کریں۔", "3:00 — het is drie uur", "3:00 — تین بجے ہیں۔", "اَٹ اِس دْری یُور"],
+    "half acht": ["ڈچ میں آدھا گھنٹہ اگلے گھنٹے سے پہلے گنا جاتا ہے: half acht = 7:30۔", "half acht کا مطلب ساڑھے آٹھ نہیں! یہ آٹھ سے آدھا گھنٹہ پہلے، یعنی 7:30 ہے۔", "7:30 — half acht", "7:30 — ساڑھے سات۔", "ہالف آخت"],
+    "kwart over drie": ["گھنٹے کے پندرہ منٹ بعد کا وقت: kwart over + گھنٹہ۔", "over کا مطلب بعد ہے: kwart over drie = 3:15، یعنی سوا تین۔", "3:15 — kwart over drie", "3:15 — سوا تین۔", "کْوارٹ اووَر دْری"],
+    "kwart voor vier": ["اگلے گھنٹے سے پندرہ منٹ پہلے کا وقت: kwart voor + اگلا گھنٹہ۔", "voor کا مطلب پہلے ہے: kwart voor vier = 3:45، یعنی پونے چار؛ چار بج کر پندرہ نہیں۔", "3:45 — kwart voor vier", "3:45 — پونے چار۔", "کْوارٹ وور فیر"],
+    "om half negen": ["کسی کام کا وقت بتاتے ہوئے om لگائیں: om half negen۔", "om half negen = 8:30، 9:30 نہیں۔ وقت سے پہلے om آتا ہے۔", "8:30 — om half negen", "8:30 — ساڑھے آٹھ بجے۔", "اوم ہالف نیخَن"]
+  },
+  "a0-months-dates": {
+    "de eerste": ["تاریخ بتاتے ہوئے مہینے کا پہلا دن: de eerste۔", "eerste ترتیب بتاتا ہے: پہلی تاریخ؛ گنتی نہیں۔", "de eerste — de tweede", "پہلی تاریخ — دوسری تاریخ۔", "دَ ایرسٹَ"],
+    "de tweede": ["تاریخ بتاتے ہوئے مہینے کا دوسرا دن: de tweede۔", "tweede ترتیب ہے: دوسری تاریخ۔", "de tweede — de eerste", "دوسری تاریخ — پہلی تاریخ۔", "دَ تْویدَ"],
+    "op drie maart": ["کسی کام کی تاریخ بتاتے ہوئے op + دن + مہینہ کہیں۔", "پوری تاریخ (دن اور مہینہ) سے پہلے op آتا ہے: op drie maart۔", "3 maart — op drie maart", "3 مارچ — تین مارچ کو۔", "اوپ دْری مارٹ"],
+    "welke datum is het vandaag?": ["آج کی تاریخ پوچھنی ہو تو یہ سوال کریں۔", "datum کا مطلب تاریخ ہے، ہفتے کا دن نہیں۔", "welke datum is het vandaag? — de tweede.", "آج کون سی تاریخ ہے؟ — دوسری۔", "وَیلکَ داتُم اِس اَٹ فانداخ"]
+  },
+  "a0-body-health": {
+    "hand": ["جسم کا حصہ بتاتے ہوئے ہاتھ کے لیے hand کہیں؛ ڈاکٹر کو چوٹ کی جگہ بتانے میں کام آتا ہے۔", "آخر کی آواز ٹ جیسی ہے: ہانٹ۔ hand ہاتھ ہے، arm بازو۔", "hand — arm", "ہاتھ — بازو۔", "ہانٹ"],
+    "arm": ["کندھے سے ہاتھ تک کا حصہ arm ہے۔", "arm کا ایک اور مطلب غریب بھی ہے؛ جسم کی بات میں اس کا مطلب بازو ہے۔", "arm — hand", "بازو — ہاتھ۔", "آرم"],
+    "been": ["جس حصے پر چلتے ہیں، یعنی ٹانگ: been۔", "لمبی ای کی آواز ہے: بین۔ been ٹانگ ہے، پاؤں نہیں۔", "been — arm", "ٹانگ — بازو۔", "بین"],
+    "rug": ["جسم کی پچھلی طرف، یعنی کمر: rug۔", "آخر کی آواز گلے سے خ جیسی ہے: رُخ۔ انگریزی والا rug (قالین) نہیں۔", "rug — been", "کمر — ٹانگ۔", "رُخ"],
+    "tand": ["منہ کا دانت: tand۔", "tand ایک دانت ہے؛ آخر کی آواز ٹ جیسی: تانٹ۔", "tand — tandarts", "دانت — دانتوں کا ڈاکٹر۔", "تانٹ"],
+    "keel": ["گلا: keel۔ نزلے میں گلے کا درد عام ہے۔", "keel گلا ہے؛ لمبی ای کی آواز: کیل۔", "keel — tand", "گلا — دانت۔", "کیل"],
+    "tandarts": ["دانت میں درد ہو تو عام ڈاکٹر نہیں، tandarts کے پاس جائیں۔", "tandarts صرف دانتوں کا ڈاکٹر ہے؛ لفظ کا پہلا حصہ tand یعنی دانت ہے۔", "tand — tandarts", "دانت — دانتوں کا ڈاکٹر۔", "تانٹ آرٹس"],
+    "mijn rug doet pijn": ["جسم کے کسی حصے میں درد بتانا ہو: mijn + حصہ + doet pijn۔", "doet pijn کا مطلب ‘درد کرتا ہے’؛ اس کے ساتھ is نہ لگائیں۔", "mijn rug doet pijn — ik heb keelpijn", "میری کمر میں درد ہے — میرے گلے میں درد ہے۔", "مَین رُخ دوٹ پَین"],
+    "ik heb keelpijn": ["نزلے میں گلے کا درد بتانے کے لیے ik heb keelpijn کہیں۔", "keelpijn ایک لفظ ہے: keel اور pijn ملا کر۔", "keel — ik heb keelpijn", "گلا — میرے گلے میں درد ہے۔", "اِک ہیپ کیل پَین"],
+    "ik moet naar de tandarts": ["کام یا اسکول کو بتانا ہو کہ آپ کو دانتوں کے ڈاکٹر کے پاس جانا ہے۔", "moet کے بعد naar آتا ہے: کسی جگہ یا شخص کی طرف جانا۔", "mijn rug doet pijn — ik moet naar de tandarts", "میری کمر میں درد ہے — مجھے دانتوں کے ڈاکٹر کے پاس جانا ہے۔", "اِک موٹ نار دَ تانٹ آرٹس"]
+  },
+  "a0-emergency-police": {
+    "politie": ["چوری، لڑائی، یا خطرے میں پولیس: politie۔ ہنگامی نمبر 112 ہے۔", "لمبی ای کی آواز ہے اور آخر میں تسی: پولیتسی۔", "politie — brandweer", "پولیس — فائر بریگیڈ۔", "پولیتسی"],
+    "brandweer": ["آگ لگنے پر جو عملہ آتا ہے: brandweer۔", "brandweer آگ بجھانے والا عملہ ہے، پولیس نہیں۔", "brandweer — politie", "فائر بریگیڈ — پولیس۔", "برانٹ ویر"],
+    "ongeluk": ["سڑک یا گھر میں حادثہ: ongeluk۔", "ongeluk ایک لفظ ہے: اون خَلُک؛ درمیان کی آواز گلے سے خ جیسی۔", "ongeluk — politie", "حادثہ — پولیس۔", "اون خَلُک"],
+    "brand": ["لگی ہوئی آگ: brand۔ عمارت میں دھواں یا شعلے دیکھیں تو یہ لفظ کام آئے گا۔", "brand لگی ہوئی آگ ہے؛ آخر کی آواز ٹ جیسی: برانٹ۔", "brand — brandweer", "آگ — آگ بجھانے والے۔", "برانٹ"],
+    "gewond": ["جس شخص کو چوٹ لگی ہو: gewond۔", "شروع کی آواز گلے سے خ جیسی اور آخر کی ٹ جیسی: خَوونٹ۔", "brand — gewond", "آگ — زخمی۔", "خَوونٹ"],
+    "er is brand": ["آگ لگنے کی فوری اطلاع: er is brand!", "er is کا مطلب ‘ہوا ہے’ یا ‘موجود ہے’؛ er is brand = آگ لگی ہے۔", "er is brand — brandweer", "آگ لگی ہے — فائر بریگیڈ۔", "اَر اِس برانٹ"],
+    "er is een ongeluk": ["حادثہ دیکھ کر 112 یا لوگوں کو بتانے کے لیے: er is een ongeluk۔", "ongeluk سے پہلے een آتا ہے، brand سے پہلے نہیں: er is brand۔", "er is een ongeluk — er is brand", "حادثہ ہوا ہے — آگ لگی ہے۔", "اَر اِس اَن اون خَلُک"],
+    "iemand is gewond": ["حادثے میں کسی کو چوٹ لگی ہو تو فوراً بتائیں۔", "iemand کا مطلب کوئی (شخص) ہے۔", "er is een ongeluk. iemand is gewond.", "حادثہ ہوا ہے۔ کوئی زخمی ہے۔", "ایمانٹ اِس خَوونٹ"],
+    "bel de politie": ["کسی سے کہنا ہو کہ پولیس کو فون کرو: bel de politie!", "bel کا مطلب فون کرو؛ یہ حکم ہے، اس لیے فعل پہلے آتا ہے۔", "er is een ongeluk. bel de politie!", "حادثہ ہوا ہے۔ پولیس کو فون کریں!", "بَیل دَ پولیتسی"]
+  }
+};
+survivalMonthsV4.forEach(([dutch, urdu, pronunciation, usage, confusion], index) => {
+  // Contrast with a month from the same run of four.
+  const neighbour = survivalMonthsV4[index % 4 === 3 ? index - 1 : index + 1];
+  a0SurvivalTeachingV4["a0-months-dates"][dutch] = [
+    usage,
+    confusion,
+    `${dutch} — ${neighbour[0]}`,
+    `${urdu} — ${neighbour[1]}۔`,
+    pronunciation
+  ];
+});
+
 const a0ReviewedTeachingOverridesV4 = {
   "a0-ik-jij-u|ik": {
     exampleDutch: "ik — jij",
@@ -11314,6 +11748,14 @@ const a0ReviewedTeachingOverridesV4 = {
     urdu: "باہر جانے کا راستہ کہاں ہے؟"
   }
 };
+
+for (const [lessonId, records] of Object.entries(a0SurvivalTeachingV4)) {
+  for (const [dutch, [usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu]] of Object.entries(records)) {
+    a0ReviewedTeachingOverridesV4[`${lessonId}|${normalizedTextV4(dutch)}`] = {
+      usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu
+    };
+  }
+}
 
 for (const [dutch, [usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu]] of Object.entries(a0SoundTeachingV4)) {
   const lessonId = ["boot", "bot", "voet", "hoed", "neus", "muis", "duim", "ei"].includes(dutch)
@@ -12312,6 +12754,67 @@ function a0PracticalUsePromptV4(concept, lesson) {
     "a0-gaan-komen|kom": "دروازے پر پہنچ کر اپنے بارے میں “آتا یا آتی ہوں” کہنا ہے۔ درست ڈچ شکل چنیں۔",
     "a0-gaan-komen|komt": "کسی شخص کی آمد بتاتے ہوئے “آتا یا آتی ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔"
   };
+  Object.assign(exactScenes, {
+    "a0-colours-clothes|rood": "ٹریفک کی بتی پر رکنے کا اشارہ ہے۔ بچے کو اس بتی کا رنگ بتائیں۔",
+    "a0-colours-clothes|blauw": "گم شدہ چیزوں کے کاؤنٹر پر آپ کی جیکٹ آسمان جیسے رنگ کی ہے۔ رنگ بتائیں۔",
+    "a0-colours-clothes|groen": "ٹریفک کی بتی پر اب چلنے کا اشارہ ہے۔ بچے کو اس بتی کا رنگ بتائیں۔",
+    "a0-colours-clothes|geel": "اسکول کے بچے کی برساتی کیلے جیسے رنگ کی ہے۔ استاد کو رنگ بتائیں۔",
+    "a0-colours-clothes|zwart": "دکان میں آپ کو رات جیسے گہرے رنگ کے جوتے چاہییں۔ رنگ بتائیں۔",
+    "a0-colours-clothes|wit": "کھیل کے لیے بیٹے کو برف جیسے رنگ کی قمیص چاہیے۔ دکان میں رنگ بتائیں۔",
+    "a0-colours-clothes|kleur": "دکان کا ملازم پوچھتا ہے کہ آپ کو کیا بدلنا ہے؛ آپ کو ناپ نہیں، صرف دوسرا رنگ چاہیے۔ اس لفظ کو چنیں۔",
+    "a0-colours-clothes|welke kleur": "دوست نئی جیکٹ خریدنے کا بتاتا ہے مگر رنگ نہیں بتاتا۔ اس سے رنگ پوچھیں۔",
+    "a0-colours-clothes|de jas is blauw": "بیٹے کی جیکٹ اسکول میں گم ہو گئی ہے۔ ملازم کو بتائیں کہ جیکٹ نیلی ہے۔",
+    "a0-colours-clothes|heeft u dit in het zwart": "دکان میں جیکٹ پسند ہے مگر آپ کو کالی چاہیے۔ ملازم سے پوچھیں۔",
+    "a0-language-help|ik spreek urdu": "ہسپتال کی استقبالیہ پوچھتی ہے کہ آپ کون سی زبان بولتے ہیں۔ بتائیں کہ آپ اردو بولتے ہیں۔",
+    "a0-language-help|ik spreek engels": "اسکول کا ملازم تیزی سے ڈچ بول رہا ہے۔ بتائیں کہ آپ انگریزی بول سکتے ہیں۔",
+    "a0-language-help|spreekt u engels": "فارمیسی میں ہدایت سمجھ نہیں آ رہی۔ مؤدبانہ پوچھیں کہ کیا ملازم انگریزی بولتا ہے۔",
+    "a0-language-help|ik spreek geen nederlands": "دروازے پر ڈاکیا لمبی بات ڈچ میں کر رہا ہے۔ بتائیں کہ آپ ڈچ نہیں بولتے۔",
+    "a0-language-help|tolk": "بلدیہ کے فارم پر ایک خانہ ہے کہ کیا آپ کو ترجمان چاہیے۔ اس خانے کا ڈچ لفظ چنیں۔",
+    "a0-language-help|ik heb een tolk nodig": "ہسپتال میں ڈاکٹر کی بات بالکل سمجھ نہیں آ رہی۔ بتائیں کہ آپ کو ترجمان چاہیے۔",
+    "a0-language-help|is er een tolk": "بلدیہ کے کاؤنٹر پر پہنچ کر پوچھیں کہ کیا یہاں کوئی ترجمان موجود ہے۔",
+    "a0-language-help|hoe zeg je dat in het nederlands": "کلاس میں آپ کو ایک لفظ صرف اردو میں آتا ہے۔ استاد سے پوچھیں کہ اسے ڈچ میں کیسے کہتے ہیں۔",
+    "a0-family-status|mijn man": "اسکول میں استاد پوچھتی ہے کہ بچے کو کون لینے آئے گا۔ آپ کا شوہر آئے گا؛ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|mijn vrouw": "بلدیہ کے ملازم کو بتانا ہے کہ فارم آپ کی بیوی بھرے گی۔ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|ik ben getrouwd": "رجسٹریشن فارم پر پوچھا گیا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے؛ جواب دیں۔",
+    "a0-family-status|ik ben niet getrouwd": "کام کے فارم پر ازدواجی حالت پوچھی گئی ہے۔ آپ کی شادی نہیں ہوئی؛ جواب دیں۔",
+    "a0-family-status|mijn zoon": "ڈاکٹر پوچھتا ہے کہ بیمار بچہ کون ہے۔ وہ آپ کا بیٹا ہے؛ ڈچ چنیں۔",
+    "a0-family-status|mijn dochter": "اسکول کے ملازم کو بتانا ہے کہ آج آپ کی بیٹی بیمار ہے۔ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|opa": "بچہ تصویر میں آپ کے والد کو دکھاتا ہے۔ بچے کے لیے وہ دادا ہیں؛ ڈچ لفظ چنیں۔",
+    "a0-family-status|oma": "بچہ تصویر میں آپ کی والدہ کو دکھاتا ہے۔ بچے کے لیے وہ دادی ہیں؛ ڈچ لفظ چنیں۔",
+    "a0-telling-time|kwart": "بس کا شیڈول بتاتا ہے کہ ہر پندرہ منٹ بعد بس آتی ہے۔ پندرہ منٹ کے لیے ڈچ لفظ چنیں۔",
+    "a0-telling-time|het is drie uur": "اسٹیشن پر کوئی وقت پوچھتا ہے۔ گھڑی پر ٹھیک 3:00 ہے؛ جواب دیں۔",
+    "a0-telling-time|half acht": "اسکول کا خط کہتا ہے کہ کلاس 7:30 پر شروع ہوگی۔ یہ وقت ڈچ میں کیسے کہیں گے؟",
+    "a0-telling-time|kwart over drie": "ڈاکٹر کی ملاقات 3:15 پر ہے۔ ساتھی کو یہ وقت ڈچ میں بتائیں۔",
+    "a0-telling-time|kwart voor vier": "بچے کی چھٹی 3:45 پر ہوتی ہے۔ پڑوسی کو یہ وقت ڈچ میں بتائیں۔",
+    "a0-telling-time|om half negen": "ملازم پوچھتا ہے کہ آپ کب آئیں گے۔ آپ 8:30 پر آئیں گے؛ جواب دیں۔",
+    "a0-months-dates|de eerste": "ملاقات کارڈ پر مہینے کی پہلی تاریخ لکھی ہے۔ اس تاریخ کے لیے ڈچ چنیں۔",
+    "a0-months-dates|de tweede": "کرایہ مہینے کی دوسری تاریخ کو دینا ہے۔ اس تاریخ کے لیے ڈچ چنیں۔",
+    "a0-months-dates|op drie maart": "استقبالیہ پوچھتی ہے کہ ملاقات کب ہے۔ ملاقات تین مارچ کو ہے؛ جواب دیں۔",
+    "a0-months-dates|welke datum is het vandaag": "فارم پر آج کی تاریخ لکھنی ہے مگر آپ کو یاد نہیں۔ ساتھ والے سے پوچھیں۔",
+    "a0-body-health|hand": "ڈاکٹر پوچھتا ہے کہ چوٹ کہاں ہے۔ آپ انگلیوں والا حصہ دکھاتے ہیں؛ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|arm": "فارمیسی میں بتانا ہے کہ کندھے سے کلائی تک والے حصے پر خارش ہے۔ اس حصے کا ڈچ لفظ چنیں۔",
+    "a0-body-health|been": "کھیل کے بعد بچہ لنگڑا رہا ہے۔ استاد کو جسم کا وہ حصہ بتائیں جس پر وہ چلتا ہے۔",
+    "a0-body-health|rug": "بھاری ڈبہ اٹھانے کے بعد جسم کی پچھلی طرف درد ہے۔ اس حصے کا ڈچ لفظ چنیں۔",
+    "a0-body-health|tand": "بچہ منہ کھول کر ہلتی ہوئی چیز دکھاتا ہے جس سے وہ کھانا چباتا ہے۔ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|keel": "نزلے میں نگلنے پر تکلیف ہوتی ہے۔ ڈاکٹر کو جسم کا وہ حصہ بتائیں۔",
+    "a0-body-health|tandarts": "دانت میں درد ہے۔ کس ڈاکٹر کے پاس جانا ہے؟ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|mijn rug doet pijn": "ڈاکٹر پوچھتا ہے کہ کیا مسئلہ ہے۔ بھاری کام کے بعد آپ کی کمر میں درد ہے؛ بتائیں۔",
+    "a0-body-health|ik heb keelpijn": "نزلے کی وجہ سے نگلنا مشکل ہے۔ فارمیسی میں بتائیں کہ گلے میں درد ہے۔",
+    "a0-body-health|ik moet naar de tandarts": "کام کے ذمہ دار کو بتانا ہے کہ آج آپ کو دانتوں کے ڈاکٹر کے پاس جانا ہے۔",
+    "a0-emergency-police|politie": "رات کو کسی نے آپ کی سائیکل چرا لی ہے۔ کس کو اطلاع دیں گے؟ ڈچ لفظ چنیں۔",
+    "a0-emergency-police|brandweer": "عمارت کی سیڑھیوں میں دھواں ہے۔ آگ بجھانے والوں کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|ongeluk": "سڑک پر دو گاڑیاں ٹکرا گئی ہیں۔ اس واقعے کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|brand": "پڑوسی کی کھڑکی سے شعلے نکل رہے ہیں۔ اس کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|gewond": "سائیکل سے گرنے والے شخص کے گھٹنے سے خون نکل رہا ہے۔ اس کی حالت کا ڈچ لفظ چنیں۔",
+    "a0-emergency-police|er is brand": "باورچی خانے میں آگ لگ گئی ہے۔ 112 پر فوراً یہ اطلاع دیں۔",
+    "a0-emergency-police|er is een ongeluk": "چوراہے پر گاڑی اور سائیکل ٹکرا گئی ہیں۔ 112 کو فوراً یہ اطلاع دیں۔",
+    "a0-emergency-police|iemand is gewond": "حادثے کی جگہ ایک شخص کو چوٹ لگی ہے۔ 112 کو یہ بتائیں۔",
+    "a0-emergency-police|bel de politie": "دکان میں کوئی چوری کر کے بھاگ رہا ہے۔ ساتھ کھڑے شخص سے کہیں کہ پولیس کو فون کرے۔",
+  });
+  const monthOrdinalsUrdu = ["پہلا", "دوسرا", "تیسرا", "چوتھا", "پانچواں", "چھٹا", "ساتواں", "آٹھواں", "نواں", "دسواں", "گیارہواں", "بارہواں"];
+  survivalMonthsV4.forEach(([month], index) => {
+    exactScenes[`a0-months-dates|${month}`] = `بچوں کے اسکول کے کیلنڈر پر سال کا ${monthOrdinalsUrdu[index]} مہینہ نشان زد ہے۔ اس مہینے کا ڈچ نام چنیں۔`;
+  });
   const exactKey = `${lesson.id}|${normalizedTextV4(dutch)}`;
   if (exactScenes[exactKey]) return `حال: ${exactScenes[exactKey]}`;
 
@@ -13834,6 +14337,11 @@ const a0MissionPlansV4 = {
     documentTitles: ["عمارت کا استقبالی پیغام", "کاؤنٹر کا مختصر نوٹ", "اسکول کا مختصر پیغام"],
     documentLabels: ["پہلی بات", "اگلا جواب"],
     targets: [
+      a0MissionTargetV4("a0-language-help", "ik heb een tolk nodig", [
+        "نئی عمارت کے دفتر میں بات سمجھ نہیں آ رہی۔ بتائیں کہ آپ کو ترجمان چاہیے۔",
+        "دکان کے کاؤنٹر پر لمبی ہدایت سمجھ نہیں آئی۔ ترجمان مانگیں۔",
+        "اسکول کے دروازے پر استاد کی بات مشکل ہے۔ بتائیں کہ آپ کو ترجمان چاہیے۔"
+      ]),
       a0MissionTargetV4("a0-greetings-courtesy", "hallo", [
         "صبح نئی عمارت میں پڑوسی سے پہلی بار ملتے ہیں۔ بات شروع کریں۔",
         "دکان میں ملازم آپ کی طرف متوجہ ہوتا ہے۔ گفتگو شروع کریں۔",
@@ -13859,11 +14367,6 @@ const a0MissionPlansV4 = {
         "دکاندار پوچھتا ہے کہ کیا آپ تھیلا چاہتے ہیں؛ آپ نہیں چاہتے۔ مختصر جواب دیں۔",
         "استاد پوچھتا ہے کہ کیا کوئی اور سوال ہے؛ ابھی کوئی سوال نہیں۔ مختصر جواب دیں۔"
       ]),
-      a0MissionTargetV4("a0-greetings-courtesy", "tot ziens", [
-        "گفتگو مکمل ہو گئی ہے اور آپ پڑوسی سے رخصت ہو رہے ہیں۔ مناسب بات کہیں۔",
-        "خریداری مکمل ہو گئی ہے اور آپ دکان سے جا رہے ہیں۔ مناسب رخصتی کہیں۔",
-        "اسکول کی بات مکمل ہو گئی ہے اور آپ واپس جا رہے ہیں۔ مناسب رخصتی کہیں۔"
-      ])
     ]
   },
   "a0-letters-sounds-mission": {
@@ -13916,15 +14419,15 @@ const a0MissionPlansV4 = {
     documentTitles: ["پڑوسی کا تعارف کارڈ", "مرکز کا تعارف فارم", "اسکول کا تعارف کارڈ"],
     documentLabels: ["تعارف", "خاندان"],
     targets: [
+      a0MissionTargetV4("a0-family-status", "ik ben getrouwd", [
+        "نیا پڑوسی پوچھتا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے؛ بتائیں۔",
+        "کمیونٹی مرکز کے فارم پر ازدواجی حالت پوچھی گئی ہے۔ آپ شادی شدہ ہیں؛ بتائیں۔",
+        "اسکول کے تعارف کارڈ کے لیے بتانا ہے کہ آپ شادی شدہ ہیں۔"
+      ], [{ lessonId: "a0-people-nouns", dutch: "familie" }]),
       a0MissionTargetV4("a0-ik-jij-u", "u", [
         "نئے پڑوسی سے ادب کے ساتھ آپ کہنا ہے۔ درست ڈچ لفظ پہچانیں۔",
         "مرکز کے ملازم سے رسمی انداز میں آپ کہنا ہے۔ درست لفظ چنیں۔",
         "استقبالی استاد سے ادب کے ساتھ آپ کہنا ہے۔ درست لفظ چنیں۔"
-      ]),
-      a0MissionTargetV4("a0-people-nouns", "familie", [
-        "پڑوسی آپ کے ساتھ موجود لوگوں کے بارے میں پوچھتا ہے۔ خاندان کا لفظ چنیں۔",
-        "فارم پر خاندان کی تصویر کے لیے صحیح لفظ درکار ہے۔ درست لفظ چنیں۔",
-        "اسکول کے کارڈ پر خاندان کی تصویر ہے۔ صحیح ڈچ لفظ پہچانیں۔"
       ]),
       a0MissionTargetV4("a0-hij-zij-wij", "zij", [
         "ایک عورت کی طرف اشارہ کرکے وہ کہنا ہے۔ درست ڈچ ضمیر چنیں۔",
@@ -13988,6 +14491,16 @@ const a0MissionPlansV4 = {
     documentTitles: ["ملاقات کارڈ", "فون نوٹ", "استقبالی فارم"],
     documentLabels: ["اہم نمبر", "وقت یا رابطہ"],
     targets: [
+      a0MissionTargetV4("a0-months-dates", "op drie maart", [
+        "ملاقات کارڈ پر تاریخ 3 مارچ لکھی ہے۔ ملاقات کی تاریخ بتائیں۔",
+        "فون پر ملاقات تین مارچ کو منتقل ہو گئی۔ نئی تاریخ ڈچ میں دہرائیں۔",
+        "استقبالی فارم کے لیے بتانا ہے کہ آپ تین مارچ کو آئیں گے۔"
+      ], [{ lessonId: "a0-date-appointment", dutch: "ik heb een afspraak" }]),
+      a0MissionTargetV4("a0-telling-time", "half acht", [
+        "ملاقات کارڈ پر وقت 7:30 لکھا ہے۔ یہ وقت ڈچ میں بتائیں۔",
+        "فون پر ملاقات کا نیا وقت 7:30 طے ہوا۔ یہ وقت ڈچ میں دہرائیں۔",
+        "استقبالی کاؤنٹر پر بتانا ہے کہ آپ 7:30 پر آئیں گے۔ وقت ڈچ میں کہیں۔"
+      ], [{ lessonId: "a0-time-days", dutch: "om acht uur" }]),
       a0MissionTargetV4("a0-numbers-0-10", "vier euro", [
         "ملاقات کے سفر کا ٹکٹ چار یورو ہے۔ رقم پہچانیں۔",
         "فون پر بتائی گئی فیس چار یورو ہے۔ درست رقم چنیں۔",
@@ -13997,11 +14510,6 @@ const a0MissionPlansV4 = {
         "ملاقات کے کارڈ پر گھر نمبر چودہ درج کرنا ہے۔ مکمل بات کہیں۔",
         "فون پر اپنا گھر نمبر چودہ بتانا ہے۔ مکمل بات کہیں۔",
         "استقبالی فارم میں گھر نمبر چودہ بتایا گیا ہے۔ اسے پہچانیں۔"
-      ]),
-      a0MissionTargetV4("a0-time-days", "om acht uur", [
-        "ملاقات آٹھ بجے ہے۔ پورا وقت ڈچ میں کہیں۔",
-        "فون پر نیا وقت آٹھ بجے بتایا گیا ہے۔ اسے پہچانیں۔",
-        "کاؤنٹر پر آٹھ بجے پہنچنے کی بات کرنی ہے۔ پورا وقت کہیں۔"
       ]),
       a0MissionTargetV4("a0-spelling-personal-details", "hoe spelt u dat?", [
         "نام سن لیا مگر حروف معلوم نہیں۔ ادب سے ہجے پوچھیں۔",
@@ -14013,11 +14521,6 @@ const a0MissionPlansV4 = {
         "فون پر رابطے کے لیے اپنا نمبر صفر چھ سے شروع بتائیں۔",
         "کاؤنٹر پر اپنا نمبر صفر چھ سے شروع بتائیں۔"
       ]),
-      a0MissionTargetV4("a0-date-appointment", "ik heb een afspraak", [
-        "استقبال پر بتانا ہے کہ آپ کی ملاقات ہے۔ مکمل جملہ کہیں۔",
-        "فون اٹھانے والے کو بتائیں کہ آپ کی ملاقات ہے۔",
-        "کاؤنٹر پر پہنچ کر اپنی ملاقات کی وجہ واضح کریں۔"
-      ])
     ]
   },
   "a0-mission-home-start": {
@@ -14075,6 +14578,11 @@ const a0MissionPlansV4 = {
         "کیفے کے کاؤنٹر پر پانی مانگیں۔",
         "سپر مارکیٹ کے کاؤنٹر پر پانی کی درخواست کریں۔"
       ]),
+      a0MissionTargetV4("a0-colours-clothes", "heeft u dit in het zwart?", [
+        "دکان میں قمیص پسند ہے مگر آپ کو کالے رنگ میں چاہیے۔ ملازم سے پوچھیں۔",
+        "کیفے کے ساتھ والی دکان میں ٹوپی دوسرے رنگ میں چاہیے۔ کالے رنگ کا پوچھیں۔",
+        "سپر مارکیٹ میں تھیلا پسند ہے؛ پوچھیں کہ کیا یہ کالے رنگ میں بھی ہے۔"
+      ]),
       a0MissionTargetV4("a0-shopping-payment", "hoeveel kost dit", [
         "ایک چیز کی قیمت معلوم نہیں۔ قیمت کا سوال پوچھیں۔",
         "کاؤنٹر پر آرڈر کی قیمت پوچھیں۔",
@@ -14096,6 +14604,16 @@ const a0MissionPlansV4 = {
     documentTitles: ["سفر اور راستے کا نوٹ", "بس اور صحت کا پیغام", "فوری مدد کا کارڈ"],
     documentLabels: ["راستہ یا سفر", "صحت یا مدد"],
     targets: [
+      a0MissionTargetV4("a0-emergency-police", "er is een ongeluk", [
+        "اسٹیشن کے باہر سائیکل اور گاڑی ٹکرا گئی ہیں۔ 112 کو اطلاع دیں۔",
+        "بس کے سامنے حادثہ ہو گیا ہے۔ ڈرائیور کے ساتھ 112 کو اطلاع دیں۔",
+        "رات کو گلی میں حادثہ ہوا ہے۔ 112 پر سب سے پہلی بات کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-body-health", "mijn rug doet pijn", [
+        "اسٹیشن کے بعد فارمیسی میں بتانا ہے کہ آپ کی کمر میں درد ہے۔",
+        "بس کے لمبے سفر کے بعد کمر میں درد ہے۔ ڈاکٹر کو بتائیں۔",
+        "رات کو فوری مدد کے فون پر بتانا ہے کہ کمر میں سخت درد ہے۔"
+      ]),
       a0MissionTargetV4("a0-transport-directions", "waar is het station", [
         "سفر شروع کرنے کے لیے اسٹیشن کا راستہ پوچھیں۔",
         "بس سے اترنے کے بعد اسٹیشن معلوم کرنا ہے۔ درست سوال کہیں۔",
@@ -14106,20 +14624,10 @@ const a0MissionPlansV4 = {
         "بس میں سفر کے لیے ٹکٹ کی درخواست کریں۔",
         "رات کی گاڑی کے لیے ٹکٹ مانگیں۔"
       ]),
-      a0MissionTargetV4("a0-transport-directions", "ga rechtdoor", [
-        "راستہ بتاتے ہوئے سیدھا جانے کی ہدایت دیں۔",
-        "مسافر کو بس اسٹاپ تک سیدھا جانے کو کہیں۔",
-        "مددگار آپ کو سیدھا جانے کی بات بتاتا ہے۔ اسے پہچانیں۔"
-      ]),
       a0MissionTargetV4("a0-health-emergency", "ik ben ziek", [
         "دواخانے پہنچ کر بتائیں کہ آپ بیمار ہیں۔",
         "بس میں طبیعت خراب ہے۔ مددگار کو بتائیں کہ آپ بیمار ہیں۔",
         "رات کو فون پر بتائیں کہ آپ بیمار ہیں۔"
-      ]),
-      a0MissionTargetV4("a0-health-emergency", "waar is de apotheek", [
-        "اسٹیشن کے قریب دواخانے کی جگہ پوچھیں۔",
-        "بس ڈرائیور سے دواخانے کی جگہ پوچھیں۔",
-        "رات کو کھلے دواخانے کا راستہ پوچھیں۔"
       ]),
       a0MissionTargetV4("a0-health-emergency", "bel 112", [
         "فوری خطرہ ہے اور کسی کو ہنگامی نمبر ملانے کو کہنا ہے۔",
@@ -15381,12 +15889,18 @@ function distractorKeyV4(value) {
 }
 
 function distractorSeedV4(value) {
-  let hash = 2166136261;
   const text = String(value || "");
-  for (let index = 0; index < text.length; index += 1) {
-    hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
+  const cache = distractorSeedV4.cache || (distractorSeedV4.cache = new Map());
+  let hash = cache.get(text);
+  if (hash === undefined) {
+    hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
+    }
+    hash >>>= 0;
+    cache.set(text, hash);
   }
-  return hash >>> 0;
+  return hash;
 }
 
 function distractorSetKeyV4(options) {
@@ -15719,42 +16233,53 @@ function applyDistractorEngineV4() {
       .filter((concept) => concept.introducedInLessonId === lesson.id || (concept.lessonIds || []).includes(lesson.id))
       .map((concept) => concept.id));
     const lessonRunConceptIds = [];
+    const lessonUnit = unitByLesson.get(lesson.id);
+    const lessonDomain = lessonDomainV4(lesson.id);
+    // Score parts that do not depend on the run or the question.
+    const baseScore = (candidate, fact) => (sameLessonIds.has(candidate.id) ? 1.5 : 0)
+      + (fact.unitId && fact.unitId === lessonUnit ? 1 : 0)
+      + (fact.domain === lessonDomain ? 1 : 0)
+      + Math.max(0, 1 - (position - fact.position) / 20)
+      + (phonics && isPhonicsLesson(candidate.introducedInLessonId) ? 2 : 0);
+    // Earlier concepts are scored and sorted once per lesson rather than once
+    // per run: this loop used to be the slowest part of building the course.
+    const earlierIds = new Set(earlierConcepts.map((concept) => concept.id));
+    const earlierEntries = [];
+    for (const candidate of earlierConcepts) {
+      const fact = facts.get(candidate.id);
+      if (fact) earlierEntries.push({ candidate, fact, base: baseScore(candidate, fact) });
+    }
+    const earlierByBase = [...earlierEntries].sort((left, right) => right.base - left.base);
 
     for (const sequence of sequences) {
       lessonRunConceptIds.push(...sequence.runConceptIds);
-      const allowed = new Map(earlierConcepts.map((concept) => [concept.id, concept]));
       const lessonTokens = new Set();
+      const newLessonConcepts = new Map();
       for (const conceptId of lessonRunConceptIds) {
         const concept = conceptByIdV4.get(conceptId);
         if (!concept) continue;
-        allowed.set(concept.id, concept);
+        if (!earlierIds.has(concept.id) && !newLessonConcepts.has(concept.id)) newLessonConcepts.set(concept.id, concept);
         for (const token of facts.get(concept.id)?.ownTokens || distractorLatinTokensV4(concept.dutch)) lessonTokens.add(token);
       }
       const allowedTokens = { has: (token) => earlierTokens.has(token) || lessonTokens.has(token) };
       const runConceptIds = new Set(sequence.runConceptIds);
       const lessonConceptIds = new Set(lessonRunConceptIds);
-      const lessonUnit = unitByLesson.get(lesson.id);
-      const lessonDomain = lessonDomainV4(lesson.id);
       const runContentTokens = new Set(sequence.runConceptIds.flatMap((conceptId) => facts.get(conceptId)?.contentTokens || []));
       // Plausible wrong options: this lesson and anything sharing a content
       // word with this run, plus the 24 closest others by unit, topic, and recency.
-      // Score parts that do not depend on the question.
-      const baseScore = (candidate, fact) => (sameLessonIds.has(candidate.id) ? 1.5 : 0)
-        + (fact.unitId && fact.unitId === lessonUnit ? 1 : 0)
-        + (fact.domain === lessonDomain ? 1 : 0)
-        + Math.max(0, 1 - (position - fact.position) / 20)
-        + (phonics && isPhonicsLesson(candidate.introducedInLessonId) ? 2 : 0);
-      const close = [];
-      const others = [];
-      for (const candidate of allowed.values()) {
+      const isRelated = (entry) => lessonConceptIds.has(entry.candidate.id)
+        || entry.fact.contentTokens.some((token) => runContentTokens.has(token));
+      const close = earlierEntries.filter(isRelated);
+      for (const candidate of newLessonConcepts.values()) {
         const fact = facts.get(candidate.id);
-        if (!fact) continue;
-        const related = lessonConceptIds.has(candidate.id)
-          || fact.contentTokens.some((token) => runContentTokens.has(token));
-        (related ? close : others).push({ candidate, fact, base: baseScore(candidate, fact) });
+        if (fact) close.push({ candidate, fact, base: baseScore(candidate, fact) });
       }
-      others.sort((left, right) => right.base - left.base);
-      const pool = [...close, ...others.slice(0, 24)].map((entry) => ({
+      const others = [];
+      for (const entry of earlierByBase) {
+        if (others.length === 24) break;
+        if (!isRelated(entry)) others.push(entry);
+      }
+      const pool = [...close, ...others].map((entry) => ({
         ...entry,
         inRun: runConceptIds.has(entry.candidate.id),
         usable: {
