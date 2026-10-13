@@ -13226,6 +13226,351 @@ function applyTypedGapFeedbackV4(question, concept, urdu) {
 // order). A heard reply may use them, like the distractor engine's options.
 const taughtTokensV4 = new Set();
 
+// Stage 2.1: hear a Dutch question, choose the Dutch reply. Each entry is
+// [heard Dutch, its Urdu meaning, the reply (a phrase of the lesson), two
+// wrong replies]. Wrong replies answer a different kind of question (a time
+// instead of a place), so only one option fits. Yes/no questions are avoided
+// because "ja" and "nee" would both fit. A cue is used only once every word
+// in it has been taught.
+const listenReplyCuesV4 = {
+  "a0-greetings-courtesy": [
+    ["alstublieft.", "یہ لیجیے۔", "dank u wel", "goedemiddag", "tot ziens"],
+    ["hoe gaat het?", "آپ کیسے ہیں؟", "goed, dank u", "sorry", "graag"]
+  ],
+  "a0-understanding-help": [
+    ["begrijpt u mij?", "کیا آپ مجھے سمجھتے ہیں؟", "ja, ik begrijp het", "dank u wel", "tot ziens"]
+  ],
+  "a0-dit-dat-questions": [
+    ["wat is dit?", "یہ کیا ہے؟", "dit is een boek", "mijn naam is Ali", "hij is een man"],
+    ["waar is jouw huis?", "تمہارا گھر کہاں ہے؟", "dat is mijn huis", "dit is een boek", "ik heb een boek"]
+  ],
+  "a0-telling-time": [
+    ["hoe laat is het?", "کتنے بجے ہیں؟", "half acht", "kwart", "morgen"],
+    ["hoe laat is het?", "کتنے بجے ہیں؟", "het is drie uur", "vandaag", "maandag"]
+  ],
+  "a0-address-phone": [
+    ["wat is uw adres?", "آپ کا پتہ کیا ہے؟", "ik woon aan de Marktstraat 12", "mijn naam is Sara", "ik kom uit Pakistan"],
+    ["wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟", "mijn nummer is nul zes", "ik woon aan de Marktstraat 12", "mijn naam is Sara"]
+  ],
+  "a0-date-appointment": [
+    ["wanneer is de afspraak?", "ملاقات کب ہے؟", "morgen om tien uur", "ik ben te laat", "mijn naam is Sara"]
+  ],
+  "a0-months-dates": [
+    ["welke datum is het vandaag?", "آج کون سی تاریخ ہے؟", "de eerste", "om tien uur", "op tijd"]
+  ],
+  "a0-place-1": [
+    ["waar is het boek?", "کتاب کہاں ہے؟", "op de tafel", "om tien uur", "morgen"]
+  ],
+  "a0-place-2": [
+    ["waar is de deur?", "دروازہ کہاں ہے؟", "achter het huis", "om acht uur", "vandaag"]
+  ],
+  "a0-naar-met": [
+    ["met wie bent u hier?", "آپ یہاں کس کے ساتھ ہیں؟", "ik ben met mijn kind", "naar huis", "om acht uur"]
+  ],
+  "a0-home-needs": [
+    ["is de kamer warm?", "کیا کمرہ گرم ہے؟", "de kamer is koud", "de deur is open", "ik heb een sleutel nodig"]
+  ],
+  "a0-daily-actions": [
+    ["wat drink jij?", "تم کیا پیتے ہو؟", "ik drink water", "ik eet brood", "ik wacht hier"],
+    ["wat eet jij?", "تم کیا کھاتے ہو؟", "ik eet brood", "ik drink water", "ik ga naar huis"]
+  ],
+  "a0-food-drink": [
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "ik wil graag water", "ik heb honger", "ik eet brood"],
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "ik wil graag koffie", "ik heb honger", "ik wacht hier"]
+  ],
+  "a0-colours-clothes": [
+    ["welke kleur is de jas?", "جیکٹ کس رنگ کی ہے؟", "de jas is blauw", "de kamer is koud", "op de tafel"]
+  ],
+  "a0-shopping-payment": [
+    ["hoe wil je betalen?", "تم کیسے ادائیگی کرنا چاہتے ہو؟", "ik betaal met pin", "mag ik de bon", "ik wil dit"]
+  ],
+  "a0-transport-directions": [
+    ["waar is het station?", "اسٹیشن کہاں ہے؟", "ga rechtdoor", "ik wil een kaartje", "om acht uur"]
+  ],
+  "a0-health-emergency": [
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik heb pijn", "om acht uur", "ga rechtdoor"],
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik ben ziek", "waar is de apotheek", "ik wil een kaartje"]
+  ],
+  "a0-body-health": [
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik heb keelpijn", "ga rechtdoor", "om half negen"]
+  ],
+  "a0-emergency-police": [
+    ["112, wat is er?", "112، کیا ہوا ہے؟", "er is een ongeluk", "ik wil een kaartje", "ga rechtdoor"]
+  ],
+  "a0-child-school": [
+    ["hoe is het met uw kind?", "آپ کا بچہ کیسا ہے؟", "mijn kind is ziek", "om drie uur", "op de tafel"],
+    ["komt uw kind vandaag?", "کیا آپ کا بچہ آج آئے گا؟", "mijn kind komt vandaag niet", "om acht uur", "ga rechtdoor"]
+  ],
+  "a0-work-basics": [
+    ["komt u vandaag?", "کیا آپ آج آئیں گے؟", "ik kan vandaag niet komen", "ga rechtdoor", "op de tafel"],
+    ["wanneer begin je?", "تم کب شروع کرتے ہو؟", "ik begin om negen uur", "ik ben te laat", "ik ben vandaag ziek"]
+  ],
+  "a0-weather-clothing-safety": [
+    ["mag ik hier staan?", "کیا میں یہاں کھڑا ہو سکتا ہوں؟", "nee, het is verboden", "het regent", "ik heb een jas nodig"]
+  ],
+  "a1-greetings-personal-info": [
+    ["wat is uw naam?", "آپ کا نام کیا ہے؟", "mijn naam is Zarar", "ik kom uit Pakistan", "ik woon in Nederland"]
+  ],
+  "a1-details-forms": [
+    ["wat is uw voornaam?", "آپ کا پہلا نام کیا ہے؟", "mijn voornaam is Sara", "mijn achternaam is Khan", "ik woon aan de Marktstraat 12"],
+    ["wat is uw achternaam?", "آپ کا خاندانی نام کیا ہے؟", "mijn achternaam is Khan", "mijn voornaam is Sara", "mijn nummer is nul zes"],
+    ["wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟", "mijn geboortedatum is 12 mei", "ik woon aan de Marktstraat 12", "mijn naam is Sara"],
+    ["wat is uw postcode?", "آپ کا پوسٹ کوڈ کیا ہے؟", "mijn postcode is 1234 AB", "mijn woonplaats is Utrecht", "mijn voornaam is Sara"],
+    ["wat is uw woonplaats?", "آپ کس شہر میں رہتے ہیں؟", "mijn woonplaats is Utrecht", "mijn postcode is 1234 AB", "mijn achternaam is Khan"],
+    ["wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟", "mijn telefoonnummer is nul zes", "mijn postcode is 1234 AB", "ik heb geen e-mailadres"],
+    ["wat is uw e-mailadres?", "آپ کا ای میل پتہ کیا ہے؟", "ik heb geen e-mailadres", "mijn telefoonnummer is nul zes", "mijn voornaam is Sara"]
+  ],
+  "a1-people-family-articles": [
+    ["wie is dat?", "وہ کون ہے؟", "dit is mijn vader", "ik heb een boek", "op de tafel"]
+  ],
+  "a1-hebben-family": [
+    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb twee kinderen", "mijn naam is Sara", "ik woon in Nederland"],
+    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb geen kinderen", "dit is mijn vader", "ik woon in Nederland"]
+  ],
+  "a1-family-routine-extra": [
+    ["waar woont uw familie?", "آپ کا خاندان کہاں رہتا ہے؟", "mijn familie woont in Nederland", "mijn dochter is vijf jaar", "mijn zoon gaat naar school"]
+  ],
+  "a1-child-care": [
+    ["wanneer haal je je kind op?", "تم اپنے بچے کو کب لینے آتے ہو؟", "ik haal mijn kind om vijf uur op", "ik breng mijn kind om acht uur naar de kinderopvang", "de kinderopvang"],
+    ["wat heeft uw kind nodig?", "آپ کے بچے کو کیا چاہیے؟", "mijn kind heeft water nodig", "om vijf uur", "mijn kind is moe"],
+    ["hoe is het met uw kind?", "آپ کا بچہ کیسا ہے؟", "mijn kind is moe", "om vijf uur", "de kinderopvang"]
+  ],
+  "a1-present-time": [
+    ["wat doet u nu?", "آپ ابھی کیا کر رہے ہیں؟", "ik leer nu Nederlands", "ik woon in Nederland", "om acht uur"]
+  ],
+  "a1-daily-routine": [
+    ["hoe laat sta je op?", "تم کتنے بجے اٹھتے ہو؟", "ik sta om zeven uur op", "ik ga met de bus naar mijn werk", "ik ontbijt om half acht"],
+    ["hoe gaat u naar uw werk?", "آپ کام پر کیسے جاتے ہیں؟", "ik ga met de bus naar mijn werk", "ik begin om negen uur", "ik ontbijt om half acht"],
+    ["hoe laat stop je?", "تم کتنے بجے کام ختم کرتے ہو؟", "ik stop om vijf uur", "daarna ga ik naar huis", "eerst breng ik mijn kind naar school"]
+  ],
+  "a1-calendar-time": [
+    ["wanneer komt u?", "آپ کب آئیں گے؟", "ik kom op maandag", "mijn naam is Sara", "ga rechtdoor"],
+    ["waar bent u in het weekend?", "ہفتہ وار چھٹی میں آپ کہاں ہوتے ہیں؟", "in het weekend ben ik thuis", "ik kom op maandag", "ik werk op vrijdag"],
+    ["heeft u tijd?", "کیا آپ کے پاس وقت ہے؟", "ik heb tijd in de middag", "ik ben op tijd", "sorry ik ben te laat"]
+  ],
+  "a1-weather-clothes": [
+    ["regent het?", "کیا بارش ہو رہی ہے؟", "het regent vandaag", "ik heb een jas nodig", "ik ga niet naar buiten"]
+  ],
+  "a1-polite-chunks": [
+    ["wil je koffie?", "کیا تم کافی لو گے؟", "nee dank u", "dank u wel voor uw hulp", "mag ik iets vragen?"]
+  ],
+  "a1-plans-invitations": [
+    ["wanneer heb je tijd?", "تمہارے پاس کب وقت ہے؟", "zullen we om drie uur afspreken?", "wil je koffie drinken?", "tot ziens"],
+    ["heb je morgen tijd?", "کیا کل تمہارے پاس وقت ہے؟", "sorry ik kan niet", "tot morgen", "waar spreken we af?"]
+  ],
+  "a1-phone-calls": [
+    ["met wie spreek ik?", "میں کس سے بات کر رہا ہوں؟", "met Sara", "telefoon", "ik bel u vanavond terug"],
+    ["hallo, is Ali daar?", "ہیلو، کیا Ali وہاں ہے؟", "u heeft het verkeerde nummer", "kunt u het nummer herhalen?", "spreek een bericht in"]
+  ],
+  "a1-appointments": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik wil een afspraak maken", "om tien uur", "ik ben op tijd"],
+    ["kunt u vandaag om drie uur komen?", "کیا آپ آج تین بجے آ سکتے ہیں؟", "kan het morgen in de ochtend?", "ik wil een afspraak maken", "hoe laat is de afspraak?"],
+    ["kunt u maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟", "ik kan maandag niet komen", "hoe laat is de afspraak?", "ik wil een afspraak maken"]
+  ],
+  "a1-house-food-plurals": [
+    ["waar is het boek?", "کتاب کہاں ہے؟", "het boek is in de kamer", "ik heb twee kinderen", "om acht uur"]
+  ],
+  "a1-neighbour-talk": [
+    ["wat is er?", "کیا بات ہے؟", "ik heb last van lawaai", "het boek is in de kamer", "om acht uur"]
+  ],
+  "a1-home-repairs": [
+    ["wat is er kapot?", "کیا خراب ہے؟", "de verwarming doet het niet", "warm water", "monteur"],
+    ["wat is er kapot?", "کیا خراب ہے؟", "de lamp is kapot", "het probleem is opgelost", "wanneer komt de monteur?"]
+  ],
+  "a1-cleaning-house": [
+    ["hoe is de keuken?", "کچن کیسا ہے؟", "de keuken is schoon", "de badkamer is vies", "ik doe vandaag de was"]
+  ],
+  "a1-house-search-extra": [
+    ["wat zoek je?", "تم کیا تلاش کر رہے ہو؟", "ik zoek een woning", "ik woon in Nederland", "om acht uur"]
+  ],
+  "a1-supermarket": [
+    ["wat zoek je?", "تم کیا تلاش کر رہے ہو؟", "ik zoek melk", "ik heb honger", "om acht uur"],
+    ["waar is de kassa?", "کاؤنٹر کہاں ہے؟", "de kassa is daar", "mag ik een tas?", "hoeveel kost dit brood?"]
+  ],
+  "a1-cafe-ordering": [
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "voor mij een thee", "mag ik de kaart alstublieft?", "menu"],
+    ["wat wilt u eten?", "آپ کیا کھانا چاہتے ہیں؟", "ik neem de soep", "de rekening alstublieft", "voor mij een thee"]
+  ],
+  "a1-cafe-food-needs": [
+    ["met vlees?", "گوشت کے ساتھ؟", "zonder vlees alstublieft", "bestelling", "de rekening alstublieft"],
+    ["is dit uw bestelling?", "کیا یہ آپ کا آرڈر ہے؟", "dit is niet mijn bestelling", "zonder vlees alstublieft", "de rekening alstublieft"]
+  ],
+  "a1-shopping-clothes": [
+    ["is de jas goed?", "کیا جیکٹ ٹھیک ہے؟", "deze jas is te groot", "hoeveel kost deze jas?", "maat"],
+    ["wilt u deze jas?", "کیا آپ یہ جیکٹ لیں گے؟", "ik neem deze", "mijn naam is Sara", "waar is de paskamer?"]
+  ],
+  "a1-shopping-returns": [
+    ["kan ik u helpen?", "کیا میں آپ کی مدد کر سکتا ہوں؟", "ik wil dit terugbrengen", "de kassa is daar", "om acht uur"],
+    ["heeft u de bon?", "کیا آپ کے پاس رسید ہے؟", "hier is de bon", "ik wil dit terugbrengen", "ruilen"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "de jas is kapot", "kan ik mijn geld terugkrijgen?", "heeft u een grotere maat?"]
+  ],
+  "a1-money-bank": [
+    ["hoe wil je betalen?", "تم کیسے ادائیگی کرنا چاہتے ہو؟", "ik betaal contant", "mag ik de bon", "de kassa is daar"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "het bedrag klopt niet", "ik betaal contant", "mag ik de bon"]
+  ],
+  "a1-public-transport": [
+    ["wat wilt u?", "آپ کو کیا چاہیے؟", "ik wil een kaartje naar Utrecht", "mijn pinpas werkt niet", "het bedrag klopt niet"],
+    ["is de trein op tijd?", "کیا ٹرین وقت پر ہے؟", "de trein heeft vertraging", "waar moet ik overstappen?", "de volgende halte is centrum"]
+  ],
+  "a1-directions-town": [
+    ["waar is de apotheek?", "فارمیسی کہاں ہے؟", "het is dichtbij", "hoe kom ik bij de apotheek?", "kaart"],
+    ["hoe kom ik bij het plein?", "میں چوک تک کیسے جاؤں؟", "sla rechts af", "de trein heeft vertraging", "ik betaal contant"]
+  ],
+  "a1-post-parcel-extra": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik wil mijn pakket ophalen", "ik betaal contant", "de kassa is daar"],
+    ["waar is mijn pakket?", "میرا پارسل کہاں ہے؟", "het pakket is nog niet gekomen", "ik moet hier tekenen", "heeft u een identiteitsbewijs?"]
+  ],
+  "a1-library-community": [
+    ["wat wilt u leren?", "آپ کیا سیکھنا چاہتے ہیں؟", "ik wil Nederlands leren", "ik wil een kaartje naar Utrecht", "ik zoek een woning"],
+    ["is de bibliotheek vandaag open?", "کیا لائبریری آج کھلی ہے؟", "vandaag is het gesloten", "hoe laat is het open?", "ik wil lid worden"]
+  ],
+  "a1-safety-rules": [
+    ["mag ik hier staan?", "کیا میں یہاں کھڑا ہو سکتا ہوں؟", "het is hier verboden", "de ingang is daar", "ik heb hulp nodig"],
+    ["waar is de ingang?", "داخلہ کہاں ہے؟", "de ingang is daar", "u moet hier wachten", "het is hier verboden"]
+  ],
+  "a1-health-appointments": [
+    ["huisarts, hoe kan ik u helpen?", "فیملی ڈاکٹر کا دفتر، میں آپ کی کیا مدد کر سکتی ہوں؟", "ik wil een afspraak bij de huisarts", "assistente", "ik ben op tijd"],
+    ["kunt u morgen komen?", "کیا آپ کل آ سکتے ہیں؟", "ik kan morgen niet komen", "is het dringend?", "het is dichtbij"]
+  ],
+  "a1-doctor-symptoms": [
+    ["wat is er?", "کیا بات ہے؟", "ik heb pijn in mijn buik", "ik heb tijd in de middag", "het is dichtbij"],
+    ["sinds wanneer heeft u koorts?", "آپ کو کب سے بخار ہے؟", "ik heb sinds gisteren koorts", "ik heb pijn in mijn buik", "morgen om tien uur"]
+  ],
+  "a1-pharmacy-medicine": [
+    ["hoe vaak moet ik dit nemen?", "مجھے یہ کتنی بار لینا ہے؟", "twee keer per dag", "recept", "heeft u iets tegen de pijn?"]
+  ],
+  "a1-short-messages": [
+    ["heeft u mijn bericht gelezen?", "کیا آپ نے میرا پیغام پڑھ لیا؟", "ik heb uw bericht gelezen", "ik heb morgen een afspraak", "app"]
+  ],
+  "a1-work-school-messages": [
+    ["waarom kunt u niet komen?", "آپ کیوں نہیں آ سکتے؟", "ik ben ziek", "ik kom morgen weer", "goedemorgen, u spreekt met Ali"],
+    ["waarom bent u te laat?", "آپ کو دیر کیوں ہوئی؟", "de bus heeft vertraging", "dank u voor uw begrip", "kunt u mij terugbellen?"]
+  ],
+  "a1-school-contact": [
+    ["waarom is uw kind thuis?", "آپ کا بچہ گھر پر کیوں ہے؟", "mijn kind heeft koorts", "ik wil de docent spreken", "hoe laat begint de les?"],
+    ["waar staat het rooster?", "اوقات کہاں لکھے ہیں؟", "het rooster staat in de app", "morgen is er geen school", "waar staat het huiswerk?"]
+  ],
+  "a1-work-schedule": [
+    ["wat is er veranderd?", "کیا بدلا ہے؟", "mijn dienst is veranderd", "het bedrag klopt niet", "de lamp is kapot"],
+    ["werk je morgen?", "کیا تم کل کام کرو گے؟", "ik werk morgen niet", "ik heb om twaalf uur pauze", "baas"],
+    ["waarom kunt u niet werken?", "آپ کام کیوں نہیں کر سکتے؟", "ik ben ziek en kan niet werken", "staat het rooster in de app?", "kan ik met mijn baas spreken?"]
+  ],
+  "a2-separable-verbs-routine": [
+    ["moet ik iets invullen?", "کیا مجھے کچھ بھرنا ہے؟", "vul het formulier in", "ik betaal contant", "het is dichtbij"],
+    ["waar moet ik tekenen?", "مجھے کہاں دستخط کرنے ہیں؟", "onderteken hier", "neem uw identiteitsbewijs mee", "vul het formulier in"],
+    ["wat moet ik meenemen?", "مجھے کیا ساتھ لانا ہے؟", "neem uw identiteitsbewijs mee", "onderteken hier", "het formulier invullen"]
+  ],
+  "a2-gemeente-official": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik heb een afspraak bij de gemeente", "hier is mijn paspoort", "het loket"],
+    ["heeft u uw paspoort bij u?", "کیا آپ کا پاسپورٹ آپ کے پاس ہے؟", "hier is mijn paspoort", "ik heb een afspraak bij de gemeente", "het BSN"]
+  ],
+  "a2-gemeente-documents": [
+    ["heeft u uw BSN?", "کیا آپ کے پاس آپ کا BSN ہے؟", "ik heb mijn BSN niet bij me", "waar moet ik tekenen?", "is een kopie voldoende?"],
+    ["zijn uw gegevens correct?", "کیا آپ کی معلومات درست ہیں؟", "mijn gegevens zijn niet correct", "hier is mijn paspoort", "waar is loket drie?"],
+    ["is het formulier compleet?", "کیا فارم مکمل ہے؟", "het formulier is nog niet compleet", "waar is loket drie?", "kunt u dit uitleggen?"],
+    ["wanneer krijg ik antwoord?", "مجھے جواب کب ملے گا؟", "u ontvangt binnen twee weken een brief", "kan ik de aanvraag online doen?", "ik wil deze fout laten herstellen"]
+  ],
+  "a2-work-school": [
+    ["heeft u werk?", "کیا آپ کے پاس کام ہے؟", "ik zoek een baan", "dit is mijn contract", "hoeveel uur staat in mijn contract?"],
+    ["wanneer begint u?", "آپ کب شروع کریں گے؟", "ik begin maandag met mijn baan", "dit is mijn contract", "ik zoek een baan"],
+    ["wat is er veranderd?", "کیا بدلا ہے؟", "mijn rooster is veranderd", "mijn collega helpt mij", "dit is mijn rooster"]
+  ],
+  "a2-future-modal-verbs": [
+    ["wanneer kunt u werken?", "آپ کب کام کر سکتے ہیں؟", "ik kan op dinsdag werken", "ik moet veiligheidsschoenen dragen", "mag ik eerder beginnen?"],
+    ["wat moet u dragen?", "آپ کو کیا پہننا ہے؟", "ik moet veiligheidsschoenen dragen", "ik kan op dinsdag werken", "ik ga maandag beginnen"],
+    ["kunt u vrijdag werken?", "کیا آپ جمعہ کو کام کر سکتے ہیں؟", "ik kan op vrijdag niet werken", "wanneer ga ik beginnen?", "ik moet de manager bellen"]
+  ],
+  "a2-work-conditions": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "mijn salaris klopt niet", "kan ik een vrije dag aanvragen", "dit is mijn contract"],
+    ["wilt u dit per e-mail bevestigen?", "کیا آپ اس کی ای میل سے تصدیق کریں گے؟", "ik stuur de bevestiging per e-mail", "wie neemt mijn dienst over", "kunnen we hierover praten"]
+  ],
+  "a2-school-absence-notice": [
+    ["waarom was hij thuis?", "وہ گھر پر کیوں تھا؟", "hij had koorts en moest thuisblijven", "ik meld mijn kind af", "mijn kind komt vandaag niet naar school"],
+    ["hoe laat begint de les?", "سبق کتنے بجے شروع ہوتا ہے؟", "de les begint om tien uur", "moet ik de docent bellen?", "ik meld mijn kind af"]
+  ],
+  "a2-parent-school": [
+    ["waar heeft uw kind moeite mee?", "آپ کے بچے کو کس چیز میں مشکل ہے؟", "mijn kind heeft moeite met lezen", "ik wil graag met de docent praten", "hoe gaat het met mijn kind in de klas?"],
+    ["kunt u dinsdag komen?", "کیا آپ منگل کو آ سکتے ہیں؟", "is een ander tijdstip mogelijk", "we maken samen een plan", "mijn kind voelt zich niet veilig"]
+  ],
+  "a2-perfect-tense": [
+    ["heeft u de dokter gebeld?", "کیا آپ نے ڈاکٹر کو فون کیا؟", "ik heb de dokter gebeld", "gisteren ben ik gevallen", "de pijn begon gisteravond"],
+    ["wanneer begon de pijn?", "درد کب شروع ہوا؟", "de pijn begon gisteravond", "ik heb de dokter gebeld", "ik heb vannacht slecht geslapen"],
+    ["heeft u al gegeten?", "کیا آپ نے کھانا کھا لیا؟", "ik heb nog niet gegeten", "ik ben thuis gebleven", "ik heb al pijnstillers genomen"],
+    ["wanneer is de koorts begonnen?", "بخار کب شروع ہوا؟", "de koorts is vanmorgen begonnen", "ik ben thuis gebleven", "ik heb nog niet gegeten"]
+  ],
+  "a2-strong-combined": [
+    ["waarom bent u naar de huisarts gegaan?", "آپ ڈاکٹر کے پاس کیوں گئے؟", "omdat ik pijn had in mijn rug", "de dokter heeft gezegd", "dat ik rust moet nemen"],
+    ["wanneer moet u terugkomen?", "آپ کو دوبارہ کب آنا ہے؟", "ik moet volgende week terugkomen", "ik moet rust nemen", "als de pijn niet weg is"]
+  ],
+  "a2-doctor-advice": [
+    ["hoe lang heeft u al pijn?", "آپ کو کب سے درد ہے؟", "ik heb al drie dagen pijn", "het medicijn heeft niet geholpen", "de pijn wordt erger als ik loop"],
+    ["heeft het medicijn geholpen?", "کیا دوا سے فائدہ ہوا؟", "het medicijn heeft niet geholpen", "ik heb al drie dagen pijn", "ik ben allergisch voor penicilline"]
+  ],
+  "a2-health-housing": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "ik heb lekkage in mijn huis", "hier is mijn paspoort", "ik zoek een baan"],
+    ["sinds wanneer is de verwarming kapot?", "ہیٹنگ کب سے خراب ہے؟", "de verwarming is sinds gisteren kapot", "ik heb lekkage in mijn huis", "hier is mijn paspoort"],
+    ["waar is de lekkage?", "رساؤ کہاں ہے؟", "het water komt uit de keukenmuur", "wanneer komt de monteur?", "kunt u vandaag een monteur sturen?"]
+  ],
+  "a2-word-order-connectors": [
+    ["waarom bel je?", "تم فون کیوں کر رہے ہو؟", "ik bel omdat de verwarming kapot is", "als de monteur komt, ben ik thuis", "ik zoek een baan"],
+    ["waarom is de kamer nat?", "کمرہ گیلا کیوں ہے؟", "de kamer is nat omdat er een lekkage is", "ik bel omdat de verwarming kapot is", "als de monteur komt, ben ik thuis"],
+    ["wat wilt u?", "آپ کیا چاہتے ہیں؟", "ik wil dat de lekkage wordt gerepareerd", "omdat de muur nat is", "de vloer wordt nat als het regent"]
+  ],
+  "a2-landlord-repairs": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "er is een lekkage in de keuken", "wanneer wordt het gerepareerd", "ik zoek een baan"],
+    ["is de monteur gekomen?", "کیا مرمت کرنے والا آیا؟", "de monteur is niet gekomen", "wie betaalt de reparatie", "kunt u dit schriftelijk bevestigen"]
+  ],
+  "a2-shopping-services": [
+    ["wanneer heeft u deze jas gekocht?", "آپ نے یہ جیکٹ کب خریدی؟", "ik heb gisteren deze jas gekocht", "hij is kapot", "ik zoek een baan"],
+    ["wat is er met de jas?", "جیکٹ کو کیا ہوا؟", "hij is kapot", "ik heb gisteren deze jas gekocht", "hier is mijn paspoort"],
+    ["heeft u de bon?", "کیا آپ کے پاس رسید ہے؟", "ik heb de bon", "ik wil hem ruilen", "hij is kapot"],
+    ["wat wilt u?", "آپ کیا چاہتے ہیں؟", "ik wil hem ruilen", "ik heb de bon", "ik heb gisteren deze jas gekocht"]
+  ],
+  "a2-customer-complaints": [
+    ["wanneer heeft u dit gekocht?", "آپ نے یہ کب خریدا؟", "ik heb dit vorige week gekocht", "het product werkt niet goed", "valt dit onder de garantie"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "het product werkt niet goed", "ik heb dit vorige week gekocht", "ik wil het liever ruilen"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "een onderdeel ontbreekt", "wanneer krijg ik een oplossing", "ik wil graag met een leidinggevende spreken"]
+  ],
+  "a2-bills-banking": [
+    ["heeft u deze rekening al betaald?", "کیا آپ یہ بل ادا کر چکے ہیں؟", "ik heb deze rekening al betaald", "kan ik in termijnen betalen", "wanneer moet ik betalen"],
+    ["wat is er met uw pinpas?", "آپ کے کارڈ کو کیا ہوا؟", "ik ben mijn pinpas kwijt", "ik stuur een bewijs van betaling", "de automatische betaling is mislukt"]
+  ],
+  "a2-formal-digital-messages": [
+    ["kunt u op maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟", "ik kan op die dag niet komen", "met vriendelijke groet", "geachte meneer of mevrouw"],
+    ["waar is het formulier?", "فارم کہاں ہے؟", "het formulier staat in de bijlage", "ik heb het formulier ingevuld", "ik wil graag een nieuwe datum afspreken"],
+    ["heeft u al antwoord?", "کیا آپ کو جواب مل گیا؟", "ik heb nog geen antwoord ontvangen", "kunt u mijn bericht bevestigen", "met vriendelijke groet"]
+  ]
+};
+
+function listenReplySourcesV4(lesson, legacyQuestions) {
+  const cues = (listenReplyCuesV4[lesson.id] || []).map(([speak, speakUrdu, answer, ...wrong]) => ({
+    mode: "listen-reply",
+    speak,
+    speakUrdu,
+    options: [answer, ...wrong],
+    answer
+  }));
+  return [...cues, ...legacyQuestions.filter((question) => question.mode === "listen-reply")];
+}
+
+// A reply's feedback names the question that was heard.
+function applyListenReplyFeedbackV4(question, source, concept, urdu) {
+  if (!source.speakUrdu) return question;
+  const correct = `درست۔ سوال تھا “${source.speak}” (${source.speakUrdu}) اور جواب “${concept.dutch}” = “${urdu}”۔`;
+  const wrong = `سوال “${source.speak}” کا مطلب ہے: ${source.speakUrdu} اس کا جواب “${concept.dutch}” ہے: “${urdu}”۔`;
+  const byOption = Object.fromEntries(question.options
+    .filter((option) => option !== question.answer)
+    .map((option) => [option, `“${option}” اس سوال کا جواب نہیں۔ ${wrong}`]));
+  return Object.assign(question, {
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    optionExplanationsUrdu: byOption,
+    wrongExplanationsByOption: { ...byOption }
+  });
+}
+
 function latinTokensV4(value) {
   return String(value || "").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]*/g) || [];
 }
@@ -13402,6 +13747,7 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
 
   const selectedAuthoredIds = new Set();
   const usedListenRepliesV4 = new Set();
+  const listenReplySources = listenReplySourcesV4(lesson, legacyQuestions);
   const replyTokens = new Set(prerequisiteConceptIds.flatMap((conceptId) => {
     const concept = conceptByIdV4.get(conceptId);
     return latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`);
@@ -13816,9 +14162,8 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       const concept = conceptByIdV4.get(conceptId);
       latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`).forEach((token) => replyTokens.add(token));
     });
-    legacyQuestions
-      .filter((question) => question.mode === "listen-reply"
-        && !usedListenRepliesV4.has(question)
+    listenReplySources
+      .filter((question) => !usedListenRepliesV4.has(question)
         && runConceptByDutch.has(normalizedTextV4(question.answer))
         && [question.speak, ...(question.options || [])]
           .flatMap(latinTokensV4)
@@ -13827,7 +14172,9 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       .forEach((legacy, replyIndex) => {
         usedListenRepliesV4.add(legacy);
         const conceptId = runConceptByDutch.get(normalizedTextV4(legacy.answer));
-        use.push(addSyntheticExerciseV4({
+        const concept = conceptByIdV4.get(conceptId);
+        const answerKey = normalizedTextV4(concept.dutch);
+        use.push(applyListenReplyFeedbackV4(addSyntheticExerciseV4({
           lesson,
           run,
           question: {
@@ -13836,16 +14183,20 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
             label: "Nederlands سوال سنیں اور Nederlands جواب منتخب کریں",
             prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
             speak: legacy.speak,
-            options: [...legacy.options],
-            answer: legacy.answer,
-            explain: `سوال: ${legacy.speak} — جواب: ${legacy.answer}۔ ${legacy.explain || ""}`.trim(),
-            generatedConceptId: conceptId
+            options: legacy.options.map((option) => (normalizedTextV4(option) === answerKey ? concept.dutch : option)),
+            answer: concept.dutch,
+            explain: `سوال: ${legacy.speak} — جواب: ${concept.dutch}۔ ${legacy.explain || ""}`.trim(),
+            generatedConceptId: conceptId,
+            // Every reply is hand-written: a listenReplyCuesV4 cue or a lesson's listenReplies.
+            scenarioId: `${lesson.id}:listen-reply:${semanticSlugV4(legacy.speak, "cue")}`,
+            scenarioSource: `${String(lesson.id).slice(0, 2)}-authored:${semanticSlugV4(lesson.id)}:listen-reply:${semanticSlugV4(legacy.speak, "cue")}`,
+            authenticUse: true
           },
           phase: "use",
           conceptIds: [conceptId],
           skillIds: [skillIdByConceptIdV4.get(conceptId)],
           scope: `use:listen-reply-${replyIndex + 1}:${conceptId}`
-        }));
+        }), legacy, concept, canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu)));
       });
 
     const useConceptIds = uniqueV4([
@@ -14019,7 +14370,7 @@ const a0StartUseScenesV4 = {
 function applyA0StartUseScenesV4(lesson) {
   if (!a0StartSpeakingLessonIdsV4.has(lesson.id)) return;
   for (const question of lesson.exercises || []) {
-    if (question.phase !== "use") continue;
+    if (question.phase !== "use" || question.mode === "listen-reply") continue;
     const concept = (question.conceptIds || [])
       .map((conceptId) => conceptByIdV4.get(conceptId))
       .find(Boolean);
@@ -14083,7 +14434,7 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
   for (const run of lesson.learning?.runs || []) {
     for (const questionId of run.phases?.use?.exerciseIds || []) {
       const question = questionById.get(questionId);
-      if (question?.scored === false) continue;
+      if (question?.scored === false || question?.mode === "listen-reply") continue;
       const concept = (question?.conceptIds || [])
         .map((conceptId) => conceptByIdV4.get(conceptId))
         .find(Boolean);

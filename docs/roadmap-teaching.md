@@ -213,6 +213,49 @@ run from each lesson's phrases.
 - Accept common variants (capitals, final punctuation, `u`/`jij` where both
   fit); give targeted feedback on near-misses (`stat` → "check the ending").
 
+**Done (13 October 2026).**
+
+*2.2 Typing.* Every run except letters and sounds (244 of 256) has one
+typed item in guided practice. A phrase loses one word (the verb after a
+subject pronoun, otherwise its longest content word) and the learner types it
+into the gap (`ik ___ het niet` → `begrijp`). A run with only single words
+asks for one word typed whole. The word-bank fallback spells the word from
+letter tiles. Capitals, commas, curly apostrophes, and final punctuation never
+make an answer wrong, and accents are optional (`een` for `één`). A near miss
+gets targeted feedback: "check the ending" when only the end differs,
+otherwise "check the spelling".
+
+*2.1 Hear and reply.* The hand-written `listenReplies` never reached the
+v4 lesson runs; they do now. A new table, `listenReplyCuesV4`, adds 153
+cues: a heard Dutch question, its Urdu meaning, the reply (one of the run's
+phrases), and two wrong replies. 159 reply items in total, each placed in
+the first run that owns its answer once every Dutch word in it is taught.
+Their options are hand-picked, so the distractor engine skips them.
+
+| Hear-and-reply items per run | Before | After |
+|---|---|---|
+| A0 (124 runs without letters/sounds) | 0 | 0.26 |
+| A1 (81 runs) | 0 | 0.93 |
+| A2 (41 runs) | 0 | 1.20 |
+
+Teacher rules for cues:
+- One clearly right reply. Wrong replies answer another kind of question
+  (a time instead of a place), or are a near miss with a different meaning
+  (`ik ben op tijd` for "do you have time?").
+- No plain yes/no questions where both `ja` and `nee` fit, and no echo
+  greetings (`goedenavond!` → `goedenavond`); the audit flags echoes.
+- Nothing untaught: the heard line may use Dutch from earlier lessons and
+  earlier runs of the same lesson, like the distractor engine. The 50
+  generated fillers ("wat is een goed antwoord?") stay retired.
+
+Why not 2 per run in A0: most A0 runs teach single words or grammar forms
+(`ik, jij, u`; numbers; days; `een/de/het`), where no natural question has
+one right reply. Those runs get the typed item instead.
+
+Fixes found on the way: the A0 start-lesson scenes and the A1 authored
+scenarios rewrote every use-phase prompt, including replies; both now skip
+`listen-reply`.
+
 ### 2.3 Guided role-play (new exercise type)
 The app speaks line 1 (with audio); the learner chooses or builds line 2,
 hears the model answer, says it aloud, and continues for 3–4 turns. This
