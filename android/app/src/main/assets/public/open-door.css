@@ -118,6 +118,8 @@ body.od-reduced #app *{animation:none!important;transition:none!important}
 #app .match-pair-card.matched{background:#e7f2ec;color:#176b4d;border-color:#176b4d}
 #app .match-pair-card.wrong{background:#f9e9e6;color:#a73535;border-color:#a73535}
 #app .short-answer-input{min-height:60px;padding:15px;width:100%;font-size:21px}
+#app .gap-sentence{display:block;direction:ltr;text-align:center;margin:6px 0 14px;font:600 24px/1.6 var(--font-ui);color:#18212b;overflow-wrap:anywhere}
+#app .gap-slot{display:inline-block;min-width:3.2em;border-bottom:3px solid #2047ed;color:transparent;line-height:1.1}
 #app .input-fallback{color:#2047ed;background:#e8edff;border:0;border-radius:8px;padding:10px 14px;margin-top:16px}
 #app .build-answer{min-height:70px;background:#f5f2ec;border:1px solid #bbc0c9;border-radius:10px;box-shadow:none}
 #app .build-word,#app .word-bank-word{background:#fff;border:1px solid #bbc0c9;color:#18212b;border-radius:8px;box-shadow:0 3px 0 #e0e0dc}

@@ -13134,6 +13134,102 @@ function pickAuthoredExerciseV4({
   return selected;
 }
 
+// Stage 2.2: "type the missing word". A phrase loses one word (the verb after
+// a subject pronoun, otherwise its longest content word); a single word is
+// typed whole. The word bank fallback spells the word from letter tiles.
+const typedGapSubjectsV4 = new Set(["ik", "jij", "je", "u", "hij", "zij", "ze", "wij", "we", "jullie", "het"]);
+const typedGapSkipV4 = new Set([
+  ...typedGapSubjectsV4, "de", "een", "en", "of", "in", "op", "aan", "naar", "met", "van", "bij",
+  "om", "voor", "uit", "mijn", "uw", "niet", "geen", "er", "dat", "dit", "wat", "ook", "is", "ben", "bent", "zijn"
+]);
+
+function plainLettersV4(value) {
+  return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function typedGapPartsV4(dutch) {
+  const words = String(dutch || "").trim().split(/\s+/).filter(Boolean).map((raw) => {
+    const match = raw.match(/^(.*?)([?.!,;:]*)$/u);
+    return { core: match[1], tail: match[2] };
+  });
+  const usable = (word) => /^[a-zà-ÿ]{2,}$/.test(word.core)
+    && words.filter((other) => other.core.toLowerCase() === word.core.toLowerCase()).length === 1;
+  if (words.length === 1) return usable(words[0]) || /^[A-Za-zÀ-ÿ]{2,}$/.test(words[0].core) ? { words, index: 0 } : null;
+  if (words.length >= 3 && typedGapSubjectsV4.has(words[0].core.toLowerCase()) && usable(words[1])
+    && !typedGapSkipV4.has(words[1].core) ) {
+    return { words, index: 1 };
+  }
+  let best = -1;
+  words.forEach((word, index) => {
+    if (!usable(word) || typedGapSkipV4.has(word.core)) return;
+    if (best < 0 || word.core.length > words[best].core.length) best = index;
+  });
+  return best >= 0 ? { words, index: best } : null;
+}
+
+function makeTypedGapQuestionV4(concept, urdu) {
+  const parts = typedGapPartsV4(concept?.dutch);
+  if (!parts) return null;
+  const answer = parts.words[parts.index].core;
+  const whole = parts.words.length === 1;
+  const gapSentence = whole
+    ? ""
+    : parts.words.map((word, index) => `${index === parts.index ? "___" : word.core}${word.tail}`).join(" ");
+  const letters = [...answer];
+  // A fixed, non-alphabetical letter order, so the bank never spells the answer.
+  const rotation = letters.length > 2 ? 1 + (answer.length % (letters.length - 1)) : 1;
+  let fallbackTiles = [...letters.slice(rotation), ...letters.slice(0, rotation)].reverse();
+  if (fallbackTiles.join("") === answer) fallbackTiles = [...fallbackTiles.slice(1), fallbackTiles[0]];
+  const plain = plainLettersV4(answer);
+  return {
+    type: "short-input",
+    label: whole ? "Nederlands لفظ خود لکھیں" : "خالی جگہ کا Nederlands لفظ لکھیں",
+    prompt: whole
+      ? `“${urdu}” کو Nederlands میں لکھیں۔`
+      : `“${urdu}” — خالی جگہ میں صحیح لفظ لکھیں۔`,
+    gapSentence,
+    answer,
+    acceptedAnswers: plain !== answer ? [plain] : [],
+    fallbackTiles,
+    fallbackJoiner: "",
+    optional: true,
+    explain: whole
+      ? `“${urdu}” = ${answer}۔`
+      : `پورا جملہ: ${concept.dutch} = ${urdu}۔`,
+    generatedConceptId: concept.id
+  };
+}
+
+// annotateQuestionV4 writes generic feedback; a typed gap names the missing word.
+function applyTypedGapFeedbackV4(question, concept, urdu) {
+  const whole = !question.gapSentence;
+  const correct = whole
+    ? `درست۔ “${urdu}” = ${question.answer}۔`
+    : `درست۔ پورا جملہ: ${concept.dutch} = “${urdu}”۔`;
+  const wrong = whole
+    ? `“${urdu}” کے لیے لکھیں: ${question.answer}۔ ہجے حرف بہ حرف دیکھیں۔`
+    : `خالی جگہ میں “${question.answer}” آتا ہے: ${concept.dutch} = “${urdu}”۔`;
+  const hint = whole
+    ? `یہ لفظ ${question.answer.length} حروف کا ہے اور “${question.answer[0]}” سے شروع ہوتا ہے۔`
+    : `یہ لفظ “${question.answer[0]}” سے شروع ہوتا ہے اور ${question.answer.length} حروف کا ہے۔`;
+  return Object.assign(question, {
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    hintUrdu: hint,
+    hint
+  });
+}
+
+// Dutch words taught by lessons already built (lessons are built in course
+// order). A heard reply may use them, like the distractor engine's options.
+const taughtTokensV4 = new Set();
+
+function latinTokensV4(value) {
+  return String(value || "").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]*/g) || [];
+}
+
 function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   const level = chapterId;
   const conceptIds = lesson.conceptIds;
@@ -13305,6 +13401,11 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   });
 
   const selectedAuthoredIds = new Set();
+  const usedListenRepliesV4 = new Set();
+  const replyTokens = new Set(prerequisiteConceptIds.flatMap((conceptId) => {
+    const concept = conceptByIdV4.get(conceptId);
+    return latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`);
+  }));
   runs.forEach((run, runIndex) => {
     const understand = [];
     const guided = [];
@@ -13681,6 +13782,72 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       }
     }
 
+    // Stage 2.2: one typed item per run, preferring a phrase so the learner
+    // writes a word inside a sentence they know.
+    if (!/^a0-(?:letters|sounds)-/.test(lesson.id) && productionConceptIds.length) {
+      const typedCandidates = productionConceptIds
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .filter((concept) => concept && skillIdByConceptIdV4.get(concept.id) && typedGapPartsV4(concept.dutch));
+      const phraseCandidates = typedCandidates.filter((concept) => /\s/.test(concept.dutch.trim()));
+      const typedPool = phraseCandidates.length ? phraseCandidates : typedCandidates;
+      const typedConcept = typedPool[runIndex % Math.max(1, typedPool.length)];
+      const typedUrdu = typedConcept && canonicalUrduForDutchV4(lesson, typedConcept.dutch, typedConcept.urdu);
+      const typedQuestion = typedConcept && makeTypedGapQuestionV4(typedConcept, typedUrdu);
+      if (typedQuestion) {
+        guided.push(applyTypedGapFeedbackV4(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: typedQuestion,
+          phase: "guided-practice",
+          conceptIds: [typedConcept.id],
+          skillIds: [skillIdByConceptIdV4.get(typedConcept.id)],
+          scope: `guided:typed-gap:${typedConcept.id}`
+        }), typedConcept, typedUrdu));
+      }
+    }
+
+    // Stage 2.1: hear a Dutch question and choose the Dutch reply. These are the
+    // lesson's hand-written listenReplies whose answer is a phrase of this run.
+    const runConceptByDutch = new Map(run.conceptIds.map((conceptId) => [
+      normalizedTextV4(conceptByIdV4.get(conceptId)?.dutch),
+      conceptId
+    ]));
+    chunks[runIndex].conceptIds.forEach((conceptId) => {
+      const concept = conceptByIdV4.get(conceptId);
+      latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`).forEach((token) => replyTokens.add(token));
+    });
+    legacyQuestions
+      .filter((question) => question.mode === "listen-reply"
+        && !usedListenRepliesV4.has(question)
+        && runConceptByDutch.has(normalizedTextV4(question.answer))
+        && [question.speak, ...(question.options || [])]
+          .flatMap(latinTokensV4)
+          .every((token) => replyTokens.has(token) || taughtTokensV4.has(token)))
+      .slice(0, 2)
+      .forEach((legacy, replyIndex) => {
+        usedListenRepliesV4.add(legacy);
+        const conceptId = runConceptByDutch.get(normalizedTextV4(legacy.answer));
+        use.push(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: {
+            type: "listen-choice",
+            mode: "listen-reply",
+            label: "Nederlands سوال سنیں اور Nederlands جواب منتخب کریں",
+            prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
+            speak: legacy.speak,
+            options: [...legacy.options],
+            answer: legacy.answer,
+            explain: `سوال: ${legacy.speak} — جواب: ${legacy.answer}۔ ${legacy.explain || ""}`.trim(),
+            generatedConceptId: conceptId
+          },
+          phase: "use",
+          conceptIds: [conceptId],
+          skillIds: [skillIdByConceptIdV4.get(conceptId)],
+          scope: `use:listen-reply-${replyIndex + 1}:${conceptId}`
+        }));
+      });
+
     const useConceptIds = uniqueV4([
       productionConceptIds[0],
       productionConceptIds.length > 1
@@ -13822,6 +13989,10 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   });
 
   lesson.exercises = lesson.questions;
+  lesson.conceptIds.forEach((conceptId) => {
+    const concept = conceptByIdV4.get(conceptId);
+    latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`).forEach((token) => taughtTokensV4.add(token));
+  });
   return runs;
 }
 
@@ -16158,6 +16329,8 @@ function distractorEligibleV4(question) {
     && question.options.length >= 3
     && ["meaning", "reverse", "situation", "listen-choice", "document-choice", "image-choice"].includes(question.type)
     && !question.patternDrill
+    // Hand-written replies keep their options: other replies to other questions.
+    && question.mode !== "listen-reply"
     && question.scored !== false;
 }
 

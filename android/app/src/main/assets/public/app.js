@@ -2342,16 +2342,26 @@ function renderDocumentQuestion(question) {
   `;
 }
 
+function renderGapSentence(question) {
+  if (!question.gapSentence) return "";
+  const shown = checked
+    ? question.gapSentence.replace("___", question.answer)
+    : question.gapSentence;
+  return `<strong class="gap-sentence latin" dir="ltr">${escapeHtml(shown).replace("___", '<span class="gap-slot" aria-label="خالی جگہ">____</span>')}</strong>`;
+}
+
 function renderShortInputQuestion(question) {
   if (typedFallback) return `
     <div class="short-input-question">
       <p>${escapeHtml(question.prompt)}</p>
+      ${renderGapSentence(question)}
       ${renderBuildExercise(question)}
     </div>
   `;
   return `
     <div class="short-input-question">
       <p>${escapeHtml(question.prompt)}</p>
+      ${renderGapSentence(question)}
       <input class="short-answer-input latin" data-short-answer value="${escapeAttr(typedAnswer)}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Nederlands جواب" />
       <button class="input-fallback" data-action="input-fallback">الفاظ سے بنائیں</button>
     </div>
@@ -2543,6 +2553,7 @@ function getWrongOptionExplanation(question, answer) {
     || question?.wrongExplanationsByOption?.[answer]
     || question?.optionExplanations?.[answer]
     || question?.feedbackByOption?.[answer]
+    || (question?.type === "short-input" ? getTypedNearMissExplanation(question, answer) : "")
     || "";
 }
 
@@ -4730,7 +4741,11 @@ function getBuildAnswerText(question) {
   return buildAnswerIds
     .map((id) => tiles.find((tile) => tile.id === id)?.word)
     .filter(Boolean)
-    .join(question.type === "sequence" ? " | " : " ");
+    .join(question.type === "sequence"
+      ? " | "
+      : question.type === "short-input" && typedFallback && typeof question.fallbackJoiner === "string"
+        ? question.fallbackJoiner
+        : " ");
 }
 
 function isInfoQuestion(question) {
@@ -4751,7 +4766,42 @@ function getAnswerTiles(question) {
 }
 
 function normalizeTypedAnswer(value) {
-  return String(value || "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[.!?]+$/g, "");
+  // Capitals, curly apostrophes, commas and closing punctuation never make a typed answer wrong.
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[‘’`]/g, "'")
+    .replace(/[,;:"“”]/g, " ")
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/[.!?]+$/g, "")
+    .trim();
+}
+
+function typedEditDistance(left, right) {
+  const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i += 1) {
+    let diagonal = previous[0];
+    previous[0] = i;
+    for (let j = 1; j <= right.length; j += 1) {
+      const above = previous[j];
+      previous[j] = Math.min(above + 1, previous[j - 1] + 1, diagonal + (left[i - 1] === right[j - 1] ? 0 : 1));
+      diagonal = above;
+    }
+  }
+  return previous[right.length];
+}
+
+// Targeted feedback for a typed answer that is nearly right.
+function getTypedNearMissExplanation(question, typed) {
+  const value = normalizeTypedAnswer(typed);
+  const answer = normalizeTypedAnswer(question.answer);
+  if (!value || !answer || answer.length < 3) return "";
+  if (typedEditDistance(value, answer) > (answer.length > 6 ? 2 : 1)) return "";
+  const stem = answer.slice(0, Math.max(2, answer.length - 2));
+  if (value.startsWith(stem)) {
+    return `“${typed.trim()}” تقریباً درست ہے، صرف آخر دیکھیں: صحیح لفظ “${question.answer}” ہے۔`;
+  }
+  return `“${typed.trim()}” تقریباً درست ہے، ہجے دیکھیں: صحیح لفظ “${question.answer}” ہے۔`;
 }
 
 function getAcceptedAnswers(question) {

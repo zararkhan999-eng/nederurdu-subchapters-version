@@ -710,7 +710,9 @@ function questionLexicalValues(question) {
     ...list(question.options),
     ...list(question.acceptedAnswers),
     ...tileText(question.tiles),
-    ...tileText(question.fallbackTiles),
+    // Letter tiles (fallbackJoiner "") spell the answer; auditTypedLetterBank checks them.
+    ...(question.fallbackJoiner === "" ? [] : tileText(question.fallbackTiles)),
+    question.gapSentence,
     question.document?.title,
     ...list(question.document?.rows).flatMap((row) => [row?.label, row?.value])
   ].filter(Boolean);
@@ -752,6 +754,15 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
   const ownsCompositeDutch = (value) => concepts.length > 1 && concepts.every((concept) => (
     normalizeSemantic(value).includes(normalizeSemantic(concept.dutch))
   ));
+  if (question.type === "short-input" && question.gapSentence) {
+    // A typed gap owns the phrase it completes.
+    const completed = text(question.gapSentence).replace("___", text(answer));
+    return concepts.some((concept) => sameSurface(completed, concept.dutch));
+  }
+  if (question.type === "listen-choice" && question.mode === "listen-reply") {
+    // A heard question owns the reply the learner chooses.
+    return concepts.some((concept) => sameSurface(answer, concept.dutch));
+  }
   if (["reverse", "situation", "image-choice", "build", "short-input"].includes(question.type)) {
     return ownsCompositeDutch(answer) || concepts.some((concept) => sameSurface(answer, concept.dutch));
   }
@@ -832,7 +843,17 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
   }
   const priorTokens = priorTaughtTokensByLesson.get(lesson?.id) || new Set();
   const answerKey = normalizeSemantic(question.answer);
+  // A heard question and its replies may use Dutch from earlier lessons.
+  const heardReply = question.type === "listen-choice" && question.mode === "listen-reply";
   const wrongOptions = list(question.options).filter((option) => normalizeSemantic(option) !== answerKey);
+  if (heardReply) {
+    const unknown = [...new Set([question.speak, ...list(question.options)].flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Heard reply contains Dutch not taught before this run.", unknown.join(", "), chapter, lesson, question);
+    }
+    return;
+  }
   const unownedTokens = [...new Set([
     ...questionLexicalValues({ ...question, options: list(question.options).filter((option) => !wrongOptions.includes(option)) })
       .flatMap(latinTokens)
@@ -1198,6 +1219,13 @@ function auditV4Exercise(findings, chapter, lesson, question, conceptMap, skillM
   }
   if (!unscoredTypes.has(question.type) && !hasUrdu(hint)) {
     addCourseFinding(findings, "error", "exercise-hint", "Assessed exercise needs an Urdu hint.", hint, chapter, lesson, question);
+  }
+  if (question.type === "short-input" && question.fallbackJoiner === "") {
+    const letters = (value) => [...String(value || "")].sort().join("");
+    const bank = list(question.fallbackTiles).map((tile) => (typeof tile === "string" ? tile : tile?.word)).join("");
+    if (letters(bank) !== letters(question.answer) || bank === question.answer) {
+      addCourseFinding(findings, "error", "typed-letter-bank", "Letter tiles must be a shuffle of the typed answer.", bank, chapter, lesson, question);
+    }
   }
   if (question.type === "short-input" && (!question.optional || !(question.fallbackTiles || []).length)) {
     addCourseFinding(findings, "error", "typed-fallback", "Typed exercise must remain optional and provide a word-bank fallback.", "", chapter, lesson, question);
