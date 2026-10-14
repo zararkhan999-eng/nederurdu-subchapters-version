@@ -240,6 +240,7 @@ NU.street = (() => {
     NU.haptics.play("select");
     NU.cat.act(cat, "hop");
     NU.cat.mood(cat, "happy");
+    NU.pim.hearts(cat, 5);
     setTimeout(() => say(street, ...PHRASES[phrase]), 350);
   }
 

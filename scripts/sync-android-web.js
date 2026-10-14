@@ -27,6 +27,7 @@ const files = [
   "motion.js",
   "sound.js",
   "cat.js",
+  "pim.js",
   "street.js",
   "map.js",
   "lesson.js",

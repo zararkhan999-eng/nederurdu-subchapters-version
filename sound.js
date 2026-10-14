@@ -115,6 +115,27 @@ NU.sound = (() => {
       osc.start(start);
       osc.stop(start + 0.5);
     },
+    // Purr: a low hum pulsed about 24 times a second.
+    purr: ({ seconds = 1.1 } = {}) => {
+      const c = ctx();
+      if (!c) return;
+      const start = c.currentTime;
+      const osc = c.createOscillator(), lfo = c.createOscillator(), depth = c.createGain(), gain = c.createGain(), filter = c.createBiquadFilter();
+      osc.type = "sawtooth";
+      osc.frequency.value = 62;
+      filter.type = "lowpass";
+      filter.frequency.value = 420;
+      lfo.frequency.value = 24;
+      depth.gain.value = 0.05;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.06, start + 0.15);
+      gain.gain.setValueAtTime(0.06, start + seconds - 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + seconds);
+      lfo.connect(depth).connect(gain.gain);
+      osc.connect(filter).connect(gain).connect(master);
+      osc.start(start); lfo.start(start);
+      osc.stop(start + seconds); lfo.stop(start + seconds);
+    },
     // Rubber stamp: a low thump with a papery slap.
     stamp: () => {
       tone(140, { duration: 0.18, volume: 0.22, type: "sine", glide: 0.5, attack: 0.004, wet: false });
@@ -154,6 +175,7 @@ NU.haptics = (() => {
     success: [14, 40, 22],
     error: [30, 50, 30],
     streak: [10, 30, 10, 30, 28],
+    purr: [8, 34, 8, 34, 8, 34, 8, 34, 8],
     celebrate: [20, 40, 20, 40, 60]
   };
   function play(name) {

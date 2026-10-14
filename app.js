@@ -2041,7 +2041,7 @@ function renderConceptTeachingQuestion(question, visual) {
           <div class="teaching-dutch latin">
             <strong data-karaoke>${NU.lesson.karaokeHTML(teaching.dutch)}</strong>
           </div>
-          <div class="teaching-actions">${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
+          <div class="teaching-actions">${teaching.audioText ? `<span class="pl-speaker-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 46 })}</span>` : ""}${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
           <div class="pl-meaning"><span>مطلب</span><p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p></div>
           ${teaching.pronunciation ? `<p class="teaching-pronunciation"><span>اردو میں آواز:</span> ${escapeHtml(teaching.pronunciation)}</p>` : ""}
         </section>
@@ -3390,6 +3390,7 @@ function triggerAnswerMoment(correct, compact = false) {
     NU.sound.play("wrong");
     NU.haptics.play("error");
     NU.motion.shake(document.querySelector(".choice-button.wrong") || icon);
+    NU.cat.act(icon?.querySelector(".nu-cat"), "shake");
     return;
   }
   const streak = answerCombo >= 3 && answerCombo % 3 === 0;
@@ -3397,6 +3398,7 @@ function triggerAnswerMoment(correct, compact = false) {
   if (streak) window.setTimeout(() => NU.sound.play("streak"), 260);
   NU.haptics.play(streak ? "streak" : "success");
   NU.motion.jelly(icon);
+  NU.cat.act(icon?.querySelector(".nu-cat"), "nod");
   NU.motion.burst(icon, { count: streak ? 28 : 14, spread: streak ? 150 : 90 });
   NU.motion.bump(document.querySelector(".choice-button.correct"));
   NU.motion.pop(document.querySelector(".quiz-combo"));
