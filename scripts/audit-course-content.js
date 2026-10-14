@@ -338,7 +338,7 @@ const annotatedExercisePhases = new Set([
   "learn", "understand", "guided-practice", "use", "independent-check"
 ]);
 const productionTypes = new Set(["reverse", "fill-gap", "build", "sequence", "situation", "short-input"]);
-const unscoredTypes = new Set(["uitleg", "speak-repeat", "correction-teach"]);
+const unscoredTypes = new Set(["uitleg", "speak-repeat", "correction-teach", "role-play"]);
 const lexicalScaffoldTokens = new Set([
   "nederlands", "a", "b", "ali", "sara", "ahmed", "fatima",
   "amsterdam", "rotterdam", "utrecht", "nederland", "digid", "iban", "bsn",
@@ -843,6 +843,26 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
   }
   const priorTokens = priorTaughtTokensByLesson.get(lesson?.id) || new Set();
   const answerKey = normalizeSemantic(question.answer);
+  // A role-play may use any Dutch taught before its mission.
+  if (question.type === "role-play") {
+    const turns = list(question.turns);
+    const unknown = [...new Set(turns.flatMap((turn) => [turn?.dutch, turn?.answer, ...list(turn?.options)]).flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Role-play contains Dutch not taught before this mission.", unknown.join(", "), chapter, lesson, question);
+    }
+    const replies = turns.filter((turn) => turn?.speaker === "you");
+    const badTurns = replies.filter((turn) => {
+      const options = list(turn.options).map(normalizeSemantic);
+      return options.length !== 3 || new Set(options).size !== 3 || !options.includes(normalizeSemantic(turn.answer))
+        || !hasUrdu(turn.urdu) || list(turn.options).filter((option) => option !== turn.answer).some((option) => !hasUrdu(turn.explanations?.[option]));
+    });
+    const badOther = turns.filter((turn) => turn?.speaker === "other" && (!hasLatin(turn.dutch) || !hasUrdu(turn.urdu)));
+    if (replies.length < 2 || badTurns.length || badOther.length || !hasUrdu(question.prompt)) {
+      addCourseFinding(findings, "error", "role-play-structure", "Role-play needs an Urdu scene, 2+ learner turns with 3 distinct options including the answer, Urdu meanings, and an Urdu reason for each wrong option.", replies.length + " replies", chapter, lesson, question);
+    }
+    return;
+  }
   // A heard question and its replies may use Dutch from earlier lessons.
   const heardReply = question.type === "listen-choice" && question.mode === "listen-reply";
   const wrongOptions = list(question.options).filter((option) => normalizeSemantic(option) !== answerKey);
@@ -1051,7 +1071,8 @@ function auditV4ExerciseReferences(findings, chapter, lesson, question, conceptM
   if (question.legacyId && question.legacyId === question.id) {
     addCourseFinding(findings, "error", "semantic-exercise-id", "When present, legacyId must differ from the semantic stable id.", question.legacyId, chapter, lesson, question);
   }
-  if (!annotatedExercisePhases.has(question.phase)) {
+  // A mission role-play is the unscored warm-up in the preparation step.
+  if (!annotatedExercisePhases.has(question.phase) && !(question.type === "role-play" && question.phase === "preview")) {
     addCourseFinding(findings, "error", "exercise-phase", "Exercise has no canonical learning phase.", question.phase || "", chapter, lesson, question);
   }
   if (!conceptIds.length || conceptIds.some((id) => !conceptMap.has(id))) {
@@ -2552,11 +2573,17 @@ function auditV4Mission(findings, chapter, mission, lessonMap, conceptMap, skill
       addCourseFinding(findings, "error", "mission-variant-reference", "Mission learning contract references an unknown variant.", variantContract.id, chapter, mission);
       continue;
     }
-    const questions = list(variant.questions);
+    // Stage 2.3: a variant may open with one unscored role-play in Preview,
+    // a warm-up conversation. Everything after it follows the usual contract.
+    const allQuestions = list(variant.questions);
+    const warmUp = allQuestions[0]?.type === "role-play" && allQuestions[0]?.phase === "preview" && allQuestions[0]?.scored === false
+      ? allQuestions[0]
+      : null;
+    const questions = warmUp ? allQuestions.slice(1) : allQuestions;
     const questionIds = questions.map((question) => question.id);
     const useIds = list(variantContract.phases?.use?.exerciseIds);
     const checkIds = list(variantContract.phases?.independentCheck?.exerciseIds);
-    const declaredIds = list(variantContract.exerciseIds);
+    const declaredIds = list(variantContract.exerciseIds).filter((id) => id !== warmUp?.id);
     const exercisePhases = questions.map((question) => question.phase);
     const firstCheckIndex = exercisePhases.indexOf("independent-check");
     const invalidMissionSequence = (
@@ -2586,8 +2613,9 @@ function auditV4Mission(findings, chapter, mission, lessonMap, conceptMap, skill
     ) {
       addCourseFinding(findings, "error", "mission-variant-phase-coverage", "Mission variant phases must cover every authored exercise exactly once.", variant.id, chapter, mission);
     }
+    const previewIds = list(variantContract.phases?.preview?.exerciseIds);
     if (
-      list(variantContract.phases?.preview?.exerciseIds).length
+      (warmUp ? !sameIds(previewIds, [warmUp.id]) : previewIds.length)
       || variantContract.phases?.preview?.scored !== false
     ) {
       addCourseFinding(findings, "error", "mission-preview-phase", "Mission Preview must be an unscored screen, not a question.", variant.id, chapter, mission);

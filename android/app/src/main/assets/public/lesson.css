@@ -54,6 +54,8 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
 #app .teaching-dutch{margin:14px 0 10px}
 #app .teaching-dutch strong{font:800 clamp(32px,10vw,46px)/1.25 var(--font-ui);color:var(--pl-ink);letter-spacing:-.01em}
 #app .teaching-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:4px 0 16px}
+#app .pl-speaker-pim{flex:0 0 auto;width:46px;margin-inline-end:-2px}
+#app .pl-speaker-pim .nu-cat{width:46px;height:auto}
 
 /* Karaoke: syllables light up as Pim says them. */
 #app .kw-word{display:inline-block;white-space:nowrap}

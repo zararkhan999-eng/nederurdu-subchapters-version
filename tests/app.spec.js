@@ -79,6 +79,18 @@ async function setLessonSkillStatus(page, lessonIds, status = "introduced") {
   }, { ids: lessonIds, nextStatus: status });
 }
 
+// Missions open with an unscored role-play warm-up (roadmap 2.3); finish it
+// to reach the first Use task.
+async function completeMissionRolePlay(page) {
+  await expect(page.locator(".role-play-question")).toBeVisible();
+  await page.evaluate(() => {
+    for (const turn of getActiveQuestion().turns.filter((item) => item.speaker === "you")) {
+      chooseRolePlayReply(turn.answer);
+    }
+    continueInfoStep();
+  });
+}
+
 async function makeMissionReady(page, missionId) {
   await page.evaluate((id) => {
     const mission = window.NEDERURDU_COURSE.missions.find((item) => item.id === id);
@@ -2648,7 +2660,7 @@ test("course bank has stable IDs, valid answers, and visual mappings without fix
     const allowedTypes = new Set([
       "meaning", "reverse", "image-choice", "listen-choice",
       "situation", "uitleg", "fill-gap", "build", "match-pairs",
-      "document-choice", "sequence", "short-input", "speak-repeat"
+      "document-choice", "sequence", "short-input", "speak-repeat", "role-play"
     ]);
     const ids = lessons.map((lesson) => lesson.id);
     const invalidAnswers = [];
@@ -4908,7 +4920,7 @@ test("A1 completion mission covers nine units and all five required skill areas"
 });
 
 test("A1 completion mission uses only earlier authored skills with complete feedback", async ({ page }) => {
-  await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((item)=>item.id==="a1"),mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),lessonOrder=new Map(chapter.lessons.map((lesson,index)=>[lesson.id,index])),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept])),ids=mission.questions.map((question)=>question.id);return{newSkills:mission.introducesNewSkills,unseen:mission.conceptIds.filter((id)=>{const concept=conceptById.get(id);return !concept||!lessonOrder.has(concept.introducedInLessonId)||lessonOrder.get(concept.introducedInLessonId)>=lessonOrder.get(mission.id);}),duplicateIds:ids.length-new Set(ids).size,invalid:mission.questions.filter((question)=>!/^a1-authored:chapter-completion-mission:variant-[1-3]:(?:use|independent-check):slot-[1-6]$/.test(question.scenarioSource)||!question.instructionUrdu||(!isInfoQuestion(question)&&(!question.explainCorrectUrdu||!question.explainWrongUrdu))||(!isInfoQuestion(question)&&question.options?.length&&!question.options.includes(question.answer))).map((question)=>question.id)};});
+  await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((item)=>item.id==="a1"),mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),lessonOrder=new Map(chapter.lessons.map((lesson,index)=>[lesson.id,index])),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept])),ids=mission.questions.map((question)=>question.id);return{newSkills:mission.introducesNewSkills,unseen:mission.conceptIds.filter((id)=>{const concept=conceptById.get(id);return !concept||!lessonOrder.has(concept.introducedInLessonId)||lessonOrder.get(concept.introducedInLessonId)>=lessonOrder.get(mission.id);}),duplicateIds:ids.length-new Set(ids).size,invalid:mission.questions.filter((question)=>!/^a1-authored:chapter-completion-mission:variant-[1-3]:(?:(?:use|independent-check):slot-[1-6]|role-play)$/.test(question.scenarioSource)||!question.instructionUrdu||(!isInfoQuestion(question)&&(!question.explainCorrectUrdu||!question.explainWrongUrdu))||(!isInfoQuestion(question)&&question.options?.length&&!question.options.includes(question.answer))).map((question)=>question.id)};});
   expect(audit.newSkills).toBe(false);expect(audit.unseen).toEqual([]);expect(audit.duplicateIds).toBe(0);expect(audit.invalid).toEqual([]);
 });
 
@@ -4929,7 +4941,7 @@ test("A1 completion appears as the final stop on the journey map", async ({ page
 });
 
 test("A1 completion preview and first Use task fit all target widths", async ({ page }) => {
-  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());await makeMissionReady(page,"a1-chapter-completion-mission");for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){await page.setViewportSize(viewport);await page.evaluate(()=>showLessonPreview("a1-chapter-completion-mission"));await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();await expect(page.locator(".learning-preview-phases .learning-phase-chip")).toHaveCount(4);expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);}await page.setViewportSize({width:390,height:844});await page.locator('.learning-preview [data-action="start"]').click();await expect(page.locator(".mission-lesson.learning-phase-use")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);
+  await openCleanApp(page,{selectedChapterId:"a1"});await page.evaluate(()=>finishLaunch());await makeMissionReady(page,"a1-chapter-completion-mission");for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){await page.setViewportSize(viewport);await page.evaluate(()=>showLessonPreview("a1-chapter-completion-mission"));await expect(page.locator(".learning-preview.mission-preview")).toBeVisible();await expect(page.locator(".learning-preview-phases .learning-phase-chip")).toHaveCount(4);expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);}await page.setViewportSize({width:390,height:844});await page.locator('.learning-preview [data-action="start"]').click();await completeMissionRolePlay(page);await expect(page.locator(".mission-lesson.learning-phase-use")).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1)).toBe(false);
 });
 
 test("repeating a lesson selects incomplete runs before non-secure runs", async ({ page }) => {
@@ -5247,6 +5259,7 @@ test("A0 completion mission keeps its four phases and the corrected ticket-payme
   await page.locator('.learning-preview [data-action="start"]').click();
   await expect(page.locator(".quiz-screen.mission-lesson")).toBeVisible();
   await expect(page.locator(".learning-phase-track .learning-phase-step")).toHaveCount(4);
+  await completeMissionRolePlay(page);
   expect(await page.evaluate(() => getQuestionPhase(getActiveQuestion()))).toBe("use");
 });
 
@@ -5297,6 +5310,7 @@ test("mission starts in Use then renders a readable authored document", async ({
   await openCleanApp(page);
   await makeMissionReady(page, "a1-mission-phone-internet");
   await page.evaluate(() => startLesson("a1-mission-phone-internet"));
+  await completeMissionRolePlay(page);
   await expect(page.locator(".quiz-screen.mission-lesson.learning-phase-use")).toBeVisible();
   expect(await page.evaluate(() => getQuestionPhase(getActiveQuestion()))).toBe("use");
   await page.evaluate(() => {
@@ -5814,4 +5828,43 @@ test("A2 full chapter representative previews remain responsive", async ({ page 
       expect(overflow, `${id} at ${viewport.width}px`).toBe(false);
     }
   }
+});
+
+test("mission opens with a guided role-play that explains a wrong reply and unlocks when complete", async ({ page }) => {
+  await openCleanApp(page);
+  const missionId = "a1-mission-doctor";
+  const script = await page.evaluate((id) => {
+    const mission = window.NEDERURDU_COURSE.missions.find((item) => item.id === id);
+    const question = mission.variants[0].questions[0];
+    return {
+      type: question.type,
+      scored: question.scored,
+      allMissions: window.NEDERURDU_COURSE.missions
+        .filter((item) => item.id !== "a0-letters-sounds-mission")
+        .every((item) => item.variants.every((variant) => variant.questions[0].type === "role-play")),
+      replies: question.turns.filter((turn) => turn.speaker === "you")
+        .map((turn) => ({ answer: turn.answer, wrong: turn.options.find((option) => option !== turn.answer) }))
+    };
+  }, missionId);
+  expect(script.type).toBe("role-play");
+  expect(script.scored).toBe(false);
+  expect(script.allMissions).toBe(true);
+  expect(script.replies.length).toBeGreaterThanOrEqual(2);
+
+  await makeMissionReady(page, missionId);
+  await page.evaluate((id) => startLesson(id), missionId);
+  await expect(page.locator(".role-play-question")).toBeVisible();
+  const next = page.locator('.quiz-action-bar [data-action="continue-info"]');
+  await expect(next).toBeDisabled();
+
+  await page.locator(`[data-action="role-play-choose"][data-answer="${script.replies[0].wrong}"]`).click();
+  await expect(page.locator(".role-play-wrong")).toContainText(/[؀-ۿ]/);
+  for (const reply of script.replies) {
+    await page.locator(`[data-action="role-play-choose"][data-answer="${reply.answer}"]`).click();
+  }
+  await expect(page.locator(".role-play-done")).toBeVisible();
+  await expect(page.locator(".role-play-turn.you")).toHaveCount(script.replies.length);
+  await expect(next).toBeEnabled();
+  await next.click();
+  await expect(page.locator(".role-play-question")).toHaveCount(0);
 });

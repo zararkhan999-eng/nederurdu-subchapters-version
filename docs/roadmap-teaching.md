@@ -261,6 +261,24 @@ The app speaks line 1 (with audio); the learner chooses or builds line 2,
 hears the model answer, says it aloud, and continues for 3–4 turns. This
 needs no speech recognition. It is used in missions first.
 
+**Done (14 October 2026).** A new exercise type, `role-play`. Every
+mission except the letters mission (27 of 28) opens with a short hand-written
+conversation (`missionRolePlaysV4` in `course-data.js`): an Urdu scene,
+then 2–4 learner turns. The other person's lines play aloud. On each learner
+turn the learner picks one of three Dutch replies; a wrong pick shows an Urdu
+reason ("“twee keer per dag” = دن میں دو بار، یہ اس گفتگو میں فٹ نہیں
+ہوتا") and they retry. A right pick adds the line to the conversation with a
+replay button and "اب بلند آواز میں کہیں", and the other person's next line
+plays. Where the conversation alone doesn't make the reply clear, a short
+Urdu cue says what to say ("کرایہ پوچھیں").
+
+How it fits the mission contract: the role-play is an unscored warm-up in
+the mission's Preview (تیاری) step, before Use. The audit's mission rules
+now allow exactly one such item and nothing else, so the 6 Use + 6 Check
+assessment is unchanged. Every Dutch word in it must be taught before the
+mission, and each learner turn needs 3 distinct options, an Urdu meaning,
+and an Urdu reason per wrong option (`role-play-structure`).
+
 ### 2.4 Real listening
 - Two-speaker dialogues (alternate pitch and rate on the device's Dutch voice).
 - 8–15-word items at normal speed, with "slow" as the second play.

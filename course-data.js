@@ -16990,6 +16990,393 @@ function applyDistractorEngineV4() {
   }
 }
 
+// Stage 2.3: guided role-play. Each mission opens with a short conversation.
+// The other person's lines are spoken; on the learner's turns they choose the
+// Dutch reply, get an instant explanation for a wrong choice, retry, then say
+// the right line aloud. It is unscored practice: the mission's own questions
+// stay the assessment. Turns: ["other", dutch, urdu] or
+// ["you", reply, [wrong, wrong], optional Urdu cue for what to say].
+const missionRolePlaysV4 = {
+  "a0-start-speaking-mission": {
+    sceneUrdu: "آپ پہلی بار ایک دکان میں ہیں۔ ملازم آپ سے بات کرتا ہے۔",
+    turns: [
+      ["other", "goedemorgen! hoe gaat het?", "صبح بخیر! آپ کیسے ہیں؟"],
+      ["you", "goed, dank u", ["tot ziens", "ik heb een tolk nodig"]],
+      ["other", "spreekt u Nederlands?", "کیا آپ ڈچ بولتے ہیں؟"],
+      ["you", "ik spreek een beetje Nederlands", ["goedenavond", "dank u wel"]],
+      ["other", "begrijpt u mij?", "کیا آپ مجھے سمجھتے ہیں؟"],
+      ["you", "langzamer alstublieft", ["goedemorgen", "graag"], "بات پوری سمجھ نہیں آئی۔ آہستہ بولنے کو کہیں۔"]
+    ]
+  },
+  "a0-first-sentences-mission": {
+    sceneUrdu: "نئی پڑوسن سیڑھیوں پر اپنا تعارف کراتی ہے۔",
+    turns: [
+      ["other", "hallo! hoe gaat het?", "ہیلو! آپ کیسے ہیں؟"],
+      ["you", "goed, dank u", ["ik ben getrouwd", "tot ziens"]],
+      ["other", "ik kom uit Pakistan.", "میں پاکستان سے ہوں۔"],
+      ["you", "ik woon in Nederland", ["ik ben een man", "hij is een man"], "بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔"],
+      ["other", "ik ben getrouwd.", "میں شادی شدہ ہوں۔"],
+      ["you", "ik ben niet getrouwd", ["mijn vrouw", "wij zijn familie"], "بتائیں کہ آپ شادی شدہ نہیں ہیں۔"]
+    ]
+  },
+  "a0-people-things-mission": {
+    sceneUrdu: "کلاس میں استاد چیزوں کے بارے میں پوچھتی ہیں۔",
+    turns: [
+      ["other", "wat is dit?", "یہ کیا ہے؟"],
+      ["you", "dit is een boek", ["ik ben een man", "waar is het toilet"]],
+      ["other", "heeft u een boek?", "کیا آپ کے پاس کتاب ہے؟"],
+      ["you", "ik heb geen boek", ["dit is een boek", "zijn huis"], "آپ کے پاس کتاب نہیں ہے۔"],
+      ["you", "waar is het toilet", ["wat is dit", "dat is mijn huis"], "اب پوچھیں کہ ٹوائلٹ کہاں ہے۔"],
+      ["other", "daar.", "وہاں۔"]
+    ]
+  },
+  "a0-numbers-time-mission": {
+    sceneUrdu: "کلینک کے کاؤنٹر پر ملازم آپ کی معلومات لیتی ہے۔",
+    turns: [
+      ["other", "goedemorgen. hoe heet u?", "صبح بخیر۔ آپ کا نام کیا ہے؟"],
+      ["you", "mijn naam is Sara", ["ik ben dertig jaar", "mijn nummer is nul zes"]],
+      ["other", "wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟"],
+      ["you", "mijn nummer is nul zes", ["ik woon aan de Marktstraat 12", "om half negen"]],
+      ["other", "wanneer is de afspraak?", "ملاقات کب ہے؟"],
+      ["you", "morgen om tien uur", ["ik ben dertig jaar", "het is drie uur"]]
+    ]
+  },
+  "a0-mission-home-start": {
+    sceneUrdu: "مکان مالک آپ کو نیا کمرہ دکھاتا ہے۔",
+    turns: [
+      ["other", "waar is de sleutel?", "چابی کہاں ہے؟"],
+      ["you", "op de tafel", ["ik ga naar huis", "doe de deur dicht"]],
+      ["other", "is de kamer warm?", "کیا کمرہ گرم ہے؟"],
+      ["you", "de kamer is koud", ["ik kom naar huis", "naast de tafel"]],
+      ["other", "is de verwarming kapot?", "کیا ہیٹنگ خراب ہے؟"],
+      ["you", "de verwarming doet het niet", ["ik ben met mijn kind", "onder de tafel"]]
+    ]
+  },
+  "a0-mission-neighbourhood": {
+    sceneUrdu: "آپ ایک کیفے میں کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemiddag! wat wil je drinken?", "دوپہر بخیر! کیا پینا چاہیں گے؟"],
+      ["you", "ik wil graag koffie", ["de jas is blauw", "ik betaal met pin"]],
+      ["other", "dat is drie euro.", "یہ تین یورو ہیں۔"],
+      ["you", "ik betaal met pin", ["ik drink water", "welke kleur"]],
+      ["other", "alstublieft.", "یہ لیجیے۔"],
+      ["you", "mag ik de bon", ["ik eet brood", "rood"], "رسید مانگیں۔"]
+    ]
+  },
+  "a0-mission-help": {
+    sceneUrdu: "سڑک پر ایک حادثہ ہوا ہے۔ ایک راہ گیر آپ سے پوچھتا ہے۔",
+    turns: [
+      ["other", "wat is er?", "کیا ہوا ہے؟"],
+      ["you", "er is een ongeluk", ["ik wil een kaartje", "ga rechtdoor"]],
+      ["other", "is iemand gewond?", "کیا کوئی زخمی ہے؟"],
+      ["you", "ik heb een ambulance nodig", ["waar is het station", "mijn rug doet pijn"], "کوئی زخمی ہے۔ ایمبولینس مانگیں۔"],
+      ["other", "ik bel 112.", "میں 112 پر فون کرتا ہوں۔"]
+    ]
+  },
+  "a0-school-work-safety-mission": {
+    sceneUrdu: "صبح آپ کام پر فون کرتے ہیں کیونکہ آپ بیمار ہیں۔",
+    turns: [
+      ["other", "goedemorgen!", "صبح بخیر!"],
+      ["you", "ik ben vandaag ziek", ["ik begin om negen uur", "het regent"], "بتائیں کہ آپ آج بیمار ہیں۔"],
+      ["other", "komt u morgen?", "کیا آپ کل آئیں گے؟"],
+      ["you", "ik kom morgen", ["nee, het is verboden", "mijn kind is ziek"]]
+    ]
+  },
+  "a1-personal-info-mission": {
+    sceneUrdu: "بلدیہ کے کاؤنٹر پر ملازم آپ کا فارم بھرتا ہے۔",
+    turns: [
+      ["other", "goedemorgen. wat is uw naam?", "صبح بخیر۔ آپ کا نام کیا ہے؟"],
+      ["you", "mijn naam is Zarar", ["mijn postcode is 1234 AB", "ik heb geen e-mailadres"]],
+      ["other", "wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟"],
+      ["you", "mijn geboortedatum is 12 mei", ["mijn woonplaats is Utrecht", "mijn achternaam is Khan"]],
+      ["other", "wat is uw e-mailadres?", "آپ کا ای میل پتہ کیا ہے؟"],
+      ["you", "ik heb geen e-mailadres", ["mijn voornaam is Sara", "mijn geboortedatum is 12 mei"]]
+    ]
+  },
+  "a1-family-people-mission": {
+    sceneUrdu: "اسکول کے دفتر میں ملازم آپ کے خاندان کے بارے میں پوچھتا ہے۔",
+    turns: [
+      ["other", "heeft u kinderen?", "کیا آپ کے بچے ہیں؟"],
+      ["you", "ik heb twee kinderen", ["dit is mijn vader", "de kinderopvang"]],
+      ["other", "wat doet uw zoon?", "آپ کا بیٹا کیا کرتا ہے؟"],
+      ["you", "mijn zoon gaat naar school", ["mijn kind is moe", "ik heb een broer"]],
+      ["other", "wanneer haal je je kind op?", "تم اپنے بچے کو کب لینے آتے ہو؟"],
+      ["you", "ik haal mijn kind om vijf uur op", ["mijn dochter is vijf jaar", "ik heb geen kinderen"]]
+    ]
+  },
+  "a1-daily-routine-mission": {
+    sceneUrdu: "کام کے بعد ایک ساتھی آپ سے بات کرتا ہے۔",
+    turns: [
+      ["other", "hoe laat sta je op?", "تم کتنے بجے اٹھتے ہو؟"],
+      ["you", "ik sta om zeven uur op", ["het regent vandaag", "in het weekend ben ik thuis"]],
+      ["other", "hoe gaat u naar uw werk?", "آپ کام پر کیسے جاتے ہیں؟"],
+      ["you", "ik ga met de bus naar mijn werk", ["ik heb tijd in de middag", "neem een paraplu mee"]],
+      ["other", "het regent vandaag!", "آج بارش ہو رہی ہے!"],
+      ["you", "neem een paraplu mee", ["ik sta om zeven uur op", "ik werk op vrijdag"], "ساتھی کو چھتری ساتھ لینے کا مشورہ دیں۔"]
+    ]
+  },
+  "a1-mission-phone-internet": {
+    sceneUrdu: "آپ ملاقات کا وقت لینے کے لیے فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, met Sara.", "صبح بخیر، سارہ بول رہی ہوں۔"],
+      ["you", "ik wil een afspraak maken", ["tot morgen", "wie spreekt er?"]],
+      ["other", "kunt u maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟"],
+      ["you", "ik kan maandag niet komen", ["met Sara", "wanneer komt u?"]],
+      ["other", "kan het morgen in de ochtend?", "کیا کل صبح ہو سکتا ہے؟"],
+      ["you", "ja graag", ["u heeft het verkeerde nummer", "wie spreekt er?"]]
+    ]
+  },
+  "a1-mission-house-search": {
+    sceneUrdu: "آپ کرائے کا مکان دیکھنے آئے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, kan ik u helpen?", "دوپہر بخیر، کیا میں آپ کی مدد کر سکتا ہوں؟"],
+      ["you", "ik zoek een woning", ["de badkamer is vies", "ik heb last van lawaai"]],
+      ["other", "de woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔"],
+      ["you", "hoeveel is de huur?", ["het boek is in de kamer", "kunt u zachter zijn?"], "کرایہ پوچھیں۔"],
+      ["other", "kan ik u nog helpen?", "کیا میں آپ کی مزید مدد کر سکتا ہوں؟"],
+      ["you", "kan ik de woning bekijken?", ["de keuken is schoon", "er ligt een pakket voor u"], "مکان دیکھنے کی اجازت مانگیں۔"]
+    ]
+  },
+  "a1-food-shopping-mission": {
+    sceneUrdu: "آپ ایک کیفے میں بیٹھے ہیں۔ ویٹر آرڈر لیتا ہے۔",
+    turns: [
+      ["other", "wat wilt u drinken?", "آپ کیا پینا چاہتے ہیں؟"],
+      ["you", "voor mij een thee", ["deze jas is te groot", "ik wil dit terugbrengen"]],
+      ["other", "wat wilt u eten?", "آپ کیا کھانا چاہتے ہیں؟"],
+      ["you", "ik neem de soep", ["mijn pinpas werkt niet", "mag ik een tas?"]],
+      ["other", "wilt u nog iets?", "کیا آپ کو کچھ اور چاہیے؟"],
+      ["you", "de rekening alstublieft", ["deze jas is te groot", "ik zoek melk"], "بل مانگیں۔"]
+    ]
+  },
+  "a1-mission-post-parcel": {
+    sceneUrdu: "آپ پارسل لینے کی جگہ پر کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemiddag, hoe kan ik u helpen?", "دوپہر بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "ik wil mijn pakket ophalen", ["de trein heeft vertraging", "het is dichtbij"]],
+      ["other", "heeft u het bericht?", "کیا آپ کے پاس نوٹس ہے؟"],
+      ["you", "hier is mijn bericht", ["ik wil een kaartje naar Utrecht", "sla rechts af"]],
+      ["other", "u moet hier tekenen.", "آپ کو یہاں دستخط کرنے ہیں۔"]
+    ]
+  },
+  "a1-mission-doctor": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کے پاس ہیں۔",
+    turns: [
+      ["other", "goedemorgen. wat is er?", "صبح بخیر۔ کیا تکلیف ہے؟"],
+      ["you", "ik heb pijn in mijn buik", ["twee keer per dag", "ik wil een afspraak bij de huisarts"]],
+      ["other", "hoe lang bent u ziek?", "آپ کب سے بیمار ہیں؟"],
+      ["you", "ik heb sinds gisteren koorts", ["lees de bijsluiter", "is het dringend?"]],
+      ["other", "u moet rust nemen.", "آپ کو آرام کرنا چاہیے۔"],
+      ["you", "hoe vaak moet ik dit nemen?", ["waar doet het pijn?", "ik kan morgen niet komen"], "پوچھیں کہ دوا کتنی بار لینی ہے۔"],
+      ["other", "twee keer per dag.", "دن میں دو بار۔"]
+    ]
+  },
+  "a1-mission-school-day": {
+    sceneUrdu: "آپ صبح اسکول کو فون کرتے ہیں۔ آپ کا بچہ بیمار ہے۔",
+    turns: [
+      ["other", "goedemorgen, met de school.", "صبح بخیر، اسکول سے بات ہو رہی ہے۔"],
+      ["you", "mijn kind komt vandaag niet naar school", ["de bus heeft vertraging", "mijn dienst is veranderd"]],
+      ["other", "wat is er?", "کیا بات ہے؟"],
+      ["you", "mijn kind heeft koorts", ["het rooster staat in de app", "ik heb uw bericht gelezen"]],
+      ["other", "dank u wel.", "آپ کا شکریہ۔"],
+      ["you", "kunt u mij een bericht sturen?", ["ik ben tien minuten later", "mijn dienst is veranderd"], "پوچھیں کیا وہ آپ کو گھر کے کام کا پیغام بھیج سکتے ہیں۔"]
+    ]
+  },
+  "a1-chapter-completion-mission": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کے دفتر فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتی ہوں؟"],
+      ["you", "ik wil een afspraak bij de huisarts", ["ik wil mijn pakket ophalen", "ik zoek een woning"]],
+      ["other", "wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟"],
+      ["you", "mijn geboortedatum is 12 mei", ["mijn postcode is 1234 AB", "twee keer per dag"]],
+      ["other", "kunt u morgen komen?", "کیا آپ کل آ سکتے ہیں؟"],
+      ["you", "ik kan morgen niet komen", ["de trein heeft vertraging", "het is dichtbij"]]
+    ]
+  },
+  "a2-mission-social-help": {
+    sceneUrdu: "آپ بلدیہ کے کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemorgen. heeft u een afspraak?", "صبح بخیر۔ کیا آپ کی ملاقات طے ہے؟"],
+      ["you", "ik heb een afspraak bij de gemeente", ["de aanvraag", "onderteken hier"]],
+      ["other", "heeft u uw paspoort bij u?", "کیا آپ کا پاسپورٹ آپ کے پاس ہے؟"],
+      ["you", "hier is mijn paspoort", ["ik begrijp deze vraag niet", "het BSN"]],
+      ["other", "vul het formulier in, alstublieft.", "برائے مہربانی فارم بھر دیں۔"],
+      ["you", "ik begrijp deze vraag niet", ["hier is mijn paspoort", "waar is loket drie?"], "فارم کا ایک سوال سمجھ نہیں آیا۔ یہ بتائیں۔"],
+      ["other", "geen probleem.", "کوئی بات نہیں۔"]
+    ]
+  },
+  "a2-mission-job-start": {
+    sceneUrdu: "نئی نوکری پر آپ نگران سے بات کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen! wanneer kunt u werken?", "صبح بخیر! آپ کب کام کر سکتے ہیں؟"],
+      ["you", "ik kan op dinsdag werken", ["mijn salaris klopt niet", "dit is mijn contract"]],
+      ["other", "u moet veiligheidsschoenen dragen.", "آپ کو حفاظتی جوتے پہننے ہوں گے۔"],
+      ["you", "mag ik eerder beginnen?", ["ik zoek een baan", "mijn rooster is veranderd"], "پوچھیں کیا آپ پہلے شروع کر سکتے ہیں۔"],
+      ["other", "ja, dat is goed. heeft u nog vragen?", "ہاں، ٹھیک ہے۔ کوئی اور سوال؟"],
+      ["you", "wanneer krijg ik mijn salaris?", ["ik moet de manager bellen", "mijn collega helpt mij"], "پوچھیں تنخواہ کب ملے گی۔"]
+    ]
+  },
+  "a2-school-contact-mission": {
+    sceneUrdu: "آپ اپنے بچے کے استاد سے ملنے آئے ہیں۔",
+    turns: [
+      ["other", "goedemiddag! hoe gaat het met uw kind?", "دوپہر بخیر! آپ کا بچہ کیسا ہے؟"],
+      ["you", "mijn kind heeft moeite met lezen", ["de les valt vandaag uit", "ik meld mijn kind af"]],
+      ["you", "kan mijn kind extra hulp krijgen", ["de les begint om tien uur", "mijn kind was gisteren afwezig"], "پوچھیں کیا بچے کو اضافی مدد مل سکتی ہے۔"],
+      ["other", "ja. kunt u dinsdag komen?", "ہاں۔ کیا آپ منگل کو آ سکتے ہیں؟"],
+      ["you", "is een ander tijdstip mogelijk", ["we maken samen een plan", "moet ik de docent bellen?"]]
+    ]
+  },
+  "a2-health-doctor-mission": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کو بتاتے ہیں کہ کیا ہوا۔",
+    turns: [
+      ["other", "goedemorgen. wat is er?", "صبح بخیر۔ کیا ہوا ہے؟"],
+      ["you", "gisteren ben ik gevallen", ["ik moet volgende week terugkomen", "zijn er bijwerkingen"]],
+      ["other", "wanneer begon de pijn?", "درد کب شروع ہوا؟"],
+      ["you", "de pijn begon gisteravond", ["ik heb nog niet gegeten", "ik moet rust nemen"]],
+      ["other", "heeft u al iets genomen?", "کیا آپ نے کوئی دوا لی ہے؟"],
+      ["you", "ik heb al pijnstillers genomen", ["ik ben thuis gebleven", "dat ik rust moet nemen"]],
+      ["other", "u moet rust nemen.", "آپ کو آرام کرنا چاہیے۔"],
+      ["you", "wanneer moet ik terugkomen", ["omdat ik pijn had", "de dokter heeft gezegd"], "پوچھیں دوبارہ کب آنا ہے۔"]
+    ]
+  },
+  "a2-housing-problems-mission": {
+    sceneUrdu: "آپ مکان مالک کو گھر کے مسئلے کے بارے میں فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, wat is het probleem?", "دوپہر بخیر، مسئلہ کیا ہے؟"],
+      ["you", "er is een lekkage in de keuken", ["wie betaalt de reparatie", "als het water blijft lopen"]],
+      ["you", "de vloer wordt nat als het regent", ["kunt u dit schriftelijk bevestigen", "de monteur is niet gekomen"], "بتائیں کہ بارش ہو تو فرش گیلا ہو جاتا ہے۔"],
+      ["other", "de monteur komt morgen.", "مرمت کرنے والا کل آئے گا۔"],
+      ["you", "kunt u dit schriftelijk bevestigen", ["ik heb lekkage in mijn huis", "omdat de muur nat is"], "تحریری تصدیق مانگیں۔"]
+    ]
+  },
+  "a2-shopping-complaints-mission": {
+    sceneUrdu: "آپ ایک خراب چیز دکان پر واپس لائے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, kan ik u helpen?", "دوپہر بخیر، کیا میں آپ کی مدد کر سکتا ہوں؟"],
+      ["you", "het product werkt niet goed", ["ik heb de bon", "de les valt vandaag uit"]],
+      ["other", "wanneer heeft u dit gekocht?", "آپ نے یہ کب خریدا؟"],
+      ["you", "ik heb dit vorige week gekocht", ["ik wil het liever ruilen", "een onderdeel ontbreekt"]],
+      ["other", "heeft u de bon?", "کیا آپ کے پاس رسید ہے؟"],
+      ["you", "ik heb de bon", ["ik wil hem ruilen", "hij is kapot"]],
+      ["other", "wilt u uw geld terug?", "کیا آپ اپنے پیسے واپس چاہتے ہیں؟"],
+      ["you", "ik wil het liever ruilen", ["valt dit onder de garantie", "wanneer krijg ik een oplossing"]]
+    ]
+  },
+  "a2-mission-utilities": {
+    sceneUrdu: "آپ کا بینک کارڈ گم ہو گیا ہے۔ آپ بینک فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "ik ben mijn pinpas kwijt", ["ik heb deze rekening al betaald", "het bedrag klopt niet"]],
+      ["other", "wat is uw naam?", "آپ کا نام کیا ہے؟"],
+      ["you", "blokkeer mijn pas alstublieft", ["kan ik in termijnen betalen", "wanneer moet ik betalen"], "کارڈ بند کرنے کو کہیں۔"]
+    ]
+  },
+  "a2-mission-lost-stolen": {
+    sceneUrdu: "آپ دفتر کو فون کرتے ہیں کیونکہ آپ کو ابھی جواب نہیں ملا۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتی ہوں؟"],
+      ["you", "ik heb nog geen antwoord ontvangen", ["met vriendelijke groet", "beste dokter"]],
+      ["other", "wat is uw vraag?", "آپ کا سوال کیا ہے؟"],
+      ["you", "ik wil graag een nieuwe datum afspreken", ["geachte meneer of mevrouw", "met vriendelijke groet"]],
+      ["other", "heeft u het formulier?", "کیا آپ کے پاس فارم ہے؟"],
+      ["you", "ik heb het formulier ingevuld", ["met vriendelijke groet", "beste dokter"]]
+    ]
+  },
+  "a2-chapter-completion-mission": {
+    sceneUrdu: "آپ کام کے دفتر میں ذمہ دار سے بات کرتے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, hoe kan ik u helpen?", "دوپہر بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "mijn salaris klopt niet", ["ik heb de bon", "de les valt vandaag uit"]],
+      ["other", "kunt u morgen om negen uur komen?", "کیا آپ کل نو بجے آ سکتے ہیں؟"],
+      ["you", "is een ander tijdstip mogelijk", ["ik heb al pijnstillers genomen", "het formulier staat in de bijlage"]],
+      ["other", "ja, om twee uur.", "ہاں، دو بجے۔"],
+      ["you", "kunt u dit schriftelijk bevestigen", ["blokkeer mijn pas alstublieft", "gisteren ben ik gevallen"], "تحریری تصدیق مانگیں۔"]
+    ]
+  }
+};
+
+function rolePlayConceptV4(dutch) {
+  const key = normalizedTextV4(dutch);
+  for (const concept of conceptByIdV4.values()) {
+    if (normalizedTextV4(concept.dutch) === key) return concept;
+  }
+  return null;
+}
+
+function applyMissionRolePlaysV4() {
+  const missions = chaptersV4.flatMap((chapter) => chapter.lessons.filter((lesson) => lesson.kind === "mission"));
+  for (const mission of missions) {
+    const script = missionRolePlaysV4[mission.id];
+    if (!script || !mission.variants?.length) continue;
+    const turns = script.turns.map(([speaker, dutch, third, cueUrdu]) => {
+      if (speaker === "other") return { speaker, dutch, urdu: third };
+      const concept = rolePlayConceptV4(dutch);
+      const urdu = cleanTerminalPunctuationV4(concept?.urdu || "");
+      const explanations = Object.fromEntries(third.map((wrong) => {
+        const wrongUrdu = cleanTerminalPunctuationV4(rolePlayConceptV4(wrong)?.urdu || "");
+        return [wrong, wrongUrdu
+          ? `“${wrong}” = “${wrongUrdu}”۔ یہ اس گفتگو میں فٹ نہیں ہوتا۔ دوبارہ سوچیں۔`
+          : `“${wrong}” اس گفتگو میں فٹ نہیں ہوتا۔ دوبارہ سوچیں۔`];
+      }));
+      return { speaker, answer: dutch, urdu, cueUrdu: cueUrdu || "", conceptId: concept?.id || "", options: [dutch, ...third], explanations };
+    });
+    const replies = turns.filter((turn) => turn.speaker === "you");
+    // Tag the role-play with the mission's own targets it practises; the
+    // other replies are earlier phrases that only set the scene.
+    const missionConceptIds = new Set(mission.conceptIds || []);
+    const missionSkillIds = new Set(mission.assessmentSkillIds || mission.learning?.assessmentSkillIds || []);
+    const isMissionTarget = (conceptId) => missionConceptIds.has(conceptId)
+      && (!missionSkillIds.size || missionSkillIds.has(skillIdByConceptIdV4.get(conceptId)));
+    const ownConceptIds = uniqueV4(replies.map((turn) => turn.conceptId)).filter(isMissionTarget);
+    const conceptIds = ownConceptIds.length
+      ? ownConceptIds
+      : [(mission.conceptIds || []).find(isMissionTarget)].filter(Boolean);
+    const skillIds = uniqueV4(conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)));
+    mission.variants.forEach((variant, variantIndex) => {
+      const id = `${mission.id}:role-play:variant-${variantIndex + 1}`;
+      if (variant.questions.some((question) => question.id === id)) return;
+      const question = {
+        id,
+        type: "role-play",
+        label: "گفتگو کی مشق",
+        instructionUrdu: "گفتگو سنیں اور اپنی باری پر مناسب ڈچ جواب چنیں، پھر اسے بلند آواز میں کہیں",
+        prompt: script.sceneUrdu,
+        turns: turns.map((turn) => ({ ...turn, options: turn.options ? [...turn.options] : undefined })),
+        answer: replies[replies.length - 1].answer,
+        explain: replies.map((turn) => `${turn.answer} = ${turn.urdu}`).join("، "),
+        // A warm-up in the mission's unscored preparation step, before Use.
+        phase: "preview",
+        conceptIds,
+        skillIds,
+        scored: false,
+        adaptiveReviewEligible: false,
+        synthetic: true,
+        semanticKey: `${mission.id}:role-play`
+      };
+      // Same authored provenance as the variant: "<ch>-authored:<mission>:variant-N:role-play".
+      const variantSource = variant.scenarioSource
+        || variant.questions.map((item) => String(item.scenarioSource || "")).find((source) => /:variant-\d+/.test(source))?.replace(/(:variant-\d+).*$/, "$1")
+        || `${String(mission.id).slice(0, 2)}-authored:${semanticSlugV4(mission.id)}:variant-${variantIndex + 1}`;
+      question.scenarioSource = `${variantSource}:role-play`;
+      question.scenarioId = `${mission.id}:role-play`;
+      variant.questions.unshift(question);
+      const addToPreview = (phases) => {
+        if (!phases) return;
+        phases.preview = { scored: false, ...(phases.preview || {}) };
+        phases.preview.exerciseIds = uniqueV4([id, ...(phases.preview.exerciseIds || [])]);
+      };
+      addToPreview(variant.phases);
+      const learningVariant = mission.learning?.variants?.find((item) => item.id === variant.id);
+      if (learningVariant) {
+        if (learningVariant.exerciseIds && !learningVariant.exerciseIds.includes(id)) learningVariant.exerciseIds.unshift(id);
+        if (learningVariant.phases !== variant.phases) addToPreview(learningVariant.phases);
+      }
+    });
+    mission.questions = mission.variants.flatMap((variant) => variant.questions);
+  }
+}
+
+applyMissionRolePlaysV4();
+
 applyDistractorEngineV4();
 
 const courseV4 = {

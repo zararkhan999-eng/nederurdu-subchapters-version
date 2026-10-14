@@ -1988,6 +1988,7 @@ function getQuestionTitle(question) {
 }
 
 function renderQuestionCard(question, visual) {
+  if (question.type === "role-play") return renderRolePlayQuestion(question);
   if (question.type === "concept-teach") return renderConceptTeachingQuestion(question, visual);
   if (question.type === "pattern-teach") return renderPatternTeachingQuestion(question);
   if (question.type === "correction-teach") return renderCorrectionTeachingQuestion(question);
@@ -2041,7 +2042,7 @@ function renderConceptTeachingQuestion(question, visual) {
           <div class="teaching-dutch latin">
             <strong data-karaoke>${NU.lesson.karaokeHTML(teaching.dutch)}</strong>
           </div>
-          <div class="teaching-actions">${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
+          <div class="teaching-actions">${teaching.audioText ? `<span class="pl-speaker-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 46 })}</span>` : ""}${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
           <div class="pl-meaning"><span>مطلب</span><p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p></div>
           ${teaching.pronunciation ? `<p class="teaching-pronunciation"><span>اردو میں آواز:</span> ${escapeHtml(teaching.pronunciation)}</p>` : ""}
         </section>
@@ -2350,6 +2351,114 @@ function renderGapSentence(question) {
   return `<strong class="gap-sentence latin" dir="ltr">${escapeHtml(shown).replace("___", '<span class="gap-slot" aria-label="خالی جگہ">____</span>')}</strong>`;
 }
 
+// Stage 2.3 guided role-play: the conversation advances one learner turn at a
+// time; a wrong reply is explained and retried. Progress lives per question.
+let rolePlayState = null;
+
+function getRolePlayState(question) {
+  if (!rolePlayState || rolePlayState.questionId !== question.id || rolePlayState.index !== activeQuestionIndex) {
+    rolePlayState = { questionId: question.id, index: activeQuestionIndex, step: 0, wrong: "", mistakes: 0 };
+  }
+  return rolePlayState;
+}
+
+function getRolePlayReplies(question) {
+  return (question.turns || []).filter((turn) => turn.speaker === "you");
+}
+
+function isRolePlayComplete(question) {
+  return getRolePlayState(question).step >= getRolePlayReplies(question).length;
+}
+
+function chooseRolePlayReply(answer) {
+  const question = getActiveQuestion();
+  if (question?.type !== "role-play") return;
+  const state = getRolePlayState(question);
+  const turn = getRolePlayReplies(question)[state.step];
+  if (!turn) return;
+  if (answer === turn.answer) {
+    state.step += 1;
+    state.wrong = "";
+    NU.sound.play("correct", { combo: 1 });
+    NU.haptics.play("success");
+    // The other person answers: speak their next line.
+    const turns = question.turns || [];
+    const nextOther = turns.slice(turns.indexOf(turn) + 1).find((item) => item.speaker !== "you");
+    const nextReplyIndex = turns.findIndex((item, index) => index > turns.indexOf(turn) && item.speaker === "you");
+    if (nextOther && (nextReplyIndex < 0 || turns.indexOf(nextOther) < nextReplyIndex)) {
+      window.setTimeout(() => speakDutch(nextOther.dutch), 500);
+    }
+  } else {
+    state.wrong = answer;
+    state.mistakes += 1;
+    NU.sound.play("wrong");
+    NU.haptics.play("error");
+  }
+  render();
+  // render() restores the scroll position in the next frame, so scroll after
+  // it: just far enough that the new turn sits above the fixed footer.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const target = app.querySelector(".role-play-choice, .role-play-done");
+    const content = app.querySelector(".quiz-content");
+    const footer = app.querySelector(".quiz-action-bar");
+    if (!target || !content || !footer) return;
+    const overlap = target.getBoundingClientRect().bottom - (footer.getBoundingClientRect().top - 12);
+    const room = target.getBoundingClientRect().top - content.getBoundingClientRect().top;
+    if (overlap > 0) content.scrollTop += Math.min(overlap, Math.max(0, room));
+  }));
+}
+
+function renderRolePlayQuestion(question) {
+  const state = getRolePlayState(question);
+  const turns = question.turns || [];
+  let repliesSeen = 0;
+  const visible = [];
+  let current = null;
+  for (const turn of turns) {
+    if (turn.speaker === "you") {
+      if (repliesSeen === state.step) {
+        current = turn;
+        break;
+      }
+      repliesSeen += 1;
+    }
+    visible.push(turn);
+  }
+  const bubble = (turn) => turn.speaker === "you"
+    ? `
+      <li class="role-play-turn you">
+        <div class="role-play-bubble">
+          <strong class="latin" dir="ltr">${escapeHtml(turn.answer)}</strong>
+          <small>${escapeHtml(turn.urdu)}</small>
+          <span class="role-play-say">${renderSpeakButton(turn.answer)} اب بلند آواز میں کہیں</span>
+        </div>
+      </li>`
+    : `
+      <li class="role-play-turn other">
+        <div class="role-play-bubble">
+          <strong class="latin" dir="ltr">${renderSpeakButton(turn.dutch)} ${escapeHtml(turn.dutch)}</strong>
+          <small>${escapeHtml(turn.urdu)}</small>
+        </div>
+      </li>`;
+  return `
+    <div class="role-play-question">
+      <p class="role-play-scene">${escapeHtml(question.prompt)}</p>
+      <ol class="role-play-transcript">${visible.map(bubble).join("")}</ol>
+      ${current ? `
+        <div class="role-play-choice">
+          <p class="role-play-your-turn">${current.cueUrdu ? escapeHtml(current.cueUrdu) : "آپ کی باری: مناسب جواب چنیں۔"}</p>
+          ${state.wrong ? `<p class="role-play-wrong" role="status">${escapeHtml(current.explanations?.[state.wrong] || "یہ جواب یہاں فٹ نہیں ہوتا۔ دوبارہ کوشش کریں۔")}</p>` : ""}
+          <div class="choice-list">
+            ${(current.options || []).map((option) => `
+              <button class="choice-button latin ${state.wrong === option ? "wrong" : ""}" dir="ltr" data-action="role-play-choose" data-answer="${escapeAttr(option)}">${escapeHtml(option)}</button>
+            `).join("")}
+          </div>
+        </div>
+      ` : `<p class="role-play-done" role="status">شاباش! گفتگو مکمل ہو گئی۔ اپنی باتیں ایک بار پھر بلند آواز میں کہیں۔</p>`}
+    </div>
+  `;
+}
+
 function renderShortInputQuestion(question) {
   if (typedFallback) return `
     <div class="short-input-question">
@@ -2475,6 +2584,10 @@ function renderMatchPairButton(id, side, text) {
 
 function renderQuizFooter(question, infoStep) {
   const correct = checked && isCurrentAnswerCorrect(question);
+  if (infoStep && question.type === "role-play") {
+    const done = isRolePlayComplete(question);
+    return `<footer class="quiz-action-bar"><button class="quiz-action ${done ? "enabled" : ""}" data-action="continue-info" ${done ? "" : "disabled"}>${done ? "گفتگو مکمل، آگے بڑھیں" : "پہلے گفتگو مکمل کریں"}</button></footer>`;
+  }
   if (infoStep) {
     const hasNextTeachingStep = teachingStep < getTeachingStepCount(question) - 1;
     const label = question.type === "speak-repeat"
@@ -3156,6 +3269,7 @@ function bindEvents() {
       if (action === "start") startLesson(element.dataset.lesson);
       if (action === "review") startReview(element.dataset.reviewKind);
       if (action === "choose") chooseAnswer(element.dataset.answer);
+      if (action === "role-play-choose") chooseRolePlayReply(element.dataset.answer);
       if (action === "build-select") selectBuildTile(element.dataset.tileId);
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
       if (action === "match-pair") selectMatchPair(element.dataset.matchId, element.dataset.matchSide);
@@ -3390,6 +3504,7 @@ function triggerAnswerMoment(correct, compact = false) {
     NU.sound.play("wrong");
     NU.haptics.play("error");
     NU.motion.shake(document.querySelector(".choice-button.wrong") || icon);
+    NU.cat.act(icon?.querySelector(".nu-cat"), "shake");
     return;
   }
   const streak = answerCombo >= 3 && answerCombo % 3 === 0;
@@ -3397,6 +3512,7 @@ function triggerAnswerMoment(correct, compact = false) {
   if (streak) window.setTimeout(() => NU.sound.play("streak"), 260);
   NU.haptics.play(streak ? "streak" : "success");
   NU.motion.jelly(icon);
+  NU.cat.act(icon?.querySelector(".nu-cat"), "nod");
   NU.motion.burst(icon, { count: streak ? 28 : 14, spread: streak ? 150 : 90 });
   NU.motion.bump(document.querySelector(".choice-button.correct"));
   NU.motion.pop(document.querySelector(".quiz-combo"));
@@ -3842,6 +3958,7 @@ function selectMatchPair(id, side) {
 
 function continueInfoStep() {
   const question = getActiveQuestion();
+  if (question?.type === "role-play" && !isRolePlayComplete(question)) return;
   if (teachingStep < getTeachingStepCount(question) - 1) {
     teachingStep += 1;
     lessonDetailKind = "";
@@ -4662,6 +4779,9 @@ function prepareSessionQuestion(question) {
   )));
   return {
     ...question,
+    ...(question.turns ? {
+      turns: question.turns.map((turn) => (turn.options ? { ...turn, options: shuffleArray([...turn.options]) } : turn))
+    } : {}),
     options: question.options ? shuffleArray([...question.options]) : [],
     tiles: prepareTiles(question.tiles, "tile"),
     fallbackTiles: prepareTiles(question.fallbackTiles, "fallback")
@@ -4749,7 +4869,7 @@ function getBuildAnswerText(question) {
 }
 
 function isInfoQuestion(question) {
-  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach"].includes(question?.type);
+  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach", "role-play"].includes(question?.type);
 }
 
 function canCheckQuestion(question) {

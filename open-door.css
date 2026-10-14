@@ -118,6 +118,25 @@ body.od-reduced #app *{animation:none!important;transition:none!important}
 #app .match-pair-card.matched{background:#e7f2ec;color:#176b4d;border-color:#176b4d}
 #app .match-pair-card.wrong{background:#f9e9e6;color:#a73535;border-color:#a73535}
 #app .short-answer-input{min-height:60px;padding:15px;width:100%;font-size:21px}
+#app .role-play-question{background:#fff;color:#18212b;border:1px solid #deded9;border-radius:14px;box-shadow:var(--shadow);padding:18px}
+#app .role-play-scene{font:500 18px/1.8 var(--font-urdu-reading);color:#626a75;margin:0 0 12px}
+#app .role-play-transcript{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:10px}
+#app .role-play-turn{display:flex}
+#app .role-play-turn.other{justify-content:flex-end}
+#app .role-play-turn.you{justify-content:flex-start}
+#app .role-play-bubble{max-width:88%;border-radius:14px;padding:10px 14px;display:grid;gap:4px}
+#app .role-play-turn.other .role-play-bubble{background:#f5f2ec;border-top-right-radius:4px}
+#app .role-play-turn.you .role-play-bubble{background:#e7f2ec;border-top-left-radius:4px}
+#app .role-play-bubble strong{font:600 19px/1.5 var(--font-ui);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#app .role-play-bubble small{font:500 15px/1.7 var(--font-urdu-reading);color:#626a75}
+#app .role-play-say{display:flex;align-items:center;gap:8px;font-size:14px;color:#176b4d}
+#app .role-play-your-turn{font:600 17px/1.8 var(--font-urdu-reading);margin:4px 0 10px}
+#app .role-play-wrong{background:#f9e9e6;color:#a73535;border-radius:10px;padding:10px 12px;font:500 15px/1.8 var(--font-urdu-reading);margin:0 0 10px}
+#app .role-play-done{background:#e7f2ec;color:#176b4d;border-radius:10px;padding:12px;font:600 16px/1.8 var(--font-urdu-reading);margin:0}
+#app .role-play-choice .choice-list{display:grid;gap:10px}
+#app .role-play-choice .choice-button{text-align:left;justify-content:flex-start}
+#app .role-play-bubble .speak-button{width:34px;height:34px;min-width:34px;min-height:34px;padding:0;flex:none}
+#app .role-play-bubble .speak-button svg{width:18px;height:18px}
 #app .gap-sentence{display:block;direction:ltr;text-align:center;margin:6px 0 14px;font:600 24px/1.6 var(--font-ui);color:#18212b;overflow-wrap:anywhere}
 #app .gap-slot{display:inline-block;min-width:3.2em;border-bottom:3px solid #2047ed;color:transparent;line-height:1.1}
 #app .input-fallback{color:#2047ed;background:#e8edff;border:0;border-radius:8px;padding:10px 14px;margin-top:16px}

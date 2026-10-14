@@ -44,6 +44,7 @@ NU.lesson = (() => {
     el.querySelectorAll(".kw-syl.is-lit,.kw-syl.is-done").forEach((s) => s.classList.remove("is-lit", "is-done"));
     if (!syllables.length || NU.motion.level() === "off") return;
     const step = slow ? 380 : 240;
+    const speaker = NU.pim?.speakerFor(el);
     let t = 260;
     syllables.forEach((syl, i) => {
       const gap = i && syl.parentElement !== syllables[i - 1].parentElement ? (slow ? 160 : 90) : 0;
@@ -52,6 +53,7 @@ NU.lesson = (() => {
         if (run !== karaokeRun) return;
         syllables[i - 1]?.classList.replace("is-lit", "is-done");
         syl.classList.add("is-lit");
+        if (speaker) NU.pim.mouth(speaker, syl.textContent, { hold: step * 0.7 });
       }, t);
       t += step;
     });

@@ -92,6 +92,7 @@ body{background:var(--pl-bg);color:var(--pl-ink)}
 .nu-particle{position:absolute;display:block;width:10px;height:10px;background:var(--c);will-change:transform,opacity}
 .nu-particle-dot{border-radius:50%}
 .nu-particle-bar{width:6px;height:14px;border-radius:3px}
+.nu-particle-heart{width:14px;height:13px;clip-path:path("M7 13C3 9.6 0 7.2 0 4A3.6 3.6 0 0 1 7 2.3 3.6 3.6 0 0 1 14 4c0 3.2-3 5.6-7 9Z")}
 .nu-particle-star{width:14px;height:14px;clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%)}
 
 /* Fixes: the notes chip was squeezed into the flexible grid column, and the RTL reading scroller showed a desktop scrollbar. */
