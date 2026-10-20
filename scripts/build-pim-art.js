@@ -1,6 +1,7 @@
 /* Renders the Pim art kit (art/*.js) to the SVG files the app ships:
      assets/word-visuals/<id>.svg   one picture per word in word-visual-data.js
      assets/visuals/<topic>.svg     the lesson topic headers
+     icon.svg                       the web app icon
    Run with `npm run art:build`; `--check` fails if any shipped file is out of date. */
 const fs = require("fs");
 const path = require("path");
@@ -11,6 +12,7 @@ window.NEDERURDU_CHAPTERS = [];
 require(path.join(root, "word-visual-data.js"));
 const words = require(path.join(root, "art", "render.js"));
 const scenes = require(path.join(root, "art", "scenes.js"));
+const brand = require(path.join(root, "art", "brand.js"));
 
 const check = process.argv.includes("--check");
 const outputs = new Map();
@@ -23,6 +25,8 @@ for (const visual of window.NEDERURDU_WORD_VISUALS) {
 for (const [name, svg] of Object.entries(scenes.topics())) {
   outputs.set(path.join("assets", "visuals", `${name}.svg`), svg);
 }
+
+outputs.set("icon.svg", brand.icon());
 
 const stale = [];
 for (const [rel, svg] of outputs) {
