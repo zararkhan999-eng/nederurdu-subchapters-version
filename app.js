@@ -3120,15 +3120,15 @@ function bindEvents() {
         event.preventDefault();
         event.stopPropagation();
         animateSpeakingControl(element);
-        speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
-        NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio });
+        const durationMs = speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
+        NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio, durationMs });
       }
       if (action === "slow-speak") {
         event.preventDefault();
         event.stopPropagation();
         animateSpeakingControl(element);
-        speakDutch(element.dataset.speak, true);
-        NU.lesson.karaoke(getKaraokeTarget(element), { slow: true });
+        const durationMs = speakDutch(element.dataset.speak, true);
+        NU.lesson.karaoke(getKaraokeTarget(element), { slow: true, durationMs });
       }
       if (action === "home") goHome();
       if (action === "journey") goDestination("journey");
@@ -3168,8 +3168,8 @@ function bindEvents() {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       event.stopPropagation();
-      speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
-      NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio });
+      const durationMs = speakDutch(element.dataset.speak, false, element.dataset.regular === "true");
+      NU.lesson.karaoke(getKaraokeTarget(element), { slow: element.dataset.regular !== "true" && progress.settings.slowAudio, durationMs });
     });
   });
 
@@ -4820,13 +4820,52 @@ function refreshPreferredDutchVoice() {
   return preferredDutchVoice;
 }
 
+function isSlowSpeech(forceSlow = false, forceRegular = false) {
+  return forceRegular ? false : progress.settings.slowAudio || forceSlow;
+}
+
 function getDutchSpeechRate(text, forceSlow = false, forceRegular = false) {
   const cleanText = normalizeDutchSpeechText(text);
   const singleLetter = cleanText.length === 1;
   const singleWord = !/\s/.test(cleanText);
-  const slow = forceRegular ? false : progress.settings.slowAudio || forceSlow;
-  if (slow) return singleLetter ? 0.7 : singleWord ? 0.76 : 0.8;
+  if (isSlowSpeech(forceSlow, forceRegular)) return singleLetter ? 0.7 : singleWord ? 0.76 : 0.8;
   return singleLetter ? 0.82 : singleWord ? 0.92 : 0.96;
+}
+
+// Recorded Dutch: every course text has a regular and a slow clip spoken by
+// the Piper "pim" voice (audio/nl, built by scripts/audio). Texts without a
+// clip, and browsers that cannot play Opus, use the device voice instead.
+const speechClips = window.NEDERURDU_AUDIO?.clips || {};
+const canPlaySpeechClips = (() => {
+  try {
+    return Boolean(document.createElement("audio").canPlayType('audio/ogg; codecs="opus"'));
+  } catch {
+    return false;
+  }
+})();
+let speechClipPlayer = null;
+
+function getSpeechClip(spokenText, slow) {
+  const clip = canPlaySpeechClips ? speechClips[spokenText] : null;
+  if (!clip) return null;
+  const [id, regularMs, slowMs] = clip;
+  return slow
+    ? { src: `audio/nl/${id}-slow.ogg`, durationMs: slowMs }
+    : { src: `audio/nl/${id}.ogg`, durationMs: regularMs };
+}
+
+function playSpeechClip(clip, fallback) {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  speechClipPlayer ||= new Audio();
+  const player = speechClipPlayer;
+  player.pause();
+  player.src = clip.src;
+  player.currentTime = 0;
+  // A newer clip interrupting this one rejects with AbortError; anything else
+  // (missing file, unsupported audio) falls back to the device voice.
+  player.play()?.catch?.((error) => {
+    if (error?.name !== "AbortError" && player.src.endsWith(clip.src)) fallback();
+  });
 }
 
 let missingVoiceNoticeShown = false;
@@ -4851,11 +4890,23 @@ function showMissingVoiceNotice() {
   document.body.append(notice);
 }
 
+// Returns the clip's length in ms when a recorded clip plays, else null.
 function speakDutch(text, forceSlow = false, forceRegular = false) {
-  if (!progress.settings.pronunciation || !text) return;
+  if (!progress.settings.pronunciation || !text) return null;
 
   const spokenText = normalizeDutchSpeechText(text);
-  if (!spokenText) return;
+  if (!spokenText) return null;
+  const clip = getSpeechClip(spokenText, isSlowSpeech(forceSlow, forceRegular));
+  if (clip) {
+    playSpeechClip(clip, () => speakWithDeviceVoice(spokenText, forceSlow, forceRegular));
+    return clip.durationMs;
+  }
+  speakWithDeviceVoice(spokenText, forceSlow, forceRegular);
+  return null;
+}
+
+function speakWithDeviceVoice(spokenText, forceSlow = false, forceRegular = false) {
+  speechClipPlayer?.pause();
   const rate = getDutchSpeechRate(spokenText, forceSlow, forceRegular);
   const pitch = 0.98;
 

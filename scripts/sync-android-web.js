@@ -57,7 +57,10 @@ const referenced = [...read("index.html").matchAll(/(?:href|src)="([^"?#]+)/g)].
 for (const file of files.filter((name) => name.endsWith(".css"))) {
   for (const match of read(file).matchAll(/@import\s+url\(\s*["']?([^"')?#]+)/g)) referenced.push(match[1]);
 }
-const missing = [...new Set(referenced)].filter((file) => !files.includes(file));
+// Whole folders: fonts and images, and the recorded Dutch clips with their manifest.
+const directories = ["assets", "audio"];
+const missing = [...new Set(referenced)]
+  .filter((file) => !files.includes(file) && !directories.some((directory) => file.startsWith(`${directory}/`)));
 if (missing.length) {
   throw new Error(`index.html loads files the Android sync does not copy: ${missing.join(", ")}`);
 }
@@ -70,5 +73,5 @@ for (const file of files) {
   fs.copyFileSync(path.join(root, file), path.join(target, file));
 }
 
-copyDirectory(path.join(root, "assets"), path.join(target, "assets"));
-console.log(`Synced ${files.length} web files and assets to ${path.relative(root, target)}`);
+for (const directory of directories) copyDirectory(path.join(root, directory), path.join(target, directory));
+console.log(`Synced ${files.length} web files, ${directories.join(" and ")} to ${path.relative(root, target)}`);

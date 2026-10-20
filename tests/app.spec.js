@@ -2462,7 +2462,7 @@ test("beginner settings persist and pronunciation hints render for core words", 
   expect(stored.settings.largeText).toBe(true);
 });
 
-test("slow audio setting lowers speech synthesis rate", async ({ page }) => {
+test("slow audio setting lowers the device voice rate for unrecorded text", async ({ page }) => {
   await openCleanApp(page);
 
   const rate = await page.evaluate(() => {
@@ -2472,7 +2472,7 @@ test("slow audio setting lowers speech synthesis rate", async ({ page }) => {
       window.__spokenRate = utterance.rate;
       window.speechSynthesis.speak = originalSpeak;
     };
-    window.speakDutch("appel");
+    window.speakDutch("appeltaart");
     return window.__spokenRate;
   });
   expect(rate).toBeGreaterThan(0);
@@ -2491,7 +2491,7 @@ test("natural speech prefers an enhanced local Netherlands voice", async ({ page
   expect(voice.name).toBe("Xander Enhanced");
 });
 
-test("native speech receives cleaned text and tuned pacing", async ({ page }) => {
+test("native speech receives cleaned text and tuned pacing for unrecorded text", async ({ page }) => {
   await openCleanApp(page);
 
   const spoken = await page.evaluate(() => {
@@ -2502,14 +2502,99 @@ test("native speech receives cleaned text and tuned pacing", async ({ page }) =>
         return true;
       }
     };
-    window.speakDutch("Hoi | hoe gaat het?");
+    window.speakDutch("Hoi | hoe gaat het met de appeltaart?");
     return window.__nativeSpeech;
   });
 
-  expect(spoken.text).toBe("Hoi, hoe gaat het?");
+  expect(spoken.text).toBe("Hoi, hoe gaat het met de appeltaart?");
   expect(spoken.rate).toBeGreaterThanOrEqual(0.7);
   expect(spoken.rate).toBeLessThan(0.9);
   expect(spoken.pitch).toBeCloseTo(0.98, 2);
+});
+
+// Records clip playback instead of making sound. `outcome` decides how play() settles.
+async function stubSpeechPlayback(page, outcome = "play") {
+  await page.evaluate((outcome) => {
+    window.__clipPlays = [];
+    window.__deviceSpeech = [];
+    HTMLMediaElement.prototype.play = function play() {
+      window.__clipPlays.push(new URL(this.src).pathname.replace(/^\//, ""));
+      if (outcome === "play") return Promise.resolve();
+      const error = new Error("unsupported");
+      error.name = "NotSupportedError";
+      return Promise.reject(error);
+    };
+    window.speechSynthesis.speak = (utterance) => window.__deviceSpeech.push(utterance.text);
+  }, outcome);
+}
+
+test("speech plays the recorded pim clip at the learner's speed", async ({ page }) => {
+  await openCleanApp(page);
+  await stubSpeechPlayback(page);
+
+  const result = await page.evaluate(() => {
+    const [id, regularMs, slowMs] = window.NEDERURDU_AUDIO.clips.appel;
+    return {
+      id,
+      regularMs,
+      slowMs,
+      slowDuration: window.speakDutch("appel"),
+      regularDuration: window.speakDutch("appel", false, true),
+      plays: window.__clipPlays,
+      device: window.__deviceSpeech
+    };
+  });
+
+  expect(result.plays).toEqual([`audio/nl/${result.id}-slow.ogg`, `audio/nl/${result.id}.ogg`]);
+  expect(result.slowDuration).toBe(result.slowMs);
+  expect(result.regularDuration).toBe(result.regularMs);
+  expect(result.slowMs).toBeGreaterThan(result.regularMs);
+  expect(result.device).toEqual([]);
+});
+
+test("a lesson speak button plays the clip for its own text", async ({ page }) => {
+  await openCleanApp(page);
+  await page.evaluate(() => startLesson("a0-letters-1"));
+  await stubSpeechPlayback(page);
+
+  const button = page.locator('[data-action="speak"]').first();
+  const text = await button.getAttribute("data-speak");
+  await button.click();
+
+  const expected = await page.evaluate((text) => {
+    const clip = window.NEDERURDU_AUDIO.clips[normalizeDutchSpeechText(text)];
+    return clip && clip[0];
+  }, text);
+  expect(expected, `no recorded clip for "${text}"`).toBeTruthy();
+  await expect.poll(() => page.evaluate(() => window.__clipPlays)).toEqual([expect.stringMatching(new RegExp(`^audio/nl/${expected}(-slow)?\\.ogg$`))]);
+});
+
+test("a clip that cannot play falls back to the device voice", async ({ page }) => {
+  await openCleanApp(page);
+  await stubSpeechPlayback(page, "fail");
+
+  await page.evaluate(() => window.speakDutch("appel"));
+
+  await expect.poll(() => page.evaluate(() => window.__deviceSpeech)).toEqual(["appel"]);
+});
+
+test("recorded clips are served as Opus audio", async ({ page }) => {
+  await openCleanApp(page);
+
+  const responses = await page.evaluate(async () => {
+    const ids = Object.values(window.NEDERURDU_AUDIO.clips).map(([id]) => id);
+    const sample = [ids[0], ids[Math.floor(ids.length / 2)], ids[ids.length - 1]];
+    return Promise.all(sample.flatMap((id) => [`audio/nl/${id}.ogg`, `audio/nl/${id}-slow.ogg`]).map(async (src) => {
+      const response = await fetch(src);
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      return { src, status: response.status, type: response.headers.get("content-type"), magic: String.fromCharCode(...bytes.slice(0, 4)), size: bytes.length };
+    }));
+  });
+
+  for (const response of responses) {
+    expect(response, response.src).toMatchObject({ status: 200, type: "audio/ogg", magic: "OggS" });
+    expect(response.size, response.src).toBeGreaterThan(1000);
+  }
 });
 
 test("securing every run marks its lesson complete on the path", async ({ page }) => {

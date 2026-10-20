@@ -16,6 +16,7 @@ const types = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
+  ".ogg": "audio/ogg",
   ".webmanifest": "application/manifest+json; charset=utf-8"
 };
 

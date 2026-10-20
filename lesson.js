@@ -35,18 +35,23 @@ NU.lesson = (() => {
     }).join("");
   }
 
-  // Lights syllables in time with speech. Native TTS gives no word timings, so pacing is estimated.
+  // Lights syllables in time with speech. There are no word timings, so pacing
+  // is estimated; when a recorded clip plays, it is spread over the clip's length.
   let karaokeRun = 0;
-  function karaoke(el, { slow = false } = {}) {
+  function karaoke(el, { slow = false, durationMs = 0 } = {}) {
     if (!el) return;
     const run = ++karaokeRun;
     const syllables = [...el.querySelectorAll(".kw-syl,.od-grammar-token")];
     el.querySelectorAll(".kw-syl.is-lit,.kw-syl.is-done").forEach((s) => s.classList.remove("is-lit", "is-done"));
     if (!syllables.length || NU.motion.level() === "off") return;
-    const step = slow ? 380 : 240;
-    let t = 260;
+    const wordBreaks = syllables.filter((syl, i) => i && syl.parentElement !== syllables[i - 1].parentElement).length;
+    // A clip starts speaking almost at once; a word break takes 40% of a syllable step.
+    const fitted = durationMs > 0 ? Math.max(90, (durationMs - 80) / (syllables.length + wordBreaks * 0.4)) : 0;
+    const step = fitted || (slow ? 380 : 240);
+    const wordGap = fitted ? fitted * 0.4 : slow ? 160 : 90;
+    let t = fitted ? 40 : 260;
     syllables.forEach((syl, i) => {
-      const gap = i && syl.parentElement !== syllables[i - 1].parentElement ? (slow ? 160 : 90) : 0;
+      const gap = i && syl.parentElement !== syllables[i - 1].parentElement ? wordGap : 0;
       t += gap;
       setTimeout(() => {
         if (run !== karaokeRun) return;

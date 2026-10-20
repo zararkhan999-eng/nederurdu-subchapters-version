@@ -10,6 +10,7 @@ const APP_SHELL = [
   "./brand-system.css",
   "./course-data.js",
   "./word-visual-data.js",
+  "./audio/nl/manifest.js",
   "./assets/word-visuals/offline-manifest.json",
   "./app.js",
   "./app.js?v=86",
@@ -76,8 +77,26 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Recorded Dutch clips are named by a hash of their content, so a cached clip
+// never goes stale. They are cached on first play, keyed by URL: audio
+// elements send Range requests, and partial responses cannot be cached.
+function respondWithSpeechClip(url) {
+  return caches.match(url).then((cached) => cached || fetch(url).then((response) => {
+    if (response.status === 200) {
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(url, copy));
+    }
+    return response;
+  }));
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.origin === self.location.origin && /\/audio\/nl\/[^/]+\.ogg$/.test(url.pathname)) {
+    event.respondWith(respondWithSpeechClip(url.href));
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then((response) => {
