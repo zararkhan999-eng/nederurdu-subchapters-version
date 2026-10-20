@@ -1,0 +1,3 @@
+# Python environment for rendering recorded Dutch (npm run audio:setup)
+.venv/
+__pycache__/

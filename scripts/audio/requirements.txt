@@ -1,0 +1,4 @@
+sherpa-onnx>=1.12
+numpy
+soundfile>=0.12
+soxr

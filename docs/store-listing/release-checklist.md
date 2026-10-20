@@ -58,7 +58,9 @@ After the 14 days, apply for production access in Play Console and roll out
 the same bundle (or a fixed one with a higher `versionCode`).
 
 ## For every later update
-1. Make changes, then `npm run audit:course` and the Playwright tests.
+1. Make changes, then `npm run audit:course` and the Playwright tests. If Dutch
+   course text changed, `npm run audio:build` and `npm run audit:audio`
+   (see "Recorded Dutch audio" in the README).
 2. `npm run android:sync-web`.
 3. Raise `versionCode` (and `versionName`, plus `APP_VERSION` in `app.js`) in `android/app/build.gradle`.
 4. `./gradlew :app:bundleRelease` and upload.

@@ -34,8 +34,31 @@ Then open this folder in Android Studio and build the `app` module. See `docs/mo
   (`node scripts/render-store-graphics.js` regenerates the icon and feature graphic)
 - Privacy policy page to host: `docs/privacy-policy.html`
 
-Before every release: `npm run audit:course`, `npm test`, `npm run android:sync-web`,
-then raise `versionCode` in `android/app/build.gradle`.
+Before every release: `npm run audit:course`, `npm run audit:audio`, `npm test`,
+`npm run android:sync-web`, then raise `versionCode` in `android/app/build.gradle`.
+
+## Recorded Dutch audio
+
+Dutch is spoken from recorded clips made with the open-source
+[Piper](https://github.com/OHF-Voice/piper1-gpl) voice `nl_NL-pim-medium`
+(trained on CC0 data, so it is free to use in the app). Every course text has a
+regular and a slow clip in `audio/nl/` (Opus, about 27 kbit/s), listed in
+`audio/nl/manifest.js`. Texts without a clip, and browsers that cannot play
+Opus, fall back to the phone's own Dutch voice as before.
+
+After adding or changing Dutch course text:
+
+```bash
+npm run audio:setup   # once: Python packages in scripts/audio/.venv
+npm run audio:build   # list every spoken text, render only new or changed ones
+npm run audit:audio   # fails if any spoken text has no clip
+```
+
+`audio:build` downloads the voice (about 60 MB) to `~/.cache/nederurdu-tts` the
+first time. Fix a word the voice says wrongly by adding a respelling to
+`scripts/audio/pronunciations.json` (`{"shown text": "text to read"}`), then
+run `npm run audio:render` again. Times, prices, dates and letter names are
+rewritten for the voice in `prepare()` in `scripts/audio/render-speech.py`.
 
 ## Learning design
 
