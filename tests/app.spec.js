@@ -2896,7 +2896,7 @@ test("course bank has stable IDs, valid answers, and visual mappings without fix
   }
 });
 
-test("every approved visual loads as a 1024px WebP without fallbacks", async ({ page }) => {
+test("every word visual loads as a 240px Pim SVG without fallbacks", async ({ page }) => {
   await openCleanApp(page);
 
   const audit = await page.evaluate(async () => {
@@ -2918,9 +2918,9 @@ test("every approved visual loads as a 1024px WebP without fallbacks", async ({ 
       pending: window.NEDERURDU_PENDING_VISUAL_IDS,
       invalid: results.filter((visual) => (
         !visual.loaded
-        || !visual.src.endsWith(".webp")
-        || visual.width !== 1024
-        || visual.height !== 1024
+        || !visual.src.endsWith(".svg")
+        || visual.width !== 240
+        || visual.height !== 240
       ))
     };
   });
