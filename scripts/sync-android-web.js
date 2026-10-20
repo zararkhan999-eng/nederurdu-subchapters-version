@@ -28,6 +28,7 @@ const files = [
   "word-visual-data.js",
   "motion.js",
   "sound.js",
+  "pim-parts.js",
   "cat.js",
   "pim.js",
   "guide.js",

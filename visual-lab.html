@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pim Visual Lab</title>
+  <style>
+    :root{--ink:#1f2433;--muted:#6b7280;--line:#e5e7eb;--bg:#fffdf9;--card:#fff;--accent:#ff7a1a}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+    header{padding:28px 16px 8px;max-width:1200px;margin:0 auto}
+    h1{margin:0;font-size:30px;letter-spacing:-.02em}
+    h2{margin:40px 0 6px;font-size:21px}
+    p.lead{color:var(--muted);margin:6px 0 0;max-width:70ch}
+    main{max-width:1200px;margin:0 auto;padding:0 16px 64px}
+    .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+    .rule{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 4px 0 var(--line)}
+    .rule b{display:block;margin-bottom:2px}
+    .swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .swatch{width:92px;border-radius:12px;overflow:hidden;border:2px solid var(--line);font-size:11px;background:#fff}
+    .swatch i{display:block;height:44px}
+    .swatch span{display:block;padding:4px 6px;font-family:ui-monospace,monospace}
+    .grid{display:grid;gap:10px;margin-top:12px;grid-template-columns:repeat(auto-fill,minmax(var(--min,150px),1fr))}
+    .tile{background:var(--card);border:2px solid var(--line);border-radius:16px;overflow:hidden;text-align:center;font-size:12px;color:var(--muted)}
+    .tile svg{display:block;width:100%;height:auto}
+    .tile figcaption{padding:4px 6px 8px;word-break:break-word}
+    .wide{--min:300px}
+    .filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .filters button{border:2px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font:inherit;font-weight:700;cursor:pointer}
+    .filters button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .live{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    .live .tile{padding:10px;width:260px}
+    code{background:#f3f4f6;padding:1px 5px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pim Visual Lab</h1>
+    <p class="lead">The art system behind NederUrdu: Pim's model sheet, the cast, the prop library and every word picture, drawn live from <code>art/*.js</code>. <code>npm run art:build</code> renders them to the SVG files the app ships.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Style rules</h2>
+      <div class="rules">
+        <div class="rule"><b>Flat, no outlines</b>Shapes are solid fills. Ink (<code>#1f2433</code>) is only for faces, symbols and fine detail.</div>
+        <div class="rule"><b>One hard shade</b>Each shape gets one darker copy offset down-left. No gradients.</div>
+        <div class="rule"><b>Round everything</b>Round joins and caps; rounded corners on every box.</div>
+        <div class="rule"><b>Pim acts it out</b>Verbs and situations are performed by Pim or the cast; nouns stand alone, big and centred.</div>
+        <div class="rule"><b>No answers in pictures</b>Dutch words never appear in art. Letters and numerals may, when they are the concept.</div>
+        <div class="rule"><b>The same cast</b>Ayesha, Imran, Sara and Ali, and neighbours Femke and Jan, recur across lessons.</div>
+      </div>
+      <div class="swatches" id="swatches"></div>
+    </section>
+
+    <section>
+      <h2>Pim: moods</h2>
+      <div class="grid" id="moods"></div>
+      <h2>Pim: poses</h2>
+      <div class="grid" id="poses"></div>
+      <h2>Pim on his omafiets (live rig)</h2>
+      <div class="live" id="live"></div>
+    </section>
+
+    <section>
+      <h2>The cast</h2>
+      <div class="grid" id="cast"></div>
+    </section>
+
+    <section>
+      <h2>Topic scenes</h2>
+      <div class="grid wide" id="scenes"></div>
+    </section>
+
+    <section>
+      <h2>Word pictures <small id="count"></small></h2>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="words"></div>
+    </section>
+
+    <section>
+      <h2>Props</h2>
+      <div class="grid" id="props" style="--min:110px"></div>
+    </section>
+  </main>
+
+  <script>window.NEDERURDU_CHAPTERS = [];</script>
+  <script src="word-visual-data.js"></script>
+  <script src="motion.js"></script>
+  <script src="pim-parts.js"></script>
+  <script src="cat.js"></script>
+  <script src="art/kit.js"></script>
+  <script src="art/props.js"></script>
+  <script src="art/cast.js"></script>
+  <script src="art/scenes.js"></script>
+  <script src="art/words-objects.js"></script>
+  <script src="art/words-people.js"></script>
+  <script src="art/words-actions.js"></script>
+  <script src="art/words-foundations.js"></script>
+  <script src="art/render.js"></script>
+  <script>
+    const K = PimArt, P = PimProps, C = K.C;
+    const tile = (svg, caption) => `<figure class="tile">${svg}<figcaption>${caption}</figcaption></figure>`;
+    const put = (id, html) => { document.getElementById(id).innerHTML = html; };
+
+    put("swatches", ["oranje", "blue", "green", "yellow", "red", "purple", "teal", "fur", "furShade", "cream", "scarf", "bike", "ink", "paper"]
+      .map((name) => `<div class="swatch"><i style="background:${C[name]}"></i><span>${name}<br>${C[name]}</span></div>`).join(""));
+
+    put("moods", Object.keys(K.parts.MOODS).map((mood) => tile(K.card("person", K.pim({ x: 118, y: 204, s: 1.25, mood })), mood)).join(""));
+    put("poses", Object.keys(K.ARMS).map((arms) => tile(K.card("object", K.pim({ x: 118, y: 204, s: 1.2, arms, mood: "happy" })), arms)).join("") +
+      tile(K.card("object", K.pim({ x: 118, y: 204, s: 1.2, legs: "walk", arms: "wave", mood: "happy" })), "walk") +
+      tile(K.card("body", K.pim({ x: 120, y: 204, s: 1.3, pose: "sleep" })), "sleep"));
+
+    const live = document.getElementById("live");
+    ["idle", "happy", "sad", "talk"].forEach((mood) => {
+      const wrap = document.createElement("figure");
+      wrap.className = "tile";
+      wrap.innerHTML = NU.cat.render({ mood, size: 240 }) + `<figcaption>${mood} · tap to ride</figcaption>`;
+      wrap.addEventListener("click", () => NU.cat.pedalFor(wrap.querySelector("svg"), { duration: 1400, distance: 300 }));
+      live.appendChild(wrap);
+    });
+    live.insertAdjacentHTML("beforeend", tile(`<div style="display:flex;gap:8px;justify-content:center;padding:12px">${NU.cat.render({ face: true, size: 72, mood: "happy" })}${NU.cat.render({ face: true, size: 72 })}${NU.cat.render({ face: true, size: 72, mood: "sad" })}</div>`, "face crop (avatars, logo)"));
+
+    const cast = PimCast();
+    put("cast", Object.keys(cast.CAST).map((name) => tile(K.card("person", cast.who(name, { x: 120, y: 208, s: 1, mood: "happy" })), name)).join(""));
+    put("scenes", Object.entries(PimScenes.topics()).map(([name, svg]) => tile(svg, name)).join(""));
+    put("props", Object.keys(P).map((name) => tile(`<svg viewBox="-60 -60 120 120">${P[name]()}</svg>`, name)).join(""));
+
+    const visuals = window.NEDERURDU_WORD_VISUALS;
+    const kinds = ["all", ...new Set(visuals.map((v) => v.kind))];
+    let kind = "all";
+    function drawWords() {
+      const list = visuals.filter((v) => kind === "all" || v.kind === kind);
+      document.getElementById("count").textContent = `(${list.length})`;
+      put("words", list.map((v) => tile(PimWords.renderWord(v.id, v.kind) || "<b>missing</b>", `${v.id} · <span dir="rtl">${v.concept}</span>`)).join(""));
+      put("filters", kinds.map((k) => `<button type="button" data-kind="${k}" aria-pressed="${k === kind}">${k}</button>`).join(""));
+    }
+    document.getElementById("filters").addEventListener("click", (e) => {
+      const k = e.target.closest("button")?.dataset.kind;
+      if (k) { kind = k; drawWords(); }
+    });
+    drawWords();
+  </script>
+</body>
+</html>
