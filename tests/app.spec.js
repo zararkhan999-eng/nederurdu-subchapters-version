@@ -4868,7 +4868,7 @@ test("A1 Unit 8 manually teaches every new appointment symptom and medicine targ
 
 test("A1 Unit 8 teaches appointment and medicine documents before checks", async ({ page }) => {
   await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((item)=>item.id==="a1-body-health"),docs=[],failures=[];for(const lesson of unit.lessonIds.map((id)=>course.lessons.find((item)=>item.id===id)).filter(Boolean)){const byId=new Map(lesson.exercises.map((question)=>[question.id,question]));for(const run of lesson.learning.runs){const earlier=["understand","guidedPractice","use"].flatMap((phase)=>run.phases[phase].exerciseIds.map((id)=>byId.get(id)).filter(Boolean)),types=new Set(earlier.map((question)=>question.type)),check=run.phases.independentCheck.exerciseIds.map((id)=>byId.get(id)).filter(Boolean);if(check.some((question)=>!types.has(question.type)))failures.push(lesson.id);for(const question of earlier.filter((item)=>item.type==="document-choice"))docs.push([lesson.id,question.document?.documentKind,question.authenticDocument,question.document?.rows?.length]);}}return{docs,failures};});
-  expect(audit.docs).toEqual([["a1-health-appointments","doctor-appointment-card",true,3],["a1-pharmacy-medicine","medicine-label",true,3]]);expect(audit.failures).toEqual([]);
+  expect(audit.docs).toEqual([["a1-health-appointments","doctor-appointment-card",true,3],["a1-pharmacy-medicine","medicine-label",true,3],...Array(4).fill(["a1-pharmacy-medicine","pharmacy-label",true,5])]);expect(audit.failures).toEqual([]);
 });
 
 test("A1 Unit 8 prerequisites and mission cover all three health lessons", async ({ page }) => {
@@ -5916,4 +5916,60 @@ test("lesson preview shows the unit's how-it-works-here card", async ({ page }) 
   await expect(page.locator(".learning-preview .society-card")).not.toHaveAttribute("open", "");
   await page.locator(".learning-preview .society-card summary").click();
   await expect(page.locator(".learning-preview .society-card li").first()).toBeVisible();
+});
+
+test("reading texts: four real-life texts close a Use phase with 3-4 questions", async ({ page }) => {
+  await openCleanApp(page);
+  const texts = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    return course.lessons.flatMap((lesson) => {
+      const reading = (lesson.exercises || []).filter((question) => question.readingText);
+      if (!reading.length) return [];
+      const run = lesson.learning.runs.find((item) => item.id === reading[0].runId);
+      const session = buildLearningFirstSession(lesson, run);
+      const positions = reading.map((question) => session.findIndex((item) => item.id === question.id));
+      return [{
+        lessonId: lesson.id,
+        kind: reading[0].document.documentKind,
+        count: reading.length,
+        phases: [...new Set(positions.map((index) => getQuestionPhase(session[index])))],
+        consecutive: positions.every((index, step) => index >= 0 && index === positions[0] + step),
+        beforeCheck: getQuestionPhase(session[positions[positions.length - 1] + 1]) === "check",
+        answersOffered: reading.every((question) => question.options.length === 3 && question.options.includes(question.answer))
+      }];
+    });
+  });
+  expect(texts.map((text) => [text.lessonId, text.kind])).toEqual([
+    ["a1-pharmacy-medicine", "pharmacy-label"],
+    ["a2-gemeente-official", "gemeente-letter"],
+    ["a2-school-absence-notice", "school-app-message"],
+    ["a2-landlord-repairs", "landlord-email"]
+  ]);
+  for (const text of texts) {
+    expect(text.count, text.lessonId).toBeGreaterThanOrEqual(3);
+    expect(text.count, text.lessonId).toBeLessThanOrEqual(4);
+    expect(text.phases, text.lessonId).toEqual(["use"]);
+    expect(text.consecutive, text.lessonId).toBe(true);
+    expect(text.beforeCheck, text.lessonId).toBe(true);
+    expect(text.answersOffered, text.lessonId).toBe(true);
+  }
+
+  // The letter is shown in full, and a wrong pick names the line to reread.
+  const wrong = await page.evaluate(() => {
+    const lesson = getLesson("a2-gemeente-official");
+    startLesson(lesson.id);
+    const question = lesson.exercises.find((item) => item.readingText && item.answer === "10 مارچ سے پہلے");
+    activeLearningRun = lesson.learning.runs.find((run) => run.id === question.runId);
+    sessionQuestions = buildSessionQuestions(lesson);
+    activeQuestionIndex = sessionQuestions.findIndex((item) => item.id === question.id);
+    render();
+    return question.options.find((option) => option !== question.answer);
+  });
+  const documentCard = page.locator(".document-question .practice-document");
+  await expect(documentCard).toContainText("Gemeente Utrecht");
+  await expect(documentCard).toContainText("u heeft een afspraak bij de gemeente op dinsdag 14 maart om 10 uur.");
+  await expect(documentCard).toContainText("vul het formulier in en stuur het voor 10 maart terug.");
+  await page.evaluate((option) => { chooseAnswer(option); checkAnswer(); }, wrong);
+  await expect(page.locator(".quiz-feedback-panel.wrong")).toBeVisible();
+  await expect(page.locator(".quiz-feedback-panel.wrong")).toContainText("10 مارچ سے پہلے");
 });

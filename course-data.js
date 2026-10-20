@@ -17280,6 +17280,8 @@ function distractorEligibleV4(question) {
     && !question.patternDrill
     // Hand-written replies keep their options: other replies to other questions.
     && question.mode !== "listen-reply"
+    // Reading-text questions keep their options: other readings of the same text.
+    && !question.readingText
     && question.scored !== false;
 }
 
@@ -17974,6 +17976,173 @@ function applyMissionRolePlaysV4() {
 }
 
 applyMissionRolePlaysV4();
+
+// Teaching roadmap 3.3: short real-life texts (a pharmacy label, a gemeente
+// letter, a school app message, a landlord's email). Each text is shown with
+// 3-4 questions in the Use phase of the run whose phrases it uses, and every
+// Dutch word in it was taught before that run. A question is
+// [run phrase it practises, words in the text that answer it, their Urdu
+// meaning, Urdu question, answer, wrong, wrong]. An Urdu answer asks what
+// the text says; a Dutch answer asks what you say or write back.
+const readingTextsV4 = [
+  {
+    lessonId: "a1-pharmacy-medicine",
+    stableId: "pharmacy-label",
+    documentKind: "pharmacy-label",
+    title: "Apotheek",
+    rows: [
+      { label: "Naam", value: "Ali Khan" },
+      { label: "Medicijn", value: "medicijn tegen de pijn" },
+      { label: "Hoe vaak?", value: "twee keer per dag, na het eten" },
+      { label: "Kinderen", value: "niet voor kinderen" },
+      { label: "Lees", value: "lees de bijsluiter" }
+    ],
+    questions: [
+      ["heeft u iets tegen de pijn?", "medicijn tegen de pijn", "درد کے خلاف دوا", "دواخانے نے آپ کو دوا کے ساتھ یہ لیبل دیا ہے۔ یہ دوا کس تکلیف کے لیے ہے؟", "درد کے لیے", "کھانسی کے لیے", "نیند کے لیے"],
+      ["twee keer per dag", "twee keer per dag", "دن میں دو بار", "لیبل کے مطابق آپ یہ دوا روزانہ کتنی بار لیں گے؟", "دن میں دو بار", "دن میں ایک بار", "دن میں تین بار"],
+      ["voor of na het eten?", "na het eten", "کھانے کے بعد", "لیبل کے مطابق دوا کھانے سے پہلے لینی ہے یا بعد میں؟", "کھانے کے بعد", "کھانے سے پہلے", "صرف رات کو سونے سے پہلے"],
+      ["lees de bijsluiter", "lees de bijsluiter", "دوا کی معلومات والا پرچہ پڑھیں", "لیبل کی آخری قطار آپ سے دوا لینے سے پہلے کیا کرنے کو کہتی ہے؟", "دوا کے ساتھ والا معلوماتی پرچہ پڑھیں", "ڈاکٹر کو دوبارہ فون کریں", "دوا فرج میں رکھیں"]
+    ]
+  },
+  {
+    lessonId: "a2-gemeente-official",
+    stableId: "gemeente-letter",
+    documentKind: "gemeente-letter",
+    title: "Gemeente Utrecht",
+    rows: [
+      { label: "Aan", value: "Ali Khan" },
+      { label: "Datum", value: "1 maart" },
+      { label: "Afspraak", value: "u heeft een afspraak bij de gemeente op dinsdag 14 maart om 10 uur." },
+      { label: "Waar?", value: "ga naar loket drie. neem uw paspoort mee." },
+      { label: "Formulier", value: "vul het formulier in en stuur het voor 10 maart terug." }
+    ],
+    questions: [
+      ["ik heb een afspraak bij de gemeente", "u heeft een afspraak bij de gemeente op dinsdag 14 maart om 10 uur", "آپ کی بلدیہ میں منگل 14 مارچ کو 10 بجے ملاقات ہے", "بلدیہ کا یہ خط آپ کے گھر آیا ہے۔ آپ کی ملاقات کس دن اور کتنے بجے ہے؟", "منگل 14 مارچ، 10 بجے", "منگل 10 مارچ، 14 بجے", "جمعہ 1 مارچ، 10 بجے"],
+      ["waar is loket drie?", "ga naar loket drie", "کاؤنٹر نمبر تین پر جائیں", "ملاقات کے دن بلدیہ کے دفتر میں آپ کو کہاں جانا ہے؟", "کاؤنٹر نمبر تین پر", "کاؤنٹر نمبر دس پر", "کمرہ نمبر چودہ میں"],
+      ["hier is mijn paspoort", "neem uw paspoort mee", "اپنا پاسپورٹ ساتھ لائیں", "خط کے مطابق ملاقات پر آپ کو اپنے ساتھ کیا لانا ہے؟", "اپنا پاسپورٹ", "اپنا بینک کارڈ", "اپنے بچے کا اسکول کارڈ"],
+      ["kunt u mij helpen met dit formulier?", "vul het formulier in en stuur het voor 10 maart terug", "فارم بھریں اور 10 مارچ سے پہلے واپس بھیجیں", "خط کے ساتھ ایک فارم بھی ہے۔ آپ کو یہ فارم بھر کر کب تک واپس بھیجنا ہے؟", "10 مارچ سے پہلے", "14 مارچ کو ملاقات کے دن", "1 مارچ سے پہلے"]
+    ]
+  },
+  {
+    lessonId: "a2-school-absence-notice",
+    stableId: "school-app-message",
+    documentKind: "school-app-message",
+    title: "Bericht van school",
+    rows: [
+      { label: "Van", value: "de docent van klas 5" },
+      { label: "Morgen", value: "de les begint om tien uur." },
+      { label: "Vrijdag", value: "de les valt uit." },
+      { label: "Ziek?", value: "is uw kind ziek? bel dan de docent voor acht uur." }
+    ],
+    questions: [
+      ["de les begint om tien uur", "de les begint om tien uur", "کلاس دس بجے شروع ہوتی ہے", "آپ کے فون پر اسکول ایپ کا یہ پیغام آیا ہے۔ کل بچے کی کلاس کتنے بجے شروع ہوگی؟", "دس بجے", "آٹھ بجے", "پانچ بجے"],
+      ["de les valt vandaag uit", "de les valt uit", "کلاس نہیں ہوگی", "پیغام کے مطابق جمعہ کے دن بچے کی کلاس کا کیا ہوگا؟", "اس دن کلاس نہیں ہوگی", "اس دن کلاس دس بجے شروع ہوگی", "اس دن والدین کی میٹنگ ہوگی"],
+      ["moet ik de docent bellen?", "bel dan de docent voor acht uur", "تو آٹھ بجے سے پہلے استاد کو فون کریں", "اگر صبح آپ کا بچہ بیمار ہو تو پیغام کے مطابق آپ کو کیا کرنا ہے؟", "آٹھ بجے سے پہلے استاد کو فون کریں", "دس بجے بچے کو اسکول لے جائیں", "جمعہ کو استاد کو پیغام بھیجیں"],
+      ["wanneer kan mijn kind weer komen?", "is uw kind ziek? bel dan de docent voor acht uur", "اگر بچہ بیمار ہو تو آٹھ بجے سے پہلے استاد کو فون کریں", "پیغام کے مطابق آپ صبح سات بجے استاد کو فون کرتے ہیں اور بتاتے ہیں کہ بچہ بیمار ہے۔ اب آپ پوچھنا چاہتے ہیں کہ بچہ دوبارہ کب آئے۔ آپ کیا کہیں گے؟", "wanneer kan mijn kind weer komen?", "moet ik de docent bellen?", "de les valt vandaag uit"]
+    ]
+  },
+  {
+    lessonId: "a2-landlord-repairs",
+    stableId: "landlord-email",
+    documentKind: "landlord-email",
+    title: "E-mail",
+    rows: [
+      { label: "Van", value: "Ahmed – huur en reparatie" },
+      { label: "Over", value: "de verwarming" },
+      { label: "Bericht", value: "sorry, de monteur is niet gekomen. hij komt nu op donderdag in de ochtend. bent u dan thuis? wij betalen de reparatie." }
+    ],
+    questions: [
+      ["de monteur is niet gekomen", "de monteur is niet gekomen", "مرمت کرنے والا نہیں آیا", "مالک مکان نے آپ کو ہیٹنگ کے بارے میں یہ ای میل بھیجی ہے۔ وہ کس بات کی معافی مانگ رہا ہے؟", "مرمت کرنے والا نہیں آیا", "ہیٹنگ کا بل دیر سے آیا", "کرایہ دیر سے ملا"],
+      ["de monteur is niet gekomen", "hij komt nu op donderdag in de ochtend", "وہ اب جمعرات کی صبح آئے گا", "ای میل کے مطابق مرمت کرنے والا اب کس دن اور کس وقت آئے گا؟", "جمعرات کی صبح", "جمعرات کی دوپہر", "جمعہ کی صبح"],
+      ["wie betaalt de reparatie", "wij betalen de reparatie", "مرمت کی ادائیگی ہم کریں گے", "ای میل کے مطابق ہیٹنگ کی مرمت کا خرچ کس کے ذمے ہے؟", "مالک مکان کے ذمے", "آپ کے اپنے ذمے", "مرمت کرنے والے کے ذمے"],
+      ["de monteur is niet gekomen", "hij komt nu op donderdag in de ochtend", "وہ اب جمعرات کی صبح آئے گا", "آپ جمعرات کی پوری صبح گھر پر رہے، لیکن پھر بھی کوئی نہیں آیا۔ آپ مالک مکان کو جواب لکھتے ہیں۔ پہلا جملہ کیا ہوگا؟", "de monteur is niet gekomen", "wie betaalt de reparatie", "kunt u dit schriftelijk bevestigen"]
+    ]
+  }
+];
+
+function applyReadingTextsV4() {
+  const lessons = new Map(chaptersV4.flatMap((chapter) => chapter.lessons).map((lesson) => [lesson.id, lesson]));
+  for (const text of readingTextsV4) {
+    const lesson = lessons.get(text.lessonId);
+    if (!lesson?.learning?.runs?.length) continue;
+    const conceptFor = (dutch) => lesson.conceptIds
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find((concept) => normalizedTextV4(concept?.dutch) === normalizedTextV4(dutch));
+    const firstConcept = conceptFor(text.questions[0][0]);
+    const run = lesson.learning.runs.find((candidate) => candidate.conceptIds.includes(firstConcept?.id));
+    if (!run) continue;
+    const chapterId = lesson.chapterId || String(lesson.id).slice(0, 2);
+    const ids = [];
+    text.questions.forEach(([phrase, evidence, evidenceUrdu, promptUrdu, answer, ...wrong], index) => {
+      const concept = conceptFor(phrase);
+      const skillId = concept ? skillIdByConceptIdV4.get(concept.id) : null;
+      if (!concept || !skillId || !run.conceptIds.includes(concept.id)) return;
+      const replies = /[A-Za-z]/.test(answer);
+      const shown = replies ? `“${answer}”` : answer;
+      const correct = replies
+        ? `درست۔ “${answer}” = “${cleanTerminalPunctuationV4(concept.urdu)}”۔ متن میں لکھا تھا: “${evidence}” = “${evidenceUrdu}”۔`
+        : `درست۔ متن میں “${evidence}” لکھا ہے: “${evidenceUrdu}”۔ اس لیے جواب ہے: ${answer}۔`;
+      const wrongText = replies
+        ? `متن میں “${evidence}” لکھا تھا۔ اب درست جواب “${answer}” ہے: “${cleanTerminalPunctuationV4(concept.urdu)}”۔`
+        : `متن کی قطار “${evidence}” دوبارہ پڑھیں: “${evidenceUrdu}”۔ درست جواب: ${answer}۔`;
+      const optionExplanationsUrdu = Object.fromEntries(wrong.map((option) => {
+        const optionUrdu = replies
+          ? cleanTerminalPunctuationV4(lesson.conceptIds.map((id) => conceptByIdV4.get(id)).find((item) => normalizedTextV4(item?.dutch) === normalizedTextV4(option))?.urdu || "")
+          : "";
+        return [option, replies
+          ? `“${option}”${optionUrdu ? ` = “${optionUrdu}”` : ""}؛ یہ اس موقع کا جواب نہیں۔ یہاں ${shown} لکھیں یا کہیں۔`
+          : `“${option}” نہیں۔ متن میں “${evidence}” لکھا ہے، یعنی ${answer}۔`];
+      }));
+      const id = `${lesson.id}:reading:${text.stableId}:${index + 1}`;
+      const instruction = replies
+        ? "متن پڑھیں، صورت سمجھیں، پھر مناسب ڈچ جواب منتخب کریں۔"
+        : "پورا متن پڑھیں، سوال کا جواب والی قطار ڈھونڈیں، پھر درست اردو جواب منتخب کریں۔";
+      const question = {
+        id,
+        type: "document-choice",
+        label: "اصل متن پڑھ کر جواب دیں",
+        prompt: promptUrdu,
+        document: { documentKind: text.documentKind, title: text.title, rows: text.rows.map((row) => ({ ...row })) },
+        // The app shuffles options; rotate here so the answer is not always first in the data.
+        options: rotate([answer, ...wrong], index),
+        answer,
+        explain: `${evidence} = ${evidenceUrdu}۔`,
+        semanticKey: `${lesson.id}:reading:${text.stableId}:${index + 1}`,
+        legacyId: "",
+        phase: "use",
+        conceptIds: [concept.id],
+        skillIds: [skillId],
+        runId: run.id,
+        readingText: text.stableId,
+        readingEvidence: evidence,
+        scenarioId: `${lesson.id}:reading:${text.stableId}`,
+        scenarioSource: `${chapterId}-authored:${semanticSlugV4(lesson.id)}:reading:${text.stableId}:${index + 1}`,
+        authenticDocument: true,
+        authenticUse: true,
+        instructionUrdu: instruction,
+        instruction,
+        hintUrdu: "سوال کا جواب متن کی کسی ایک قطار میں ہے۔ دن، وقت، اور کام والے الفاظ دیکھیں۔",
+        hint: "سوال کا جواب متن کی کسی ایک قطار میں ہے۔ دن، وقت، اور کام والے الفاظ دیکھیں۔",
+        explainCorrectUrdu: correct,
+        correctExplanation: correct,
+        explainWrongUrdu: wrongText,
+        wrongExplanation: wrongText,
+        optionExplanationsUrdu,
+        wrongExplanationsByOption: { ...optionExplanationsUrdu },
+        synthetic: true,
+        retiredCompatibility: false,
+        adaptiveReviewEligible: false
+      };
+      lesson.questions.push(question);
+      ids.push(id);
+    });
+    // The text closes the run's Use phase, so its questions follow each other.
+    run.phases.use.exerciseIds = uniqueV4([...run.phases.use.exerciseIds, ...ids]);
+    lesson.exercises = lesson.questions;
+  }
+}
+
+applyReadingTextsV4();
 
 applyDistractorEngineV4();
 

@@ -361,6 +361,35 @@ unit's first lesson and its missions, and stays folded on the other lessons.
 A gemeente letter, a school app message, a pharmacy label, and a
 landlord's email, each with 3–4 comprehension questions.
 
+**Done (20 October 2026).** Four short texts in `readingTextsV4`
+(`course-data.js`), each placed in the lesson that already teaches its
+phrases, at the end of that run's Use phase (so learners read the text
+just before the Check):
+
+| Text | Lesson (run) | Questions |
+|---|---|---|
+| Pharmacy label (`pharmacy-label`) | `a1-pharmacy-medicine` (2) | what the medicine is for, how often, before or after food, read the leaflet |
+| Gemeente letter (`gemeente-letter`) | `a2-gemeente-official` (2) | appointment day and time, which counter, what to bring, the form deadline (before 10 March) |
+| School app message (`school-app-message`) | `a2-school-absence-notice` (2) | start time, Friday's cancelled lesson, what to do if the child is ill, and the Dutch question to ask on that call |
+| Landlord's email (`landlord-email`) | `a2-landlord-repairs` (2) | what went wrong, when the monteur comes now, who pays, and the first line of your reply when nobody came |
+
+- All questions use the existing `document-choice` type, so the whole text
+  stays on screen. Most have Urdu answers ("what does the text say?").
+  Two have Dutch answers, like a `situation` item ("what do you say or
+  write back?").
+- Every Dutch word in the texts was taught before that lesson (`Let op`,
+  `Beste`, `Met vriendelijke groet` and similar were left out because they
+  are not taught yet). Each question stores the words in the text that
+  answer it (`readingEvidence`). Feedback quotes those words with their
+  Urdu meaning, and each wrong option gets its own explanation.
+- The distractor engine leaves these options alone (`readingText`).
+- Audit: a reading question owns a run phrase that the text contains or
+  shares a content word with, or the Dutch reply it asks for. The text may
+  use any Dutch taught before the lesson. New rules `reading-text-structure`
+  (one shared document of 3+ rows, 3–4 questions that close one run's Use
+  phase) and `reading-text-coverage` (all four texts present).
+- Asset version is now v90.
+
 ### 3.4 Accessibility for less-literate learners
 - Shorter instructions, with one icon per exercise type.
 - A "hear the instruction in Urdu" button (device Urdu voice, falling back

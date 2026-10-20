@@ -189,7 +189,9 @@ function auditQuestion(findings, chapter, lesson, question, visualIds, visualLoo
   const listenDutch = question.type === "listen-choice" && question.mode === "listen-dutch";
   const listenMeaning = question.type === "listen-choice" && !listenReply && !listenDutch;
 
-  if ((urduAnswerTypes.has(question.type) || listenMeaning) && !hasUrdu(answer)) {
+  // A reading text may also ask for the Dutch reply to what it says.
+  const readingReply = Boolean(question.readingText) && hasLatin(answer);
+  if (((urduAnswerTypes.has(question.type) && !readingReply) || listenMeaning) && !hasUrdu(answer)) {
     addFinding(findings, "error", chapter, lesson, question, "answer-script", "This exercise should answer in Urdu, but answer has no Urdu text.");
   }
   if ((dutchAnswerTypes.has(question.type) || listenReply || listenDutch) && !hasLatin(answer)) {
@@ -777,6 +779,22 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
       && (sameSurface(answer, concept.dutch) || sameMeaning(answer, concept.urdu))
     ));
   }
+  if (question.type === "document-choice" && question.readingText) {
+    // A reading-text question quotes the words that answer it. It owns a run
+    // phrase the text contains or shares a content word with, or the Dutch
+    // reply it asks for.
+    const documentText = normalizeSemantic(list(question.document?.rows).map((row) => row?.value).join(" "));
+    const evidence = normalizeSemantic(question.readingEvidence);
+    const contentWords = (value) => latinTokens(value).filter((token) => token.length > 3);
+    const evidenceWords = new Set(contentWords(question.readingEvidence));
+    return Boolean(evidence) && documentText.includes(evidence) && concepts.some((concept) => (
+      sameSurface(answer, concept.dutch)
+      || (hasUrdu(answer) && !hasLatin(answer) && (
+        documentText.includes(normalizeSemantic(concept.dutch))
+        || contentWords(concept.dutch).some((token) => evidenceWords.has(token))
+      ))
+    ));
+  }
   if (question.type === "document-choice") {
     const documentValues = list(question.document?.rows).map((row) => row?.value);
     return concepts.some((concept) => (
@@ -860,6 +878,15 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
     const badOther = turns.filter((turn) => turn?.speaker === "other" && (!hasLatin(turn.dutch) || !hasUrdu(turn.urdu)));
     if (replies.length < 2 || badTurns.length || badOther.length || !hasUrdu(question.prompt)) {
       addCourseFinding(findings, "error", "role-play-structure", "Role-play needs an Urdu scene, 2+ learner turns with 3 distinct options including the answer, Urdu meanings, and an Urdu reason for each wrong option.", replies.length + " replies", chapter, lesson, question);
+    }
+    return;
+  }
+  // A reading text (roadmap 3.3) may use any Dutch taught before its lesson.
+  if (question.readingText) {
+    const unknown = [...new Set(questionLexicalValues(question).flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Reading text contains Dutch not taught before this lesson.", unknown.join(", "), chapter, lesson, question);
     }
     return;
   }
@@ -3254,7 +3281,43 @@ function auditV4Course(course, chapters, visuals) {
   if (!course.reviewPolicy || text(course.reviewPolicy.selection) !== "weakest-first-spaced") {
     addCourseFinding(findings, "error", "course-review-policy", "Course reviewPolicy must select eligible skills weakest-first-spaced.");
   }
+  auditReadingTexts(findings, normalLessons, chapterMap);
   return dedupeFindings(findings);
+}
+
+// Teaching roadmap 3.3: each reading text is one document with 3-4 questions
+// that follow each other at the end of one run's Use phase.
+function auditReadingTexts(findings, lessons, chapterMap) {
+  let textCount = 0;
+  for (const lesson of lessons) {
+    const chapter = chapterMap.get(lesson.chapterId) || { id: lesson.chapterId || "course" };
+    const exercises = getActiveLessonExercises(lesson);
+    const byText = new Map();
+    for (const question of exercises.filter((item) => item.readingText)) {
+      if (!byText.has(question.readingText)) byText.set(question.readingText, []);
+      byText.get(question.readingText).push(question);
+    }
+    for (const [textId, questions] of byText) {
+      textCount += 1;
+      const run = list(lesson.learning?.runs).find((item) => item.id === questions[0].runId);
+      const useIds = list(run?.phases?.use?.exerciseIds);
+      const tail = useIds.slice(-questions.length);
+      const sameDocument = questions.every((question) => JSON.stringify(question.document) === JSON.stringify(questions[0].document));
+      const rows = list(questions[0].document?.rows);
+      if (
+        questions.length < 3 || questions.length > 4
+        || !sameDocument
+        || rows.length < 3
+        || !questions.every((question) => question.type === "document-choice" && question.phase === "use" && question.runId === run?.id)
+        || questions.some((question) => !tail.includes(question.id))
+      ) {
+        addCourseFinding(findings, "error", "reading-text-structure", "A reading text needs one shared document of 3+ rows and 3-4 document-choice questions that close one run's Use phase.", `${textId}: ${questions.length} questions`, chapter, lesson);
+      }
+    }
+  }
+  if (textCount < 4) {
+    addCourseFinding(findings, "error", "reading-text-coverage", "The course needs its four A1/A2 reading texts (pharmacy label, gemeente letter, school app message, landlord's email).", String(textCount));
+  }
 }
 
 function auditChapter(chapter, visualIds, visualLookup, v4Mode = false) {
