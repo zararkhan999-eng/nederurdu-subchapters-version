@@ -1733,6 +1733,7 @@ function renderLessonPreview() {
       </section>
 
       ${renderPrerequisiteGuidance(lesson, prerequisiteIds, missingPrerequisites, missingMissionPrerequisites)}
+      ${renderSocietyCard(unit, lesson)}
 
       <section class="learning-preview-content">
         <div class="learning-preview-column">
@@ -1764,6 +1765,28 @@ function renderLessonPreview() {
         <small>${lesson.kind === "mission" ? "مشن میں صرف پہلے سے مشق کی ہوئی باتیں استعمال ہوں گی؛ جانچ آخر میں ہوگی۔" : "پڑھانے والے حصے پر کوئی نمبر نہیں؛ جانچ آخر میں ہوگی۔"}</small>
       </div>
     </main>
+  `;
+}
+
+// "How it works here": the unit's short society card (KNM). Dutch terms
+// inside the Urdu text are isolated so they read left to right.
+function renderSocietyCard(unit, lesson) {
+  const card = unit?.societyUrdu;
+  if (!card?.points?.length) return "";
+  const open = lesson.kind === "mission" || unit.lessonIds?.[0] === lesson.id;
+  const isolate = (value) => escapeHtml(value).replace(
+    /[A-Za-zÀ-ÿ0-9](?:[A-Za-zÀ-ÿ0-9 .:\/-]*[A-Za-zÀ-ÿ0-9])?/g,
+    (run) => `<bdi class="latin" dir="ltr">${run}</bdi>`
+  );
+  return `
+    <details class="society-card"${open ? " open" : ""}>
+      <summary>
+        <span class="society-card-icon" aria-hidden="true">${renderIcon("flag")}</span>
+        <span><small>یہاں ایسے ہوتا ہے</small><strong>${isolate(card.title)}</strong></span>
+        ${renderIcon("chevron", "society-card-chevron")}
+      </summary>
+      <ul>${card.points.map((point) => `<li>${isolate(point)}</li>`).join("")}</ul>
+    </details>
   `;
 }
 

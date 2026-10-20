@@ -5868,3 +5868,52 @@ test("mission opens with a guided role-play that explains a wrong reply and unlo
   await next.click();
   await expect(page.locator(".role-play-question")).toHaveCount(0);
 });
+
+test("A0 grammar lessons sit after the lessons that teach their words", async ({ page }) => {
+  await openCleanApp(page);
+  const order = await page.evaluate(() => {
+    const a0 = window.NEDERURDU_COURSE.chapters.find((chapter) => chapter.id === "a0");
+    const ids = a0.subchapters.flatMap((unit) => unit.lessonIds);
+    const lesson = (id) => window.NEDERURDU_COURSE.lessons.find((item) => item.id === id);
+    return {
+      positions: Object.fromEntries([
+        "a0-home-needs", "a0-plurals-er-is", "a0-food-drink", "a0-verb-endings",
+        "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives",
+        "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had",
+        "a0-child-school", "a0-object-pronouns", "a0-work-basics", "a0-future-gaan"
+      ].map((id) => [id, ids.indexOf(id)])),
+      runs: ["a0-verb-endings", "a0-past-was-had", "a0-object-pronouns"].map((id) => lesson(id)?.learning?.runs?.length || 0)
+    };
+  });
+  const pairs = [
+    ["a0-home-needs", "a0-plurals-er-is"], ["a0-food-drink", "a0-verb-endings"],
+    ["a0-colours-clothes", "a0-adjective-endings"], ["a0-shopping-payment", "a0-comparatives"],
+    ["a0-body-health", "a0-feelings-reflexive"], ["a0-emergency-police", "a0-past-was-had"],
+    ["a0-child-school", "a0-object-pronouns"], ["a0-work-basics", "a0-future-gaan"]
+  ];
+  for (const [before, after] of pairs) {
+    expect(order.positions[before]).toBeGreaterThanOrEqual(0);
+    expect(order.positions[after]).toBe(order.positions[before] + 1);
+  }
+  for (const runs of order.runs) expect(runs).toBeGreaterThan(0);
+});
+
+test("lesson preview shows the unit's how-it-works-here card", async ({ page }) => {
+  await openCleanApp(page);
+  const cards = await page.evaluate(() => window.NEDERURDU_COURSE.units.map((unit) => [unit.id, unit.societyUrdu?.points?.length || 0]));
+  expect(cards.length).toBeGreaterThan(20);
+  for (const [, points] of cards) expect(points).toBe(3);
+
+  await page.evaluate(() => showLessonPreview("a0-transport-directions"));
+  const card = page.locator(".learning-preview .society-card");
+  await expect(card).toBeVisible();
+  await expect(card).toHaveAttribute("open", "");
+  await expect(card).toContainText("یہاں ایسے ہوتا ہے");
+  await expect(card).toContainText("112");
+
+  await page.evaluate(() => showLessonPreview("a0-body-health"));
+  await expect(page.locator(".learning-preview .society-card")).toBeVisible();
+  await expect(page.locator(".learning-preview .society-card")).not.toHaveAttribute("open", "");
+  await page.locator(".learning-preview .society-card summary").click();
+  await expect(page.locator(".learning-preview .society-card li").first()).toBeVisible();
+});

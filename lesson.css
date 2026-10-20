@@ -308,3 +308,17 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
   #app .quiz-feedback-panel .feedback-copy{gap:8px}
   #app .quiz-feedback-panel .pl-praise{display:none}
 }
+
+/* "How it works here" society card on the lesson preview */
+#app .pl-preview .society-card{margin:14px 4px 0;padding:0;border:2px solid #f3c58a;border-radius:18px;background:#fff8ee;box-shadow:0 3px 0 #f3c58a;overflow:hidden}
+#app .pl-preview .society-card summary{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;list-style:none}
+#app .pl-preview .society-card summary::-webkit-details-marker{display:none}
+#app .pl-preview .society-card-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:#ff7a1a;color:#fff}
+#app .pl-preview .society-card-icon .ui-icon{width:20px;height:20px}
+#app .pl-preview .society-card summary>span:nth-child(2){display:grid;gap:2px;flex:1;min-width:0}
+#app .pl-preview .society-card summary small{color:#b4570b;font-size:12px;font-weight:800}
+#app .pl-preview .society-card summary strong{color:var(--pl-ink);font-size:15px;line-height:1.6}
+#app .pl-preview .society-card-chevron{flex:none;width:20px;height:20px;color:#b4570b;transition:transform .2s}
+#app .pl-preview .society-card[open] .society-card-chevron{transform:rotate(180deg)}
+#app .pl-preview .society-card ul{display:grid;gap:8px;margin:0;padding:0 16px 14px 16px;padding-inline-start:34px;color:var(--pl-ink);line-height:1.85}
+#app .pl-preview .society-card bdi.latin{font-family:inherit;unicode-bidi:isolate}
