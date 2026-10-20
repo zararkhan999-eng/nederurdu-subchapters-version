@@ -189,7 +189,9 @@ function auditQuestion(findings, chapter, lesson, question, visualIds, visualLoo
   const listenDutch = question.type === "listen-choice" && question.mode === "listen-dutch";
   const listenMeaning = question.type === "listen-choice" && !listenReply && !listenDutch;
 
-  if ((urduAnswerTypes.has(question.type) || listenMeaning) && !hasUrdu(answer)) {
+  // A reading text may also ask for the Dutch reply to what it says.
+  const readingReply = Boolean(question.readingText) && hasLatin(answer);
+  if (((urduAnswerTypes.has(question.type) && !readingReply) || listenMeaning) && !hasUrdu(answer)) {
     addFinding(findings, "error", chapter, lesson, question, "answer-script", "This exercise should answer in Urdu, but answer has no Urdu text.");
   }
   if ((dutchAnswerTypes.has(question.type) || listenReply || listenDutch) && !hasLatin(answer)) {
@@ -338,7 +340,7 @@ const annotatedExercisePhases = new Set([
   "learn", "understand", "guided-practice", "use", "independent-check"
 ]);
 const productionTypes = new Set(["reverse", "fill-gap", "build", "sequence", "situation", "short-input"]);
-const unscoredTypes = new Set(["uitleg", "speak-repeat", "correction-teach"]);
+const unscoredTypes = new Set(["uitleg", "speak-repeat", "correction-teach", "role-play"]);
 const lexicalScaffoldTokens = new Set([
   "nederlands", "a", "b", "ali", "sara", "ahmed", "fatima",
   "amsterdam", "rotterdam", "utrecht", "nederland", "digid", "iban", "bsn",
@@ -710,7 +712,9 @@ function questionLexicalValues(question) {
     ...list(question.options),
     ...list(question.acceptedAnswers),
     ...tileText(question.tiles),
-    ...tileText(question.fallbackTiles),
+    // Letter tiles (fallbackJoiner "") spell the answer; auditTypedLetterBank checks them.
+    ...(question.fallbackJoiner === "" ? [] : tileText(question.fallbackTiles)),
+    question.gapSentence,
     question.document?.title,
     ...list(question.document?.rows).flatMap((row) => [row?.label, row?.value])
   ].filter(Boolean);
@@ -752,6 +756,15 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
   const ownsCompositeDutch = (value) => concepts.length > 1 && concepts.every((concept) => (
     normalizeSemantic(value).includes(normalizeSemantic(concept.dutch))
   ));
+  if (question.type === "short-input" && question.gapSentence) {
+    // A typed gap owns the phrase it completes.
+    const completed = text(question.gapSentence).replace("___", text(answer));
+    return concepts.some((concept) => sameSurface(completed, concept.dutch));
+  }
+  if (question.type === "listen-choice" && question.mode === "listen-reply") {
+    // A heard question owns the reply the learner chooses.
+    return concepts.some((concept) => sameSurface(answer, concept.dutch));
+  }
   if (["reverse", "situation", "image-choice", "build", "short-input"].includes(question.type)) {
     return ownsCompositeDutch(answer) || concepts.some((concept) => sameSurface(answer, concept.dutch));
   }
@@ -764,6 +777,22 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
     return (ownsCompositeDutch(question.speak || answer) && hasUrdu(answer)) || concepts.some((concept) => (
       sameSurface(question.speak || answer, concept.dutch)
       && (sameSurface(answer, concept.dutch) || sameMeaning(answer, concept.urdu))
+    ));
+  }
+  if (question.type === "document-choice" && question.readingText) {
+    // A reading-text question quotes the words that answer it. It owns a run
+    // phrase the text contains or shares a content word with, or the Dutch
+    // reply it asks for.
+    const documentText = normalizeSemantic(list(question.document?.rows).map((row) => row?.value).join(" "));
+    const evidence = normalizeSemantic(question.readingEvidence);
+    const contentWords = (value) => latinTokens(value).filter((token) => token.length > 3);
+    const evidenceWords = new Set(contentWords(question.readingEvidence));
+    return Boolean(evidence) && documentText.includes(evidence) && concepts.some((concept) => (
+      sameSurface(answer, concept.dutch)
+      || (hasUrdu(answer) && !hasLatin(answer) && (
+        documentText.includes(normalizeSemantic(concept.dutch))
+        || contentWords(concept.dutch).some((token) => evidenceWords.has(token))
+      ))
     ));
   }
   if (question.type === "document-choice") {
@@ -800,6 +829,28 @@ function phonicsLessonV4(lesson) {
   return /^a0-sounds-/.test(String(lesson?.id || ""));
 }
 
+// Wrong options may reuse any Dutch introduced in an earlier lesson: the
+// distractor engine draws near-misses from the whole course taught so far.
+let priorTaughtTokensByLesson = new Map();
+
+function buildPriorTaughtTokens(concepts, lessonPositionMap) {
+  const byPosition = new Map();
+  for (const concept of concepts) {
+    const position = lessonPositionMap.get(concept?.introducedInLessonId);
+    if (!Number.isFinite(position)) continue;
+    if (!byPosition.has(position)) byPosition.set(position, []);
+    byPosition.get(position).push(...latinTokens(concept.dutch), ...latinTokens(concept.audioText));
+  }
+  const result = new Map();
+  const seen = new Set();
+  const ordered = [...lessonPositionMap].sort((left, right) => left[1] - right[1]);
+  for (const [lessonId, position] of ordered) {
+    result.set(lessonId, new Set(seen));
+    for (const token of byPosition.get(position) || []) seen.add(token);
+  }
+  return result;
+}
+
 function auditLexicalOwnership(findings, chapter, lesson, question, allowedConceptIds, conceptMap) {
   const allowedTokens = new Set(lexicalScaffoldTokens);
   if (phonicsLessonV4(lesson)) phonicsGraphemeTokens.forEach((token) => allowedTokens.add(token));
@@ -808,11 +859,56 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
     for (const token of latinTokens(concept?.dutch)) allowedTokens.add(token);
     for (const token of latinTokens(concept?.audioText)) allowedTokens.add(token);
   }
-  const unownedTokens = [...new Set(
-    questionLexicalValues(question)
+  const priorTokens = priorTaughtTokensByLesson.get(lesson?.id) || new Set();
+  const answerKey = normalizeSemantic(question.answer);
+  // A role-play may use any Dutch taught before its mission.
+  if (question.type === "role-play") {
+    const turns = list(question.turns);
+    const unknown = [...new Set(turns.flatMap((turn) => [turn?.dutch, turn?.answer, ...list(turn?.options)]).flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Role-play contains Dutch not taught before this mission.", unknown.join(", "), chapter, lesson, question);
+    }
+    const replies = turns.filter((turn) => turn?.speaker === "you");
+    const badTurns = replies.filter((turn) => {
+      const options = list(turn.options).map(normalizeSemantic);
+      return options.length !== 3 || new Set(options).size !== 3 || !options.includes(normalizeSemantic(turn.answer))
+        || !hasUrdu(turn.urdu) || list(turn.options).filter((option) => option !== turn.answer).some((option) => !hasUrdu(turn.explanations?.[option]));
+    });
+    const badOther = turns.filter((turn) => turn?.speaker === "other" && (!hasLatin(turn.dutch) || !hasUrdu(turn.urdu)));
+    if (replies.length < 2 || badTurns.length || badOther.length || !hasUrdu(question.prompt)) {
+      addCourseFinding(findings, "error", "role-play-structure", "Role-play needs an Urdu scene, 2+ learner turns with 3 distinct options including the answer, Urdu meanings, and an Urdu reason for each wrong option.", replies.length + " replies", chapter, lesson, question);
+    }
+    return;
+  }
+  // A reading text (roadmap 3.3) may use any Dutch taught before its lesson.
+  if (question.readingText) {
+    const unknown = [...new Set(questionLexicalValues(question).flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Reading text contains Dutch not taught before this lesson.", unknown.join(", "), chapter, lesson, question);
+    }
+    return;
+  }
+  // A heard question and its replies may use Dutch from earlier lessons.
+  const heardReply = question.type === "listen-choice" && question.mode === "listen-reply";
+  const wrongOptions = list(question.options).filter((option) => normalizeSemantic(option) !== answerKey);
+  if (heardReply) {
+    const unknown = [...new Set([question.speak, ...list(question.options)].flatMap(latinTokens))]
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token));
+    if (unknown.length) {
+      addCourseFinding(findings, "error", "hidden-lexical-material", "Heard reply contains Dutch not taught before this run.", unknown.join(", "), chapter, lesson, question);
+    }
+    return;
+  }
+  const unownedTokens = [...new Set([
+    ...questionLexicalValues({ ...question, options: list(question.options).filter((option) => !wrongOptions.includes(option)) })
       .flatMap(latinTokens)
-      .filter((token) => !allowedTokens.has(token))
-  )];
+      .filter((token) => !allowedTokens.has(token)),
+    ...wrongOptions
+      .flatMap(latinTokens)
+      .filter((token) => !allowedTokens.has(token) && !priorTokens.has(token))
+  ])];
   if (unownedTokens.length) {
     addCourseFinding(
       findings,
@@ -824,6 +920,101 @@ function auditLexicalOwnership(findings, chapter, lesson, question, allowedConce
       lesson,
       question
     );
+  }
+}
+
+// Teaching roadmap 1.1: wrong options must vary. Learners stop reading when
+// the same three or four options keep coming back.
+function optionSetKey(question) {
+  return list(question.options).map(normalizeSemantic).sort().join("|");
+}
+
+function isScoredChoice(question) {
+  return choiceTypes.has(question?.type)
+    && question.scored !== false
+    && list(question.options).length >= 2;
+}
+
+function runSequences(lessonOrMission) {
+  if (lessonOrMission.kind === "mission") {
+    const variants = list(lessonOrMission.variants);
+    return (variants.length ? variants : [{ questions: lessonOrMission.questions }])
+      .map((variant) => list(variant.questions));
+  }
+  const questionMap = new Map(getActiveLessonExercises(lessonOrMission).map((question) => [question.id, question]));
+  return list(lessonOrMission.learning?.runs).map((run) => {
+    const phases = run.phases || {};
+    return [
+      ...list(phases.understand?.exerciseIds),
+      ...list((phases.guidedPractice || phases.guided)?.exerciseIds),
+      ...list(phases.use?.exerciseIds),
+      ...list((phases.independentCheck || phases.check)?.exerciseIds)
+    ].map((id) => questionMap.get(id)).filter(Boolean);
+  });
+}
+
+function auditOptionVariety(findings, chapter, lesson) {
+  const sequences = runSequences(lesson);
+  const uses = new Map();
+  const seen = new Set();
+  sequences.forEach((sequence, sequenceIndex) => {
+    let previous = null;
+    for (const question of sequence) {
+      if (!isScoredChoice(question)) {
+        previous = null;
+        continue;
+      }
+      const key = optionSetKey(question);
+      // A grammar gap drill offers the same closed set on purpose (de / het / een).
+      const closedSetDrills = previous?.patternDrill && question.patternDrill
+        && previous.type === "fill-gap" && question.type === "fill-gap";
+      if (previous && optionSetKey(previous) === key && !closedSetDrills) {
+        addCourseFinding(findings, "error", "consecutive-option-set", "Two questions in a row show the same option set.", list(question.options).join(" / "), chapter, lesson, question);
+      }
+      previous = question;
+      if (seen.has(question)) continue;
+      seen.add(question);
+      if (!uses.has(key)) uses.set(key, []);
+      uses.get(key).push({ question, sequenceIndex });
+    }
+  });
+  for (const [key, entries] of uses) {
+    if (entries.length < 3) continue;
+    // Allowed only when a run has no other material: its whole option pool
+    // is the set plus one word (the first greetings of the course).
+    const scriptOf = (value) => (hasUrdu(value) ? "urdu" : "latin");
+    const setScript = scriptOf(list(entries[0].question.options)[0]);
+    const unavoidable = entries.every(({ sequenceIndex }) => {
+      const pool = new Set(sequences[sequenceIndex]
+        .filter(isScoredChoice)
+        .flatMap((question) => list(question.options))
+        .filter((option) => scriptOf(option) === setScript)
+        .map(normalizeSemantic));
+      return pool.size <= list(entries[0].question.options).length + 1;
+    });
+    if (unavoidable) continue;
+    addCourseFinding(findings, "error", "repeated-option-set", "Three or more questions in this lesson reuse an identical option set.", `${entries.length}x ${key}`, chapter, lesson, entries[2].question);
+  }
+}
+
+// Teaching roadmap 1.2: a prompt must not contain a Dutch word that only the
+// correct option contains (for example "penicilline" in both the situation
+// and the answer).
+function auditPromptGiveaway(findings, chapter, lesson) {
+  const seen = new Set();
+  for (const question of runSequences(lesson).flat()) {
+    if (seen.has(question) || !isScoredChoice(question) || !hasUrdu(question.prompt)) continue;
+    seen.add(question);
+    const answerKey = normalizeSemantic(question.answer);
+    const answerTokens = new Set(latinTokens(question.answer));
+    const wrongTokens = new Set(list(question.options)
+      .filter((option) => normalizeSemantic(option) !== answerKey)
+      .flatMap(latinTokens));
+    const leaked = [...new Set(latinTokens(question.prompt))]
+      .filter((token) => answerTokens.has(token) && !wrongTokens.has(token));
+    if (leaked.length) {
+      addCourseFinding(findings, "error", "prompt-gives-answer", "The prompt contains a Dutch word that appears only in the correct option.", leaked.join(", "), chapter, lesson, question);
+    }
   }
 }
 
@@ -907,7 +1098,8 @@ function auditV4ExerciseReferences(findings, chapter, lesson, question, conceptM
   if (question.legacyId && question.legacyId === question.id) {
     addCourseFinding(findings, "error", "semantic-exercise-id", "When present, legacyId must differ from the semantic stable id.", question.legacyId, chapter, lesson, question);
   }
-  if (!annotatedExercisePhases.has(question.phase)) {
+  // A mission role-play is the unscored warm-up in the preparation step.
+  if (!annotatedExercisePhases.has(question.phase) && !(question.type === "role-play" && question.phase === "preview")) {
     addCourseFinding(findings, "error", "exercise-phase", "Exercise has no canonical learning phase.", question.phase || "", chapter, lesson, question);
   }
   if (!conceptIds.length || conceptIds.some((id) => !conceptMap.has(id))) {
@@ -1075,6 +1267,13 @@ function auditV4Exercise(findings, chapter, lesson, question, conceptMap, skillM
   }
   if (!unscoredTypes.has(question.type) && !hasUrdu(hint)) {
     addCourseFinding(findings, "error", "exercise-hint", "Assessed exercise needs an Urdu hint.", hint, chapter, lesson, question);
+  }
+  if (question.type === "short-input" && question.fallbackJoiner === "") {
+    const letters = (value) => [...String(value || "")].sort().join("");
+    const bank = list(question.fallbackTiles).map((tile) => (typeof tile === "string" ? tile : tile?.word)).join("");
+    if (letters(bank) !== letters(question.answer) || bank === question.answer) {
+      addCourseFinding(findings, "error", "typed-letter-bank", "Letter tiles must be a shuffle of the typed answer.", bank, chapter, lesson, question);
+    }
   }
   if (question.type === "short-input" && (!question.optional || !(question.fallbackTiles || []).length)) {
     addCourseFinding(findings, "error", "typed-fallback", "Typed exercise must remain optional and provide a word-bank fallback.", "", chapter, lesson, question);
@@ -2401,11 +2600,17 @@ function auditV4Mission(findings, chapter, mission, lessonMap, conceptMap, skill
       addCourseFinding(findings, "error", "mission-variant-reference", "Mission learning contract references an unknown variant.", variantContract.id, chapter, mission);
       continue;
     }
-    const questions = list(variant.questions);
+    // Stage 2.3: a variant may open with one unscored role-play in Preview,
+    // a warm-up conversation. Everything after it follows the usual contract.
+    const allQuestions = list(variant.questions);
+    const warmUp = allQuestions[0]?.type === "role-play" && allQuestions[0]?.phase === "preview" && allQuestions[0]?.scored === false
+      ? allQuestions[0]
+      : null;
+    const questions = warmUp ? allQuestions.slice(1) : allQuestions;
     const questionIds = questions.map((question) => question.id);
     const useIds = list(variantContract.phases?.use?.exerciseIds);
     const checkIds = list(variantContract.phases?.independentCheck?.exerciseIds);
-    const declaredIds = list(variantContract.exerciseIds);
+    const declaredIds = list(variantContract.exerciseIds).filter((id) => id !== warmUp?.id);
     const exercisePhases = questions.map((question) => question.phase);
     const firstCheckIndex = exercisePhases.indexOf("independent-check");
     const invalidMissionSequence = (
@@ -2435,8 +2640,9 @@ function auditV4Mission(findings, chapter, mission, lessonMap, conceptMap, skill
     ) {
       addCourseFinding(findings, "error", "mission-variant-phase-coverage", "Mission variant phases must cover every authored exercise exactly once.", variant.id, chapter, mission);
     }
+    const previewIds = list(variantContract.phases?.preview?.exerciseIds);
     if (
-      list(variantContract.phases?.preview?.exerciseIds).length
+      (warmUp ? !sameIds(previewIds, [warmUp.id]) : previewIds.length)
       || variantContract.phases?.preview?.scored !== false
     ) {
       addCourseFinding(findings, "error", "mission-preview-phase", "Mission Preview must be an unscored screen, not a question.", variant.id, chapter, mission);
@@ -2640,6 +2846,7 @@ function auditV4Course(course, chapters, visuals) {
   const missionMap = new Map(missions.map((mission) => [mission.id, mission]));
   const conceptLessonMap = new Map([...lessonMap, ...missionMap]);
   const conceptMap = new Map(values(course.concepts).map((concept) => [concept.id, concept]));
+  priorTaughtTokensByLesson = buildPriorTaughtTokens(values(course.concepts), lessonPositionMap);
   const skillMap = new Map(values(course.skills).map((skill) => [skill.id, skill]));
   const patternMap = new Map(values(course.patterns).map((pattern) => [pattern.id, pattern]));
   const unitMap = new Map(values(course.units).map((unit) => [unit.id, unit]));
@@ -2894,6 +3101,8 @@ function auditV4Course(course, chapters, visuals) {
     for (const lessonId of list(chapter.lessonIds)) {
       const lesson = lessonMap.get(lessonId);
       if (lesson) {
+        auditOptionVariety(findings, chapter, lesson);
+        auditPromptGiveaway(findings, chapter, lesson);
         auditV4Lesson(
           findings,
           chapter,
@@ -2909,6 +3118,8 @@ function auditV4Course(course, chapters, visuals) {
     for (const missionId of list(chapter.missionIds)) {
       const mission = missionMap.get(missionId);
       if (mission) {
+        auditOptionVariety(findings, chapter, mission);
+        auditPromptGiveaway(findings, chapter, mission);
         auditV4Mission(
           findings,
           chapter,
@@ -3070,7 +3281,43 @@ function auditV4Course(course, chapters, visuals) {
   if (!course.reviewPolicy || text(course.reviewPolicy.selection) !== "weakest-first-spaced") {
     addCourseFinding(findings, "error", "course-review-policy", "Course reviewPolicy must select eligible skills weakest-first-spaced.");
   }
+  auditReadingTexts(findings, normalLessons, chapterMap);
   return dedupeFindings(findings);
+}
+
+// Teaching roadmap 3.3: each reading text is one document with 3-4 questions
+// that follow each other at the end of one run's Use phase.
+function auditReadingTexts(findings, lessons, chapterMap) {
+  let textCount = 0;
+  for (const lesson of lessons) {
+    const chapter = chapterMap.get(lesson.chapterId) || { id: lesson.chapterId || "course" };
+    const exercises = getActiveLessonExercises(lesson);
+    const byText = new Map();
+    for (const question of exercises.filter((item) => item.readingText)) {
+      if (!byText.has(question.readingText)) byText.set(question.readingText, []);
+      byText.get(question.readingText).push(question);
+    }
+    for (const [textId, questions] of byText) {
+      textCount += 1;
+      const run = list(lesson.learning?.runs).find((item) => item.id === questions[0].runId);
+      const useIds = list(run?.phases?.use?.exerciseIds);
+      const tail = useIds.slice(-questions.length);
+      const sameDocument = questions.every((question) => JSON.stringify(question.document) === JSON.stringify(questions[0].document));
+      const rows = list(questions[0].document?.rows);
+      if (
+        questions.length < 3 || questions.length > 4
+        || !sameDocument
+        || rows.length < 3
+        || !questions.every((question) => question.type === "document-choice" && question.phase === "use" && question.runId === run?.id)
+        || questions.some((question) => !tail.includes(question.id))
+      ) {
+        addCourseFinding(findings, "error", "reading-text-structure", "A reading text needs one shared document of 3+ rows and 3-4 document-choice questions that close one run's Use phase.", `${textId}: ${questions.length} questions`, chapter, lesson);
+      }
+    }
+  }
+  if (textCount < 4) {
+    addCourseFinding(findings, "error", "reading-text-coverage", "The course needs its four A1/A2 reading texts (pharmacy label, gemeente letter, school app message, landlord's email).", String(textCount));
+  }
 }
 
 function auditChapter(chapter, visualIds, visualLookup, v4Mode = false) {

@@ -50,6 +50,7 @@ NU.lesson = (() => {
     const step = fitted || (slow ? 380 : 240);
     const wordGap = fitted ? fitted * 0.4 : slow ? 160 : 90;
     let t = fitted ? 40 : 260;
+    const speaker = NU.pim?.speakerFor(el);
     syllables.forEach((syl, i) => {
       const gap = i && syl.parentElement !== syllables[i - 1].parentElement ? wordGap : 0;
       t += gap;
@@ -57,6 +58,7 @@ NU.lesson = (() => {
         if (run !== karaokeRun) return;
         syllables[i - 1]?.classList.replace("is-lit", "is-done");
         syl.classList.add("is-lit");
+        if (speaker) NU.pim.mouth(speaker, syl.textContent, { hold: step * 0.7 });
       }, t);
       t += step;
     });

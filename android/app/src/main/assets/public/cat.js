@@ -100,18 +100,20 @@ NU.cat = (() => {
           <path d="M131 22q2 5 0 9M139 21v8M147 22q-2 5 0 9" stroke="${furDark}" stroke-width="2.6" stroke-linecap="round" fill="none"/>
           <ellipse cx="148" cy="52" rx="11" ry="7.5" fill="${cream}"/>
           <circle cx="129" cy="51" r="4" fill="#ff8fa3" opacity=".45"/><circle cx="159" cy="49" r="3.5" fill="#ff8fa3" opacity=".45"/>
-          <g class="cat-eyes cat-eyes-open">
-            <g class="cat-blink" style="transform-origin:144px 41px">
-              <ellipse cx="136" cy="41" rx="3.8" ry="5" fill="${ink}"/><ellipse cx="152" cy="40" rx="3.6" ry="4.8" fill="${ink}"/>
-              <circle class="cat-pupil-shine" cx="137.4" cy="39" r="1.4" fill="#fff"/><circle class="cat-pupil-shine" cx="153.3" cy="38" r="1.3" fill="#fff"/>
+          <g class="cat-gaze">
+            <g class="cat-eyes cat-eyes-open">
+              <g class="cat-blink" style="transform-origin:144px 41px">
+                <ellipse cx="136" cy="41" rx="3.8" ry="5" fill="${ink}"/><ellipse cx="152" cy="40" rx="3.6" ry="4.8" fill="${ink}"/>
+                <circle class="cat-pupil-shine" cx="137.4" cy="39" r="1.4" fill="#fff"/><circle class="cat-pupil-shine" cx="153.3" cy="38" r="1.3" fill="#fff"/>
+              </g>
             </g>
-          </g>
-          <g class="cat-eyes cat-eyes-happy" fill="none" stroke="${ink}" stroke-width="2.6" stroke-linecap="round">
-            <path d="M132 42q4-5 8 0M148 41q4-5 8 0"/>
-          </g>
-          <g class="cat-eyes cat-eyes-sad">
-            <ellipse cx="136" cy="43" rx="3.4" ry="4" fill="${ink}"/><ellipse cx="152" cy="42" rx="3.2" ry="3.8" fill="${ink}"/>
-            <path d="M131 37.5l7-3M157 36.5l-7-3" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
+            <g class="cat-eyes cat-eyes-happy" fill="none" stroke="${ink}" stroke-width="2.6" stroke-linecap="round">
+              <path d="M132 42q4-5 8 0M148 41q4-5 8 0"/>
+            </g>
+            <g class="cat-eyes cat-eyes-sad">
+              <ellipse cx="136" cy="43" rx="3.4" ry="4" fill="${ink}"/><ellipse cx="152" cy="42" rx="3.2" ry="3.8" fill="${ink}"/>
+              <path d="M131 37.5l7-3M157 36.5l-7-3" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
+            </g>
           </g>
           <path d="M145.5 48.5h5l-2.5 3Z" fill="#e0567a"/>
           <path class="cat-mouth cat-mouth-closed" d="M143 53q2.5 3 5 0q2.5 3 5 0" fill="none" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/>
@@ -119,6 +121,7 @@ NU.cat = (() => {
           <path class="cat-mouth cat-mouth-sad" d="M143 57q5-4 10 0" fill="none" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M157 51l12-3M157 54l12 1M129 53l-11-1" stroke="#7a5a3a" stroke-width="1" stroke-linecap="round" opacity=".6"/>
         </g>
+        <g class="cat-zzz" fill="#3d4a66" font-weight="900" font-family="system-ui,sans-serif"><text x="163" y="24" font-size="13">z</text><text x="175" y="10" font-size="18">z</text></g>
         <path class="cat-leg-near" d="${leg(HIP_NEAR, near)}" fill="none" stroke="${fur}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
         <circle class="cat-foot-near" cx="${near.x.toFixed(1)}" cy="${near.y.toFixed(1)}" r="5.5" fill="${cream}"/>
       </g>

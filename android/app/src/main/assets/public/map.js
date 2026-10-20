@@ -196,25 +196,151 @@ NU.map = (() => {
     if (card.getBoundingClientRect().bottom > innerHeight - 90) card.scrollIntoView({ block: "center", behavior: NU.motion.level() === "off" ? "auto" : "smooth" });
   }
 
-  // Pim rides in from the building side and parks beside the current stop, saying where to start.
-  function ridePim(map, current) {
+  // ---- Scroll ride ------------------------------------------------------------
+  // Pim rides the road as you scroll. She follows a reading line down the page with a little spring lag,
+  // pedals in step with the distance she covers, ducks under the unit banners like tunnels and high-fives
+  // finished stops as she passes. When scrolling stops she rides on to the nearest stop and pulls over
+  // beside it; if that is the next lesson she rings her bell and points it out.
+  const PARK = 80, PIM_W = 92, PIM_H = 73;
+  let ride = null;
+
+  function roadPoints(map) {
+    return [...map.querySelectorAll(".map-node")].map((node) => {
+      const trail = node.closest(".map-trail");
+      return { node, status: node.dataset.status, top: trail.offsetTop, x: trail.offsetLeft + node.offsetLeft, y: trail.offsetTop + node.offsetTop, left: trail.offsetLeft, width: trail.clientWidth };
+    });
+  }
+  function roadAt(points, y) {
+    if (y <= points[0].y) return points[0];
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1], b = points[i];
+      if (y <= b.y) return { ...b, x: a.x + ((b.x - a.x) * (y - a.y)) / (b.y - a.y) };
+    }
+    return points[points.length - 1];
+  }
+  const sideAt = (spot) => (spot.x > spot.left + spot.width / 2 ? -1 : 1);       // park on the roomier side
+
+  function draw(r, lean = 0) {
+    const spot = roadAt(r.points, r.y);
+    const raw = spot.x + r.off;
+    // Parked Pim stays inside the trail; only the ride-in starts beyond it.
+    const x = Math.abs(r.off) > PARK + 1 ? raw : Math.max(spot.left + PIM_W / 2 - 10, Math.min(spot.left + spot.width - PIM_W / 2 + 10, raw));
+    // Parked near the top of a unit, Pim drops a little so her speech clears the banner.
+    let top = r.y + 16 - PIM_H;
+    const floor = spot.top + 48;
+    if (top < floor) top += (floor - top) * Math.min(1, Math.abs(r.off) / PARK);
+    r.pim.style.transform = `translate(${(x - PIM_W / 2).toFixed(1)}px,${top.toFixed(1)}px) rotate(${lean.toFixed(2)}deg)`;
+    return x;
+  }
+
+  function face(r, left) {
+    r.cat.classList.toggle("cat-facing-left", left);
+  }
+
+  function say(r, on) {
+    r.pim.classList.toggle("is-saying", on);
+    if (on) NU.motion.drop(r.pim.querySelector(".map-pim-say"));
+  }
+
+  // Finished stops get a bump and a sparkle as Pim rides past them.
+  function cheerPast(r, from, to, speed) {
+    const lo = Math.min(from, to), hi = Math.max(from, to);
+    r.points.forEach((p) => {
+      if (p.y <= lo || p.y > hi || !/done|secure/.test(p.status)) return;
+      NU.motion.bump(p.node.querySelector(".map-node-face"));
+      // Sparkles live in screen space, so a fast fling would leave them hanging behind.
+      if (speed < 900) NU.motion.burst(p.node, { count: 6, spread: 46, gravity: 10, shapes: ["star", "dot"] });
+      const now = performance.now();
+      if (now - r.lastCheer > 90) { NU.sound.play("xp"); NU.haptics.play("tap"); r.lastCheer = now; }
+    });
+  }
+
+  // While scrolling Pim follows the middle of the screen; once it stops she rides to the nearest stop.
+  function targetY(r, riding) {
+    const line = innerHeight * 0.5 - r.map.getBoundingClientRect().top;
+    if (riding) return Math.max(r.points[0].y, Math.min(r.points[r.points.length - 1].y, line));
+    return r.points.reduce((best, p) => (Math.abs(p.y - line) < Math.abs(best.y - line) ? p : best)).y;
+  }
+
+  function step(now) {
+    const r = ride;
+    if (!r?.map.isConnected) { ride = null; return; }
+    const dt = Math.min(0.05, (now - r.lastT) / 1000 || 1 / 60);
+    r.lastT = now;
+    const riding = now - r.lastScroll < 420;
+    const ty = targetY(r, riding);
+    const prevY = r.y;
+    r.y += (ty - r.y) * (1 - Math.exp(-dt * 7));
+    const spot = roadAt(r.points, r.y);
+    const wantOff = riding ? 0 : sideAt(spot) * PARK;
+    r.off += (wantOff - r.off) * (1 - Math.exp(-dt * 5));
+    const prevX = r.x;
+    const dy = r.y - prevY;
+    // Lean into the ride a little; speed lines appear when scrolling fast.
+    const speed = Math.abs(dy) / dt;
+    r.x = draw(r, Math.max(-7, Math.min(7, (dy / dt) / 160)) * (r.cat.classList.contains("cat-facing-left") ? -1 : 1));
+    const dx = r.x - prevX;
+    const dist = Math.hypot(dx, dy);
+    if (Math.abs(dx) > 0.25) face(r, dx < 0);
+    r.pim.classList.toggle("is-zooming", speed > 650);
+    r.pim.style.setProperty("--trail", `${Math.atan2(-dy, -dx)}rad`);
+    // Wheels turn by distance travelled (rendered wheel radius is about 12px).
+    r.wheel += dist / 12;
+    r.spokes.forEach((s) => { s.style.transform = `rotate(${r.wheel}rad)`; });
+    NU.cat.setCrank(r.cat, r.crank0 + r.wheel * 0.55);
+    cheerPast(r, prevY, r.y, speed);
+    if (dist > 0.6 && r.pim.classList.contains("is-saying")) say(r, false);
+    const moving = riding || Math.abs(ty - r.y) > 0.4 || Math.abs(wantOff - r.off) > 0.4;
+    if (moving) { r.raf = requestAnimationFrame(step); return; }
+    // Settled: face the road, brake, and if parked at the next lesson, point it out.
+    r.raf = 0;
+    r.pim.classList.remove("is-zooming");
+    face(r, sideAt(spot) > 0);
+    NU.cat.act(r.cat, "brake");
+    const atFrontier = Math.abs(r.y - r.frontier.y) < 24 && r.frontier.status === "current";
+    if (atFrontier) {
+      if (r.rodeSinceArrival) NU.sound.play("bell");
+      setTimeout(() => { NU.cat.act(r.cat, "wave"); NU.cat.act(r.cat, "talk", 900); }, 260);
+      say(r, true);
+    }
+    r.rodeSinceArrival = false;
+  }
+
+  function kick() {
+    if (!ride) return;
+    ride.lastScroll = performance.now();
+    ride.rodeSinceArrival = true;
+    if (!ride.raf) { ride.lastT = performance.now(); ride.raf = requestAnimationFrame(step); }
+  }
+  addEventListener("scroll", () => ride && kick(), { passive: true, capture: true });
+  addEventListener("resize", () => { if (ride?.map.isConnected) { ride.points = roadPoints(ride.map); ride.frontier = ride.points[ride.frontierIndex]; draw(ride); } }, { passive: true });
+
+  function startRide(map, current, { intro }) {
+    if (ride?.raf) cancelAnimationFrame(ride.raf);
+    ride = null;
     const pim = map.querySelector(".map-pim");
-    if (!pim || !current) { pim?.remove(); return; }
-    const trail = current.closest(".map-trail");
-    trail.append(pim);
-    const width = trail.clientWidth, nodeX = current.offsetLeft, nodeY = current.offsetTop;
-    const toLeft = nodeX > width / 2;                       // park on the roomier side of the stop
-    const x = toLeft ? nodeX - 52 - 92 : nodeX + 52;
-    const y = Math.max(nodeY - 58, 48);                     // keep the speech label clear of the unit banner
+    const points = roadPoints(map);
+    if (!pim || !points.length) { pim?.remove(); return; }
+    const frontierIndex = current ? points.findIndex((p) => p.node === current) : points.length - 1;
+    const frontier = points[frontierIndex];
     const cat = pim.querySelector(".nu-cat");
-    cat.classList.toggle("cat-facing-left", !toLeft);
-    pim.classList.toggle("is-left", toLeft);
-    pim.style.transform = `translate(${x}px, ${y}px)`;
-    if (NU.motion.level() === "off") return;
-    const from = toLeft ? -x - 110 : width - x + 20;
-    NU.motion.animate(pim, [{ transform: `translate(${x + from}px, ${y}px)` }, { transform: `translate(${x}px, ${y}px)` }], { duration: 1100, easing: "cubic-bezier(.2,.7,.3,1)" })
-      ?.finished.then(() => { NU.cat.act(cat, "brake"); setTimeout(() => { NU.cat.act(cat, "wave"); NU.cat.act(cat, "talk", 900); NU.motion.drop(pim.querySelector(".map-pim-say")); }, 280); }, () => {});
-    NU.cat.pedalFor(cat, { duration: 1100, distance: Math.abs(from) });
+    map.append(pim);
+    const side = sideAt(frontier);
+    const r = {
+      map, pim, cat, points, frontier, frontierIndex, spokes: [...cat.querySelectorAll(".cat-spokes")],
+      y: frontier.y, x: undefined, off: side * PARK, wheel: 0, crank0: Number(cat.dataset.crank) || 0,
+      lastScroll: 0, lastT: performance.now(), lastCheer: 0, raf: 0, rodeSinceArrival: false
+    };
+    r.x = draw(r);
+    face(r, side > 0);
+    if (NU.motion.level() === "off") { if (current) say(r, true); return; }
+    ride = r;
+    if (!intro) { if (current) say(r, true); return; }
+    // Ride in from beyond the road on the parking side.
+    r.off = side * (frontier.width + PIM_W);
+    r.x = draw(r);
+    face(r, side > 0);
+    r.raf = requestAnimationFrame(step);
   }
 
   // Units completed since the map was last seen get a one-time light-up celebration.
@@ -245,11 +371,11 @@ NU.map = (() => {
     map.querySelectorAll("[data-action='map-node']").forEach((node) => node.addEventListener("click", (e) => { e.stopPropagation(); openCard(node, onOpen); }));
     map.addEventListener("click", (e) => { if (!e.target.closest(".map-card")) closeCard(); });
     celebrateNewlyLit(map);
-    if (!entered) { ridePim(map, current); return; }
+    if (!entered) { startRide(map, current, { intro: false }); return; }
     // Callers scroll to the top after rendering; wait for that, then bring the next stop into view.
     setTimeout(() => {
       current?.scrollIntoView({ block: "center", behavior: NU.motion.level() === "full" ? "smooth" : "auto" });
-      setTimeout(() => ridePim(map, current), NU.motion.level() === "full" ? 450 : 0);
+      setTimeout(() => startRide(map, current, { intro: true }), NU.motion.level() === "full" ? 450 : 0);
     }, 80);
     if (NU.motion.level() !== "off") NU.motion.stagger([...map.querySelectorAll(".map-banner")].slice(0, 3), "rise", { each: 90 });
   }
