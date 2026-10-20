@@ -1,0 +1,69 @@
+/* Refresh: a warmer backdrop, glossier heroes, a frosted bottom bar, a shining main button and
+   small springy rewards for taps. Loaded last; the lesson screen keeps its still reading surface. */
+
+/* ---- Backdrop: warm paper with a faint Delft-tile dot grid ------------------ */
+body{background:#fbf6ee}
+.app-shell{background:
+  radial-gradient(circle at 1px 1px,#e9dcc8 1px,transparent 1.4px) 0 0/22px 22px,
+  radial-gradient(120% 60% at 100% 0%,#ffe9d4 0%,transparent 60%),
+  radial-gradient(120% 50% at 0% 100%,#e4ecff 0%,transparent 55%),
+  #fbf6ee}
+body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
+
+/* ---- Header controls -------------------------------------------------------- */
+#app .pl-brand-face{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#app .brand-lockup:hover .pl-brand-face,#app .brand-lockup:focus-visible .pl-brand-face{transform:rotate(-8deg) scale(1.08)}
+#app .od-level,#app .od-profile{border:2px solid var(--pl-line);box-shadow:0 3px 0 var(--pl-line);transition:transform 90ms,box-shadow 90ms}
+#app .od-level:active,#app .od-profile:active{transform:translateY(3px);box-shadow:none}
+#app .od-profile:hover .ui-icon{transform:rotate(60deg)}
+#app .od-profile .ui-icon{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+
+/* ---- Main call to action: glossy face and a light sweep now and then -------- */
+#app .today-action{position:relative;overflow:hidden;background:linear-gradient(180deg,#ff8f3a 0%,var(--pl-oranje) 55%,#f86f0f 100%);min-height:58px;font-size:17px}
+#app .today-action::after{content:"";position:absolute;inset:0 auto 0 -60%;width:45%;background:linear-gradient(100deg,transparent,#ffffff70,transparent);transform:skewX(-18deg);pointer-events:none;opacity:0}
+:root:not([data-effects=reduced]) #app .today-action::after{animation:rf-shine 4.8s ease-in-out 1.8s infinite}
+@keyframes rf-shine{0%{left:-60%;opacity:0}6%{opacity:1}22%{left:130%;opacity:1}23%,100%{left:130%;opacity:0}}
+#app .today-action .ui-icon{transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+#app .today-action:hover .ui-icon{transform:scale(1.25) translateX(-3px)}
+
+/* ---- Hero cards (Practice, Toolkit, Settings…): gloss, sparkles, bobbing Pim - */
+#app .pl-hero{position:relative;overflow:hidden;isolation:isolate}
+#app .pl-hero::before{content:"";position:absolute;inset:0 0 55% 0;z-index:-1;background:linear-gradient(180deg,#ffffff30,transparent);pointer-events:none}
+#app .pl-hero::after{content:"";position:absolute;z-index:-1;inset-inline-start:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:#ffffff1a;box-shadow:120px -90px 0 -50px #ffffff14;pointer-events:none}
+:root:not([data-effects=reduced]) #app .pl-hero-pim{animation:rf-bob 3.2s ease-in-out infinite}
+@keyframes rf-bob{50%{transform:translateY(-5px) rotate(-3deg)}}
+
+/* ---- Tappable cards lift on hover and squish on press ----------------------- */
+@media (hover:hover){
+  #app .review-hub-card,#app .pl-row-link,#app .utility-action,#app .od-word,#app .pim-corner{transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s}
+  #app .review-hub-card:hover,#app .pl-row-link:hover,#app .utility-action:hover{transform:translateY(-3px)}
+}
+#app .review-hub-card:active,#app .pl-row-link:active,#app .utility-action:active{transform:translateY(2px) scale(.985)}
+
+/* ---- Bottom bar: frosted glass, springy icons ------------------------------- */
+#app .bottom-nav{background:#ffffffd9;-webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);border-top:2px solid #ffffff;box-shadow:0 -10px 30px #1f24331a}
+#app .nav-button .nav-icon{transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+#app .nav-button:active .nav-icon{transform:scale(.82)}
+#app .nav-button.active .nav-icon{transform:translateY(-2px) scale(1.12)}
+:root:not([data-effects=reduced]) #app .nav-button.active .nav-icon{animation:rf-nav-pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rf-nav-pop{0%{transform:scale(.7)}60%{transform:translateY(-4px) scale(1.2)}100%{transform:translateY(-2px) scale(1.12)}}
+
+/* ---- Today: the lesson card gets a soft coloured glow ----------------------- */
+#app .pl-today .today-panel{box-shadow:0 5px 0 var(--pl-line),0 18px 40px #ff7a1a14}
+#app .pl-today .od-progress-track span{background:linear-gradient(90deg,var(--pl-green),#6bdc84);position:relative}
+#app .pl-today .od-progress-track span::after{content:"";position:absolute;inset:3px 6px auto;height:3px;border-radius:9px;background:#ffffff66}
+
+/* ---- Toolkit word cards: a coloured edge per card --------------------------- */
+#app .od-word{border-inline-start:5px solid var(--pl-blue-soft)}
+#app .od-word:nth-child(3n+2){border-inline-start-color:var(--pl-oranje-soft)}
+#app .od-word:nth-child(3n){border-inline-start-color:var(--pl-green-soft)}
+
+/* ---- Lesson: answers pop gently when chosen (no idle motion while reading) -- */
+:root:not([data-effects=reduced]) #app .choice-button.selected,:root:not([data-effects=reduced]) #app .word-bank-token.selected{animation:rf-select .28s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rf-select{0%{transform:scale(.96)}100%{transform:none}}
+#app .quiz-feedback-panel.correct{background:linear-gradient(180deg,#e9fbe9,var(--pl-green-soft))}
+
+@media (prefers-reduced-motion:reduce){
+  #app .today-action::after{display:none}
+  #app .pl-hero-pim,#app .nav-button.active .nav-icon,#app .choice-button.selected{animation:none!important}
+}

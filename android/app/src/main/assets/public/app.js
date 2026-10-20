@@ -470,6 +470,7 @@ let coachmarkDismissed = false;
 let teachingStep = 0;
 let preferredDutchVoice = null;
 let answerCombo = 0;
+let coachLine = null;
 let bestAnswerCombo = 0;
 let experienceObserver = null;
 let globalMotionBound = false;
@@ -1201,6 +1202,8 @@ function render() {
   if (screen === "journey") NU.map.mount(app.querySelector(".map"), { entered: screenChanged || chapterChanged, onOpen: showLessonPreview });
   animateLessonProgress();
   reserveLessonFooterSpace();
+  NU.guide.afterRender({ questionKey: screen === "lesson" ? `${activeLessonId}:${activeQuestionIndex}:${String(getActiveQuestion()?.id || "")}` : "" });
+  if (screen === "home") NU.guide.maybeTour();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -1310,9 +1313,30 @@ function renderHome() {
       <h2>${getShortLessonTitle(nextLesson)}</h2><p>${escapeHtml(getLessonOutcome(nextLesson) || nextLesson.description)}</p>
       <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button>
     </section>
+    ${renderPimCorner(completed)}
     <section class="od-progress"><div><strong>آپ کا سفر</strong><small>${completed} / ${chapter.lessons.length} سبق مکمل</small></div><button class="text-button" data-action="journey">سفر دیکھیں ${renderIcon("arrow")}</button><div class="od-progress-track"><span style="width:${Math.round(completed / Math.max(1,chapter.lessons.length)*100)}%"></span></div></section>
     <section class="od-support"><span>${renderIcon("speaker")}</span><p><strong>پہلے سمجھیں، پھر کہیں۔</strong><small>معنی، آواز اور مثال کے بعد اپنی بات کہیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف اور آوازیں">${renderIcon("chevron")}</button></section>
   </main>`;
+}
+
+// Pim's corner: a greeting that follows the learner's streak and absence, plus a word of the day.
+function renderPimCorner(completed) {
+  const streak = getPracticeStreak();
+  const hello = NU.guide.greeting({ streak, practicedToday: progress.practiceDays.includes(todayKey()), completed, time: NU.street.timeOfDay() });
+  const all = [...courseConcepts.values()];
+  const met = all.filter(concept => getConceptSkillIds(concept, { skillIds: [...courseSkills.keys()] }).some(id => statusAtLeast(getSkillStatus(id), "introduced")));
+  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40));
+  return `<section class="pim-corner" aria-label="${escapeAttr(NU.cat.NAME)} کا پیغام">
+    <div class="pim-corner-hello">
+      <span class="pim-corner-face">${NU.cat.render({ face: true, size: 60, mood: hello.mood, label: NU.cat.NAME })}</span>
+      <p class="pim-corner-bubble"><b class="latin" dir="ltr">${escapeHtml(hello.nl)}</b><small>${escapeHtml(hello.ur)}</small></p>
+    </div>
+    ${word ? `<div class="pim-word">
+      <span class="pim-word-label latin">${/\s/.test(word.dutch.trim()) ? "Zin van vandaag" : "Woord van vandaag"}</span>
+      <div class="pim-word-row"><strong class="latin" dir="ltr">${escapeHtml(word.dutch)}</strong>${renderSpeakButton(word.audioText || word.dutch, "toolkit")}</div>
+      <button type="button" class="pim-word-reveal" data-guide="reveal-word" aria-expanded="false"><span class="pim-word-ask">مطلب دیکھیں</span><span class="pim-word-meaning">${escapeHtml(word.urdu)}</span></button>
+    </div>` : ""}
+  </section>`;
 }
 
 function renderJourney() {
@@ -2627,7 +2651,7 @@ function renderQuizFooter(question, infoStep) {
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
           <span class="feedback-icon pl-feedback-face">${NU.cat.render({ face: true, size: 48, mood: correct ? "happy" : "sad" })}</span>
-          <div><div class="pl-feedback-title"><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong><span class="pl-praise latin" dir="ltr">${NU.lesson.phrase(correct, activeQuestionIndex)[0]}</span></div>${renderFeedbackDetail(question, correct)}</div>
+          <div><div class="pl-feedback-title"><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong>${coachLine ? `<span class="pl-praise pl-coach"><b class="latin" dir="ltr">${escapeHtml(coachLine[0])}</b><small>${escapeHtml(coachLine[1])}</small></span>` : `<span class="pl-praise latin" dir="ltr">${NU.lesson.phrase(correct, activeQuestionIndex)[0]}</span>`}</div>${renderFeedbackDetail(question, correct)}</div>
         </div>
         <button class="quiz-action enabled" data-action="next">${getFeedbackNextLabel(question, correct)}</button>
       </footer>
@@ -3192,6 +3216,7 @@ function renderSettings() {
         ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "کمزور مہارتوں کے مطابق دہرائی", "today")}
         ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
         ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
+        ${renderSettingsLink("replay-tour", "spark", `${NU.cat.NAME} کے ساتھ سیر`, "ایپ کا تعارف دوبارہ دیکھیں")}
       </div>
       <div class="settings-section-heading"><strong>آپ کے لیے آسانی</strong><span></span></div>
       <div class="settings-list">
@@ -3305,6 +3330,12 @@ function bindEvents() {
       if (action === "continue-info") continueInfoStep();
       if (action === "next") nextQuestion();
       if (action === "reset") resetProgress();
+      if (action === "replay-tour") {
+        screen = "home";
+        render();
+        scrollToTop();
+        NU.guide.startTour();
+      }
       if (action === "toggle-setting") toggleSetting(element.dataset.setting);
       if (action === "skip-audio") skipAudioQuestion();
       if (action === "input-fallback") enableInputFallback();
@@ -4016,6 +4047,7 @@ function checkAnswer() {
     : selectedAnswer === question.answer;
   answerCombo = correct ? answerCombo + 1 : 0;
   bestAnswerCombo = Math.max(bestAnswerCombo, answerCombo);
+  coachLine = NU.guide.onAnswer({ correct, combo: answerCombo, lessonKey: activeLessonId, index: activeQuestionIndex, total: (sessionQuestions.length ? sessionQuestions : getActiveLesson()?.questions || []).length });
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -4378,6 +4410,7 @@ function resetProgress() {
   const confirmed = window.confirm("کیا آپ واقعی پیش رفت دوبارہ شروع کرنا چاہتے ہیں؟");
   if (!confirmed) return;
   saveProgress({ ...defaultProgress });
+  NU.guide.reset();
   activeWordHelp = null;
   activeReview = null;
   buildAnswerIds = [];
@@ -5156,6 +5189,7 @@ document.addEventListener("visibilitychange", () => {
 });
 document.documentElement.classList.toggle("effects-paused", document.hidden);
 
+NU.guide.configure({ speak: (text) => speakDutch(text, false, true) });
 render();
 
 if ("serviceWorker" in navigator) {
