@@ -312,6 +312,51 @@ One short Urdu card per unit, for example:
 
 This also prepares learners for the KNM part of the inburgering exam.
 
+**Done (20 October 2026).**
+
+*3.1 Grammar.* A coverage check of every Dutch phrase in the course found
+no verb-ending drill, no adjective endings, no object pronouns, no
+comparatives, no reflexive verbs, no future with `gaan`, and only a few
+past forms. Eight new A0 lessons, built with `makeA0DailyLesson`, each
+placed where its words are already taught:
+
+| Lesson | Teaches | Placed after |
+|---|---|---|
+| `a0-plurals-er-is` | `stoelen`, `tafels`, `huizen`, `de boeken`; `er is` / `er zijn` | `a0-home-needs` |
+| `a0-verb-endings` | `ik werk`, `hij werkt`, `wij werken`; `werk jij?` drops the t | `a0-food-drink` |
+| `a0-adjective-endings` | `de blauwe jas`, `een wit huis`, `het witte huis` | `a0-colours-clothes` |
+| `a0-comparatives` | `duurder`, `goedkoper`, `beter`; `… dan …` | `a0-shopping-payment` |
+| `a0-feelings-reflexive` | `ik voel me`, `hoe voelt u zich?`, `ik ben moe` | `a0-body-health` |
+| `a0-past-was-had` | `was / waren`, `had`, `ging`; `gisteren was ik ziek` | `a0-emergency-police` |
+| `a0-object-pronouns` | `mij`, `hem`, `haar`, `ons` after the verb | `a0-child-school` |
+| `a0-future-gaan` | `ik ga morgen werken`, `morgen ga ik werken` | `a0-work-basics` |
+
+- Every item has a hand-written teacher card (`a0SurvivalTeachingV4`)
+  and its own scene (`exactScenes`).
+- Each lesson also lists the known form it contrasts with (`ik ben ziek`
+  next to `ik was ziek`, `stoel` next to `stoelen`) as a review item. That
+  is what lets a teacher card quote it, and the review run drills the pair.
+- The distractor engine now offers the matching mistake forms
+  (`hij drink koffie`, `een witte huis`, `morgen ik ga werken`).
+- Unit missions test every new lesson. Neighbourhood: `hij drinkt koffie`,
+  `ik wil de groene jas`, and price + `dit is goedkoper` as one ordered
+  pair (the second pin-payment target was dropped; the final mission still
+  has it). Help: `gisteren was ik ziek` replaces the second ticket target,
+  and `ik voel me niet goed` is paired with `mijn rug doet pijn`. Home:
+  `er zijn drie kamers`. The A0 final mission adds `bel mij morgen` and
+  `morgen ga ik werken` to two of its ordered sequences.
+- The auto-made examples for two `a0-work-basics` items changed once new
+  lessons came before them and quoted untaught words, so both now have
+  hand-written cards.
+- Building the course takes about 1.57 s in Node (was 1.41 s).
+
+*3.2 Society cards.* `societyCardsV4` in `course-data.js` gives each of
+the 26 units a title and three short Urdu facts (huisarts and 112, `u` and
+`jij`, punctuality, waste sorting, statiegeld, check-in/out, leerplicht,
+zorgverzekering, DigiD, the 14-day return right, PIN safety, and more).
+The lesson preview shows the card as "یہاں ایسے ہوتا ہے". It opens on the
+unit's first lesson and its missions, and stays folded on the other lessons.
+
 ### 3.3 Reading real texts
 A gemeente letter, a school app message, a pharmacy label, and a
 landlord's email, each with 3–4 comprehension questions.
