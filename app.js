@@ -3777,6 +3777,7 @@ function startLesson(id) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(lesson);
+  NU.guide.beginLesson(activeLessonId);
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
@@ -3820,6 +3821,7 @@ function startReview(kind) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(activeReview);
+  NU.guide.beginLesson(activeLessonId);
   screen = "lesson";
   render();
   scrollToTop();

@@ -92,12 +92,15 @@ NU.guide = (() => {
 
   /* ---- Lesson coach ------------------------------------------------------------------------ */
   const STREAK_MILESTONES = [3, 5, 10, 15, 20];
-  let lesson = { key: "", answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false };
+  const freshLesson = (key = "") => ({ key, answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false });
+  let lesson = freshLesson();
+  // Called whenever a lesson or review (re)starts, so a replay of the same one starts clean.
+  function beginLesson(lessonKey = "") { lesson = freshLesson(lessonKey); }
   const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
   // Returns a special [nl, ur] line for the feedback panel, or null for the usual praise.
   function onAnswer({ correct, combo = 0, lessonKey = "", index = 0, total = 0 }) {
-    if (lessonKey !== lesson.key) lesson = { key: lessonKey, answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false };
+    if (lessonKey !== lesson.key) beginLesson(lessonKey);
     hidePeek();
     const first = lesson.answers === 0;
     const comeback = correct && !lesson.lastCorrect;
@@ -319,5 +322,5 @@ NU.guide = (() => {
     save(store);
   }
 
-  return { configure, greeting, wordOfDay, toast, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
+  return { configure, greeting, wordOfDay, toast, beginLesson, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
 })();
