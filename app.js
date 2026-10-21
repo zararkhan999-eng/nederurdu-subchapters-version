@@ -1332,7 +1332,7 @@ function renderPimCorner(completed) {
     if (skill) normalizeIdList(skill.conceptId, skill.conceptIds).forEach(conceptId => metIds.add(conceptId));
   });
   const met = all.filter(concept => metIds.has(concept.id) || normalizeIdList(concept.skillIds).some(id => introduced.has(id)));
-  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40));
+  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40), all);
   return `<section class="pim-corner" aria-label="${escapeAttr(NU.cat.NAME)} کا پیغام">
     <div class="pim-corner-hello">
       <span class="pim-corner-face">${NU.cat.render({ face: true, size: 60, mood: hello.mood, label: NU.cat.NAME })}</span>

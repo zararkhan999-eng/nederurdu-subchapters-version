@@ -47,12 +47,22 @@ NU.guide = (() => {
     return { ...(byTime[time] || byTime.morning), mood: "idle" };
   }
 
-  // The same word all day; a new one tomorrow. Prefers words the learner has already met.
-  function wordOfDay(words) {
+  // The same word all day; a new one tomorrow. Prefers words the learner has already met. The
+  // candidate list grows as words are met, so the day's pick is remembered rather than re-derived;
+  // `pool` (all words) lets it be found again after the candidates change.
+  function wordOfDay(words, pool = words) {
     const usable = (words || []).filter((w) => w?.dutch && w?.urdu);
+    const idOf = (w) => w.id || w.dutch;
+    if (store.word?.day === today()) {
+      const kept = [...usable, ...(pool || [])].find((w) => w?.dutch && w?.urdu && idOf(w) === store.word.id);
+      if (kept) return kept;
+    }
     if (!usable.length) return null;
     const seed = [...today()].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7);
-    return usable[seed % usable.length];
+    const word = usable[seed % usable.length];
+    store.word = { day: today(), id: idOf(word) };
+    save(store);
+    return word;
   }
 
   // Delegated so the Today card needs no wiring in app.js.
