@@ -1324,8 +1324,15 @@ function renderPimCorner(completed) {
   const streak = getPracticeStreak();
   const hello = NU.guide.greeting({ streak, practicedToday: progress.practiceDays.includes(todayKey()), completed, time: NU.street.timeOfDay() });
   const all = [...courseConcepts.values()];
-  const met = all.filter(concept => getConceptSkillIds(concept, { skillIds: [...courseSkills.keys()] }).some(id => statusAtLeast(getSkillStatus(id), "introduced")));
-  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40));
+  // One pass over the learner's introduced skills instead of matching every concept against every skill.
+  const introduced = new Set(Object.keys(progress.skillMastery || {}).filter(id => statusAtLeast(getSkillStatus(id), "introduced")));
+  const metIds = new Set();
+  introduced.forEach(id => {
+    const skill = courseSkills.get(id);
+    if (skill) normalizeIdList(skill.conceptId, skill.conceptIds).forEach(conceptId => metIds.add(conceptId));
+  });
+  const met = all.filter(concept => metIds.has(concept.id) || normalizeIdList(concept.skillIds).some(id => introduced.has(id)));
+  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40), all);
   return `<section class="pim-corner" aria-label="${escapeAttr(NU.cat.NAME)} کا پیغام">
     <div class="pim-corner-hello">
       <span class="pim-corner-face">${NU.cat.render({ face: true, size: 60, mood: hello.mood, label: NU.cat.NAME })}</span>
@@ -3777,6 +3784,8 @@ function startLesson(id) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(lesson);
+  NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
@@ -3820,6 +3829,8 @@ function startReview(kind) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(activeReview);
+  NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   screen = "lesson";
   render();
   scrollToTop();
