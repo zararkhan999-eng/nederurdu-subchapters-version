@@ -1821,7 +1821,7 @@ function renderPreviewScene(lesson, chapter, unit) {
   const color = trophy ? "#e09b00" : NU.map.unitColor(index);
   const kind = trophy ? "townhall" : NU.map.kindFor(unit?.id || lesson.id);
   return `<div class="pl-preview-scene" style="--unit:${color}" aria-hidden="true">
-    <svg class="pl-preview-clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><g fill="#fff"><ellipse cx="70" cy="40" rx="34" ry="13"/><ellipse cx="88" cy="32" rx="18" ry="14"/><ellipse cx="320" cy="62" rx="28" ry="11"/><ellipse cx="334" cy="55" rx="15" ry="12"/></g></svg>
+    <svg class="pl-preview-clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><g fill="#fff"><path transform="translate(80 40)" d="M-36 16a14 14 0 0 1 2-28 20 20 0 0 1 38-6 16 16 0 0 1 28 10 13 13 0 0 1 2 24Z"/><path transform="translate(326 64) scale(.75)" d="M-36 16a14 14 0 0 1 2-28 20 20 0 0 1 38-6 16 16 0 0 1 28 10 13 13 0 0 1 2 24Z"/></g></svg>
     <div class="pl-preview-building">${NU.map.building(kind, color, "open")}</div>
     <div class="pl-preview-pim">${NU.cat.render({ size: 132 })}</div>
     <div class="pl-preview-ground"></div>

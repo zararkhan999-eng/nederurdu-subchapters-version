@@ -30,26 +30,30 @@ NU.map = (() => {
     post: '<rect x="-8" y="-5" width="16" height="11" rx="2" fill="#fff"/><path d="m-8-4 8 6 8-6" fill="none" stroke="#ff7a1a" stroke-width="1.8"/>'
   };
 
-  // A small gabled building in the street's style; `state` is "lit", "open" or "ahead".
+  const shade = (hex, k = 0.8) => `#${[1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0")).join("")}`;
+
+  // A small gabled building in the street's style (one hard shade, sills under the windows);
+  // `state` is "lit", "open" or "ahead".
   function building(kind, color, state) {
     const lit = state === "lit";
-    const glass = lit ? "#ffd56b" : "#cfe7ff";
+    const glass = lit ? "#ffd56b" : "#e3f2ff";
     const tall = kind === "clock" || kind === "office";
     const h = tall ? 92 : 82, top = 112 - h;
-    const roof = kind === "townhall" || kind === "bank"
-      ? `<path d="M10 ${top}L60 ${top - 22}L110 ${top}Z" fill="${color}"/><path d="M18 ${top}h84" stroke="#00000022" stroke-width="3"/>`
+    const roof = (c) => kind === "townhall" || kind === "bank"
+      ? `<path d="M10 ${top}L60 ${top - 22}L110 ${top}Z" fill="${c}"/>`
       : kind === "station"
-        ? `<path d="M10 ${top}q50-34 100 0Z" fill="${color}"/>`
+        ? `<path d="M10 ${top}q50-34 100 0Z" fill="${c}"/>`
         : kind === "clock"
-          ? `<path d="M34 ${top}l26-26 26 26Z" fill="${color}"/>`
-          : `<path d="M20 ${top}v-10h10v-10h10v-10h40v10h10v10h10v10Z" fill="${color}"/>`;
+          ? `<path d="M34 ${top}l26-26 26 26Z" fill="${c}"/>`
+          : `<path d="M20 ${top}v-10h10v-10h10v-10h40v10h10v10h10v10Z" fill="${c}"/>`;
     const bodyX = kind === "clock" ? 34 : 14, bodyW = kind === "clock" ? 52 : 92;
     const cols = kind === "clock" ? 2 : 3, rows = tall ? 3 : 2;
     let windows = "";
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const w = 12, gap = (bodyW - cols * w) / (cols + 1);
-        windows += `<rect x="${(bodyX + gap + c * (w + gap)).toFixed(1)}" y="${top + 10 + r * 24}" width="${w}" height="15" rx="6" fill="${glass}" stroke="#fff" stroke-width="2"/>`;
+        const wx = bodyX + gap + c * (w + gap), wy = top + 10 + r * 24;
+        windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="${w}" height="15" rx="6" fill="${glass}"/><rect x="${(wx - 2).toFixed(1)}" y="${wy + 14}" width="${w + 4}" height="3.4" rx="1.7" fill="#fff"/>`;
       }
     }
     const awning = kind === "cafe" || kind === "shop"
@@ -65,8 +69,9 @@ NU.map = (() => {
     return `<svg class="map-building map-building-${state}" viewBox="0 -40 120 156" aria-hidden="true">
       <defs><pattern id="map-stripes" width="12" height="10" patternUnits="userSpaceOnUse"><rect width="6" height="10" fill="${color}"/></pattern></defs>
       <ellipse cx="60" cy="113" rx="54" ry="5" fill="#1f243318"/>
-      ${roof}<rect x="${bodyX}" y="${top}" width="${bodyW}" height="${h}" fill="${color}"/>${clockFace}${windows}${columns}${awning}
-      <rect x="51" y="${112 - 22}" width="18" height="22" rx="9" fill="#2a2f45" opacity=".85"/>
+      <g transform="translate(-3 3)">${roof(shade(color))}<rect x="${bodyX}" y="${top}" width="${bodyW}" height="${h}" fill="${shade(color)}"/></g>
+      ${roof(color)}<rect x="${bodyX}" y="${top}" width="${bodyW}" height="${h}" fill="${color}"/><rect x="${bodyX}" y="${top}" width="${bodyW}" height="3" fill="#ffffff55"/>${clockFace}${windows}${columns}${awning}
+      <rect x="51" y="${112 - 22}" width="18" height="22" rx="9" fill="${shade(color, 0.5)}"/>
       ${sign}
       ${flag}${sparkles}
     </svg>`;
@@ -74,8 +79,8 @@ NU.map = (() => {
 
   // Decorations sit in their own small SVGs so the stretched road viewBox never distorts them.
   const deco = (x, y, art) => `<span class="map-deco" style="left:${x}%;top:${y}px" aria-hidden="true"><svg viewBox="-16 -20 32 34">${art}</svg></span>`;
-  const tree = (x, y) => deco(x, y, '<rect x="-2" y="0" width="4" height="12" fill="#8c5a3c"/><circle cy="-6" r="11" fill="#3dc25d"/><circle cx="-6" cy="-1" r="7" fill="#2ea64d"/><circle cx="5" cy="-12" r="6" fill="#58d474"/>');
-  const tulips = (x, y) => deco(x, y, [-8, 0, 8].map((tx, i) => `<path d="M${tx} 12v-8" stroke="#3a9a4a" stroke-width="2"/><path d="M${tx - 3} 4c0-5 1-6 3-7 2 1 3 2 3 7-2 2-4 2-6 0Z" fill="${["#ff4d4d", "#ffc23d", "#ff5ca8"][i]}"/>`).join(""));
+  const tree = (x, y) => deco(x, y, '<rect x="-2" y="0" width="4" height="12" rx="2" fill="#b9773d"/><circle cx="-1.5" cy="-4.5" r="11" fill="#26963f"/><circle cy="-6" r="11" fill="#3dc25d"/><circle cx="-4" cy="-10" r="3" fill="#9be3ab"/>');
+  const tulips = (x, y) => deco(x, y, [-8, 0, 8].map((tx, i) => `<path d="M${tx} 12v-8" stroke="#26963f" stroke-width="2" stroke-linecap="round"/><path d="M${tx - 3.5} -4q0 7 3.5 7t3.5-7l-1.8 1.6L0-6l-1.7 3.6Z" fill="${["#ff4d4d", "#ffc23d", "#ff5ca8"][i]}" stroke="${["#ff4d4d", "#ffc23d", "#ff5ca8"][i]}" stroke-width="1.4" stroke-linejoin="round"/>`).join(""));
 
   function nodeIcon(lesson) {
     if (lesson.trophy) return '<path d="M8 4h8v5a4 4 0 0 1-8 0Z M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>';
