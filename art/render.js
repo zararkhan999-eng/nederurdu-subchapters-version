@@ -2,7 +2,7 @@
 (function (root, factory) {
   const node = typeof module === "object" && module.exports;
   const K = node ? require("./kit.js") : root.PimArt;
-  const ctx = (node ? require("./cast.js") : root.PimCast)();
+  const ctx = node ? require("./cast.js") : root.PimCast;
   const sets = node ? ["objects", "people", "actions", "foundations"].map((s) => require(`./words-${s}.js`)) : root.PimWordSets || [];
   const api = factory(K, ctx, sets);
   if (node) module.exports = api;

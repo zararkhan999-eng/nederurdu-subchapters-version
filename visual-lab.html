@@ -122,7 +122,7 @@
     });
     live.insertAdjacentHTML("beforeend", tile(`<div style="display:flex;gap:8px;justify-content:center;padding:12px">${NU.cat.render({ face: true, size: 72, mood: "happy" })}${NU.cat.render({ face: true, size: 72 })}${NU.cat.render({ face: true, size: 72, mood: "sad" })}</div>`, "face crop (avatars, logo)"));
 
-    const cast = PimCast();
+    const cast = PimCast;
     put("cast", Object.keys(cast.CAST).map((name) => tile(K.card("person", cast.who(name, { x: 120, y: 208, s: 1, mood: "happy" })), name)).join(""));
     put("scenes", Object.entries(PimScenes.topics()).map(([name, svg]) => tile(svg, name)).join(""));
     put("props", Object.keys(P).map((name) => tile(`<svg viewBox="-60 -60 120 120">${P[name]()}</svg>`, name)).join(""));

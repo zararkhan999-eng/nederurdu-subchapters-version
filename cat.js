@@ -8,13 +8,18 @@ NU.cat = (() => {
   const { BIKE, leg, pedal } = parts;
   const C = BIKE.crank;
 
+  // Both markups are the same on every call, so build them once. Face avatars carry only the head
+  // (still inside .cat-rig for purring), not the whole bike cropped away by the viewBox.
+  const RIDER = parts.rider();
+  const FACE = `<g class="cat-rig">${parts.riderHead()}</g>`;
+
   // `face: true` crops to Pim's head for logos and small avatars.
   function render({ mood = "idle", facing = "right", size = 180, face = false, label = `${NAME}, بلی جو سائیکل چلاتی ہے` } = {}) {
     const F = parts.FACE_BOX;
     const box = face ? `${F.x} ${F.y} ${F.w} ${F.h}` : "0 0 240 190";
     const height = face ? Math.round(size * F.h / F.w) : Math.round(size * 190 / 240);
     const a11y = face ? 'aria-hidden="true"' : `role="img" aria-label="${label}"`;
-    return `<svg class="nu-cat ${face ? "nu-cat-face" : ""} cat-mood-${mood} ${facing === "left" ? "cat-facing-left" : ""}" viewBox="${box}" width="${size}" height="${height}" ${a11y} data-crank="${Math.PI * 0.3}">${parts.rider()}</svg>`;
+    return `<svg class="nu-cat ${face ? "nu-cat-face" : ""} cat-mood-${mood} ${facing === "left" ? "cat-facing-left" : ""}" viewBox="${box}" width="${size}" height="${height}" ${a11y} data-crank="${BIKE.crank0}">${face ? FACE : RIDER}</svg>`;
   }
 
   function setCrank(svg, angle) {
@@ -38,7 +43,7 @@ NU.cat = (() => {
         if (!svg.isConnected) return resolve();
         const p = Math.min(1, (now - start) / duration);
         const travelled = distance * (easeOut ? 1 - (1 - p) ** 3 : p);
-        const wheelTurn = travelled / 30;
+        const wheelTurn = travelled / BIKE.wheelR;
         spokes.forEach((s) => { s.style.transform = `rotate(${wheelTurn}rad)`; });
         const angle = crank0 + wheelTurn * 0.55;
         setCrank(svg, angle);

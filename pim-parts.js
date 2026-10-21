@@ -102,7 +102,7 @@
   }
 
   /* ---- Pim on his omafiets (facing right, 240×190 box). Legs are solved hip→pedal with two-bone IK. ---- */
-  const BIKE = { crank: { x: 114, y: 148 }, wheels: [{ x: 58, y: 148 }, { x: 184, y: 148 }], crankR: 15, hipNear: { x: 110, y: 104 }, hipFar: { x: 104, y: 102 }, bone: 27 };
+  const BIKE = { crank0: Math.PI * 0.3, wheelR: 30, crank: { x: 114, y: 148 }, wheels: [{ x: 58, y: 148 }, { x: 184, y: 148 }], crankR: 15, hipNear: { x: 110, y: 104 }, hipFar: { x: 104, y: 102 }, bone: 27 };
   function leg(hip, foot) {
     const T = BIKE.bone, dx = foot.x - hip.x, dy = foot.y - hip.y;
     const d = Math.min(Math.hypot(dx, dy), T * 2 - 0.5);
@@ -118,14 +118,16 @@
       return `<path d="M${(w.x - c).toFixed(1)} ${(w.y - s).toFixed(1)}L${(w.x + c).toFixed(1)} ${(w.y + s).toFixed(1)}"/>`;
     }).join("");
     return `<g class="cat-wheel" data-wheel="${i}">
-      <circle cx="${w.x}" cy="${w.y}" r="30" fill="none" stroke="${P.ink}" stroke-width="8"/>
+      <circle cx="${w.x}" cy="${w.y}" r="${BIKE.wheelR}" fill="none" stroke="${P.ink}" stroke-width="8"/>
       <circle cx="${w.x}" cy="${w.y}" r="25.5" fill="none" stroke="#c9d3e6" stroke-width="2.4"/>
       <g class="cat-spokes" stroke="#aab6cc" stroke-width="1.5" style="transform-origin:${w.x}px ${w.y}px">${spokes}</g>
       <circle cx="${w.x}" cy="${w.y}" r="5" fill="${P.ink}"/>
     </g>`;
   }
+  // The head as the live rig animates it (cat-head pivots at the neck).
+  const riderHead = ({ mood } = {}) => `<g class="cat-head" style="transform-origin:${HEAD.x}px 64px">${head({ mood })}</g>`;
   // `mood` set → a static drawing with one face; unset → all faces for the live, CSS-driven Pim.
-  function rider({ mood, crank = Math.PI * 0.3 } = {}) {
+  function rider({ mood, crank = BIKE.crank0 } = {}) {
     const C0 = BIKE.crank, near = pedal(crank), far = pedal(crank + Math.PI);
     return `<ellipse class="cat-shadow" cx="121" cy="182" rx="94" ry="6.5" fill="#1f243324"/>
       <g class="cat-rig">
@@ -170,7 +172,7 @@
           <path d="M128 74Q137 78 141 70" fill="none" stroke="${P.fur}" stroke-width="10" stroke-linecap="round"/>
           <circle cx="142" cy="69.5" r="6" fill="${P.cream}"/>
         </g>
-        <g class="cat-head" style="transform-origin:${HEAD.x}px 64px">${head({ mood })}</g>
+        ${riderHead({ mood })}
         ${mood ? "" : `<g class="cat-zzz" fill="#2b6bff" font-weight="900" font-family="system-ui,sans-serif"><text x="172" y="22" font-size="13">z</text><text x="184" y="8" font-size="18">z</text></g>`}
         <path class="cat-leg-near" d="${leg(BIKE.hipNear, near)}" fill="none" stroke="${P.fur}" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle class="cat-foot-near" cx="${near.x.toFixed(1)}" cy="${near.y.toFixed(1)}" r="6" fill="${P.cream}"/>
@@ -179,5 +181,5 @@
   // The head-only crop used for avatars, the logo and the launch screen.
   const FACE_BOX = { x: 100, y: 2, w: 78, h: 72 };
 
-  return { P, HEAD, HEAD_TOP, EYES, MOODS, soft, shadeOf, head, scarf, BIKE, leg, pedal, rider, FACE_BOX };
+  return { P, HEAD, HEAD_TOP, EYES, MOODS, soft, shadeOf, head, scarf, BIKE, leg, pedal, rider, riderHead, FACE_BOX };
 });

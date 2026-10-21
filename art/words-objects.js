@@ -3,7 +3,7 @@
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
   else (root.PimWordSets = root.PimWordSets || []).push(factory);
-})(typeof self !== "undefined" ? self : this, ({ K, P, C, who, solo, pimAnd, g }) => {
+})(typeof self !== "undefined" ? self : this, ({ K, P, C, who, solo, g }) => {
   const { pim, sym, line, rect, circ, ell, text } = K;
   const holding = (prop, o = {}) => pim({ x: 112, y: 204, s: 1.15, mood: "happy", arms: "hold", hold: g(prop, { s: o.ps ?? 0.5 }), ...o });
   return {

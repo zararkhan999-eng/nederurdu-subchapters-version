@@ -10,7 +10,7 @@
   const { C, g, ell, circ, rect, line, box, text, soft, sym, shadeOf, tint, n } = K;
   const path = (d, fill, extra = "") => `<path d="${d}" fill="${fill}"${extra}/>`;
   const sp = (d, fill, w = 4) => soft(d, fill, w);
-  const shadedPath = (d, fill, shade, dx = -2.5, dy = 2.5) => `<g transform="translate(${dx} ${dy})">${sp(d, shade)}</g>${sp(d, fill)}`;
+  const shadedPath = (d, fill, shade, dx, dy) => K.shaded(d, fill, shade, { dx, dy });
   const shine = (x, y, rx = 4, ry = 7, r = -30) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff" opacity=".45" transform="rotate(${r} ${x} ${y})"/>`;
   const lines = (x, y, w, count, gap = 8, c = C.grey, wd = 3) => [...Array(count)].map((_, i) => line(`M${x} ${y + i * gap}h${i === count - 1 ? w * 0.6 : w}`, c, wd)).join("");
 
@@ -177,7 +177,6 @@
   P.pinTerminal = () => g(box(-26, -40, 52, 82, 10, C.ink, "#000") + rect(-18, -32, 36, 22, 4, "#9ff0b5") + line("M-12-21h24", C.greenDark, 3) +
     [...Array(9)].map((_, i) => rect(-16 + (i % 3) * 12, -2 + Math.floor(i / 3) * 11, 8, 7, 2, i === 8 ? C.green : "#fff")).join(""), { r: 8 });
   P.ticket = ({ c = C.yellow } = {}) => g(shadedPath("M-44-22h88v14a8 8 0 0 0 0 16v14h-88V8a8 8 0 0 0 0-16Z", c, shadeOf(c)) + line("M16-18v36", shadeOf(c), 2, ' stroke-dasharray="4 4"') + lines(-34, -10, 40, 3, 9, shadeOf(c, 0.75)) + path("M24-6l6 4-6 4Z", C.ink) + path("M30-6l6 4-6 4Z", C.ink), { r: -8 });
-  P.clipboard = () => P.form();
   P.report = () => P.paper({ w: 64, h: 82, lineCount: 2, head: C.green }) + rect(-20, 8, 10, 22, 2, C.blue) + rect(-6, -2, 10, 32, 2, C.green) + rect(8, 14, 10, 16, 2, C.oranje) + sym.star(24, -24, 0.7);
   P.document = () => P.paper({ w: 62, h: 80, lineCount: 5, head: C.blue }) + path("M14-40h17l-17 17Z", C.greyLight);
   P.prescription = () => P.paper({ w: 62, h: 80, lineCount: 3, head: C.green }) + text(-14, 30, "Rx", { size: 20, fill: C.greenDark }) + sym.drop(18, 22, 0.8, C.red);
@@ -186,7 +185,6 @@
   P.menu = () => box(-34, -42, 68, 84, 8, C.wood, C.woodDark) + rect(-28, -36, 56, 72, 5, C.paper) + g(P.cup({ steam: false }), { x: 0, y: -18, s: 0.35 }) + lines(-20, 0, 40, 3, 9);
   P.agenda = () => P.calendarWeek({ hi: [1, 3], c: C.blue });
   P.rooster = () => box(-46, -34, 92, 68, 8, "#fff", C.grey) + [...Array(4)].map((_, r) => [...Array(5)].map((_, c) => rect(-40 + c * 17.4, -28 + r * 15, 14, 11, 3, [C.blue, C.green, C.oranje, C.purple, C.greyLight][(r * 2 + c) % 5])).join("")).join("");
-  P.bill = () => P.receipt();
 
   /* ---------- Tech & comms ---------- */
   P.phone = ({ c = C.ink, screen = C.sky, content = "" } = {}) => shadedPath("M-22-42h44q6 0 6 6v76q0 6-6 6h-44q-6 0-6-6v-76q0-6 6-6Z", c, "#000") + rect(-22, -34, 44, 66, 4, screen) + rect(-6, -40, 12, 3, 1.5, "#ffffff55") + circ(0, 38, 3, "#ffffff55") + content;
@@ -196,7 +194,6 @@
   P.phoneSignal = ({ bars = 1 } = {}) => P.phone({ screen: "#fff", content: [0, 1, 2, 3].map((i) => rect(-14 + i * 8, 4 - i * 8, 6, 10 + i * 8, 2, i < bars ? C.green : C.greyLight)).join("") });
   P.phoneVoicemail = () => P.phone({ screen: C.blueSoft, content: circ(-9, -6, 7, "none", ` stroke="${C.blue}" stroke-width="4"`) + circ(9, -6, 7, "none", ` stroke="${C.blue}" stroke-width="4"`) + line("M-9 1h18", C.blue, 4) + rect(-14, 12, 28, 5, 2.5, C.blue) });
   P.handset = ({ c = C.green } = {}) => g(sp("M-26-30q-10 10-6 26 8 26 34 38 14 4 24-6l-12-14-10 6q-14-8-20-22l6-10Z", c, 5), { r: 0 });
-  P.speechBubble = ({ c = "#fff", inner = "" } = {}) => K.bubble(-38, -30, 76, 50, inner, { fill: c });
   P.laptop = () => box(-40, -34, 80, 52, 6, C.ink, "#000", 0) + rect(-34, -28, 68, 40, 3, C.sky) + path("M-50 18h100l-6 10h-88Z", C.greyDark) + lines(-26, -18, 40, 3, 9, "#fff");
   P.wrench = () => g(rect(-5, -12, 10, 52, 5, C.greyDark) + sp("M-14-26a16 16 0 1 0 28 0l-6 10h-16Z", C.greyDark, 3), { r: -40 });
   P.hammer = () => g(rect(-4, -10, 8, 50, 4, C.wood) + box(-20, -26, 40, 16, 4, C.greyDark, C.ink), { r: 30 });
@@ -262,7 +259,6 @@
     line("M-48-36h12l10 44h46l8-34h-62", C.greyDark, 5) + line("M-22-16h56M-18-2h48", C.grey, 3) + circ(-20, 20, 7, C.ink) + circ(18, 20, 7, C.ink);
   P.counter = () => shadedPath("M-50 0h100v40h-100Z", C.wood, C.woodDark) + rect(-54, -6, 108, 10, 4, "#efc287") + rect(-40, -60, 80, 52, 6, "#e3f3ff", ' opacity=".8"') + rect(-12, -16, 24, 10, 3, "#fff") + circ(28, -10, 6, C.yellow) + line("M28-16v-4", C.ink, 2);
   P.library = () => shadedPath("M-48-30h96v70h-96Z", C.wood, C.woodDark) + [0, 1, 2].map((r) => rect(-42, -24 + r * 22, 84, 18, 2, "#f3d29e") + [...Array(9)].map((_, i) => rect(-40 + i * 9, -22 + r * 22 + (i % 3), 7, 16 - (i % 3), 2, [C.red, C.blue, C.green, C.yellow, C.purple, C.oranje][(i + r) % 6])).join("")).join("");
-  P.bookshelf = () => P.library();
   P.blackboard = ({ content = "" } = {}) => box(-48, -34, 96, 62, 6, C.wood, C.woodDark) + rect(-42, -28, 84, 50, 4, "#2f6b4f") + content + rect(-30, 26, 24, 4, 2, "#fff");
   P.buurthuis = () => shadedPath("M-48-16h96v56h-96Z", C.yellow, C.yellowDark) + sp("M-54-16L0-44 54-16", C.red, 8) + circ(0, -24, 8, "#fff") + sym.heart(0, -24, 0.42) + rect(-36, -4, 24, 20, 4, C.sky) + rect(12, -4, 24, 20, 4, C.sky) + rect(-10, 10, 20, 30, 10, C.green) + rect(-56, 38, 112, 6, 3, C.greyDark);
   P.pickupPoint = () => shadedPath("M-46-22h92v62h-92Z", "#fff", C.grey) + rect(-46, -34, 92, 14, 5, C.oranje) + g(P.box(), { x: -20, y: 12, s: 0.5 }) + g(P.box(), { x: 14, y: 16, s: 0.4 }) + g(P.box(), { x: -2, y: -4, s: 0.36 });
@@ -296,7 +292,6 @@
   P.eye = () => path("M-46 0q46-44 92 0-46 44-92 0Z", "#fff") + circ(0, 0, 20, C.blue) + circ(0, 0, 10, C.ink) + circ(6, -6, 5, "#fff") + line("M-46 0q46-44 92 0", C.ink, 4) + line("M-30-20l-6-10M-12-26l-2-12M8-27l2-12M28-21l6-10", C.ink, 3.4);
   P.ear = () => shadedPath("M-10-40c22-6 40 8 38 34-2 18-14 20-16 32-2 12-12 16-22 10", "#e8b48a", "#d1966a") + line("M4-24c10 0 14 10 10 20", "#d1966a", 4);
   P.zap = ({ c = C.yellow } = {}) => sp("M4-20L-8 2h10L-4 20 10-4H0Z", c, 3);
-  P.heart = ({ c = C.red } = {}) => g(sym.heart(0, 0, 3.2, c));
   P.muscle = () => sp("M-30 20c-6-30 6-46 18-44 6 2 4 12-2 14 0 8 10 12 18 8 18-8 30 0 28 16-2 14-20 18-40 14-10-2-18-4-22-8Z", "#e8b48a", 4) + line("M2 8q8-6 14 0", "#d1966a", 3);
 
   /* ---------- Misc symbols ---------- */

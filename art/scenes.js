@@ -2,7 +2,7 @@
    a sky, a ground line, Pim and the cast doing the topic. */
 (function (root, factory) {
   const node = typeof module === "object" && module.exports;
-  const api = factory(node ? require("./kit.js") : root.PimArt, node ? require("./props.js") : root.PimProps, (node ? require("./cast.js") : root.PimCast)());
+  const api = factory(node ? require("./kit.js") : root.PimArt, node ? require("./props.js") : root.PimProps, node ? require("./cast.js") : root.PimCast);
   if (node) module.exports = api;
   else root.PimScenes = api;
 })(typeof self !== "undefined" ? self : this, (K, P, ctx) => {

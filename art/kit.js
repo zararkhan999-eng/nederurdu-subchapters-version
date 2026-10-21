@@ -29,7 +29,7 @@
   ];
   const HAIR = { black: "#2a2230", brown: "#5b3a24", blond: "#e8b84a", grey: "#b8bcc8", red: "#c8552a" };
 
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const n = (v) => +(+v).toFixed(1);
   const g = (inner, { x = 0, y = 0, s = 1, r = 0, flip = false, o } = {}) => {
     const t = [];
@@ -38,9 +38,9 @@
     if (s !== 1 || flip) t.push(`scale(${flip ? -s : s} ${s})`);
     return `<g${t.length ? ` transform="${t.join(" ")}"` : ""}${o != null ? ` opacity="${o}"` : ""}>${inner}</g>`;
   };
-  // A flat shape with its hard shade: the shade copy sits `dx,dy` down-left underneath.
-  const shaded = (shape, fill, shade, { dx = -2.5, dy = 2.5 } = {}) =>
-    `<g transform="translate(${dx} ${dy})">${shape(shade)}</g>${shape(fill)}`;
+  // A flat path with its hard shade: a darker copy sits `dx,dy` down-left underneath (the house style).
+  const shaded = (d, fill, shade, { dx = -2.5, dy = 2.5, w = 4 } = {}) =>
+    `<g transform="translate(${dx} ${dy})">${soft(d, shade, w)}</g>${soft(d, fill, w)}`;
   const ell = (cx, cy, rx, ry, fill, extra = "") => `<ellipse cx="${n(cx)}" cy="${n(cy)}" rx="${n(rx)}" ry="${n(ry)}" fill="${fill}"${extra}/>`;
   const circ = (cx, cy, r, fill, extra = "") => `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="${fill}"${extra}/>`;
   const rect = (x, y, w, h, rx, fill, extra = "") => `<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" rx="${n(rx)}" fill="${fill}"${extra}/>`;
@@ -50,7 +50,6 @@
     const fam = family === "urdu" ? "'Noto Nastaliq Urdu','Noto Naskh Arabic',serif" : "'Nunito','Arial Rounded MT Bold','DM Sans',system-ui,sans-serif";
     return `<text x="${n(x)}" y="${n(y)}" font-family="${fam}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${esc(str)}</text>`;
   };
-  const groundShadow = (cx, cy, rx, ry = rx * 0.14) => ell(cx, cy, rx, ry, C.shadow);
 
   // An arm: a soft curve from shoulder to paw/hand; `bend` pushes the elbow sideways.
   function limb(sx, sy, hx, hy, { color, w = 9, bend = 0, hand, handR = 5.4 }) {
@@ -83,7 +82,7 @@
     hug: { far: [124, 92, 0], near: [168, 94, -14] }
   };
 
-  function pimBody({ pose = "stand", arms = "rest", mood = "idle", hold, holdAt = "near", tail = true, scarf = true, legs = "stand" }) {
+  function pimBody({ arms = "rest", mood = "idle", hold, holdAt = "near", tail = true, scarf = true, legs = "stand" }) {
     const a = typeof arms === "string" ? ARMS[arms] || ARMS.rest : arms;
     const farArm = limb(126, 82, a.far[0], a.far[1], { color: P.furShade, w: 9.5, bend: a.far[2], hand: P.creamShade });
     const nearArm = limb(154, 82, a.near[0], a.near[1], { color: P.fur, w: 10, bend: a.near[2], hand: P.cream, handR: 5.8 });
@@ -96,7 +95,7 @@
     else legSvg = ell(130, 118, 7.6, 8, P.furShade) + ell(151, 118, 7.6, 8, P.fur) + ell(128, 122.5, 8.4, 4.4, P.creamShade) + ell(153, 122.5, 8.4, 4.4, P.cream);
     const body = ell(139.4, 97, 22, 25, P.furShade) + ell(141, 95.4, 20.6, 23.6, P.fur) + ell(146, 100, 11, 15, P.cream) +
       line("M128 84q4 3 3 9M124 93q4 2 4 8", P.furStripe, 3);
-    const lift = pose === "sit" ? "translate(0 6)" : "";
+    const lift = legs === "sit" ? "translate(0 6)" : "";
     return `${tailSvg}${farArm}${legSvg}<g transform="${lift}">${body}</g>${scarf ? parts.scarf({ y: 0 }) : ""}${parts.head({ mood })}${held}${nearArm}`;
   }
 
@@ -135,8 +134,7 @@
     belly: { far: [-8, -64, -10], near: [10, -62, -10] },
     head: { far: [-16, -150, -14], near: [20, -152, -14] },
     give: { far: [-27, -50, 4], near: [54, -76, 4] },
-    hug: { far: [12, -80, -8], near: [36, -78, -16] },
-    cross: { far: [14, -80, -8], near: [-14, -80, 8] }
+    hug: { far: [12, -80, -8], near: [36, -78, -16] }
   };
 
   function personFace({ mood = "idle", skin, hx, hy, r }) {
@@ -179,7 +177,7 @@
   function person({
     x = 120, y = 210, s = 1, flip = false, kid = false, skin = 1, hair = "black", hairStyle = "short", hijab, beard, glasses,
     top = C.blue, bottom = "#3a4766", bottomType = "pants", shoes = "#2a2f45", mood = "idle", arms = "rest",
-    hold, holdAt = "near", coat, hat, extra = "", walk = false, sit = false, holdBehind = false
+    hold, holdAt = "near", coat, hat, extra = ""
   } = {}) {
     const sk = SKIN[skin] || SKIN[1];
     const r = kid ? 23 : 25.5;
@@ -198,17 +196,14 @@
     const held = hold ? g(hold, { x: handPos[0], y: handPos[1] }) : "";
     const foot = (fx, col) => ell(fx, -3.5, kid ? 8.5 : 10, kid ? 4.6 : 5.2, col);
     const bShade = shadeOf(bottom);
-    let legs;
-    if (sit) legs = line(`M-8 ${hipY}H${tw + 14}V-6`, bShade, legW) + line(`M6 ${hipY}H${tw + 24}V-6`, bottom, legW) + foot(tw + 18, shoes) + foot(tw + 28, shoes);
-    else if (walk) legs = line(`M-6 ${hipY}L-17 -6`, bShade, legW) + line(`M6 ${hipY}L16 -6`, bottom, legW) + foot(-20, shoes) + foot(20, shoes);
-    else legs = line(`M-7 ${hipY}V-6`, bShade, legW) + line(`M7 ${hipY}V-6`, bottom, legW) + foot(-9, shoes) + foot(10, shoes);
+    let legs = line(`M-7 ${hipY}V-6`, bShade, legW) + line(`M7 ${hipY}V-6`, bottom, legW) + foot(-9, shoes) + foot(10, shoes);
     const torsoD = `M${-tw} ${shoulderY + 4}Q${-tw} ${shoulderY - 3} ${-tw + 8} ${shoulderY - 3}H${tw - 8}Q${tw} ${shoulderY - 3} ${tw} ${shoulderY + 4}L${tw + 3} ${hipY + 4}H${-tw - 3}Z`;
     if (bottomType === "skirt" || bottomType === "long") {
       const hem = bottomType === "long" ? -6 : hipY + (kid ? 20 : 30);
       const skirt = `<path d="M${-tw} ${hipY}H${tw}L${tw + 8} ${hem}H${-tw - 8}Z" fill="${bottom}" stroke="${bottom}" stroke-width="5" stroke-linejoin="round"/>`;
       legs = (bottomType === "skirt" ? line(`M-7 ${hipY}V-6`, sk[1], 8) + line(`M7 ${hipY}V-6`, sk[0], 8) : "") + foot(-9, shoes) + foot(10, shoes) + skirt;
     }
-    const torso = `<path d="${torsoD}" fill="${tShade}" stroke="${tShade}" stroke-width="6" stroke-linejoin="round" transform="translate(-2.5 2.5)"/><path d="${torsoD}" fill="${top}" stroke="${top}" stroke-width="6" stroke-linejoin="round"/>`;
+    const torso = shaded(torsoD, top, tShade, { w: 6 });
     const coatD = `M${-tw - 2} ${shoulderY + 3}Q${-tw - 2} ${shoulderY - 4} ${-tw + 7} ${shoulderY - 4}H${tw - 7}Q${tw + 2} ${shoulderY - 4} ${tw + 2} ${shoulderY + 3}L${tw + 6} ${hipY + 18}H${-tw - 6}Z`;
     const coatSvg = coat ? `<path d="${coatD}" fill="${coat}" stroke="${coat}" stroke-width="5" stroke-linejoin="round"/>` +
       `<path d="M-9 ${shoulderY - 4}L0 ${shoulderY + 16}L9 ${shoulderY - 4}Z" fill="${top}"/>` + line(`M0 ${shoulderY + 18}V${hipY + 16}`, shadeOf(coat, 0.85), 2) : "";
@@ -226,12 +221,10 @@
     const glassesSvg = glasses ? `<g fill="none" stroke="${C.ink}" stroke-width="2.2">${circ(2 - r * 0.36, hy + r * 0.08, r * 0.22, "none")}${circ(2 + r * 0.36, hy + r * 0.08, r * 0.22, "none")}<path d="M${n(2 - r * 0.14)} ${n(hy + r * 0.05)}h${n(r * 0.28)}"/></g>` : "";
     const hatSvg = hat === "cap" ? `<path d="M${n(-r - 1)} ${n(hy - 2)}A${n(r + 1)} ${n(r)} 0 0 1 ${n(r + 1)} ${n(hy - 2)}Z" fill="${C.oranje}"/>` + rect(r - 8, hy - 6, 22, 6, 3, C.oranjeDark)
       : hat === "helmet" ? `<path d="M${n(-r - 3)} ${n(hy - 1)}A${n(r + 3)} ${n(r + 2)} 0 0 1 ${n(r + 3)} ${n(hy - 1)}Z" fill="${C.yellow}"/>` + rect(-r - 7, hy - 5, 2 * r + 14, 6, 3, C.yellowDark) + rect(-3, hy - r - 4, 6, r, 3, C.yellowDark)
-      : hat === "nurse" ? rect(-r * 0.7, hy - r - 4, r * 1.4, r * 0.55, 4, "#fff") + `<path d="M-3 ${n(hy - r + 1)}h6M0 ${n(hy - r - 2)}v6" stroke="${C.red}" stroke-width="2.6" stroke-linecap="round"/>`
       : "";
     const hairB = hijab ? "" : hairBack(hairStyle, hairCol, 0, hy, r);
     const hairF = hijab ? "" : hat === "cap" || hat === "helmet" ? "" : hairFront(hairStyle, hairCol, 0, hy, r);
-    const back = holdBehind ? held : "";
-    return g(`${back}${hairB}${farArm}${legs}${torso}${coatSvg}${neck}${headSvg}${hairF}${beardSvg}${face}${glassesSvg}${hatSvg}${extra}${holdBehind ? "" : held}${nearArm}`, { x, y, s, flip });
+    return g(`${hairB}${farArm}${legs}${torso}${coatSvg}${neck}${headSvg}${hairF}${beardSvg}${face}${glassesSvg}${hatSvg}${extra}${held}${nearArm}`, { x, y, s, flip });
   }
 
   const { shadeOf } = parts;
@@ -257,8 +250,9 @@
   function card(kind, body, opts = {}) {
     return svg(240, 240, stage(kind, opts) + body, opts.title);
   }
-  function svg(w, h, inner, title) {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"${title ? ` role="img" aria-label="${esc(title)}"` : ""}>${inner}</svg>`;
+  // `size` sets the display width (height keeps the aspect); the viewBox stays w×h.
+  function svg(w, h, inner, title, { size = w } = {}) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${n(size)}" height="${n((size * h) / w)}"${title ? ` role="img" aria-label="${esc(title)}"` : ""}>${inner}</svg>`;
   }
 
   function bubble(x, y, w, h, inner = "", { tail = "left", fill = "#fff", shade = C.grey } = {}) {
@@ -287,5 +281,5 @@
     music: (x, y, s = 1, c = C.purple) => g(line("M0 0v-18l10-3v16", c, 3) + ell(-3, 1, 4, 3, c) + ell(7, -3, 4, 3, c), { x, y, s })
   };
 
-  return { C, P, SKIN, HAIR, parts, g, shaded, ell, circ, rect, line, box, text, soft, limb, groundShadow, pim, person, shadeOf, tint, stage, card, svg, bubble, thought, sym, esc, n, ARMS, PARMS, KIND_TINT };
+  return { C, parts, g, shaded, ell, circ, rect, line, box, text, soft, pim, person, shadeOf, tint, stage, card, svg, bubble, thought, sym, n, ARMS };
 });

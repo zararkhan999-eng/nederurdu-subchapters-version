@@ -43,7 +43,7 @@
     const K = PimArt, P = PimProps, C = K.C;
     const row = [[50, C.brick, "step", 92, 210], [146, C.yellow, "bell", 92, 240], [242, C.teal, "point", 92, 200], [338, C.red, "step", 92, 228]]
       .map(([x, wall, gable, w, h]) => K.g(P.canalHouse({ wall, w, h, gable, door: C.blueDark }), { x, y: 300 - h / 2 })).join("");
-    document.getElementById("houses").innerHTML = K.svg(390, 300, row).replace('width="390" height="300"', 'width="430" height="331"');
+    document.getElementById("houses").innerHTML = K.svg(390, 300, row, "", { size: 430 });
     document.getElementById("cat").innerHTML = `<svg viewBox="0 0 240 190" width="300" height="238">${NU.pimParts.rider({ mood: "happy" })}</svg>`;
   </script>
 </body>

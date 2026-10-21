@@ -19,16 +19,16 @@
 
   // Full icon on a square: `rounded` for the web icon; Play applies its own mask so it gets a plain square.
   function icon({ rounded = true, size = 192 } = {}) {
-    const bg = rounded ? K.rect(0, 0, 192, 192, 42, BG) : K.rect(0, 0, 192, 192, 0, BG);
+    const bg = K.rect(0, 0, 192, 192, rounded ? 42 : 0, BG);
     const glow = K.circ(96, 104, 74, K.tint(BG, 0.18));
-    return K.svg(192, 192, bg + glow + K.g(head(), { x: 96, y: 98, s: 1.42 }), "NederUrdu").replace('width="192" height="192"', `width="${size}" height="${size}"`);
+    return K.svg(192, 192, bg + glow + K.g(head(), { x: 96, y: 98, s: 1.42 }), "NederUrdu", { size });
   }
   // Android adaptive layers on the 108dp canvas: keep the mark inside the 66dp safe circle.
-  function adaptiveForeground() { return K.svg(108, 108, K.g(head(), { x: 54, y: 52, s: 0.58 })); }
-  function adaptiveMonochrome() {
+  function adaptiveForeground(size) { return K.svg(108, 108, K.g(head(), { x: 54, y: 52, s: 0.58 }), "", { size }); }
+  function adaptiveMonochrome(size) {
     const holes = `<g transform="translate(-139 -40)" fill="#000"><ellipse cx="131" cy="42" rx="5" ry="6.4"/><ellipse cx="157" cy="41" rx="4.6" ry="6"/><path d="M142.6 51h7.6l-3.8 3.6Z"/></g>`;
     const mask = `<mask id="pim-mono"><rect width="108" height="108" fill="#fff"/>${K.g(holes, { x: 54, y: 52, s: 0.58 })}</mask>`;
-    return K.svg(108, 108, `${mask}<g mask="url(#pim-mono)">${K.g(silhouette(), { x: 54, y: 52, s: 0.58 })}</g>`);
+    return K.svg(108, 108, `${mask}<g mask="url(#pim-mono)">${K.g(silhouette(), { x: 54, y: 52, s: 0.58 })}</g>`, "", { size });
   }
 
   return { BG, head, icon, adaptiveForeground, adaptiveMonochrome };
