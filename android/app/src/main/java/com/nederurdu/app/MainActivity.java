@@ -247,6 +247,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                     case "celebrate":
                         vibrate(new long[] {0, 20, 50, 20, 50, 70});
                         break;
+                    case "purr":
+                        vibrate(new long[] {0, 8, 34, 8, 34, 8, 34, 8, 34, 8});
+                        break;
                     default:
                         break;
                 }

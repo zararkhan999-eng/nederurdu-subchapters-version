@@ -118,6 +118,27 @@ body.od-reduced #app *{animation:none!important;transition:none!important}
 #app .match-pair-card.matched{background:#e7f2ec;color:#176b4d;border-color:#176b4d}
 #app .match-pair-card.wrong{background:#f9e9e6;color:#a73535;border-color:#a73535}
 #app .short-answer-input{min-height:60px;padding:15px;width:100%;font-size:21px}
+#app .role-play-question{background:#fff;color:#18212b;border:1px solid #deded9;border-radius:14px;box-shadow:var(--shadow);padding:18px}
+#app .role-play-scene{font:500 18px/1.8 var(--font-urdu-reading);color:#626a75;margin:0 0 12px}
+#app .role-play-transcript{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:10px}
+#app .role-play-turn{display:flex}
+#app .role-play-turn.other{justify-content:flex-end}
+#app .role-play-turn.you{justify-content:flex-start}
+#app .role-play-bubble{max-width:88%;border-radius:14px;padding:10px 14px;display:grid;gap:4px}
+#app .role-play-turn.other .role-play-bubble{background:#f5f2ec;border-top-right-radius:4px}
+#app .role-play-turn.you .role-play-bubble{background:#e7f2ec;border-top-left-radius:4px}
+#app .role-play-bubble strong{font:600 19px/1.5 var(--font-ui);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#app .role-play-bubble small{font:500 15px/1.7 var(--font-urdu-reading);color:#626a75}
+#app .role-play-say{display:flex;align-items:center;gap:8px;font-size:14px;color:#176b4d}
+#app .role-play-your-turn{font:600 17px/1.8 var(--font-urdu-reading);margin:4px 0 10px}
+#app .role-play-wrong{background:#f9e9e6;color:#a73535;border-radius:10px;padding:10px 12px;font:500 15px/1.8 var(--font-urdu-reading);margin:0 0 10px}
+#app .role-play-done{background:#e7f2ec;color:#176b4d;border-radius:10px;padding:12px;font:600 16px/1.8 var(--font-urdu-reading);margin:0}
+#app .role-play-choice .choice-list{display:grid;gap:10px}
+#app .role-play-choice .choice-button{text-align:left;justify-content:flex-start}
+#app .role-play-bubble .speak-button{width:34px;height:34px;min-width:34px;min-height:34px;padding:0;flex:none}
+#app .role-play-bubble .speak-button svg{width:18px;height:18px}
+#app .gap-sentence{display:block;direction:ltr;text-align:center;margin:6px 0 14px;font:600 24px/1.6 var(--font-ui);color:#18212b;overflow-wrap:anywhere}
+#app .gap-slot{display:inline-block;min-width:3.2em;border-bottom:3px solid #2047ed;color:transparent;line-height:1.1}
 #app .input-fallback{color:#2047ed;background:#e8edff;border:0;border-radius:8px;padding:10px 14px;margin-top:16px}
 #app .build-answer{min-height:70px;background:#f5f2ec;border:1px solid #bbc0c9;border-radius:10px;box-shadow:none}
 #app .build-word,#app .word-bank-word{background:#fff;border:1px solid #bbc0c9;color:#18212b;border-radius:8px;box-shadow:0 3px 0 #e0e0dc}
@@ -147,12 +168,6 @@ body[data-screen=lesson] .quiz-content{display:block;flex:1 1 0;min-height:0;ove
 #app .choice-audio{background:#e8edff;color:#2047ed;border:0;border-radius:9px;box-shadow:none}
 
 /* Graphic compositions: original editorial marks and printed paper materials. */
-#app .od-graphic{position:relative;width:100%;height:136px;border-radius:11px;overflow:hidden;margin:0 0 20px;background:#e8edff;isolation:isolate;pointer-events:none}
-#app .od-graphic svg{display:block;width:100%;height:100%;font-family:var(--font-ui)}
-#app .od-art-piece{transform-box:fill-box;transform-origin:center}
-#app .od-graphic-toolkit{background:#e8edff;margin:20px 0}
-#app .od-graphic-settings{height:114px;background:#f5f2ec}
-#app .od-graphic-letters{background:#e8edff}
 #app .od-language-strip{display:flex;align-items:center;gap:9px;color:#2047ed;margin-bottom:12px;font:600 10px var(--font-ui);direction:ltr}
 #app .od-language-strip>span{display:flex;align-items:center;justify-content:center;width:29px;height:23px;background:#e8edff;border-radius:5px}
 #app .od-language-strip>span:nth-of-type(2){font-family:var(--font-urdu);font-size:9px;width:36px}
@@ -182,11 +197,11 @@ body[data-screen=lesson] .quiz-content{display:block;flex:1 1 0;min-height:0;ove
 #app .od-route-ribbon span{display:block;width:68%;background:#2047ed}
 #app .od-route-ribbon i{display:block;width:22%;background:#f1d27a}
 #app .od-route-ribbon b{display:block;width:10%;background:#d87d5c}
-@media(max-width:360px){#app .od-route-snapshot-content{padding-inline:14px}#app .od-graphic{height:120px}#app .od-graphic-settings{height:104px}}
+@media(max-width:360px){#app .od-route-snapshot-content{padding-inline:14px}}
 @media(prefers-reduced-motion:reduce){#app .od-route-snapshot,#app .od-route-ribbon{display:none}}
 body.od-reduced #app .od-route-snapshot,body.od-reduced #app .od-route-ribbon{display:none}
 
-#app .od-graphic svg{direction:ltr;unicode-bidi:isolate}#app .od-route-snapshot-content:has(.quiz-screen){padding-inline:16px}
+#app .od-route-snapshot-content:has(.quiz-screen){padding-inline:16px}
 /* Letter cards need their own compact arrangement at phone widths. */
 #app .letters-heading h1,#app .letters-panel h2{color:#18212b}
 #app .letters-heading h1{font-size:23px;line-height:1.7}

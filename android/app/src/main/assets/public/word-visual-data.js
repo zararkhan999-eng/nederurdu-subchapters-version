@@ -1493,7 +1493,7 @@ window.NEDERURDU_WORD_VISUALS = legacyWordVisuals.map((entry) => {
   }
   return {
     id,
-    src: `assets/word-visuals/${id}.${pendingGeneratedVisualIds.has(id) ? "svg" : "webp"}`,
+    src: `assets/word-visuals/${id}.svg`,
     altUrdu: entry.alt,
     canonicalTerm,
     dutchTerms,
@@ -1504,7 +1504,7 @@ window.NEDERURDU_WORD_VISUALS = legacyWordVisuals.map((entry) => {
 
 const extraVisual = (id, altUrdu, canonicalTerm, dutchTerms, kind) => ({
   id,
-  src: `assets/word-visuals/${id}.webp`,
+  src: `assets/word-visuals/${id}.svg`,
   altUrdu,
   canonicalTerm,
   dutchTerms,

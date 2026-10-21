@@ -470,6 +470,7 @@ let coachmarkDismissed = false;
 let teachingStep = 0;
 let preferredDutchVoice = null;
 let answerCombo = 0;
+let coachLine = null;
 let bestAnswerCombo = 0;
 let experienceObserver = null;
 let globalMotionBound = false;
@@ -1201,6 +1202,8 @@ function render() {
   if (screen === "journey") NU.map.mount(app.querySelector(".map"), { entered: screenChanged || chapterChanged, onOpen: showLessonPreview });
   animateLessonProgress();
   reserveLessonFooterSpace();
+  NU.guide.afterRender({ questionKey: screen === "lesson" ? `${activeLessonId}:${activeQuestionIndex}:${String(getActiveQuestion()?.id || "")}` : "" });
+  if (screen === "home") NU.guide.maybeTour();
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -1310,9 +1313,37 @@ function renderHome() {
       <h2>${getShortLessonTitle(nextLesson)}</h2><p>${escapeHtml(getLessonOutcome(nextLesson) || nextLesson.description)}</p>
       <button class="primary-button today-action" data-action="preview" data-lesson="${escapeAttr(nextLesson.id)}">${renderIcon("play")}<span>${isBeginnerFirstHome() ? "پہلا سبق شروع کریں" : "سبق جاری رکھیں"}</span></button>
     </section>
+    ${renderPimCorner(completed)}
     <section class="od-progress"><div><strong>آپ کا سفر</strong><small>${completed} / ${chapter.lessons.length} سبق مکمل</small></div><button class="text-button" data-action="journey">سفر دیکھیں ${renderIcon("arrow")}</button><div class="od-progress-track"><span style="width:${Math.round(completed / Math.max(1,chapter.lessons.length)*100)}%"></span></div></section>
     <section class="od-support"><span>${renderIcon("speaker")}</span><p><strong>پہلے سمجھیں، پھر کہیں۔</strong><small>معنی، آواز اور مثال کے بعد اپنی بات کہیں۔</small></p><button class="od-profile" data-action="letters" aria-label="حروف اور آوازیں">${renderIcon("chevron")}</button></section>
   </main>`;
+}
+
+// Pim's corner: a greeting that follows the learner's streak and absence, plus a word of the day.
+function renderPimCorner(completed) {
+  const streak = getPracticeStreak();
+  const hello = NU.guide.greeting({ streak, practicedToday: progress.practiceDays.includes(todayKey()), completed, time: NU.street.timeOfDay() });
+  const all = [...courseConcepts.values()];
+  // One pass over the learner's introduced skills instead of matching every concept against every skill.
+  const introduced = new Set(Object.keys(progress.skillMastery || {}).filter(id => statusAtLeast(getSkillStatus(id), "introduced")));
+  const metIds = new Set();
+  introduced.forEach(id => {
+    const skill = courseSkills.get(id);
+    if (skill) normalizeIdList(skill.conceptId, skill.conceptIds).forEach(conceptId => metIds.add(conceptId));
+  });
+  const met = all.filter(concept => metIds.has(concept.id) || normalizeIdList(concept.skillIds).some(id => introduced.has(id)));
+  const word = NU.guide.wordOfDay(met.length >= 3 ? met : all.slice(0, 40), all);
+  return `<section class="pim-corner" aria-label="${escapeAttr(NU.cat.NAME)} کا پیغام">
+    <div class="pim-corner-hello">
+      <span class="pim-corner-face">${NU.cat.render({ face: true, size: 60, mood: hello.mood, label: NU.cat.NAME })}</span>
+      <p class="pim-corner-bubble"><b class="latin" dir="ltr">${escapeHtml(hello.nl)}</b><small>${escapeHtml(hello.ur)}</small></p>
+    </div>
+    ${word ? `<div class="pim-word">
+      <span class="pim-word-label latin">${/\s/.test(word.dutch.trim()) ? "Zin van vandaag" : "Woord van vandaag"}</span>
+      <div class="pim-word-row"><strong class="latin" dir="ltr">${escapeHtml(word.dutch)}</strong>${renderSpeakButton(word.audioText || word.dutch, "toolkit")}</div>
+      <button type="button" class="pim-word-reveal" data-guide="reveal-word" aria-expanded="false"><span class="pim-word-ask">مطلب دیکھیں</span><span class="pim-word-meaning">${escapeHtml(word.urdu)}</span></button>
+    </div>` : ""}
+  </section>`;
 }
 
 function renderJourney() {
@@ -1733,6 +1764,7 @@ function renderLessonPreview() {
       </section>
 
       ${renderPrerequisiteGuidance(lesson, prerequisiteIds, missingPrerequisites, missingMissionPrerequisites)}
+      ${renderSocietyCard(unit, lesson)}
 
       <section class="learning-preview-content">
         <div class="learning-preview-column">
@@ -1767,6 +1799,28 @@ function renderLessonPreview() {
   `;
 }
 
+// "How it works here": the unit's short society card (KNM). Dutch terms
+// inside the Urdu text are isolated so they read left to right.
+function renderSocietyCard(unit, lesson) {
+  const card = unit?.societyUrdu;
+  if (!card?.points?.length) return "";
+  const open = lesson.kind === "mission" || unit.lessonIds?.[0] === lesson.id;
+  const isolate = (value) => escapeHtml(value).replace(
+    /[A-Za-zÀ-ÿ0-9](?:[A-Za-zÀ-ÿ0-9 .:\/-]*[A-Za-zÀ-ÿ0-9])?/g,
+    (run) => `<bdi class="latin" dir="ltr">${run}</bdi>`
+  );
+  return `
+    <details class="society-card"${open ? " open" : ""}>
+      <summary>
+        <span class="society-card-icon" aria-hidden="true">${renderIcon("flag")}</span>
+        <span><small>یہاں ایسے ہوتا ہے</small><strong>${isolate(card.title)}</strong></span>
+        ${renderIcon("chevron", "society-card-chevron")}
+      </summary>
+      <ul>${card.points.map((point) => `<li>${isolate(point)}</li>`).join("")}</ul>
+    </details>
+  `;
+}
+
 // The lesson's place on the map: its unit building on a little street, with Pim parked outside.
 function renderPreviewScene(lesson, chapter, unit) {
   const index = (chapter.subchapters || []).findIndex((item) => item.id === unit?.id);
@@ -1774,7 +1828,7 @@ function renderPreviewScene(lesson, chapter, unit) {
   const color = trophy ? "#e09b00" : NU.map.unitColor(index);
   const kind = trophy ? "townhall" : NU.map.kindFor(unit?.id || lesson.id);
   return `<div class="pl-preview-scene" style="--unit:${color}" aria-hidden="true">
-    <svg class="pl-preview-clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><g fill="#fff"><ellipse cx="70" cy="40" rx="34" ry="13"/><ellipse cx="88" cy="32" rx="18" ry="14"/><ellipse cx="320" cy="62" rx="28" ry="11"/><ellipse cx="334" cy="55" rx="15" ry="12"/></g></svg>
+    <svg class="pl-preview-clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><g fill="#fff"><path transform="translate(80 40)" d="M-36 16a14 14 0 0 1 2-28 20 20 0 0 1 38-6 16 16 0 0 1 28 10 13 13 0 0 1 2 24Z"/><path transform="translate(326 64) scale(.75)" d="M-36 16a14 14 0 0 1 2-28 20 20 0 0 1 38-6 16 16 0 0 1 28 10 13 13 0 0 1 2 24Z"/></g></svg>
     <div class="pl-preview-building">${NU.map.building(kind, color, "open")}</div>
     <div class="pl-preview-pim">${NU.cat.render({ size: 132 })}</div>
     <div class="pl-preview-ground"></div>
@@ -1988,6 +2042,7 @@ function getQuestionTitle(question) {
 }
 
 function renderQuestionCard(question, visual) {
+  if (question.type === "role-play") return renderRolePlayQuestion(question);
   if (question.type === "concept-teach") return renderConceptTeachingQuestion(question, visual);
   if (question.type === "pattern-teach") return renderPatternTeachingQuestion(question);
   if (question.type === "correction-teach") return renderCorrectionTeachingQuestion(question);
@@ -2041,7 +2096,7 @@ function renderConceptTeachingQuestion(question, visual) {
           <div class="teaching-dutch latin">
             <strong data-karaoke>${NU.lesson.karaokeHTML(teaching.dutch)}</strong>
           </div>
-          <div class="teaching-actions">${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
+          <div class="teaching-actions">${teaching.audioText ? `<span class="pl-speaker-pim" aria-hidden="true">${NU.cat.render({ face: true, size: 46 })}</span>` : ""}${teaching.audioText ? renderSpeakButton(teaching.audioText, "teaching") : ""}${renderSlowSpeakButton(teaching.audioText, true)}</div>
           <div class="pl-meaning"><span>مطلب</span><p class="teaching-urdu">${escapeHtml(teaching.urdu)}</p></div>
           ${teaching.pronunciation ? `<p class="teaching-pronunciation"><span>اردو میں آواز:</span> ${escapeHtml(teaching.pronunciation)}</p>` : ""}
         </section>
@@ -2342,16 +2397,134 @@ function renderDocumentQuestion(question) {
   `;
 }
 
+function renderGapSentence(question) {
+  if (!question.gapSentence) return "";
+  const shown = checked
+    ? question.gapSentence.replace("___", question.answer)
+    : question.gapSentence;
+  return `<strong class="gap-sentence latin" dir="ltr">${escapeHtml(shown).replace("___", '<span class="gap-slot" aria-label="خالی جگہ">____</span>')}</strong>`;
+}
+
+// Stage 2.3 guided role-play: the conversation advances one learner turn at a
+// time; a wrong reply is explained and retried. Progress lives per question.
+let rolePlayState = null;
+
+function getRolePlayState(question) {
+  if (!rolePlayState || rolePlayState.questionId !== question.id || rolePlayState.index !== activeQuestionIndex) {
+    rolePlayState = { questionId: question.id, index: activeQuestionIndex, step: 0, wrong: "", mistakes: 0 };
+  }
+  return rolePlayState;
+}
+
+function getRolePlayReplies(question) {
+  return (question.turns || []).filter((turn) => turn.speaker === "you");
+}
+
+function isRolePlayComplete(question) {
+  return getRolePlayState(question).step >= getRolePlayReplies(question).length;
+}
+
+function chooseRolePlayReply(answer) {
+  const question = getActiveQuestion();
+  if (question?.type !== "role-play") return;
+  const state = getRolePlayState(question);
+  const turn = getRolePlayReplies(question)[state.step];
+  if (!turn) return;
+  if (answer === turn.answer) {
+    state.step += 1;
+    state.wrong = "";
+    NU.sound.play("correct", { combo: 1 });
+    NU.haptics.play("success");
+    // The other person answers: speak their next line.
+    const turns = question.turns || [];
+    const nextOther = turns.slice(turns.indexOf(turn) + 1).find((item) => item.speaker !== "you");
+    const nextReplyIndex = turns.findIndex((item, index) => index > turns.indexOf(turn) && item.speaker === "you");
+    if (nextOther && (nextReplyIndex < 0 || turns.indexOf(nextOther) < nextReplyIndex)) {
+      window.setTimeout(() => speakDutch(nextOther.dutch), 500);
+    }
+  } else {
+    state.wrong = answer;
+    state.mistakes += 1;
+    NU.sound.play("wrong");
+    NU.haptics.play("error");
+  }
+  render();
+  // render() restores the scroll position in the next frame, so scroll after
+  // it: just far enough that the new turn sits above the fixed footer.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const target = app.querySelector(".role-play-choice, .role-play-done");
+    const content = app.querySelector(".quiz-content");
+    const footer = app.querySelector(".quiz-action-bar");
+    if (!target || !content || !footer) return;
+    const overlap = target.getBoundingClientRect().bottom - (footer.getBoundingClientRect().top - 12);
+    const room = target.getBoundingClientRect().top - content.getBoundingClientRect().top;
+    if (overlap > 0) content.scrollTop += Math.min(overlap, Math.max(0, room));
+  }));
+}
+
+function renderRolePlayQuestion(question) {
+  const state = getRolePlayState(question);
+  const turns = question.turns || [];
+  let repliesSeen = 0;
+  const visible = [];
+  let current = null;
+  for (const turn of turns) {
+    if (turn.speaker === "you") {
+      if (repliesSeen === state.step) {
+        current = turn;
+        break;
+      }
+      repliesSeen += 1;
+    }
+    visible.push(turn);
+  }
+  const bubble = (turn) => turn.speaker === "you"
+    ? `
+      <li class="role-play-turn you">
+        <div class="role-play-bubble">
+          <strong class="latin" dir="ltr">${escapeHtml(turn.answer)}</strong>
+          <small>${escapeHtml(turn.urdu)}</small>
+          <span class="role-play-say">${renderSpeakButton(turn.answer)} اب بلند آواز میں کہیں</span>
+        </div>
+      </li>`
+    : `
+      <li class="role-play-turn other">
+        <div class="role-play-bubble">
+          <strong class="latin" dir="ltr">${renderSpeakButton(turn.dutch)} ${escapeHtml(turn.dutch)}</strong>
+          <small>${escapeHtml(turn.urdu)}</small>
+        </div>
+      </li>`;
+  return `
+    <div class="role-play-question">
+      <p class="role-play-scene">${escapeHtml(question.prompt)}</p>
+      <ol class="role-play-transcript">${visible.map(bubble).join("")}</ol>
+      ${current ? `
+        <div class="role-play-choice">
+          <p class="role-play-your-turn">${current.cueUrdu ? escapeHtml(current.cueUrdu) : "آپ کی باری: مناسب جواب چنیں۔"}</p>
+          ${state.wrong ? `<p class="role-play-wrong" role="status">${escapeHtml(current.explanations?.[state.wrong] || "یہ جواب یہاں فٹ نہیں ہوتا۔ دوبارہ کوشش کریں۔")}</p>` : ""}
+          <div class="choice-list">
+            ${(current.options || []).map((option) => `
+              <button class="choice-button latin ${state.wrong === option ? "wrong" : ""}" dir="ltr" data-action="role-play-choose" data-answer="${escapeAttr(option)}">${escapeHtml(option)}</button>
+            `).join("")}
+          </div>
+        </div>
+      ` : `<p class="role-play-done" role="status">شاباش! گفتگو مکمل ہو گئی۔ اپنی باتیں ایک بار پھر بلند آواز میں کہیں۔</p>`}
+    </div>
+  `;
+}
+
 function renderShortInputQuestion(question) {
   if (typedFallback) return `
     <div class="short-input-question">
       <p>${escapeHtml(question.prompt)}</p>
+      ${renderGapSentence(question)}
       ${renderBuildExercise(question)}
     </div>
   `;
   return `
     <div class="short-input-question">
       <p>${escapeHtml(question.prompt)}</p>
+      ${renderGapSentence(question)}
       <input class="short-answer-input latin" data-short-answer value="${escapeAttr(typedAnswer)}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Nederlands جواب" />
       <button class="input-fallback" data-action="input-fallback">الفاظ سے بنائیں</button>
     </div>
@@ -2465,6 +2638,10 @@ function renderMatchPairButton(id, side, text) {
 
 function renderQuizFooter(question, infoStep) {
   const correct = checked && isCurrentAnswerCorrect(question);
+  if (infoStep && question.type === "role-play") {
+    const done = isRolePlayComplete(question);
+    return `<footer class="quiz-action-bar"><button class="quiz-action ${done ? "enabled" : ""}" data-action="continue-info" ${done ? "" : "disabled"}>${done ? "گفتگو مکمل، آگے بڑھیں" : "پہلے گفتگو مکمل کریں"}</button></footer>`;
+  }
   if (infoStep) {
     const hasNextTeachingStep = teachingStep < getTeachingStepCount(question) - 1;
     const label = question.type === "speak-repeat"
@@ -2481,7 +2658,7 @@ function renderQuizFooter(question, infoStep) {
       <footer class="quiz-feedback-panel ${correct ? "correct" : "wrong"}">
         <div class="feedback-copy">
           <span class="feedback-icon pl-feedback-face">${NU.cat.render({ face: true, size: 48, mood: correct ? "happy" : "sad" })}</span>
-          <div><div class="pl-feedback-title"><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong><span class="pl-praise latin" dir="ltr">${NU.lesson.phrase(correct, activeQuestionIndex)[0]}</span></div>${renderFeedbackDetail(question, correct)}</div>
+          <div><div class="pl-feedback-title"><strong>${correct ? "درست" : "یہ جواب درست نہیں تھا"}</strong>${coachLine ? `<span class="pl-praise pl-coach"><b class="latin" dir="ltr">${escapeHtml(coachLine[0])}</b><small>${escapeHtml(coachLine[1])}</small></span>` : `<span class="pl-praise latin" dir="ltr">${NU.lesson.phrase(correct, activeQuestionIndex)[0]}</span>`}</div>${renderFeedbackDetail(question, correct)}</div>
         </div>
         <button class="quiz-action enabled" data-action="next">${getFeedbackNextLabel(question, correct)}</button>
       </footer>
@@ -2543,6 +2720,7 @@ function getWrongOptionExplanation(question, answer) {
     || question?.wrongExplanationsByOption?.[answer]
     || question?.optionExplanations?.[answer]
     || question?.feedbackByOption?.[answer]
+    || (question?.type === "short-input" ? getTypedNearMissExplanation(question, answer) : "")
     || "";
 }
 
@@ -3045,6 +3223,7 @@ function renderSettings() {
         ${renderSettingsLink("review", "dumbbell", "آج کی مشق", "کمزور مہارتوں کے مطابق دہرائی", "today")}
         ${renderSettingsLink("review", "book", "پرانا سبق", "مکمل سبق دوبارہ کریں", "old")}
         ${renderSettingsLink("letters", "alphabet", "Nederlands حروف", "حروف سنیں اور دہرائیں")}
+        ${renderSettingsLink("replay-tour", "spark", `${NU.cat.NAME} کے ساتھ سیر`, "ایپ کا تعارف دوبارہ دیکھیں")}
       </div>
       <div class="settings-section-heading"><strong>آپ کے لیے آسانی</strong><span></span></div>
       <div class="settings-list">
@@ -3096,9 +3275,19 @@ function renderBottomNav() {
   </nav>`;
 }
 
+// Tab icons are small Pim-world pieces in the art kit's style: flat colour with one hard shade.
+// Inactive tabs show them greyed (refresh.css); the active tab shows full colour.
+const NAV_ART = {
+  home: '<path d="M4 22V11l7-6.5 7 6.5v11Z" fill="#c44e36"/><path d="M5.5 20.5V9.5l7-6.5 7 6.5v11Z" fill="#e8694f" stroke="#e8694f" stroke-width="1.4" stroke-linejoin="round"/><rect x="7.6" y="12" width="4" height="4" rx="1.4" fill="#fff6c9"/><rect x="7.2" y="15.6" width="4.8" height="1.2" rx=".6" fill="#fff"/><rect x="13.6" y="14" width="3.8" height="6.5" rx="1.9" fill="#8f3a26"/>',
+  journey: '<path d="M6.5 22V3.5" stroke="#1f2433" stroke-width="2.4" stroke-linecap="round"/><path d="M6.6 5.4h11l-3 4 3 4h-11Z" fill="#26963f" stroke="#26963f" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 4h11l-3 4 3 4h-11Z" fill="#3dc25d" stroke="#3dc25d" stroke-width="1.4" stroke-linejoin="round"/>',
+  practice: '<rect x="6" y="10.8" width="12" height="2.6" rx="1.3" fill="#1f2433"/><rect x="2.4" y="7.4" width="5" height="11" rx="2" fill="#1a4ed1"/><rect x="3" y="6.4" width="5" height="11" rx="2" fill="#2b6bff"/><rect x="16" y="7.4" width="5" height="11" rx="2" fill="#1a4ed1"/><rect x="16.6" y="6.4" width="5" height="11" rx="2" fill="#2b6bff"/>',
+  toolkit: '<path d="M4 4.8h11.5a3 3 0 0 1 3 3V22H6.2A2.2 2.2 0 0 1 4 19.8Z" fill="#6a3fe0"/><path d="M5 3.5h11.5a3 3 0 0 1 3 3V21H7.2A2.2 2.2 0 0 1 5 18.8Z" fill="#8a5cff"/><path d="M5 18.4h14.5V21H7.2A2.2 2.2 0 0 1 5 18.8Z" fill="#fff"/><path d="M14 3.5v7l2-1.5 2 1.5v-7Z" fill="#ff4d4d"/>'
+};
+
 function renderNavButton(action, icon, label, active) {
   const indicator = active ? '<span class="nav-indicator" data-morph="nav-indicator" aria-hidden="true"></span>' : "";
-  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}">${indicator}<span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
+  const art = NAV_ART[action] ? `<svg class="ui-icon nav-art" viewBox="0 0 24 24" aria-hidden="true">${NAV_ART[action]}</svg>` : renderIcon(icon);
+  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}">${indicator}<span class="nav-icon">${art}</span><span>${label}</span></button>`;
 }
 
 function bindEvents() {
@@ -3145,6 +3334,7 @@ function bindEvents() {
       if (action === "start") startLesson(element.dataset.lesson);
       if (action === "review") startReview(element.dataset.reviewKind);
       if (action === "choose") chooseAnswer(element.dataset.answer);
+      if (action === "role-play-choose") chooseRolePlayReply(element.dataset.answer);
       if (action === "build-select") selectBuildTile(element.dataset.tileId);
       if (action === "build-remove") removeBuildTile(Number(element.dataset.buildIndex));
       if (action === "match-pair") selectMatchPair(element.dataset.matchId, element.dataset.matchSide);
@@ -3157,6 +3347,12 @@ function bindEvents() {
       if (action === "continue-info") continueInfoStep();
       if (action === "next") nextQuestion();
       if (action === "reset") resetProgress();
+      if (action === "replay-tour") {
+        screen = "home";
+        render();
+        scrollToTop();
+        NU.guide.startTour();
+      }
       if (action === "toggle-setting") toggleSetting(element.dataset.setting);
       if (action === "skip-audio") skipAudioQuestion();
       if (action === "input-fallback") enableInputFallback();
@@ -3379,6 +3575,7 @@ function triggerAnswerMoment(correct, compact = false) {
     NU.sound.play("wrong");
     NU.haptics.play("error");
     NU.motion.shake(document.querySelector(".choice-button.wrong") || icon);
+    NU.cat.act(icon?.querySelector(".nu-cat"), "shake");
     return;
   }
   const streak = answerCombo >= 3 && answerCombo % 3 === 0;
@@ -3386,6 +3583,7 @@ function triggerAnswerMoment(correct, compact = false) {
   if (streak) window.setTimeout(() => NU.sound.play("streak"), 260);
   NU.haptics.play(streak ? "streak" : "success");
   NU.motion.jelly(icon);
+  NU.cat.act(icon?.querySelector(".nu-cat"), "nod");
   NU.motion.burst(icon, { count: streak ? 28 : 14, spread: streak ? 150 : 90 });
   NU.motion.bump(document.querySelector(".choice-button.correct"));
   NU.motion.pop(document.querySelector(".quiz-combo"));
@@ -3596,6 +3794,8 @@ function startLesson(id) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(lesson);
+  NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
@@ -3639,6 +3839,8 @@ function startReview(kind) {
   pendingCorrectionQuestions = [];
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(activeReview);
+  NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   screen = "lesson";
   render();
   scrollToTop();
@@ -3831,6 +4033,7 @@ function selectMatchPair(id, side) {
 
 function continueInfoStep() {
   const question = getActiveQuestion();
+  if (question?.type === "role-play" && !isRolePlayComplete(question)) return;
   if (teachingStep < getTeachingStepCount(question) - 1) {
     teachingStep += 1;
     lessonDetailKind = "";
@@ -3865,6 +4068,7 @@ function checkAnswer() {
     : selectedAnswer === question.answer;
   answerCombo = correct ? answerCombo + 1 : 0;
   bestAnswerCombo = Math.max(bestAnswerCombo, answerCombo);
+  coachLine = NU.guide.onAnswer({ correct, combo: answerCombo, lessonKey: activeLessonId, index: activeQuestionIndex, total: (sessionQuestions.length ? sessionQuestions : getActiveLesson()?.questions || []).length });
   lessonProgressSteps = correct
     ? Math.max(lessonProgressSteps, activeQuestionIndex + 1)
     : Math.max(0, lessonProgressSteps - 1);
@@ -4227,6 +4431,7 @@ function resetProgress() {
   const confirmed = window.confirm("کیا آپ واقعی پیش رفت دوبارہ شروع کرنا چاہتے ہیں؟");
   if (!confirmed) return;
   saveProgress({ ...defaultProgress });
+  NU.guide.reset();
   activeWordHelp = null;
   activeReview = null;
   buildAnswerIds = [];
@@ -4651,6 +4856,9 @@ function prepareSessionQuestion(question) {
   )));
   return {
     ...question,
+    ...(question.turns ? {
+      turns: question.turns.map((turn) => (turn.options ? { ...turn, options: shuffleArray([...turn.options]) } : turn))
+    } : {}),
     options: question.options ? shuffleArray([...question.options]) : [],
     tiles: prepareTiles(question.tiles, "tile"),
     fallbackTiles: prepareTiles(question.fallbackTiles, "fallback")
@@ -4730,11 +4938,15 @@ function getBuildAnswerText(question) {
   return buildAnswerIds
     .map((id) => tiles.find((tile) => tile.id === id)?.word)
     .filter(Boolean)
-    .join(question.type === "sequence" ? " | " : " ");
+    .join(question.type === "sequence"
+      ? " | "
+      : question.type === "short-input" && typedFallback && typeof question.fallbackJoiner === "string"
+        ? question.fallbackJoiner
+        : " ");
 }
 
 function isInfoQuestion(question) {
-  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach"].includes(question?.type);
+  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach", "role-play"].includes(question?.type);
 }
 
 function canCheckQuestion(question) {
@@ -4751,7 +4963,42 @@ function getAnswerTiles(question) {
 }
 
 function normalizeTypedAnswer(value) {
-  return String(value || "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[.!?]+$/g, "");
+  // Capitals, curly apostrophes, commas and closing punctuation never make a typed answer wrong.
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[‘’`]/g, "'")
+    .replace(/[,;:"“”]/g, " ")
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/[.!?]+$/g, "")
+    .trim();
+}
+
+function typedEditDistance(left, right) {
+  const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i += 1) {
+    let diagonal = previous[0];
+    previous[0] = i;
+    for (let j = 1; j <= right.length; j += 1) {
+      const above = previous[j];
+      previous[j] = Math.min(above + 1, previous[j - 1] + 1, diagonal + (left[i - 1] === right[j - 1] ? 0 : 1));
+      diagonal = above;
+    }
+  }
+  return previous[right.length];
+}
+
+// Targeted feedback for a typed answer that is nearly right.
+function getTypedNearMissExplanation(question, typed) {
+  const value = normalizeTypedAnswer(typed);
+  const answer = normalizeTypedAnswer(question.answer);
+  if (!value || !answer || answer.length < 3) return "";
+  if (typedEditDistance(value, answer) > (answer.length > 6 ? 2 : 1)) return "";
+  const stem = answer.slice(0, Math.max(2, answer.length - 2));
+  if (value.startsWith(stem)) {
+    return `“${typed.trim()}” تقریباً درست ہے، صرف آخر دیکھیں: صحیح لفظ “${question.answer}” ہے۔`;
+  }
+  return `“${typed.trim()}” تقریباً درست ہے، ہجے دیکھیں: صحیح لفظ “${question.answer}” ہے۔`;
 }
 
 function getAcceptedAnswers(question) {
@@ -4963,6 +5210,7 @@ document.addEventListener("visibilitychange", () => {
 });
 document.documentElement.classList.toggle("effects-paused", document.hidden);
 
+NU.guide.configure({ speak: (text) => speakDutch(text, false, true) });
 render();
 
 if ("serviceWorker" in navigator) {

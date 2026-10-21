@@ -424,8 +424,8 @@ const a0Lessons = [
       meaning("stad", ["شہر", "ملک", "فون"], "شہر", "stad = شہر۔"),
       meaning("woon", ["رہتا/رہتی ہوں", "جاتا ہوں", "میرے پاس ہے"], "رہتا/رہتی ہوں", "ik woon = میں رہتا/رہتی ہوں۔"),
       meaning("mijn naam is Ali", ["میرا نام Ali ہے", "میں Ali کے پاس ہوں", "میرا گھر Ali ہے"], "میرا نام Ali ہے", "تعارف جملہ۔"),
-      meaning("ik woon in Nederland", ["میں Nederland میں رہتا/رہتی ہوں", "میں Nederland جاتا ہوں", "میرے پاس Nederland ہے"], "میں Nederland میں رہتا/رہتی ہوں", "ik woon in = میں رہتا ہوں۔"),
-      meaning("ik kom uit Pakistan", ["میں Pakistan سے آتا/آتی ہوں", "میں Pakistan میں رہتا ہوں", "میرے پاس Pakistan ہے"], "میں Pakistan سے آتا/آتی ہوں", "uit = سے۔"),
+      meaning("ik woon in Nederland", ["میں نیدرلینڈز میں رہتا/رہتی ہوں", "میں نیدرلینڈز جاتا ہوں", "میرے پاس نیدرلینڈز ہے"], "میں نیدرلینڈز میں رہتا/رہتی ہوں", "ik woon in = میں رہتا ہوں۔"),
+      meaning("ik kom uit Pakistan", ["میں پاکستان سے آتا/آتی ہوں", "میں پاکستان میں رہتا ہوں", "میرے پاس پاکستان ہے"], "میں پاکستان سے آتا/آتی ہوں", "uit = سے۔"),
       reverse("میرا نام Ali ہے", ["mijn naam is Ali", "ik woon Ali", "ik heb Ali"], "mijn naam is Ali", "نام بتانے کا نمونہ۔")
     ]
   },
@@ -438,7 +438,7 @@ const a0Lessons = [
     questions: [
       meaning("ik ben Ali", ["میں Ali ہوں", "میرے پاس Ali ہے", "میں Ali جاتا ہوں"], "میں Ali ہوں", "ik ben = میں ہوں۔"),
       meaning("ik heb een telefoon", ["میرے پاس ایک فون ہے", "میں فون ہوں", "میں فون جاتا ہوں"], "میرے پاس ایک فون ہے", "ik heb = میرے پاس ہے۔"),
-      meaning("ik woon in Nederland", ["میں Nederland میں رہتا/رہتی ہوں", "میں Nederland سے ہوں", "میرے پاس Nederland ہے"], "میں Nederland میں رہتا/رہتی ہوں", "woon in = رہنا۔"),
+      meaning("ik woon in Nederland", ["میں نیدرلینڈز میں رہتا/رہتی ہوں", "میں نیدرلینڈز سے ہوں", "میرے پاس نیدرلینڈز ہے"], "میں نیدرلینڈز میں رہتا/رہتی ہوں", "woon in = رہنا۔"),
       meaning("ik ga naar huis", ["میں گھر جا رہا/رہی ہوں", "میں گھر میں ہوں", "میرے پاس گھر ہے"], "میں گھر جا رہا/رہی ہوں", "naar huis = گھر کی طرف۔"),
       meaning("ik begrijp het niet", ["مجھے سمجھ نہیں آیا", "میں اچھا ہوں", "میرے پاس کتاب نہیں"], "مجھے سمجھ نہیں آیا", "یہ بہت ضروری مدد والا جملہ ہے۔"),
       meaning("langzaam alstublieft", ["آہستہ برائے مہربانی", "شکریہ", "میرا نام"], "آہستہ برائے مہربانی", "جب کوئی تیز بولے تو یہ کہیں۔"),
@@ -1044,14 +1044,25 @@ function uniq(items) {
   return [...new Set(items.filter(Boolean))];
 }
 
+// optionKey and normalizedTextV4 run on the same strings many thousands of
+// times while the course is built, so their results are cached. The cache is
+// a function property because both functions are called before top-level
+// constants further down the file are initialised.
 function optionKey(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
-    .trim()
-    .replace(/\s+/g, " ");
+  const text = String(value || "");
+  const cache = optionKey.cache || (optionKey.cache = new Map());
+  let key = cache.get(text);
+  if (key === undefined) {
+    key = text
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
+      .trim()
+      .replace(/\s+/g, " ");
+    cache.set(text, key);
+  }
+  return key;
 }
 
 function uniqueOptions(items) {
@@ -1786,7 +1797,7 @@ const a0DailyLessons = [
       dailyConcept("help-again", "nog een keer", "ایک بار پھر", "nog-een-keer", "phrase"),
       dailyConcept("help-me", "kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟", "helpen", "phrase"),
       dailyConcept("help-meaning", "wat betekent dit?", "اس کا کیا مطلب ہے؟", "vraag", "phrase"),
-      dailyConcept("help-little-dutch", "ik spreek een beetje Nederlands", "میں تھوڑی Nederlands بولتا/بولتی ہوں", "spreken", "phrase"),
+      dailyConcept("help-little-dutch", "ik spreek een beetje Nederlands", "میں تھوڑی ڈچ بولتا/بولتی ہوں", "spreken", "phrase"),
       dailyConcept("help-do-not-know", "ik weet het niet", "مجھے معلوم نہیں", "begrijpen", "phrase"),
       dailyConcept("help-listen", "luister alstublieft", "سنیں، برائے مہربانی", "luisteren", "phrase"),
       dailyConcept("help-say-again", "zeg het nog een keer", "اسے ایک بار پھر کہیں", "nog-een-keer", "phrase"),
@@ -1809,7 +1820,7 @@ const a0DailyLessons = [
       ["حال: سامنے والا بہت تیز بول رہا ہے۔", ["langzamer alstublieft", "tot ziens", "ik ben goed"], "langzamer alstublieft", "آہستہ بولنے کی درخواست۔"],
       ["حال: کسی کام میں مدد چاہیے۔", ["kunt u mij helpen?", "kunt u betalen?", "ik heb geen hulp"], "kunt u mij helpen?", "ادب سے مدد مانگیں۔"],
       ["حال: ایک لفظ کا مطلب پوچھنا ہے۔", ["wat betekent dit?", "waar is dit?", "wie bent dit?"], "wat betekent dit?", "معنی کے لیے wat betekent dit?۔"],
-      ["حال: کہنا ہے کہ آپ تھوڑی Nederlands بولتے ہیں۔", ["ik spreek een beetje Nederlands", "ik begrijp geen Nederlands", "ik ben Nederlands"], "ik spreek een beetje Nederlands", "تھوڑی زبان بولنے کا تیار فقرہ۔"],
+      ["حال: کہنا ہے کہ آپ تھوڑی ڈچ بولتے ہیں۔", ["ik spreek een beetje Nederlands", "ik begrijp geen Nederlands", "ik ben Nederlands"], "ik spreek een beetje Nederlands", "تھوڑی زبان بولنے کا تیار فقرہ۔"],
       ["حال: جواب معلوم نہیں۔", ["ik weet het niet", "ik heb het niet", "ik ben het niet"], "ik weet het niet", "معلوم نہ ہونے کے لیے weet het niet۔"],
       ["حال: ایک بار پھر سننا ہے۔", ["nog een keer", "tot een keer", "geen keer"], "nog een keer", "ایک بار پھر = nog een keer۔"],
       ["حال: اب بات سمجھ آ گئی۔", ["ja, ik begrijp het", "nee, ik woon hier", "sorry, tot ziens"], "ja, ik begrijp het", "سمجھ آنے کی تصدیق۔"]
@@ -2513,7 +2524,7 @@ a0DailyLessons.push(
       ["حال: خاندانی نام پوچھنا ہے۔", ["wat is uw achternaam?", "hoe oud bent u?", "wat kost dit?"], "wat is uw achternaam?", "خاندانی نام = achternaam۔"]
     ],
     builds: [
-      ["میرا نام Sara ہے", ["mijn", "naam", "is", "Sara"], "mijn naam is Sara", "نام بتانے کا جملہ۔"],
+      ["میرا نام سارہ ہے", ["mijn", "naam", "is", "Sara"], "mijn naam is Sara", "نام بتانے کا جملہ۔"],
       ["آپ کا نام کیا ہے؟", ["hoe", "heet", "u"], "hoe heet u", "نام پوچھنے کا سوال۔"],
       ["میں تیس سال کا / کی ہوں", ["ik", "ben", "dertig", "jaar"], "ik ben dertig jaar", "عمر بتانے کا جملہ۔"],
       ["کیا آپ اسے دوبارہ کہہ سکتے ہیں؟", ["kunt", "u", "dat", "herhalen"], "kunt u dat herhalen", "دوبارہ سننے کی درخواست۔"]
@@ -2987,7 +2998,7 @@ a1Lessons.push(
       dailyConcept("travel-station", "station", "اسٹیشن", "station"), dailyConcept("travel-stop", "halte", "بس اسٹاپ", "halte"),
       dailyConcept("travel-ticket", "kaartje", "ٹکٹ", "kaartje"), dailyConcept("travel-left", "links", "بائیں", "links"),
       dailyConcept("travel-right", "rechts", "دائیں", "rechts"), dailyConcept("travel-straight", "rechtdoor", "سیدھا", "rechtdoor"),
-      a1Phrase("travel-p1", "ik wil een kaartje naar Utrecht", "مجھے Utrecht کا ٹکٹ چاہیے", "حال: منزل کا ٹکٹ خریدنا ہے۔"),
+      a1Phrase("travel-p1", "ik wil een kaartje naar Utrecht", "مجھے یوٹریکٹ کا ٹکٹ چاہیے", "حال: منزل کا ٹکٹ خریدنا ہے۔"),
       a1Phrase("travel-p2", "hoe laat vertrekt de trein?", "ٹرین کتنے بجے روانہ ہوتی ہے؟", "حال: روانگی کا وقت پوچھنا ہے۔"),
       a1Phrase("travel-p3", "van welk spoor vertrekt de trein?", "ٹرین کس پلیٹ فارم سے جاتی ہے؟", "حال: پلیٹ فارم پوچھنا ہے۔"),
       a1Phrase("travel-p4", "de trein heeft vertraging", "ٹرین دیر سے ہے", "حال: تاخیر کی بات سمجھنی یا بتانی ہے۔"),
@@ -3002,7 +3013,7 @@ a1Lessons.push(
       a1Phrase("travel-p13", "wanneer komt de bus?", "بس کب آئے گی؟", "حال: بس آنے کا وقت پوچھنا ہے۔")
     ],
     listenReplies: [["waar wilt u naartoe?", ["naar Utrecht", "spoor vijf", "om tien uur"], "naar Utrecht", "منزل بتائیں۔"], ["van welk spoor?", ["van spoor vijf", "met de bus", "naar links"], "van spoor vijf", "پلیٹ فارم بتائیں۔"], ["moet ik hier uitstappen?", ["ja bij deze halte", "de trein is laat", "rechtdoor gaan"], "ja bij deze halte", "اترنے کی جگہ پکی کریں۔"]],
-    builds: [["مجھے Utrecht کا ٹکٹ چاہیے", ["ik", "wil", "een", "kaartje", "naar", "Utrecht"], "ik wil een kaartje naar Utrecht", "ٹکٹ کی درخواست۔"], ["ٹرین کتنے بجے جاتی ہے؟", ["hoe", "laat", "vertrekt", "de", "trein"], "hoe laat vertrekt de trein", "روانگی کا وقت۔"], ["مجھے کہاں گاڑی بدلنی ہے؟", ["waar", "moet", "ik", "overstappen"], "waar moet ik overstappen", "تبدیلی کا سوال۔"], ["کیا یہ بس اسٹیشن جاتی ہے؟", ["gaat", "deze", "bus", "naar", "het", "station"], "gaat deze bus naar het station", "بس کی منزل۔"], ["سیدھا جائیں", ["ga", "rechtdoor"], "ga rechtdoor", "راستے کی ہدایت۔"], ["میرا ٹکٹ گم ہو گیا ہے", ["ik", "ben", "mijn", "kaartje", "kwijt"], "ik ben mijn kaartje kwijt", "گمشدہ ٹکٹ۔"]]
+    builds: [["مجھے یوٹریکٹ کا ٹکٹ چاہیے", ["ik", "wil", "een", "kaartje", "naar", "Utrecht"], "ik wil een kaartje naar Utrecht", "ٹکٹ کی درخواست۔"], ["ٹرین کتنے بجے جاتی ہے؟", ["hoe", "laat", "vertrekt", "de", "trein"], "hoe laat vertrekt de trein", "روانگی کا وقت۔"], ["مجھے کہاں گاڑی بدلنی ہے؟", ["waar", "moet", "ik", "overstappen"], "waar moet ik overstappen", "تبدیلی کا سوال۔"], ["کیا یہ بس اسٹیشن جاتی ہے؟", ["gaat", "deze", "bus", "naar", "het", "station"], "gaat deze bus naar het station", "بس کی منزل۔"], ["سیدھا جائیں", ["ga", "rechtdoor"], "ga rechtdoor", "راستے کی ہدایت۔"], ["میرا ٹکٹ گم ہو گیا ہے", ["ik", "ben", "mijn", "kaartje", "kwijt"], "ik ben mijn kaartje kwijt", "گمشدہ ٹکٹ۔"]]
   }),
   makeA1PracticalLesson({
     id: "a1-home-neighbours",
@@ -3165,7 +3176,7 @@ const a1ExpansionTopics = [
     description: "فارم میں نام، پتہ، تاریخ پیدائش، فون نمبر، اور ای میل سمجھنا۔",
     focus: "فارم میں ذاتی معلومات آہستہ اور صحیح جگہ پر بھری جاتی ہیں۔",
     words: [["voornaam","پہلا نام","naam"],["achternaam","خاندانی نام","naam"],["geboortedatum","تاریخ پیدائش","number-12"],["adres","پتہ","adres"],["postcode","پوسٹ کوڈ","adres"],["woonplaats","رہنے کا شہر","stad"],["telefoonnummer","فون نمبر","telefoon"],["e-mailadres","ای میل پتہ","telefoon"]],
-    phrases: [["mijn voornaam is Sara","میرا پہلا نام Sara ہے","حال: فارم میں پہلا نام بتانا ہے۔"],["mijn achternaam is Khan","میرا خاندانی نام Khan ہے","حال: خاندانی نام بتانا ہے۔"],["mijn geboortedatum is 12 mei","میری تاریخ پیدائش 12 مئی ہے","حال: تاریخ پیدائش بتانی ہے۔"],["ik woon aan de Marktstraat 12","میں Marktstraat 12 پر رہتا / رہتی ہوں","حال: پتہ بتانا ہے۔"],["mijn postcode is 1234 AB","میرا پوسٹ کوڈ 1234 AB ہے","حال: پوسٹ کوڈ بتانا ہے۔"],["mijn woonplaats is Utrecht","میرا رہنے کا شہر Utrecht ہے","حال: شہر بتانا ہے۔"],["mijn telefoonnummer is nul zes","میرا فون نمبر صفر چھ سے شروع ہوتا ہے","حال: فون نمبر بتانا ہے۔"],["ik heb geen e-mailadres","میرے پاس ای میل پتہ نہیں ہے","حال: ای میل نہ ہونے کی بات بتانی ہے۔"]]
+    phrases: [["mijn voornaam is Sara","میرا پہلا نام سارہ ہے","حال: فارم میں پہلا نام بتانا ہے۔"],["mijn achternaam is Khan","میرا خاندانی نام خان ہے","حال: خاندانی نام بتانا ہے۔"],["mijn geboortedatum is 12 mei","میری تاریخ پیدائش 12 مئی ہے","حال: تاریخ پیدائش بتانی ہے۔"],["ik woon aan de Marktstraat 12","میں Marktstraat 12 پر رہتا / رہتی ہوں","حال: پتہ بتانا ہے۔"],["mijn postcode is 1234 AB","میرا پوسٹ کوڈ 1234 اے بی ہے","حال: پوسٹ کوڈ بتانا ہے۔"],["mijn woonplaats is Utrecht","میرا رہنے کا شہر یوٹریکٹ ہے","حال: شہر بتانا ہے۔"],["mijn telefoonnummer is nul zes","میرا فون نمبر صفر چھ سے شروع ہوتا ہے","حال: فون نمبر بتانا ہے۔"],["ik heb geen e-mailadres","میرے پاس ای میل پتہ نہیں ہے","حال: ای میل نہ ہونے کی بات بتانی ہے۔"]]
   },
   {
     id: "a1-phone-calls",
@@ -3264,7 +3275,7 @@ const a1ExpansionTopics = [
     description: "ٹکٹ، پلیٹ فارم، اسٹاپ، تاخیر، گاڑی بدلنا، اور منزل۔",
     focus: "سفر میں bestemming, spoor, halte, vertraging بار بار آتے ہیں۔",
     words: [["bus","بس","bus"],["trein","ٹرین","trein"],["station","اسٹیشن","station"],["halte","بس اسٹاپ","halte"],["kaartje","ٹکٹ","kaartje"],["spoor","پلیٹ فارم","station"],["vertraging","تاخیر","wachten"],["bestemming","منزل","kaart"]],
-    phrases: [["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے","حال: ٹکٹ خریدنا ہے۔"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟","حال: بس کی منزل پوچھنی ہے۔"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟","حال: پلیٹ فارم پوچھنا ہے۔"],["de trein heeft vertraging","ٹرین دیر سے ہے","حال: تاخیر سمجھنی ہے۔"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟","حال: گاڑی بدلنے کی جگہ پوچھنی ہے۔"],["moet ik hier uitstappen?","کیا مجھے یہاں اترنا ہے؟","حال: اترنے کی جگہ پوچھنی ہے۔"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے","حال: اگلا اسٹاپ سمجھنا ہے۔"],["ik ben mijn kaartje kwijt","میرا ٹکٹ گم ہو گیا ہے","حال: ٹکٹ گم ہے۔"]]
+    phrases: [["ik wil een kaartje naar Utrecht","مجھے یوٹریکٹ کا ٹکٹ چاہیے","حال: ٹکٹ خریدنا ہے۔"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟","حال: بس کی منزل پوچھنی ہے۔"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟","حال: پلیٹ فارم پوچھنا ہے۔"],["de trein heeft vertraging","ٹرین دیر سے ہے","حال: تاخیر سمجھنی ہے۔"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟","حال: گاڑی بدلنے کی جگہ پوچھنی ہے۔"],["moet ik hier uitstappen?","کیا مجھے یہاں اترنا ہے؟","حال: اترنے کی جگہ پوچھنی ہے۔"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے","حال: اگلا اسٹاپ سمجھنا ہے۔"],["ik ben mijn kaartje kwijt","میرا ٹکٹ گم ہو گیا ہے","حال: ٹکٹ گم ہے۔"]]
   },
   {
     id: "a1-weather-clothes",
@@ -3408,7 +3419,7 @@ const a1ExpansionTopics = [
     description: "تعارف، فون، پیغام، ملاقات، اسکول، اور پڑوسی کی مشترک مشق۔",
     focus: "یہ دہرائی نئے لفظ نہیں دیتی؛ روزمرہ جواب جلدی پہچنوانے کے لیے ہے۔",
     words: [["naam","نام","naam"],["telefoon","فون","telefoon"],["bericht","پیغام","bericht"],["afspraak","ملاقات","rooster"],["school","اسکول","school"],["buurvrouw","پڑوسن","vrouw"],["hulp","مدد","helpen"],["tijd","وقت","uur"]],
-    phrases: [["mijn naam is Sara","میرا نام Sara ہے","حال: تعارف ہے۔"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","حال: فون کا جواب چاہیے۔"],["ik stuur u een bericht","میں آپ کو پیغام بھیجتا / بھیجتی ہوں","حال: پیغام بھیجنا ہے۔"],["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ملاقات لینی ہے۔"],["mijn kind is vandaag ziek","میرا بچہ آج بیمار ہے","حال: اسکول کو اطلاع ہے۔"],["goedemorgen buurvrouw","صبح بخیر پڑوسن","حال: پڑوسی کو سلام ہے۔"],["kunt u mij helpen?","کیا آپ میری مدد کر سکتے ہیں؟","حال: مدد مانگنی ہے۔"],["hoe laat komt u?","آپ کتنے بجے آئیں گے؟","حال: وقت پوچھنا ہے۔"]]
+    phrases: [["mijn naam is Sara","میرا نام سارہ ہے","حال: تعارف ہے۔"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟","حال: فون کا جواب چاہیے۔"],["ik stuur u een bericht","میں آپ کو پیغام بھیجتا / بھیجتی ہوں","حال: پیغام بھیجنا ہے۔"],["ik wil een afspraak maken","میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں","حال: ملاقات لینی ہے۔"],["mijn kind is vandaag ziek","میرا بچہ آج بیمار ہے","حال: اسکول کو اطلاع ہے۔"],["goedemorgen buurvrouw","صبح بخیر پڑوسن","حال: پڑوسی کو سلام ہے۔"],["kunt u mij helpen?","کیا آپ میری مدد کر سکتے ہیں؟","حال: مدد مانگنی ہے۔"],["hoe laat komt u?","آپ کتنے بجے آئیں گے؟","حال: وقت پوچھنا ہے۔"]]
   },
   {
     id: "a1-daily-review-two",
@@ -3417,7 +3428,7 @@ const a1ExpansionTopics = [
     description: "گھر، خریداری، سفر، صحت، کام، اور وقت کی مشترک مشق۔",
     focus: "یہ دہرائی حقیقی دن کے چھوٹے مسائل کو ملاتی ہے۔",
     words: [["verwarming","ہیٹنگ","verwarming"],["bon","رسید","bon"],["kaartje","ٹکٹ","kaartje"],["apotheek","دواخانہ","apotheek"],["werk","کام","werk"],["rooster","شیڈول","rooster"],["pijn","درد","pijn"],["regen","بارش","regen"]],
-    phrases: [["de verwarming doet het niet","ہیٹنگ کام نہیں کر رہی","حال: گھر کا مسئلہ ہے۔"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","حال: رسید چاہیے۔"],["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے","حال: سفر ہے۔"],["waar is de apotheek?","دواخانہ کہاں ہے؟","حال: دواخانہ تلاش کرنا ہے۔"],["ik kom vandaag later op werk","میں آج کام پر دیر سے آؤں گا / گی","حال: کام کو اطلاع ہے۔"],["staat het rooster in de app?","کیا شیڈول ایپ میں ہے؟","حال: شیڈول پوچھنا ہے۔"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے","حال: صحت کا مسئلہ ہے۔"],["het regent vandaag","آج بارش ہو رہی ہے","حال: موسم ہے۔"]]
+    phrases: [["de verwarming doet het niet","ہیٹنگ کام نہیں کر رہی","حال: گھر کا مسئلہ ہے۔"],["mag ik de bon?","کیا مجھے رسید مل سکتی ہے؟","حال: رسید چاہیے۔"],["ik wil een kaartje naar Utrecht","مجھے یوٹریکٹ کا ٹکٹ چاہیے","حال: سفر ہے۔"],["waar is de apotheek?","دواخانہ کہاں ہے؟","حال: دواخانہ تلاش کرنا ہے۔"],["ik kom vandaag later op werk","میں آج کام پر دیر سے آؤں گا / گی","حال: کام کو اطلاع ہے۔"],["staat het rooster in de app?","کیا شیڈول ایپ میں ہے؟","حال: شیڈول پوچھنا ہے۔"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے","حال: صحت کا مسئلہ ہے۔"],["het regent vandaag","آج بارش ہو رہی ہے","حال: موسم ہے۔"]]
   }
 ];
 
@@ -3512,18 +3523,708 @@ a0DailyLessons.push(makeA0DailyLesson({
   ]
 }));
 
+const survivalMonthsV4 = [
+  ["januari", "جنوری", "یانُواری", "نئے سال کا پہلا مہینہ: januari۔", "januari کی شروع کی آواز ی جیسی ہے: یانُواری، ج نہیں۔"],
+  ["februari", "فروری", "فےبرُواری", "سال کا سب سے چھوٹا مہینہ: februari۔", "februari بھی ‘واری’ پر ختم ہوتا ہے: فےبرُواری۔"],
+  ["maart", "مارچ", "مارٹ", "تیسرا مہینہ؛ اس میں بہار شروع ہوتی ہے: maart۔", "maart میں لمبی آ کی آواز ہے اور آخر میں ٹ: مارٹ۔"],
+  ["april", "اپریل", "اَپرِل", "چوتھا مہینہ: april۔", "april کا نام اردو جیسا ہے؛ لکھتے وقت پہلا حرف چھوٹا رکھیں۔"],
+  ["mei", "مئی", "مَے", "پانچواں مہینہ: mei؛ اسکولوں میں اس میں چھٹیاں ہوتی ہیں۔", "mei کی آواز مَے جیسی ہے، ‘می’ نہیں۔"],
+  ["juni", "جون", "یُونی", "چھٹا مہینہ: juni؛ گرمیاں شروع ہوتی ہیں۔", "juni (جون) اور juli (جولائی) کی آواز ملتی ہے؛ جون میں ن ہے اور جولائی میں ل۔"],
+  ["juli", "جولائی", "یُولی", "ساتواں مہینہ: juli؛ اسکول کی گرمیوں کی چھٹیاں اسی میں شروع ہوتی ہیں۔", "juli (جولائی) کو juni (جون) سے الگ سنیں: یُولی میں ل کی آواز ہے۔"],
+  ["augustus", "اگست", "آؤخُستُس", "آٹھواں مہینہ: augustus؛ گرمیوں کی چھٹیاں جاری رہتی ہیں۔", "augustus کی شروع کی آواز آؤ جیسی ہے: آؤخُستُس۔"],
+  ["september", "ستمبر", "سَپتَمبَر", "نواں مہینہ: september؛ نیا اسکولی سال اسی کے قریب شروع ہوتا ہے۔", "september انگریزی جیسا ہے، مگر پہلا حرف چھوٹا لکھا جاتا ہے۔"],
+  ["oktober", "اکتوبر", "اوکٹوبَر", "دسواں مہینہ: oktober؛ خزاں کا موسم۔", "oktober کا ہجا انگریزی سے مختلف ہے؛ پہلے حصے میں ک کی آواز ہے۔"],
+  ["november", "نومبر", "نووَمبَر", "گیارہواں مہینہ: november؛ دن چھوٹے ہونے لگتے ہیں۔", "november کی آواز نووَمبَر ہے، انگریزی جیسی۔"],
+  ["december", "دسمبر", "دےسَمبَر", "سال کا آخری مہینہ: december۔", "december کی آواز دےسَمبَر ہے، اردو کے دسمبر جیسی۔"]
+];
+
+// Survival lessons (teaching roadmap 1.3). No pictures yet: images come from
+// the Stage 0 image session, and a wrong picture is worse than none.
+a0DailyLessons.push(
+  makeA0DailyLesson({
+    id: "a0-language-help",
+    unit: "A0: زبان اور ترجمان",
+    title: "Talen en tolk",
+    description: "اپنی زبان بتانا، انگریزی کا پوچھنا، اور ضرورت ہو تو ترجمان مانگنا۔",
+    explanation: practicalExplanation("جب ڈچ ابھی مشکل ہو تو اپنی زبان بتائیں یا ترجمان مانگیں", [
+      "ik spreek Urdu = میں اردو بولتا / بولتی ہوں۔ ik spreek Engels = میں انگریزی بولتا / بولتی ہوں۔",
+      "spreekt u Engels? سوال ہے: فعل پہلے، پھر u۔",
+      "ik heb een tolk nodig کا مطلب ہے مجھے ترجمان چاہیے؛ ہسپتال اور بلدیہ میں یہ حق مانگ سکتے ہیں۔"
+    ]),
+    concepts: [
+      dailyConcept("language-speak-urdu", "ik spreek Urdu", "میں اردو بولتا / بولتی ہوں", "", "phrase"),
+      dailyConcept("language-speak-english", "ik spreek Engels", "میں انگریزی بولتا / بولتی ہوں", "", "phrase"),
+      dailyConcept("language-do-you-speak-english", "spreekt u Engels?", "کیا آپ انگریزی بولتے ہیں؟", "", "phrase"),
+      dailyConcept("language-no-dutch", "ik spreek geen Nederlands", "میں ڈچ نہیں بولتا / بولتی", "", "phrase"),
+      dailyConcept("language-interpreter", "tolk", "ترجمان"),
+      dailyConcept("language-need-interpreter", "ik heb een tolk nodig", "مجھے ترجمان چاہیے", "", "phrase"),
+      dailyConcept("language-is-there-interpreter", "is er een tolk?", "کیا یہاں کوئی ترجمان ہے؟", "", "phrase"),
+      dailyConcept("language-how-say-dutch", "hoe zeg je dat in het Nederlands?", "اسے ڈچ میں کیسے کہتے ہیں؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["spreekt u Nederlands?", ["ik spreek geen Nederlands", "ik heb een tolk", "ik spreek tolk"], "ik spreek geen Nederlands", "ڈچ نہ آنے کا صاف جواب۔"],
+      ["welke taal spreekt u?", ["ik spreek Urdu", "ik heb een tolk nodig", "spreekt u Engels?"], "ik spreek Urdu", "زبان کے سوال کا جواب۔"]
+    ],
+    fills: [
+      ["ik ___ Urdu", ["spreek", "spreekt", "tolk"], "spreek", "ik کے ساتھ spreek۔"],
+      ["___ u Engels?", ["spreekt", "spreek", "is"], "spreekt", "u کے ساتھ spreekt۔"],
+      ["ik heb een ___ nodig", ["tolk", "Urdu", "spreek"], "tolk", "ترجمان = tolk۔"],
+      ["ik spreek ___ Nederlands", ["geen", "een", "is"], "geen", "زبان کی نفی geen سے۔"]
+    ],
+    situations: [
+      ["حال: ہسپتال میں ڈاکٹر کی بات سمجھ نہیں آ رہی۔ ترجمان مانگیں۔", ["ik heb een tolk nodig", "ik spreek Urdu", "is er een tolk?"], "ik heb een tolk nodig", "ترجمان کی ضرورت بتائیں۔"],
+      ["حال: فارمیسی میں پوچھیں کہ کیا ملازم انگریزی بولتا ہے۔", ["spreekt u Engels?", "ik spreek Engels", "ik spreek geen Nederlands"], "spreekt u Engels?", "ادب سے سوال۔"]
+    ],
+    builds: [
+      ["میں اردو بولتا / بولتی ہوں", ["ik", "spreek", "Urdu"], "ik spreek Urdu", "زبان بتانے کا جملہ۔"],
+      ["مجھے ترجمان چاہیے", ["ik", "heb", "een", "tolk", "nodig"], "ik heb een tolk nodig", "nodig آخر میں۔"],
+      ["کیا آپ انگریزی بولتے ہیں؟", ["spreekt", "u", "Engels"], "spreekt u Engels", "سوال میں فعل پہلے۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-family-status",
+    unit: "A0: شوہر، بیوی، اور بچے",
+    title: "Mijn gezin",
+    description: "شوہر، بیوی، بیٹا، بیٹی، دادا دادی بتانا اور شادی شدہ ہونا یا نہ ہونا کہنا۔",
+    explanation: practicalExplanation("mijn کے ساتھ خاندان کا رشتہ بتائیں", [
+      "mijn man = میرا شوہر، mijn vrouw = میری بیوی۔ اکیلے man اور vrouw کا مطلب آدمی اور عورت ہے۔",
+      "ik ben getrouwd = میں شادی شدہ ہوں؛ ik ben niet getrouwd = میں شادی شدہ نہیں ہوں۔",
+      "ڈچ میں دادا اور نانا دونوں opa ہیں، اور دادی اور نانی دونوں oma۔"
+    ]),
+    concepts: [
+      dailyConcept("family-my-husband", "mijn man", "میرا شوہر", "", "phrase"),
+      dailyConcept("family-my-wife", "mijn vrouw", "میری بیوی", "", "phrase"),
+      dailyConcept("family-married", "ik ben getrouwd", "میں شادی شدہ ہوں", "", "phrase"),
+      dailyConcept("family-not-married", "ik ben niet getrouwd", "میں شادی شدہ نہیں ہوں", "", "phrase"),
+      dailyConcept("family-my-son", "mijn zoon", "میرا بیٹا", "", "phrase"),
+      dailyConcept("family-my-daughter", "mijn dochter", "میری بیٹی", "", "phrase"),
+      dailyConcept("family-grandfather", "opa", "دادا / نانا"),
+      dailyConcept("family-grandmother", "oma", "دادی / نانی")
+    ],
+    listenReplies: [
+      ["bent u getrouwd?", ["ja, ik ben getrouwd", "ja, mijn zoon", "ik ben opa"], "ja, ik ben getrouwd", "ہاں میں جواب اور پورا جملہ۔"]
+    ],
+    fills: [
+      ["ik ben ___", ["getrouwd", "mijn", "oma"], "getrouwd", "شادی شدہ = getrouwd۔"],
+      ["ik ben ___ getrouwd", ["niet", "geen", "mijn"], "niet", "صفت کی نفی niet سے۔"],
+      ["dit is mijn ___", ["dochter", "getrouwd", "niet"], "dochter", "بیٹی = dochter۔"]
+    ],
+    situations: [
+      ["حال: فارم پر پوچھا گیا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے۔", ["ik ben getrouwd", "ik ben niet getrouwd", "mijn man"], "ik ben getrouwd", "ازدواجی حالت کا جملہ۔"],
+      ["حال: بچہ تصویر میں آپ کی والدہ کو دکھاتا ہے۔ بچے کے لیے وہ دادی ہیں۔", ["oma", "opa", "mijn vrouw"], "oma", "دادی = oma۔"]
+    ],
+    builds: [
+      ["میں شادی شدہ ہوں", ["ik", "ben", "getrouwd"], "ik ben getrouwd", "حالت بتانے کا جملہ۔"],
+      ["میں شادی شدہ نہیں ہوں", ["ik", "ben", "niet", "getrouwd"], "ik ben niet getrouwd", "niet فعل کے بعد۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-telling-time",
+    unit: "A0: سوا، ساڑھے، پونے",
+    title: "Hoe laat is het?",
+    description: "پورا گھنٹہ، ساڑھے، سوا، اور پونے کا وقت سمجھنا اور بتانا۔",
+    explanation: practicalExplanation("ڈچ میں آدھا گھنٹہ اگلے گھنٹے سے گنا جاتا ہے", [
+      "half acht = 7:30، یعنی ساڑھے سات؛ ساڑھے آٹھ نہیں۔",
+      "kwart over drie = 3:15 (سوا تین)؛ kwart voor vier = 3:45 (پونے چار)۔",
+      "کسی کام کا وقت بتانے کے لیے om لگائیں: om half negen۔"
+    ]),
+    concepts: [
+      // half acht and om half negen share a run so 7:30 is tested against
+      // 8:30, the usual mistake for Urdu speakers.
+      dailyConcept("time-quarter", "kwart", "پندرہ منٹ (پاؤ گھنٹہ)"),
+      dailyConcept("time-half-eight", "half acht", "ساڑھے سات (7:30)", "", "phrase"),
+      dailyConcept("time-at-half-nine", "om half negen", "ساڑھے آٹھ بجے (8:30)", "", "phrase"),
+      dailyConcept("time-three-oclock", "het is drie uur", "تین بجے ہیں", "", "phrase"),
+      dailyConcept("time-quarter-past-three", "kwart over drie", "سوا تین (3:15)", "", "phrase"),
+      dailyConcept("time-quarter-to-four", "kwart voor vier", "پونے چار (3:45)", "", "phrase")
+    ],
+    listenReplies: [
+      ["hoe laat begint de les?", ["om half negen", "kwart", "het is drie"], "om half negen", "وقت کے سوال کا جواب om کے ساتھ۔"]
+    ],
+    fills: [
+      ["___ over drie", ["kwart", "half", "uur"], "kwart", "3:15 = kwart over drie۔"],
+      ["kwart ___ vier", ["voor", "over", "om"], "voor", "3:45 = kwart voor vier۔"],
+      ["om ___ negen", ["half", "kwart", "uur"], "half", "8:30 = half negen۔"]
+    ],
+    situations: [
+      ["حال: اسکول کا خط کہتا ہے کہ کلاس 7:30 پر شروع ہوگی۔", ["half acht", "om half negen", "kwart over drie"], "half acht", "7:30 = half acht۔"],
+      ["حال: بچے کی چھٹی 3:45 پر ہوتی ہے۔", ["kwart voor vier", "kwart over drie", "half acht"], "kwart voor vier", "3:45 = kwart voor vier۔"]
+    ],
+    builds: [
+      ["تین بجے ہیں", ["het", "is", "drie", "uur"], "het is drie uur", "پورے گھنٹے کا جملہ۔"],
+      ["سوا تین", ["kwart", "over", "drie"], "kwart over drie", "پندرہ منٹ بعد۔"],
+      ["ساڑھے آٹھ بجے", ["om", "half", "negen"], "om half negen", "کام کا وقت۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-months-dates",
+    unit: "A0: مہینے اور تاریخ",
+    title: "Maanden en data",
+    description: "بارہ مہینے، پہلی اور دوسری تاریخ، اور تاریخ بتانا یا پوچھنا۔",
+    explanation: practicalExplanation("تاریخ: op + دن + مہینہ", [
+      "ڈچ میں مہینوں کے نام چھوٹے حرف سے لکھے جاتے ہیں: januari، maart، mei۔",
+      "op drie maart = تین مارچ کو۔ صرف مہینہ ہو تو in آتا ہے۔",
+      "de eerste = پہلی تاریخ، de tweede = دوسری تاریخ۔"
+    ]),
+    concepts: [
+      dailyConcept("month-january", "januari", "جنوری"),
+      dailyConcept("month-february", "februari", "فروری"),
+      dailyConcept("month-march", "maart", "مارچ"),
+      dailyConcept("month-april", "april", "اپریل"),
+      dailyConcept("month-may", "mei", "مئی"),
+      dailyConcept("month-june", "juni", "جون"),
+      dailyConcept("month-july", "juli", "جولائی"),
+      dailyConcept("month-august", "augustus", "اگست"),
+      dailyConcept("month-september", "september", "ستمبر"),
+      dailyConcept("month-october", "oktober", "اکتوبر"),
+      dailyConcept("month-november", "november", "نومبر"),
+      dailyConcept("month-december", "december", "دسمبر"),
+      dailyConcept("date-first", "de eerste", "پہلی تاریخ", "", "phrase"),
+      dailyConcept("date-second", "de tweede", "دوسری تاریخ", "", "phrase"),
+      dailyConcept("date-on-third-march", "op drie maart", "تین مارچ کو", "", "phrase"),
+      dailyConcept("date-which-today", "welke datum is het vandaag?", "آج کون سی تاریخ ہے؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["wanneer is de afspraak?", ["op drie maart", "de tweede maart is", "maart drie op"], "op drie maart", "تاریخ op کے ساتھ۔"]
+    ],
+    fills: [
+      ["___ drie maart", ["op", "in", "om"], "op", "تاریخ سے پہلے op۔"],
+      ["de ___", ["eerste", "januari", "datum"], "eerste", "پہلی تاریخ = de eerste۔"]
+    ],
+    situations: [
+      ["حال: ملاقات تین مارچ کو ہے۔ استقبالیہ کو بتائیں۔", ["op drie maart", "de eerste", "de tweede"], "op drie maart", "تاریخ کا جواب۔"]
+    ],
+    builds: [
+      ["تین مارچ کو", ["op", "drie", "maart"], "op drie maart", "op + دن + مہینہ۔"],
+      ["آج کون سی تاریخ ہے؟", ["welke", "datum", "is", "het", "vandaag"], "welke datum is het vandaag", "تاریخ کا سوال۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-body-health",
+    unit: "A0: جسم اور درد کی جگہ",
+    title: "Het lichaam",
+    description: "جسم کے حصے پہچاننا اور ڈاکٹر کو درد کی جگہ بتانا۔",
+    explanation: practicalExplanation("درد کی جگہ بتائیں: mijn + حصہ + doet pijn", [
+      "hand ہاتھ، arm بازو، been ٹانگ، rug کمر، tand دانت، keel گلا۔",
+      "mijn rug doet pijn = میری کمر میں درد ہے۔",
+      "دانت کے درد میں tandarts کے پاس جائیں۔"
+    ]),
+    concepts: [
+      dailyConcept("body-hand", "hand", "ہاتھ"),
+      dailyConcept("body-arm", "arm", "بازو"),
+      dailyConcept("body-leg", "been", "ٹانگ"),
+      dailyConcept("body-back", "rug", "کمر"),
+      dailyConcept("body-tooth", "tand", "دانت"),
+      dailyConcept("body-throat", "keel", "گلا"),
+      dailyConcept("body-dentist", "tandarts", "دانتوں کا ڈاکٹر"),
+      dailyConcept("body-back-hurts", "mijn rug doet pijn", "میری کمر میں درد ہے", "", "phrase"),
+      dailyConcept("body-sore-throat", "ik heb keelpijn", "میرے گلے میں درد ہے", "", "phrase"),
+      dailyConcept("body-must-dentist", "ik moet naar de tandarts", "مجھے دانتوں کے ڈاکٹر کے پاس جانا ہے", "", "phrase")
+    ],
+    listenReplies: [
+      ["waar doet het pijn?", ["mijn rug doet pijn", "ik moet naar de tandarts", "mijn rug is pijn"], "mijn rug doet pijn", "درد کی جگہ بتائیں۔"]
+    ],
+    fills: [
+      ["mijn rug doet ___", ["pijn", "keel", "arm"], "pijn", "درد کی جگہ: doet pijn۔"],
+      ["ik heb ___pijn", ["keel", "rug", "tand"], "keel", "گلے کا درد = keelpijn۔"],
+      ["ik moet naar de ___", ["tandarts", "tand", "keel"], "tandarts", "دانتوں کا ڈاکٹر = tandarts۔"]
+    ],
+    situations: [
+      ["حال: بھاری کام کے بعد کمر میں درد ہے۔ ڈاکٹر کو بتائیں۔", ["mijn rug doet pijn", "ik heb keelpijn", "mijn arm doet pijn"], "mijn rug doet pijn", "درد کی جگہ۔"],
+      ["حال: کام پر بتانا ہے کہ آج دانتوں کے ڈاکٹر کے پاس جانا ہے۔", ["ik moet naar de tandarts", "ik heb keelpijn", "mijn rug doet pijn"], "ik moet naar de tandarts", "ملاقات کی اطلاع۔"]
+    ],
+    builds: [
+      ["میری کمر میں درد ہے", ["mijn", "rug", "doet", "pijn"], "mijn rug doet pijn", "حصہ، پھر doet pijn۔"],
+      ["میرے گلے میں درد ہے", ["ik", "heb", "keelpijn"], "ik heb keelpijn", "گلے کا درد۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-emergency-police",
+    unit: "A0: پولیس، آگ، اور حادثہ",
+    title: "Noodgevallen",
+    description: "پولیس، آگ بجھانے والے، حادثہ، اور زخمی کی فوری اطلاع دینا۔",
+    explanation: {
+      title: "112 پر پہلے بتائیں کہ کیا ہوا ہے",
+      points: [
+        "er is brand = آگ لگی ہے؛ er is een ongeluk = حادثہ ہوا ہے۔",
+        "iemand is gewond = کوئی زخمی ہے۔",
+        "bel de politie = پولیس کو فون کریں۔ پولیس، آگ، اور ایمبولینس سب کا نمبر 112 ہے۔"
+      ],
+      note: "یہ زبان کی مشق ہے؛ حقیقی ہنگامی حالت میں 112 پر رابطہ کریں۔"
+    },
+    concepts: [
+      dailyConcept("emergency-police", "politie", "پولیس"),
+      dailyConcept("emergency-fire-brigade", "brandweer", "فائر بریگیڈ (آگ بجھانے والا عملہ)"),
+      dailyConcept("emergency-accident", "ongeluk", "حادثہ"),
+      dailyConcept("emergency-fire", "brand", "آگ"),
+      dailyConcept("emergency-injured", "gewond", "زخمی"),
+      dailyConcept("emergency-there-is-fire", "er is brand", "آگ لگی ہے", "", "phrase"),
+      dailyConcept("emergency-there-is-accident", "er is een ongeluk", "حادثہ ہوا ہے", "", "phrase"),
+      dailyConcept("emergency-someone-injured", "iemand is gewond", "کوئی زخمی ہے", "", "phrase"),
+      dailyConcept("emergency-call-police", "bel de politie", "پولیس کو فون کریں", "", "phrase")
+    ],
+    listenReplies: [
+      ["112, wat is er gebeurd?", ["er is een ongeluk", "bel de politie", "ik ben gewond politie"], "er is een ongeluk", "پہلے بتائیں کیا ہوا ہے۔"]
+    ],
+    fills: [
+      ["er is ___", ["brand", "politie", "gewond"], "brand", "آگ لگی ہے = er is brand۔"],
+      ["iemand is ___", ["gewond", "brand", "ongeluk"], "gewond", "زخمی = gewond۔"],
+      ["bel de ___", ["politie", "brand", "gewond"], "politie", "پولیس کو فون۔"]
+    ],
+    situations: [
+      ["حال: باورچی خانے میں آگ لگ گئی ہے۔ 112 کو بتائیں۔", ["er is brand", "er is een ongeluk", "bel de politie"], "er is brand", "آگ کی اطلاع۔"],
+      ["حال: حادثے میں ایک شخص کو چوٹ لگی ہے۔ 112 کو بتائیں۔", ["iemand is gewond", "er is brand", "bel de politie"], "iemand is gewond", "زخمی کی اطلاع۔"]
+    ],
+    builds: [
+      ["حادثہ ہوا ہے", ["er", "is", "een", "ongeluk"], "er is een ongeluk", "فوری اطلاع۔"],
+      ["پولیس کو فون کریں", ["bel", "de", "politie"], "bel de politie", "حکم میں فعل پہلے۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-colours-clothes",
+    unit: "A0: رنگ اور کپڑے",
+    title: "Kleuren",
+    description: "چھ عام رنگ پہچاننا اور کپڑے یا چیز کا رنگ بتانا اور پوچھنا۔",
+    explanation: practicalExplanation("رنگ کا لفظ چیز کے بعد آئے تو اس میں کوئی تبدیلی نہیں ہوتی", [
+      "rood سرخ، blauw نیلا، groen سبز، geel پیلا، zwart کالا، wit سفید۔",
+      "de jas is blauw کا مطلب ہے جیکٹ نیلی ہے: پہلے چیز، پھر is، پھر رنگ۔",
+      "دکان میں رنگ پوچھنے کے لیے: heeft u dit in het zwart?"
+    ]),
+    concepts: [
+      dailyConcept("colour-red", "rood", "سرخ"),
+      dailyConcept("colour-blue", "blauw", "نیلا"),
+      dailyConcept("colour-green", "groen", "سبز"),
+      dailyConcept("colour-yellow", "geel", "پیلا"),
+      dailyConcept("colour-black", "zwart", "کالا"),
+      dailyConcept("colour-white", "wit", "سفید"),
+      dailyConcept("colour-colour", "kleur", "رنگ"),
+      dailyConcept("colour-which", "welke kleur?", "کون سا رنگ؟", "", "phrase"),
+      dailyConcept("colour-coat-blue", "de jas is blauw", "جیکٹ نیلی ہے", "", "phrase"),
+      dailyConcept("colour-in-black", "heeft u dit in het zwart?", "کیا یہ آپ کے پاس کالے رنگ میں ہے؟", "", "phrase")
+    ],
+    listenReplies: [
+      ["welke kleur is de jas?", ["de jas is blauw", "ik heb geen jas", "de jas is groot"], "de jas is blauw", "رنگ کے سوال کا جواب رنگ سے دیں۔"],
+      ["welke kleur wilt u?", ["zwart, alstublieft", "twee, alstublieft", "ja, graag"], "zwart, alstublieft", "پسند کا رنگ بتائیں۔"]
+    ],
+    fills: [
+      ["de jas is ___", ["blauw", "jas", "kleur"], "blauw", "چیز کے بعد is، پھر رنگ۔"],
+      ["welke ___?", ["kleur", "rood", "jas"], "kleur", "رنگ پوچھنے کا سوال۔"],
+      ["heeft u dit in het ___?", ["zwart", "kleur", "jas"], "zwart", "دکان میں دوسرا رنگ پوچھنا۔"],
+      ["de tas is ___", ["rood", "tas", "welke"], "rood", "چیز کا رنگ بتائیں۔"]
+    ],
+    situations: [
+      ["حال: دکان میں جیکٹ پسند ہے مگر آپ کو کالی چاہیے۔ ملازم سے پوچھیں۔", ["heeft u dit in het zwart?", "de jas is zwart", "welke kleur?"], "heeft u dit in het zwart?", "دوسرا رنگ پوچھنے کا جملہ۔"],
+      ["حال: بیٹے کی جیکٹ گم ہو گئی ہے۔ اسکول کے ملازم کو بتائیں کہ جیکٹ نیلی ہے۔", ["de jas is blauw", "welke kleur?", "heeft u dit in het zwart?"], "de jas is blauw", "رنگ بتانے کا مکمل جملہ۔"],
+      ["حال: دوست نیا اسکارف دکھاتا ہے مگر رنگ نہیں بتاتا۔ رنگ پوچھیں۔", ["welke kleur?", "de jas is blauw", "kleur"], "welke kleur?", "رنگ کا سوال۔"],
+      ["حال: ٹریفک کی بتی پر چلنے کا رنگ بتانا ہے۔", ["groen", "rood", "geel"], "groen", "چلنے کی بتی سبز ہوتی ہے۔"],
+      ["حال: ٹریفک کی بتی پر رکنے کا رنگ بتانا ہے۔", ["rood", "groen", "wit"], "rood", "رکنے کی بتی سرخ ہوتی ہے۔"]
+    ],
+    builds: [
+      ["جیکٹ نیلی ہے", ["de", "jas", "is", "blauw"], "de jas is blauw", "چیز، is، رنگ۔"],
+      ["کون سا رنگ؟", ["welke", "kleur"], "welke kleur", "رنگ پوچھنے کا سوال۔"],
+      ["کیا یہ آپ کے پاس کالے رنگ میں ہے؟", ["heeft", "u", "dit", "in", "het", "zwart"], "heeft u dit in het zwart", "دکان کا سوال۔"]
+    ]
+  })
+);
+
+// Core grammar lessons (roadmap 3.1): verb endings, adjective endings,
+// comparatives, plurals with er is/er zijn, simple past, ik voel me, object
+// pronouns, and gaan + infinitive. Each uses only words taught before it.
+a0DailyLessons.push(
+  makeA0DailyLesson({
+    id: "a0-verb-endings",
+    unit: "A0: فعل کی شکلیں",
+    title: "Ik werk, hij werkt",
+    description: "فعل کی شکل بدلنا: ik کے ساتھ جڑ، jij اور hij کے ساتھ آخر میں ٹ، اور wij کے ساتھ پورا فعل۔",
+    explanation: {
+      title: "ik werk، hij werkt، wij werken",
+      points: [
+        "ik کے ساتھ فعل کی جڑ آتی ہے: ik werk hier۔",
+        "jij، u، hij، اور zij کے ساتھ آخر میں ٹ لگتی ہے: hij werkt، zij woont۔",
+        "wij کے ساتھ پورا فعل آتا ہے: wij werken، wij eten۔"
+      ],
+      note: "سوال میں jij فعل کے بعد آئے تو ٹ ہٹ جاتی ہے: werk jij vandaag?"
+    },
+    concepts: [
+      dailyConcept("verb-ik-werk", "ik werk hier", "میں یہاں کام کرتا / کرتی ہوں", "", "phrase"),
+      dailyConcept("verb-jij-werkt", "jij werkt", "تم کام کرتے / کرتی ہو", "", "phrase"),
+      dailyConcept("verb-hij-werkt", "hij werkt", "وہ (مرد) کام کرتا ہے", "", "phrase"),
+      dailyConcept("verb-wij-werken", "wij werken", "ہم کام کرتے ہیں", "", "phrase"),
+      dailyConcept("verb-werk-jij", "werk jij vandaag?", "کیا تم آج کام کرتے ہو؟", "", "phrase"),
+      dailyConcept("verb-zij-woont", "zij woont in Nederland", "وہ (عورت) نیدرلینڈز میں رہتی ہے", "", "phrase"),
+      dailyConcept("verb-hij-drinkt", "hij drinkt koffie", "وہ کافی پیتا ہے", "", "phrase"),
+      dailyConcept("verb-wij-eten", "wij eten brood", "ہم روٹی کھاتے ہیں", "", "phrase"),
+      dailyConcept("review-ik-woon", "ik woon in Nederland", "میں نیدرلینڈز میں رہتا / رہتی ہوں", "", "phrase"),
+      dailyConcept("review-ik-drink", "ik drink water", "میں پانی پیتا / پیتی ہوں", "", "phrase"),
+      dailyConcept("review-ik-eet", "ik eet brood", "میں روٹی کھاتا / کھاتی ہوں", "", "phrase")
+    ],
+    listenReplies: [
+      ["wat drinkt hij?", ["hij drinkt koffie", "wij eten brood", "zij woont in Nederland"], "hij drinkt koffie", "سوال مشروب کا ہے۔"]
+    ],
+    fills: [
+      ["hij ___ koffie", ["drinkt", "drink", "drinken"], "drinkt", "hij کے ساتھ آخر میں ٹ: drinkt۔"],
+      ["wij ___ brood", ["eten", "eet", "drinkt"], "eten", "wij کے ساتھ پورا فعل: eten۔"],
+      ["___ jij vandaag?", ["werk", "werkt", "werken"], "werk", "سوال میں jij بعد میں ہو تو ٹ نہیں لگتی۔"],
+      ["zij ___ in Nederland", ["woont", "woon", "wonen"], "woont", "zij (ایک عورت) کے ساتھ ٹ: woont۔"]
+    ],
+    situations: [
+      ["حال: دوست پوچھتا ہے کہ آپ کا بھائی کیا پیتا ہے۔ بتائیں کہ وہ کافی پیتا ہے۔", ["hij drinkt koffie", "hij drink koffie", "hij drinken koffie"], "hij drinkt koffie", "hij کے ساتھ drinkt۔"],
+      ["حال: دوست سے پوچھنا ہے کہ کیا وہ آج کام کرتا ہے۔", ["werk jij vandaag?", "werkt jij vandaag?", "jij werk vandaag?"], "werk jij vandaag?", "سوال: فعل پہلے، jij بعد میں، ٹ کے بغیر۔"],
+      ["حال: تصویر میں اپنی بہن کی طرف اشارہ کرکے بتائیں کہ وہ نیدرلینڈز میں رہتی ہے۔", ["zij woont in Nederland", "zij woon in Nederland", "zij wonen in Nederland"], "zij woont in Nederland", "zij کے ساتھ woont۔"]
+    ],
+    builds: [
+      ["وہ کافی پیتا ہے", ["hij", "drinkt", "koffie"], "hij drinkt koffie", "hij، پھر drinkt۔"],
+      ["کیا تم آج کام کرتے ہو؟", ["werk", "jij", "vandaag"], "werk jij vandaag", "سوال میں فعل پہلے۔"],
+      ["ہم روٹی کھاتے ہیں", ["wij", "eten", "brood"], "wij eten brood", "wij کے ساتھ پورا فعل۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-adjective-endings",
+    unit: "A0: رنگ اسم سے پہلے",
+    title: "De blauwe jas",
+    description: "رنگ یا صفت اسم سے پہلے آئے تو اکثر آخر میں اَ لگتی ہے: de blauwe jas۔ een کے ساتھ het والے اسم پر نہیں: een wit huis۔",
+    explanation: {
+      title: "is کے بعد blauw، اسم سے پہلے blauwe",
+      points: [
+        "de jas is blauw = جیکٹ نیلی ہے۔ de blauwe jas = نیلی جیکٹ۔",
+        "اسم سے پہلے صفت کے آخر میں اَ لگتی ہے: de rode deur، een warme jas۔",
+        "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een wit huis، مگر het witte huis۔"
+      ],
+      note: "لکھنے میں کبھی حرف دگنا یا کم ہوتا ہے: wit سے witte، rood سے rode۔"
+    },
+    concepts: [
+      dailyConcept("adj-de-blauwe-jas", "de blauwe jas", "نیلی جیکٹ", "", "phrase"),
+      dailyConcept("adj-een-warme-jas", "een warme jas", "ایک گرم جیکٹ", "", "phrase"),
+      dailyConcept("adj-de-rode-deur", "de rode deur", "سرخ دروازہ", "", "phrase"),
+      dailyConcept("adj-het-witte-huis", "het witte huis", "سفید گھر (وہ خاص گھر)", "", "phrase"),
+      dailyConcept("adj-een-wit-huis", "een wit huis", "ایک سفید گھر", "", "phrase"),
+      dailyConcept("adj-een-zwart-boek", "een zwart boek", "ایک کالی کتاب", "", "phrase"),
+      dailyConcept("adj-het-zwarte-boek", "het zwarte boek", "کالی کتاب (وہ خاص کتاب)", "", "phrase"),
+      dailyConcept("adj-groene-jas", "ik wil de groene jas", "مجھے سبز جیکٹ چاہیے", "", "phrase"),
+      dailyConcept("review-rood", "rood", "سرخ"),
+      dailyConcept("review-groen", "groen", "سبز"),
+      dailyConcept("review-warm", "warm", "گرم")
+    ],
+    listenReplies: [
+      ["welke jas wilt u?", ["ik wil de groene jas", "een wit huis", "het zwarte boek"], "ik wil de groene jas", "سوال جیکٹ کا ہے؛ جیکٹ کا رنگ بتائیں۔"]
+    ],
+    fills: [
+      ["de ___ jas", ["blauwe", "blauw", "kleur"], "blauwe", "اسم سے پہلے: blauwe۔"],
+      ["een ___ huis", ["wit", "witte", "kleur"], "wit", "een اور het والا اسم: کوئی تبدیلی نہیں۔"],
+      ["het ___ huis", ["witte", "wit", "kleur"], "witte", "het کے بعد آخر میں اَ، اور ٹ دگنی۔"],
+      ["een ___ jas", ["warme", "warm", "kleur"], "warme", "jas کے ساتھ de آتا ہے، اس لیے een کے بعد بھی warme۔"]
+    ],
+    situations: [
+      ["حال: دکان میں کئی رنگ کی جیکٹیں ہیں۔ آپ کو سبز والی چاہیے۔", ["ik wil de groene jas", "ik wil de groen jas", "de jas is groen"], "ik wil de groene jas", "اسم سے پہلے groene۔"],
+      ["حال: گلی میں صرف ایک سفید گھر ہے۔ اسی خاص گھر کی طرف اشارہ کریں۔", ["het witte huis", "een wit huis", "het wit huis"], "het witte huis", "het کے بعد witte۔"],
+      ["حال: دکان میں کوئی بھی ایک کالی کتاب چاہیے، کوئی خاص کتاب نہیں۔", ["een zwart boek", "een zwarte boek", "het zwart boek"], "een zwart boek", "een اور het والا اسم: zwart۔"],
+      ["حال: سردی ہے؛ آپ کو کوئی بھی ایک گرم جیکٹ چاہیے۔", ["een warme jas", "een warm jas", "de jas is warm"], "een warme jas", "jas کے ساتھ de آتا ہے: een warme jas۔"]
+    ],
+    builds: [
+      ["مجھے سبز جیکٹ چاہیے", ["ik", "wil", "de", "groene", "jas"], "ik wil de groene jas", "صفت اسم سے پہلے۔"],
+      ["ایک سفید گھر", ["een", "wit", "huis"], "een wit huis", "een اور het والا اسم۔"],
+      ["سرخ دروازہ", ["de", "rode", "deur"], "de rode deur", "rood سے rode۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-comparatives",
+    unit: "A0: موازنہ",
+    title: "Duurder en goedkoper",
+    description: "دو چیزوں کا موازنہ کرنا: زیادہ مہنگا، زیادہ سستا، بہتر، اور زیادہ ٹھنڈا۔",
+    explanation: {
+      title: "زیادہ کے لیے آخر میں اَر: duur سے duurder",
+      points: [
+        "goedkoop سے goedkoper، duur سے duurder، koud سے kouder۔",
+        "goed سے beter: یہ شکل الگ ہے۔",
+        "دو چیزوں کا موازنہ dan سے: koffie is duurder dan thee۔"
+      ],
+      note: "اردو میں ‘سے زیادہ’ کہتے ہیں؛ ڈچ میں صفت کے آخر میں اَر لگا کر پھر dan کہیں۔"
+    },
+    concepts: [
+      dailyConcept("compare-more-expensive", "duurder", "زیادہ مہنگا"),
+      dailyConcept("compare-cheaper", "goedkoper", "زیادہ سستا"),
+      dailyConcept("compare-better", "beter", "بہتر"),
+      dailyConcept("compare-colder", "kouder", "زیادہ ٹھنڈا"),
+      dailyConcept("compare-warmer", "warmer", "زیادہ گرم"),
+      dailyConcept("compare-this-cheaper", "dit is goedkoper", "یہ زیادہ سستا ہے", "", "phrase"),
+      dailyConcept("compare-coffee-tea", "koffie is duurder dan thee", "کافی چائے سے مہنگی ہے", "", "phrase"),
+      dailyConcept("compare-colder-today", "vandaag is het kouder", "آج زیادہ ٹھنڈ ہے", "", "phrase"),
+      dailyConcept("compare-this-better", "dit is beter", "یہ بہتر ہے", "", "phrase"),
+      dailyConcept("review-goedkoop", "goedkoop", "سستا"),
+      dailyConcept("review-duur", "duur", "مہنگا"),
+      dailyConcept("review-goed", "goed", "اچھا"),
+      dailyConcept("review-koud", "koud", "ٹھنڈا"),
+      dailyConcept("review-warm-2", "warm", "گرم")
+    ],
+    listenReplies: [
+      ["welke is goedkoper?", ["dit is goedkoper", "vandaag is het kouder", "koffie, alstublieft"], "dit is goedkoper", "سستی چیز کی طرف اشارہ کریں۔"]
+    ],
+    fills: [
+      ["koffie is duurder ___ thee", ["dan", "dat", "de"], "dan", "موازنے میں dan۔"],
+      ["koffie is ___ dan thee", ["duurder", "duur", "goedkoop"], "duurder", "dan سے پہلے اَر والی شکل۔"],
+      ["het is ___ dan gisteren", ["kouder", "koud", "warm"], "kouder", "dan سے پہلے kouder۔"],
+      ["dit is ___ dan dat", ["beter", "goed", "goedkoop"], "beter", "goed کی موازنے والی شکل beter ہے۔"]
+    ],
+    situations: [
+      ["حال: دکان میں دو قمیصیں ہیں۔ دوست کو بتائیں کہ یہ والی زیادہ سستی ہے۔", ["dit is goedkoper", "dit is goedkoop dan", "koffie is duurder dan thee"], "dit is goedkoper", "goedkoop سے goedkoper۔"],
+      ["حال: کیفے میں دوست پوچھتا ہے کہ کافی اور چائے میں کون سی زیادہ مہنگی ہے۔ بتائیں کہ کافی۔", ["koffie is duurder dan thee", "koffie is duur dan thee", "dit is goedkoper"], "koffie is duurder dan thee", "duurder dan۔"],
+      ["حال: کل ٹھنڈ تھی مگر آج اس سے بھی زیادہ ہے۔", ["vandaag is het kouder", "vandaag is het koud", "vandaag is het warmer"], "vandaag is het kouder", "زیادہ ٹھنڈ: kouder۔"]
+    ],
+    builds: [
+      ["کافی چائے سے مہنگی ہے", ["koffie", "is", "duurder", "dan", "thee"], "koffie is duurder dan thee", "duurder، پھر dan۔"],
+      ["یہ زیادہ سستا ہے", ["dit", "is", "goedkoper"], "dit is goedkoper", "goedkoper۔"],
+      ["آج زیادہ ٹھنڈ ہے", ["vandaag", "is", "het", "kouder"], "vandaag is het kouder", "وقت پہلے، پھر is۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-plurals-er-is",
+    unit: "A0: ایک یا زیادہ",
+    title: "Meervoud: er is, er zijn",
+    description: "ایک سے زیادہ چیزوں کے لیے اسم کی شکل بدلنا، اور بتانا کہ کہیں ایک چیز ہے یا کئی چیزیں ہیں۔",
+    explanation: {
+      title: "زیادہ کے لیے آخر میں اَن یا س",
+      points: [
+        "زیادہ تر اسم کے آخر میں اَن لگتا ہے: stoel سے stoelen، huis سے huizen۔",
+        "آخر میں اَل یا اَر ہو تو س لگتی ہے: tafel سے tafels، kamer سے kamers۔",
+        "ایک چیز ہو تو er is، کئی چیزیں ہوں تو er zijn: er zijn twee stoelen۔"
+      ],
+      note: "جمع اسم کے ساتھ ہمیشہ de آتا ہے: het boek مگر de boeken۔"
+    },
+    concepts: [
+      dailyConcept("plural-chairs", "stoelen", "کرسیاں"),
+      dailyConcept("plural-tables", "tafels", "میزیں"),
+      dailyConcept("plural-rooms", "kamers", "کمرے"),
+      dailyConcept("plural-houses", "huizen", "کئی گھر"),
+      dailyConcept("plural-the-books", "de boeken", "وہ کتابیں", "", "phrase"),
+      dailyConcept("plural-there-is-chair", "er is een stoel", "ایک کرسی ہے", "", "phrase"),
+      dailyConcept("plural-there-are-chairs", "er zijn twee stoelen", "دو کرسیاں ہیں", "", "phrase"),
+      dailyConcept("plural-three-rooms", "er zijn drie kamers", "تین کمرے ہیں", "", "phrase"),
+      dailyConcept("review-stoel", "stoel", "کرسی"),
+      dailyConcept("review-tafel", "tafel", "میز"),
+      dailyConcept("review-kamer", "kamer", "کمرہ"),
+      dailyConcept("review-het-boek", "het boek", "کتاب"),
+      dailyConcept("review-twee-boeken", "twee boeken", "دو کتابیں", "", "phrase")
+    ],
+    listenReplies: [
+      ["wat is er in de kamer?", ["er zijn twee stoelen", "er zijn drie kamers", "huizen"], "er zijn twee stoelen", "کمرے کے اندر کی چیزیں بتائیں۔"]
+    ],
+    fills: [
+      ["er zijn twee ___", ["stoelen", "stoel", "tafel"], "stoelen", "دو کے بعد جمع: stoelen۔"],
+      ["er ___ een stoel", ["is", "zijn", "ben"], "is", "ایک چیز: er is۔"],
+      ["er ___ drie kamers", ["zijn", "is", "bent"], "zijn", "کئی چیزیں: er zijn۔"],
+      ["___ boeken", ["de", "het", "een"], "de", "جمع کے ساتھ ہمیشہ de۔"]
+    ],
+    situations: [
+      ["حال: مکان دیکھنے آئے شخص کو بتائیں کہ گھر میں تین کمرے ہیں۔", ["er zijn drie kamers", "er is drie kamers", "er zijn drie kamer"], "er zijn drie kamers", "کئی کمرے: er zijn اور kamers۔"],
+      ["حال: کلاس میں مہمان کے لیے صرف ایک خالی کرسی ہے۔ یہ بتائیں۔", ["er is een stoel", "er zijn een stoel", "er zijn twee stoelen"], "er is een stoel", "ایک چیز: er is۔"],
+      ["حال: گلی میں ایک نہیں، کئی گھر ہیں۔ جمع کا لفظ چنیں۔", ["huizen", "huis", "kamers"], "huizen", "huis سے huizen۔"]
+    ],
+    builds: [
+      ["دو کرسیاں ہیں", ["er", "zijn", "twee", "stoelen"], "er zijn twee stoelen", "کئی چیزیں: er zijn۔"],
+      ["تین کمرے ہیں", ["er", "zijn", "drie", "kamers"], "er zijn drie kamers", "kamer سے kamers۔"],
+      ["ایک کرسی ہے", ["er", "is", "een", "stoel"], "er is een stoel", "ایک چیز: er is۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-past-was-had",
+    unit: "A0: گزرا ہوا وقت",
+    title: "Gisteren: was, had, ging",
+    description: "کل یا پہلے کی بات بتانا: میں بیمار تھا، مجھے درد تھا، میں گھر گیا۔",
+    explanation: {
+      title: "گزری بات: ben سے was، heb سے had، ga سے ging",
+      points: [
+        "ik ben ziek = میں بیمار ہوں؛ ik was ziek = میں بیمار تھا / تھی۔",
+        "ik heb pijn = مجھے درد ہے؛ ik had pijn = مجھے درد تھا۔",
+        "ik ga naar huis = میں گھر جاتا ہوں؛ ik ging naar huis = میں گھر گیا / گئی۔ wij کے ساتھ: wij waren۔"
+      ],
+      note: "gisteren پہلے آئے تو فعل دوسرے نمبر پر آتا ہے: gisteren was ik ziek۔"
+    },
+    concepts: [
+      dailyConcept("past-i-was-ill", "ik was ziek", "میں بیمار تھا / تھی", "", "phrase"),
+      dailyConcept("past-i-had-pain", "ik had pijn", "مجھے درد تھا", "", "phrase"),
+      dailyConcept("past-i-went-home", "ik ging naar huis", "میں گھر گیا / گئی", "", "phrase"),
+      dailyConcept("past-he-was-ill", "hij was ziek", "وہ بیمار تھا", "", "phrase"),
+      dailyConcept("past-we-were-late", "wij waren te laat", "ہمیں دیر ہو گئی تھی", "", "phrase"),
+      dailyConcept("past-yesterday-ill", "gisteren was ik ziek", "کل میں بیمار تھا / تھی", "", "phrase"),
+      dailyConcept("past-headache", "ik had gisteren hoofdpijn", "کل میرے سر میں درد تھا", "", "phrase"),
+      dailyConcept("past-she-went-doctor", "zij ging naar de dokter", "وہ ڈاکٹر کے پاس گئی", "", "phrase"),
+      dailyConcept("review-ik-ben-ziek", "ik ben ziek", "میں بیمار ہوں", "", "phrase"),
+      dailyConcept("review-ik-heb-pijn", "ik heb pijn", "مجھے درد ہے", "", "phrase"),
+      dailyConcept("review-ik-ga-naar-huis", "ik ga naar huis", "میں گھر جاتا / جاتی ہوں", "", "phrase")
+    ],
+    listenReplies: [
+      ["wat had u gisteren?", ["ik had gisteren hoofdpijn", "ik ging naar huis", "wij waren te laat"], "ik had gisteren hoofdpijn", "کل کی تکلیف بتائیں۔"]
+    ],
+    fills: [
+      ["ik ___ gisteren ziek", ["was", "ben", "is"], "was", "gisteren = گزری بات: was۔"],
+      ["gisteren ___ ik pijn", ["had", "heb", "ben"], "had", "gisteren پہلے، پھر فعل، پھر ik۔"],
+      ["gisteren ___ wij te laat", ["waren", "was", "zijn"], "waren", "wij کے ساتھ: waren۔"],
+      ["zij ___ gisteren naar de dokter", ["ging", "gaat", "ga"], "ging", "gaan کی گزری شکل: ging۔"]
+    ],
+    situations: [
+      ["حال: کام پر مینیجر پوچھتا ہے کہ آپ کل کیوں نہیں آئے۔ بتائیں کہ کل آپ بیمار تھے۔", ["gisteren was ik ziek", "gisteren ik was ziek", "gisteren ben ik ziek"], "gisteren was ik ziek", "gisteren کے بعد پہلے فعل۔"],
+      ["حال: ڈاکٹر کو بتائیں کہ کل آپ کے سر میں درد تھا۔", ["ik had gisteren hoofdpijn", "ik heb gisteren hoofdpijn", "ik ging naar huis"], "ik had gisteren hoofdpijn", "گزری بات: had۔"],
+      ["حال: استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔", ["zij ging naar de dokter", "zij gaat naar de dokter", "hij was ziek"], "zij ging naar de dokter", "گزری بات: ging۔"]
+    ],
+    builds: [
+      ["کل میں بیمار تھا", ["gisteren", "was", "ik", "ziek"], "gisteren was ik ziek", "وقت، فعل، پھر ik۔"],
+      ["میں گھر گیا", ["ik", "ging", "naar", "huis"], "ik ging naar huis", "ga سے ging۔"],
+      ["ہمیں دیر ہو گئی تھی", ["wij", "waren", "te", "laat"], "wij waren te laat", "wij کے ساتھ waren۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-feelings-reflexive",
+    unit: "A0: طبیعت کیسی ہے",
+    title: "Ik voel me ...",
+    description: "اپنی طبیعت بتانا اور دوسروں سے پوچھنا: ik voel me goed، hoe voelt u zich?",
+    explanation: {
+      title: "محسوس کرنا: ik voel me",
+      points: [
+        "ik voel me goed = میں اچھا محسوس کرتا / کرتی ہوں۔",
+        "me کا مطلب ہے ‘خود کو’، اور یہ ضروری ہے: ik voel me ziek۔",
+        "سوال: hoe voel je je? (دوست سے)، hoe voelt u zich? (ادب سے)۔"
+      ],
+      note: "تھکاوٹ کے لیے یہ ڈھانچہ نہیں: ik ben moe۔"
+    },
+    concepts: [
+      dailyConcept("feel-good", "ik voel me goed", "میں اچھا محسوس کرتا / کرتی ہوں", "", "phrase"),
+      dailyConcept("feel-ill", "ik voel me ziek", "میں بیمار محسوس کرتا / کرتی ہوں", "", "phrase"),
+      dailyConcept("feel-not-well", "ik voel me niet goed", "میری طبیعت ٹھیک نہیں", "", "phrase"),
+      dailyConcept("feel-better", "ik voel me beter", "اب میں بہتر محسوس کرتا / کرتی ہوں", "", "phrase"),
+      dailyConcept("feel-how-you", "hoe voel je je?", "تم کیسا محسوس کرتے ہو؟", "", "phrase"),
+      dailyConcept("feel-how-polite", "hoe voelt u zich?", "آپ کیسا محسوس کرتے ہیں؟", "", "phrase"),
+      dailyConcept("feel-she-ill", "zij voelt zich ziek", "وہ بیمار محسوس کرتی ہے", "", "phrase"),
+      dailyConcept("feel-tired", "ik ben moe", "میں تھکا / تھکی ہوں", "", "phrase"),
+      dailyConcept("review-ik-ben-ziek-2", "ik ben ziek", "میں بیمار ہوں", "", "phrase")
+    ],
+    listenReplies: [
+      ["hoe voelt u zich?", ["ik voel me beter", "om acht uur", "ga rechtdoor"], "ik voel me beter", "حال کا سوال ہے؛ اپنی طبیعت بتائیں۔"]
+    ],
+    fills: [
+      ["ik voel ___ goed", ["me", "je", "zich"], "me", "ik کے ساتھ me۔"],
+      ["hoe voelt u ___?", ["zich", "me", "je"], "zich", "u کے ساتھ zich۔"],
+      ["hoe voel je ___?", ["je", "me", "zich"], "je", "دوست سے: hoe voel je je?"],
+      ["zij voelt ___ ziek", ["zich", "me", "je"], "zich", "zij کے ساتھ zich۔"]
+    ],
+    situations: [
+      ["حال: دوائی کے دو دن بعد ڈاکٹر حال پوچھتا ہے۔ اب آپ پہلے سے اچھا محسوس کرتے ہیں۔", ["ik voel me beter", "ik voel beter", "ik voel me goed dan"], "ik voel me beter", "me ضروری ہے۔"],
+      ["حال: کام پر صبح سے طبیعت خراب ہے۔ مینیجر کو بتائیں۔", ["ik voel me niet goed", "ik voel niet goed", "ik voel me goed"], "ik voel me niet goed", "ik voel me، پھر niet goed۔"],
+      ["حال: استقبالیہ پر آپ ایک بزرگ مریض سے ادب سے ان کا حال پوچھتے ہیں۔", ["hoe voelt u zich?", "hoe voel je je?", "hoe voelt u me?"], "hoe voelt u zich?", "ادب سے: u اور zich۔"]
+    ],
+    builds: [
+      ["میری طبیعت ٹھیک نہیں", ["ik", "voel", "me", "niet", "goed"], "ik voel me niet goed", "ik voel me + niet goed۔"],
+      ["آپ کیسا محسوس کرتے ہیں؟", ["hoe", "voelt", "u", "zich"], "hoe voelt u zich", "ادب کا سوال۔"],
+      ["اب میں بہتر محسوس کرتا ہوں", ["ik", "voel", "me", "beter"], "ik voel me beter", "beter آخر میں۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-object-pronouns",
+    unit: "A0: مجھے، اسے، ہمیں",
+    title: "Mij, hem, haar, ons",
+    description: "فعل کے بعد شخص کی شکل بدلنا: کیا آپ ہماری مدد کر سکتے ہیں؟ میں اسے فون کرتا ہوں۔",
+    explanation: {
+      title: "فعل کے بعد: mij، hem، haar، ons",
+      points: [
+        "ik سے mij، hij سے hem، zij سے haar، wij سے ons۔",
+        "kunt u ons helpen? = کیا آپ ہماری مدد کر سکتے ہیں؟ ik bel hem = میں اسے فون کرتا ہوں۔",
+        "haar کے دو کام ہیں: haar pen = اس کا قلم؛ ik bel haar = میں اسے فون کرتا ہوں۔"
+      ],
+      note: "فعل کے بعد ik، hij، یا wij نہیں آتا: kunt u hij helpen غلط ہے۔"
+    },
+    concepts: [
+      dailyConcept("object-him", "hem", "اسے (مرد کو)"),
+      dailyConcept("object-us", "ons", "ہمیں"),
+      dailyConcept("object-help-him", "kunt u hem helpen?", "کیا آپ اس کی مدد کر سکتے ہیں؟", "", "phrase"),
+      dailyConcept("object-help-us", "kunt u ons helpen?", "کیا آپ ہماری مدد کر سکتے ہیں؟", "", "phrase"),
+      dailyConcept("object-call-her", "ik bel haar", "میں اسے (عورت کو) فون کرتا / کرتی ہوں", "", "phrase"),
+      dailyConcept("object-call-me", "bel mij morgen", "مجھے کل فون کریں", "", "phrase"),
+      dailyConcept("object-bring-him", "ik breng hem naar school", "میں اسے اسکول لے جاتا / جاتی ہوں", "", "phrase"),
+      dailyConcept("object-pick-her-up", "ik haal haar om drie uur op", "میں اسے تین بجے لے آتا / آتی ہوں", "", "phrase"),
+      dailyConcept("review-hij", "hij", "وہ (مرد)"),
+      dailyConcept("review-wij", "wij", "ہم"),
+      dailyConcept("review-help-me", "kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟", "", "phrase"),
+      dailyConcept("review-haar-pen", "haar pen", "اس کا قلم", "", "phrase")
+    ],
+    listenReplies: [
+      ["wie brengt uw zoon naar school?", ["ik breng hem naar school", "bel mij morgen", "ik bel haar"], "ik breng hem naar school", "بیٹے کو اسکول کون لے جاتا ہے؟ اپنے بارے میں بتائیں۔"]
+    ],
+    fills: [
+      ["kunt u ___ helpen?", ["ons", "wij", "ik"], "ons", "فعل کے بعد wij نہیں، ons۔"],
+      ["ik breng ___ naar school", ["hem", "hij", "ik"], "hem", "فعل کے بعد hij نہیں، hem۔"],
+      ["bel ___ morgen", ["mij", "ik", "mijn"], "mij", "فعل کے بعد ik نہیں، mij۔"],
+      ["ik haal ___ om drie uur op", ["haar", "zij", "wij"], "haar", "فعل کے بعد zij نہیں، haar۔"]
+    ],
+    situations: [
+      ["حال: بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔", ["kunt u hem helpen?", "kunt u hij helpen?", "kunt u ons helpen?"], "kunt u hem helpen?", "مرد یا لڑکے کے لیے hem۔"],
+      ["حال: آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے مدد مانگیں۔", ["kunt u ons helpen?", "kunt u wij helpen?", "kunt u hem helpen?"], "kunt u ons helpen?", "ہمیں = ons۔"],
+      ["حال: استاد پوچھتی ہیں کہ بیٹی کو کون لے جائے گا۔ بتائیں کہ آپ اسے تین بجے لے جائیں گے۔", ["ik haal haar om drie uur op", "ik haal zij om drie uur op", "ik bel haar"], "ik haal haar om drie uur op", "فعل کے بعد haar۔"]
+    ],
+    builds: [
+      ["کیا آپ ہماری مدد کر سکتے ہیں؟", ["kunt", "u", "ons", "helpen"], "kunt u ons helpen", "ons فعل سے پہلے، آخر میں helpen۔"],
+      ["میں اسے اسکول لے جاتا ہوں", ["ik", "breng", "hem", "naar", "school"], "ik breng hem naar school", "breng کے بعد hem۔"],
+      ["مجھے کل فون کریں", ["bel", "mij", "morgen"], "bel mij morgen", "bel کے بعد mij۔"]
+    ]
+  }),
+  makeA0DailyLesson({
+    id: "a0-future-gaan",
+    unit: "A0: آنے والا وقت",
+    title: "Morgen ga ik werken",
+    description: "آنے والے کام اور منصوبے بتانا: ik ga morgen werken، wij gaan eten۔",
+    explanation: {
+      title: "آنے والا کام: gaan اور آخر میں پورا فعل",
+      points: [
+        "ik ga werken = میں کام کرنے جا رہا / رہی ہوں، یعنی کام کروں گا / گی۔",
+        "پورا فعل جملے کے آخر میں آتا ہے: ik ga morgen werken۔",
+        "وقت پہلے ہو تو فعل دوسرے نمبر پر: morgen ga ik werken۔"
+      ],
+      note: "گزری بات: gisteren was ik ziek؛ آنے والی بات: morgen ga ik werken۔"
+    },
+    concepts: [
+      dailyConcept("future-go-work", "ik ga werken", "میں کام کرنے جا رہا / رہی ہوں", "", "phrase"),
+      dailyConcept("future-work-tomorrow", "ik ga morgen werken", "میں کل کام کروں گا / گی", "", "phrase"),
+      dailyConcept("future-tomorrow-first", "morgen ga ik werken", "کل میں کام کروں گا / گی", "", "phrase"),
+      dailyConcept("future-we-eat", "wij gaan eten", "ہم کھانا کھانے جا رہے ہیں", "", "phrase"),
+      dailyConcept("future-he-sleeps", "hij gaat slapen", "وہ سونے جا رہا ہے", "", "phrase"),
+      dailyConcept("future-call-school", "ik ga de school bellen", "میں اسکول کو فون کروں گا / گی", "", "phrase"),
+      dailyConcept("future-saturday-shop", "zaterdag ga ik naar de winkel", "ہفتے کو میں دکان جاؤں گا / گی", "", "phrase"),
+      dailyConcept("future-what-do", "wat ga je morgen doen?", "تم کل کیا کرو گے؟", "", "phrase"),
+      dailyConcept("review-ik-werk-vandaag", "ik werk vandaag", "میں آج کام کرتا / کرتی ہوں", "", "phrase")
+    ],
+    listenReplies: [
+      ["wat ga je morgen doen?", ["ik ga morgen werken", "ik was ziek", "ik had pijn"], "ik ga morgen werken", "کل کا منصوبہ بتائیں، گزری بات نہیں۔"]
+    ],
+    fills: [
+      ["ik ga morgen ___", ["werken", "werk", "werkt"], "werken", "gaan کے بعد پورا فعل آخر میں۔"],
+      ["morgen ___ ik werken", ["ga", "gaat", "gaan"], "ga", "وقت پہلے، پھر ga، پھر ik۔"],
+      ["wij ___ eten", ["gaan", "ga", "gaat"], "gaan", "wij کے ساتھ gaan۔"],
+      ["hij gaat ___", ["slapen", "slaap", "gaat"], "slapen", "gaat کے بعد پورا فعل۔"]
+    ],
+    situations: [
+      ["حال: ساتھی پوچھتا ہے کہ آپ کل کیا کریں گے۔ وقت پہلے رکھ کر بتائیں کہ کام کریں گے۔", ["morgen ga ik werken", "morgen ik ga werken", "morgen ga ik werk"], "morgen ga ik werken", "وقت، ga، ik، پھر پورا فعل۔"],
+      ["حال: دوست کو بتائیں کہ آپ اسکول کو فون کریں گے۔", ["ik ga de school bellen", "ik ga bellen de school", "ik ga de school bel"], "ik ga de school bellen", "پورا فعل آخر میں۔"],
+      ["حال: شام کو بچوں کو بتانا ہے کہ اب سب کھانا کھانے جا رہے ہیں۔", ["wij gaan eten", "wij gaat eten", "wij eten gaan"], "wij gaan eten", "wij کے ساتھ gaan۔"]
+    ],
+    builds: [
+      ["کل میں کام کروں گا", ["morgen", "ga", "ik", "werken"], "morgen ga ik werken", "وقت، ga، ik، werken۔"],
+      ["ہم کھانا کھانے جا رہے ہیں", ["wij", "gaan", "eten"], "wij gaan eten", "gaan، پھر eten۔"],
+      ["تم کل کیا کرو گے؟", ["wat", "ga", "je", "morgen", "doen"], "wat ga je morgen doen", "سوال کا لفظ پہلے، doen آخر میں۔"]
+    ]
+  })
+);
+
 a0Lessons.push(...a0DailyLessons);
 
 const a0LessonOrder = [
-  "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help",
+  "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help", "a0-language-help",
   "a0-letters-1", "a0-letters-2", "a0-letters-3", "a0-sounds-vowels", "a0-sounds-consonants",
-  "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-date-appointment",
+  "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-telling-time", "a0-date-appointment", "a0-months-dates",
   "a0-people-nouns", "a0-things-nouns", "a0-dit-dat-questions", "a0-een-de-het",
   "a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1",
-  "a0-geen", "a0-possessive", "a0-name-land-city", "a0-spelling-personal-details", "a0-address-phone", "a0-checkpoint",
+  "a0-geen", "a0-possessive", "a0-name-land-city", "a0-family-status", "a0-spelling-personal-details", "a0-address-phone", "a0-checkpoint",
   "a0-place-1", "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs",
-  "a0-daily-actions", "a0-food-drink", "a0-shopping-payment", "a0-transport-directions",
-  "a0-health-emergency", "a0-child-school", "a0-work-basics", "a0-weather-clothing-safety",
+  "a0-plurals-er-is",
+  "a0-daily-actions", "a0-food-drink", "a0-verb-endings", "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives", "a0-transport-directions",
+  "a0-health-emergency", "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had", "a0-child-school", "a0-object-pronouns", "a0-work-basics", "a0-future-gaan", "a0-weather-clothing-safety",
   "a0-daily-checkpoint"
 ];
 
@@ -4057,7 +4758,7 @@ const missionSpecs = [
   missionSpec({
     level: "a0", id: "a0-mission-help", unit: "A0: فوری مدد", title: "Hulp nodig", description: "نام، پتہ، فون، 112، پولیس، ڈاکٹر، اور ایمبولینس کی بنیادی بات۔",
     concepts: [["phone","telefoon","فون","telefoon"],["address","adres","پتہ","adres"],["doctor","dokter","ڈاکٹر","dokter"],["ambulance","ambulance","ایمبولینس","ambulance"],["medicine","medicijn","دوا","medicijn"],["pain","pijn","درد","pijn"]],
-    phrases: [["ik heb hulp nodig","مجھے مدد چاہیے"],["bel alstublieft 112","براہ مہربانی 112 پر فون کریں"],["mijn naam is Sara","میرا نام Sara ہے"],["wat is uw adres?","آپ کا پتہ کیا ہے؟"],["mijn adres is Marktstraat twaalf","میرا پتہ Marktstraat بارہ ہے"],["wat is er gebeurd?","کیا ہوا ہے؟"],["ik heb veel pijn","مجھے بہت درد ہے"],["er komt een ambulance","ایمبولینس آ رہی ہے"],["blijf hier wachten","یہاں انتظار کریں"],["ik heb een dokter nodig","مجھے ڈاکٹر چاہیے"],["de politie is onderweg","پولیس راستے میں ہے"],["de hulp is gekomen","مدد پہنچ گئی ہے"]],
+    phrases: [["ik heb hulp nodig","مجھے مدد چاہیے"],["bel alstublieft 112","براہ مہربانی 112 پر فون کریں"],["mijn naam is Sara","میرا نام سارہ ہے"],["wat is uw adres?","آپ کا پتہ کیا ہے؟"],["mijn adres is Marktstraat twaalf","میرا پتہ Marktstraat بارہ ہے"],["wat is er gebeurd?","کیا ہوا ہے؟"],["ik heb veel pijn","مجھے بہت درد ہے"],["er komt een ambulance","ایمبولینس آ رہی ہے"],["blijf hier wachten","یہاں انتظار کریں"],["ik heb een dokter nodig","مجھے ڈاکٹر چاہیے"],["de politie is onderweg","پولیس راستے میں ہے"],["de hulp is gekomen","مدد پہنچ گئی ہے"]],
     cues: ["hoe heet u?","wat is uw adres?","wat is er gebeurd?"], variants: ["طبی مدد","گمشدہ چیز","سڑک پر مدد"], documents: ["Noodkaart","Adresgegevens","Hulpbericht"]
   }),
   missionSpec({
@@ -4167,7 +4868,7 @@ const a0Subchapters = [
     title: "میرے پہلے جملے",
     goal: "اپنے، دوسرے لوگوں، چیزوں، اور رہنے کی جگہ کے بارے میں چھوٹے جملے کہنا۔",
     practice: "ik ben، ik heb، wij zijn، mijn naam is جیسے جملے بنائیں۔",
-    lessonIds: ["a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1", "a0-geen", "a0-possessive", "a0-name-land-city", "a0-spelling-personal-details", "a0-address-phone"]
+    lessonIds: ["a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1", "a0-geen", "a0-possessive", "a0-name-land-city", "a0-family-status", "a0-spelling-personal-details", "a0-address-phone"]
   },
   {
     id: "a0-foundation-review",
@@ -4392,23 +5093,45 @@ function semanticSlugV4(value, fallback = "item") {
 }
 
 function normalizedTextV4(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFKC")
-    .replace(/[.!?,;:()[\]{}"'’`|/\\]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const text = String(value || "");
+  const cache = normalizedTextV4.cache || (normalizedTextV4.cache = new Map());
+  let normalized = cache.get(text);
+  if (normalized === undefined) {
+    normalized = text
+      .toLowerCase()
+      .normalize("NFKC")
+      .replace(/[.!?,;:()[\]{}"'’`|/\\]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    cache.set(text, normalized);
+  }
+  return normalized;
 }
 
 function uniqueV4(items) {
-  return [...new Set((items || []).filter(Boolean))];
+  // Same result as [...new Set(items.filter(Boolean))], without building a
+  // Set for the short lists this is almost always called with.
+  const list = items || [];
+  if (list.length > 16) return [...new Set(list.filter(Boolean))];
+  const result = [];
+  for (const item of list) {
+    if (item && !result.includes(item)) result.push(item);
+  }
+  return result;
 }
 
 function dutchWordsV4(value) {
-  return uniqueV4(
-    (String(value || "").toLowerCase().match(/[a-zà-ÿ0-9-]+/g) || [])
-      .filter((word) => word.length > 1)
-  );
+  const text = String(value || "");
+  const cache = dutchWordsV4.cache || (dutchWordsV4.cache = new Map());
+  let words = cache.get(text);
+  if (words === undefined) {
+    words = uniqueV4(
+      (text.toLowerCase().match(/[a-zà-ÿ0-9-]+/g) || [])
+        .filter((word) => word.length > 1)
+    );
+    cache.set(text, words);
+  }
+  return words.slice();
 }
 
 function hasUsefulOverlapV4(left, right) {
@@ -4833,6 +5556,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-greetings-courtesy",
       "a0-understanding-help",
       "a0-ja-nee-goed-niet",
+      "a0-language-help",
       "a0-start-speaking-mission"
     ]
   },
@@ -4863,6 +5587,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-ben-bent-is",
       "a0-first-sentences",
       "a0-name-land-city",
+      "a0-family-status",
       "a0-first-sentences-mission"
     ]
   },
@@ -4888,9 +5613,11 @@ const a0LearningFirstUnitsV4 = [
       "a0-numbers-0-10",
       "a0-numbers-11-100",
       "a0-time-days",
+      "a0-telling-time",
       "a0-spelling-personal-details",
       "a0-address-phone",
       "a0-date-appointment",
+      "a0-months-dates",
       "a0-numbers-time-mission"
     ]
   },
@@ -4905,6 +5632,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-gaan-komen",
       "a0-naar-met",
       "a0-home-needs",
+      "a0-plurals-er-is",
       "a0-mission-home-start"
     ]
   },
@@ -4916,7 +5644,11 @@ const a0LearningFirstUnitsV4 = [
     lessonIds: [
       "a0-daily-actions",
       "a0-food-drink",
+      "a0-verb-endings",
+      "a0-colours-clothes",
+      "a0-adjective-endings",
       "a0-shopping-payment",
+      "a0-comparatives",
       "a0-mission-neighbourhood"
     ]
   },
@@ -4928,6 +5660,10 @@ const a0LearningFirstUnitsV4 = [
     lessonIds: [
       "a0-transport-directions",
       "a0-health-emergency",
+      "a0-body-health",
+      "a0-feelings-reflexive",
+      "a0-emergency-police",
+      "a0-past-was-had",
       "a0-mission-help"
     ]
   },
@@ -4938,7 +5674,9 @@ const a0LearningFirstUnitsV4 = [
     practice: "اسکول، کام، موسم، اور حفاظت کی ایک مربوط عملی صورت مکمل کریں۔",
     lessonIds: [
       "a0-child-school",
+      "a0-object-pronouns",
       "a0-work-basics",
+      "a0-future-gaan",
       "a0-weather-clothing-safety",
       "a0-school-work-safety-mission"
     ]
@@ -4949,6 +5687,20 @@ a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
 const a0LessonLabelsV4 = {
   "a0-greetings-courtesy": "سلام اور ادب",
   "a0-understanding-help": "سمجھ اور مدد",
+  "a0-language-help": "زبان اور ترجمان",
+  "a0-family-status": "شوہر، بیوی، اور بچے",
+  "a0-telling-time": "سوا، ساڑھے، پونے",
+  "a0-months-dates": "مہینے اور تاریخ",
+  "a0-body-health": "جسم اور درد کی جگہ",
+  "a0-emergency-police": "پولیس، آگ، اور حادثہ",
+  "a0-verb-endings": "فعل کی شکلیں",
+  "a0-adjective-endings": "رنگ اسم سے پہلے",
+  "a0-comparatives": "مہنگا، سستا، بہتر",
+  "a0-plurals-er-is": "ایک یا زیادہ",
+  "a0-past-was-had": "کل کیا ہوا",
+  "a0-feelings-reflexive": "طبیعت کیسی ہے",
+  "a0-object-pronouns": "مجھے، اسے، ہمیں",
+  "a0-future-gaan": "کل کیا کریں گے",
   "a0-ja-nee-goed-niet": "چھوٹے جواب",
   "a0-letters-1": "آواز: a اور b",
   "a0-letters-2": "آواز: h اور i",
@@ -4979,6 +5731,7 @@ const a0LessonLabelsV4 = {
   "a0-home-needs": "گھر کی فوری ضرورت",
   "a0-daily-actions": "روزمرہ کام",
   "a0-food-drink": "کھانا اور پینا",
+  "a0-colours-clothes": "رنگ اور کپڑے",
   "a0-shopping-payment": "دکان اور ادائیگی",
   "a0-transport-directions": "سفر اور راستہ",
   "a0-health-emergency": "صحت اور فوری مدد",
@@ -5090,8 +5843,8 @@ replaceSeedConceptsV4("a0-name-land-city", [
   ["land", "ملک"],
   ["stad", "شہر"],
   ["mijn naam is Ali", "میرا نام Ali ہے"],
-  ["ik woon in Nederland", "میں Nederland میں رہتا/رہتی ہوں"],
-  ["ik kom uit Pakistan", "میں Pakistan سے آتا/آتی ہوں"]
+  ["ik woon in Nederland", "میں نیدرلینڈز میں رہتا/رہتی ہوں"],
+  ["ik kom uit Pakistan", "میں پاکستان سے آتا/آتی ہوں"]
 ]);
 replaceSeedConceptsV4("a0-hebben-1", [
   ["ik heb een boek", "میرے پاس ایک کتاب ہے"],
@@ -5132,7 +5885,7 @@ replaceSeedConceptsV4("a0-possessive", [
   ["zijn naam is Ali", "اس کا نام Ali ہے"]
 ]);
 replaceSeedConceptsV4("a0-spelling-personal-details", [
-  ["mijn naam is Sara", "میرا نام Sara ہے"],
+  ["mijn naam is Sara", "میرا نام سارہ ہے"],
   ["hoe heet u?", "آپ کا نام کیا ہے؟"],
   ["hoe spelt u dat?", "آپ اس کے حروف کیسے بولتے ہیں؟"],
   ["voornaam", "پہلا نام"],
@@ -5343,16 +6096,16 @@ const a1AuthoredCurriculumV4 = {
       seedConcepts: [
         ["voornaam", "پہلا نام"],
         ["achternaam", "خاندانی نام"],
-        ["mijn voornaam is Sara", "میرا پہلا نام Sara ہے"],
-        ["mijn achternaam is Khan", "میرا خاندانی نام Khan ہے"],
+        ["mijn voornaam is Sara", "میرا پہلا نام سارہ ہے"],
+        ["mijn achternaam is Khan", "میرا خاندانی نام خان ہے"],
         ["geboortedatum", "تاریخ پیدائش"],
         ["mijn geboortedatum is 12 mei", "میری تاریخ پیدائش 12 مئی ہے"],
         ["adres", "پتہ"],
         ["ik woon aan de Marktstraat 12", "میں Marktstraat 12 پر رہتا / رہتی ہوں"],
         ["postcode", "پوسٹ کوڈ"],
-        ["mijn postcode is 1234 AB", "میرا پوسٹ کوڈ 1234 AB ہے"],
+        ["mijn postcode is 1234 AB", "میرا پوسٹ کوڈ 1234 اے بی ہے"],
         ["woonplaats", "رہنے کا شہر"],
-        ["mijn woonplaats is Utrecht", "میرا رہنے کا شہر Utrecht ہے"],
+        ["mijn woonplaats is Utrecht", "میرا رہنے کا شہر یوٹریکٹ ہے"],
         ["telefoonnummer", "فون نمبر"],
         ["mijn telefoonnummer is nul zes", "میرا فون نمبر صفر چھ سے شروع ہوتا ہے"],
         ["e-mailadres", "ای میل پتہ"],
@@ -5372,7 +6125,7 @@ const a1AuthoredCurriculumV4 = {
           usageBoundaryUrdu: "voornaam صرف پہلا نام ہے؛ خاندانی نام achternaam کے الگ خانے میں جاتا ہے۔",
           commonConfusionUrdu: "پہلے نام کے جواب میں achternaam نہ دیں؛ “mijn voornaam is Sara” میں voornaam ہی رکھیں۔",
           exampleDutch: "voornaam — mijn voornaam is Sara",
-          exampleUrdu: "پہلا نام — میرا پہلا نام Sara ہے۔",
+          exampleUrdu: "پہلا نام — میرا پہلا نام سارہ ہے۔",
           pronunciationUrdu: "مَین فور نام اِس سا را"
         },
         "mijn achternaam is khan": {
@@ -5380,7 +6133,7 @@ const a1AuthoredCurriculumV4 = {
           usageBoundaryUrdu: "achternaam خاندانی نام ہے؛ اسے پہلے نام والے voornaam خانے میں نہ لکھیں۔",
           commonConfusionUrdu: "“mijn achternaam is Khan” خاندانی نام دیتا ہے؛ voornaam والے پہلے نام کے جواب سے اسے نہ ملائیں۔",
           exampleDutch: "mijn achternaam is Khan",
-          exampleUrdu: "میرا خاندانی نام Khan ہے۔",
+          exampleUrdu: "میرا خاندانی نام خان ہے۔",
           pronunciationUrdu: "مَین آخ تَر نام اِس خان"
         },
         "mijn geboortedatum is 12 mei": {
@@ -5396,7 +6149,7 @@ const a1AuthoredCurriculumV4 = {
           usageBoundaryUrdu: "postcode صرف علاقے کا عدد اور حرف والا کوڈ ہے؛ سڑک اور گھر نمبر پورا adres ہوتے ہیں۔",
           commonConfusionUrdu: "1234 کے بعد AB چھوڑنے سے پوسٹ کوڈ نامکمل رہتا ہے؛ عدد اور حروف دونوں دیں۔",
           exampleDutch: "postcode — mijn postcode is 1234 AB",
-          exampleUrdu: "پوسٹ کوڈ — میرا پوسٹ کوڈ 1234 AB ہے۔",
+          exampleUrdu: "پوسٹ کوڈ — میرا پوسٹ کوڈ 1234 اے بی ہے۔",
           pronunciationUrdu: "مَین پوسٹ کو دا اِس ٹوالف دَر تیخ فیر آ بے"
         },
         "mijn woonplaats is utrecht": {
@@ -5404,7 +6157,7 @@ const a1AuthoredCurriculumV4 = {
           usageBoundaryUrdu: "woonplaats رہنے کا شہر ہے؛ land ملک اور adres مکمل گلی اور گھر نمبر ہے۔",
           commonConfusionUrdu: "woonplaats کے خانے میں ملک نہ لکھیں؛ یہاں Utrecht جیسے رہنے کے شہر کا نام درکار ہے۔",
           exampleDutch: "woonplaats — mijn woonplaats is Utrecht",
-          exampleUrdu: "رہنے کا شہر — میرا رہنے کا شہر Utrecht ہے۔",
+          exampleUrdu: "رہنے کا شہر — میرا رہنے کا شہر یوٹریکٹ ہے۔",
           pronunciationUrdu: "مَین وون پلاتس اِس یو ترَخت"
         },
         "mijn telefoonnummer is nul zes": {
@@ -5456,15 +6209,15 @@ const a1AuthoredCurriculumV4 = {
         voornaam: ["details-find-first-name", "کمیونٹی مرکز کے فارم میں پہلا نام والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
         achternaam: ["details-find-family-name", "فارم میں خاندانی نام والا خانہ نشان زد کرنا ہے۔ درست ڈچ لفظ چنیں۔"],
         "mijn voornaam is sara": ["details-give-first-name", "ملازم voornaam پوچھتا ہے۔ اپنا پہلا نام Sara مکمل جملے میں بتائیں۔"],
-        "mijn achternaam is khan": ["details-give-family-name", "ملازم achternaam پوچھتا ہے۔ اپنا خاندانی نام Khan مکمل جملے میں بتائیں۔"],
+        "mijn achternaam is khan": ["details-give-family-name", "ملازم achternaam پوچھتا ہے۔ اپنا خاندانی نام خان مکمل جملے میں بتائیں۔"],
         geboortedatum: ["details-find-birth-date", "رجسٹریشن فارم میں پیدائش کی تاریخ والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
         "mijn geboortedatum is 12 mei": ["details-give-birth-date", "ملازم پیدائش کی تاریخ پوچھتا ہے۔ 12 مئی مکمل جملے میں بتائیں۔"],
         adres: ["details-find-address", "فارم میں سڑک اور گھر نمبر والی مکمل معلومات کا خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
         "ik woon op marktstraat 12": ["details-give-address", "ملازم پوچھتا ہے کہ آپ کہاں رہتے ہیں۔ Marktstraat 12 کا مکمل جواب دیں۔"],
         postcode: ["details-find-postcode", "پتے کے حصے میں عدد اور حروف والا پوسٹ کوڈ خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
-        "mijn postcode is 1234 ab": ["details-give-postcode", "ملازم پوسٹ کوڈ پوچھتا ہے۔ 1234 AB حروف سمیت مکمل جواب دیں۔"],
+        "mijn postcode is 1234 ab": ["details-give-postcode", "ملازم پوسٹ کوڈ پوچھتا ہے۔ 1234 اے بی حروف سمیت مکمل جواب دیں۔"],
         woonplaats: ["details-find-city", "فارم میں رہنے کے شہر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
-        "mijn woonplaats is utrecht": ["details-give-city", "ملازم رہنے کا شہر پوچھتا ہے۔ Utrecht مکمل جملے میں بتائیں۔"],
+        "mijn woonplaats is utrecht": ["details-give-city", "ملازم رہنے کا شہر پوچھتا ہے۔ یوٹریکٹ مکمل جملے میں بتائیں۔"],
         telefoonnummer: ["details-find-phone", "رابطے کے حصے میں فون نمبر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
         "mijn telefoonnummer is nul zes": ["details-give-phone", "ملازم رابطے کا فون نمبر پوچھتا ہے۔ صفر چھ سے شروع ہونے والا جواب صاف کہیں۔"],
         "e-mailadres": ["details-find-email", "رابطہ فارم میں ای میل پتہ والا خانہ ڈھونڈنا ہے۔ درست لفظ چنیں۔"],
@@ -7263,10 +8016,10 @@ const a1AuthoredCurriculumV4 = {
     "a1-public-transport": {
       title: "Reizen met bus en trein", unitLabel: "A1: سفر، شہر کی جگہیں اور حفاظت",
       outcomeUrdu: "ٹکٹ مانگنا، روانگی بورڈ پڑھنا، پلیٹ فارم یا وقت پوچھنا، تاخیر سمجھنا، اور بس یا ٹرین بدلنے کی بات کرنا۔",
-      seedConcepts: [["spoor","پلیٹ فارم"],["ik wil een kaartje naar Utrecht","مجھے Utrecht کا ٹکٹ چاہیے"],["vertraging","تاخیر"],["ik ga naar het station","میں اسٹیشن جا رہا یا رہی ہوں"],["hoe laat vertrekt de trein?","ٹرین کتنے بجے روانہ ہوتی ہے؟"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟"],["de trein heeft vertraging","ٹرین دیر سے ہے"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے"]],
+      seedConcepts: [["spoor","پلیٹ فارم"],["ik wil een kaartje naar Utrecht","مجھے یوٹریکٹ کا ٹکٹ چاہیے"],["vertraging","تاخیر"],["ik ga naar het station","میں اسٹیشن جا رہا یا رہی ہوں"],["hoe laat vertrekt de trein?","ٹرین کتنے بجے روانہ ہوتی ہے؟"],["van welk spoor vertrekt de trein?","ٹرین کس پلیٹ فارم سے جاتی ہے؟"],["de trein heeft vertraging","ٹرین دیر سے ہے"],["gaat deze bus naar het centrum?","کیا یہ بس مرکز جاتی ہے؟"],["waar moet ik overstappen?","مجھے کہاں گاڑی بدلنی ہے؟"],["de volgende halte is centrum","اگلا اسٹاپ مرکز ہے"]],
       teaching:authoredA1TeachingV4([
         ["spoor","اسٹیشن کے بورڈ پر ٹرین کے پلیٹ فارم کو spoor کہیں۔","یہ پلیٹ فارم ہے؛ halte بس کا اسٹاپ ہے۔","spoor کو ٹرین کے روانگی وقت کے معنی میں نہ لیں۔","spoor — station","پلیٹ فارم — اسٹیشن۔","سپور"],
-        ["ik wil een kaartje naar utrecht","ٹکٹ کاؤنٹر پر Utrecht جانے کا ٹکٹ مکمل جملے میں مانگیں۔","naar منزل بتاتا ہے؛ روانگی کا وقت الگ سوال ہے۔","kaartje کے بعد naar اور پھر شہر رکھیں۔","Ik wil een kaartje naar Utrecht.","مجھے Utrecht کا ٹکٹ چاہیے۔","اِک وِل اَن کارت یَ نار یو تریخت"],
+        ["ik wil een kaartje naar utrecht","ٹکٹ کاؤنٹر پر Utrecht جانے کا ٹکٹ مکمل جملے میں مانگیں۔","naar منزل بتاتا ہے؛ روانگی کا وقت الگ سوال ہے۔","kaartje کے بعد naar اور پھر شہر رکھیں۔","Ik wil een kaartje naar Utrecht.","مجھے یوٹریکٹ کا ٹکٹ چاہیے۔","اِک وِل اَن کارت یَ نار یو تریخت"],
         ["vertraging","روانگی بورڈ پر تاخیر کے لیے vertraging پہچانیں۔","یہ دیر ہے؛ spoor پلیٹ فارم ہے۔","vertraging کو منسوخی کے معنی میں نہ سمجھیں۔","vertraging — spoor","تاخیر — پلیٹ فارم۔","فَر ترا خِنگ"],
         ["ik ga naar het station","اپنی منزل اسٹیشن ہو تو یہ مکمل حرکت والا جملہ کہیں۔","یہ اسٹیشن جانے کی اطلاع ہے؛ ٹکٹ مانگنے کی درخواست نہیں۔","ga کے بعد naar het station رکھیں۔","Ik ga naar het station.","میں اسٹیشن جا رہا یا رہی ہوں۔","اِک خا نار ہَت ستا سیون"],
         ["hoe laat vertrekt de trein","ٹرین کا گھڑی والا روانگی وقت پوچھیں۔","hoe laat وقت پوچھتا ہے؛ welk spoor پلیٹ فارم پوچھتا ہے۔","سوال میں hoe laat پہلے اور vertrekt اس کے بعد رکھیں۔","Hoe laat vertrekt de trein?","ٹرین کتنے بجے روانہ ہوتی ہے؟","ہو لات فَر تریکٹ دَ ٹرَین"],
@@ -7278,7 +8031,7 @@ const a1AuthoredCurriculumV4 = {
       ]),
       pattern:{modelDutch:"ik wil een kaartje naar Utrecht",titleUrdu:"منزل کے ساتھ ٹکٹ مانگنا",highlight:"ik wil een kaartje naar Utrecht",explanationUrdu:"ٹکٹ مانگنے کے لیے ik wil een kaartje naar کے بعد منزل رکھیں۔",contrastUrdu:"kaartje naar Utrecht منزل والا ٹکٹ ہے؛ hoe laat vertrekt وقت پوچھتا ہے۔",commonMistakeUrdu:"naar کو شہر کے بعد نہ رکھیں؛ kaartje naar کے بعد منزل کہیں۔"},
       prerequisiteLessonIds:["a0-transport-directions","a0-time-days","a1-questions"],prerequisiteRefs:[["a0-transport-directions","bus"],["a0-transport-directions","trein"],["a0-transport-directions","station"],["a0-transport-directions","halte"],["a0-transport-directions","kaartje"],["a0-time-days","hoe laat"],["a1-questions","waar"]],
-      scenarios:{spoor:["transport-recognise-platform","روانگی بورڈ پر پلیٹ فارم پہچانیں۔"],"ik wil een kaartje naar utrecht":["transport-buy-ticket","کاؤنٹر پر Utrecht کا ٹکٹ مانگیں۔"],vertraging:["transport-recognise-delay","بورڈ پر تاخیر پہچانیں۔"],"ik ga naar het station":["transport-state-destination","اپنی اسٹیشن والی منزل بتائیں۔"],"hoe laat vertrekt de trein":["transport-ask-departure","ٹرین کا روانگی وقت پوچھیں۔"],"van welk spoor vertrekt de trein":["transport-ask-platform","ٹرین کا پلیٹ فارم پوچھیں۔"],"de trein heeft vertraging":["transport-hear-delay","اعلان میں ٹرین کی تاخیر سمجھیں۔"],"gaat deze bus naar het centrum":["transport-check-bus","مرکز جانے والی بس کی تصدیق کریں۔"],"waar moet ik overstappen":["transport-ask-transfer","گاڑی بدلنے کی جگہ پوچھیں۔"],"de volgende halte is centrum":["transport-hear-stop","اگلے اسٹاپ کا اعلان سمجھیں۔"]},
+      scenarios:{spoor:["transport-recognise-platform","روانگی بورڈ پر پلیٹ فارم پہچانیں۔"],"ik wil een kaartje naar utrecht":["transport-buy-ticket","کاؤنٹر پر یوٹریکٹ کا ٹکٹ مانگیں۔"],vertraging:["transport-recognise-delay","بورڈ پر تاخیر پہچانیں۔"],"ik ga naar het station":["transport-state-destination","اپنی اسٹیشن والی منزل بتائیں۔"],"hoe laat vertrekt de trein":["transport-ask-departure","ٹرین کا روانگی وقت پوچھیں۔"],"van welk spoor vertrekt de trein":["transport-ask-platform","ٹرین کا پلیٹ فارم پوچھیں۔"],"de trein heeft vertraging":["transport-hear-delay","اعلان میں ٹرین کی تاخیر سمجھیں۔"],"gaat deze bus naar het centrum":["transport-check-bus","مرکز جانے والی بس کی تصدیق کریں۔"],"waar moet ik overstappen":["transport-ask-transfer","گاڑی بدلنے کی جگہ پوچھیں۔"],"de volgende halte is centrum":["transport-hear-stop","اگلے اسٹاپ کا اعلان سمجھیں۔"]},
       document:{stableId:"transport-departure-board",sourceKey:"transport-departure-board",documentKind:"departure-board",targetDutch:"van welk spoor vertrekt de trein?",title:"spoor",labelUrdu:"ٹرین کا روانگی بورڈ پڑھیں",promptUrdu:"بورڈ میں trein اور spoor دیکھیں، پھر پلیٹ فارم پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"روانگی بورڈ میں وقت، spoor، اور vertraging الگ دیکھیں، پھر ٹرین کے پلیٹ فارم والا سیکھی ہوئی سوال چنیں۔",correctUrdu:"درست۔ van welk spoor ٹرین کا پلیٹ فارم پوچھتا ہے۔",wrongUrdu:"یہ دوسری سفر کی بات ہے۔ welk spoor پلیٹ فارم کے بارے میں ہے۔",rows:[{label:"trein",value:"de trein heeft vertraging"},{label:"spoor",value:"van welk spoor vertrekt de trein?"},{label:"vertraging",value:"vertraging"}]}
     },
     "a1-directions-town": {
@@ -7672,7 +8425,7 @@ const a1AuthoredCurriculumV4 = {
       document:{documentKind:"school-work-message-card",title:"Bericht",labelUrdu:"اسکول اور کام کے پیغام پڑھیں",promptUrdu:"کارڈ میں huiswerk اور dienst veranderd الگ دیکھیں، پھر موجود صورت کے لیے مناسب سیکھی ہوئی بات کا درست مطلب منتخب کریں۔",instructionUrdu:"کارڈ میں غیر حاضری، huiswerk، اور بدلی dienst الگ پڑھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات چنیں۔",rows:[{label:"school",value:"mijn kind komt vandaag niet naar school"},{label:"huiswerk",value:"waar staat het huiswerk?"},{label:"dienst",value:"mijn dienst is veranderd"}]}
     },
     "a1-mission-doctor": {
-      sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"huisarts کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"huisarts، dokter، یا apotheek کا ملازم",
+      sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"فیملی ڈاکٹر کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"فیملی ڈاکٹر، ڈاکٹر، یا فارمیسی کا ملازم",
       prerequisiteLessonIds:["a1-health-appointments","a1-doctor-symptoms","a1-pharmacy-medicine"],
       variantTitles:["huisarts کو فون اور ملاقات","ڈاکٹر کو علامت اور مدت بتانا","نسخہ، دوا، اور لیبل کی ہدایت"],
       variantContexts:["assistente کو ملاقات کا مقصد بتائیں، فوری ضرورت کا سوال سمجھیں، اور وقت طے کریں","ڈاکٹر کے سوال سنیں، درد کی جگہ اور بخار کی مدت واضح کریں، اور آرام کی ہدایت سمجھیں","دواخانے میں نسخہ دیں، حساسیت بتائیں، اور لیبل سے مقدار اور کھانے کا وقت سمجھیں"],
@@ -11198,6 +11951,89 @@ const a0SoundTeachingV4 = {
   zeep: ["z صاف ‘ز’، اور ee لمبی ‘اے’: زیپ۔", "ee کو ‘ای’ نہ پڑھیں؛ یہ لمبی ‘اے’ ہے۔", "zeep — zon", "دونوں لفظ صاف ‘ز’ سے شروع ہوتے ہیں۔", "زیپ"]
 };
 
+// Survival lessons (roadmap 1.3): hand-written teaching per item.
+// [usage, common confusion, example Dutch, example Urdu, pronunciation]
+const a0SurvivalTeachingV4 = {
+  "a0-colours-clothes": {
+    "rood": ["رنگ بتاتے ہوئے سرخ کے لیے rood کہیں، جیسے ٹریفک کی رکنے والی بتی۔", "آخر کی آواز ٹ جیسی سنائی دیتی ہے: روٹ۔ rood (سرخ) کو groen (سبز) سے نہ ملائیں۔", "rood — groen", "رکنے کی بتی سرخ، چلنے کی بتی سبز۔", "روٹ"],
+    "blauw": ["آسمان یا جینز جیسے نیلے رنگ کے لیے blauw کہیں۔", "blauw (نیلا) اور rood (سرخ) دونوں رنگ ہیں؛ blauw کی آواز بلاؤ جیسی ہے۔", "blauw — rood", "نیلا — سرخ۔", "بلاؤ"],
+    "groen": ["پتے، گھاس، یا چلنے والی بتی کے سبز رنگ کے لیے groen کہیں۔", "شروع کی آواز گلے سے خ جیسی ہے: خرون۔", "groen — rood", "سبز بتی پر چلیں، سرخ بتی پر رکیں۔", "خْرون"],
+    "zwart": ["کالے کپڑے، جوتے، یا بیگ کے لیے zwart کہیں۔", "شروع میں ز اور و کی آواز ساتھ بولیں اور آخر کی ٹ صاف بولیں۔ zwart (کالا) کا الٹ wit (سفید) ہے۔", "zwart — wit", "کالا اور سفید: الٹے رنگ۔", "زْوارٹ"],
+    "kleur": ["کسی چیز کے رنگ کی بات کرتے ہوئے kleur کہیں۔", "درمیان کی آواز اردو میں نہیں؛ ہونٹ گول کرکے بولیں: کلُور۔ kleur خود رنگ ہے، کوئی خاص رنگ نہیں۔", "kleur: zwart", "رنگ: کالا۔", "کْلُور"],
+    "welke kleur?": ["کسی سے کسی چیز کا رنگ پوچھنا ہو تو welke kleur? کہیں۔", "سوال welke سے شروع ہوتا ہے؛ جواب میں صرف رنگ کہہ دینا کافی ہے۔", "welke kleur? — zwart.", "کون سا رنگ؟ — کالا۔", "وَیلکَ کْلُور"],
+    "de jas is blauw": ["کسی چیز کا رنگ بتانا ہو: پہلے چیز، پھر is، پھر رنگ۔", "is کے بعد رنگ کا لفظ نہیں بدلتا: de jas is blauw۔", "de jas is zwart", "جیکٹ کالی ہے۔", "دَ یاس اِس بلاؤ"],
+    "heeft u dit in het zwart?": ["دکان میں کوئی چیز دوسرے رنگ میں چاہیے تو یہ سوال پوچھیں۔", "رنگ سے پہلے in het آتا ہے: in het zwart، in het blauw۔", "heeft u dit in het blauw?", "کیا یہ آپ کے پاس نیلے رنگ میں ہے؟", "ہیفٹ یو دِٹ اِن اَٹ زْوارٹ"]
+  },
+  "a0-language-help": {
+    "ik spreek Urdu": ["کوئی پوچھے کہ آپ کون سی زبان بولتے ہیں تو اپنی زبان بتائیں۔", "spreek کے بعد سیدھا زبان کا نام آتا ہے؛ درمیان میں کوئی اور لفظ نہیں۔", "spreekt u Engels? — ik spreek Urdu.", "کیا آپ انگریزی بولتے ہیں؟ — میں اردو بولتا ہوں۔", "اِک سپریک اُردو"],
+    "ik spreek Engels": ["اگر ڈچ مشکل ہو اور آپ انگریزی جانتے ہیں تو یہ بتائیں۔", "Engels کا مطلب انگریزی زبان ہے؛ زبان کا نام بڑے حرف سے لکھا جاتا ہے۔", "ik spreek Urdu — ik spreek Engels", "میں اردو بولتا ہوں — میں انگریزی بولتا ہوں۔", "اِک سپریک اینگلس"],
+    "spreekt u Engels?": ["دکان، فارمیسی، یا دفتر میں ادب سے پوچھیں کہ کیا سامنے والا انگریزی بولتا ہے۔", "سوال میں فعل پہلے آتا ہے اور u کے ساتھ فعل کے آخر میں ٹ کی آواز لگتی ہے: spreekt u۔", "spreekt u Engels? — ik spreek Engels.", "کیا آپ انگریزی بولتے ہیں؟ — میں انگریزی بولتا ہوں۔", "سپریکٹ یو اینگلس"],
+    "ik spreek geen Nederlands": ["جب کوئی تیزی سے ڈچ بولے اور آپ ابھی ڈچ نہیں جانتے تو یہ کہیں۔", "زبان کی نفی geen سے ہوتی ہے: ik spreek geen Nederlands۔", "ik spreek geen Nederlands — ik spreek Engels", "میں ڈچ نہیں بولتا — میں انگریزی بولتا ہوں۔", "اِک سپریک خین نیدرلانڈس"],
+    "tolk": ["ایسا شخص جو دو زبانوں میں بات سمجھا دے؛ ہسپتال یا بلدیہ میں مانگا جا سکتا ہے۔", "tolk بولی ہوئی بات کا ترجمان ہے؛ اسے کسی زبان کا نام نہ سمجھیں۔", "een tolk — ik heb een tolk nodig", "ترجمان — مجھے ترجمان چاہیے۔", "ٹولک"],
+    "ik heb een tolk nodig": ["جب ڈاکٹر یا ملازم کی بات بالکل سمجھ نہ آئے اور ترجمان چاہیے۔", "nodig جملے کے آخر میں آتا ہے: ik heb een tolk nodig۔", "ik spreek geen Nederlands. ik heb een tolk nodig.", "میں ڈچ نہیں بولتا۔ مجھے ترجمان چاہیے۔", "اِک ہیپ اَن ٹولک نودِخ"],
+    "is er een tolk?": ["کسی کاؤنٹر پر پوچھنا ہو کہ کیا یہاں ترجمان موجود ہے۔", "سوال is سے شروع ہوتا ہے؛ er کا مطلب یہاں ‘موجود’ ہے۔", "is er een tolk? — ik spreek Urdu.", "کیا یہاں ترجمان ہے؟ — میں اردو بولتا ہوں۔", "اِس اَر اَن ٹولک"],
+    "hoe zeg je dat in het Nederlands?": ["جب کوئی لفظ ڈچ میں نہ آتا ہو تو استاد یا ساتھی سے یہ پوچھیں۔", "hoe کا مطلب کیسے ہے؛ یہ سوال ڈچ میں کہنے کا طریقہ پوچھتا ہے۔", "hoe zeg je dat in het Nederlands? — tolk.", "اسے ڈچ میں کیسے کہتے ہیں؟ — tolk۔", "ہُو زَخ یَ دَٹ اِن اَٹ نیدرلانڈس"]
+  },
+  "a0-family-status": {
+    "mijn man": ["اپنے شوہر کے بارے میں بات کرتے ہوئے mijn man کہیں۔", "اکیلے man کا مطلب آدمی ہے، مگر mijn man کا مطلب میرا شوہر ہے۔", "mijn man — mijn vrouw", "میرا شوہر — میری بیوی۔", "مَین مان"],
+    "mijn vrouw": ["اپنی بیوی کے بارے میں بات کرتے ہوئے mijn vrouw کہیں۔", "اکیلے vrouw کا مطلب عورت ہے، مگر mijn vrouw کا مطلب میری بیوی ہے۔", "mijn vrouw — mijn man", "میری بیوی — میرا شوہر۔", "مَین وْراؤ"],
+    "ik ben getrouwd": ["فارم یا تعارف میں پوچھا جائے کہ آپ شادی شدہ ہیں تو یہ کہیں۔", "getrouwd کی آواز خَتراؤٹ ہے: شروع گلے سے خ جیسا اور آخر ٹ جیسا۔", "ik ben getrouwd — mijn man", "میں شادی شدہ ہوں — میرا شوہر۔", "اِک بَن خَتراؤٹ"],
+    "ik ben niet getrouwd": ["شادی نہیں ہوئی تو فارم یا تعارف میں یہ کہیں۔", "niet فعل ben کے بعد آتا ہے: ik ben niet getrouwd۔", "ik ben niet getrouwd — ik ben getrouwd", "میں شادی شدہ نہیں ہوں — میں شادی شدہ ہوں۔", "اِک بَن نیٹ خَتراؤٹ"],
+    "mijn zoon": ["اسکول یا ڈاکٹر کو اپنے بیٹے کے بارے میں بتاتے ہوئے mijn zoon کہیں۔", "zoon بیٹا ہے، dochter بیٹی؛ ہر لڑکا zoon نہیں، صرف کسی کا بیٹا۔", "mijn zoon — mijn dochter", "میرا بیٹا — میری بیٹی۔", "مَین زون"],
+    "mijn dochter": ["اسکول یا ڈاکٹر کو اپنی بیٹی کے بارے میں بتاتے ہوئے mijn dochter کہیں۔", "درمیان کی آواز گلے سے خ جیسی ہے: دوختَر۔", "mijn dochter — mijn zoon", "میری بیٹی — میرا بیٹا۔", "مَین دوختَر"],
+    "opa": ["دادا یا نانا دونوں کے لیے ڈچ میں ایک لفظ opa ہے۔", "ڈچ میں دادا اور نانا میں فرق نہیں؛ دونوں opa ہیں۔", "opa — oma", "دادا یا نانا — دادی یا نانی۔", "اوپا"],
+    "oma": ["دادی یا نانی دونوں کے لیے ڈچ میں oma کہیں۔", "opa مرد ہے اور oma عورت؛ درمیان کی آواز سنیں: پ یا م۔", "oma — opa", "دادی یا نانی — دادا یا نانا۔", "اوما"]
+  },
+  "a0-telling-time": {
+    "kwart": ["گھڑی میں پندرہ منٹ کو kwart کہتے ہیں۔", "kwart پندرہ منٹ ہے، آدھا گھنٹہ نہیں؛ آدھے کے لیے half آتا ہے۔", "kwart: 0:15", "پاؤ گھنٹہ: پندرہ منٹ۔", "کْوارٹ"],
+    "het is drie uur": ["کوئی وقت پوچھے تو پورے گھنٹے کا جواب: het is ... uur۔", "uur گھڑی کا گھنٹہ ہے؛ جواب het is سے شروع کریں۔", "3:00 — het is drie uur", "3:00 — تین بجے ہیں۔", "اَٹ اِس دْری یُور"],
+    "half acht": ["ڈچ میں آدھا گھنٹہ اگلے گھنٹے سے پہلے گنا جاتا ہے: half acht = 7:30۔", "half acht کا مطلب ساڑھے آٹھ نہیں! یہ آٹھ سے آدھا گھنٹہ پہلے، یعنی 7:30 ہے۔", "7:30 — half acht", "7:30 — ساڑھے سات۔", "ہالف آخت"],
+    "kwart over drie": ["گھنٹے کے پندرہ منٹ بعد کا وقت: kwart over + گھنٹہ۔", "over کا مطلب بعد ہے: kwart over drie = 3:15، یعنی سوا تین۔", "3:15 — kwart over drie", "3:15 — سوا تین۔", "کْوارٹ اووَر دْری"],
+    "kwart voor vier": ["اگلے گھنٹے سے پندرہ منٹ پہلے کا وقت: kwart voor + اگلا گھنٹہ۔", "voor کا مطلب پہلے ہے: kwart voor vier = 3:45، یعنی پونے چار؛ چار بج کر پندرہ نہیں۔", "3:45 — kwart voor vier", "3:45 — پونے چار۔", "کْوارٹ وور فیر"],
+    "om half negen": ["کسی کام کا وقت بتاتے ہوئے om لگائیں: om half negen۔", "om half negen = 8:30، 9:30 نہیں۔ وقت سے پہلے om آتا ہے۔", "8:30 — om half negen", "8:30 — ساڑھے آٹھ بجے۔", "اوم ہالف نیخَن"]
+  },
+  "a0-months-dates": {
+    "de eerste": ["تاریخ بتاتے ہوئے مہینے کا پہلا دن: de eerste۔", "eerste ترتیب بتاتا ہے: پہلی تاریخ؛ گنتی نہیں۔", "de eerste — de tweede", "پہلی تاریخ — دوسری تاریخ۔", "دَ ایرسٹَ"],
+    "de tweede": ["تاریخ بتاتے ہوئے مہینے کا دوسرا دن: de tweede۔", "tweede ترتیب ہے: دوسری تاریخ۔", "de tweede — de eerste", "دوسری تاریخ — پہلی تاریخ۔", "دَ تْویدَ"],
+    "op drie maart": ["کسی کام کی تاریخ بتاتے ہوئے op + دن + مہینہ کہیں۔", "پوری تاریخ (دن اور مہینہ) سے پہلے op آتا ہے: op drie maart۔", "3 maart — op drie maart", "3 مارچ — تین مارچ کو۔", "اوپ دْری مارٹ"],
+    "welke datum is het vandaag?": ["آج کی تاریخ پوچھنی ہو تو یہ سوال کریں۔", "datum کا مطلب تاریخ ہے، ہفتے کا دن نہیں۔", "welke datum is het vandaag? — de tweede.", "آج کون سی تاریخ ہے؟ — دوسری۔", "وَیلکَ داتُم اِس اَٹ فانداخ"]
+  },
+  "a0-body-health": {
+    "hand": ["جسم کا حصہ بتاتے ہوئے ہاتھ کے لیے hand کہیں؛ ڈاکٹر کو چوٹ کی جگہ بتانے میں کام آتا ہے۔", "آخر کی آواز ٹ جیسی ہے: ہانٹ۔ hand ہاتھ ہے، arm بازو۔", "hand — arm", "ہاتھ — بازو۔", "ہانٹ"],
+    "arm": ["کندھے سے ہاتھ تک کا حصہ arm ہے۔", "arm کا ایک اور مطلب غریب بھی ہے؛ جسم کی بات میں اس کا مطلب بازو ہے۔", "arm — hand", "بازو — ہاتھ۔", "آرم"],
+    "been": ["جس حصے پر چلتے ہیں، یعنی ٹانگ: been۔", "لمبی ای کی آواز ہے: بین۔ been ٹانگ ہے، پاؤں نہیں۔", "been — arm", "ٹانگ — بازو۔", "بین"],
+    "rug": ["جسم کی پچھلی طرف، یعنی کمر: rug۔", "آخر کی آواز گلے سے خ جیسی ہے: رُخ۔ انگریزی والا rug (قالین) نہیں۔", "rug — been", "کمر — ٹانگ۔", "رُخ"],
+    "tand": ["منہ کا دانت: tand۔", "tand ایک دانت ہے؛ آخر کی آواز ٹ جیسی: تانٹ۔", "tand — tandarts", "دانت — دانتوں کا ڈاکٹر۔", "تانٹ"],
+    "keel": ["گلا: keel۔ نزلے میں گلے کا درد عام ہے۔", "keel گلا ہے؛ لمبی ای کی آواز: کیل۔", "keel — tand", "گلا — دانت۔", "کیل"],
+    "tandarts": ["دانت میں درد ہو تو عام ڈاکٹر نہیں، tandarts کے پاس جائیں۔", "tandarts صرف دانتوں کا ڈاکٹر ہے؛ لفظ کا پہلا حصہ tand یعنی دانت ہے۔", "tand — tandarts", "دانت — دانتوں کا ڈاکٹر۔", "تانٹ آرٹس"],
+    "mijn rug doet pijn": ["جسم کے کسی حصے میں درد بتانا ہو: mijn + حصہ + doet pijn۔", "doet pijn کا مطلب ‘درد کرتا ہے’؛ اس کے ساتھ is نہ لگائیں۔", "mijn rug doet pijn — ik heb keelpijn", "میری کمر میں درد ہے — میرے گلے میں درد ہے۔", "مَین رُخ دوٹ پَین"],
+    "ik heb keelpijn": ["نزلے میں گلے کا درد بتانے کے لیے ik heb keelpijn کہیں۔", "keelpijn ایک لفظ ہے: keel اور pijn ملا کر۔", "keel — ik heb keelpijn", "گلا — میرے گلے میں درد ہے۔", "اِک ہیپ کیل پَین"],
+    "ik moet naar de tandarts": ["کام یا اسکول کو بتانا ہو کہ آپ کو دانتوں کے ڈاکٹر کے پاس جانا ہے۔", "moet کے بعد naar آتا ہے: کسی جگہ یا شخص کی طرف جانا۔", "mijn rug doet pijn — ik moet naar de tandarts", "میری کمر میں درد ہے — مجھے دانتوں کے ڈاکٹر کے پاس جانا ہے۔", "اِک موٹ نار دَ تانٹ آرٹس"]
+  },
+  "a0-emergency-police": {
+    "politie": ["چوری، لڑائی، یا خطرے میں پولیس: politie۔ ہنگامی نمبر 112 ہے۔", "لمبی ای کی آواز ہے اور آخر میں تسی: پولیتسی۔", "politie — brandweer", "پولیس — فائر بریگیڈ۔", "پولیتسی"],
+    "brandweer": ["آگ لگنے پر جو عملہ آتا ہے: brandweer۔", "brandweer آگ بجھانے والا عملہ ہے، پولیس نہیں۔", "brandweer — politie", "فائر بریگیڈ — پولیس۔", "برانٹ ویر"],
+    "ongeluk": ["سڑک یا گھر میں حادثہ: ongeluk۔", "ongeluk ایک لفظ ہے: اون خَلُک؛ درمیان کی آواز گلے سے خ جیسی۔", "ongeluk — politie", "حادثہ — پولیس۔", "اون خَلُک"],
+    "brand": ["لگی ہوئی آگ: brand۔ عمارت میں دھواں یا شعلے دیکھیں تو یہ لفظ کام آئے گا۔", "brand لگی ہوئی آگ ہے؛ آخر کی آواز ٹ جیسی: برانٹ۔", "brand — brandweer", "آگ — آگ بجھانے والے۔", "برانٹ"],
+    "gewond": ["جس شخص کو چوٹ لگی ہو: gewond۔", "شروع کی آواز گلے سے خ جیسی اور آخر کی ٹ جیسی: خَوونٹ۔", "brand — gewond", "آگ — زخمی۔", "خَوونٹ"],
+    "er is brand": ["آگ لگنے کی فوری اطلاع: er is brand!", "er is کا مطلب ‘ہوا ہے’ یا ‘موجود ہے’؛ er is brand = آگ لگی ہے۔", "er is brand — brandweer", "آگ لگی ہے — فائر بریگیڈ۔", "اَر اِس برانٹ"],
+    "er is een ongeluk": ["حادثہ دیکھ کر 112 یا لوگوں کو بتانے کے لیے: er is een ongeluk۔", "ongeluk سے پہلے een آتا ہے، brand سے پہلے نہیں: er is brand۔", "er is een ongeluk — er is brand", "حادثہ ہوا ہے — آگ لگی ہے۔", "اَر اِس اَن اون خَلُک"],
+    "iemand is gewond": ["حادثے میں کسی کو چوٹ لگی ہو تو فوراً بتائیں۔", "iemand کا مطلب کوئی (شخص) ہے۔", "er is een ongeluk. iemand is gewond.", "حادثہ ہوا ہے۔ کوئی زخمی ہے۔", "ایمانٹ اِس خَوونٹ"],
+    "bel de politie": ["کسی سے کہنا ہو کہ پولیس کو فون کرو: bel de politie!", "bel کا مطلب فون کرو؛ یہ حکم ہے، اس لیے فعل پہلے آتا ہے۔", "er is een ongeluk. bel de politie!", "حادثہ ہوا ہے۔ پولیس کو فون کریں!", "بَیل دَ پولیتسی"]
+  }
+};
+survivalMonthsV4.forEach(([dutch, urdu, pronunciation, usage, confusion], index) => {
+  // Contrast with a month from the same run of four.
+  const neighbour = survivalMonthsV4[index % 4 === 3 ? index - 1 : index + 1];
+  a0SurvivalTeachingV4["a0-months-dates"][dutch] = [
+    usage,
+    confusion,
+    `${dutch} — ${neighbour[0]}`,
+    `${urdu} — ${neighbour[1]}۔`,
+    pronunciation
+  ];
+});
+
 const a0ReviewedTeachingOverridesV4 = {
   "a0-ik-jij-u|ik": {
     exampleDutch: "ik — jij",
@@ -11314,6 +12150,104 @@ const a0ReviewedTeachingOverridesV4 = {
     urdu: "باہر جانے کا راستہ کہاں ہے؟"
   }
 };
+
+// Grammar lessons (roadmap 3.1): hand-written teaching per item.
+// [usage, common confusion, example Dutch, example Urdu, pronunciation]
+Object.assign(a0SurvivalTeachingV4, {
+  "a0-verb-endings": {
+    "ik werk hier": ["اپنے کام کی جگہ بتانی ہو تو ik werk hier کہیں۔", "ik کے ساتھ werk بغیر ٹ کے آتا ہے؛ ik werkt غلط ہے۔", "ik werk hier", "میں یہاں کام کرتا ہوں۔", "اِک وَیرک ہیر"],
+    "jij werkt": ["دوست یا ساتھی سے اس کے کام کی بات میں jij werkt کہیں۔", "jij کے ساتھ آخر میں ٹ لگتی ہے: werkt۔", "ik werk hier — jij werkt", "میں یہاں کام کرتا ہوں — تم کام کرتے ہو۔", "یَےای وَیرکٹ"],
+    "hij werkt": ["کسی ایک مرد کے کام کی بات میں hij werkt کہیں۔", "hij کے ساتھ بھی آخر میں ٹ: werkt۔", "jij werkt — hij werkt", "تم کام کرتے ہو — وہ کام کرتا ہے۔", "ہَےای وَیرکٹ"],
+    "wij werken": ["اپنے اور ساتھیوں کے کام کی بات میں wij werken کہیں۔", "wij کے ساتھ پورا فعل آتا ہے، ٹ نہیں: wij werken۔", "wij werken vandaag", "ہم آج کام کرتے ہیں۔", "وَےای وَیرکَن"],
+    "werk jij vandaag?": ["دوست سے پوچھنا ہو کہ کیا وہ آج کام کرتا ہے تو فعل پہلے رکھیں۔", "سوال میں jij فعل کے بعد آئے تو ٹ ہٹ جاتی ہے: werk jij، نہ کہ werkt jij۔", "werk jij vandaag? — ik werk vandaag.", "کیا تم آج کام کرتے ہو؟ — میں آج کام کرتا ہوں۔", "وَیرک یَےای فان داخ"],
+    "zij woont in Nederland": ["کسی ایک عورت کی رہائش بتانی ہو تو zij woont کہیں۔", "zij کے ساتھ آخر میں ٹ: woont۔ ik کے ساتھ woon ہوتا ہے۔", "ik woon in Nederland — zij woont in Nederland", "میں نیدرلینڈز میں رہتا ہوں — وہ نیدرلینڈز میں رہتی ہے۔", "زَےای وونٹ اِن نیدرلانٹ"],
+    "hij drinkt koffie": ["کسی ایک شخص کی عادت یا پسند بتانی ہو: hij drinkt koffie۔", "ik drink مگر hij drinkt؛ hij کے ساتھ ٹ نہ بھولیں۔", "ik drink water — hij drinkt koffie", "میں پانی پیتا ہوں — وہ کافی پیتا ہے۔", "ہَےای ڈرِنکٹ کوفی"],
+    "wij eten brood": ["خاندان یا گروپ کے کھانے کی بات میں wij eten کہیں۔", "ik eet مگر wij eten؛ wij کے ساتھ پورا فعل۔", "ik eet brood — wij eten brood", "میں روٹی کھاتا ہوں — ہم روٹی کھاتے ہیں۔", "وَےای ایٹَن بروٹ"]
+  },
+  "a0-adjective-endings": {
+    "de blauwe jas": ["کسی خاص جیکٹ کا رنگ اسم سے پہلے بتانا ہو: de blauwe jas۔", "is کے بعد blauw، مگر اسم سے پہلے blauwe: de jas is blauw — de blauwe jas۔", "de jas is blauw — de blauwe jas", "جیکٹ نیلی ہے — نیلی جیکٹ۔", "دَ بلاؤ اَ یاس"],
+    "een warme jas": ["سردی میں کوئی بھی ایک گرم جیکٹ مانگنی ہو تو een warme jas کہیں۔", "jas کے ساتھ de آتا ہے، اس لیے een کے بعد بھی warme: een warm jas غلط ہے۔", "warm — een warme jas", "گرم — ایک گرم جیکٹ۔", "اَن وارمَ یاس"],
+    "de rode deur": ["کسی جگہ کا نشان بتاتے ہوئے: de rode deur۔", "rood اسم سے پہلے rode بنتا ہے؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "rood — de rode deur", "سرخ — سرخ دروازہ۔", "دَ روڈَ دُور"],
+    "het witte huis": ["کسی خاص، جانے پہچانے سفید گھر کی بات میں het witte huis کہیں۔", "het کے بعد آخر میں اَ لگتی ہے اور ٹ دگنی ہوتی ہے: witte۔", "het huis is wit — het witte huis", "گھر سفید ہے — سفید گھر۔", "اَٹ وِٹّے ہاؤس"],
+    "een wit huis": ["کوئی بھی ایک سفید گھر، کوئی خاص نہیں: een wit huis۔", "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een witte huis غلط ہے۔", "een wit huis — het witte huis", "ایک سفید گھر — وہ سفید گھر۔", "اَن وِٹ ہاؤس"],
+    "een zwart boek": ["کوئی بھی ایک کالی کتاب مانگنی ہو تو een zwart boek کہیں۔", "boek کے ساتھ het آتا ہے، اس لیے een کے بعد zwart بغیر تبدیلی: een zwart boek۔", "een zwart boek — het zwarte boek", "ایک کالی کتاب — وہ کالی کتاب۔", "اَن زْوارٹ بوک"],
+    "het zwarte boek": ["کسی خاص کالی کتاب کی طرف اشارہ ہو: het zwarte boek۔", "het کے بعد صفت کے آخر میں اَ: zwarte۔", "het boek is zwart — het zwarte boek", "کتاب کالی ہے — کالی کتاب۔", "اَٹ زْوارٹَ بوک"],
+    "ik wil de groene jas": ["دکان میں کئی رنگوں میں سے ایک خاص چیز چننی ہو تو یہ کہیں۔", "اسم سے پہلے groene؛ ik wil de groen jas غلط ہے۔", "groen — ik wil de groene jas", "سبز — مجھے سبز جیکٹ چاہیے۔", "اِک وِل دَ خرونَ یاس"]
+  },
+  "a0-comparatives": {
+    "duurder": ["دو چیزوں میں سے زیادہ قیمت والی کے لیے duurder کہیں۔", "duur = مہنگا، duurder = زیادہ مہنگا۔", "duur — duurder", "مہنگا — زیادہ مہنگا۔", "ڈیوردَر"],
+    "goedkoper": ["دو چیزوں میں سے کم قیمت والی کے لیے goedkoper کہیں۔", "goedkoop = سستا، goedkoper = زیادہ سستا؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "goedkoop — goedkoper", "سستا — زیادہ سستا۔", "خُوت کوپَر"],
+    "beter": ["دو چیزوں یا حالتوں میں سے اچھی کے لیے beter کہیں۔", "goed کی شکل بالکل الگ ہے: beter۔ اسے یاد کریں۔", "goed — beter", "اچھا — بہتر۔", "بیٹَر"],
+    "kouder": ["موسم یا کمرے میں پہلے سے زیادہ ٹھنڈ ہو تو kouder کہیں۔", "koud سے kouder: آخر میں اَر لگائیں۔", "koud — kouder", "ٹھنڈا — زیادہ ٹھنڈا۔", "کاؤدَر"],
+    "warmer": ["موسم یا کمرے میں پہلے سے زیادہ گرمی ہو تو warmer کہیں۔", "warm سے warmer؛ kouder اس کا الٹ ہے۔", "warm — warmer", "گرم — زیادہ گرم۔", "وارمَر"],
+    "dit is goedkoper": ["دکان میں سستی چیز کی طرف اشارہ کرکے یہ کہیں۔", "dit is goedkoop = یہ سستا ہے؛ dit is goedkoper = یہ زیادہ سستا ہے۔", "dit is goedkoop — dit is goedkoper", "یہ سستا ہے — یہ زیادہ سستا ہے۔", "دِٹ اِس خُوت کوپَر"],
+    "koffie is duurder dan thee": ["دو چیزوں کا موازنہ: پہلی چیز، is، اَر والی صفت، dan، دوسری چیز۔", "dan موازنے کا لفظ ہے: duurder dan = سے زیادہ مہنگا۔", "koffie is duurder dan thee", "کافی چائے سے مہنگی ہے۔", "کوفی اِس ڈیوردَر دان تے"],
+    "vandaag is het kouder": ["کل کے مقابلے میں آج زیادہ ٹھنڈ ہو تو یہ کہیں۔", "vandaag پہلے آئے تو is دوسرے نمبر پر: vandaag is het kouder۔", "vandaag is het kouder", "آج زیادہ ٹھنڈ ہے۔", "فان داخ اِس اَٹ کاؤدَر"],
+    "dit is beter": ["دو چیزوں میں سے اچھی چننی ہو تو یہ کہیں۔", "dit is goed = یہ اچھا ہے؛ dit is beter = یہ بہتر ہے۔", "dit is goed — dit is beter", "یہ اچھا ہے — یہ بہتر ہے۔", "دِٹ اِس بیٹَر"]
+  },
+  "a0-plurals-er-is": {
+    "stoelen": ["ایک سے زیادہ کرسیوں کی بات میں stoelen کہیں۔", "stoel کے آخر میں اَن لگا کر stoelen؛ ایک کرسی stoel ہے۔", "stoel — stoelen", "کرسی — کرسیاں۔", "ستولَن"],
+    "tafels": ["ایک سے زیادہ میزوں کی بات میں tafels کہیں۔", "آخر میں اَل ہو تو س لگتی ہے: tafel سے tafels، اَن نہیں۔", "tafel — tafels", "میز — میزیں۔", "تافَلس"],
+    "kamers": ["گھر کے ایک سے زیادہ کمروں کی بات میں kamers کہیں۔", "آخر میں اَر ہو تو س: kamer سے kamers۔", "kamer — kamers", "کمرہ — کمرے۔", "کامَرس"],
+    "huizen": ["ایک سے زیادہ گھروں کی بات میں huizen کہیں۔", "ایک گھر والے لفظ کی آخری س جمع میں ز بن جاتی ہے: huizen۔", "kamers — huizen", "کمرے — کئی گھر۔", "ہاؤزَن"],
+    "de boeken": ["کچھ خاص کتابوں کی بات میں de boeken کہیں۔", "ایک کتاب het boek، مگر جمع کے ساتھ ہمیشہ de: de boeken۔", "het boek — de boeken", "کتاب — کتابیں۔", "دَ بوکَن"],
+    "er is een stoel": ["بتانا ہو کہ کسی جگہ ایک چیز موجود ہے تو er is کہیں۔", "ایک چیز کے ساتھ er is؛ er zijn een stoel غلط ہے۔", "er is een stoel", "ایک کرسی ہے۔", "اَیر اِس اَن ستول"],
+    "er zijn twee stoelen": ["کئی چیزیں موجود ہوں تو er zijn اور جمع اسم کہیں۔", "er zijn کے بعد جمع: twee stoelen، نہ کہ twee stoel۔", "er is een stoel — er zijn twee stoelen", "ایک کرسی ہے — دو کرسیاں ہیں۔", "اَیر زَین تْوے ستولَن"],
+    "er zijn drie kamers": ["مکان کی بات میں کمروں کی تعداد بتانی ہو تو یہ کہیں۔", "kamer سے kamers، اور کئی چیزوں کے ساتھ er zijn۔", "er zijn drie kamers", "تین کمرے ہیں۔", "اَیر زَین دْری کامَرس"]
+  },
+  "a0-past-was-had": {
+    "ik was ziek": ["پہلے کی بیماری بتانی ہو، مثلاً کام یا اسکول پر، تو ik was ziek کہیں۔", "ik ben ziek = اب بیمار ہوں؛ ik was ziek = پہلے بیمار تھا۔", "ik ben ziek — ik was ziek", "میں بیمار ہوں — میں بیمار تھا۔", "اِک واس زیک"],
+    "ik had pijn": ["پہلے کا درد بتانا ہو تو ik had pijn کہیں۔", "ik heb pijn = اب درد ہے؛ ik had pijn = پہلے درد تھا۔", "ik heb pijn — ik had pijn", "مجھے درد ہے — مجھے درد تھا۔", "اِک ہاٹ پَین"],
+    "ik ging naar huis": ["گزرے وقت میں گھر جانے کی بات میں ik ging naar huis کہیں۔", "ik ga = جاتا ہوں؛ ik ging = گیا۔ یہ شکل یاد کرنی ہے۔", "ik ga naar huis — ik ging naar huis", "میں گھر جاتا ہوں — میں گھر گیا۔", "اِک خِنگ نار ہاؤس"],
+    "hij was ziek": ["کسی ایک مرد کی پہلے کی بیماری بتانی ہو تو hij was ziek کہیں۔", "hij is ziek = اب بیمار ہے؛ hij was ziek = بیمار تھا۔", "hij is ziek — hij was ziek", "وہ بیمار ہے — وہ بیمار تھا۔", "ہَےای واس زیک"],
+    "wij waren te laat": ["اپنے اور خاندان کے دیر سے پہنچنے کی بات میں یہ کہیں۔", "ik was مگر wij waren؛ wij کے ساتھ was نہیں۔", "ik was te laat — wij waren te laat", "مجھے دیر ہو گئی تھی — ہمیں دیر ہو گئی تھی۔", "وَےای وارَن تے لات"],
+    "gisteren was ik ziek": ["کل کی بیماری بتاتے ہوئے gisteren پہلے رکھیں۔", "gisteren پہلے ہو تو فعل دوسرے نمبر پر: gisteren was ik، نہ کہ gisteren ik was۔", "ik was gisteren ziek — gisteren was ik ziek", "میں کل بیمار تھا — کل میں بیمار تھا۔", "خِستَرَن واس اِک زیک"],
+    "ik had gisteren hoofdpijn": ["ڈاکٹر کو کل کا سر درد بتانا ہو تو یہ کہیں۔", "had کے بعد وقت، پھر تکلیف: ik had gisteren hoofdpijn۔", "ik heb hoofdpijn — ik had gisteren hoofdpijn", "میرے سر میں درد ہے — کل میرے سر میں درد تھا۔", "اِک ہاٹ خِستَرَن ہوفت پَین"],
+    "zij ging naar de dokter": ["کسی ایک عورت کے ڈاکٹر کے پاس جانے کی گزری بات میں یہ کہیں۔", "ging کی شکل ik، hij، اور zij کے ساتھ ایک جیسی ہے: ik ging، zij ging۔", "ik ging naar huis — zij ging naar de dokter", "میں گھر گیا — وہ ڈاکٹر کے پاس گئی۔", "زَےای خِنگ نار دَ ڈوکتَر"]
+  },
+  "a0-feelings-reflexive": {
+    "ik voel me goed": ["کوئی حال پوچھے اور طبیعت اچھی ہو تو ik voel me goed کہیں۔", "me ضروری ہے: ik voel goed ادھورا ہے۔", "ik voel me goed", "میں اچھا محسوس کرتا ہوں۔", "اِک فُول مَے خُوت"],
+    "ik voel me ziek": ["بیماری کا احساس ہو، مثلاً کام یا ڈاکٹر کو بتانا ہو، تو یہ کہیں۔", "ik ben ziek = میں بیمار ہوں؛ ik voel me ziek = میں بیمار محسوس کرتا ہوں۔", "ik ben ziek — ik voel me ziek", "میں بیمار ہوں — میں بیمار محسوس کرتا ہوں۔", "اِک فُول مَے زیک"],
+    "ik voel me niet goed": ["طبیعت خراب ہو تو نرمی سے یہ کہیں؛ یہ بہت عام جملہ ہے۔", "niet آخر میں goed سے پہلے: ik voel me niet goed۔", "ik voel me goed — ik voel me niet goed", "میں اچھا محسوس کرتا ہوں — میری طبیعت ٹھیک نہیں۔", "اِک فُول مَے نیت خُوت"],
+    "ik voel me beter": ["دوا یا آرام کے بعد طبیعت سنبھل جائے تو یہ کہیں۔", "beter = بہتر؛ me پھر بھی ضروری ہے۔", "ik voel me ziek — ik voel me beter", "میں بیمار محسوس کرتا ہوں — اب بہتر محسوس کرتا ہوں۔", "اِک فُول مَے بیٹَر"],
+    "hoe voel je je?": ["دوست یا گھر والوں سے ان کی طبیعت پوچھیں۔", "دوست سے بات میں دوسرا je بھی آتا ہے: hoe voel je je؟", "hoe voel je je? — ik voel me goed.", "تم کیسا محسوس کرتے ہو؟ — میں اچھا محسوس کرتا ہوں۔", "ہُو فُول یَے یَے"],
+    "hoe voelt u zich?": ["ڈاکٹر، استقبالیہ، یا بزرگ سے ادب سے ان کی طبیعت پوچھیں۔", "u کے ساتھ voelt اور zich: hoe voelt u zich؟", "hoe voelt u zich? — ik voel me beter.", "آپ کیسا محسوس کرتے ہیں؟ — میں بہتر محسوس کرتا ہوں۔", "ہُو فُولٹ یُو زِخ"],
+    "zij voelt zich ziek": ["کسی ایک عورت کی طبیعت خراب ہونے کی بات میں یہ کہیں۔", "zij کے ساتھ voelt اور zich، me نہیں۔", "ik voel me ziek — zij voelt zich ziek", "میں بیمار محسوس کرتا ہوں — وہ بیمار محسوس کرتی ہے۔", "زَےای فُولٹ زِخ زیک"],
+    "ik ben moe": ["کام یا رات کے بعد تھکاوٹ ہو تو ik ben moe کہیں۔", "moe کے ساتھ ben آتا ہے: ik voel me moe بھی ممکن ہے مگر ik ben moe سب سے عام ہے۔", "ik ben moe — ik ben ziek", "میں تھکا ہوں — میں بیمار ہوں۔", "اِک بَین مُو"]
+  },
+  "a0-object-pronouns": {
+    "hem": ["فعل کے بعد کسی مرد یا لڑکے کے لیے hem کہیں: اسے۔", "فعل کے بعد hij نہیں، hem آتا ہے۔", "hij — hem", "وہ — اسے۔", "ہَیم"],
+    "ons": ["فعل کے بعد اپنے اور ساتھ والوں کے لیے ons کہیں: ہمیں۔", "فعل کے بعد wij نہیں، ons آتا ہے۔", "wij — ons", "ہم — ہمیں۔", "اونس"],
+    "kunt u hem helpen?": ["کسی مرد یا لڑکے کے لیے مدد مانگنی ہو تو یہ کہیں۔", "kunt u hij helpen غلط ہے؛ فعل کے بعد hem۔", "kunt u mij helpen? — kunt u hem helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ اس کی مدد کر سکتے ہیں؟", "کُنٹ یُو ہَیم ہَیلپَن"],
+    "kunt u ons helpen?": ["خاندان یا گروپ کے لیے مدد مانگنی ہو تو یہ کہیں۔", "kunt u wij helpen غلط ہے؛ فعل کے بعد ons۔", "kunt u mij helpen? — kunt u ons helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ ہماری مدد کر سکتے ہیں؟", "کُنٹ یُو اونس ہَیلپَن"],
+    "ik bel haar": ["کسی عورت کو فون کرنے کی بات میں ik bel haar کہیں۔", "haar کے دو کام: haar pen = اس کا قلم؛ ik bel haar = میں اسے فون کرتا ہوں۔", "haar pen — ik bel haar", "اس کا قلم — میں اسے فون کرتا ہوں۔", "اِک بَیل ہار"],
+    "bel mij morgen": ["کسی سے کہنا ہو کہ آپ کو کل فون کرے تو یہ کہیں۔", "حکم میں فعل پہلے، پھر mij: bel mij، نہ کہ bel ik۔", "bel 112 — bel mij morgen", "112 پر فون کریں — مجھے کل فون کریں۔", "بَیل مَےای مورخَن"],
+    "ik breng hem naar school": ["بیٹے کو اسکول لے جانے کی بات میں یہ کہیں۔", "breng کے بعد hem، پھر جگہ: ik breng hem naar school۔", "ik breng mijn kind naar school — ik breng hem naar school", "میں اپنے بچے کو اسکول لے جاتا ہوں — میں اسے اسکول لے جاتا ہوں۔", "اِک بْرَینگ ہَیم نار سخُول"],
+    "ik haal haar om drie uur op": ["بیٹی کو اسکول سے لینے کا وقت بتانا ہو تو یہ کہیں۔", "haal کے بعد haar، وقت، اور آخر میں op۔", "ik haal mijn kind om drie uur op — ik haal haar om drie uur op", "میں اپنے بچے کو تین بجے لاتا ہوں — میں اسے تین بجے لاتا ہوں۔", "اِک ہال ہار اوم دْری یُور اوپ"]
+  },
+  "a0-future-gaan": {
+    "ik ga werken": ["آنے والے کام کی بات میں ik ga werken کہیں۔", "ga کے بعد پورا فعل: werken، نہ کہ werk۔", "ik werk vandaag — ik ga werken", "میں آج کام کرتا ہوں — میں کام کرنے جا رہا ہوں۔", "اِک خا وَیرکَن"],
+    "ik ga morgen werken": ["کل کے کام کی بات میں وقت درمیان میں اور فعل آخر میں رکھیں۔", "پورا فعل جملے کے آخر میں: ik ga morgen werken۔", "ik ga werken — ik ga morgen werken", "میں کام کرنے جا رہا ہوں — میں کل کام کروں گا۔", "اِک خا مورخَن وَیرکَن"],
+    "morgen ga ik werken": ["کل کی بات شروع میں رکھنی ہو تو فعل دوسرے نمبر پر آئے۔", "morgen پہلے ہو تو ga پھر ik: morgen ga ik، نہ کہ morgen ik ga۔", "ik ga morgen werken — morgen ga ik werken", "میں کل کام کروں گا — کل میں کام کروں گا۔", "مورخَن خا اِک وَیرکَن"],
+    "wij gaan eten": ["گھر والوں کو بتانا ہو کہ اب کھانے کا وقت ہے تو یہ کہیں۔", "wij کے ساتھ gaan، پھر پورا فعل eten۔", "wij eten — wij gaan eten", "ہم کھاتے ہیں — ہم کھانا کھانے جا رہے ہیں۔", "وَےای خان ایٹَن"],
+    "hij gaat slapen": ["کسی ایک شخص کے سونے جانے کی بات میں یہ کہیں۔", "hij کے ساتھ gaat، مگر slapen بغیر تبدیلی۔", "hij gaat slapen", "وہ سونے جا رہا ہے۔", "ہَےای خات سلاپَن"],
+    "ik ga de school bellen": ["بتانا ہو کہ آپ اسکول کو فون کریں گے تو یہ کہیں۔", "bellen آخر میں: ik ga de school bellen، نہ کہ ik ga bellen de school۔", "ik ga werken — ik ga de school bellen", "میں کام کرنے جا رہا ہوں — میں اسکول کو فون کروں گا۔", "اِک خا دَ سخُول بَیلَن"],
+    "zaterdag ga ik naar de winkel": ["ہفتے کے منصوبے میں دن پہلے رکھ کر یہ کہیں۔", "دن پہلے ہو تو ga دوسرے نمبر پر: zaterdag ga ik۔", "ik ga naar de winkel — zaterdag ga ik naar de winkel", "میں دکان جاتا ہوں — ہفتے کو میں دکان جاؤں گا۔", "زاتَرداخ خا اِک نار دَ وِنکَل"],
+    "wat ga je morgen doen?": ["دوست سے اس کا کل کا منصوبہ پوچھیں۔", "doen آخر میں: wat ga je morgen doen؟", "wat ga je morgen doen? — ik ga morgen werken.", "تم کل کیا کرو گے؟ — میں کل کام کروں گا۔", "وات خا یَے مورخَن ڈُون"]
+  },
+  "a0-work-basics": {
+    "ik kan vandaag niet komen": ["کام یا ملاقات پر آج نہ آ سکیں تو فون پر یہی پوری بات کہیں۔", "kan کے بعد vandaag niet، اور آخر میں komen۔", "ik kan vandaag niet komen — morgen", "میں آج نہیں آ سکتا — کل۔", "اِک کان فان داخ نیت کومَن"],
+    "ik ben vandaag ziek": ["صبح کام پر فون کرکے بتائیں کہ آج بیمار ہیں۔", "vandaag درمیان میں آتا ہے: ik ben vandaag ziek۔", "ik ben vandaag ziek — ik kan vandaag niet komen", "میں آج بیمار ہوں — میں آج نہیں آ سکتا۔", "اِک بَین فان داخ زیک"]
+  }
+});
+
+for (const [lessonId, records] of Object.entries(a0SurvivalTeachingV4)) {
+  for (const [dutch, [usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu]] of Object.entries(records)) {
+    a0ReviewedTeachingOverridesV4[`${lessonId}|${normalizedTextV4(dutch)}`] = {
+      usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu
+    };
+  }
+}
 
 for (const [dutch, [usageUrdu, commonConfusionUrdu, exampleDutch, exampleUrdu, pronunciationUrdu]] of Object.entries(a0SoundTeachingV4)) {
   const lessonId = ["boot", "bot", "voet", "hoed", "neus", "muis", "duim", "ei"].includes(dutch)
@@ -12312,6 +13246,159 @@ function a0PracticalUsePromptV4(concept, lesson) {
     "a0-gaan-komen|kom": "دروازے پر پہنچ کر اپنے بارے میں “آتا یا آتی ہوں” کہنا ہے۔ درست ڈچ شکل چنیں۔",
     "a0-gaan-komen|komt": "کسی شخص کی آمد بتاتے ہوئے “آتا یا آتی ہے” کہنا ہے۔ درست ڈچ شکل چنیں۔"
   };
+  Object.assign(exactScenes, {
+    "a0-colours-clothes|rood": "ٹریفک کی بتی پر رکنے کا اشارہ ہے۔ بچے کو اس بتی کا رنگ بتائیں۔",
+    "a0-colours-clothes|blauw": "گم شدہ چیزوں کے کاؤنٹر پر آپ کی جیکٹ آسمان جیسے رنگ کی ہے۔ رنگ بتائیں۔",
+    "a0-colours-clothes|groen": "ٹریفک کی بتی پر اب چلنے کا اشارہ ہے۔ بچے کو اس بتی کا رنگ بتائیں۔",
+    "a0-colours-clothes|geel": "اسکول کے بچے کی برساتی کیلے جیسے رنگ کی ہے۔ استاد کو رنگ بتائیں۔",
+    "a0-colours-clothes|zwart": "دکان میں آپ کو رات جیسے گہرے رنگ کے جوتے چاہییں۔ رنگ بتائیں۔",
+    "a0-colours-clothes|wit": "کھیل کے لیے بیٹے کو برف جیسے رنگ کی قمیص چاہیے۔ دکان میں رنگ بتائیں۔",
+    "a0-colours-clothes|kleur": "دکان کا ملازم پوچھتا ہے کہ آپ کو کیا بدلنا ہے؛ آپ کو ناپ نہیں، صرف دوسرا رنگ چاہیے۔ اس لفظ کو چنیں۔",
+    "a0-colours-clothes|welke kleur": "دوست نئی جیکٹ خریدنے کا بتاتا ہے مگر رنگ نہیں بتاتا۔ اس سے رنگ پوچھیں۔",
+    "a0-colours-clothes|de jas is blauw": "بیٹے کی جیکٹ اسکول میں گم ہو گئی ہے۔ ملازم کو بتائیں کہ جیکٹ نیلی ہے۔",
+    "a0-colours-clothes|heeft u dit in het zwart": "دکان میں جیکٹ پسند ہے مگر آپ کو کالی چاہیے۔ ملازم سے پوچھیں۔",
+    "a0-language-help|ik spreek urdu": "ہسپتال کی استقبالیہ پوچھتی ہے کہ آپ کون سی زبان بولتے ہیں۔ بتائیں کہ آپ اردو بولتے ہیں۔",
+    "a0-language-help|ik spreek engels": "اسکول کا ملازم تیزی سے ڈچ بول رہا ہے۔ بتائیں کہ آپ انگریزی بول سکتے ہیں۔",
+    "a0-language-help|spreekt u engels": "فارمیسی میں ہدایت سمجھ نہیں آ رہی۔ مؤدبانہ پوچھیں کہ کیا ملازم انگریزی بولتا ہے۔",
+    "a0-language-help|ik spreek geen nederlands": "دروازے پر ڈاکیا لمبی بات ڈچ میں کر رہا ہے۔ بتائیں کہ آپ ڈچ نہیں بولتے۔",
+    "a0-language-help|tolk": "بلدیہ کے فارم پر ایک خانہ ہے کہ کیا آپ کو ترجمان چاہیے۔ اس خانے کا ڈچ لفظ چنیں۔",
+    "a0-language-help|ik heb een tolk nodig": "ہسپتال میں ڈاکٹر کی بات بالکل سمجھ نہیں آ رہی۔ بتائیں کہ آپ کو ترجمان چاہیے۔",
+    "a0-language-help|is er een tolk": "بلدیہ کے کاؤنٹر پر پہنچ کر پوچھیں کہ کیا یہاں کوئی ترجمان موجود ہے۔",
+    "a0-language-help|hoe zeg je dat in het nederlands": "کلاس میں آپ کو ایک لفظ صرف اردو میں آتا ہے۔ استاد سے پوچھیں کہ اسے ڈچ میں کیسے کہتے ہیں۔",
+    "a0-family-status|mijn man": "اسکول میں استاد پوچھتی ہے کہ بچے کو کون لینے آئے گا۔ آپ کا شوہر آئے گا؛ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|mijn vrouw": "بلدیہ کے ملازم کو بتانا ہے کہ فارم آپ کی بیوی بھرے گی۔ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|ik ben getrouwd": "رجسٹریشن فارم پر پوچھا گیا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے؛ جواب دیں۔",
+    "a0-family-status|ik ben niet getrouwd": "کام کے فارم پر ازدواجی حالت پوچھی گئی ہے۔ آپ کی شادی نہیں ہوئی؛ جواب دیں۔",
+    "a0-family-status|mijn zoon": "ڈاکٹر پوچھتا ہے کہ بیمار بچہ کون ہے۔ وہ آپ کا بیٹا ہے؛ ڈچ چنیں۔",
+    "a0-family-status|mijn dochter": "اسکول کے ملازم کو بتانا ہے کہ آج آپ کی بیٹی بیمار ہے۔ اس کے لیے دو ڈچ لفظ چنیں۔",
+    "a0-family-status|opa": "بچہ تصویر میں آپ کے والد کو دکھاتا ہے۔ بچے کے لیے وہ دادا ہیں؛ ڈچ لفظ چنیں۔",
+    "a0-family-status|oma": "بچہ تصویر میں آپ کی والدہ کو دکھاتا ہے۔ بچے کے لیے وہ دادی ہیں؛ ڈچ لفظ چنیں۔",
+    "a0-telling-time|kwart": "بس کا شیڈول بتاتا ہے کہ ہر پندرہ منٹ بعد بس آتی ہے۔ پندرہ منٹ کے لیے ڈچ لفظ چنیں۔",
+    "a0-telling-time|het is drie uur": "اسٹیشن پر کوئی وقت پوچھتا ہے۔ گھڑی پر ٹھیک 3:00 ہے؛ جواب دیں۔",
+    "a0-telling-time|half acht": "اسکول کا خط کہتا ہے کہ کلاس 7:30 پر شروع ہوگی۔ یہ وقت ڈچ میں کیسے کہیں گے؟",
+    "a0-telling-time|kwart over drie": "ڈاکٹر کی ملاقات 3:15 پر ہے۔ ساتھی کو یہ وقت ڈچ میں بتائیں۔",
+    "a0-telling-time|kwart voor vier": "بچے کی چھٹی 3:45 پر ہوتی ہے۔ پڑوسی کو یہ وقت ڈچ میں بتائیں۔",
+    "a0-telling-time|om half negen": "ملازم پوچھتا ہے کہ آپ کب آئیں گے۔ آپ 8:30 پر آئیں گے؛ جواب دیں۔",
+    "a0-months-dates|de eerste": "ملاقات کارڈ پر مہینے کی پہلی تاریخ لکھی ہے۔ اس تاریخ کے لیے ڈچ چنیں۔",
+    "a0-months-dates|de tweede": "کرایہ مہینے کی دوسری تاریخ کو دینا ہے۔ اس تاریخ کے لیے ڈچ چنیں۔",
+    "a0-months-dates|op drie maart": "استقبالیہ پوچھتی ہے کہ ملاقات کب ہے۔ ملاقات تین مارچ کو ہے؛ جواب دیں۔",
+    "a0-months-dates|welke datum is het vandaag": "فارم پر آج کی تاریخ لکھنی ہے مگر آپ کو یاد نہیں۔ ساتھ والے سے پوچھیں۔",
+    "a0-body-health|hand": "ڈاکٹر پوچھتا ہے کہ چوٹ کہاں ہے۔ آپ انگلیوں والا حصہ دکھاتے ہیں؛ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|arm": "فارمیسی میں بتانا ہے کہ کندھے سے کلائی تک والے حصے پر خارش ہے۔ اس حصے کا ڈچ لفظ چنیں۔",
+    "a0-body-health|been": "کھیل کے بعد بچہ لنگڑا رہا ہے۔ استاد کو جسم کا وہ حصہ بتائیں جس پر وہ چلتا ہے۔",
+    "a0-body-health|rug": "بھاری ڈبہ اٹھانے کے بعد جسم کی پچھلی طرف درد ہے۔ اس حصے کا ڈچ لفظ چنیں۔",
+    "a0-body-health|tand": "بچہ منہ کھول کر ہلتی ہوئی چیز دکھاتا ہے جس سے وہ کھانا چباتا ہے۔ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|keel": "نزلے میں نگلنے پر تکلیف ہوتی ہے۔ ڈاکٹر کو جسم کا وہ حصہ بتائیں۔",
+    "a0-body-health|tandarts": "دانت میں درد ہے۔ کس ڈاکٹر کے پاس جانا ہے؟ اس کا ڈچ لفظ چنیں۔",
+    "a0-body-health|mijn rug doet pijn": "ڈاکٹر پوچھتا ہے کہ کیا مسئلہ ہے۔ بھاری کام کے بعد آپ کی کمر میں درد ہے؛ بتائیں۔",
+    "a0-body-health|ik heb keelpijn": "نزلے کی وجہ سے نگلنا مشکل ہے۔ فارمیسی میں بتائیں کہ گلے میں درد ہے۔",
+    "a0-body-health|ik moet naar de tandarts": "کام کے ذمہ دار کو بتانا ہے کہ آج آپ کو دانتوں کے ڈاکٹر کے پاس جانا ہے۔",
+    "a0-emergency-police|politie": "رات کو کسی نے آپ کی سائیکل چرا لی ہے۔ کس کو اطلاع دیں گے؟ ڈچ لفظ چنیں۔",
+    "a0-emergency-police|brandweer": "عمارت کی سیڑھیوں میں دھواں ہے۔ آگ بجھانے والوں کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|ongeluk": "سڑک پر دو گاڑیاں ٹکرا گئی ہیں۔ اس واقعے کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|brand": "پڑوسی کی کھڑکی سے شعلے نکل رہے ہیں۔ اس کے لیے ڈچ لفظ چنیں۔",
+    "a0-emergency-police|gewond": "سائیکل سے گرنے والے شخص کے گھٹنے سے خون نکل رہا ہے۔ اس کی حالت کا ڈچ لفظ چنیں۔",
+    "a0-emergency-police|er is brand": "باورچی خانے میں آگ لگ گئی ہے۔ 112 پر فوراً یہ اطلاع دیں۔",
+    "a0-emergency-police|er is een ongeluk": "چوراہے پر گاڑی اور سائیکل ٹکرا گئی ہیں۔ 112 کو فوراً یہ اطلاع دیں۔",
+    "a0-emergency-police|iemand is gewond": "حادثے کی جگہ ایک شخص کو چوٹ لگی ہے۔ 112 کو یہ بتائیں۔",
+    "a0-emergency-police|bel de politie": "دکان میں کوئی چوری کر کے بھاگ رہا ہے۔ ساتھ کھڑے شخص سے کہیں کہ پولیس کو فون کرے۔",
+  });
+  Object.assign(exactScenes, {
+    "a0-verb-endings|ik werk hier": "نئی دکان کا ملازم پوچھتا ہے کہ کیا آپ یہیں ملازم ہیں۔ بتائیں کہ آپ یہاں کام کرتے ہیں۔",
+    "a0-verb-endings|jij werkt": "دوست کے شیڈول کو دیکھ کر اسے بتانا ہے: تم کام کرتے ہو۔ درست شکل چنیں۔",
+    "a0-verb-endings|hij werkt": "بچہ پوچھتا ہے کہ ابو آج گھر پر کیوں نہیں۔ بتائیں کہ وہ کام کرتے ہیں۔",
+    "a0-verb-endings|wij werken": "پڑوسی پوچھتا ہے کہ آپ اور آپ کی بیوی دن میں کیا کرتے ہیں۔ بتائیں کہ ہم کام کرتے ہیں۔",
+    "a0-verb-endings|werk jij vandaag": "دوست کے ساتھ شام کا پروگرام بنانا ہے۔ پہلے پوچھیں کہ کیا وہ آج کام کرتا ہے۔",
+    "a0-verb-endings|zij woont in nederland": "استاد آپ کی بہن کی تصویر دیکھ کر پوچھتی ہیں کہ وہ کہاں رہتی ہے۔ بتائیں کہ نیدرلینڈز میں۔",
+    "a0-verb-endings|hij drinkt koffie": "کیفے میں دوست پوچھتا ہے کہ آپ کا بھائی کیا لے گا۔ بتائیں کہ وہ کافی پیتا ہے۔",
+    "a0-verb-endings|wij eten brood": "اسکول کے فارم پر صبح کے ناشتے کا پوچھا گیا ہے۔ بتائیں کہ آپ کا خاندان روٹی کھاتا ہے۔",
+    "a0-adjective-endings|de blauwe jas": "گم شدہ چیزوں کے کاؤنٹر پر کئی جیکٹیں ہیں۔ اپنی نیلی جیکٹ کی طرف اشارہ کریں۔",
+    "a0-adjective-endings|een warme jas": "سردیوں سے پہلے دکان میں ملازم پوچھتا ہے کہ کیا چاہیے۔ کوئی بھی ایک گرم جیکٹ مانگیں۔",
+    "a0-adjective-endings|de rode deur": "مہمان کو فون پر بتانا ہے کہ آپ کا گھر کون سا ہے۔ اپنے سرخ دروازے کا نشان بتائیں۔",
+    "a0-adjective-endings|het witte huis": "نقشے پر گلی میں صرف ایک سفید گھر ہے۔ دوست کو اسی خاص گھر کا بتائیں۔",
+    "a0-adjective-endings|een wit huis": "دوست پوچھتا ہے کہ نیا گھر کیسا ہے۔ بتائیں کہ وہ ایک سفید گھر ہے۔",
+    "a0-adjective-endings|een zwart boek": "اسکول کی فہرست میں بچے کے لیے کوئی بھی ایک کالی کاپی چاہیے۔ دکان میں مانگیں۔",
+    "a0-adjective-endings|het zwarte boek": "میز پر کئی کتابیں ہیں۔ استاد کو بتائیں کہ آپ کی وہ کالی کتاب ہے۔",
+    "a0-adjective-endings|ik wil de groene jas": "دکان میں تین رنگ کی جیکٹیں لٹکی ہیں۔ آپ کو سبز والی چاہیے؛ ملازم کو بتائیں۔",
+    "a0-comparatives|duurder": "دکان میں دو جوتوں کی قیمت دیکھیں۔ ایک کی قیمت زیادہ ہے؛ اس کے لیے لفظ چنیں۔",
+    "a0-comparatives|goedkoper": "سپر مارکیٹ میں دو دودھ کے ڈبے ہیں۔ ایک کی قیمت کم ہے؛ اس کے لیے لفظ چنیں۔",
+    "a0-comparatives|beter": "ڈاکٹر پوچھتا ہے کہ دوا کے بعد حالت کیسی ہے۔ پہلے سے اچھی ہے؛ ایک لفظ میں بتائیں۔",
+    "a0-comparatives|kouder": "صبح باہر نکل کر محسوس ہوتا ہے کہ کل سے زیادہ ٹھنڈ ہے۔ اس کے لیے لفظ چنیں۔",
+    "a0-comparatives|warmer": "ہیٹنگ ٹھیک ہونے کے بعد کمرہ پہلے سے زیادہ گرم ہے۔ اس کے لیے لفظ چنیں۔",
+    "a0-comparatives|dit is goedkoper": "دکان میں دو قمیصیں ہیں۔ دوست کو بتائیں کہ یہ والی زیادہ سستی ہے۔",
+    "a0-comparatives|koffie is duurder dan thee": "کیفے کی قیمتوں کی فہرست دیکھ کر دوست کو بتائیں کہ کافی چائے سے مہنگی ہے۔",
+    "a0-comparatives|vandaag is het kouder": "بچہ اسکول جاتے ہوئے پتلی جیکٹ لے رہا ہے۔ اسے بتائیں کہ آج کل سے زیادہ ٹھنڈ ہے۔",
+    "a0-comparatives|dit is beter": "دکان کا ملازم دو چھتریاں دکھاتا ہے۔ ایک مضبوط ہے؛ بتائیں کہ یہ والی بہتر ہے۔",
+    "a0-plurals-er-is|stoelen": "مہمان آنے والے ہیں اور آپ کو ایک سے زیادہ کرسیاں چاہییں۔ جمع کا لفظ چنیں۔",
+    "a0-plurals-er-is|tafels": "کمیونٹی مرکز میں تقریب کے لیے کئی میزیں لگانی ہیں۔ جمع کا لفظ چنیں۔",
+    "a0-plurals-er-is|kamers": "مکان کے اشتہار میں ایک سے زیادہ کمروں کا ذکر ہے۔ جمع کا لفظ چنیں۔",
+    "a0-plurals-er-is|huizen": "گلی میں ایک نہیں، کئی گھر ہیں۔ جمع کا لفظ چنیں۔",
+    "a0-plurals-er-is|de boeken": "بچے کی لائبریری والی کتابیں میز پر ہیں۔ انہی خاص کتابوں کا ذکر کریں۔",
+    "a0-plurals-er-is|er is een stoel": "کلاس میں مہمان کے لیے صرف ایک خالی کرسی ہے۔ مہمان کو بتائیں۔",
+    "a0-plurals-er-is|er zijn twee stoelen": "انتظار گاہ میں دو کرسیاں خالی ہیں۔ ساتھ آئے شخص کو بتائیں۔",
+    "a0-plurals-er-is|er zijn drie kamers": "مکان دیکھنے آئے شخص کو بتائیں کہ گھر میں تین کمرے ہیں۔",
+    "a0-past-was-had|ik was ziek": "استاد پوچھتی ہیں کہ آپ پچھلے ہفتے کلاس میں کیوں نہیں آئے۔ بتائیں کہ آپ بیمار تھے۔",
+    "a0-past-was-had|ik had pijn": "ڈاکٹر پوچھتا ہے کہ کیا پچھلی بار بھی تکلیف تھی۔ بتائیں کہ تب درد تھا۔",
+    "a0-past-was-had|ik ging naar huis": "ساتھی پوچھتا ہے کہ کل کام کے بعد آپ نے کیا کیا۔ بتائیں کہ آپ گھر گئے۔",
+    "a0-past-was-had|hij was ziek": "اسکول کو بتانا ہے کہ پچھلے ہفتے آپ کا بیٹا بیمار تھا۔",
+    "a0-past-was-had|wij waren te laat": "ملاقات کے بعد گھر والوں سے بات ہو رہی ہے۔ بتائیں کہ آپ سب دیر سے پہنچے تھے۔",
+    "a0-past-was-had|gisteren was ik ziek": "کام پر مینیجر پوچھتا ہے کہ آپ کل کیوں نہیں آئے۔ کل سے شروع کرکے بتائیں کہ آپ بیمار تھے۔",
+    "a0-past-was-had|ik had gisteren hoofdpijn": "ڈاکٹر کو بتانا ہے کہ کل آپ کے سر میں درد تھا۔",
+    "a0-past-was-had|zij ging naar de dokter": "استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔",
+    "a0-feelings-reflexive|ik voel me goed": "پڑوسی کل کی بیماری کے بعد حال پوچھتی ہے۔ اب آپ کی طبیعت اچھی ہے؛ بتائیں۔",
+    "a0-feelings-reflexive|ik voel me ziek": "کام پر دوپہر کو بخار جیسا محسوس ہو رہا ہے۔ مینیجر کو بتائیں کہ آپ بیمار محسوس کرتے ہیں۔",
+    "a0-feelings-reflexive|ik voel me niet goed": "بس میں سفر کے دوران ہلکے چکر آ رہے ہیں؛ آپ بیمار نہیں، بس طبیعت ٹھیک نہیں۔ ڈرائیور کو یہی بتائیں۔",
+    "a0-feelings-reflexive|ik voel me beter": "دوا کے دو دن بعد ڈاکٹر حال پوچھتا ہے۔ اب آپ پہلے سے اچھا محسوس کرتے ہیں۔",
+    "a0-feelings-reflexive|hoe voel je je": "دوست کل بیمار تھا۔ آج اس سے اس کی طبیعت پوچھیں۔",
+    "a0-feelings-reflexive|hoe voelt u zich": "استقبالیہ پر آپ ایک بزرگ مریض سے ادب سے ان کا حال پوچھتے ہیں۔",
+    "a0-feelings-reflexive|zij voelt zich ziek": "استاد کو فون پر بتانا ہے کہ آج آپ کی بیٹی بیمار محسوس کر رہی ہے۔",
+    "a0-feelings-reflexive|ik ben moe": "رات کی شفٹ کے بعد دوست شام کو باہر چلنے کو کہتا ہے۔ بتائیں کہ آپ تھکے ہوئے ہیں۔",
+    "a0-object-pronouns|hem": "استاد پوچھتی ہیں کہ آپ کس کو فون کریں گے: بیٹے کو۔ فعل کے بعد کون سا لفظ آئے گا؟",
+    "a0-object-pronouns|ons": "اسٹیشن پر آپ کا پورا خاندان مدد کا منتظر ہے۔ فعل کے بعد ‘ہمیں’ کے لیے کون سا لفظ آئے گا؟",
+    "a0-object-pronouns|kunt u hem helpen": "بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔",
+    "a0-object-pronouns|kunt u ons helpen": "آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے مدد مانگیں۔",
+    "a0-object-pronouns|ik bel haar": "ساتھی پوچھتا ہے کہ کیا آپ نئی ساتھی کو اطلاع دیں گے۔ بتائیں کہ آپ اسے فون کرتے ہیں۔",
+    "a0-object-pronouns|bel mij morgen": "فون پر بات مکمل نہیں ہوئی۔ سامنے والے سے کہیں کہ آپ کو کل فون کرے۔",
+    "a0-object-pronouns|ik breng hem naar school": "پڑوسی ابھی آپ کے بیٹے کا نام لے کر پوچھتی ہے کہ صبح اسے کون لے جاتا ہے۔ بیٹے کا دوبارہ ذکر کیے بغیر ‘اسے’ کہہ کر بتائیں کہ آپ اسے اسکول لے جاتے ہیں۔",
+    "a0-object-pronouns|ik haal haar om drie uur op": "استاد پوچھتی ہیں کہ بیٹی کو کون لے جائے گا۔ بتائیں کہ آپ اسے تین بجے لے جائیں گے۔",
+    "a0-future-gaan|ik ga werken": "صبح بچہ پوچھتا ہے کہ آپ کہاں جا رہے ہیں۔ بتائیں کہ آپ کام کرنے جا رہے ہیں۔",
+    "a0-future-gaan|ik ga morgen werken": "دوست کل ملنا چاہتا ہے۔ بتائیں کہ آپ کل کام کریں گے۔",
+    "a0-future-gaan|morgen ga ik werken": "ساتھی پوچھتا ہے کہ آپ کل کیا کریں گے۔ وقت پہلے رکھ کر بتائیں کہ کام کریں گے۔",
+    "a0-future-gaan|wij gaan eten": "شام کو بچوں کو بلانا ہے کہ اب سب کھانا کھانے جا رہے ہیں۔",
+    "a0-future-gaan|hij gaat slapen": "فون پر دادی پوچھتی ہیں کہ کیا بیٹا جاگ رہا ہے۔ بتائیں کہ وہ سونے جا رہا ہے۔",
+    "a0-future-gaan|ik ga de school bellen": "بچے کو بخار ہے۔ اپنے شوہر کو بتائیں کہ آپ اسکول کو فون کریں گی۔",
+    "a0-future-gaan|zaterdag ga ik naar de winkel": "پڑوسی ہفتے کو ملنا چاہتی ہے۔ بتائیں کہ ہفتے کو آپ دکان جائیں گے۔",
+    "a0-plurals-er-is|kamer": "مکان کے نقشے پر صرف ایک کمرہ دکھایا گیا ہے۔ ایک کمرے کا لفظ چنیں۔",
+    "a0-plurals-er-is|stoel": "کلاس میں صرف ایک کرسی خالی ہے۔ ایک کرسی کا لفظ چنیں۔",
+    "a0-plurals-er-is|tafel": "کمرے میں کھانے کے لیے ایک ہی میز ہے۔ ایک میز کا لفظ چنیں۔",
+    "a0-plurals-er-is|het boek": "استاد ایک خاص کتاب مانگتی ہیں جو میز پر رکھی ہے۔ اس کتاب کا ذکر کریں۔",
+    "a0-plurals-er-is|twee boeken": "لائبریری میں آپ کے بچے کے پاس دو کتابیں ہیں۔ ملازم کو بتائیں۔",
+    "a0-adjective-endings|rood": "دوست پوچھتا ہے کہ آپ کا دروازہ کس رنگ کا ہے۔ صرف رنگ بتائیں: سرخ۔",
+    "a0-adjective-endings|groen": "دوست پوچھتا ہے کہ آپ کو جیکٹ کس رنگ میں چاہیے۔ صرف رنگ بتائیں: سبز۔",
+    "a0-adjective-endings|warm": "دکان کا ملازم پوچھتا ہے کہ جیکٹ کیسی چاہیے، پتلی یا سردی والی۔ ایک لفظ میں بتائیں: گرم۔",
+    "a0-comparatives|goedkoop": "بازار میں ایک چیز کی قیمت کم ہے۔ دوست کو ایک لفظ میں بتائیں: سستی۔",
+    "a0-comparatives|duur": "دکان میں جوتوں کی قیمت بہت زیادہ ہے۔ ایک لفظ میں بتائیں: مہنگے۔",
+    "a0-comparatives|goed": "دوست پوچھتا ہے کہ نیا کیفے کیسا ہے۔ ایک لفظ میں بتائیں: اچھا۔",
+    "a0-comparatives|koud": "صبح باہر نکل کر بچہ پوچھتا ہے کہ موسم کیسا ہے۔ ایک لفظ میں بتائیں: ٹھنڈا۔",
+    "a0-comparatives|warm": "دوپہر کو دھوپ تیز ہے۔ دوست کو ایک لفظ میں بتائیں: گرم۔",
+    "a0-object-pronouns|hij": "اسکول کی تصویر میں اپنے بیٹے کی طرف اشارہ کرکے ‘وہ’ کہنا ہے۔ جملے کے شروع والا لفظ چنیں۔",
+    "a0-object-pronouns|wij": "استاد پوچھتی ہیں کہ کون آئے گا: آپ اور آپ کا شوہر۔ جملے کے شروع والا لفظ چنیں۔",
+    "a0-object-pronouns|kunt u mij helpen": "اسٹیشن پر آپ اکیلے ہیں اور راستہ نہیں جانتے۔ اپنے لیے مدد مانگیں۔",
+    "a0-object-pronouns|haar pen": "کلاس میں ایک عورت کا قلم گر گیا ہے۔ استاد کو بتائیں کہ یہ اس کا قلم ہے۔",
+    "a0-verb-endings|ik woon in nederland": "نیا پڑوسی پوچھتا ہے کہ آپ کہاں رہتے ہیں۔ اپنے بارے میں بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔",
+    "a0-verb-endings|ik drink water": "کیفے میں دوست پوچھتا ہے کہ آپ کیا لیں گے۔ اپنے بارے میں بتائیں کہ آپ پانی پیتے ہیں۔",
+    "a0-verb-endings|ik eet brood": "ڈاکٹر پوچھتا ہے کہ آپ ناشتے میں کیا کھاتے ہیں۔ اپنے بارے میں بتائیں کہ آپ روٹی کھاتے ہیں۔",
+    "a0-past-was-had|ik ben ziek": "آج صبح سے بخار ہے۔ فارمیسی میں بتائیں کہ آپ ابھی بیمار ہیں۔",
+    "a0-past-was-had|ik heb pijn": "ڈاکٹر پوچھتا ہے کہ کیا ابھی تکلیف ہے۔ بتائیں کہ اس وقت درد ہے۔",
+    "a0-past-was-had|ik ga naar huis": "کام ختم ہو گیا ہے اور ساتھی پوچھتا ہے کہ اب کہاں جا رہے ہیں۔ بتائیں کہ آپ گھر جاتے ہیں۔",
+    "a0-feelings-reflexive|ik ben ziek": "ڈاکٹر نے بخار کی تصدیق کر دی ہے۔ استاد کو احساس نہیں، سیدھی حالت بتائیں: میں بیمار ہوں۔",
+    "a0-future-gaan|ik werk vandaag": "دوست آج دوپہر ملنا چاہتا ہے۔ بتائیں کہ آپ آج کام کرتے ہیں۔",
+    "a0-future-gaan|wat ga je morgen doen": "جمعہ کی شام دوست سے بات ہو رہی ہے۔ اس سے پوچھیں کہ وہ کل کیا کرے گا۔"
+  });
+  const monthOrdinalsUrdu = ["پہلا", "دوسرا", "تیسرا", "چوتھا", "پانچواں", "چھٹا", "ساتواں", "آٹھواں", "نواں", "دسواں", "گیارہواں", "بارہواں"];
+  survivalMonthsV4.forEach(([month], index) => {
+    exactScenes[`a0-months-dates|${month}`] = `بچوں کے اسکول کے کیلنڈر پر سال کا ${monthOrdinalsUrdu[index]} مہینہ نشان زد ہے۔ اس مہینے کا ڈچ نام چنیں۔`;
+  });
   const exactKey = `${lesson.id}|${normalizedTextV4(dutch)}`;
   if (exactScenes[exactKey]) return `حال: ${exactScenes[exactKey]}`;
 
@@ -12631,6 +13718,447 @@ function pickAuthoredExerciseV4({
   return selected;
 }
 
+// Stage 2.2: "type the missing word". A phrase loses one word (the verb after
+// a subject pronoun, otherwise its longest content word); a single word is
+// typed whole. The word bank fallback spells the word from letter tiles.
+const typedGapSubjectsV4 = new Set(["ik", "jij", "je", "u", "hij", "zij", "ze", "wij", "we", "jullie", "het"]);
+const typedGapSkipV4 = new Set([
+  ...typedGapSubjectsV4, "de", "een", "en", "of", "in", "op", "aan", "naar", "met", "van", "bij",
+  "om", "voor", "uit", "mijn", "uw", "niet", "geen", "er", "dat", "dit", "wat", "ook", "is", "ben", "bent", "zijn"
+]);
+
+function plainLettersV4(value) {
+  return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function typedGapPartsV4(dutch) {
+  const words = String(dutch || "").trim().split(/\s+/).filter(Boolean).map((raw) => {
+    const match = raw.match(/^(.*?)([?.!,;:]*)$/u);
+    return { core: match[1], tail: match[2] };
+  });
+  const usable = (word) => /^[a-zà-ÿ]{2,}$/.test(word.core)
+    && words.filter((other) => other.core.toLowerCase() === word.core.toLowerCase()).length === 1;
+  if (words.length === 1) return usable(words[0]) || /^[A-Za-zÀ-ÿ]{2,}$/.test(words[0].core) ? { words, index: 0 } : null;
+  if (words.length >= 3 && typedGapSubjectsV4.has(words[0].core.toLowerCase()) && usable(words[1])
+    && !typedGapSkipV4.has(words[1].core) ) {
+    return { words, index: 1 };
+  }
+  let best = -1;
+  words.forEach((word, index) => {
+    if (!usable(word) || typedGapSkipV4.has(word.core)) return;
+    if (best < 0 || word.core.length > words[best].core.length) best = index;
+  });
+  return best >= 0 ? { words, index: best } : null;
+}
+
+function makeTypedGapQuestionV4(concept, urdu) {
+  const parts = typedGapPartsV4(concept?.dutch);
+  if (!parts) return null;
+  const answer = parts.words[parts.index].core;
+  const whole = parts.words.length === 1;
+  const gapSentence = whole
+    ? ""
+    : parts.words.map((word, index) => `${index === parts.index ? "___" : word.core}${word.tail}`).join(" ");
+  const letters = [...answer];
+  // A fixed, non-alphabetical letter order, so the bank never spells the answer.
+  const rotation = letters.length > 2 ? 1 + (answer.length % (letters.length - 1)) : 1;
+  let fallbackTiles = [...letters.slice(rotation), ...letters.slice(0, rotation)].reverse();
+  if (fallbackTiles.join("") === answer) fallbackTiles = [...fallbackTiles.slice(1), fallbackTiles[0]];
+  const plain = plainLettersV4(answer);
+  return {
+    type: "short-input",
+    label: whole ? "Nederlands لفظ خود لکھیں" : "خالی جگہ کا Nederlands لفظ لکھیں",
+    prompt: whole
+      ? `“${urdu}” کو Nederlands میں لکھیں۔`
+      : `“${urdu}” — خالی جگہ میں صحیح لفظ لکھیں۔`,
+    gapSentence,
+    answer,
+    acceptedAnswers: plain !== answer ? [plain] : [],
+    fallbackTiles,
+    fallbackJoiner: "",
+    optional: true,
+    explain: whole
+      ? `“${urdu}” = ${answer}۔`
+      : `پورا جملہ: ${concept.dutch} = ${urdu}۔`,
+    generatedConceptId: concept.id
+  };
+}
+
+// annotateQuestionV4 writes generic feedback; a typed gap names the missing word.
+function applyTypedGapFeedbackV4(question, concept, urdu) {
+  const whole = !question.gapSentence;
+  const correct = whole
+    ? `درست۔ “${urdu}” = ${question.answer}۔`
+    : `درست۔ پورا جملہ: ${concept.dutch} = “${urdu}”۔`;
+  const wrong = whole
+    ? `“${urdu}” کے لیے لکھیں: ${question.answer}۔ ہجے حرف بہ حرف دیکھیں۔`
+    : `خالی جگہ میں “${question.answer}” آتا ہے: ${concept.dutch} = “${urdu}”۔`;
+  const hint = whole
+    ? `یہ لفظ ${question.answer.length} حروف کا ہے اور “${question.answer[0]}” سے شروع ہوتا ہے۔`
+    : `یہ لفظ “${question.answer[0]}” سے شروع ہوتا ہے اور ${question.answer.length} حروف کا ہے۔`;
+  return Object.assign(question, {
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    hintUrdu: hint,
+    hint
+  });
+}
+
+// Dutch words taught by lessons already built (lessons are built in course
+// order). A heard reply may use them, like the distractor engine's options.
+const taughtTokensV4 = new Set();
+
+// Stage 2.1: hear a Dutch question, choose the Dutch reply. Each entry is
+// [heard Dutch, its Urdu meaning, the reply (a phrase of the lesson), two
+// wrong replies]. Wrong replies answer a different kind of question (a time
+// instead of a place), so only one option fits. Yes/no questions are avoided
+// because "ja" and "nee" would both fit. A cue is used only once every word
+// in it has been taught.
+const listenReplyCuesV4 = {
+  "a0-greetings-courtesy": [
+    ["alstublieft.", "یہ لیجیے۔", "dank u wel", "goedemiddag", "tot ziens"],
+    ["hoe gaat het?", "آپ کیسے ہیں؟", "goed, dank u", "sorry", "graag"]
+  ],
+  "a0-understanding-help": [
+    ["begrijpt u mij?", "کیا آپ مجھے سمجھتے ہیں؟", "ja, ik begrijp het", "dank u wel", "tot ziens"]
+  ],
+  "a0-dit-dat-questions": [
+    ["wat is dit?", "یہ کیا ہے؟", "dit is een boek", "mijn naam is Ali", "hij is een man"],
+    ["waar is jouw huis?", "تمہارا گھر کہاں ہے؟", "dat is mijn huis", "dit is een boek", "ik heb een boek"]
+  ],
+  "a0-telling-time": [
+    ["hoe laat is het?", "کتنے بجے ہیں؟", "half acht", "kwart", "morgen"],
+    ["hoe laat is het?", "کتنے بجے ہیں؟", "het is drie uur", "vandaag", "maandag"]
+  ],
+  "a0-address-phone": [
+    ["wat is uw adres?", "آپ کا پتہ کیا ہے؟", "ik woon aan de Marktstraat 12", "mijn naam is Sara", "ik kom uit Pakistan"],
+    ["wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟", "mijn nummer is nul zes", "ik woon aan de Marktstraat 12", "mijn naam is Sara"]
+  ],
+  "a0-date-appointment": [
+    ["wanneer is de afspraak?", "ملاقات کب ہے؟", "morgen om tien uur", "ik ben te laat", "mijn naam is Sara"]
+  ],
+  "a0-months-dates": [
+    ["welke datum is het vandaag?", "آج کون سی تاریخ ہے؟", "de eerste", "om tien uur", "op tijd"]
+  ],
+  "a0-place-1": [
+    ["waar is het boek?", "کتاب کہاں ہے؟", "op de tafel", "om tien uur", "morgen"]
+  ],
+  "a0-place-2": [
+    ["waar is de deur?", "دروازہ کہاں ہے؟", "achter het huis", "om acht uur", "vandaag"]
+  ],
+  "a0-naar-met": [
+    ["met wie bent u hier?", "آپ یہاں کس کے ساتھ ہیں؟", "ik ben met mijn kind", "naar huis", "om acht uur"]
+  ],
+  "a0-home-needs": [
+    ["is de kamer warm?", "کیا کمرہ گرم ہے؟", "de kamer is koud", "de deur is open", "ik heb een sleutel nodig"]
+  ],
+  "a0-daily-actions": [
+    ["wat drink jij?", "تم کیا پیتے ہو؟", "ik drink water", "ik eet brood", "ik wacht hier"],
+    ["wat eet jij?", "تم کیا کھاتے ہو؟", "ik eet brood", "ik drink water", "ik ga naar huis"]
+  ],
+  "a0-food-drink": [
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "ik wil graag water", "ik heb honger", "ik eet brood"],
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "ik wil graag koffie", "ik heb honger", "ik wacht hier"]
+  ],
+  "a0-colours-clothes": [
+    ["welke kleur is de jas?", "جیکٹ کس رنگ کی ہے؟", "de jas is blauw", "de kamer is koud", "op de tafel"]
+  ],
+  "a0-shopping-payment": [
+    ["hoe wil je betalen?", "تم کیسے ادائیگی کرنا چاہتے ہو؟", "ik betaal met pin", "mag ik de bon", "ik wil dit"]
+  ],
+  "a0-transport-directions": [
+    ["waar is het station?", "اسٹیشن کہاں ہے؟", "ga rechtdoor", "ik wil een kaartje", "om acht uur"]
+  ],
+  "a0-health-emergency": [
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik heb pijn", "om acht uur", "ga rechtdoor"],
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik ben ziek", "waar is de apotheek", "ik wil een kaartje"]
+  ],
+  "a0-body-health": [
+    ["wat heeft u?", "آپ کو کیا تکلیف ہے؟", "ik heb keelpijn", "ga rechtdoor", "om half negen"]
+  ],
+  "a0-emergency-police": [
+    ["112, wat is er?", "112، کیا ہوا ہے؟", "er is een ongeluk", "ik wil een kaartje", "ga rechtdoor"]
+  ],
+  "a0-child-school": [
+    ["hoe is het met uw kind?", "آپ کا بچہ کیسا ہے؟", "mijn kind is ziek", "om drie uur", "op de tafel"],
+    ["komt uw kind vandaag?", "کیا آپ کا بچہ آج آئے گا؟", "mijn kind komt vandaag niet", "om acht uur", "ga rechtdoor"]
+  ],
+  "a0-work-basics": [
+    ["komt u vandaag?", "کیا آپ آج آئیں گے؟", "ik kan vandaag niet komen", "ga rechtdoor", "op de tafel"],
+    ["wanneer begin je?", "تم کب شروع کرتے ہو؟", "ik begin om negen uur", "ik ben te laat", "ik ben vandaag ziek"]
+  ],
+  "a0-weather-clothing-safety": [
+    ["mag ik hier staan?", "کیا میں یہاں کھڑا ہو سکتا ہوں؟", "nee, het is verboden", "het regent", "ik heb een jas nodig"]
+  ],
+  "a1-greetings-personal-info": [
+    ["wat is uw naam?", "آپ کا نام کیا ہے؟", "mijn naam is Zarar", "ik kom uit Pakistan", "ik woon in Nederland"]
+  ],
+  "a1-details-forms": [
+    ["wat is uw voornaam?", "آپ کا پہلا نام کیا ہے؟", "mijn voornaam is Sara", "mijn achternaam is Khan", "ik woon aan de Marktstraat 12"],
+    ["wat is uw achternaam?", "آپ کا خاندانی نام کیا ہے؟", "mijn achternaam is Khan", "mijn voornaam is Sara", "mijn nummer is nul zes"],
+    ["wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟", "mijn geboortedatum is 12 mei", "ik woon aan de Marktstraat 12", "mijn naam is Sara"],
+    ["wat is uw postcode?", "آپ کا پوسٹ کوڈ کیا ہے؟", "mijn postcode is 1234 AB", "mijn woonplaats is Utrecht", "mijn voornaam is Sara"],
+    ["wat is uw woonplaats?", "آپ کس شہر میں رہتے ہیں؟", "mijn woonplaats is Utrecht", "mijn postcode is 1234 AB", "mijn achternaam is Khan"],
+    ["wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟", "mijn telefoonnummer is nul zes", "mijn postcode is 1234 AB", "ik heb geen e-mailadres"],
+    ["wat is uw e-mailadres?", "آپ کا ای میل پتہ کیا ہے؟", "ik heb geen e-mailadres", "mijn telefoonnummer is nul zes", "mijn voornaam is Sara"]
+  ],
+  "a1-people-family-articles": [
+    ["wie is dat?", "وہ کون ہے؟", "dit is mijn vader", "ik heb een boek", "op de tafel"]
+  ],
+  "a1-hebben-family": [
+    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb twee kinderen", "mijn naam is Sara", "ik woon in Nederland"],
+    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb geen kinderen", "dit is mijn vader", "ik woon in Nederland"]
+  ],
+  "a1-family-routine-extra": [
+    ["waar woont uw familie?", "آپ کا خاندان کہاں رہتا ہے؟", "mijn familie woont in Nederland", "mijn dochter is vijf jaar", "mijn zoon gaat naar school"]
+  ],
+  "a1-child-care": [
+    ["wanneer haal je je kind op?", "تم اپنے بچے کو کب لینے آتے ہو؟", "ik haal mijn kind om vijf uur op", "ik breng mijn kind om acht uur naar de kinderopvang", "de kinderopvang"],
+    ["wat heeft uw kind nodig?", "آپ کے بچے کو کیا چاہیے؟", "mijn kind heeft water nodig", "om vijf uur", "mijn kind is moe"],
+    ["hoe is het met uw kind?", "آپ کا بچہ کیسا ہے؟", "mijn kind is moe", "om vijf uur", "de kinderopvang"]
+  ],
+  "a1-present-time": [
+    ["wat doet u nu?", "آپ ابھی کیا کر رہے ہیں؟", "ik leer nu Nederlands", "ik woon in Nederland", "om acht uur"]
+  ],
+  "a1-daily-routine": [
+    ["hoe laat sta je op?", "تم کتنے بجے اٹھتے ہو؟", "ik sta om zeven uur op", "ik ga met de bus naar mijn werk", "ik ontbijt om half acht"],
+    ["hoe gaat u naar uw werk?", "آپ کام پر کیسے جاتے ہیں؟", "ik ga met de bus naar mijn werk", "ik begin om negen uur", "ik ontbijt om half acht"],
+    ["hoe laat stop je?", "تم کتنے بجے کام ختم کرتے ہو؟", "ik stop om vijf uur", "daarna ga ik naar huis", "eerst breng ik mijn kind naar school"]
+  ],
+  "a1-calendar-time": [
+    ["wanneer komt u?", "آپ کب آئیں گے؟", "ik kom op maandag", "mijn naam is Sara", "ga rechtdoor"],
+    ["waar bent u in het weekend?", "ہفتہ وار چھٹی میں آپ کہاں ہوتے ہیں؟", "in het weekend ben ik thuis", "ik kom op maandag", "ik werk op vrijdag"],
+    ["heeft u tijd?", "کیا آپ کے پاس وقت ہے؟", "ik heb tijd in de middag", "ik ben op tijd", "sorry ik ben te laat"]
+  ],
+  "a1-weather-clothes": [
+    ["regent het?", "کیا بارش ہو رہی ہے؟", "het regent vandaag", "ik heb een jas nodig", "ik ga niet naar buiten"]
+  ],
+  "a1-polite-chunks": [
+    ["wil je koffie?", "کیا تم کافی لو گے؟", "nee dank u", "dank u wel voor uw hulp", "mag ik iets vragen?"]
+  ],
+  "a1-plans-invitations": [
+    ["wanneer heb je tijd?", "تمہارے پاس کب وقت ہے؟", "zullen we om drie uur afspreken?", "wil je koffie drinken?", "tot ziens"],
+    ["heb je morgen tijd?", "کیا کل تمہارے پاس وقت ہے؟", "sorry ik kan niet", "tot morgen", "waar spreken we af?"]
+  ],
+  "a1-phone-calls": [
+    ["met wie spreek ik?", "میں کس سے بات کر رہا ہوں؟", "met Sara", "telefoon", "ik bel u vanavond terug"],
+    ["hallo, is Ali daar?", "ہیلو، کیا Ali وہاں ہے؟", "u heeft het verkeerde nummer", "kunt u het nummer herhalen?", "spreek een bericht in"]
+  ],
+  "a1-appointments": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik wil een afspraak maken", "om tien uur", "ik ben op tijd"],
+    ["kunt u vandaag om drie uur komen?", "کیا آپ آج تین بجے آ سکتے ہیں؟", "kan het morgen in de ochtend?", "ik wil een afspraak maken", "hoe laat is de afspraak?"],
+    ["kunt u maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟", "ik kan maandag niet komen", "hoe laat is de afspraak?", "ik wil een afspraak maken"]
+  ],
+  "a1-house-food-plurals": [
+    ["waar is het boek?", "کتاب کہاں ہے؟", "het boek is in de kamer", "ik heb twee kinderen", "om acht uur"]
+  ],
+  "a1-neighbour-talk": [
+    ["wat is er?", "کیا بات ہے؟", "ik heb last van lawaai", "het boek is in de kamer", "om acht uur"]
+  ],
+  "a1-home-repairs": [
+    ["wat is er kapot?", "کیا خراب ہے؟", "de verwarming doet het niet", "warm water", "monteur"],
+    ["wat is er kapot?", "کیا خراب ہے؟", "de lamp is kapot", "het probleem is opgelost", "wanneer komt de monteur?"]
+  ],
+  "a1-cleaning-house": [
+    ["hoe is de keuken?", "کچن کیسا ہے؟", "de keuken is schoon", "de badkamer is vies", "ik doe vandaag de was"]
+  ],
+  "a1-house-search-extra": [
+    ["wat zoek je?", "تم کیا تلاش کر رہے ہو؟", "ik zoek een woning", "ik woon in Nederland", "om acht uur"]
+  ],
+  "a1-supermarket": [
+    ["wat zoek je?", "تم کیا تلاش کر رہے ہو؟", "ik zoek melk", "ik heb honger", "om acht uur"],
+    ["waar is de kassa?", "کاؤنٹر کہاں ہے؟", "de kassa is daar", "mag ik een tas?", "hoeveel kost dit brood?"]
+  ],
+  "a1-cafe-ordering": [
+    ["wat wil je drinken?", "تم کیا پینا چاہتے ہو؟", "voor mij een thee", "mag ik de kaart alstublieft?", "menu"],
+    ["wat wilt u eten?", "آپ کیا کھانا چاہتے ہیں؟", "ik neem de soep", "de rekening alstublieft", "voor mij een thee"]
+  ],
+  "a1-cafe-food-needs": [
+    ["met vlees?", "گوشت کے ساتھ؟", "zonder vlees alstublieft", "bestelling", "de rekening alstublieft"],
+    ["is dit uw bestelling?", "کیا یہ آپ کا آرڈر ہے؟", "dit is niet mijn bestelling", "zonder vlees alstublieft", "de rekening alstublieft"]
+  ],
+  "a1-shopping-clothes": [
+    ["is de jas goed?", "کیا جیکٹ ٹھیک ہے؟", "deze jas is te groot", "hoeveel kost deze jas?", "maat"],
+    ["wilt u deze jas?", "کیا آپ یہ جیکٹ لیں گے؟", "ik neem deze", "mijn naam is Sara", "waar is de paskamer?"]
+  ],
+  "a1-shopping-returns": [
+    ["kan ik u helpen?", "کیا میں آپ کی مدد کر سکتا ہوں؟", "ik wil dit terugbrengen", "de kassa is daar", "om acht uur"],
+    ["heeft u de bon?", "کیا آپ کے پاس رسید ہے؟", "hier is de bon", "ik wil dit terugbrengen", "ruilen"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "de jas is kapot", "kan ik mijn geld terugkrijgen?", "heeft u een grotere maat?"]
+  ],
+  "a1-money-bank": [
+    ["hoe wil je betalen?", "تم کیسے ادائیگی کرنا چاہتے ہو؟", "ik betaal contant", "mag ik de bon", "de kassa is daar"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "het bedrag klopt niet", "ik betaal contant", "mag ik de bon"]
+  ],
+  "a1-public-transport": [
+    ["wat wilt u?", "آپ کو کیا چاہیے؟", "ik wil een kaartje naar Utrecht", "mijn pinpas werkt niet", "het bedrag klopt niet"],
+    ["is de trein op tijd?", "کیا ٹرین وقت پر ہے؟", "de trein heeft vertraging", "waar moet ik overstappen?", "de volgende halte is centrum"]
+  ],
+  "a1-directions-town": [
+    ["waar is de apotheek?", "فارمیسی کہاں ہے؟", "het is dichtbij", "hoe kom ik bij de apotheek?", "kaart"],
+    ["hoe kom ik bij het plein?", "میں چوک تک کیسے جاؤں؟", "sla rechts af", "de trein heeft vertraging", "ik betaal contant"]
+  ],
+  "a1-post-parcel-extra": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik wil mijn pakket ophalen", "ik betaal contant", "de kassa is daar"],
+    ["waar is mijn pakket?", "میرا پارسل کہاں ہے؟", "het pakket is nog niet gekomen", "ik moet hier tekenen", "heeft u een identiteitsbewijs?"]
+  ],
+  "a1-library-community": [
+    ["wat wilt u leren?", "آپ کیا سیکھنا چاہتے ہیں؟", "ik wil Nederlands leren", "ik wil een kaartje naar Utrecht", "ik zoek een woning"],
+    ["is de bibliotheek vandaag open?", "کیا لائبریری آج کھلی ہے؟", "vandaag is het gesloten", "hoe laat is het open?", "ik wil lid worden"]
+  ],
+  "a1-safety-rules": [
+    ["mag ik hier staan?", "کیا میں یہاں کھڑا ہو سکتا ہوں؟", "het is hier verboden", "de ingang is daar", "ik heb hulp nodig"],
+    ["waar is de ingang?", "داخلہ کہاں ہے؟", "de ingang is daar", "u moet hier wachten", "het is hier verboden"]
+  ],
+  "a1-health-appointments": [
+    ["huisarts, hoe kan ik u helpen?", "فیملی ڈاکٹر کا دفتر، میں آپ کی کیا مدد کر سکتی ہوں؟", "ik wil een afspraak bij de huisarts", "assistente", "ik ben op tijd"],
+    ["kunt u morgen komen?", "کیا آپ کل آ سکتے ہیں؟", "ik kan morgen niet komen", "is het dringend?", "het is dichtbij"]
+  ],
+  "a1-doctor-symptoms": [
+    ["wat is er?", "کیا بات ہے؟", "ik heb pijn in mijn buik", "ik heb tijd in de middag", "het is dichtbij"],
+    ["sinds wanneer heeft u koorts?", "آپ کو کب سے بخار ہے؟", "ik heb sinds gisteren koorts", "ik heb pijn in mijn buik", "morgen om tien uur"]
+  ],
+  "a1-pharmacy-medicine": [
+    ["hoe vaak moet ik dit nemen?", "مجھے یہ کتنی بار لینا ہے؟", "twee keer per dag", "recept", "heeft u iets tegen de pijn?"]
+  ],
+  "a1-short-messages": [
+    ["heeft u mijn bericht gelezen?", "کیا آپ نے میرا پیغام پڑھ لیا؟", "ik heb uw bericht gelezen", "ik heb morgen een afspraak", "app"]
+  ],
+  "a1-work-school-messages": [
+    ["waarom kunt u niet komen?", "آپ کیوں نہیں آ سکتے؟", "ik ben ziek", "ik kom morgen weer", "goedemorgen, u spreekt met Ali"],
+    ["waarom bent u te laat?", "آپ کو دیر کیوں ہوئی؟", "de bus heeft vertraging", "dank u voor uw begrip", "kunt u mij terugbellen?"]
+  ],
+  "a1-school-contact": [
+    ["waarom is uw kind thuis?", "آپ کا بچہ گھر پر کیوں ہے؟", "mijn kind heeft koorts", "ik wil de docent spreken", "hoe laat begint de les?"],
+    ["waar staat het rooster?", "اوقات کہاں لکھے ہیں؟", "het rooster staat in de app", "morgen is er geen school", "waar staat het huiswerk?"]
+  ],
+  "a1-work-schedule": [
+    ["wat is er veranderd?", "کیا بدلا ہے؟", "mijn dienst is veranderd", "het bedrag klopt niet", "de lamp is kapot"],
+    ["werk je morgen?", "کیا تم کل کام کرو گے؟", "ik werk morgen niet", "ik heb om twaalf uur pauze", "baas"],
+    ["waarom kunt u niet werken?", "آپ کام کیوں نہیں کر سکتے؟", "ik ben ziek en kan niet werken", "staat het rooster in de app?", "kan ik met mijn baas spreken?"]
+  ],
+  "a2-separable-verbs-routine": [
+    ["moet ik iets invullen?", "کیا مجھے کچھ بھرنا ہے؟", "vul het formulier in", "ik betaal contant", "het is dichtbij"],
+    ["waar moet ik tekenen?", "مجھے کہاں دستخط کرنے ہیں؟", "onderteken hier", "neem uw identiteitsbewijs mee", "vul het formulier in"],
+    ["wat moet ik meenemen?", "مجھے کیا ساتھ لانا ہے؟", "neem uw identiteitsbewijs mee", "onderteken hier", "het formulier invullen"]
+  ],
+  "a2-gemeente-official": [
+    ["hoe kan ik u helpen?", "میں آپ کی کیا مدد کر سکتا ہوں؟", "ik heb een afspraak bij de gemeente", "hier is mijn paspoort", "het loket"],
+    ["heeft u uw paspoort bij u?", "کیا آپ کا پاسپورٹ آپ کے پاس ہے؟", "hier is mijn paspoort", "ik heb een afspraak bij de gemeente", "het BSN"]
+  ],
+  "a2-gemeente-documents": [
+    ["heeft u uw BSN?", "کیا آپ کے پاس آپ کا BSN ہے؟", "ik heb mijn BSN niet bij me", "waar moet ik tekenen?", "is een kopie voldoende?"],
+    ["zijn uw gegevens correct?", "کیا آپ کی معلومات درست ہیں؟", "mijn gegevens zijn niet correct", "hier is mijn paspoort", "waar is loket drie?"],
+    ["is het formulier compleet?", "کیا فارم مکمل ہے؟", "het formulier is nog niet compleet", "waar is loket drie?", "kunt u dit uitleggen?"],
+    ["wanneer krijg ik antwoord?", "مجھے جواب کب ملے گا؟", "u ontvangt binnen twee weken een brief", "kan ik de aanvraag online doen?", "ik wil deze fout laten herstellen"]
+  ],
+  "a2-work-school": [
+    ["heeft u werk?", "کیا آپ کے پاس کام ہے؟", "ik zoek een baan", "dit is mijn contract", "hoeveel uur staat in mijn contract?"],
+    ["wanneer begint u?", "آپ کب شروع کریں گے؟", "ik begin maandag met mijn baan", "dit is mijn contract", "ik zoek een baan"],
+    ["wat is er veranderd?", "کیا بدلا ہے؟", "mijn rooster is veranderd", "mijn collega helpt mij", "dit is mijn rooster"]
+  ],
+  "a2-future-modal-verbs": [
+    ["wanneer kunt u werken?", "آپ کب کام کر سکتے ہیں؟", "ik kan op dinsdag werken", "ik moet veiligheidsschoenen dragen", "mag ik eerder beginnen?"],
+    ["wat moet u dragen?", "آپ کو کیا پہننا ہے؟", "ik moet veiligheidsschoenen dragen", "ik kan op dinsdag werken", "ik ga maandag beginnen"],
+    ["kunt u vrijdag werken?", "کیا آپ جمعہ کو کام کر سکتے ہیں؟", "ik kan op vrijdag niet werken", "wanneer ga ik beginnen?", "ik moet de manager bellen"]
+  ],
+  "a2-work-conditions": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "mijn salaris klopt niet", "kan ik een vrije dag aanvragen", "dit is mijn contract"],
+    ["wilt u dit per e-mail bevestigen?", "کیا آپ اس کی ای میل سے تصدیق کریں گے؟", "ik stuur de bevestiging per e-mail", "wie neemt mijn dienst over", "kunnen we hierover praten"]
+  ],
+  "a2-school-absence-notice": [
+    ["waarom was hij thuis?", "وہ گھر پر کیوں تھا؟", "hij had koorts en moest thuisblijven", "ik meld mijn kind af", "mijn kind komt vandaag niet naar school"],
+    ["hoe laat begint de les?", "سبق کتنے بجے شروع ہوتا ہے؟", "de les begint om tien uur", "moet ik de docent bellen?", "ik meld mijn kind af"]
+  ],
+  "a2-parent-school": [
+    ["waar heeft uw kind moeite mee?", "آپ کے بچے کو کس چیز میں مشکل ہے؟", "mijn kind heeft moeite met lezen", "ik wil graag met de docent praten", "hoe gaat het met mijn kind in de klas?"],
+    ["kunt u dinsdag komen?", "کیا آپ منگل کو آ سکتے ہیں؟", "is een ander tijdstip mogelijk", "we maken samen een plan", "mijn kind voelt zich niet veilig"]
+  ],
+  "a2-perfect-tense": [
+    ["heeft u de dokter gebeld?", "کیا آپ نے ڈاکٹر کو فون کیا؟", "ik heb de dokter gebeld", "gisteren ben ik gevallen", "de pijn begon gisteravond"],
+    ["wanneer begon de pijn?", "درد کب شروع ہوا؟", "de pijn begon gisteravond", "ik heb de dokter gebeld", "ik heb vannacht slecht geslapen"],
+    ["heeft u al gegeten?", "کیا آپ نے کھانا کھا لیا؟", "ik heb nog niet gegeten", "ik ben thuis gebleven", "ik heb al pijnstillers genomen"],
+    ["wanneer is de koorts begonnen?", "بخار کب شروع ہوا؟", "de koorts is vanmorgen begonnen", "ik ben thuis gebleven", "ik heb nog niet gegeten"]
+  ],
+  "a2-strong-combined": [
+    ["waarom bent u naar de huisarts gegaan?", "آپ ڈاکٹر کے پاس کیوں گئے؟", "omdat ik pijn had in mijn rug", "de dokter heeft gezegd", "dat ik rust moet nemen"],
+    ["wanneer moet u terugkomen?", "آپ کو دوبارہ کب آنا ہے؟", "ik moet volgende week terugkomen", "ik moet rust nemen", "als de pijn niet weg is"]
+  ],
+  "a2-doctor-advice": [
+    ["hoe lang heeft u al pijn?", "آپ کو کب سے درد ہے؟", "ik heb al drie dagen pijn", "het medicijn heeft niet geholpen", "de pijn wordt erger als ik loop"],
+    ["heeft het medicijn geholpen?", "کیا دوا سے فائدہ ہوا؟", "het medicijn heeft niet geholpen", "ik heb al drie dagen pijn", "ik ben allergisch voor penicilline"]
+  ],
+  "a2-health-housing": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "ik heb lekkage in mijn huis", "hier is mijn paspoort", "ik zoek een baan"],
+    ["sinds wanneer is de verwarming kapot?", "ہیٹنگ کب سے خراب ہے؟", "de verwarming is sinds gisteren kapot", "ik heb lekkage in mijn huis", "hier is mijn paspoort"],
+    ["waar is de lekkage?", "رساؤ کہاں ہے؟", "het water komt uit de keukenmuur", "wanneer komt de monteur?", "kunt u vandaag een monteur sturen?"]
+  ],
+  "a2-word-order-connectors": [
+    ["waarom bel je?", "تم فون کیوں کر رہے ہو؟", "ik bel omdat de verwarming kapot is", "als de monteur komt, ben ik thuis", "ik zoek een baan"],
+    ["waarom is de kamer nat?", "کمرہ گیلا کیوں ہے؟", "de kamer is nat omdat er een lekkage is", "ik bel omdat de verwarming kapot is", "als de monteur komt, ben ik thuis"],
+    ["wat wilt u?", "آپ کیا چاہتے ہیں؟", "ik wil dat de lekkage wordt gerepareerd", "omdat de muur nat is", "de vloer wordt nat als het regent"]
+  ],
+  "a2-landlord-repairs": [
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "er is een lekkage in de keuken", "wanneer wordt het gerepareerd", "ik zoek een baan"],
+    ["is de monteur gekomen?", "کیا مرمت کرنے والا آیا؟", "de monteur is niet gekomen", "wie betaalt de reparatie", "kunt u dit schriftelijk bevestigen"]
+  ],
+  "a2-shopping-services": [
+    ["wanneer heeft u deze jas gekocht?", "آپ نے یہ جیکٹ کب خریدی؟", "ik heb gisteren deze jas gekocht", "hij is kapot", "ik zoek een baan"],
+    ["wat is er met de jas?", "جیکٹ کو کیا ہوا؟", "hij is kapot", "ik heb gisteren deze jas gekocht", "hier is mijn paspoort"],
+    ["heeft u de bon?", "کیا آپ کے پاس رسید ہے؟", "ik heb de bon", "ik wil hem ruilen", "hij is kapot"],
+    ["wat wilt u?", "آپ کیا چاہتے ہیں؟", "ik wil hem ruilen", "ik heb de bon", "ik heb gisteren deze jas gekocht"]
+  ],
+  "a2-customer-complaints": [
+    ["wanneer heeft u dit gekocht?", "آپ نے یہ کب خریدا؟", "ik heb dit vorige week gekocht", "het product werkt niet goed", "valt dit onder de garantie"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "het product werkt niet goed", "ik heb dit vorige week gekocht", "ik wil het liever ruilen"],
+    ["wat is het probleem?", "مسئلہ کیا ہے؟", "een onderdeel ontbreekt", "wanneer krijg ik een oplossing", "ik wil graag met een leidinggevende spreken"]
+  ],
+  "a2-bills-banking": [
+    ["heeft u deze rekening al betaald?", "کیا آپ یہ بل ادا کر چکے ہیں؟", "ik heb deze rekening al betaald", "kan ik in termijnen betalen", "wanneer moet ik betalen"],
+    ["wat is er met uw pinpas?", "آپ کے کارڈ کو کیا ہوا؟", "ik ben mijn pinpas kwijt", "ik stuur een bewijs van betaling", "de automatische betaling is mislukt"]
+  ],
+  "a2-formal-digital-messages": [
+    ["kunt u op maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟", "ik kan op die dag niet komen", "met vriendelijke groet", "geachte meneer of mevrouw"],
+    ["waar is het formulier?", "فارم کہاں ہے؟", "het formulier staat in de bijlage", "ik heb het formulier ingevuld", "ik wil graag een nieuwe datum afspreken"],
+    ["heeft u al antwoord?", "کیا آپ کو جواب مل گیا؟", "ik heb nog geen antwoord ontvangen", "kunt u mijn bericht bevestigen", "met vriendelijke groet"]
+  ]
+};
+
+function listenReplySourcesV4(lesson, legacyQuestions) {
+  const cues = (listenReplyCuesV4[lesson.id] || []).map(([speak, speakUrdu, answer, ...wrong]) => ({
+    mode: "listen-reply",
+    speak,
+    speakUrdu,
+    options: [answer, ...wrong],
+    answer
+  }));
+  return [...cues, ...legacyQuestions.filter((question) => question.mode === "listen-reply")];
+}
+
+// A reply's feedback names the question that was heard.
+function applyListenReplyFeedbackV4(question, source, concept, urdu) {
+  if (!source.speakUrdu) return question;
+  const correct = `درست۔ سوال تھا “${source.speak}” (${source.speakUrdu}) اور جواب “${concept.dutch}” = “${urdu}”۔`;
+  const wrong = `سوال “${source.speak}” کا مطلب ہے: ${source.speakUrdu} اس کا جواب “${concept.dutch}” ہے: “${urdu}”۔`;
+  const byOption = Object.fromEntries(question.options
+    .filter((option) => option !== question.answer)
+    .map((option) => [option, `“${option}” اس سوال کا جواب نہیں۔ ${wrong}`]));
+  return Object.assign(question, {
+    explainCorrectUrdu: correct,
+    correctExplanation: correct,
+    explainWrongUrdu: wrong,
+    wrongExplanation: wrong,
+    optionExplanationsUrdu: byOption,
+    wrongExplanationsByOption: { ...byOption }
+  });
+}
+
+function latinTokensV4(value) {
+  return String(value || "").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]*/g) || [];
+}
+
 function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   const level = chapterId;
   const conceptIds = lesson.conceptIds;
@@ -12802,6 +14330,12 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   });
 
   const selectedAuthoredIds = new Set();
+  const usedListenRepliesV4 = new Set();
+  const listenReplySources = listenReplySourcesV4(lesson, legacyQuestions);
+  const replyTokens = new Set(prerequisiteConceptIds.flatMap((conceptId) => {
+    const concept = conceptByIdV4.get(conceptId);
+    return latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`);
+  }));
   runs.forEach((run, runIndex) => {
     const understand = [];
     const guided = [];
@@ -13178,6 +14712,77 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
       }
     }
 
+    // Stage 2.2: one typed item per run, preferring a phrase so the learner
+    // writes a word inside a sentence they know.
+    if (!/^a0-(?:letters|sounds)-/.test(lesson.id) && productionConceptIds.length) {
+      const typedCandidates = productionConceptIds
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .filter((concept) => concept && skillIdByConceptIdV4.get(concept.id) && typedGapPartsV4(concept.dutch));
+      const phraseCandidates = typedCandidates.filter((concept) => /\s/.test(concept.dutch.trim()));
+      const typedPool = phraseCandidates.length ? phraseCandidates : typedCandidates;
+      const typedConcept = typedPool[runIndex % Math.max(1, typedPool.length)];
+      const typedUrdu = typedConcept && canonicalUrduForDutchV4(lesson, typedConcept.dutch, typedConcept.urdu);
+      const typedQuestion = typedConcept && makeTypedGapQuestionV4(typedConcept, typedUrdu);
+      if (typedQuestion) {
+        guided.push(applyTypedGapFeedbackV4(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: typedQuestion,
+          phase: "guided-practice",
+          conceptIds: [typedConcept.id],
+          skillIds: [skillIdByConceptIdV4.get(typedConcept.id)],
+          scope: `guided:typed-gap:${typedConcept.id}`
+        }), typedConcept, typedUrdu));
+      }
+    }
+
+    // Stage 2.1: hear a Dutch question and choose the Dutch reply. These are the
+    // lesson's hand-written listenReplies whose answer is a phrase of this run.
+    const runConceptByDutch = new Map(run.conceptIds.map((conceptId) => [
+      normalizedTextV4(conceptByIdV4.get(conceptId)?.dutch),
+      conceptId
+    ]));
+    chunks[runIndex].conceptIds.forEach((conceptId) => {
+      const concept = conceptByIdV4.get(conceptId);
+      latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`).forEach((token) => replyTokens.add(token));
+    });
+    listenReplySources
+      .filter((question) => !usedListenRepliesV4.has(question)
+        && runConceptByDutch.has(normalizedTextV4(question.answer))
+        && [question.speak, ...(question.options || [])]
+          .flatMap(latinTokensV4)
+          .every((token) => replyTokens.has(token) || taughtTokensV4.has(token)))
+      .slice(0, 2)
+      .forEach((legacy, replyIndex) => {
+        usedListenRepliesV4.add(legacy);
+        const conceptId = runConceptByDutch.get(normalizedTextV4(legacy.answer));
+        const concept = conceptByIdV4.get(conceptId);
+        const answerKey = normalizedTextV4(concept.dutch);
+        use.push(applyListenReplyFeedbackV4(addSyntheticExerciseV4({
+          lesson,
+          run,
+          question: {
+            type: "listen-choice",
+            mode: "listen-reply",
+            label: "Nederlands سوال سنیں اور Nederlands جواب منتخب کریں",
+            prompt: "بات سنیں اور مناسب جواب منتخب کریں۔",
+            speak: legacy.speak,
+            options: legacy.options.map((option) => (normalizedTextV4(option) === answerKey ? concept.dutch : option)),
+            answer: concept.dutch,
+            explain: `سوال: ${legacy.speak} — جواب: ${concept.dutch}۔ ${legacy.explain || ""}`.trim(),
+            generatedConceptId: conceptId,
+            // Every reply is hand-written: a listenReplyCuesV4 cue or a lesson's listenReplies.
+            scenarioId: `${lesson.id}:listen-reply:${semanticSlugV4(legacy.speak, "cue")}`,
+            scenarioSource: `${String(lesson.id).slice(0, 2)}-authored:${semanticSlugV4(lesson.id)}:listen-reply:${semanticSlugV4(legacy.speak, "cue")}`,
+            authenticUse: true
+          },
+          phase: "use",
+          conceptIds: [conceptId],
+          skillIds: [skillIdByConceptIdV4.get(conceptId)],
+          scope: `use:listen-reply-${replyIndex + 1}:${conceptId}`
+        }), legacy, concept, canonicalUrduForDutchV4(lesson, concept.dutch, concept.urdu)));
+      });
+
     const useConceptIds = uniqueV4([
       productionConceptIds[0],
       productionConceptIds.length > 1
@@ -13319,6 +14924,10 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
   });
 
   lesson.exercises = lesson.questions;
+  lesson.conceptIds.forEach((conceptId) => {
+    const concept = conceptByIdV4.get(conceptId);
+    latinTokensV4(`${concept?.dutch || ""} ${concept?.audioText || ""}`).forEach((token) => taughtTokensV4.add(token));
+  });
   return runs;
 }
 
@@ -13345,7 +14954,7 @@ const a0StartUseScenesV4 = {
 function applyA0StartUseScenesV4(lesson) {
   if (!a0StartSpeakingLessonIdsV4.has(lesson.id)) return;
   for (const question of lesson.exercises || []) {
-    if (question.phase !== "use") continue;
+    if (question.phase !== "use" || question.mode === "listen-reply") continue;
     const concept = (question.conceptIds || [])
       .map((conceptId) => conceptByIdV4.get(conceptId))
       .find(Boolean);
@@ -13409,7 +15018,7 @@ function applyA1AuthoredLessonExperienceV4(lesson) {
   for (const run of lesson.learning?.runs || []) {
     for (const questionId of run.phases?.use?.exerciseIds || []) {
       const question = questionById.get(questionId);
-      if (question?.scored === false) continue;
+      if (question?.scored === false || question?.mode === "listen-reply") continue;
       const concept = (question?.conceptIds || [])
         .map((conceptId) => conceptByIdV4.get(conceptId))
         .find(Boolean);
@@ -13834,6 +15443,11 @@ const a0MissionPlansV4 = {
     documentTitles: ["عمارت کا استقبالی پیغام", "کاؤنٹر کا مختصر نوٹ", "اسکول کا مختصر پیغام"],
     documentLabels: ["پہلی بات", "اگلا جواب"],
     targets: [
+      a0MissionTargetV4("a0-language-help", "ik heb een tolk nodig", [
+        "نئی عمارت کے دفتر میں بات سمجھ نہیں آ رہی۔ بتائیں کہ آپ کو ترجمان چاہیے۔",
+        "دکان کے کاؤنٹر پر لمبی ہدایت سمجھ نہیں آئی۔ ترجمان مانگیں۔",
+        "اسکول کے دروازے پر استاد کی بات مشکل ہے۔ بتائیں کہ آپ کو ترجمان چاہیے۔"
+      ]),
       a0MissionTargetV4("a0-greetings-courtesy", "hallo", [
         "صبح نئی عمارت میں پڑوسی سے پہلی بار ملتے ہیں۔ بات شروع کریں۔",
         "دکان میں ملازم آپ کی طرف متوجہ ہوتا ہے۔ گفتگو شروع کریں۔",
@@ -13859,11 +15473,6 @@ const a0MissionPlansV4 = {
         "دکاندار پوچھتا ہے کہ کیا آپ تھیلا چاہتے ہیں؛ آپ نہیں چاہتے۔ مختصر جواب دیں۔",
         "استاد پوچھتا ہے کہ کیا کوئی اور سوال ہے؛ ابھی کوئی سوال نہیں۔ مختصر جواب دیں۔"
       ]),
-      a0MissionTargetV4("a0-greetings-courtesy", "tot ziens", [
-        "گفتگو مکمل ہو گئی ہے اور آپ پڑوسی سے رخصت ہو رہے ہیں۔ مناسب بات کہیں۔",
-        "خریداری مکمل ہو گئی ہے اور آپ دکان سے جا رہے ہیں۔ مناسب رخصتی کہیں۔",
-        "اسکول کی بات مکمل ہو گئی ہے اور آپ واپس جا رہے ہیں۔ مناسب رخصتی کہیں۔"
-      ])
     ]
   },
   "a0-letters-sounds-mission": {
@@ -13916,15 +15525,15 @@ const a0MissionPlansV4 = {
     documentTitles: ["پڑوسی کا تعارف کارڈ", "مرکز کا تعارف فارم", "اسکول کا تعارف کارڈ"],
     documentLabels: ["تعارف", "خاندان"],
     targets: [
+      a0MissionTargetV4("a0-family-status", "ik ben getrouwd", [
+        "نیا پڑوسی پوچھتا ہے کہ کیا آپ شادی شدہ ہیں۔ آپ کی شادی ہو چکی ہے؛ بتائیں۔",
+        "کمیونٹی مرکز کے فارم پر ازدواجی حالت پوچھی گئی ہے۔ آپ شادی شدہ ہیں؛ بتائیں۔",
+        "اسکول کے تعارف کارڈ کے لیے بتانا ہے کہ آپ شادی شدہ ہیں۔"
+      ], [{ lessonId: "a0-people-nouns", dutch: "familie" }]),
       a0MissionTargetV4("a0-ik-jij-u", "u", [
         "نئے پڑوسی سے ادب کے ساتھ آپ کہنا ہے۔ درست ڈچ لفظ پہچانیں۔",
         "مرکز کے ملازم سے رسمی انداز میں آپ کہنا ہے۔ درست لفظ چنیں۔",
         "استقبالی استاد سے ادب کے ساتھ آپ کہنا ہے۔ درست لفظ چنیں۔"
-      ]),
-      a0MissionTargetV4("a0-people-nouns", "familie", [
-        "پڑوسی آپ کے ساتھ موجود لوگوں کے بارے میں پوچھتا ہے۔ خاندان کا لفظ چنیں۔",
-        "فارم پر خاندان کی تصویر کے لیے صحیح لفظ درکار ہے۔ درست لفظ چنیں۔",
-        "اسکول کے کارڈ پر خاندان کی تصویر ہے۔ صحیح ڈچ لفظ پہچانیں۔"
       ]),
       a0MissionTargetV4("a0-hij-zij-wij", "zij", [
         "ایک عورت کی طرف اشارہ کرکے وہ کہنا ہے۔ درست ڈچ ضمیر چنیں۔",
@@ -13988,6 +15597,16 @@ const a0MissionPlansV4 = {
     documentTitles: ["ملاقات کارڈ", "فون نوٹ", "استقبالی فارم"],
     documentLabels: ["اہم نمبر", "وقت یا رابطہ"],
     targets: [
+      a0MissionTargetV4("a0-months-dates", "op drie maart", [
+        "ملاقات کارڈ پر تاریخ 3 مارچ لکھی ہے۔ ملاقات کی تاریخ بتائیں۔",
+        "فون پر ملاقات تین مارچ کو منتقل ہو گئی۔ نئی تاریخ ڈچ میں دہرائیں۔",
+        "استقبالی فارم کے لیے بتانا ہے کہ آپ تین مارچ کو آئیں گے۔"
+      ], [{ lessonId: "a0-date-appointment", dutch: "ik heb een afspraak" }]),
+      a0MissionTargetV4("a0-telling-time", "half acht", [
+        "ملاقات کارڈ پر وقت 7:30 لکھا ہے۔ یہ وقت ڈچ میں بتائیں۔",
+        "فون پر ملاقات کا نیا وقت 7:30 طے ہوا۔ یہ وقت ڈچ میں دہرائیں۔",
+        "استقبالی کاؤنٹر پر بتانا ہے کہ آپ 7:30 پر آئیں گے۔ وقت ڈچ میں کہیں۔"
+      ], [{ lessonId: "a0-time-days", dutch: "om acht uur" }]),
       a0MissionTargetV4("a0-numbers-0-10", "vier euro", [
         "ملاقات کے سفر کا ٹکٹ چار یورو ہے۔ رقم پہچانیں۔",
         "فون پر بتائی گئی فیس چار یورو ہے۔ درست رقم چنیں۔",
@@ -13997,11 +15616,6 @@ const a0MissionPlansV4 = {
         "ملاقات کے کارڈ پر گھر نمبر چودہ درج کرنا ہے۔ مکمل بات کہیں۔",
         "فون پر اپنا گھر نمبر چودہ بتانا ہے۔ مکمل بات کہیں۔",
         "استقبالی فارم میں گھر نمبر چودہ بتایا گیا ہے۔ اسے پہچانیں۔"
-      ]),
-      a0MissionTargetV4("a0-time-days", "om acht uur", [
-        "ملاقات آٹھ بجے ہے۔ پورا وقت ڈچ میں کہیں۔",
-        "فون پر نیا وقت آٹھ بجے بتایا گیا ہے۔ اسے پہچانیں۔",
-        "کاؤنٹر پر آٹھ بجے پہنچنے کی بات کرنی ہے۔ پورا وقت کہیں۔"
       ]),
       a0MissionTargetV4("a0-spelling-personal-details", "hoe spelt u dat?", [
         "نام سن لیا مگر حروف معلوم نہیں۔ ادب سے ہجے پوچھیں۔",
@@ -14013,11 +15627,6 @@ const a0MissionPlansV4 = {
         "فون پر رابطے کے لیے اپنا نمبر صفر چھ سے شروع بتائیں۔",
         "کاؤنٹر پر اپنا نمبر صفر چھ سے شروع بتائیں۔"
       ]),
-      a0MissionTargetV4("a0-date-appointment", "ik heb een afspraak", [
-        "استقبال پر بتانا ہے کہ آپ کی ملاقات ہے۔ مکمل جملہ کہیں۔",
-        "فون اٹھانے والے کو بتائیں کہ آپ کی ملاقات ہے۔",
-        "کاؤنٹر پر پہنچ کر اپنی ملاقات کی وجہ واضح کریں۔"
-      ])
     ]
   },
   "a0-mission-home-start": {
@@ -14049,6 +15658,11 @@ const a0MissionPlansV4 = {
         "مرمت والے کو بتانا ہے کہ گھر کی ایک فرد اسکول جا رہی ہے۔ مکمل جملہ کہیں۔",
         "راستے میں ایک خاتون اسکول کی طرف جا رہی ہے۔ اس کے بارے میں مکمل جملہ کہیں۔"
       ]),
+      a0MissionTargetV4("a0-plurals-er-is", "er zijn drie kamers", [
+        "نئے گھر میں آئے مہمان کو بتائیں کہ گھر میں تین کمرے ہیں۔",
+        "مرمت والا پوچھتا ہے کہ کتنے کمروں میں ہیٹنگ لگی ہے۔ بتائیں کہ تین کمرے ہیں۔",
+        "گھر سے نکلنے سے پہلے نئے کرایہ دار کو بتائیں کہ گھر میں تین کمرے ہیں۔"
+      ]),
       a0MissionTargetV4("a0-home-needs", "de verwarming doet het niet", [
         "گھر ٹھنڈا ہے اور ہیٹنگ کام نہیں کر رہی۔ خرابی واضح کریں۔",
         "مرمت والے کو اصل مسئلہ بتائیں: ہیٹنگ کام نہیں کرتی۔",
@@ -14070,21 +15684,31 @@ const a0MissionPlansV4 = {
         "کیفے میں اپنی روزمرہ عادت بتائیں کہ آپ پانی پیتے ہیں۔",
         "سپر مارکیٹ میں ساتھی کو بتائیں کہ آپ پانی پیتے ہیں۔"
       ]),
+      a0MissionTargetV4("a0-verb-endings", "hij drinkt koffie", [
+        "دکان میں ساتھی پوچھتا ہے کہ آپ کا بھائی کیا پیتا ہے۔ بتائیں کہ وہ کافی پیتا ہے۔",
+        "کیفے کے کاؤنٹر پر بتائیں کہ آپ کے ساتھ آیا شخص کافی پیتا ہے۔",
+        "سپر مارکیٹ میں دوست کو بتائیں کہ آپ کا شوہر کافی پیتا ہے، اس لیے کافی لینی ہے۔"
+      ]),
       a0MissionTargetV4("a0-food-drink", "ik wil graag water", [
         "دکان میں پانی مؤدبانہ طور پر مانگیں۔",
         "کیفے کے کاؤنٹر پر پانی مانگیں۔",
         "سپر مارکیٹ کے کاؤنٹر پر پانی کی درخواست کریں۔"
       ]),
-      a0MissionTargetV4("a0-shopping-payment", "hoeveel kost dit", [
-        "ایک چیز کی قیمت معلوم نہیں۔ قیمت کا سوال پوچھیں۔",
-        "کاؤنٹر پر آرڈر کی قیمت پوچھیں۔",
-        "سپر مارکیٹ میں چیز دکھا کر قیمت پوچھیں۔"
+      a0MissionTargetV4("a0-colours-clothes", "heeft u dit in het zwart?", [
+        "دکان میں قمیص پسند ہے مگر آپ کو کالے رنگ میں چاہیے۔ ملازم سے پوچھیں۔",
+        "کیفے کے ساتھ والی دکان میں ٹوپی دوسرے رنگ میں چاہیے۔ کالے رنگ کا پوچھیں۔",
+        "سپر مارکیٹ میں تھیلا پسند ہے؛ پوچھیں کہ کیا یہ کالے رنگ میں بھی ہے۔"
       ]),
-      a0MissionTargetV4("a0-shopping-payment", "ik betaal met pin", [
-        "دکاندار ادائیگی کا طریقہ پوچھتا ہے۔ بتائیں کہ پن سے ادا کریں گے۔",
-        "کیفے کے کاؤنٹر پر پن سے ادائیگی کی بات کہیں۔",
-        "سپر مارکیٹ کی کَیش جگہ پر پن سے ادائیگی کی بات کہیں۔"
-      ])
+      a0MissionTargetV4("a0-adjective-endings", "ik wil de groene jas", [
+        "دکان میں تین رنگ کی جیکٹیں ہیں۔ ملازم کو بتائیں کہ آپ کو سبز جیکٹ چاہیے۔",
+        "کیفے کے ساتھ والی دکان میں کئی جیکٹیں لٹکی ہیں۔ سبز والی مانگیں۔",
+        "سپر مارکیٹ کے کپڑوں والے حصے میں سبز جیکٹ چننی ہے۔ ملازم کو بتائیں۔"
+      ]),
+      a0MissionTargetV4("a0-shopping-payment", "hoeveel kost dit", [
+        "دکان میں دو چیزیں ہیں۔ پہلے ایک کی قیمت پوچھیں، پھر بتائیں کہ یہ والی زیادہ سستی ہے۔",
+        "کاؤنٹر پر پہلے قیمت پوچھیں، پھر دوست کو بتائیں کہ یہ والا زیادہ سستا ہے۔",
+        "سپر مارکیٹ میں پہلے قیمت پوچھیں، پھر بتائیں کہ یہ والی چیز زیادہ سستی ہے۔"
+      ], [{ lessonId: "a0-comparatives", dutch: "dit is goedkoper" }])
     ]
   },
   "a0-mission-help": {
@@ -14096,30 +15720,30 @@ const a0MissionPlansV4 = {
     documentTitles: ["سفر اور راستے کا نوٹ", "بس اور صحت کا پیغام", "فوری مدد کا کارڈ"],
     documentLabels: ["راستہ یا سفر", "صحت یا مدد"],
     targets: [
+      a0MissionTargetV4("a0-emergency-police", "er is een ongeluk", [
+        "اسٹیشن کے باہر سائیکل اور گاڑی ٹکرا گئی ہیں۔ 112 کو اطلاع دیں۔",
+        "بس کے سامنے حادثہ ہو گیا ہے۔ ڈرائیور کے ساتھ 112 کو اطلاع دیں۔",
+        "رات کو گلی میں حادثہ ہوا ہے۔ 112 پر سب سے پہلی بات کہیں۔"
+      ]),
+      a0MissionTargetV4("a0-feelings-reflexive", "ik voel me niet goed", [
+        "اسٹیشن کے بعد فارمیسی میں پہلے بتائیں کہ طبیعت ٹھیک نہیں، پھر کہ کمر میں درد ہے۔",
+        "بس کے لمبے سفر کے بعد ڈرائیور کو پہلے بتائیں کہ طبیعت ٹھیک نہیں، پھر کمر کا درد۔",
+        "رات کو فوری مدد کے فون پر پہلے طبیعت کی خرابی، پھر کمر کا درد بتائیں۔"
+      ], [{ lessonId: "a0-body-health", dutch: "mijn rug doet pijn" }]),
       a0MissionTargetV4("a0-transport-directions", "waar is het station", [
         "سفر شروع کرنے کے لیے اسٹیشن کا راستہ پوچھیں۔",
         "بس سے اترنے کے بعد اسٹیشن معلوم کرنا ہے۔ درست سوال کہیں۔",
         "رات کے وقت مددگار سے اسٹیشن کی جگہ پوچھیں۔"
       ]),
-      a0MissionTargetV4("a0-transport-directions", "ik wil een kaartje", [
-        "اسٹیشن کے کاؤنٹر پر ایک ٹکٹ مانگیں۔",
-        "بس میں سفر کے لیے ٹکٹ کی درخواست کریں۔",
-        "رات کی گاڑی کے لیے ٹکٹ مانگیں۔"
-      ]),
-      a0MissionTargetV4("a0-transport-directions", "ga rechtdoor", [
-        "راستہ بتاتے ہوئے سیدھا جانے کی ہدایت دیں۔",
-        "مسافر کو بس اسٹاپ تک سیدھا جانے کو کہیں۔",
-        "مددگار آپ کو سیدھا جانے کی بات بتاتا ہے۔ اسے پہچانیں۔"
+      a0MissionTargetV4("a0-past-was-had", "gisteren was ik ziek", [
+        "دواخانے کا ملازم پوچھتا ہے کہ تکلیف کب سے ہے۔ کل سے شروع کرکے بتائیں کہ آپ کل بیمار تھے۔",
+        "بس میں ساتھی پوچھتا ہے کہ آپ کل کام پر کیوں نہیں تھے۔ بتائیں کہ کل آپ بیمار تھے۔",
+        "رات کو فون پر ڈاکٹر کو بتائیں کہ کل بھی آپ بیمار تھے۔"
       ]),
       a0MissionTargetV4("a0-health-emergency", "ik ben ziek", [
         "دواخانے پہنچ کر بتائیں کہ آپ بیمار ہیں۔",
         "بس میں طبیعت خراب ہے۔ مددگار کو بتائیں کہ آپ بیمار ہیں۔",
         "رات کو فون پر بتائیں کہ آپ بیمار ہیں۔"
-      ]),
-      a0MissionTargetV4("a0-health-emergency", "waar is de apotheek", [
-        "اسٹیشن کے قریب دواخانے کی جگہ پوچھیں۔",
-        "بس ڈرائیور سے دواخانے کی جگہ پوچھیں۔",
-        "رات کو کھلے دواخانے کا راستہ پوچھیں۔"
       ]),
       a0MissionTargetV4("a0-health-emergency", "bel 112", [
         "فوری خطرہ ہے اور کسی کو ہنگامی نمبر ملانے کو کہنا ہے۔",
@@ -14159,10 +15783,13 @@ const a0MissionPlansV4 = {
         "رخصتی سے پہلے پانی کی بوتل کے کارڈ پر لفظ پہچانیں۔"
       ]),
       a0MissionTargetV4("a0-name-land-city", "mijn naam is Ali", [
-        "فون پر پہلے اپنا نام علی بتائیں، پھر رابطے کے لیے اپنا صفر چھ والا نمبر دیں۔",
-        "صبح کے پیغام میں اپنا نام علی اور صفر چھ سے شروع فون نمبر درست ترتیب سے دیں۔",
-        "عمارت کے کاؤنٹر پر اپنا نام علی اور صفر چھ سے شروع نمبر درست ترتیب سے بتائیں۔"
-      ], [{ lessonId: "a0-address-phone", dutch: "mijn nummer is nul zes" }]),
+        "فون پر پہلے اپنا نام علی بتائیں، پھر اپنا صفر چھ والا نمبر دیں، اور آخر میں کہیں کہ آپ کو کل فون کریں۔",
+        "صبح کے پیغام میں اپنا نام علی، صفر چھ سے شروع فون نمبر، اور کل فون کرنے کی درخواست درست ترتیب سے دیں۔",
+        "عمارت کے کاؤنٹر پر اپنا نام علی، صفر چھ سے شروع نمبر، اور کل فون کرنے کی بات درست ترتیب سے بتائیں۔"
+      ], [
+        { lessonId: "a0-address-phone", dutch: "mijn nummer is nul zes" },
+        { lessonId: "a0-object-pronouns", dutch: "bel mij morgen" }
+      ]),
       a0MissionTargetV4("a0-possessive", "mijn huis", [
         "اپنے گھر کا ذکر کریں، پھر بتائیں کہ وہاں ہیٹنگ کام نہیں کر رہی۔",
         "مرمت کے پیغام میں پہلے میرا گھر کہیں، پھر ہیٹنگ کی خرابی بتائیں۔",
@@ -14174,11 +15801,12 @@ const a0MissionPlansV4 = {
         "محفوظ روانگی سے پہلے ٹکٹ مانگنے اور پن سے ادا کرنے کی بات ترتیب دیں۔"
       ], [{ lessonId: "a0-shopping-payment", dutch: "ik betaal met pin" }]),
       a0MissionTargetV4("a0-child-school", "mijn kind komt vandaag niet", [
-        "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
-        "صبح پہلے اسکول، پھر کام کو درست پیغام دیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
-        "محفوظ رخصتی میں بچے، کام، اور باہر جانے کی تین سیکھی ہوئی باتیں درست ترتیب سے کہیں۔"
+        "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری اور کل کا منصوبہ بتائیں، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
+        "صبح پہلے اسکول، پھر کام کو آج کی غیر حاضری اور کل کام کا بتائیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
+        "محفوظ رخصتی میں بچے، آج کا کام، کل کا کام، اور باہر جانے کی چار سیکھی ہوئی باتیں درست ترتیب سے کہیں۔"
       ], [
         { lessonId: "a0-work-basics", dutch: "ik kan vandaag niet komen" },
+        { lessonId: "a0-future-gaan", dutch: "morgen ga ik werken" },
         { lessonId: "a0-weather-clothing-safety", dutch: "waar is de uitgang" }
       ])
     ]
@@ -15264,6 +16892,1260 @@ for (let chapterIndex = 0; chapterIndex < chaptersV4.length; chapterIndex += 1) 
   });
 }
 
+/*
+ * Distractor engine (teaching roadmap 1.1).
+ *
+ * Runs once the whole course is built and rewrites the wrong options of
+ * choice exercises so they make learners think:
+ * - wrong options come from everything taught so far, not only the run's own
+ *   three phrases;
+ * - Dutch answers get near-misses that are one form off: wrong verb form
+ *   (ik bent), word order (daarna ik ga), article (de formulier), niet/geen,
+ *   and om/op/in with times, days, and months;
+ * - meanings prefer the same lesson, unit, and topic, and words that share
+ *   Dutch with the target;
+ * - A1 and A2 practice uses 4 options; Understand and all of A0 keep 3;
+ * - two questions in a row never share an option set, and a lesson never
+ *   shows the same set three times.
+ * Only Dutch the learner has already met may appear in an option.
+ */
+const distractorStopwordsV4 = new Set([
+  "ik", "jij", "je", "u", "hij", "zij", "ze", "wij", "we", "jullie", "het", "de", "een",
+  "is", "ben", "bent", "zijn", "en", "of", "in", "op", "aan", "naar", "met", "van", "bij",
+  "om", "voor", "uit", "mijn", "uw", "niet", "geen", "er", "dat", "dit", "wat", "ook"
+]);
+const distractorScaffoldTokensV4 = new Set([
+  "nederlands", "a", "b", "ali", "sara", "ahmed", "fatima",
+  "amsterdam", "rotterdam", "utrecht", "nederland", "digid", "iban", "bsn", "www", "nl"
+]);
+
+// [ik, jij/u, hij, plural]
+const distractorVerbParadigmsV4 = [
+  ["ben", "bent", "is", "zijn"],
+  ["heb", "hebt", "heeft", "hebben"],
+  ["ga", "gaat", "gaat", "gaan"],
+  ["kom", "komt", "komt", "komen"],
+  ["kan", "kunt", "kan", "kunnen"],
+  ["wil", "wilt", "wil", "willen"],
+  ["mag", "mag", "mag", "mogen"],
+  ["moet", "moet", "moet", "moeten"],
+  ["zal", "zult", "zal", "zullen"],
+  ["doe", "doet", "doet", "doen"],
+  ["sta", "staat", "staat", "staan"],
+  ["zie", "ziet", "ziet", "zien"],
+  ["woon", "woont", "woont", "wonen"],
+  ["werk", "werkt", "werkt", "werken"],
+  ["spreek", "spreekt", "spreekt", "spreken"],
+  ["begrijp", "begrijpt", "begrijpt", "begrijpen"],
+  ["neem", "neemt", "neemt", "nemen"],
+  ["drink", "drinkt", "drinkt", "drinken"],
+  ["koop", "koopt", "koopt", "kopen"],
+  ["betaal", "betaalt", "betaalt", "betalen"],
+  ["zoek", "zoekt", "zoekt", "zoeken"],
+  ["breng", "brengt", "brengt", "brengen"],
+  ["begin", "begint", "begint", "beginnen"],
+  ["stop", "stopt", "stopt", "stoppen"],
+  ["lees", "leest", "leest", "lezen"],
+  ["schrijf", "schrijft", "schrijft", "schrijven"],
+  ["bel", "belt", "belt", "bellen"],
+  ["maak", "maakt", "maakt", "maken"],
+  ["leer", "leert", "leert", "leren"],
+  ["help", "helpt", "helpt", "helpen"],
+  ["vind", "vindt", "vindt", "vinden"],
+  ["blijf", "blijft", "blijft", "blijven"],
+  ["voel", "voelt", "voelt", "voelen"],
+  ["hoor", "hoort", "hoort", "horen"],
+  ["haal", "haalt", "haalt", "halen"],
+  ["fiets", "fietst", "fietst", "fietsen"],
+  ["kook", "kookt", "kookt", "koken"],
+  ["slaap", "slaapt", "slaapt", "slapen"],
+  ["wacht", "wacht", "wacht", "wachten"],
+  ["eet", "eet", "eet", "eten"],
+  ["weet", "weet", "weet", "weten"],
+  ["zit", "zit", "zit", "zitten"]
+];
+const distractorVerbFormsV4 = new Map();
+for (const paradigm of distractorVerbParadigmsV4) {
+  for (const form of new Set(paradigm)) {
+    if (!distractorVerbFormsV4.has(form)) distractorVerbFormsV4.set(form, paradigm);
+  }
+}
+const distractorSubjectsV4 = new Set(["ik", "jij", "je", "u", "hij", "wij", "we"]);
+const distractorQuestionWordsV4 = new Set(["wat", "waar", "wanneer", "hoe", "wie", "welke", "welk", "waarom", "hoeveel"]);
+const distractorNotNounAfterArticleV4 = new Set([
+  "is", "was", "wordt", "gaat", "kost", "regent", "klopt", "duurt", "doet", "lukt", "past",
+  "niet", "wel", "goed", "ook", "nog", "al", "zo", "er", "hier", "daar", "dan", "graag",
+  "koud", "warm", "druk", "moeilijk", "leuk", "fijn", "mooi", "erg", "prima", "jammer",
+  "beter", "duur", "open", "dicht", "mij", "me", "jou", "u", "hem", "haar", "ons"
+]);
+// Filled from the course before the engine runs: words seen after een, geen,
+// mijn, uw, or a sentence-initial de/het.
+const distractorNounTokensV4 = new Set();
+const distractorWeekdaysV4 = new Set(["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]);
+const distractorMonthsV4 = new Set([
+  "januari", "februari", "maart", "april", "mei", "juni", "juli",
+  "augustus", "september", "oktober", "november", "december"
+]);
+const distractorClockWordsV4 = new Set([
+  "half", "kwart", "een", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht",
+  "negen", "tien", "elf", "twaalf"
+]);
+
+// Same tokenizer as the course audit's lexical-ownership check.
+function distractorLatinTokensV4(value) {
+  return String(value || "")
+    .replace(/\bhttps?:\/\/\S+|\bwww\.\S+|\b\S+@\S+\b/gi, " ")
+    .match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'-]*/g)?.map((token) => token.toLowerCase()) || [];
+}
+
+function distractorKeyV4(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9؀-ۿ]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function distractorSeedV4(value) {
+  const text = String(value || "");
+  const cache = distractorSeedV4.cache || (distractorSeedV4.cache = new Map());
+  let hash = cache.get(text);
+  if (hash === undefined) {
+    hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
+    }
+    hash >>>= 0;
+    cache.set(text, hash);
+  }
+  return hash;
+}
+
+function distractorSetKeyV4(options) {
+  return (options || []).map(distractorKeyV4).sort().join("|");
+}
+
+function distractorUrduSensesV4(concept) {
+  return new Set([concept?.urdu, ...(concept?.translationAliasesUrdu || [])]
+    .flatMap((value) => String(value || "").split(/[\/،,؛]/u))
+    .map(distractorKeyV4)
+    .filter(Boolean));
+}
+
+function distractorBigramsV4(value) {
+  const word = ` ${String(value).toLowerCase()} `;
+  const counts = new Map();
+  for (let index = 0; index < word.length - 1; index += 1) {
+    const gram = word.slice(index, index + 2);
+    counts.set(gram, (counts.get(gram) || 0) + 1);
+  }
+  return { counts, size: word.length - 1 };
+}
+
+// Dice similarity of letter pairs: "zeven" and "zeventien" score high.
+function distractorBigramSimilarityV4(left, right) {
+  let shared = 0;
+  for (const [gram, count] of left.counts) shared += Math.min(count, right.counts.get(gram) || 0);
+  return (2 * shared) / Math.max(1, left.size + right.size);
+}
+
+function splitDistractorWordsV4(sentence) {
+  return String(sentence || "").trim().split(/\s+/).map((raw) => {
+    const match = raw.match(/^(.*?)([?.!,;:]*)$/u);
+    return { core: match[1], lower: match[1].toLowerCase(), tail: match[2] };
+  });
+}
+
+function joinDistractorWordsV4(words) {
+  return words.map((word) => `${word.core}${word.tail}`).join(" ");
+}
+
+function distractorVerbSlotsV4(subject, inverted) {
+  if (subject === "ik") return [0];
+  if (subject === "jij" || subject === "je") return inverted ? [0] : [1];
+  if (subject === "u") return [1, 2];
+  if (subject === "hij") return [2];
+  return [3];
+}
+
+function distractorWrongVerbV4(paradigm, subject, inverted) {
+  const [first, second, third, plural] = paradigm;
+  if (subject === "ik") return second !== first ? second : plural;
+  if (subject === "jij" || subject === "je") {
+    if (inverted) return second !== first ? second : plural;
+    return first !== second ? first : plural;
+  }
+  if (subject === "u") return plural;
+  if (subject === "hij") return first !== third ? first : plural;
+  return third !== plural ? third : "";
+}
+
+function verbFormNearMissV4(answer, words) {
+  for (let index = 0; index < words.length; index += 1) {
+    const paradigm = distractorVerbFormsV4.get(words[index].lower);
+    if (!paradigm || words[index].core !== words[index].lower) continue;
+    const before = words[index - 1]?.lower;
+    const after = words[index + 1]?.lower;
+    const inverted = !distractorSubjectsV4.has(before) && distractorSubjectsV4.has(after);
+    const subject = distractorSubjectsV4.has(before) ? before : inverted ? after : "";
+    if (!subject) continue;
+    const correctSlots = distractorVerbSlotsV4(subject, inverted);
+    if (!correctSlots.some((slot) => paradigm[slot] === words[index].lower)) continue;
+    const wrong = distractorWrongVerbV4(paradigm, subject, inverted);
+    if (!wrong || wrong === words[index].lower) continue;
+    const changed = words.map((word, wordIndex) => (wordIndex === index ? { ...word, core: wrong } : word));
+    const text = joinDistractorWordsV4(changed);
+    return {
+      text,
+      kind: "verb-form",
+      explanation: `“${text}” درست نہیں: “${subject}” کے ساتھ “${words[index].lower}” آتا ہے، “${wrong}” نہیں۔ درست: “${answer}”۔`
+    };
+  }
+  return null;
+}
+
+function wordOrderNearMissV4(answer, words) {
+  const first = words[0]?.lower;
+  if (!first || distractorQuestionWordsV4.has(first) || distractorSubjectsV4.has(first) || distractorVerbFormsV4.has(first)) {
+    return null;
+  }
+  for (let index = 1; index <= Math.min(4, words.length - 2); index += 1) {
+    if (!distractorVerbFormsV4.has(words[index].lower)) continue;
+    if (!distractorSubjectsV4.has(words[index + 1].lower) || words[index + 1].tail) return null;
+    const opener = words.slice(0, index).map((word) => word.core).join(" ");
+    const changed = [...words.slice(0, index), words[index + 1], words[index], ...words.slice(index + 2)];
+    const text = joinDistractorWordsV4(changed);
+    return {
+      text,
+      kind: "word-order",
+      explanation: `“${text}” درست نہیں: جب جملہ “${opener}” سے شروع ہو تو فعل “${words[index].core}” دوسری جگہ پر آتا ہے اور “${words[index + 1].core}” اس کے بعد۔ درست: “${answer}”۔`
+    };
+  }
+  return null;
+}
+
+// "dat ik rust moet nemen" -> "dat ik moet rust nemen": after a linking word
+// the verb goes to the end, so pulling it forward is the classic mistake.
+function subordinateOrderNearMissV4(answer, words) {
+  const linker = words[0]?.lower;
+  if (!["dat", "omdat", "als", "wanneer", "terwijl", "zodat", "of"].includes(linker)) return null;
+  if (!distractorSubjectsV4.has(words[1]?.lower) || words.length < 4) return null;
+  const slots = distractorVerbSlotsV4(words[1].lower, false);
+  for (let index = words.length - 1; index >= Math.max(3, words.length - 2); index -= 1) {
+    const paradigm = distractorVerbFormsV4.get(words[index].lower);
+    // Move the finite verb (agrees with the subject), not an infinitive.
+    if (!paradigm || !slots.some((slot) => paradigm[slot] === words[index].lower)) continue;
+    const verb = words[index];
+    const changed = [words[0], words[1], { ...verb, tail: "" }, ...words.slice(2, index), ...words.slice(index + 1)];
+    changed[changed.length - 1] = { ...changed[changed.length - 1], tail: words[words.length - 1].tail };
+    const text = joinDistractorWordsV4(changed);
+    return {
+      text,
+      kind: "word-order",
+      explanation: `“${text}” درست نہیں: “${words[0].core}” کے بعد فعل “${verb.core}” فاعل کے فوراً بعد نہیں آتا بلکہ جملے کے آخری حصے میں جاتا ہے۔ درست: “${answer}”۔`
+    };
+  }
+  return null;
+}
+
+function articleNearMissV4(answer, words) {
+  for (let index = 0; index < words.length - 1; index += 1) {
+    const article = words[index].lower;
+    if (article !== "de" && article !== "het") continue;
+    if (words[index].tail) continue;
+    const next = words[index + 1].lower;
+    if (next.length < 3 || distractorNotNounAfterArticleV4.has(next) || !/^[a-zà-ÿ]+$/.test(next)) continue;
+    if (distractorVerbFormsV4.has(next)) continue;
+    // "is het dringend?", "kan het morgen?": after a verb, "het" usually means
+    // "it", so only swap it before a word the course uses as a noun.
+    const afterVerb = distractorVerbFormsV4.has(words[index - 1]?.lower) || /(?:t|en)$/.test(words[index - 1]?.lower || "");
+    if (article === "het" && afterVerb && !distractorNounTokensV4.has(next)) continue;
+    // Fixed "it" phrases: "het doet pijn", "hoe gaat het".
+    if (article === "het" && ["doet", "gaat", "regent", "lukt"].includes(words[index - 1]?.lower)) continue;
+    const wrong = article === "de" ? "het" : "de";
+    const changed = words.map((word, wordIndex) => (wordIndex === index ? { ...word, core: wrong } : word));
+    const text = joinDistractorWordsV4(changed);
+    return {
+      text,
+      kind: "article",
+      explanation: `“${text}” درست نہیں: “${words[index + 1].core}” سے پہلے “${article}” آتا ہے، “${wrong}” نہیں۔ درست: “${answer}”۔`
+    };
+  }
+  return null;
+}
+
+function negationNearMissV4(answer, words) {
+  const index = words.findIndex((word) => word.lower === "geen" || word.lower === "niet");
+  if (index < 0) return null;
+  const original = words[index].lower;
+  const wrong = original === "geen" ? "niet" : "geen";
+  const changed = words.map((word, wordIndex) => (wordIndex === index ? { ...word, core: wrong } : word));
+  const text = joinDistractorWordsV4(changed);
+  const reason = original === "geen"
+    ? "اسم کی نفی کے لیے “geen” آتا ہے، “niet” نہیں"
+    : "یہاں نفی کے لیے “niet” آتا ہے؛ “geen” صرف ایسے اسم سے پہلے آتا ہے جس کے ساتھ “de” یا “het” نہ ہو";
+  return {
+    text,
+    kind: "negation",
+    explanation: `“${text}” درست نہیں: ${reason}۔ درست: “${answer}”۔`
+  };
+}
+
+function prepositionNearMissV4(answer, words) {
+  for (let index = 0; index < words.length - 1; index += 1) {
+    const preposition = words[index].lower;
+    const next = words[index + 1].lower;
+    let wrong = "";
+    let reason = "";
+    if (preposition === "om" && (distractorClockWordsV4.has(next) || /^\d/.test(next))) {
+      wrong = "op";
+      reason = "گھڑی کے وقت کے ساتھ “om” آتا ہے، جیسے “om acht uur”";
+    } else if (preposition === "op" && distractorWeekdaysV4.has(next)) {
+      wrong = "in";
+      reason = "ہفتے کے دن کے ساتھ “op” آتا ہے، جیسے “op maandag”";
+    } else if (preposition === "in" && distractorMonthsV4.has(next)) {
+      wrong = "op";
+      reason = "صرف مہینے کے ساتھ “in” آتا ہے، جیسے “in mei”";
+    }
+    if (!wrong) continue;
+    const changed = words.map((word, wordIndex) => (wordIndex === index ? { ...word, core: wrong } : word));
+    const text = joinDistractorWordsV4(changed);
+    return {
+      text,
+      kind: "preposition",
+      explanation: `“${text}” درست نہیں: ${reason}، “${wrong}” نہیں۔ درست: “${answer}”۔`
+    };
+  }
+  return null;
+}
+
+function nearMissOptionsV4(answer, allowedTokens, knownDutchKeys) {
+  const words = splitDistractorWordsV4(answer);
+  if (words.length < 2) return [];
+  return [
+    verbFormNearMissV4(answer, words),
+    wordOrderNearMissV4(answer, words),
+    subordinateOrderNearMissV4(answer, words),
+    articleNearMissV4(answer, words),
+    negationNearMissV4(answer, words),
+    prepositionNearMissV4(answer, words)
+  ].filter((candidate) => (
+    candidate
+    && distractorKeyV4(candidate.text) !== distractorKeyV4(answer)
+    && !knownDutchKeys.has(distractorKeyV4(candidate.text))
+    && distractorLatinTokensV4(candidate.text).every((token) => allowedTokens.has(token))
+  ));
+}
+
+// Alphabet letters ("h" = "حرف h") only compete with other letters.
+function isLetterConceptV4(concept) {
+  return /^[a-z]$/i.test(String(concept?.dutch || "").trim()) && /^حرف/u.test(String(concept?.urdu || ""));
+}
+
+// Picture groups as the course audit sees them. A picture's wrong words must
+// come from a different group, so the learner never compares two foods.
+const distractorImageGroupsV4 = {
+  person: ["man", "vrouw", "kind", "kinderen", "jongen", "meisje", "familie", "vader", "moeder", "broer", "zus", "zoon", "dochter", "ouder", "buurman", "buurvrouw", "collega", "docent", "dokter", "monteur", "bezorger", "baas", "leidinggevende"],
+  food: ["appel", "brood", "kaas", "fruit", "groente", "rijst", "water", "melk", "koffie", "thee", "soep", "vlees"],
+  transport: ["bus", "trein", "fiets", "station", "halte", "kaartje", "spoor"],
+  home: ["huis", "deur", "lamp", "stoel", "tafel", "kamer", "badkamer", "keuken", "raam", "tuin", "woning"],
+  place: ["school", "gemeente", "winkel", "supermarkt", "apotheek", "ziekenhuis", "bibliotheek", "stad", "land", "plein"],
+  health: ["oog", "pijn", "hoofdpijn", "buikpijn", "hoesten", "koorts", "ziek", "moe", "honger", "dorst"]
+};
+
+function distractorImageGroupV4(concept) {
+  const keys = [distractorKeyV4(concept?.dutch), distractorKeyV4(concept?.visualId).replace(/\s+/g, "-")];
+  for (const [group, terms] of Object.entries(distractorImageGroupsV4)) {
+    if (keys.some((key) => terms.includes(key))) return group;
+  }
+  return "";
+}
+
+function distractorTargetV4(question) {
+  const concept = conceptByIdV4.get((question.conceptIds || [])[0]);
+  if (!concept) return null;
+  const answerKey = distractorKeyV4(question.answer);
+  if (answerKey === distractorKeyV4(concept.dutch)) return { concept, side: "dutch" };
+  const senses = distractorUrduSensesV4(concept);
+  if (answerKey === distractorKeyV4(concept.urdu) || senses.has(answerKey)) return { concept, side: "urdu" };
+  return null;
+}
+
+function distractorEligibleV4(question) {
+  return Array.isArray(question?.options)
+    && question.options.length >= 3
+    && ["meaning", "reverse", "situation", "listen-choice", "document-choice", "image-choice"].includes(question.type)
+    && !question.patternDrill
+    // Hand-written replies keep their options: other replies to other questions.
+    && question.mode !== "listen-reply"
+    // Reading-text questions keep their options: other readings of the same text.
+    && !question.readingText
+    && question.scored !== false;
+}
+
+function applyDistractorEngineV4() {
+  const lessonPosition = new Map();
+  const ordered = chaptersV4.flatMap((chapter) => chapter.lessons.map((lesson) => ({ chapter, lesson })));
+  ordered.forEach(({ lesson }, index) => lessonPosition.set(lesson.id, index));
+  const concepts = [...conceptByIdV4.values()].filter((concept) => lessonPosition.has(concept.introducedInLessonId));
+  const isPhonicsLesson = (lessonId) => /^a0-(?:letters|sounds)-/.test(String(lessonId));
+  const knownDutchKeys = new Set(concepts.map((concept) => distractorKeyV4(concept.dutch)));
+  for (const concept of concepts) {
+    const tokens = distractorLatinTokensV4(concept.dutch);
+    tokens.forEach((token, index) => {
+      const before = tokens[index - 1];
+      if (["een", "geen", "mijn", "uw", "deze", "dit"].includes(before) || (index === 1 && (before === "de" || before === "het"))) {
+        distractorNounTokensV4.add(token);
+      }
+    });
+  }
+  const unitByLesson = new Map(chaptersV4.flatMap((chapter) => chapter.subchapters.flatMap((subchapter) => (
+    subchapter.lessonIds.map((lessonId) => [lessonId, subchapter.id])
+  ))));
+  const facts = new Map(concepts.map((concept) => {
+    const tokens = distractorLatinTokensV4(concept.dutch);
+    return [concept.id, {
+      tokens,
+      contentTokens: tokens.filter((token) => !distractorStopwordsV4.has(token)),
+      ownTokens: distractorLatinTokensV4(`${concept.dutch} ${concept.audioText || ""}`),
+      urduTokens: distractorLatinTokensV4(concept.urdu),
+      senses: distractorUrduSensesV4(concept),
+      dutchKey: distractorKeyV4(concept.dutch),
+      urduKey: distractorKeyV4(concept.urdu),
+      wordCount: concept.dutch.split(/\s+/).length,
+      letter: isLetterConceptV4(concept),
+      imageGroup: distractorImageGroupV4(concept),
+      unitId: unitByLesson.get(concept.introducedInLessonId),
+      domain: lessonDomainV4(concept.introducedInLessonId),
+      single: !/\s/.test(concept.dutch.trim()),
+      position: lessonPosition.get(concept.introducedInLessonId),
+      grams: distractorBigramsV4(concept.dutch),
+      seeds: { dutch: distractorSeedV4(concept.dutch), urdu: distractorSeedV4(concept.urdu) }
+    }];
+  }));
+  const conceptsByPosition = [...concepts].sort((left, right) => facts.get(left.id).position - facts.get(right.id).position);
+  const earlierConcepts = [];
+  const earlierTokens = new Set(distractorScaffoldTokensV4);
+  let nextConceptIndex = 0;
+  const processed = new Set();
+
+  for (const { chapter, lesson } of ordered) {
+    const phonics = isPhonicsLesson(lesson.id);
+    const position = lessonPosition.get(lesson.id);
+    while (nextConceptIndex < conceptsByPosition.length && facts.get(conceptsByPosition[nextConceptIndex].id).position < position) {
+      const concept = conceptsByPosition[nextConceptIndex];
+      earlierConcepts.push(concept);
+      for (const token of facts.get(concept.id).ownTokens) earlierTokens.add(token);
+      nextConceptIndex += 1;
+    }
+    const exercises = new Map((lesson.exercises || lesson.questions || []).map((question) => [question.id, question]));
+    const sequences = lesson.kind === "mission"
+      ? (lesson.variants?.length ? lesson.variants : [{ questions: lesson.questions || [] }])
+        .map((variant) => ({ questions: variant.questions || [], runConceptIds: lesson.conceptIds || [] }))
+      : (lesson.learning?.runs || []).map((run) => ({
+        questions: ["understand", "guidedPractice", "use", "independentCheck"]
+          .flatMap((phase) => run.phases?.[phase]?.exerciseIds || [])
+          .map((id) => exercises.get(id))
+          .filter(Boolean),
+        runConceptIds: run.conceptIds || []
+      }));
+    const optionUses = new Map();
+    const setUses = new Map();
+    const sameLessonIds = new Set(concepts
+      .filter((concept) => concept.introducedInLessonId === lesson.id || (concept.lessonIds || []).includes(lesson.id))
+      .map((concept) => concept.id));
+    const lessonRunConceptIds = [];
+    const lessonUnit = unitByLesson.get(lesson.id);
+    const lessonDomain = lessonDomainV4(lesson.id);
+    // Score parts that do not depend on the run or the question.
+    const baseScore = (candidate, fact) => (sameLessonIds.has(candidate.id) ? 1.5 : 0)
+      + (fact.unitId && fact.unitId === lessonUnit ? 1 : 0)
+      + (fact.domain === lessonDomain ? 1 : 0)
+      + Math.max(0, 1 - (position - fact.position) / 20)
+      + (phonics && isPhonicsLesson(candidate.introducedInLessonId) ? 2 : 0);
+    // Earlier concepts are scored and sorted once per lesson rather than once
+    // per run: this loop used to be the slowest part of building the course.
+    const earlierIds = new Set(earlierConcepts.map((concept) => concept.id));
+    const earlierEntries = [];
+    for (const candidate of earlierConcepts) {
+      const fact = facts.get(candidate.id);
+      if (fact) earlierEntries.push({ candidate, fact, base: baseScore(candidate, fact) });
+    }
+    const earlierByBase = [...earlierEntries].sort((left, right) => right.base - left.base);
+
+    for (const sequence of sequences) {
+      lessonRunConceptIds.push(...sequence.runConceptIds);
+      const lessonTokens = new Set();
+      const newLessonConcepts = new Map();
+      for (const conceptId of lessonRunConceptIds) {
+        const concept = conceptByIdV4.get(conceptId);
+        if (!concept) continue;
+        if (!earlierIds.has(concept.id) && !newLessonConcepts.has(concept.id)) newLessonConcepts.set(concept.id, concept);
+        for (const token of facts.get(concept.id)?.ownTokens || distractorLatinTokensV4(concept.dutch)) lessonTokens.add(token);
+      }
+      const allowedTokens = { has: (token) => earlierTokens.has(token) || lessonTokens.has(token) };
+      const runConceptIds = new Set(sequence.runConceptIds);
+      const lessonConceptIds = new Set(lessonRunConceptIds);
+      const runContentTokens = new Set(sequence.runConceptIds.flatMap((conceptId) => facts.get(conceptId)?.contentTokens || []));
+      // Plausible wrong options: this lesson and anything sharing a content
+      // word with this run, plus the 24 closest others by unit, topic, and recency.
+      const isRelated = (entry) => lessonConceptIds.has(entry.candidate.id)
+        || entry.fact.contentTokens.some((token) => runContentTokens.has(token));
+      const close = earlierEntries.filter(isRelated);
+      for (const candidate of newLessonConcepts.values()) {
+        const fact = facts.get(candidate.id);
+        if (fact) close.push({ candidate, fact, base: baseScore(candidate, fact) });
+      }
+      const others = [];
+      for (const entry of earlierByBase) {
+        if (others.length === 24) break;
+        if (!isRelated(entry)) others.push(entry);
+      }
+      const pool = [...close, ...others].map((entry) => ({
+        ...entry,
+        inRun: runConceptIds.has(entry.candidate.id),
+        usable: {
+          dutch: !/_{2,}/.test(entry.candidate.dutch) && entry.fact.tokens.every((token) => allowedTokens.has(token)),
+          urdu: Boolean(entry.candidate.urdu) && entry.fact.urduTokens.every((token) => allowedTokens.has(token))
+        }
+      }));
+      let previousSetKey = "";
+
+      for (const question of sequence.questions) {
+        const target = distractorEligibleV4(question) ? distractorTargetV4(question) : null;
+        if (!target || processed.has(question)) {
+          if (Array.isArray(question.options) && question.options.length) previousSetKey = distractorSetKeyV4(question.options);
+          continue;
+        }
+        processed.add(question);
+        const { concept, side } = target;
+        const answer = String(question.answer);
+        const phase = question.phase;
+        const optionCount = chapter.id === "a0" || phase === "understand" ? 3 : 4;
+        const targetSenses = distractorUrduSensesV4(concept);
+        const targetTokens = distractorLatinTokensV4(concept.dutch);
+        const targetAllTokens = new Set(targetTokens);
+        const targetWords = new Set(targetTokens.filter((token) => !distractorStopwordsV4.has(token)));
+        const targetKey = distractorKeyV4(concept.dutch);
+        const answerKey = distractorKeyV4(answer);
+        const targetLetter = isLetterConceptV4(concept);
+        const targetSingle = !/\s/.test(concept.dutch.trim());
+        const heardWord = question.mode === "listen-dutch";
+        const picture = question.type === "image-choice";
+        const targetGreeting = lessonDomainV4(concept.introducedInLessonId) === "greeting";
+        const targetImageGroup = picture ? distractorImageGroupV4(concept) : "";
+        const targetGrams = facts.get(concept.id)?.grams || distractorBigramsV4(concept.dutch);
+        const targetWordCount = concept.dutch.split(/\s+/).length;
+        const answerTokens = new Set(distractorLatinTokensV4(answer));
+        const guardTokens = new Set(distractorLatinTokensV4(question.prompt).filter((token) => answerTokens.has(token)));
+        const questionSeed = distractorSeedV4(question.id);
+        const jitter = (seed) => ((Math.imul(questionSeed ^ seed, 2654435761) >>> 0) % 1000) / 1250;
+        const guardBonus = (tokens) => (
+          guardTokens.size && tokens.some((token) => guardTokens.has(token)) ? 5 : 0
+        );
+
+        const candidates = [];
+        if (side === "dutch" && phase !== "understand" && !picture) {
+          for (const nearMiss of nearMissOptionsV4(answer, allowedTokens, knownDutchKeys)) {
+            candidates.push({
+              ...nearMiss,
+              nearMiss: true,
+              inRun: false,
+              score: 6 + guardBonus(distractorLatinTokensV4(nearMiss.text)) + jitter(distractorSeedV4(nearMiss.text))
+            });
+          }
+        }
+        for (const { candidate, fact, inRun, usable, base } of pool) {
+          if (candidate.id === concept.id || !usable[side]) continue;
+          // When the answer is a greeting, another greeting from outside the
+          // run may fit the same situation (dag / goedemorgen to a shopkeeper).
+          if (question.type === "situation" && !inRun && fact.domain === "greeting" && targetGreeting) continue;
+          if (picture) {
+            // Only words the audit can place in a different picture group, so
+            // two options never look alike; "person" and "place" are also
+            // picture kinds, so an ungrouped target excludes them.
+            const group = fact.imageGroup;
+            if (!group || group === targetImageGroup || (!targetImageGroup && (group === "person" || group === "place"))) continue;
+            if (candidate.visualId && candidate.visualId === concept.visualId) continue;
+          }
+          const value = side === "dutch" ? candidate.dutch : candidate.urdu;
+          if ((side === "dutch" ? fact.dutchKey : fact.urduKey) === answerKey || fact.dutchKey === targetKey) continue;
+          let sameSense = false;
+          for (const sense of fact.senses) if (targetSenses.has(sense)) sameSense = true;
+          if (sameSense) continue;
+          // A meaning whose Dutch is only part of the target is not wrong, just incomplete.
+          if (side === "urdu" && fact.tokens.every((token) => targetAllTokens.has(token))) continue;
+          let sharedWords = 0;
+          for (const token of fact.contentTokens) if (targetWords.has(token)) sharedWords += 1;
+          let sharedFunctionWords = 0;
+          for (const token of fact.tokens) if (distractorStopwordsV4.has(token) && targetAllTokens.has(token)) sharedFunctionWords += 1;
+          const score = base
+            - (fact.letter !== targetLetter ? 8 : 0)
+            + Math.min(4, sharedWords * 2)
+            + (fact.tokens[0] === targetTokens[0] ? 1 : 0) + Math.min(1, sharedFunctionWords * 0.5)
+            + (fact.single && targetSingle ? distractorBigramSimilarityV4(fact.grams, targetGrams) * (heardWord ? 6 : 3) : 0)
+            + (inRun ? (phase === "understand" ? 6 : 2) : 0)
+            + (candidate.role === concept.role ? 0.5 : 0)
+            - 0.4 * Math.abs(fact.wordCount - targetWordCount)
+            + guardBonus(side === "dutch" ? fact.tokens : fact.urduTokens)
+            + jitter(fact.seeds[side]);
+          candidates.push({ text: value, key: side === "dutch" ? fact.dutchKey : fact.urduKey, concept: candidate, nearMiss: false, inRun, score });
+        }
+
+        const needed = optionCount - 1;
+        const maxNearMiss = chapter.id === "a0" ? 1 : 2;
+        candidates.sort((left, right) => right.score - left.score);
+        const ranked = candidates.slice(0, 30);
+        for (const candidate of ranked) {
+          candidate.key = candidate.key || distractorKeyV4(candidate.text);
+          candidate.rank = candidate.score - 1.2 * (optionUses.get(candidate.key) || 0);
+        }
+        ranked.sort((left, right) => right.rank - left.rank);
+        const outsideAvailable = ranked.some((item) => !item.inRun && !item.nearMiss);
+        const pick = (skip) => {
+          const chosen = [];
+          const keys = new Set([distractorKeyV4(answer)]);
+          for (const candidate of ranked) {
+            if (chosen.length === needed) break;
+            const key = candidate.key;
+            if (keys.has(key) || skip.has(key)) continue;
+            if (candidate.nearMiss && chosen.filter((item) => item.nearMiss).length >= maxNearMiss) continue;
+            const slotsLeft = needed - chosen.length;
+            const hasConcept = chosen.some((item) => !item.nearMiss);
+            const hasOutsideOrNearMiss = chosen.some((item) => !item.inRun || item.nearMiss);
+            if (slotsLeft === 1 && candidate.nearMiss && !hasConcept) continue;
+            if (slotsLeft === 1 && phase !== "understand" && candidate.inRun && !candidate.nearMiss && !hasOutsideOrNearMiss
+              && outsideAvailable) continue;
+            chosen.push(candidate);
+            keys.add(key);
+          }
+          return chosen;
+        };
+        const setIsFresh = (items) => {
+          const setKey = distractorSetKeyV4([answer, ...items.map((item) => item.text)]);
+          return setKey !== previousSetKey && (setUses.get(setKey) || 0) < 2;
+        };
+        let chosen = pick(new Set());
+        if (chosen.length === needed && !setIsFresh(chosen)) {
+          // Swap out one option at a time, weakest first, until the set is new.
+          const alternatives = [...chosen].reverse().map((item) => pick(new Set([item.key])));
+          chosen = alternatives.find((items) => items.length === needed && setIsFresh(items)) || chosen;
+        }
+        if (chosen.length < 2) {
+          previousSetKey = distractorSetKeyV4(question.options);
+          continue;
+        }
+
+        const previousFeedback = question.optionExplanationsUrdu || {};
+        const feedback = {};
+        for (const item of chosen) {
+          if (item.nearMiss) {
+            feedback[item.text] = item.explanation;
+          } else if (previousFeedback[item.text]) {
+            feedback[item.text] = previousFeedback[item.text];
+          } else if (heardWord) {
+            feedback[item.text] = `“${item.text}” نہیں، “${answer}” سنائی دیا تھا۔ دونوں کی آواز دوبارہ آہستہ سنیں اور فرق پکڑیں۔`;
+          } else if (side === "dutch") {
+            feedback[item.text] = `“${item.text}” = “${cleanTerminalPunctuationV4(item.concept.urdu)}”؛ یہاں درست ڈچ “${answer}” ہے۔`;
+          } else {
+            feedback[item.text] = `“${item.text}” تو “${item.concept.dutch}” کا مطلب ہے؛ “${concept.dutch}” = “${answer}”۔`;
+          }
+        }
+        if (side === "dutch" && isLetterConceptV4(concept) && concept.pronunciationUrdu) {
+          question.prompt = String(question.prompt).replace(concept.urdu, `“${concept.pronunciationUrdu}” کی آواز والا حرف`);
+        }
+        const letterRow = question.type === "document-choice" && isLetterConceptV4(concept)
+          ? (question.document?.rows || []).find((row) => row?.value === concept.dutch)
+          : null;
+        if (letterRow?.label) {
+          question.prompt = String(question.prompt).replace(`“${concept.dutch}” والی قطار`, `“${letterRow.label}” والی قطار`);
+        }
+        const options = [answer, ...chosen.map((item) => item.text)];
+        const offset = questionSeed % options.length;
+        question.options = [...options.slice(offset), ...options.slice(0, offset)];
+        question.optionExplanationsUrdu = feedback;
+        question.wrongExplanationsByOption = { ...feedback };
+        if (heardWord) {
+          // The old summary named one distractor that may no longer be shown.
+          const wrong = `یہ لفظ نہیں تھا؛ “${answer}” سنائی دیا تھا۔ آواز دوبارہ آہستہ سنیں اور فرق پکڑیں۔`;
+          question.explainWrongUrdu = wrong;
+          question.wrongExplanation = wrong;
+        }
+        question.distractorKinds = Object.fromEntries(chosen.map((item) => [
+          item.text,
+          item.nearMiss ? `near-miss:${item.kind}` : item.inRun ? "run" : "course"
+        ]));
+
+        const setKey = distractorSetKeyV4(question.options);
+        setUses.set(setKey, (setUses.get(setKey) || 0) + 1);
+        previousSetKey = setKey;
+        for (const item of chosen) {
+          const key = distractorKeyV4(item.text);
+          optionUses.set(key, (optionUses.get(key) || 0) + 1);
+        }
+      }
+    }
+  }
+}
+
+// Stage 2.3: guided role-play. Each mission opens with a short conversation.
+// The other person's lines are spoken; on the learner's turns they choose the
+// Dutch reply, get an instant explanation for a wrong choice, retry, then say
+// the right line aloud. It is unscored practice: the mission's own questions
+// stay the assessment. Turns: ["other", dutch, urdu] or
+// ["you", reply, [wrong, wrong], optional Urdu cue for what to say].
+const missionRolePlaysV4 = {
+  "a0-start-speaking-mission": {
+    sceneUrdu: "آپ پہلی بار ایک دکان میں ہیں۔ ملازم آپ سے بات کرتا ہے۔",
+    turns: [
+      ["other", "goedemorgen! hoe gaat het?", "صبح بخیر! آپ کیسے ہیں؟"],
+      ["you", "goed, dank u", ["tot ziens", "ik heb een tolk nodig"]],
+      ["other", "spreekt u Nederlands?", "کیا آپ ڈچ بولتے ہیں؟"],
+      ["you", "ik spreek een beetje Nederlands", ["goedenavond", "dank u wel"]],
+      ["other", "begrijpt u mij?", "کیا آپ مجھے سمجھتے ہیں؟"],
+      ["you", "langzamer alstublieft", ["goedemorgen", "graag"], "بات پوری سمجھ نہیں آئی۔ آہستہ بولنے کو کہیں۔"]
+    ]
+  },
+  "a0-first-sentences-mission": {
+    sceneUrdu: "نئی پڑوسن سیڑھیوں پر اپنا تعارف کراتی ہے۔",
+    turns: [
+      ["other", "hallo! hoe gaat het?", "ہیلو! آپ کیسے ہیں؟"],
+      ["you", "goed, dank u", ["ik ben getrouwd", "tot ziens"]],
+      ["other", "ik kom uit Pakistan.", "میں پاکستان سے ہوں۔"],
+      ["you", "ik woon in Nederland", ["ik ben een man", "hij is een man"], "بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔"],
+      ["other", "ik ben getrouwd.", "میں شادی شدہ ہوں۔"],
+      ["you", "ik ben niet getrouwd", ["mijn vrouw", "wij zijn familie"], "بتائیں کہ آپ شادی شدہ نہیں ہیں۔"]
+    ]
+  },
+  "a0-people-things-mission": {
+    sceneUrdu: "کلاس میں استاد چیزوں کے بارے میں پوچھتی ہیں۔",
+    turns: [
+      ["other", "wat is dit?", "یہ کیا ہے؟"],
+      ["you", "dit is een boek", ["ik ben een man", "waar is het toilet"]],
+      ["other", "heeft u een boek?", "کیا آپ کے پاس کتاب ہے؟"],
+      ["you", "ik heb geen boek", ["dit is een boek", "zijn huis"], "آپ کے پاس کتاب نہیں ہے۔"],
+      ["you", "waar is het toilet", ["wat is dit", "dat is mijn huis"], "اب پوچھیں کہ ٹوائلٹ کہاں ہے۔"],
+      ["other", "daar.", "وہاں۔"]
+    ]
+  },
+  "a0-numbers-time-mission": {
+    sceneUrdu: "کلینک کے کاؤنٹر پر ملازم آپ کی معلومات لیتی ہے۔",
+    turns: [
+      ["other", "goedemorgen. hoe heet u?", "صبح بخیر۔ آپ کا نام کیا ہے؟"],
+      ["you", "mijn naam is Sara", ["ik ben dertig jaar", "mijn nummer is nul zes"]],
+      ["other", "wat is uw telefoonnummer?", "آپ کا فون نمبر کیا ہے؟"],
+      ["you", "mijn nummer is nul zes", ["ik woon aan de Marktstraat 12", "om half negen"]],
+      ["other", "wanneer is de afspraak?", "ملاقات کب ہے؟"],
+      ["you", "morgen om tien uur", ["ik ben dertig jaar", "het is drie uur"]]
+    ]
+  },
+  "a0-mission-home-start": {
+    sceneUrdu: "مکان مالک آپ کو نیا کمرہ دکھاتا ہے۔",
+    turns: [
+      ["other", "waar is de sleutel?", "چابی کہاں ہے؟"],
+      ["you", "op de tafel", ["ik ga naar huis", "doe de deur dicht"]],
+      ["other", "is de kamer warm?", "کیا کمرہ گرم ہے؟"],
+      ["you", "de kamer is koud", ["ik kom naar huis", "naast de tafel"]],
+      ["other", "is de verwarming kapot?", "کیا ہیٹنگ خراب ہے؟"],
+      ["you", "de verwarming doet het niet", ["ik ben met mijn kind", "onder de tafel"]]
+    ]
+  },
+  "a0-mission-neighbourhood": {
+    sceneUrdu: "آپ ایک کیفے میں کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemiddag! wat wil je drinken?", "دوپہر بخیر! کیا پینا چاہیں گے؟"],
+      ["you", "ik wil graag koffie", ["de jas is blauw", "ik betaal met pin"]],
+      ["other", "dat is drie euro.", "یہ تین یورو ہیں۔"],
+      ["you", "ik betaal met pin", ["ik drink water", "welke kleur"]],
+      ["other", "alstublieft.", "یہ لیجیے۔"],
+      ["you", "mag ik de bon", ["ik eet brood", "rood"], "رسید مانگیں۔"]
+    ]
+  },
+  "a0-mission-help": {
+    sceneUrdu: "سڑک پر ایک حادثہ ہوا ہے۔ ایک راہ گیر آپ سے پوچھتا ہے۔",
+    turns: [
+      ["other", "wat is er?", "کیا ہوا ہے؟"],
+      ["you", "er is een ongeluk", ["ik wil een kaartje", "ga rechtdoor"]],
+      ["other", "is iemand gewond?", "کیا کوئی زخمی ہے؟"],
+      ["you", "ik heb een ambulance nodig", ["waar is het station", "mijn rug doet pijn"], "کوئی زخمی ہے۔ ایمبولینس مانگیں۔"],
+      ["other", "ik bel 112.", "میں 112 پر فون کرتا ہوں۔"]
+    ]
+  },
+  "a0-school-work-safety-mission": {
+    sceneUrdu: "صبح آپ کام پر فون کرتے ہیں کیونکہ آپ بیمار ہیں۔",
+    turns: [
+      ["other", "goedemorgen!", "صبح بخیر!"],
+      ["you", "ik ben vandaag ziek", ["ik begin om negen uur", "het regent"], "بتائیں کہ آپ آج بیمار ہیں۔"],
+      ["other", "komt u morgen?", "کیا آپ کل آئیں گے؟"],
+      ["you", "ik kom morgen", ["nee, het is verboden", "mijn kind is ziek"]]
+    ]
+  },
+  "a1-personal-info-mission": {
+    sceneUrdu: "بلدیہ کے کاؤنٹر پر ملازم آپ کا فارم بھرتا ہے۔",
+    turns: [
+      ["other", "goedemorgen. wat is uw naam?", "صبح بخیر۔ آپ کا نام کیا ہے؟"],
+      ["you", "mijn naam is Zarar", ["mijn postcode is 1234 AB", "ik heb geen e-mailadres"]],
+      ["other", "wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟"],
+      ["you", "mijn geboortedatum is 12 mei", ["mijn woonplaats is Utrecht", "mijn achternaam is Khan"]],
+      ["other", "wat is uw e-mailadres?", "آپ کا ای میل پتہ کیا ہے؟"],
+      ["you", "ik heb geen e-mailadres", ["mijn voornaam is Sara", "mijn geboortedatum is 12 mei"]]
+    ]
+  },
+  "a1-family-people-mission": {
+    sceneUrdu: "اسکول کے دفتر میں ملازم آپ کے خاندان کے بارے میں پوچھتا ہے۔",
+    turns: [
+      ["other", "heeft u kinderen?", "کیا آپ کے بچے ہیں؟"],
+      ["you", "ik heb twee kinderen", ["dit is mijn vader", "de kinderopvang"]],
+      ["other", "wat doet uw zoon?", "آپ کا بیٹا کیا کرتا ہے؟"],
+      ["you", "mijn zoon gaat naar school", ["mijn kind is moe", "ik heb een broer"]],
+      ["other", "wanneer haal je je kind op?", "تم اپنے بچے کو کب لینے آتے ہو؟"],
+      ["you", "ik haal mijn kind om vijf uur op", ["mijn dochter is vijf jaar", "ik heb geen kinderen"]]
+    ]
+  },
+  "a1-daily-routine-mission": {
+    sceneUrdu: "کام کے بعد ایک ساتھی آپ سے بات کرتا ہے۔",
+    turns: [
+      ["other", "hoe laat sta je op?", "تم کتنے بجے اٹھتے ہو؟"],
+      ["you", "ik sta om zeven uur op", ["het regent vandaag", "in het weekend ben ik thuis"]],
+      ["other", "hoe gaat u naar uw werk?", "آپ کام پر کیسے جاتے ہیں؟"],
+      ["you", "ik ga met de bus naar mijn werk", ["ik heb tijd in de middag", "neem een paraplu mee"]],
+      ["other", "het regent vandaag!", "آج بارش ہو رہی ہے!"],
+      ["you", "neem een paraplu mee", ["ik sta om zeven uur op", "ik werk op vrijdag"], "ساتھی کو چھتری ساتھ لینے کا مشورہ دیں۔"]
+    ]
+  },
+  "a1-mission-phone-internet": {
+    sceneUrdu: "آپ ملاقات کا وقت لینے کے لیے فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, met Sara.", "صبح بخیر، سارہ بول رہی ہوں۔"],
+      ["you", "ik wil een afspraak maken", ["tot morgen", "wie spreekt er?"]],
+      ["other", "kunt u maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟"],
+      ["you", "ik kan maandag niet komen", ["met Sara", "wanneer komt u?"]],
+      ["other", "kan het morgen in de ochtend?", "کیا کل صبح ہو سکتا ہے؟"],
+      ["you", "ja graag", ["u heeft het verkeerde nummer", "wie spreekt er?"]]
+    ]
+  },
+  "a1-mission-house-search": {
+    sceneUrdu: "آپ کرائے کا مکان دیکھنے آئے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, kan ik u helpen?", "دوپہر بخیر، کیا میں آپ کی مدد کر سکتا ہوں؟"],
+      ["you", "ik zoek een woning", ["de badkamer is vies", "ik heb last van lawaai"]],
+      ["other", "de woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔"],
+      ["you", "hoeveel is de huur?", ["het boek is in de kamer", "kunt u zachter zijn?"], "کرایہ پوچھیں۔"],
+      ["other", "kan ik u nog helpen?", "کیا میں آپ کی مزید مدد کر سکتا ہوں؟"],
+      ["you", "kan ik de woning bekijken?", ["de keuken is schoon", "er ligt een pakket voor u"], "مکان دیکھنے کی اجازت مانگیں۔"]
+    ]
+  },
+  "a1-food-shopping-mission": {
+    sceneUrdu: "آپ ایک کیفے میں بیٹھے ہیں۔ ویٹر آرڈر لیتا ہے۔",
+    turns: [
+      ["other", "wat wilt u drinken?", "آپ کیا پینا چاہتے ہیں؟"],
+      ["you", "voor mij een thee", ["deze jas is te groot", "ik wil dit terugbrengen"]],
+      ["other", "wat wilt u eten?", "آپ کیا کھانا چاہتے ہیں؟"],
+      ["you", "ik neem de soep", ["mijn pinpas werkt niet", "mag ik een tas?"]],
+      ["other", "wilt u nog iets?", "کیا آپ کو کچھ اور چاہیے؟"],
+      ["you", "de rekening alstublieft", ["deze jas is te groot", "ik zoek melk"], "بل مانگیں۔"]
+    ]
+  },
+  "a1-mission-post-parcel": {
+    sceneUrdu: "آپ پارسل لینے کی جگہ پر کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemiddag, hoe kan ik u helpen?", "دوپہر بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "ik wil mijn pakket ophalen", ["de trein heeft vertraging", "het is dichtbij"]],
+      ["other", "heeft u het bericht?", "کیا آپ کے پاس نوٹس ہے؟"],
+      ["you", "hier is mijn bericht", ["ik wil een kaartje naar Utrecht", "sla rechts af"]],
+      ["other", "u moet hier tekenen.", "آپ کو یہاں دستخط کرنے ہیں۔"]
+    ]
+  },
+  "a1-mission-doctor": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کے پاس ہیں۔",
+    turns: [
+      ["other", "goedemorgen. wat is er?", "صبح بخیر۔ کیا تکلیف ہے؟"],
+      ["you", "ik heb pijn in mijn buik", ["twee keer per dag", "ik wil een afspraak bij de huisarts"]],
+      ["other", "hoe lang bent u ziek?", "آپ کب سے بیمار ہیں؟"],
+      ["you", "ik heb sinds gisteren koorts", ["lees de bijsluiter", "is het dringend?"]],
+      ["other", "u moet rust nemen.", "آپ کو آرام کرنا چاہیے۔"],
+      ["you", "hoe vaak moet ik dit nemen?", ["waar doet het pijn?", "ik kan morgen niet komen"], "پوچھیں کہ دوا کتنی بار لینی ہے۔"],
+      ["other", "twee keer per dag.", "دن میں دو بار۔"]
+    ]
+  },
+  "a1-mission-school-day": {
+    sceneUrdu: "آپ صبح اسکول کو فون کرتے ہیں۔ آپ کا بچہ بیمار ہے۔",
+    turns: [
+      ["other", "goedemorgen, met de school.", "صبح بخیر، اسکول سے بات ہو رہی ہے۔"],
+      ["you", "mijn kind komt vandaag niet naar school", ["de bus heeft vertraging", "mijn dienst is veranderd"]],
+      ["other", "wat is er?", "کیا بات ہے؟"],
+      ["you", "mijn kind heeft koorts", ["het rooster staat in de app", "ik heb uw bericht gelezen"]],
+      ["other", "dank u wel.", "آپ کا شکریہ۔"],
+      ["you", "kunt u mij een bericht sturen?", ["ik ben tien minuten later", "mijn dienst is veranderd"], "پوچھیں کیا وہ آپ کو گھر کے کام کا پیغام بھیج سکتے ہیں۔"]
+    ]
+  },
+  "a1-chapter-completion-mission": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کے دفتر فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتی ہوں؟"],
+      ["you", "ik wil een afspraak bij de huisarts", ["ik wil mijn pakket ophalen", "ik zoek een woning"]],
+      ["other", "wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟"],
+      ["you", "mijn geboortedatum is 12 mei", ["mijn postcode is 1234 AB", "twee keer per dag"]],
+      ["other", "kunt u morgen komen?", "کیا آپ کل آ سکتے ہیں؟"],
+      ["you", "ik kan morgen niet komen", ["de trein heeft vertraging", "het is dichtbij"]]
+    ]
+  },
+  "a2-mission-social-help": {
+    sceneUrdu: "آپ بلدیہ کے کاؤنٹر پر ہیں۔",
+    turns: [
+      ["other", "goedemorgen. heeft u een afspraak?", "صبح بخیر۔ کیا آپ کی ملاقات طے ہے؟"],
+      ["you", "ik heb een afspraak bij de gemeente", ["de aanvraag", "onderteken hier"]],
+      ["other", "heeft u uw paspoort bij u?", "کیا آپ کا پاسپورٹ آپ کے پاس ہے؟"],
+      ["you", "hier is mijn paspoort", ["ik begrijp deze vraag niet", "het BSN"]],
+      ["other", "vul het formulier in, alstublieft.", "برائے مہربانی فارم بھر دیں۔"],
+      ["you", "ik begrijp deze vraag niet", ["hier is mijn paspoort", "waar is loket drie?"], "فارم کا ایک سوال سمجھ نہیں آیا۔ یہ بتائیں۔"],
+      ["other", "geen probleem.", "کوئی بات نہیں۔"]
+    ]
+  },
+  "a2-mission-job-start": {
+    sceneUrdu: "نئی نوکری پر آپ نگران سے بات کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen! wanneer kunt u werken?", "صبح بخیر! آپ کب کام کر سکتے ہیں؟"],
+      ["you", "ik kan op dinsdag werken", ["mijn salaris klopt niet", "dit is mijn contract"]],
+      ["other", "u moet veiligheidsschoenen dragen.", "آپ کو حفاظتی جوتے پہننے ہوں گے۔"],
+      ["you", "mag ik eerder beginnen?", ["ik zoek een baan", "mijn rooster is veranderd"], "پوچھیں کیا آپ پہلے شروع کر سکتے ہیں۔"],
+      ["other", "ja, dat is goed. heeft u nog vragen?", "ہاں، ٹھیک ہے۔ کوئی اور سوال؟"],
+      ["you", "wanneer krijg ik mijn salaris?", ["ik moet de manager bellen", "mijn collega helpt mij"], "پوچھیں تنخواہ کب ملے گی۔"]
+    ]
+  },
+  "a2-school-contact-mission": {
+    sceneUrdu: "آپ اپنے بچے کے استاد سے ملنے آئے ہیں۔",
+    turns: [
+      ["other", "goedemiddag! hoe gaat het met uw kind?", "دوپہر بخیر! آپ کا بچہ کیسا ہے؟"],
+      ["you", "mijn kind heeft moeite met lezen", ["de les valt vandaag uit", "ik meld mijn kind af"]],
+      ["you", "kan mijn kind extra hulp krijgen", ["de les begint om tien uur", "mijn kind was gisteren afwezig"], "پوچھیں کیا بچے کو اضافی مدد مل سکتی ہے۔"],
+      ["other", "ja. kunt u dinsdag komen?", "ہاں۔ کیا آپ منگل کو آ سکتے ہیں؟"],
+      ["you", "is een ander tijdstip mogelijk", ["we maken samen een plan", "moet ik de docent bellen?"]]
+    ]
+  },
+  "a2-health-doctor-mission": {
+    sceneUrdu: "آپ فیملی ڈاکٹر کو بتاتے ہیں کہ کیا ہوا۔",
+    turns: [
+      ["other", "goedemorgen. wat is er?", "صبح بخیر۔ کیا ہوا ہے؟"],
+      ["you", "gisteren ben ik gevallen", ["ik moet volgende week terugkomen", "zijn er bijwerkingen"]],
+      ["other", "wanneer begon de pijn?", "درد کب شروع ہوا؟"],
+      ["you", "de pijn begon gisteravond", ["ik heb nog niet gegeten", "ik moet rust nemen"]],
+      ["other", "heeft u al iets genomen?", "کیا آپ نے کوئی دوا لی ہے؟"],
+      ["you", "ik heb al pijnstillers genomen", ["ik ben thuis gebleven", "dat ik rust moet nemen"]],
+      ["other", "u moet rust nemen.", "آپ کو آرام کرنا چاہیے۔"],
+      ["you", "wanneer moet ik terugkomen", ["omdat ik pijn had", "de dokter heeft gezegd"], "پوچھیں دوبارہ کب آنا ہے۔"]
+    ]
+  },
+  "a2-housing-problems-mission": {
+    sceneUrdu: "آپ مکان مالک کو گھر کے مسئلے کے بارے میں فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, wat is het probleem?", "دوپہر بخیر، مسئلہ کیا ہے؟"],
+      ["you", "er is een lekkage in de keuken", ["wie betaalt de reparatie", "als het water blijft lopen"]],
+      ["you", "de vloer wordt nat als het regent", ["kunt u dit schriftelijk bevestigen", "de monteur is niet gekomen"], "بتائیں کہ بارش ہو تو فرش گیلا ہو جاتا ہے۔"],
+      ["other", "de monteur komt morgen.", "مرمت کرنے والا کل آئے گا۔"],
+      ["you", "kunt u dit schriftelijk bevestigen", ["ik heb lekkage in mijn huis", "omdat de muur nat is"], "تحریری تصدیق مانگیں۔"]
+    ]
+  },
+  "a2-shopping-complaints-mission": {
+    sceneUrdu: "آپ ایک خراب چیز دکان پر واپس لائے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, kan ik u helpen?", "دوپہر بخیر، کیا میں آپ کی مدد کر سکتا ہوں؟"],
+      ["you", "het product werkt niet goed", ["ik heb de bon", "de les valt vandaag uit"]],
+      ["other", "wanneer heeft u dit gekocht?", "آپ نے یہ کب خریدا؟"],
+      ["you", "ik heb dit vorige week gekocht", ["ik wil het liever ruilen", "een onderdeel ontbreekt"]],
+      ["other", "heeft u de bon?", "کیا آپ کے پاس رسید ہے؟"],
+      ["you", "ik heb de bon", ["ik wil hem ruilen", "hij is kapot"]],
+      ["other", "wilt u uw geld terug?", "کیا آپ اپنے پیسے واپس چاہتے ہیں؟"],
+      ["you", "ik wil het liever ruilen", ["valt dit onder de garantie", "wanneer krijg ik een oplossing"]]
+    ]
+  },
+  "a2-mission-utilities": {
+    sceneUrdu: "آپ کا بینک کارڈ گم ہو گیا ہے۔ آپ بینک فون کرتے ہیں۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "ik ben mijn pinpas kwijt", ["ik heb deze rekening al betaald", "het bedrag klopt niet"]],
+      ["other", "wat is uw naam?", "آپ کا نام کیا ہے؟"],
+      ["you", "blokkeer mijn pas alstublieft", ["kan ik in termijnen betalen", "wanneer moet ik betalen"], "کارڈ بند کرنے کو کہیں۔"]
+    ]
+  },
+  "a2-mission-lost-stolen": {
+    sceneUrdu: "آپ دفتر کو فون کرتے ہیں کیونکہ آپ کو ابھی جواب نہیں ملا۔",
+    turns: [
+      ["other", "goedemorgen, hoe kan ik u helpen?", "صبح بخیر، میں آپ کی کیا مدد کر سکتی ہوں؟"],
+      ["you", "ik heb nog geen antwoord ontvangen", ["met vriendelijke groet", "beste dokter"]],
+      ["other", "wat is uw vraag?", "آپ کا سوال کیا ہے؟"],
+      ["you", "ik wil graag een nieuwe datum afspreken", ["geachte meneer of mevrouw", "met vriendelijke groet"]],
+      ["other", "heeft u het formulier?", "کیا آپ کے پاس فارم ہے؟"],
+      ["you", "ik heb het formulier ingevuld", ["met vriendelijke groet", "beste dokter"]]
+    ]
+  },
+  "a2-chapter-completion-mission": {
+    sceneUrdu: "آپ کام کے دفتر میں ذمہ دار سے بات کرتے ہیں۔",
+    turns: [
+      ["other", "goedemiddag, hoe kan ik u helpen?", "دوپہر بخیر، میں آپ کی کیا مدد کر سکتا ہوں؟"],
+      ["you", "mijn salaris klopt niet", ["ik heb de bon", "de les valt vandaag uit"]],
+      ["other", "kunt u morgen om negen uur komen?", "کیا آپ کل نو بجے آ سکتے ہیں؟"],
+      ["you", "is een ander tijdstip mogelijk", ["ik heb al pijnstillers genomen", "het formulier staat in de bijlage"]],
+      ["other", "ja, om twee uur.", "ہاں، دو بجے۔"],
+      ["you", "kunt u dit schriftelijk bevestigen", ["blokkeer mijn pas alstublieft", "gisteren ben ik gevallen"], "تحریری تصدیق مانگیں۔"]
+    ]
+  }
+};
+
+function rolePlayConceptV4(dutch) {
+  const key = normalizedTextV4(dutch);
+  for (const concept of conceptByIdV4.values()) {
+    if (normalizedTextV4(concept.dutch) === key) return concept;
+  }
+  return null;
+}
+
+function applyMissionRolePlaysV4() {
+  const missions = chaptersV4.flatMap((chapter) => chapter.lessons.filter((lesson) => lesson.kind === "mission"));
+  for (const mission of missions) {
+    const script = missionRolePlaysV4[mission.id];
+    if (!script || !mission.variants?.length) continue;
+    const turns = script.turns.map(([speaker, dutch, third, cueUrdu]) => {
+      if (speaker === "other") return { speaker, dutch, urdu: third };
+      const concept = rolePlayConceptV4(dutch);
+      const urdu = cleanTerminalPunctuationV4(concept?.urdu || "");
+      const explanations = Object.fromEntries(third.map((wrong) => {
+        const wrongUrdu = cleanTerminalPunctuationV4(rolePlayConceptV4(wrong)?.urdu || "");
+        return [wrong, wrongUrdu
+          ? `“${wrong}” = “${wrongUrdu}”۔ یہ اس گفتگو میں فٹ نہیں ہوتا۔ دوبارہ سوچیں۔`
+          : `“${wrong}” اس گفتگو میں فٹ نہیں ہوتا۔ دوبارہ سوچیں۔`];
+      }));
+      return { speaker, answer: dutch, urdu, cueUrdu: cueUrdu || "", conceptId: concept?.id || "", options: [dutch, ...third], explanations };
+    });
+    const replies = turns.filter((turn) => turn.speaker === "you");
+    // Tag the role-play with the mission's own targets it practises; the
+    // other replies are earlier phrases that only set the scene.
+    const missionConceptIds = new Set(mission.conceptIds || []);
+    const missionSkillIds = new Set(mission.assessmentSkillIds || mission.learning?.assessmentSkillIds || []);
+    const isMissionTarget = (conceptId) => missionConceptIds.has(conceptId)
+      && (!missionSkillIds.size || missionSkillIds.has(skillIdByConceptIdV4.get(conceptId)));
+    const ownConceptIds = uniqueV4(replies.map((turn) => turn.conceptId)).filter(isMissionTarget);
+    const conceptIds = ownConceptIds.length
+      ? ownConceptIds
+      : [(mission.conceptIds || []).find(isMissionTarget)].filter(Boolean);
+    const skillIds = uniqueV4(conceptIds.map((conceptId) => skillIdByConceptIdV4.get(conceptId)));
+    mission.variants.forEach((variant, variantIndex) => {
+      const id = `${mission.id}:role-play:variant-${variantIndex + 1}`;
+      if (variant.questions.some((question) => question.id === id)) return;
+      const question = {
+        id,
+        type: "role-play",
+        label: "گفتگو کی مشق",
+        instructionUrdu: "گفتگو سنیں اور اپنی باری پر مناسب ڈچ جواب چنیں، پھر اسے بلند آواز میں کہیں",
+        prompt: script.sceneUrdu,
+        turns: turns.map((turn) => ({ ...turn, options: turn.options ? [...turn.options] : undefined })),
+        answer: replies[replies.length - 1].answer,
+        explain: replies.map((turn) => `${turn.answer} = ${turn.urdu}`).join("، "),
+        // A warm-up in the mission's unscored preparation step, before Use.
+        phase: "preview",
+        conceptIds,
+        skillIds,
+        scored: false,
+        adaptiveReviewEligible: false,
+        synthetic: true,
+        semanticKey: `${mission.id}:role-play`
+      };
+      // Same authored provenance as the variant: "<ch>-authored:<mission>:variant-N:role-play".
+      const variantSource = variant.scenarioSource
+        || variant.questions.map((item) => String(item.scenarioSource || "")).find((source) => /:variant-\d+/.test(source))?.replace(/(:variant-\d+).*$/, "$1")
+        || `${String(mission.id).slice(0, 2)}-authored:${semanticSlugV4(mission.id)}:variant-${variantIndex + 1}`;
+      question.scenarioSource = `${variantSource}:role-play`;
+      question.scenarioId = `${mission.id}:role-play`;
+      variant.questions.unshift(question);
+      const addToPreview = (phases) => {
+        if (!phases) return;
+        phases.preview = { scored: false, ...(phases.preview || {}) };
+        phases.preview.exerciseIds = uniqueV4([id, ...(phases.preview.exerciseIds || [])]);
+      };
+      addToPreview(variant.phases);
+      const learningVariant = mission.learning?.variants?.find((item) => item.id === variant.id);
+      if (learningVariant) {
+        if (learningVariant.exerciseIds && !learningVariant.exerciseIds.includes(id)) learningVariant.exerciseIds.unshift(id);
+        if (learningVariant.phases !== variant.phases) addToPreview(learningVariant.phases);
+      }
+    });
+    mission.questions = mission.variants.flatMap((variant) => variant.questions);
+  }
+}
+
+applyMissionRolePlaysV4();
+
+// Teaching roadmap 3.3: short real-life texts (a pharmacy label, a gemeente
+// letter, a school app message, a landlord's email). Each text is shown with
+// 3-4 questions in the Use phase of the run whose phrases it uses, and every
+// Dutch word in it was taught before that run. A question is
+// [run phrase it practises, words in the text that answer it, their Urdu
+// meaning, Urdu question, answer, wrong, wrong]. An Urdu answer asks what
+// the text says; a Dutch answer asks what you say or write back.
+const readingTextsV4 = [
+  {
+    lessonId: "a1-pharmacy-medicine",
+    stableId: "pharmacy-label",
+    documentKind: "pharmacy-label",
+    title: "Apotheek",
+    rows: [
+      { label: "Naam", value: "Ali Khan" },
+      { label: "Medicijn", value: "medicijn tegen de pijn" },
+      { label: "Hoe vaak?", value: "twee keer per dag, na het eten" },
+      { label: "Kinderen", value: "niet voor kinderen" },
+      { label: "Lees", value: "lees de bijsluiter" }
+    ],
+    questions: [
+      ["heeft u iets tegen de pijn?", "medicijn tegen de pijn", "درد کے خلاف دوا", "دواخانے نے آپ کو دوا کے ساتھ یہ لیبل دیا ہے۔ یہ دوا کس تکلیف کے لیے ہے؟", "درد کے لیے", "کھانسی کے لیے", "نیند کے لیے"],
+      ["twee keer per dag", "twee keer per dag", "دن میں دو بار", "لیبل کے مطابق آپ یہ دوا روزانہ کتنی بار لیں گے؟", "دن میں دو بار", "دن میں ایک بار", "دن میں تین بار"],
+      ["voor of na het eten?", "na het eten", "کھانے کے بعد", "لیبل کے مطابق دوا کھانے سے پہلے لینی ہے یا بعد میں؟", "کھانے کے بعد", "کھانے سے پہلے", "صرف رات کو سونے سے پہلے"],
+      ["lees de bijsluiter", "lees de bijsluiter", "دوا کی معلومات والا پرچہ پڑھیں", "لیبل کی آخری قطار آپ سے دوا لینے سے پہلے کیا کرنے کو کہتی ہے؟", "دوا کے ساتھ والا معلوماتی پرچہ پڑھیں", "ڈاکٹر کو دوبارہ فون کریں", "دوا فرج میں رکھیں"]
+    ]
+  },
+  {
+    lessonId: "a2-gemeente-official",
+    stableId: "gemeente-letter",
+    documentKind: "gemeente-letter",
+    title: "Gemeente Utrecht",
+    rows: [
+      { label: "Aan", value: "Ali Khan" },
+      { label: "Datum", value: "1 maart" },
+      { label: "Afspraak", value: "u heeft een afspraak bij de gemeente op dinsdag 14 maart om 10 uur." },
+      { label: "Waar?", value: "ga naar loket drie. neem uw paspoort mee." },
+      { label: "Formulier", value: "vul het formulier in en stuur het voor 10 maart terug." }
+    ],
+    questions: [
+      ["ik heb een afspraak bij de gemeente", "u heeft een afspraak bij de gemeente op dinsdag 14 maart om 10 uur", "آپ کی بلدیہ میں منگل 14 مارچ کو 10 بجے ملاقات ہے", "بلدیہ کا یہ خط آپ کے گھر آیا ہے۔ آپ کی ملاقات کس دن اور کتنے بجے ہے؟", "منگل 14 مارچ، 10 بجے", "منگل 10 مارچ، 14 بجے", "جمعہ 1 مارچ، 10 بجے"],
+      ["waar is loket drie?", "ga naar loket drie", "کاؤنٹر نمبر تین پر جائیں", "ملاقات کے دن بلدیہ کے دفتر میں آپ کو کہاں جانا ہے؟", "کاؤنٹر نمبر تین پر", "کاؤنٹر نمبر دس پر", "کمرہ نمبر چودہ میں"],
+      ["hier is mijn paspoort", "neem uw paspoort mee", "اپنا پاسپورٹ ساتھ لائیں", "خط کے مطابق ملاقات پر آپ کو اپنے ساتھ کیا لانا ہے؟", "اپنا پاسپورٹ", "اپنا بینک کارڈ", "اپنے بچے کا اسکول کارڈ"],
+      ["kunt u mij helpen met dit formulier?", "vul het formulier in en stuur het voor 10 maart terug", "فارم بھریں اور 10 مارچ سے پہلے واپس بھیجیں", "خط کے ساتھ ایک فارم بھی ہے۔ آپ کو یہ فارم بھر کر کب تک واپس بھیجنا ہے؟", "10 مارچ سے پہلے", "14 مارچ کو ملاقات کے دن", "1 مارچ سے پہلے"]
+    ]
+  },
+  {
+    lessonId: "a2-school-absence-notice",
+    stableId: "school-app-message",
+    documentKind: "school-app-message",
+    title: "Bericht van school",
+    rows: [
+      { label: "Van", value: "de docent van klas 5" },
+      { label: "Morgen", value: "de les begint om tien uur." },
+      { label: "Vrijdag", value: "de les valt uit." },
+      { label: "Ziek?", value: "is uw kind ziek? bel dan de docent voor acht uur." }
+    ],
+    questions: [
+      ["de les begint om tien uur", "de les begint om tien uur", "کلاس دس بجے شروع ہوتی ہے", "آپ کے فون پر اسکول ایپ کا یہ پیغام آیا ہے۔ کل بچے کی کلاس کتنے بجے شروع ہوگی؟", "دس بجے", "آٹھ بجے", "پانچ بجے"],
+      ["de les valt vandaag uit", "de les valt uit", "کلاس نہیں ہوگی", "پیغام کے مطابق جمعہ کے دن بچے کی کلاس کا کیا ہوگا؟", "اس دن کلاس نہیں ہوگی", "اس دن کلاس دس بجے شروع ہوگی", "اس دن والدین کی میٹنگ ہوگی"],
+      ["moet ik de docent bellen?", "bel dan de docent voor acht uur", "تو آٹھ بجے سے پہلے استاد کو فون کریں", "اگر صبح آپ کا بچہ بیمار ہو تو پیغام کے مطابق آپ کو کیا کرنا ہے؟", "آٹھ بجے سے پہلے استاد کو فون کریں", "دس بجے بچے کو اسکول لے جائیں", "جمعہ کو استاد کو پیغام بھیجیں"],
+      ["wanneer kan mijn kind weer komen?", "is uw kind ziek? bel dan de docent voor acht uur", "اگر بچہ بیمار ہو تو آٹھ بجے سے پہلے استاد کو فون کریں", "پیغام کے مطابق آپ صبح سات بجے استاد کو فون کرتے ہیں اور بتاتے ہیں کہ بچہ بیمار ہے۔ اب آپ پوچھنا چاہتے ہیں کہ بچہ دوبارہ کب آئے۔ آپ کیا کہیں گے؟", "wanneer kan mijn kind weer komen?", "moet ik de docent bellen?", "de les valt vandaag uit"]
+    ]
+  },
+  {
+    lessonId: "a2-landlord-repairs",
+    stableId: "landlord-email",
+    documentKind: "landlord-email",
+    title: "E-mail",
+    rows: [
+      { label: "Van", value: "Ahmed – huur en reparatie" },
+      { label: "Over", value: "de verwarming" },
+      { label: "Bericht", value: "sorry, de monteur is niet gekomen. hij komt nu op donderdag in de ochtend. bent u dan thuis? wij betalen de reparatie." }
+    ],
+    questions: [
+      ["de monteur is niet gekomen", "de monteur is niet gekomen", "مرمت کرنے والا نہیں آیا", "مالک مکان نے آپ کو ہیٹنگ کے بارے میں یہ ای میل بھیجی ہے۔ وہ کس بات کی معافی مانگ رہا ہے؟", "مرمت کرنے والا نہیں آیا", "ہیٹنگ کا بل دیر سے آیا", "کرایہ دیر سے ملا"],
+      ["de monteur is niet gekomen", "hij komt nu op donderdag in de ochtend", "وہ اب جمعرات کی صبح آئے گا", "ای میل کے مطابق مرمت کرنے والا اب کس دن اور کس وقت آئے گا؟", "جمعرات کی صبح", "جمعرات کی دوپہر", "جمعہ کی صبح"],
+      ["wie betaalt de reparatie", "wij betalen de reparatie", "مرمت کی ادائیگی ہم کریں گے", "ای میل کے مطابق ہیٹنگ کی مرمت کا خرچ کس کے ذمے ہے؟", "مالک مکان کے ذمے", "آپ کے اپنے ذمے", "مرمت کرنے والے کے ذمے"],
+      ["de monteur is niet gekomen", "hij komt nu op donderdag in de ochtend", "وہ اب جمعرات کی صبح آئے گا", "آپ جمعرات کی پوری صبح گھر پر رہے، لیکن پھر بھی کوئی نہیں آیا۔ آپ مالک مکان کو جواب لکھتے ہیں۔ پہلا جملہ کیا ہوگا؟", "de monteur is niet gekomen", "wie betaalt de reparatie", "kunt u dit schriftelijk bevestigen"]
+    ]
+  }
+];
+
+function applyReadingTextsV4() {
+  const lessons = new Map(chaptersV4.flatMap((chapter) => chapter.lessons).map((lesson) => [lesson.id, lesson]));
+  for (const text of readingTextsV4) {
+    const lesson = lessons.get(text.lessonId);
+    if (!lesson?.learning?.runs?.length) continue;
+    const conceptFor = (dutch) => lesson.conceptIds
+      .map((conceptId) => conceptByIdV4.get(conceptId))
+      .find((concept) => normalizedTextV4(concept?.dutch) === normalizedTextV4(dutch));
+    const firstConcept = conceptFor(text.questions[0][0]);
+    const run = lesson.learning.runs.find((candidate) => candidate.conceptIds.includes(firstConcept?.id));
+    if (!run) continue;
+    const chapterId = lesson.chapterId || String(lesson.id).slice(0, 2);
+    const ids = [];
+    text.questions.forEach(([phrase, evidence, evidenceUrdu, promptUrdu, answer, ...wrong], index) => {
+      const concept = conceptFor(phrase);
+      const skillId = concept ? skillIdByConceptIdV4.get(concept.id) : null;
+      if (!concept || !skillId || !run.conceptIds.includes(concept.id)) return;
+      const replies = /[A-Za-z]/.test(answer);
+      const shown = replies ? `“${answer}”` : answer;
+      const correct = replies
+        ? `درست۔ “${answer}” = “${cleanTerminalPunctuationV4(concept.urdu)}”۔ متن میں لکھا تھا: “${evidence}” = “${evidenceUrdu}”۔`
+        : `درست۔ متن میں “${evidence}” لکھا ہے: “${evidenceUrdu}”۔ اس لیے جواب ہے: ${answer}۔`;
+      const wrongText = replies
+        ? `متن میں “${evidence}” لکھا تھا۔ اب درست جواب “${answer}” ہے: “${cleanTerminalPunctuationV4(concept.urdu)}”۔`
+        : `متن کی قطار “${evidence}” دوبارہ پڑھیں: “${evidenceUrdu}”۔ درست جواب: ${answer}۔`;
+      const optionExplanationsUrdu = Object.fromEntries(wrong.map((option) => {
+        const optionUrdu = replies
+          ? cleanTerminalPunctuationV4(lesson.conceptIds.map((id) => conceptByIdV4.get(id)).find((item) => normalizedTextV4(item?.dutch) === normalizedTextV4(option))?.urdu || "")
+          : "";
+        return [option, replies
+          ? `“${option}”${optionUrdu ? ` = “${optionUrdu}”` : ""}؛ یہ اس موقع کا جواب نہیں۔ یہاں ${shown} لکھیں یا کہیں۔`
+          : `“${option}” نہیں۔ متن میں “${evidence}” لکھا ہے، یعنی ${answer}۔`];
+      }));
+      const id = `${lesson.id}:reading:${text.stableId}:${index + 1}`;
+      const instruction = replies
+        ? "متن پڑھیں، صورت سمجھیں، پھر مناسب ڈچ جواب منتخب کریں۔"
+        : "پورا متن پڑھیں، سوال کا جواب والی قطار ڈھونڈیں، پھر درست اردو جواب منتخب کریں۔";
+      const question = {
+        id,
+        type: "document-choice",
+        label: "اصل متن پڑھ کر جواب دیں",
+        prompt: promptUrdu,
+        document: { documentKind: text.documentKind, title: text.title, rows: text.rows.map((row) => ({ ...row })) },
+        // The app shuffles options; rotate here so the answer is not always first in the data.
+        options: rotate([answer, ...wrong], index),
+        answer,
+        explain: `${evidence} = ${evidenceUrdu}۔`,
+        semanticKey: `${lesson.id}:reading:${text.stableId}:${index + 1}`,
+        legacyId: "",
+        phase: "use",
+        conceptIds: [concept.id],
+        skillIds: [skillId],
+        runId: run.id,
+        readingText: text.stableId,
+        readingEvidence: evidence,
+        scenarioId: `${lesson.id}:reading:${text.stableId}`,
+        scenarioSource: `${chapterId}-authored:${semanticSlugV4(lesson.id)}:reading:${text.stableId}:${index + 1}`,
+        authenticDocument: true,
+        authenticUse: true,
+        instructionUrdu: instruction,
+        instruction,
+        hintUrdu: "سوال کا جواب متن کی کسی ایک قطار میں ہے۔ دن، وقت، اور کام والے الفاظ دیکھیں۔",
+        hint: "سوال کا جواب متن کی کسی ایک قطار میں ہے۔ دن، وقت، اور کام والے الفاظ دیکھیں۔",
+        explainCorrectUrdu: correct,
+        correctExplanation: correct,
+        explainWrongUrdu: wrongText,
+        wrongExplanation: wrongText,
+        optionExplanationsUrdu,
+        wrongExplanationsByOption: { ...optionExplanationsUrdu },
+        synthetic: true,
+        retiredCompatibility: false,
+        adaptiveReviewEligible: false
+      };
+      lesson.questions.push(question);
+      ids.push(id);
+    });
+    // The text closes the run's Use phase, so its questions follow each other.
+    run.phases.use.exerciseIds = uniqueV4([...run.phases.use.exerciseIds, ...ids]);
+    lesson.exercises = lesson.questions;
+  }
+}
+
+applyReadingTextsV4();
+
+applyDistractorEngineV4();
+
 const courseV4 = {
   schemaVersion: 4,
   courseId: "nederurdu",
@@ -15298,6 +18180,154 @@ const courseV4 = {
     legacyQuestionIdField: "legacyId"
   }
 };
+
+
+// "How it works here" (roadmap 3.2): one short Urdu card per unit about life
+// in the Netherlands. It prepares for the KNM part of the inburgering exam and
+// is shown on the lesson preview. Facts only; no exercise is scored on it.
+const societyCardsV4 = {
+  "a0-start-speaking": ["ملنے اور بات کرنے کا انداز", [
+    "پہلی ملاقات میں ہاتھ ملانا اور نام بتانا عام ہے۔ مرد اور عورت دونوں سے ایک جیسا سلوک ہوتا ہے۔",
+    "اجنبی، دفتر کے ملازم، اور بزرگوں سے u کہیں؛ دوستوں اور اکثر ساتھیوں سے jij۔",
+    "بات سمجھ نہ آئے تو دوبارہ پوچھنا بالکل عام ہے۔ ہسپتال یا بلدیہ میں ترجمان مانگا جا سکتا ہے۔"
+  ]],
+  "a0-letters-sounds": ["ڈچ سیکھنے میں مفت مدد", [
+    "بہت سی لائبریریوں میں Taalhuis ہوتا ہے جہاں زبان اور خط پڑھنے میں مفت مدد ملتی ہے۔",
+    "لائبریری کا کارڈ 18 سال سے کم بچوں کے لیے اکثر مفت ہوتا ہے۔",
+    "سرکاری خط ڈچ میں آتے ہیں۔ سمجھ نہ آئے تو خط پھینکیں نہیں؛ کسی سے پڑھوائیں۔"
+  ]],
+  "a0-first-sentences": ["خاندان اور برابری", [
+    "نیدرلینڈز میں مرد اور عورت کے حقوق برابر ہیں؛ دونوں تعلیم، کام، اور اپنے فیصلے کر سکتے ہیں۔",
+    "بچوں کو مارنا قانون کے خلاف ہے۔ تربیت میں بات چیت اور حد بندی پر زور دیا جاتا ہے۔",
+    "شادی، طلاق، اور پیدائش بلدیہ کے ریکارڈ میں درج ہوتی ہیں۔"
+  ]],
+  "a0-people-things": ["سیدھی بات", [
+    "ڈچ لوگ اکثر سیدھی اور مختصر بات کرتے ہیں۔ nee کہنا بدتمیزی نہیں سمجھا جاتا۔",
+    "کسی کے گھر بغیر بتائے جانا کم ہوتا ہے؛ پہلے وقت طے کرنا عام ہے۔",
+    "اپنی رائے دینا اور سوال پوچھنا اچھا سمجھا جاتا ہے، استاد یا ڈاکٹر سے بھی۔"
+  ]],
+  "a0-numbers-time": ["وقت کی پابندی اور ملاقات", [
+    "تقریباً ہر کام کے لیے پہلے afspraak لی جاتی ہے: ڈاکٹر، بلدیہ، بینک، حجام۔",
+    "وقت پر پہنچنا بہت اہم ہے۔ نہ آ سکیں تو پہلے فون کرکے منسوخ کریں؛ بعض جگہ نہ آنے پر پیسے لگ سکتے ہیں۔",
+    "تاریخ دن-مہینہ-سال کی ترتیب میں لکھی جاتی ہے: 3-3-2026، اور وقت اکثر 24 گھنٹے میں: 14:30۔"
+  ]],
+  "a0-place-movement": ["گھر، پڑوسی، اور کوڑا", [
+    "کوڑا الگ الگ کیا جاتا ہے، جیسے کاغذ، شیشہ، اور باقی کچرا۔ بلدیہ بتاتی ہے کہ کوڑا کس دن اٹھایا جائے گا۔",
+    "رات کو شور کم رکھیں؛ پڑوسیوں سے اچھا تعلق بہت اہم سمجھا جاتا ہے۔",
+    "کرائے کے گھر میں بڑی خرابی، جیسے ہیٹنگ یا چھت، عموماً مالک مکان ٹھیک کرواتا ہے۔"
+  ]],
+  "a0-daily-shop": ["خریداری اور ادائیگی", [
+    "زیادہ تر جگہ بینک کارڈ سے ادائیگی (pinnen) ہوتی ہے؛ کچھ دکانیں نقد نہیں لیتیں۔",
+    "بوتلوں اور ڈبوں پر statiegeld ہوتا ہے: خالی بوتل واپس کریں تو پیسے واپس ملتے ہیں۔",
+    "دکان میں تھیلا عموماً مفت نہیں ہوتا؛ اپنا تھیلا ساتھ لے جانا عام ہے۔"
+  ]],
+  "a0-travel-health": ["پہلے فیملی ڈاکٹر، 112 صرف فوری خطرے میں", [
+    "بیماری میں پہلے اپنے huisarts (فیملی ڈاکٹر) کو فون کریں۔ ہسپتال یا ماہر ڈاکٹر کے پاس عموماً اس کے حوالے سے جاتے ہیں۔",
+    "شام، رات، یا ہفتے کے آخر میں فوری مسئلے کے لیے huisartsenpost کو فون کریں۔",
+    "112 صرف جان کے خطرے، آگ، یا جرم کے وقت کے لیے ہے۔ بس اور ٹرین میں سوار ہوتے اور اترتے وقت کارڈ سے check-in اور check-out کریں۔"
+  ]],
+  "a0-school-work-safety": ["اسکول اور کام کے اصول", [
+    "پانچ سال کی عمر سے بچے کا اسکول جانا قانوناً لازمی ہے۔ چھٹی صرف اسکول کی چھٹیوں میں؛ دوسری چھٹی کی اجازت پہلے مانگیں۔",
+    "بچہ بیمار ہو تو کلاس شروع ہونے سے پہلے اسکول کو بتائیں۔ خود بیمار ہوں تو کام شروع ہونے سے پہلے مینیجر کو فون کریں۔",
+    "رات کو سائیکل پر آگے اور پیچھے بتی لازمی ہے۔"
+  ]],
+  "a1-personal-info": ["شناخت اور BSN", [
+    "14 سال سے بڑے ہر شخص کو اپنی شناختی دستاویز، جیسے پاسپورٹ یا شناختی کارڈ، ساتھ رکھنی ہوتی ہے۔",
+    "BSN آپ کا ذاتی سرکاری نمبر ہے۔ یہ صرف بلدیہ، ڈاکٹر، بینک، یا کام جیسی سرکاری ضرورت میں دیں۔",
+    "گھر بدلیں تو بلدیہ کو اطلاع دینا لازمی ہے۔"
+  ]],
+  "a1-family-people": ["بچوں کی دیکھ بھال", [
+    "چھوٹے بچوں کی صحت اور نشوونما کی جانچ مفت consultatiebureau میں ہوتی ہے۔",
+    "kinderopvang (ڈے کیئر) کے خرچ کے لیے حکومت سے مالی مدد (toeslag) مل سکتی ہے۔",
+    "بچے کو اسکول یا ڈے کیئر سے کوئی اور لے جائے تو پہلے استاد کو بتانا ضروری ہے۔"
+  ]],
+  "a1-daily-routine": ["روزمرہ کا انداز", [
+    "دوپہر کا کھانا اکثر ہلکا ہوتا ہے، جیسے روٹی؛ گرم کھانا شام کو تقریباً چھ بجے کھایا جاتا ہے۔",
+    "بہت سے لوگ کام یا اسکول سائیکل پر جاتے ہیں، بارش میں بھی۔",
+    "دکانوں کے اوقات شہر کے حساب سے بدلتے ہیں؛ اتوار کو بعض دکانیں بند ہوتی ہیں۔"
+  ]],
+  "a1-questions-help": ["مدد کہاں ملتی ہے", [
+    "بلدیہ (gemeente) رہائش، رجسٹریشن، اور بہت سے سماجی سوالوں میں رہنمائی کرتی ہے۔",
+    "قانونی سوال ہو تو Juridisch Loket سے مفت مشورہ مل سکتا ہے۔",
+    "فون پر بات مشکل ہو تو ای میل یا پیغام میں سوال لکھنا بھی ٹھیک ہے۔"
+  ]],
+  "a1-home-objects": ["کرایہ دار کے حقوق اور ذمہ داریاں", [
+    "چھوٹی مرمت، جیسے بلب بدلنا، عموماً کرایہ دار کا کام ہے؛ بڑی خرابی مالک مکان کا۔",
+    "خرابی کی اطلاع جلد دیں اور تحریر میں بھی بھیجیں تاکہ ثبوت رہے۔",
+    "کم آمدنی پر کرائے کے لیے حکومت سے مالی مدد (huurtoeslag) مل سکتی ہے۔"
+  ]],
+  "a1-food-shopping": ["دکان اور کیفے", [
+    "کیفے میں بل عموماً مانگنا پڑتا ہے؛ ویٹر خود نہیں لاتا۔",
+    "ٹپ دینا لازمی نہیں؛ اچھی سروس پر تھوڑی رقم چھوڑنا عام ہے۔",
+    "چیز واپس کرنے کے لیے رسید سنبھال کر رکھیں۔ ہر دکان کا واپسی کا اپنا اصول ہوتا ہے۔"
+  ]],
+  "a1-going-out-transport": ["سفر اور سائیکل", [
+    "بس، ٹرام، اور ٹرین میں سوار ہوتے وقت check-in اور اترتے وقت check-out کریں، ورنہ زیادہ کرایہ کٹ سکتا ہے۔",
+    "سائیکل کے اپنے راستے ہوتے ہیں۔ سائیکل چلاتے ہوئے ہاتھ میں فون استعمال کرنا منع ہے۔",
+    "پیکج نہ ملا ہو تو اطلاع کے کارڈ پر لکھی جگہ سے لے سکتے ہیں؛ شناختی دستاویز ساتھ لائیں۔"
+  ]],
+  "a1-body-health": ["صحت کا بیمہ اور دوائی", [
+    "18 سال سے بڑے ہر رہائشی کے لیے صحت کا بنیادی بیمہ (zorgverzekering) لازمی ہے۔",
+    "نسخے والی دوا apotheek سے ملتی ہے؛ سادہ دوائیں drogist پر بھی ملتی ہیں۔",
+    "بڑوں کے لیے دانتوں کا علاج بنیادی بیمے میں عموماً شامل نہیں ہوتا۔"
+  ]],
+  "a1-work-school-messages": ["کام اور اسکول سے رابطہ", [
+    "اسکول اکثر ایپ یا ای میل سے پیغام بھیجتا ہے۔ اہم پیغام روزانہ دیکھیں۔",
+    "دیر ہو جائے یا نہ آ سکیں تو پہلے اطلاع دیں، بعد میں نہیں۔",
+    "کام کے پیغام مختصر اور سیدھے ہوتے ہیں؛ لمبی معذرت ضروری نہیں۔"
+  ]],
+  "a2-gemeente-forms": ["DigiD اور سرکاری خط", [
+    "DigiD سے آپ آن لائن سرکاری کام کرتے ہیں۔ اپنا DigiD کوڈ کبھی کسی کو نہ بتائیں۔",
+    "سرکاری پیغام MijnOverheid کے پیغام خانے میں بھی آ سکتے ہیں؛ اسے باقاعدگی سے دیکھیں۔",
+    "خط میں لکھی آخری تاریخ اہم ہے؛ دیر سے جواب دینے پر نقصان ہو سکتا ہے۔"
+  ]],
+  "a2-work-school": ["کام کا معاہدہ", [
+    "کام شروع کرنے سے پہلے تحریری معاہدہ (contract) پڑھیں: گھنٹے، تنخواہ، اور آزمائشی مدت۔",
+    "ہر مہینے تنخواہ کی پرچی (loonstrook) ملتی ہے؛ اسے سنبھال کر رکھیں۔",
+    "قانون کے مطابق سال میں کم از کم 8 فیصد چھٹیوں کی رقم (vakantiegeld) ملتی ہے۔"
+  ]],
+  "a2-school-contact": ["والدین اور اسکول", [
+    "اسکول والدین سے بچے کی پڑھائی میں حصہ لینے کی توقع رکھتا ہے۔",
+    "سال میں کئی بار استاد سے مختصر ملاقات (oudergesprek) ہوتی ہے؛ وقت پر جائیں اور سوال پوچھیں۔",
+    "بچے کو اضافی مدد چاہیے ہو تو استاد سے بات کریں؛ یہ عام اور اچھا سمجھا جاتا ہے۔"
+  ]],
+  "a2-health-doctor": ["ماہر ڈاکٹر اور حوالہ", [
+    "ماہر ڈاکٹر یا ہسپتال کے لیے اکثر huisarts کا حوالہ (verwijzing) چاہیے۔",
+    "ڈاکٹر عموماً سیدھا مشورہ دیتا ہے؛ ہر بار دوا نہیں دیتا۔ آرام بھی علاج ہو سکتا ہے۔",
+    "بیمے میں ہر سال پہلے کچھ رقم خود دینی پڑتی ہے (eigen risico)؛ huisarts کی ملاقات پر یہ نہیں لگتی۔"
+  ]],
+  "a2-housing-problems": ["گھر کے جھگڑے", [
+    "مالک مکان مرمت نہ کرے تو پہلے تحریری شکایت بھیجیں اور کاپی رکھیں۔",
+    "کرائے یا مرمت کے جھگڑے میں Huurcommissie سے مدد مل سکتی ہے۔",
+    "پڑوسی سے مسئلہ ہو تو پہلے ادب سے بات کریں؛ بہت سی بلدیات میں پڑوسیوں کی صلح کرانے والی مدد (buurtbemiddeling) بھی ہے۔"
+  ]],
+  "a2-shopping-complaints": ["خریدار کے حقوق", [
+    "آن لائن خریداری پر عموماً 14 دن میں بغیر وجہ بتائے واپسی کا حق ہوتا ہے۔",
+    "نئی چیز جلد خراب ہو جائے تو دکان کو اسے ٹھیک کرنا، بدلنا، یا پیسے واپس کرنے ہوتے ہیں۔",
+    "شکایت پہلے دکان سے کریں، اور تحریر میں بھی رکھیں۔"
+  ]],
+  "a2-bills-banking": ["بل اور بینک کی حفاظت", [
+    "بینک فون، ای میل، یا پیغام میں کبھی آپ کا PIN کوڈ نہیں مانگتا۔ ایسا پیغام دھوکا ہے۔",
+    "بل وقت پر ادا نہ ہو سکے تو جلد رابطہ کریں؛ اکثر قسطوں میں ادائیگی (betalingsregeling) ممکن ہے۔",
+    "کرائے یا صحت کے بیمے کی مالی مدد (toeslagen) Belastingdienst سے ملتی ہے۔"
+  ]],
+  "a2-messages-emails": ["رسمی ای میل", [
+    "رسمی ای میل Geachte سے شروع اور Met vriendelijke groet پر ختم ہوتی ہے۔",
+    "موضوع کی لائن میں مختصر بات لکھیں، جیسے آپ کا نام اور معاملہ۔",
+    "اہم ای میل اور بھیجے ہوئے کاغذات کی کاپی ہمیشہ رکھیں۔"
+  ]]
+};
+
+for (const unit of courseV4.units) {
+  const card = societyCardsV4[unit.id];
+  if (card) unit.societyUrdu = { title: card[0], points: card[1] };
+}
+for (const chapter of courseV4.chapters) {
+  for (const subchapter of chapter.subchapters || []) {
+    const card = societyCardsV4[subchapter.id];
+    if (card) subchapter.societyUrdu = { title: card[0], points: card[1] };
+  }
+}
 
 window.NEDERURDU_COURSE = courseV4;
 window.NEDERURDU_CHAPTERS = chaptersV4;
