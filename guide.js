@@ -270,7 +270,9 @@ NU.guide = (() => {
     const pim = root.querySelector(".guide-card-pim .nu-cat");
     if (s.big) NU.cat.act(pim, index === 0 ? "wave" : "hop");
     else NU.cat.act(pim, "nod");
-    NU.motion.animate(card, [{ transform: "translateY(10px) scale(.96)", opacity: 0 }, { transform: "none", opacity: 1 }], { spring: "snappy", fill: "forwards" });
+    // Individual translate/scale compose with the CSS transform that centres steps 0 and 8, and no
+    // fill means nothing lingers after the entry to override it.
+    NU.motion.animate(card, [{ translate: "0 10px", scale: ".96", opacity: 0 }, { translate: "0 0", scale: "1", opacity: 1 }], { spring: "snappy" });
     setTimeout(() => card.querySelector(".guide-next")?.focus({ preventScroll: true }), 60);
   }
 
