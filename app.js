@@ -3268,9 +3268,19 @@ function renderBottomNav() {
   </nav>`;
 }
 
+// Tab icons are small Pim-world pieces in the art kit's style: flat colour with one hard shade.
+// Inactive tabs show them greyed (refresh.css); the active tab shows full colour.
+const NAV_ART = {
+  home: '<path d="M4 22V11l7-6.5 7 6.5v11Z" fill="#c44e36"/><path d="M5.5 20.5V9.5l7-6.5 7 6.5v11Z" fill="#e8694f" stroke="#e8694f" stroke-width="1.4" stroke-linejoin="round"/><rect x="7.6" y="12" width="4" height="4" rx="1.4" fill="#fff6c9"/><rect x="7.2" y="15.6" width="4.8" height="1.2" rx=".6" fill="#fff"/><rect x="13.6" y="14" width="3.8" height="6.5" rx="1.9" fill="#8f3a26"/>',
+  journey: '<path d="M6.5 22V3.5" stroke="#1f2433" stroke-width="2.4" stroke-linecap="round"/><path d="M6.6 5.4h11l-3 4 3 4h-11Z" fill="#26963f" stroke="#26963f" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 4h11l-3 4 3 4h-11Z" fill="#3dc25d" stroke="#3dc25d" stroke-width="1.4" stroke-linejoin="round"/>',
+  practice: '<rect x="6" y="10.8" width="12" height="2.6" rx="1.3" fill="#1f2433"/><rect x="2.4" y="7.4" width="5" height="11" rx="2" fill="#1a4ed1"/><rect x="3" y="6.4" width="5" height="11" rx="2" fill="#2b6bff"/><rect x="16" y="7.4" width="5" height="11" rx="2" fill="#1a4ed1"/><rect x="16.6" y="6.4" width="5" height="11" rx="2" fill="#2b6bff"/>',
+  toolkit: '<path d="M4 4.8h11.5a3 3 0 0 1 3 3V22H6.2A2.2 2.2 0 0 1 4 19.8Z" fill="#6a3fe0"/><path d="M5 3.5h11.5a3 3 0 0 1 3 3V21H7.2A2.2 2.2 0 0 1 5 18.8Z" fill="#8a5cff"/><path d="M5 18.4h14.5V21H7.2A2.2 2.2 0 0 1 5 18.8Z" fill="#fff"/><path d="M14 3.5v7l2-1.5 2 1.5v-7Z" fill="#ff4d4d"/>'
+};
+
 function renderNavButton(action, icon, label, active) {
   const indicator = active ? '<span class="nav-indicator" data-morph="nav-indicator" aria-hidden="true"></span>' : "";
-  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}">${indicator}<span class="nav-icon">${renderIcon(icon)}</span><span>${label}</span></button>`;
+  const art = NAV_ART[action] ? `<svg class="ui-icon nav-art" viewBox="0 0 24 24" aria-hidden="true">${NAV_ART[action]}</svg>` : renderIcon(icon);
+  return `<button class="nav-button ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""} data-action="${action}">${indicator}<span class="nav-icon">${art}</span><span>${label}</span></button>`;
 }
 
 function bindEvents() {

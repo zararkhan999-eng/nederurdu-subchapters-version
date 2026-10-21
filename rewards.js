@@ -48,11 +48,12 @@ NU.rewards = (() => {
     const stage = tulipStage(streak);
     // Outer group places the head; the inner group is what animates.
     const head = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})"><g class="pl-tulip-head"><path d="M-12 0c-2-12 2-18 5-21 2 4 5 5 7 0 2 5 5 4 7 0 3 3 7 9 5 21-4 7-20 7-24 0Z" fill="${c}"/><path d="M-5 -2c0-8 2-12 5-15 3 3 5 7 5 15" fill="#ffffff33"/></g></g>`;
-    const stem = (x, top, lean = 0) => `<path class="pl-tulip-stem" d="M${x} 92C${x + lean} 76 ${x - lean} ${top + 20} ${x} ${top}" stroke="#3a9a4a" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-    const leaf = (x, flip) => `<path class="pl-tulip-leaf" d="M${x} 90c${flip * 4}-14 ${flip * 16}-20 ${flip * 22}-22-${flip * 2}10-${flip * 8}20-${flip * 22}24Z" fill="#58c26b"/>`;
-    const pot = `<path d="M30 88h40l-5 22H35Z" fill="#d9673c"/><rect x="27" y="84" width="46" height="9" rx="3" fill="#e9824f"/>`;
+    // Kit greens and a brick pot with one hard shade, like the word pictures.
+    const stem = (x, top, lean = 0) => `<path class="pl-tulip-stem" d="M${x} 92C${x + lean} 76 ${x - lean} ${top + 20} ${x} ${top}" stroke="#26963f" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+    const leaf = (x, flip) => `<path class="pl-tulip-leaf" d="M${x} 90c${flip * 4}-14 ${flip * 16}-20 ${flip * 22}-22-${flip * 2}10-${flip * 8}20-${flip * 22}24Z" fill="#3dc25d" stroke="#3dc25d" stroke-width="2" stroke-linejoin="round"/>`;
+    const pot = `<path d="M28 90h40l-5 22H33Z" fill="#c44e36" stroke="#c44e36" stroke-width="3" stroke-linejoin="round"/><path d="M30 88h40l-5 22H35Z" fill="#e8694f" stroke="#e8694f" stroke-width="3" stroke-linejoin="round"/><rect x="25" y="86" width="46" height="9" rx="4.5" fill="#c44e36"/><rect x="27" y="84" width="46" height="9" rx="4.5" fill="#f08a6f"/>`;
     const parts = [
-      `<path d="M50 88c0-6 3-9 6-10" stroke="#3a9a4a" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="50" cy="88" r="3" fill="#8c5a3c"/>`,
+      `<path d="M50 88c0-6 3-9 6-10" stroke="#26963f" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="50" cy="88" r="3" fill="#8f5426"/>`,
       `${stem(50, 66)}${leaf(50, -1)}`,
       `${stem(50, 46)}${leaf(50, -1)}${leaf(50, 1)}<path class="pl-tulip-head" d="M44 46c0-9 3-13 6-15 3 2 6 6 6 15-3 4-9 4-12 0Z" fill="#ff7a1a"/>`,
       `${stem(50, 40)}${leaf(50, -1)}${leaf(50, 1)}${head(50, 40, 1, "#ff4d4d")}`,
