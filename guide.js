@@ -78,9 +78,12 @@ NU.guide = (() => {
     if (open) {
       NU.motion.pop(card.querySelector(".pim-word-meaning"));
       const face = document.querySelector(".pim-corner .nu-cat");
+      if (!face) return;
+      // Remember the greeting's mood (pim.js reads the same restMood) so Pim goes back to it.
+      face.dataset.restMood ||= [...face.classList].find((c) => c.startsWith("cat-mood-"))?.slice(9) || "idle";
       NU.cat.mood(face, "happy");
       NU.cat.act(face, "nod");
-      setTimeout(() => NU.cat.mood(face, face?.dataset.restMood || "idle"), 1200);
+      setTimeout(() => NU.cat.mood(face, face.dataset.restMood), 1200);
     }
   });
 
