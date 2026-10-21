@@ -3778,6 +3778,7 @@ function startLesson(id) {
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(lesson);
   NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   saveProgress({ ...progress, selectedChapterId: selectedChapterId, lastLessonId: lesson.id });
   screen = "lesson";
   render();
@@ -3822,6 +3823,7 @@ function startReview(kind) {
   correctedCheckQuestionIds = new Set();
   sessionQuestions = buildSessionQuestions(activeReview);
   NU.guide.beginLesson(activeLessonId);
+  rolePlayState = null;
   screen = "lesson";
   render();
   scrollToTop();
