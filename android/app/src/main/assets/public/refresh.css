@@ -43,6 +43,8 @@ body[data-screen=lesson] .app-shell{background:var(--pl-bg)}
 /* ---- Bottom bar: frosted glass, springy icons ------------------------------- */
 #app .bottom-nav{background:#ffffffd9;-webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);border-top:2px solid #ffffff;box-shadow:0 -10px 30px #1f24331a}
 #app .nav-button .nav-icon{transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+#app .nav-button .nav-art{width:27px;height:27px;fill:initial;stroke:none;transition:filter .25s,opacity .25s}
+#app .nav-button:not(.active) .nav-art{filter:grayscale(1);opacity:.55}
 #app .nav-button:active .nav-icon{transform:scale(.82)}
 #app .nav-button.active .nav-icon{transform:translateY(-2px) scale(1.12)}
 :root:not([data-effects=reduced]) #app .nav-button.active .nav-icon{animation:rf-nav-pop .45s cubic-bezier(.34,1.56,.64,1)}
