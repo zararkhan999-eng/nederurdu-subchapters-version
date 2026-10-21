@@ -241,7 +241,9 @@ NU.guide = (() => {
           <button type="button" class="guide-next" data-tour="next">آگے</button>
         </div>
       </div>`;
+    // The root lingers for its fade-out after endTour; by then tour is null and these do nothing.
     root.addEventListener("click", (e) => {
+      if (tour?.root !== root) return;
       const what = e.target.closest("[data-tour]")?.dataset.tour;
       if (what === "next") step(tour.index + 1);
       else if (what === "skip") endTour(true);
@@ -249,6 +251,7 @@ NU.guide = (() => {
       else if (what === "say") speakStep();
     });
     root.addEventListener("keydown", (e) => {
+      if (tour?.root !== root) return;
       if (e.key === "Escape") endTour(true);
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") step(tour.index + 1);
     });
@@ -262,8 +265,9 @@ NU.guide = (() => {
 
   function speakStep() {
     const s = STEPS[tour?.index];
-    if (s?.say && options.speak) options.speak(s.say);
-    const svg = tour?.root.querySelector(".guide-card-pim .nu-cat");
+    if (!s?.say) return;
+    if (options.speak) options.speak(s.say);
+    const svg = tour.root.querySelector(".guide-card-pim .nu-cat");
     if (svg) [...s.say.replace(/[^a-z ]/gi, "")].filter((_, i) => i % 3 === 0).forEach((ch, i) => setTimeout(() => NU.pim?.mouth(svg, ch, { hold: 150 }), i * 170));
   }
 
@@ -333,6 +337,7 @@ NU.guide = (() => {
     tour = null;
     removeEventListener("resize", onResize);
     removeEventListener("scroll", onResize, { capture: true });
+    root.inert = true;
     if (done) { store.tourDone = true; save(store); }
     const out = NU.motion.animate(root, [{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: "forwards" });
     removeAfter(root, out);
