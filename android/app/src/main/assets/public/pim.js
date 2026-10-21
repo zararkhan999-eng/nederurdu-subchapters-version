@@ -3,7 +3,7 @@
    dozes off when left alone (never during a lesson, where the screen stays still for reading). */
 window.NU = window.NU || {};
 NU.pim = (() => {
-  const EYES = { x: 144, y: 41 }, HEAD = { x: 139, y: 30 };
+  const { EYES, HEAD } = NU.pimParts;
   const active = () => NU.motion.level() !== "off";
   const isFace = (svg) => svg.classList.contains("nu-cat-face");
   const onScreen = (svg) => {

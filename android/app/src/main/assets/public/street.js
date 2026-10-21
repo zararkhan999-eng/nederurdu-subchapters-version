@@ -31,15 +31,17 @@ NU.street = (() => {
     ["Fietsen is leuk!", "سائیکل چلانا مزے کا ہے!"]
   ];
 
+  // Kit colours (art/kit.js); each house gets one hard shade, like every Pim picture.
   const HOUSES = [
-    { w: 56, h: 118, c: "#d9673c", gable: "step" },
-    { w: 50, h: 132, c: "#f2e3c6", gable: "bell" },
-    { w: 58, h: 112, c: "#34477d", gable: "point" },
-    { w: 66, h: 140, c: "#e9b949", gable: "neck", lesson: true },
-    { w: 52, h: 120, c: "#7fb58b", gable: "step" },
-    { w: 56, h: 128, c: "#ec9a8f", gable: "bell" },
-    { w: 60, h: 114, c: "#8c5a3c", gable: "point" }
+    { w: 56, h: 118, c: "#e8694f", gable: "step" },
+    { w: 50, h: 132, c: "#f3e3c4", gable: "bell" },
+    { w: 58, h: 112, c: "#3d5bd9", gable: "point" },
+    { w: 66, h: 140, c: "#ffc23d", gable: "neck", lesson: true },
+    { w: 52, h: 120, c: "#1fb5a8", gable: "step" },
+    { w: 56, h: 128, c: "#ff8fa3", gable: "bell" },
+    { w: 60, h: 114, c: "#b9773d", gable: "point" }
   ];
+  const shade = (hex, k = 0.8) => `#${[1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0")).join("")}`;
   const BASE = 228;
 
   function gable(x, top, w, type, color) {
@@ -55,8 +57,7 @@ NU.street = (() => {
 
   function house(hs, x, lit, lesson) {
     const top = BASE - hs.h;
-    const trim = hs.c === "#f2e3c6" ? "#c9b48e" : "#ffffff";
-    const glass = lit ? "#ffd56b" : "#bfe3ff";
+    const glass = lit ? "#ffd56b" : "#fff6c9";
     const cols = hs.w > 58 ? 3 : 2;
     const gap = (hs.w - cols * 11) / (cols + 1);
     let windows = "";
@@ -65,13 +66,14 @@ NU.street = (() => {
       for (let col = 0; col < cols; col++) {
         const wx = x + gap + col * (11 + gap), wy = top + 14 + row * 30;
         const on = lit && (row + col + Math.round(x)) % 3 !== 0;
-        windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="11" height="18" rx="5.5" fill="${on ? glass : "#bfe3ff"}" stroke="${trim}" stroke-width="2"/>`;
+        windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="11" height="18" rx="5.5" fill="${on ? glass : "#d6eeff"}"/><rect x="${(wx - 1.5).toFixed(1)}" y="${wy + 17}" width="14" height="3" rx="1.5" fill="#ffffff"/>`;
       }
     }
     const doorX = x + hs.w / 2 - 8;
-    const door = lesson ? "" : `<rect x="${doorX}" y="${BASE - 22}" width="16" height="22" rx="8" fill="#2a2f45" opacity=".8"/>`;
-    return `<g class="street-house">${gable(x, top, hs.w, hs.gable, hs.c)}<rect x="${x}" y="${top}" width="${hs.w}" height="${hs.h}" fill="${hs.c}"/>
-      <rect x="${x}" y="${top}" width="${hs.w}" height="4" fill="#00000014"/>${windows}${door}
+    const door = lesson ? "" : `<rect x="${doorX}" y="${BASE - 22}" width="16" height="22" rx="8" fill="${shade(hs.c, 0.55)}"/>`;
+    const body = (c) => `${gable(x, top, hs.w, hs.gable, c)}<rect x="${x}" y="${top}" width="${hs.w}" height="${hs.h}" fill="${c}"/>`;
+    return `<g class="street-house"><g transform="translate(-3 3)">${body(shade(hs.c))}</g>${body(hs.c)}
+      <rect x="${x}" y="${top}" width="${hs.w}" height="3" fill="#ffffff55"/>${windows}${door}
       <path d="M${x + hs.w / 2} ${top - 16}v-6" stroke="#2a2f45" stroke-width="2"/></g>`;
   }
 
