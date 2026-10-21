@@ -47,6 +47,12 @@ function streetTexts() {
   return [...greetings, ...phrases];
 }
 
+// The guide's tour speaks each step's `say` line; guide.js keeps them private too.
+function guideTexts() {
+  const source = fs.readFileSync(path.join(root, "guide.js"), "utf8");
+  return [...source.matchAll(/say:\s*"([^"]+)"/g)].map((match) => match[1]);
+}
+
 function launchBrowser() {
   const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
   if (executablePath) return chromium.launch({ executablePath });
@@ -141,7 +147,7 @@ function collectInPage(extraTexts) {
     for (const pattern of lesson.patterns || []) add(pattern.audioText || pattern.modelDutch, `pattern:${lesson.id}`);
   }
   collect(renderLetters(), "letters");
-  for (const text of extraTexts) add(text, "street");
+  for (const [source, texts] of Object.entries(extraTexts)) texts.forEach((text) => add(text, source));
 
   return [...found.entries()].map(([text, source]) => ({ text, source }));
 }
@@ -179,7 +185,7 @@ function checkClips(texts) {
     await page.addInitScript(() => localStorage.clear());
     await page.goto(url);
     await page.waitForFunction(() => typeof renderLesson === "function" && typeof normalizeDutchSpeechText === "function");
-    const entries = await page.evaluate(collectInPage, streetTexts());
+    const entries = await page.evaluate(collectInPage, { street: streetTexts(), guide: guideTexts() });
     const failures = entries.filter((entry) => entry.source === "error");
     if (failures.length) throw new Error(`Could not render:\n${failures.map((entry) => entry.text).join("\n")}`);
     if (errors.length) throw new Error(`Page errors:\n${errors.join("\n")}`);

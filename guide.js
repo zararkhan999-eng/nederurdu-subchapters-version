@@ -47,12 +47,22 @@ NU.guide = (() => {
     return { ...(byTime[time] || byTime.morning), mood: "idle" };
   }
 
-  // The same word all day; a new one tomorrow. Prefers words the learner has already met.
-  function wordOfDay(words) {
+  // The same word all day; a new one tomorrow. Prefers words the learner has already met. The
+  // candidate list grows as words are met, so the day's pick is remembered rather than re-derived;
+  // `pool` (all words) lets it be found again after the candidates change.
+  function wordOfDay(words, pool = words) {
     const usable = (words || []).filter((w) => w?.dutch && w?.urdu);
+    const idOf = (w) => w.id || w.dutch;
+    if (store.word?.day === today()) {
+      const kept = [...usable, ...(pool || [])].find((w) => w?.dutch && w?.urdu && idOf(w) === store.word.id);
+      if (kept) return kept;
+    }
     if (!usable.length) return null;
     const seed = [...today()].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7);
-    return usable[seed % usable.length];
+    const word = usable[seed % usable.length];
+    store.word = { day: today(), id: idOf(word) };
+    save(store);
+    return word;
   }
 
   // Delegated so the Today card needs no wiring in app.js.
@@ -68,36 +78,47 @@ NU.guide = (() => {
     if (open) {
       NU.motion.pop(card.querySelector(".pim-word-meaning"));
       const face = document.querySelector(".pim-corner .nu-cat");
+      if (!face) return;
+      // Remember the greeting's mood (pim.js reads the same restMood) so Pim goes back to it.
+      face.dataset.restMood ||= [...face.classList].find((c) => c.startsWith("cat-mood-"))?.slice(9) || "idle";
       NU.cat.mood(face, "happy");
       NU.cat.act(face, "nod");
-      setTimeout(() => NU.cat.mood(face, face?.dataset.restMood || "idle"), 1200);
+      setTimeout(() => NU.cat.mood(face, face.dataset.restMood), 1200);
     }
   });
 
   /* ---- Toasts: Pim pops in at the top with a line ---------------------------------------- */
-  function toast(nl, ur, { mood = "happy", hold = 1900 } = {}) {
+  // The one toast for the app: the lesson's streak banner (NU.lesson.streakToast) is this with
+  // className "pl-streak-toast". Only one toast shows at a time.
+  function toast(nl, ur, { mood = "happy", hold = 1900, className = "guide-toast" } = {}) {
     document.querySelectorAll(".pl-streak-toast,.guide-toast").forEach((el) => el.remove());
     const el = document.createElement("div");
-    el.className = "guide-toast";
+    el.className = className;
     el.setAttribute("role", "status");
-    el.innerHTML = `<span class="guide-toast-face" aria-hidden="true">${NU.cat.render({ face: true, size: 40, mood })}</span>
+    el.innerHTML = `<span class="${className}-face" aria-hidden="true">${NU.cat.render({ face: true, size: 40, mood })}</span>
       <span><b class="latin" dir="ltr">${esc(nl)}</b><small>${esc(ur)}</small></span>`;
     document.body.append(el);
     const show = NU.motion.animate(el, [{ transform: "translate(-50%,-120%)" }, { transform: "translate(-50%,0)" }], { spring: "bouncy", fill: "forwards" });
+    if (!show) el.style.transform = "translate(-50%,0)";
     setTimeout(() => {
       const out = NU.motion.animate(el, [{ transform: "translate(-50%,0)", opacity: 1 }, { transform: "translate(-50%,-120%)", opacity: 0 }], { duration: 320, fill: "forwards" });
       removeAfter(el, out);
     }, show ? hold : hold - 300);
   }
 
-  /* ---- Lesson coach ------------------------------------------------------------------------ */
+  // Correct answers in a row that earn a streak banner; the halfway cheer gives way to them.
   const STREAK_MILESTONES = [3, 5, 10, 15, 20];
-  let lesson = { key: "", answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false };
+
+  /* ---- Lesson coach ------------------------------------------------------------------------ */
+  const freshLesson = (key = "") => ({ key, answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false });
+  let lesson = freshLesson();
+  // Called whenever a lesson or review (re)starts, so a replay of the same one starts clean.
+  function beginLesson(lessonKey = "") { lesson = freshLesson(lessonKey); }
   const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
   // Returns a special [nl, ur] line for the feedback panel, or null for the usual praise.
   function onAnswer({ correct, combo = 0, lessonKey = "", index = 0, total = 0 }) {
-    if (lessonKey !== lesson.key) lesson = { key: lessonKey, answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false };
+    if (lessonKey !== lesson.key) beginLesson(lessonKey);
     hidePeek();
     const first = lesson.answers === 0;
     const comeback = correct && !lesson.lastCorrect;
@@ -129,10 +150,18 @@ NU.guide = (() => {
       clearTimeout(peekTimer);
       hidePeek();
       peekKey = questionKey;
-      if (!waitingQuestion() || peekShownFor === questionKey || navigator.webdriver) return;
-      peekTimer = setTimeout(() => { if (waitingQuestion() && peekKey === questionKey) showPeek(questionKey); }, PEEK_AFTER);
+      armPeek();
     }
   }
+  function armPeek() {
+    clearTimeout(peekTimer);
+    const key = peekKey;
+    if (!waitingQuestion() || peekShownFor === key || navigator.webdriver) return;
+    peekTimer = setTimeout(() => { if (waitingQuestion() && peekKey === key) showPeek(key); }, PEEK_AFTER);
+  }
+  // Tapping or typing is not hesitating: any interaction restarts the countdown.
+  const onActivity = () => { if (document.body.dataset.screen === "lesson" && peekKey) armPeek(); };
+  ["input", "keydown"].forEach((type) => document.addEventListener(type, onActivity, { capture: true, passive: true }));
   function showPeek(key) {
     if (document.querySelector(".guide-peek:not(.is-leaving)")) return;
     peekShownFor = key;
@@ -161,7 +190,11 @@ NU.guide = (() => {
     setTimeout(() => NU.cat.mood(face, "happy"), 600);
   }
   // Any tap elsewhere sends Pim away; the peek never blocks an answer.
-  document.addEventListener("pointerdown", (e) => { if (!e.target.closest?.(".guide-peek")) hidePeek(); }, { capture: true, passive: true });
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest?.(".guide-peek")) return;
+    hidePeek();
+    onActivity();
+  }, { capture: true, passive: true });
   function hidePeek() {
     document.querySelectorAll(".guide-peek:not(.is-leaving)").forEach((el) => {
       el.classList.add("is-leaving");
@@ -216,7 +249,9 @@ NU.guide = (() => {
           <button type="button" class="guide-next" data-tour="next">آگے</button>
         </div>
       </div>`;
+    // The root lingers for its fade-out after endTour; by then tour is null and these do nothing.
     root.addEventListener("click", (e) => {
+      if (tour?.root !== root) return;
       const what = e.target.closest("[data-tour]")?.dataset.tour;
       if (what === "next") step(tour.index + 1);
       else if (what === "skip") endTour(true);
@@ -224,6 +259,7 @@ NU.guide = (() => {
       else if (what === "say") speakStep();
     });
     root.addEventListener("keydown", (e) => {
+      if (tour?.root !== root) return;
       if (e.key === "Escape") endTour(true);
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") step(tour.index + 1);
     });
@@ -237,8 +273,9 @@ NU.guide = (() => {
 
   function speakStep() {
     const s = STEPS[tour?.index];
-    if (s?.say && options.speak) options.speak(s.say);
-    const svg = tour?.root.querySelector(".guide-card-pim .nu-cat");
+    if (!s?.say) return;
+    if (options.speak) options.speak(s.say);
+    const svg = tour.root.querySelector(".guide-card-pim .nu-cat");
     if (svg) [...s.say.replace(/[^a-z ]/gi, "")].filter((_, i) => i % 3 === 0).forEach((ch, i) => setTimeout(() => NU.pim?.mouth(svg, ch, { hold: 150 }), i * 170));
   }
 
@@ -270,7 +307,9 @@ NU.guide = (() => {
     const pim = root.querySelector(".guide-card-pim .nu-cat");
     if (s.big) NU.cat.act(pim, index === 0 ? "wave" : "hop");
     else NU.cat.act(pim, "nod");
-    NU.motion.animate(card, [{ transform: "translateY(10px) scale(.96)", opacity: 0 }, { transform: "none", opacity: 1 }], { spring: "snappy", fill: "forwards" });
+    // Individual translate/scale compose with the CSS transform that centres steps 0 and 8, and no
+    // fill means nothing lingers after the entry to override it.
+    NU.motion.animate(card, [{ translate: "0 10px", scale: ".96", opacity: 0 }, { translate: "0 0", scale: "1", opacity: 1 }], { spring: "snappy" });
     setTimeout(() => card.querySelector(".guide-next")?.focus({ preventScroll: true }), 60);
   }
 
@@ -306,6 +345,7 @@ NU.guide = (() => {
     tour = null;
     removeEventListener("resize", onResize);
     removeEventListener("scroll", onResize, { capture: true });
+    root.inert = true;
     if (done) { store.tourDone = true; save(store); }
     const out = NU.motion.animate(root, [{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: "forwards" });
     removeAfter(root, out);
@@ -317,5 +357,5 @@ NU.guide = (() => {
     save(store);
   }
 
-  return { configure, greeting, wordOfDay, toast, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
+  return { configure, greeting, wordOfDay, toast, STREAK_MILESTONES, beginLesson, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
 })();
