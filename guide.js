@@ -132,10 +132,18 @@ NU.guide = (() => {
       clearTimeout(peekTimer);
       hidePeek();
       peekKey = questionKey;
-      if (!waitingQuestion() || peekShownFor === questionKey || navigator.webdriver) return;
-      peekTimer = setTimeout(() => { if (waitingQuestion() && peekKey === questionKey) showPeek(questionKey); }, PEEK_AFTER);
+      armPeek();
     }
   }
+  function armPeek() {
+    clearTimeout(peekTimer);
+    const key = peekKey;
+    if (!waitingQuestion() || peekShownFor === key || navigator.webdriver) return;
+    peekTimer = setTimeout(() => { if (waitingQuestion() && peekKey === key) showPeek(key); }, PEEK_AFTER);
+  }
+  // Tapping or typing is not hesitating: any interaction restarts the countdown.
+  const onActivity = () => { if (document.body.dataset.screen === "lesson" && peekKey) armPeek(); };
+  ["input", "keydown"].forEach((type) => document.addEventListener(type, onActivity, { capture: true, passive: true }));
   function showPeek(key) {
     if (document.querySelector(".guide-peek:not(.is-leaving)")) return;
     peekShownFor = key;
@@ -164,7 +172,11 @@ NU.guide = (() => {
     setTimeout(() => NU.cat.mood(face, "happy"), 600);
   }
   // Any tap elsewhere sends Pim away; the peek never blocks an answer.
-  document.addEventListener("pointerdown", (e) => { if (!e.target.closest?.(".guide-peek")) hidePeek(); }, { capture: true, passive: true });
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest?.(".guide-peek")) return;
+    hidePeek();
+    onActivity();
+  }, { capture: true, passive: true });
   function hidePeek() {
     document.querySelectorAll(".guide-peek:not(.is-leaving)").forEach((el) => {
       el.classList.add("is-leaving");
