@@ -87,22 +87,10 @@ NU.lesson = (() => {
     </div>`;
   }
 
-  // Streak milestones get a banner that slides down from the top.
+  // Streak milestones get a banner that slides down from the top (the guide's toast, in streak colours).
   function streakToast(count) {
-    if (![3, 5, 10, 15, 20].includes(count)) return;
-    document.querySelector(".pl-streak-toast")?.remove();
-    const toast = document.createElement("div");
-    toast.className = "pl-streak-toast";
-    toast.setAttribute("role", "status");
-    toast.innerHTML = `<span class="pl-streak-toast-face" aria-hidden="true">${NU.cat.render({ face: true, size: 40, mood: "happy" })}</span>
-      <span><b class="latin" dir="ltr">${count} op rij!</b><small>لگاتار ${count} صحیح جواب</small></span>`;
-    document.body.append(toast);
-    const show = NU.motion.animate(toast, [{ transform: "translate(-50%,-120%)" }, { transform: "translate(-50%,0)" }], { spring: "bouncy", fill: "forwards" });
-    const hide = () => {
-      const out = NU.motion.animate(toast, [{ transform: "translate(-50%,0)", opacity: 1 }, { transform: "translate(-50%,-120%)", opacity: 0 }], { duration: 320, fill: "forwards" });
-      (out?.finished || Promise.resolve()).then(() => toast.remove(), () => toast.remove());
-    };
-    setTimeout(hide, show ? 1900 : 1600);
+    if (!NU.guide.STREAK_MILESTONES.includes(count)) return;
+    NU.guide.toast(`${count} op rij!`, `لگاتار ${count} صحیح جواب`, { className: "pl-streak-toast" });
   }
 
   return { syllablesOf, karaokeHTML, karaoke, phrase, reaction, tip, streakToast };

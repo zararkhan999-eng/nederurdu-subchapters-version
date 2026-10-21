@@ -88,23 +88,28 @@ NU.guide = (() => {
   });
 
   /* ---- Toasts: Pim pops in at the top with a line ---------------------------------------- */
-  function toast(nl, ur, { mood = "happy", hold = 1900 } = {}) {
+  // The one toast for the app: the lesson's streak banner (NU.lesson.streakToast) is this with
+  // className "pl-streak-toast". Only one toast shows at a time.
+  function toast(nl, ur, { mood = "happy", hold = 1900, className = "guide-toast" } = {}) {
     document.querySelectorAll(".pl-streak-toast,.guide-toast").forEach((el) => el.remove());
     const el = document.createElement("div");
-    el.className = "guide-toast";
+    el.className = className;
     el.setAttribute("role", "status");
-    el.innerHTML = `<span class="guide-toast-face" aria-hidden="true">${NU.cat.render({ face: true, size: 40, mood })}</span>
+    el.innerHTML = `<span class="${className}-face" aria-hidden="true">${NU.cat.render({ face: true, size: 40, mood })}</span>
       <span><b class="latin" dir="ltr">${esc(nl)}</b><small>${esc(ur)}</small></span>`;
     document.body.append(el);
     const show = NU.motion.animate(el, [{ transform: "translate(-50%,-120%)" }, { transform: "translate(-50%,0)" }], { spring: "bouncy", fill: "forwards" });
+    if (!show) el.style.transform = "translate(-50%,0)";
     setTimeout(() => {
       const out = NU.motion.animate(el, [{ transform: "translate(-50%,0)", opacity: 1 }, { transform: "translate(-50%,-120%)", opacity: 0 }], { duration: 320, fill: "forwards" });
       removeAfter(el, out);
     }, show ? hold : hold - 300);
   }
 
-  /* ---- Lesson coach ------------------------------------------------------------------------ */
+  // Correct answers in a row that earn a streak banner; the halfway cheer gives way to them.
   const STREAK_MILESTONES = [3, 5, 10, 15, 20];
+
+  /* ---- Lesson coach ------------------------------------------------------------------------ */
   const freshLesson = (key = "") => ({ key, answers: 0, wrongRun: 0, lastCorrect: true, halfwayShown: false });
   let lesson = freshLesson();
   // Called whenever a lesson or review (re)starts, so a replay of the same one starts clean.
@@ -352,5 +357,5 @@ NU.guide = (() => {
     save(store);
   }
 
-  return { configure, greeting, wordOfDay, toast, beginLesson, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
+  return { configure, greeting, wordOfDay, toast, STREAK_MILESTONES, beginLesson, onAnswer, afterRender, hidePeek, maybeTour, startTour, endTour, reset, visit };
 })();
