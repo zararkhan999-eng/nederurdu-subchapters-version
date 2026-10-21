@@ -15,8 +15,15 @@
     scarf: "#ff4d4d", scarfShade: "#d63434",
     bike: "#2b6bff", bikeShade: "#1a4ed1"
   };
-  const HEAD = { x: 141, y: 44 };
+  const HEAD = { x: 141, y: 44 };      // head centre
+  const HEAD_TOP = { x: 141, y: 30 };  // brow, where hearts and stars burst from
   const EYES = { x: 145, y: 42 };
+  // A darker tone of a #rrggbb colour, for hard shades (other values pass through unchanged).
+  function shadeOf(hex, k = 0.8) {
+    const h = String(hex).replace("#", "");
+    if (!/^[0-9a-f]{6}$/i.test(h)) return hex;
+    return `#${[0, 2, 4].map((i) => Math.round(parseInt(h.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0")).join("")}`;
+  }
 
   // Rounded flat shapes: the same colour as fill and a round-joined stroke softens every corner.
   const soft = (d, fill, w = 5) => `<path d="${d}" fill="${fill}" stroke="${fill}" stroke-width="${w}" stroke-linejoin="round"/>`;
@@ -26,8 +33,8 @@
       open: `<g class="cat-blink" style="transform-origin:${EYES.x}px ${EYES.y}px">
           <ellipse cx="131" cy="42" rx="7.4" ry="8.6" fill="${P.white}"/><ellipse cx="157" cy="41" rx="6.6" ry="8" fill="${P.white}"/>
           <g class="cat-gaze">
-            <ellipse cx="133" cy="43" rx="4.4" ry="5.4" fill="${P.ink}"/><ellipse cx="159" cy="42" rx="4" ry="5" fill="${P.ink}"/>
-            <circle class="cat-pupil-shine" cx="134.8" cy="40.6" r="1.7" fill="${P.white}"/><circle class="cat-pupil-shine" cx="160.6" cy="39.7" r="1.5" fill="${P.white}"/>
+            <ellipse cx="132.2" cy="43" rx="4.4" ry="5.4" fill="${P.ink}"/><ellipse cx="158" cy="42" rx="4" ry="5" fill="${P.ink}"/>
+            <circle class="cat-pupil-shine" cx="134" cy="40.6" r="1.7" fill="${P.white}"/><circle class="cat-pupil-shine" cx="159.6" cy="39.7" r="1.5" fill="${P.white}"/>
           </g>
         </g>`,
       happy: `<path d="M124 45q7-9 14 0M150 44q6.5-8.5 13 0" fill="none" stroke="${P.ink}" stroke-width="3.2" stroke-linecap="round"/>`,
@@ -38,7 +45,7 @@
           <circle cx="132" cy="41" r="3.6" fill="${P.ink}"/><circle cx="158" cy="40" r="3.3" fill="${P.ink}"/>`,
       closed: `<path d="M124 43q7 5 14 0M150 42q6.5 5 13 0" fill="none" stroke="${P.ink}" stroke-width="3" stroke-linecap="round"/>`,
       wink: `<path d="M124 45q7-9 14 0" fill="none" stroke="${P.ink}" stroke-width="3.2" stroke-linecap="round"/>
-          <ellipse cx="157" cy="41" rx="6.6" ry="8" fill="${P.white}"/><ellipse cx="159" cy="42" rx="4" ry="5" fill="${P.ink}"/><circle cx="160.6" cy="39.7" r="1.5" fill="${P.white}"/>`
+          <ellipse cx="157" cy="41" rx="6.6" ry="8" fill="${P.white}"/><ellipse cx="158" cy="42" rx="4" ry="5" fill="${P.ink}"/><circle cx="159.6" cy="39.7" r="1.5" fill="${P.white}"/>`
     },
     mouth: {
       closed: `<path d="M140 57q3.2 3.4 6.4 0q3.2 3.4 6.4 0" fill="none" stroke="${P.ink}" stroke-width="2.2" stroke-linecap="round"/>`,
@@ -69,9 +76,7 @@
       eyes = `<g class="cat-eyes cat-eyes-open">${faces.eyes.open}</g>
         <g class="cat-eyes cat-eyes-happy">${faces.eyes.happy}</g>
         <g class="cat-eyes cat-eyes-sad">${faces.eyes.sad}</g>`;
-      mouth = `<path class="cat-mouth cat-mouth-closed" d="M140 57q3.2 3.4 6.4 0q3.2 3.4 6.4 0" fill="none" stroke="${P.ink}" stroke-width="2.2" stroke-linecap="round"/>
-        <path class="cat-mouth cat-mouth-open" d="M140 56.5q6.4 12 12.8 0Z" fill="${P.mouth}" stroke="${P.mouth}" stroke-width="2" stroke-linejoin="round"/>
-        <path class="cat-mouth cat-mouth-sad" d="M140 61q6.4-5 12.8 0" fill="none" stroke="${P.ink}" stroke-width="2.2" stroke-linecap="round"/>`;
+      mouth = ["closed", "open", "sad"].map((m) => `<g class="cat-mouth cat-mouth-${m}">${faces.mouth[m]}</g>`).join("");
     }
     return `${ears()}
       ${soft("M113 50L102 55L113 58L105 64L118 62Z", P.furShade, 3)}
@@ -174,5 +179,5 @@
   // The head-only crop used for avatars, the logo and the launch screen.
   const FACE_BOX = { x: 100, y: 2, w: 78, h: 72 };
 
-  return { P, HEAD: { x: HEAD.x, y: 30 }, EYES, MOODS, soft, head, scarf, BIKE, leg, pedal, rider, FACE_BOX };
+  return { P, HEAD, HEAD_TOP, EYES, MOODS, soft, shadeOf, head, scarf, BIKE, leg, pedal, rider, FACE_BOX };
 });

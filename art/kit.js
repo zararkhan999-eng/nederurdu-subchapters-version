@@ -234,13 +234,7 @@
     return g(`${back}${hairB}${farArm}${legs}${torso}${coatSvg}${neck}${headSvg}${hairF}${beardSvg}${face}${glassesSvg}${hatSvg}${extra}${holdBehind ? "" : held}${nearArm}`, { x, y, s, flip });
   }
 
-  // A darker tone of a hex colour for hard shades.
-  function shadeOf(hex, k = 0.8) {
-    const h = String(hex).replace("#", "");
-    if (h.length !== 6) return hex;
-    const c = [0, 2, 4].map((i) => Math.round(parseInt(h.slice(i, i + 2), 16) * k));
-    return `#${c.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
-  }
+  const { shadeOf } = parts;
   function tint(hex, k = 0.85) {
     const h = String(hex).replace("#", "");
     const c = [0, 2, 4].map((i) => Math.round(parseInt(h.slice(i, i + 2), 16) + (255 - parseInt(h.slice(i, i + 2), 16)) * k));

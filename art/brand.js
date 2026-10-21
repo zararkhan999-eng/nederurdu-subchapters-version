@@ -24,11 +24,11 @@
     return K.svg(192, 192, bg + glow + K.g(head(), { x: 96, y: 98, s: 1.42 }), "NederUrdu").replace('width="192" height="192"', `width="${size}" height="${size}"`);
   }
   // Android adaptive layers on the 108dp canvas: keep the mark inside the 66dp safe circle.
-  function adaptiveForeground() { return K.svg(108, 108, K.g(head(), { x: 54, y: 56, s: 0.64 })); }
+  function adaptiveForeground() { return K.svg(108, 108, K.g(head(), { x: 54, y: 52, s: 0.58 })); }
   function adaptiveMonochrome() {
     const holes = `<g transform="translate(-139 -40)" fill="#000"><ellipse cx="131" cy="42" rx="5" ry="6.4"/><ellipse cx="157" cy="41" rx="4.6" ry="6"/><path d="M142.6 51h7.6l-3.8 3.6Z"/></g>`;
-    const mask = `<mask id="pim-mono"><rect width="108" height="108" fill="#fff"/>${K.g(holes, { x: 54, y: 56, s: 0.64 })}</mask>`;
-    return K.svg(108, 108, `${mask}<g mask="url(#pim-mono)">${K.g(silhouette(), { x: 54, y: 56, s: 0.64 })}</g>`);
+    const mask = `<mask id="pim-mono"><rect width="108" height="108" fill="#fff"/>${K.g(holes, { x: 54, y: 52, s: 0.58 })}</mask>`;
+    return K.svg(108, 108, `${mask}<g mask="url(#pim-mono)">${K.g(silhouette(), { x: 54, y: 52, s: 0.58 })}</g>`);
   }
 
   return { BG, head, icon, adaptiveForeground, adaptiveMonochrome };

@@ -41,7 +41,7 @@ NU.street = (() => {
     { w: 56, h: 128, c: "#ff8fa3", gable: "bell" },
     { w: 60, h: 114, c: "#b9773d", gable: "point" }
   ];
-  const shade = (hex, k = 0.8) => `#${[1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0")).join("")}`;
+  const shade = NU.pimParts.shadeOf;
   const BASE = 228;
 
   function gable(x, top, w, type, color) {
@@ -57,7 +57,6 @@ NU.street = (() => {
 
   function house(hs, x, lit, lesson) {
     const top = BASE - hs.h;
-    const glass = lit ? "#ffd56b" : "#fff6c9";
     const cols = hs.w > 58 ? 3 : 2;
     const gap = (hs.w - cols * 11) / (cols + 1);
     let windows = "";
@@ -66,7 +65,7 @@ NU.street = (() => {
       for (let col = 0; col < cols; col++) {
         const wx = x + gap + col * (11 + gap), wy = top + 14 + row * 30;
         const on = lit && (row + col + Math.round(x)) % 3 !== 0;
-        windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="11" height="18" rx="5.5" fill="${on ? glass : "#d6eeff"}"/><rect x="${(wx - 1.5).toFixed(1)}" y="${wy + 17}" width="14" height="3" rx="1.5" fill="#ffffff"/>`;
+        windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="11" height="18" rx="5.5" fill="${on ? "#ffd56b" : "#d6eeff"}"/><rect x="${(wx - 1.5).toFixed(1)}" y="${wy + 17}" width="14" height="3" rx="1.5" fill="#ffffff"/>`;
       }
     }
     const doorX = x + hs.w / 2 - 8;

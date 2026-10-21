@@ -38,8 +38,16 @@ for (const [rel, svg] of outputs) {
   else fs.writeFileSync(file, content, "utf8");
 }
 
+// Pictures for words that no longer exist would still ship (the Android sync copies all of assets/).
+const orphans = ["word-visuals", "visuals"].flatMap((dir) => fs.readdirSync(path.join(root, "assets", dir))
+  .filter((name) => name.endsWith(".svg"))
+  .map((name) => path.join("assets", dir, name))
+  .filter((rel) => !outputs.has(rel)));
+if (check) stale.push(...orphans);
+else orphans.forEach((rel) => fs.rmSync(path.join(root, rel)));
+
 if (check && stale.length) {
-  console.error(`${stale.length} art file(s) are out of date; run npm run art:build:\n${stale.join("\n")}`);
+  console.error(`${stale.length} art file(s) are out of date or orphaned; run npm run art:build:\n${stale.join("\n")}`);
   process.exit(1);
 }
 const bytes = [...outputs.values()].reduce((sum, svg) => sum + svg.length, 0);

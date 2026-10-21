@@ -30,7 +30,8 @@ NU.map = (() => {
     post: '<rect x="-8" y="-5" width="16" height="11" rx="2" fill="#fff"/><path d="m-8-4 8 6 8-6" fill="none" stroke="#ff7a1a" stroke-width="1.8"/>'
   };
 
-  const shade = (hex, k = 0.8) => `#${[1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0")).join("")}`;
+  const shade = NU.pimParts.shadeOf;
+  let stripeId = 0;
 
   // A small gabled building in the street's style (one hard shade, sills under the windows);
   // `state` is "lit", "open" or "ahead".
@@ -56,8 +57,10 @@ NU.map = (() => {
         windows += `<rect x="${wx.toFixed(1)}" y="${wy}" width="${w}" height="15" rx="6" fill="${glass}"/><rect x="${(wx - 2).toFixed(1)}" y="${wy + 14}" width="${w + 4}" height="3.4" rx="1.7" fill="#fff"/>`;
       }
     }
+    // Each building needs its own pattern id, or every awning takes the first building's colour.
+    const stripes = `map-stripes-${++stripeId}`;
     const awning = kind === "cafe" || kind === "shop"
-      ? `<path d="M12 ${112 - 30}h96l-6 10H18Z" fill="#fff"/><path d="M12 ${112 - 30}h96l-6 10H18Z" fill="url(#map-stripes)"/>` : "";
+      ? `<path d="M12 ${112 - 30}h96l-6 10H18Z" fill="#fff"/><path d="M12 ${112 - 30}h96l-6 10H18Z" fill="url(#${stripes})"/>` : "";
     const columns = kind === "townhall" || kind === "bank"
       ? `<g fill="#ffffffaa">${[24, 44, 70, 90].map((x) => `<rect x="${x}" y="${112 - 38}" width="6" height="38" rx="2"/>`).join("")}</g>` : "";
     const clockFace = kind === "clock" || kind === "station"
@@ -67,7 +70,7 @@ NU.map = (() => {
     const flag = lit ? `<g class="map-flag"><path d="M60 ${top - 30}v-22" stroke="#2a2f45" stroke-width="2"/><path class="map-flag-cloth" d="M60 ${top - 52}h16l-4 5 4 5H60Z" fill="#ff4d4d"/></g>` : "";
     const sparkles = lit ? `<g class="map-sparkles" fill="#ffc23d">${[[14, 20], [104, 30], [96, 4]].map(([x, y], i) => `<path style="animation-delay:${i * .5}s" d="M${x} ${y - 6}l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8Z"/>`).join("")}</g>` : "";
     return `<svg class="map-building map-building-${state}" viewBox="0 -40 120 156" aria-hidden="true">
-      <defs><pattern id="map-stripes" width="12" height="10" patternUnits="userSpaceOnUse"><rect width="6" height="10" fill="${color}"/></pattern></defs>
+      <defs><pattern id="${stripes}" width="12" height="10" patternUnits="userSpaceOnUse"><rect width="6" height="10" fill="${color}"/></pattern></defs>
       <ellipse cx="60" cy="113" rx="54" ry="5" fill="#1f243318"/>
       <g transform="translate(-3 3)">${roof(shade(color))}<rect x="${bodyX}" y="${top}" width="${bodyW}" height="${h}" fill="${shade(color)}"/></g>
       ${roof(color)}<rect x="${bodyX}" y="${top}" width="${bodyW}" height="${h}" fill="${color}"/><rect x="${bodyX}" y="${top}" width="${bodyW}" height="3" fill="#ffffff55"/>${clockFace}${windows}${columns}${awning}

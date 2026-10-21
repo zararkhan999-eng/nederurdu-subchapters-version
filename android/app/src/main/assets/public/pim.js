@@ -3,7 +3,7 @@
    dozes off when left alone (never during a lesson, where the screen stays still for reading). */
 window.NU = window.NU || {};
 NU.pim = (() => {
-  const { EYES, HEAD } = NU.pimParts;
+  const { EYES, HEAD_TOP } = NU.pimParts;
   const active = () => NU.motion.level() !== "off";
   const isFace = (svg) => svg.classList.contains("nu-cat-face");
   const onScreen = (svg) => {
@@ -30,8 +30,9 @@ NU.pim = (() => {
     if (local) {
       const vx = local.x - EYES.x, vy = local.y - EYES.y, len = Math.hypot(vx, vy) || 1;
       const reach = Math.min(1, len / 40);
-      dx = (vx / len) * 2.8 * reach;
-      dy = (vy / len) * 2.2 * reach;
+      // Pupils travel only as far as the eye whites allow.
+      dx = (vx / len) * 1.6 * reach;
+      dy = (vy / len) * 1.8 * reach;
       tilt = (vy / len) * 7 * reach;
     }
     gaze.style.transform = `translate(${dx.toFixed(2)}px,${dy.toFixed(2)}px)`;
@@ -87,7 +88,7 @@ NU.pim = (() => {
     svg._settle = setTimeout(() => NU.cat.mood(svg, restMood(svg)), ms);
   }
   function hearts(svg, count = 4) {
-    const at = toScreen(svg, HEAD.x, HEAD.y - 6);
+    const at = toScreen(svg, HEAD_TOP.x, HEAD_TOP.y - 6);
     if (at) NU.motion.burst({ x: at.x, y: at.y }, { count, spread: 46, gravity: -70, shapes: ["heart"], colors: ["#ff5c8a", "#ff7a9c", "#ff4d4d"] });
   }
   function dizzy(svg) {
@@ -96,7 +97,7 @@ NU.pim = (() => {
     NU.sound.play("whoosh");
     NU.haptics.play("error");
     NU.motion.animate(svg.querySelector(".cat-head"), [0, -16, 14, -12, 9, -5, 0].map((r) => ({ transform: `rotate(${r}deg)` })), { duration: 900, easing: "ease-in-out" });
-    const at = toScreen(svg, HEAD.x, HEAD.y - 14);
+    const at = toScreen(svg, HEAD_TOP.x, HEAD_TOP.y - 14);
     if (at) NU.motion.burst({ x: at.x, y: at.y }, { count: 6, spread: 34, gravity: 0, shapes: ["star"], colors: ["#ffc23d"] });
     settle(svg, 1300);
   }

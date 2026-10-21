@@ -14,8 +14,8 @@
       <g class="cat-blink" style="transform-origin:145px 42px">
           <ellipse cx="131" cy="42" rx="7.4" ry="8.6" fill="#fff"/><ellipse cx="157" cy="41" rx="6.6" ry="8" fill="#fff"/>
           <g class="cat-gaze">
-            <ellipse cx="133" cy="43" rx="4.4" ry="5.4" fill="#1f2433"/><ellipse cx="159" cy="42" rx="4" ry="5" fill="#1f2433"/>
-            <circle class="cat-pupil-shine" cx="134.8" cy="40.6" r="1.7" fill="#fff"/><circle class="cat-pupil-shine" cx="160.6" cy="39.7" r="1.5" fill="#fff"/>
+            <ellipse cx="132.2" cy="43" rx="4.4" ry="5.4" fill="#1f2433"/><ellipse cx="158" cy="42" rx="4" ry="5" fill="#1f2433"/>
+            <circle class="cat-pupil-shine" cx="134" cy="40.6" r="1.7" fill="#fff"/><circle class="cat-pupil-shine" cx="159.6" cy="39.7" r="1.5" fill="#fff"/>
           </g>
         </g>
       <path d="M142.6 51h7.6l-3.8 3.6Z" fill="#ff6b8b" stroke="#ff6b8b" stroke-width="2.4" stroke-linejoin="round"/>
