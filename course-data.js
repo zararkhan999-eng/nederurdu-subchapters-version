@@ -4212,20 +4212,63 @@ a0DailyLessons.push(
   })
 );
 
+// A0 zero-start lessons: the last alphabet letters, short and long vowels,
+// and question word order.
+a0DailyLessons.push(
+  makeA0DailyLesson({
+    id: "a0-letters-4",
+    unit: "A0: حروف v سے z",
+    title: "Letters v tot z",
+    description: "v، w، x، y، اور z کی شکل، نام، اور آواز پہچاننا۔",
+    concepts: [
+      dailyConcept("letter-v", "v", "حرف v", "", "sound"),
+      dailyConcept("letter-w", "w", "حرف w", "", "sound"),
+      dailyConcept("letter-z", "z", "حرف z", "", "sound")
+    ],
+    fills: [],
+    situations: [],
+    builds: []
+  }),
+  makeA0DailyLesson({
+    id: "a0-sounds-short-long",
+    unit: "A0: چھوٹی اور لمبی آواز",
+    title: "Kort en lang: a en aa",
+    description: "چھوٹی اور لمبی آواز کا فرق سننا اور پڑھنا۔",
+    concepts: [
+      dailyConcept("sound-maan", "maan", "چاند"),
+      dailyConcept("sound-boom", "boom", "درخت")
+    ],
+    fills: [],
+    situations: [],
+    builds: []
+  }),
+  makeA0DailyLesson({
+    id: "a0-word-order",
+    unit: "A0: سوال اور لفظوں کی ترتیب",
+    title: "Werk jij? Vandaag werk ik",
+    description: "سوال میں فعل پہلے، اور وقت پہلے ہو تو فعل دوسرے نمبر پر۔",
+    concepts: [
+      dailyConcept("order-hier", "vandaag ben ik hier", "آج میں یہاں ہوں", "", "phrase")
+    ],
+    fills: [],
+    situations: [],
+    builds: []
+  })
+);
+
 a0Lessons.push(...a0DailyLessons);
 
 const a0LessonOrder = [
-  "a0-greetings-courtesy", "a0-ik-jij-u", "a0-ja-nee-goed-niet", "a0-understanding-help", "a0-language-help",
-  "a0-letters-1", "a0-letters-2", "a0-letters-3", "a0-sounds-vowels", "a0-sounds-consonants",
-  "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days", "a0-telling-time", "a0-date-appointment", "a0-months-dates",
-  "a0-people-nouns", "a0-things-nouns", "a0-dit-dat-questions", "a0-een-de-het",
-  "a0-ben-bent-is", "a0-first-sentences", "a0-hij-zij-wij", "a0-hebben-1",
-  "a0-geen", "a0-possessive", "a0-name-land-city", "a0-family-status", "a0-spelling-personal-details", "a0-address-phone", "a0-checkpoint",
-  "a0-place-1", "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs",
-  "a0-plurals-er-is",
-  "a0-daily-actions", "a0-food-drink", "a0-verb-endings", "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives", "a0-transport-directions",
-  "a0-health-emergency", "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had", "a0-child-school", "a0-object-pronouns", "a0-work-basics", "a0-future-gaan", "a0-weather-clothing-safety",
-  "a0-daily-checkpoint"
+  "a0-greetings-courtesy", "a0-letters-1", "a0-letters-2", "a0-letters-3", "a0-letters-4", "a0-sounds-short-long",
+  "a0-sounds-vowels", "a0-sounds-consonants", "a0-ik-jij-u", "a0-hij-zij-wij", "a0-people-nouns", "a0-things-nouns",
+  "a0-een-de-het", "a0-ben-bent-is", "a0-first-sentences", "a0-hebben-1", "a0-ja-nee-goed-niet", "a0-geen",
+  "a0-verb-endings", "a0-word-order", "a0-dit-dat-questions", "a0-possessive", "a0-name-land-city", "a0-family-status",
+  "a0-understanding-help", "a0-language-help", "a0-checkpoint", "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days",
+  "a0-telling-time", "a0-spelling-personal-details", "a0-address-phone", "a0-date-appointment", "a0-months-dates", "a0-place-1",
+  "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs", "a0-plurals-er-is", "a0-daily-actions",
+  "a0-food-drink", "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives", "a0-transport-directions",
+  "a0-health-emergency", "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had", "a0-child-school",
+  "a0-object-pronouns", "a0-work-basics", "a0-future-gaan", "a0-weather-clothing-safety", "a0-daily-checkpoint"
 ];
 
 const a0OrderIndex = new Map(a0LessonOrder.map((id, index) => [id, index]));
@@ -5549,58 +5592,70 @@ for (const lesson of a0Lessons) {
 const a0LearningFirstUnitsV4 = [
   {
     id: "a0-start-speaking",
-    title: "بات شروع کریں",
-    goal: "سلام کرنا، ادب سے جواب دینا، اور سمجھ نہ آنے پر مدد مانگنا۔",
-    practice: "سلام سے بات شروع کریں، دوبارہ یا آہستہ بولنے کو کہیں، چھوٹا جواب دیں، اور رخصت ہوں۔",
+    title: "پہلا دن",
+    goal: "سلام کرنا، شکریہ اور معافی کہنا، ہاں یا نہیں کہنا، اور بتانا کہ سمجھ نہیں آئی۔",
+    practice: "سلام سے بات شروع کریں، ja یا nee سے جواب دیں، اور سمجھ نہ آئے تو صاف بتائیں۔",
     lessonIds: [
       "a0-greetings-courtesy",
-      "a0-understanding-help",
-      "a0-ja-nee-goed-niet",
-      "a0-language-help",
       "a0-start-speaking-mission"
     ]
   },
   {
     id: "a0-letters-sounds",
-    title: "حروف، آواز، اور پہلے لفظ",
-    goal: "ضروری ڈچ آوازیں سننا، حروف پہچاننا، اور چند آسان لفظ پڑھنا۔",
-    practice: "حرف سنیں، اس کی شکل پہچانیں، پھر اسی آواز والا سکھایا ہوا لفظ چنیں۔",
+    title: "حروف اور آوازیں",
+    goal: "پورے ڈچ حروفِ تہجی کی شکل، نام، اور آواز پہچاننا، اور آسان لفظ پڑھنا۔",
+    practice: "حرف سنیں، اس کی شکل اور نام پہچانیں، پھر چھوٹی اور لمبی آواز والے لفظ پڑھیں۔",
     lessonIds: [
       "a0-letters-1",
       "a0-letters-2",
       "a0-letters-3",
+      "a0-letters-4",
+      "a0-sounds-short-long",
       "a0-sounds-vowels",
       "a0-sounds-consonants",
       "a0-letters-sounds-mission"
     ]
   },
   {
-    id: "a0-first-sentences",
-    title: "میں، لوگ، خاندان، اور تعارف",
-    goal: "اپنا نام اور ملک بتانا، لوگوں اور قریبی خاندان کو پہچاننا، اور پہلا مکمل تعارف کہنا۔",
-    practice: "ik، jij، u، hij، zij، wij اور ben/bent/is کے ساتھ مختصر تعارف بنائیں۔",
+    id: "a0-first-words",
+    title: "لوگ اور چیزیں",
+    goal: "میں، تم، آپ، وہ، ہم، لوگوں کے لفظ، اور een/de/het کے ساتھ پہلی چیزیں پہچاننا۔",
+    practice: "ضمیر اور اسم سنیں، پہچانیں، اور een، de، یا het کے ساتھ صحیح لفظ چنیں۔",
     lessonIds: [
       "a0-ik-jij-u",
-      "a0-people-nouns",
       "a0-hij-zij-wij",
-      "a0-een-de-het",
+      "a0-people-nouns",
+      "a0-een-de-het"
+    ]
+  },
+  {
+    id: "a0-first-sentences",
+    title: "پہلے جملے",
+    goal: "ben/bent/is، heb/hebt/heeft، niet/geen، اور فعل کی شکل سے پہلے چھوٹے جملے اور سوال بنانا۔",
+    practice: "سیکھے ہوئے لوگوں اور چیزوں کے ساتھ ہوں، ہے، پاس ہے، نہیں ہے، اور سوال والے جملے بنائیں۔",
+    lessonIds: [
       "a0-ben-bent-is",
       "a0-first-sentences",
-      "a0-name-land-city",
-      "a0-family-status",
+      "a0-hebben-1",
+      "a0-ja-nee-goed-niet",
+      "a0-geen",
+      "a0-verb-endings",
+      "a0-word-order",
+      "a0-dit-dat-questions",
+      "a0-possessive",
       "a0-first-sentences-mission"
     ]
   },
   {
     id: "a0-people-things",
-    title: "چیز، ملکیت، اور چھوٹا سوال",
-    goal: "بتانا کہ کس کے پاس کیا ہے یا نہیں، چیز کی ملکیت بتانا، اور شخص، چیز، یا جگہ پوچھنا۔",
-    practice: "ik heb، geen، mijn، dit/dat اور wie/wat/waar کو پہلے سیکھی ہوئی چیزوں کے ساتھ استعمال کریں۔",
+    title: "میرا تعارف اور مدد",
+    goal: "اپنا نام، ملک، شہر، اور خاندان بتانا، اور سمجھ نہ آنے یا ترجمان کی ضرورت پر مدد مانگنا۔",
+    practice: "mijn naam is، ik kom uit، ik woon in، اور مدد کے جملوں سے مختصر تعارف اور گفتگو کریں۔",
     lessonIds: [
-      "a0-hebben-1",
-      "a0-geen",
-      "a0-possessive",
-      "a0-dit-dat-questions",
+      "a0-name-land-city",
+      "a0-family-status",
+      "a0-understanding-help",
+      "a0-language-help",
       "a0-people-things-mission"
     ]
   },
@@ -5644,7 +5699,6 @@ const a0LearningFirstUnitsV4 = [
     lessonIds: [
       "a0-daily-actions",
       "a0-food-drink",
-      "a0-verb-endings",
       "a0-colours-clothes",
       "a0-adjective-endings",
       "a0-shopping-payment",
@@ -5685,6 +5739,9 @@ const a0LearningFirstUnitsV4 = [
 a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
 
 const a0LessonLabelsV4 = {
+  "a0-letters-4": "حروف: v سے z",
+  "a0-sounds-short-long": "چھوٹی اور لمبی آواز",
+  "a0-word-order": "سوال اور ترتیب",
   "a0-greetings-courtesy": "سلام اور ادب",
   "a0-understanding-help": "سمجھ اور مدد",
   "a0-language-help": "زبان اور ترجمان",
@@ -15679,7 +15736,7 @@ const a0MissionPlansV4 = {
     documentTitles: ["خریداری کی رسید", "کاؤنٹر کا آرڈر", "ادائیگی کی رسید"],
     documentLabels: ["چیز یا مشروب", "ادائیگی"],
     targets: [
-      a0MissionTargetV4("a0-daily-actions", "ik drink water", [
+      a0MissionTargetV4("a0-verb-endings", "ik drink water", [
         "خریداری کے بعد بتانا ہے کہ آپ پانی پیتے ہیں۔ مکمل جملہ کہیں۔",
         "کیفے میں اپنی روزمرہ عادت بتائیں کہ آپ پانی پیتے ہیں۔",
         "سپر مارکیٹ میں ساتھی کو بتائیں کہ آپ پانی پیتے ہیں۔"
