@@ -3471,6 +3471,115 @@ function makeA1ExpansionLessons(spec) {
 
 a1Lessons.push(...a1ExpansionTopics.flatMap(makeA1ExpansionLessons));
 
+// Grammar lessons that began in A0 and now sit in the A1 units that use them:
+// adjective endings and comparatives in shopping, gaan + infinitive and object
+// pronouns in questions and help, ik voel me in health, and the simple past in
+// work and school messages. The seed lists are shared with their authored
+// records in a1AuthoredCurriculumV4.lessons, which replace these shells.
+const a1GrammarSeedsV4 = {
+  "a1-adjective-endings": [
+    ["de blauwe jas", "نیلی جیکٹ"],
+    ["een warme jas", "ایک گرم جیکٹ"],
+    ["ik wil de groene jas", "مجھے سبز جیکٹ چاہیے"],
+    ["de rode deur", "سرخ دروازہ"],
+    ["het witte huis", "وہ سفید گھر"],
+    ["een wit huis", "ایک سفید گھر"],
+    ["het zwarte boek", "وہ کالی کتاب"],
+    ["een zwart boek", "ایک کالی کتاب"]
+  ],
+  "a1-comparatives": [
+    ["duurder", "زیادہ مہنگا"],
+    ["goedkoper", "زیادہ سستا"],
+    ["dit is goedkoper", "یہ زیادہ سستا ہے"],
+    ["koffie is duurder dan thee", "کافی چائے سے مہنگی ہے"],
+    ["beter", "بہتر"],
+    ["dit is beter", "یہ بہتر ہے"],
+    ["kouder", "زیادہ ٹھنڈا"],
+    ["vandaag is het kouder", "آج زیادہ ٹھنڈ ہے"]
+  ],
+  "a1-future-gaan": [
+    ["ik ga werken", "میں کام کرنے جا رہا / رہی ہوں"],
+    ["ik ga morgen werken", "میں کل کام کروں گا / گی"],
+    ["morgen ga ik werken", "کل میں کام کروں گا / گی"],
+    ["wij gaan eten", "ہم کھانا کھانے جا رہے ہیں"],
+    ["hij gaat slapen", "وہ سونے جا رہا ہے"],
+    ["ik ga de school bellen", "میں اسکول کو فون کروں گا / گی"],
+    ["zaterdag ga ik naar de winkel", "ہفتے کو میں دکان جاؤں گا / گی"],
+    ["wat ga je morgen doen?", "تم کل کیا کرو گے؟"]
+  ],
+  "a1-object-pronouns": [
+    ["hem", "اسے، کسی مرد یا لڑکے کو"],
+    ["ons", "ہمیں"],
+    ["kunt u hem helpen?", "کیا آپ اس کی مدد کر سکتے ہیں؟"],
+    ["kunt u ons helpen?", "کیا آپ ہماری مدد کر سکتے ہیں؟"],
+    ["ik bel haar", "میں اسے فون کرتا / کرتی ہوں"],
+    ["bel mij morgen", "مجھے کل فون کریں"],
+    ["ik breng hem naar school", "میں اسے اسکول لے جاتا / جاتی ہوں"],
+    ["ik haal haar om drie uur op", "میں اسے تین بجے لے آتا / آتی ہوں"]
+  ],
+  "a1-feelings-reflexive": [
+    ["ik voel me goed", "میں اچھا محسوس کرتا / کرتی ہوں"],
+    ["ik voel me ziek", "میں بیمار محسوس کرتا / کرتی ہوں"],
+    ["ik voel me niet goed", "میری طبیعت ٹھیک نہیں"],
+    ["ik voel me beter", "اب میں بہتر محسوس کرتا / کرتی ہوں"],
+    ["hoe voel je je?", "تم کیسا محسوس کرتے ہو؟"],
+    ["hoe voelt u zich?", "آپ کیسا محسوس کرتے ہیں؟"],
+    ["zij voelt zich ziek", "وہ بیمار محسوس کرتی ہے"],
+    ["ik ben moe", "میں تھکا / تھکی ہوں"]
+  ],
+  "a1-past-was-had": [
+    ["ik was ziek", "میں بیمار تھا / تھی"],
+    ["ik had pijn", "مجھے درد تھا"],
+    ["gisteren was ik ziek", "کل میں بیمار تھا / تھی"],
+    ["ik had gisteren hoofdpijn", "کل میرے سر میں درد تھا"],
+    ["hij was ziek", "وہ بیمار تھا"],
+    ["wij waren te laat", "ہمیں دیر ہو گئی تھی"],
+    ["ik ging naar huis", "میں گھر گیا / گئی"],
+    ["zij ging naar de dokter", "وہ ڈاکٹر کے پاس گئی"]
+  ]
+};
+
+function makeA1GrammarShellV4({ id, unit, title, visual }) {
+  const seeds = a1GrammarSeedsV4[id];
+  const concepts = [
+    dailyConcept(`${id}-visual`, visual[0], visual[1], visual[2]),
+    ...seeds.map(([dutch, urdu], index) => (
+      dutchWordsV4Shell(dutch) > 1
+        ? a1Phrase(`${id}-p${index + 1}`, dutch, urdu, `حال: ${urdu}`)
+        : dailyConcept(`${id}-w${index + 1}`, dutch, urdu)
+    ))
+  ];
+  const phrases = seeds.filter(([dutch]) => dutchWordsV4Shell(dutch) > 1);
+  return makeA1PracticalLesson({
+    id,
+    unit,
+    title,
+    description: "",
+    explanation: practicalExplanation(title, ["پہلے مثال سنیں۔", "پھر شکل پہچانیں۔", "آخر میں اسی شکل سے جملہ بنائیں۔"]),
+    concepts,
+    listenReplies: [],
+    builds: phrases.slice(0, 3).map(([dutch, urdu]) => [
+      urdu,
+      dutch.replace(/[?]/g, "").split(/\s+/),
+      dutch.replace(/[?]/g, ""),
+      `صحیح ترتیب: ${dutch}۔`
+    ])
+  });
+}
+
+function dutchWordsV4Shell(dutch) {
+  return String(dutch).trim().split(/\s+/).length;
+}
+
+a1Lessons.push(
+  makeA1GrammarShellV4({ id: "a1-adjective-endings", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "De blauwe jas", visual: ["jas", "جیکٹ", "jas"] }),
+  makeA1GrammarShellV4({ id: "a1-comparatives", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "Duurder en goedkoper", visual: ["winkel", "دکان", "winkel"] }),
+  makeA1GrammarShellV4({ id: "a1-future-gaan", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Morgen ga ik werken", visual: ["werk", "کام", "werk"] }),
+  makeA1GrammarShellV4({ id: "a1-object-pronouns", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Mij, hem, haar, ons", visual: ["telefoon", "فون", "telefoon"] }),
+  makeA1GrammarShellV4({ id: "a1-feelings-reflexive", unit: "A1: ڈاکٹر، علامات اور دوا", title: "Ik voel me ...", visual: ["ziek", "بیمار", "ziek"] }),
+  makeA1GrammarShellV4({ id: "a1-past-was-had", unit: "A1: پیغام، اسکول اور کام", title: "Gisteren: was, had, ging", visual: ["bericht", "پیغام", "bericht"] })
+);
+
 const a0DailyCheckpointConcepts = [
   dailyConcept("check-greeting", "goedemorgen", "صبح بخیر", "goedemorgen"),
   dailyConcept("check-thanks", "dank u wel", "آپ کا شکریہ", "thanks"),
@@ -4001,7 +4110,8 @@ const a1LessonOrder = [
   "a1-questions", "a1-plans-invitations", "a1-house-food-plurals", "a1-home-neighbours",
   "a1-cafe-ordering", "a1-shopping-clothes", "a1-shopping-transport", "a1-public-transport",
   "a1-health-appointments", "a1-health-pharmacy", "a1-work-school-messages",
-  ...a1ExpansionTopics.flatMap((topic) => [topic.id, `${topic.id}-review`])
+  ...a1ExpansionTopics.flatMap((topic) => [topic.id, `${topic.id}-review`]),
+  ...Object.keys(a1GrammarSeedsV4)
 ];
 const a1OrderIndex = new Map(a1LessonOrder.map((id, index) => [id, index]));
 a1Lessons.sort((left, right) => a1OrderIndex.get(left.id) - a1OrderIndex.get(right.id));
@@ -4695,7 +4805,7 @@ const a1Subchapters = [
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-plans-invitations", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
+    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-future-gaan", "a1-plans-invitations", "a1-object-pronouns", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
   },
   {
     id: "a1-home-objects",
@@ -4709,7 +4819,7 @@ const a1Subchapters = [
     title: "کھانا اور خریداری",
     goal: "بنیادی کھانا، قیمتیں، خریدنا، اور قیمت پوچھنا۔",
     practice: "ik wil..., hoeveel kost...? جیسے روزمرہ فقرے۔",
-    lessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"]
+    lessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-adjective-endings", "a1-shopping-clothes", "a1-comparatives", "a1-shopping-returns", "a1-money-bank"]
   },
   {
     id: "a1-going-out-transport",
@@ -4723,14 +4833,14 @@ const a1Subchapters = [
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments", "a1-doctor-symptoms", "a1-pharmacy-medicine", "a1-mission-doctor"]
+    lessonIds: ["a1-health-appointments", "a1-feelings-reflexive", "a1-doctor-symptoms", "a1-pharmacy-medicine", "a1-mission-doctor"]
   },
   {
     id: "a1-work-school-messages",
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-short-messages", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
+    lessonIds: ["a1-short-messages", "a1-past-was-had", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
   }
 ];
 
