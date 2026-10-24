@@ -40,85 +40,88 @@ const a0Lessons = [
     id: "a0-letters-1",
     unit: "A0: حروف 1",
     title: "A0 les 1: a, b, c, d, e, f, g",
-    description: "اردو سے Nederlands حروف تک: پہلے چند حروف اور آسان مثال والے الفاظ۔",
+    description: "حروف a سے g: ہر حرف کی شکل، ڈچ نام، اور آواز۔",
     xp: 35,
     questions: [
       meaning("a", ["حرف a", "حرف b", "حرف d"], "حرف a", "یہ Nederlands حروف تہجی کا حرف a ہے۔"),
       meaning("b", ["حرف b", "حرف e", "حرف g"], "حرف b", "یہ Nederlands حروف تہجی کا حرف b ہے۔"),
-      meaning("appel", ["سیب", "کتاب", "دروازہ"], "سیب", "appel = سیب۔"),
-      meaning("boek", ["کتاب", "سیب", "گھر"], "کتاب", "boek = کتاب۔"),
-      meaning("deur", ["دروازہ", "قلم", "پانی"], "دروازہ", "deur = دروازہ۔"),
-      meaning("fiets", ["سائیکل", "کرسی", "میز"], "سائیکل", "fiets = سائیکل۔"),
-      reverse("سیب", ["appel", "boek", "deur"], "appel", "سیب = appel۔"),
-      reverse("کتاب", ["boek", "fiets", "goed"], "boek", "کتاب = boek۔")
+      meaning("c", ["حرف c", "حرف a", "حرف f"], "حرف c", "یہ Nederlands حروف تہجی کا حرف c ہے۔"),
+      meaning("d", ["حرف d", "حرف b", "حرف g"], "حرف d", "یہ Nederlands حروف تہجی کا حرف d ہے۔"),
+      meaning("e", ["حرف e", "حرف a", "حرف c"], "حرف e", "یہ Nederlands حروف تہجی کا حرف e ہے۔"),
+      meaning("f", ["حرف f", "حرف d", "حرف b"], "حرف f", "یہ Nederlands حروف تہجی کا حرف f ہے۔"),
+      meaning("g", ["حرف g", "حرف c", "حرف e"], "حرف g", "یہ Nederlands حروف تہجی کا حرف g ہے۔"),
+      reverse("حرف g", ["g", "c", "d"], "g", "حرف g = g۔")
     ]
   },
   {
     id: "a0-letters-2",
     unit: "A0: حروف 2",
     title: "A0 les 2: h, i, j, k, l, m, n",
-    description: "مزید حروف، پھر بہت آسان Nederlands الفاظ۔",
+    description: "حروف h سے n: ہر حرف کی شکل، ڈچ نام، اور آواز۔",
     xp: 35,
     questions: [
       meaning("h", ["حرف h", "حرف k", "حرف n"], "حرف h", "h کو Nederlands میں الگ حرف کی طرح پہچانیں۔"),
       meaning("i", ["حرف i", "حرف j", "حرف m"], "حرف i", "i ایک چھوٹا مگر بہت عام حرف ہے۔"),
-      meaning("huis", ["گھر", "آدمی", "نہیں"], "گھر", "huis = گھر۔"),
-      meaning("ik", ["میں", "تم", "ہاں"], "میں", "ik = میں۔"),
-      meaning("ja", ["ہاں", "نہیں", "گھر"], "ہاں", "ja = ہاں۔"),
-      meaning("man", ["آدمی", "عورت", "بچہ"], "آدمی", "man = آدمی۔"),
-      reverse("گھر", ["huis", "ja", "kat"], "huis", "گھر = huis۔"),
-      reverse("نہیں", ["nee", "ja", "ik"], "nee", "نہیں = nee۔")
+      meaning("j", ["حرف j", "حرف i", "حرف l"], "حرف j", "یہ Nederlands حروف تہجی کا حرف j ہے۔"),
+      meaning("k", ["حرف k", "حرف h", "حرف n"], "حرف k", "یہ Nederlands حروف تہجی کا حرف k ہے۔"),
+      meaning("l", ["حرف l", "حرف i", "حرف k"], "حرف l", "یہ Nederlands حروف تہجی کا حرف l ہے۔"),
+      meaning("m", ["حرف m", "حرف n", "حرف h"], "حرف m", "یہ Nederlands حروف تہجی کا حرف m ہے۔"),
+      meaning("n", ["حرف n", "حرف m", "حرف j"], "حرف n", "یہ Nederlands حروف تہجی کا حرف n ہے۔"),
+      reverse("حرف j", ["j", "i", "l"], "j", "حرف j = j۔")
     ]
   },
   {
     id: "a0-letters-3",
     unit: "A0: حروف 3",
-    title: "A0 les 3: o tot z",
-    description: "باقی حروف اور روزمرہ کے بہت آسان الفاظ۔",
+    title: "A0 les 3: o, p, q, r, s, t, u",
+    description: "حروف o سے u: ہر حرف کی شکل، ڈچ نام، اور آواز۔",
     xp: 35,
     questions: [
-      meaning("oog", ["آنکھ", "قلم", "بہن"], "آنکھ", "oog = آنکھ۔"),
-      meaning("pen", ["قلم", "پانی", "میز"], "قلم", "pen = قلم۔"),
-      meaning("stoel", ["کرسی", "دروازہ", "گھر"], "کرسی", "stoel = کرسی۔"),
-      meaning("tafel", ["میز", "کتاب", "آدمی"], "میز", "tafel = میز۔"),
-      meaning("water", ["پانی", "عورت", "آنکھ"], "پانی", "water = پانی۔"),
-      meaning("vrouw", ["عورت", "مرد", "بہن"], "عورت", "vrouw = عورت۔"),
-      reverse("بہن", ["zus", "vrouw", "oog"], "zus", "بہن = zus۔"),
-      reverse("پانی", ["water", "tafel", "pen"], "water", "پانی = water۔")
+      meaning("o", ["حرف o", "حرف p", "حرف u"], "حرف o", "یہ Nederlands حروف تہجی کا حرف o ہے۔"),
+      meaning("p", ["حرف p", "حرف q", "حرف t"], "حرف p", "یہ Nederlands حروف تہجی کا حرف p ہے۔"),
+      meaning("q", ["حرف q", "حرف p", "حرف o"], "حرف q", "یہ Nederlands حروف تہجی کا حرف q ہے۔"),
+      meaning("r", ["حرف r", "حرف s", "حرف t"], "حرف r", "یہ Nederlands حروف تہجی کا حرف r ہے۔"),
+      meaning("s", ["حرف s", "حرف r", "حرف u"], "حرف s", "یہ Nederlands حروف تہجی کا حرف s ہے۔"),
+      meaning("t", ["حرف t", "حرف p", "حرف s"], "حرف t", "یہ Nederlands حروف تہجی کا حرف t ہے۔"),
+      meaning("u", ["حرف u", "حرف o", "حرف q"], "حرف u", "یہ Nederlands حروف تہجی کا حرف u ہے۔"),
+      reverse("حرف u", ["u", "o", "q"], "u", "حرف u = u۔")
     ]
   },
   {
     id: "a0-sounds-vowels",
     unit: "A0: آوازیں 1",
-    title: "Klanken: oo, oe, eu, ui, ei",
-    description: "وہ ڈچ آوازیں جو اردو میں نہیں: لمبی اور چھوٹی آواز، اور گول ہونٹ والی آوازیں۔",
+    title: "Klanken: ie, oe, eu, ui, ij, ei, ou, au",
+    description: "وہ ڈچ مصوتے جو دو حروف سے لکھے جاتے ہیں اور اردو میں نہیں: گول ہونٹ والی اور ملی ہوئی آوازیں۔",
     xp: 35,
     questions: [
-      meaning("boot", ["کشتی", "ہڈی", "پاؤں"], "کشتی", "boot = کشتی۔"),
-      meaning("bot", ["ہڈی", "کشتی", "ٹوپی"], "ہڈی", "bot = ہڈی۔"),
-      meaning("voet", ["پاؤں", "ٹوپی", "ناک"], "پاؤں", "voet = پاؤں۔"),
-      meaning("hoed", ["ٹوپی", "پاؤں", "انگوٹھا"], "ٹوپی", "hoed = ٹوپی۔"),
+      meaning("fiets", ["سائیکل", "پاؤں", "ناک"], "سائیکل", "fiets = سائیکل۔"),
+      meaning("voet", ["پاؤں", "سائیکل", "ناک"], "پاؤں", "voet = پاؤں۔"),
       meaning("neus", ["ناک", "چوہا", "انڈا"], "ناک", "neus = ناک۔"),
       meaning("muis", ["چوہا", "ناک", "انگوٹھا"], "چوہا", "muis = چوہا۔"),
-      meaning("duim", ["انگوٹھا", "چوہا", "انڈا"], "انگوٹھا", "duim = انگوٹھا۔"),
-      meaning("ei", ["انڈا", "ناک", "کشتی"], "انڈا", "ei = انڈا۔")
+      meaning("ijs", ["آئس کریم", "انڈا", "نمک"], "آئس کریم", "ijs = آئس کریم۔"),
+      meaning("ei", ["انڈا", "آئس کریم", "مور"], "انڈا", "ei = انڈا۔"),
+      meaning("zout", ["نمک", "مور", "انگوٹھا"], "نمک", "zout = نمک۔"),
+      meaning("pauw", ["مور", "نمک", "چوہا"], "مور", "pauw = مور۔"),
+      meaning("duim", ["انگوٹھا", "چوہا", "نمک"], "انگوٹھا", "duim = انگوٹھا۔")
     ]
   },
   {
     id: "a0-sounds-consonants",
     unit: "A0: آوازیں 2",
-    title: "Klanken: g, ch, sch, uu, w, v, z",
+    title: "Klanken: g, ch, sch, r, w, v, f, z, s, j",
     description: "گلے سے نکلنے والی ‘خ’ جیسی آواز، اور ملتی جلتی آوازوں کا فرق۔",
     xp: 35,
     questions: [
       meaning("geel", ["پیلا", "سفید", "ہنسنا"], "پیلا", "geel = پیلا۔"),
       meaning("lachen", ["ہنسنا", "پیلا", "جوتا"], "ہنسنا", "lachen = ہنسنا۔"),
-      meaning("schoen", ["جوتا", "آگ", "پیلا"], "جوتا", "schoen = جوتا۔"),
-      meaning("vuur", ["آگ", "جوتا", "مچھلی"], "آگ", "vuur = آگ۔"),
-      meaning("wit", ["سفید", "مچھلی", "سورج"], "سفید", "wit = سفید۔"),
-      meaning("vis", ["مچھلی", "سفید", "صابن"], "مچھلی", "vis = مچھلی۔"),
-      meaning("zon", ["سورج", "صابن", "مچھلی"], "سورج", "zon = سورج۔"),
-      meaning("zeep", ["صابن", "سورج", "سفید"], "صابن", "zeep = صابن۔")
+      meaning("schoen", ["جوتا", "چاول", "پیلا"], "جوتا", "schoen = جوتا۔"),
+      meaning("rijst", ["چاول", "جوتا", "مچھلی"], "چاول", "rijst = چاول۔"),
+      meaning("wit", ["سفید", "مچھلی", "بوتل"], "سفید", "wit = سفید۔"),
+      meaning("vis", ["مچھلی", "سفید", "بوتل"], "مچھلی", "vis = مچھلی۔"),
+      meaning("fles", ["بوتل", "مچھلی", "جراب"], "بوتل", "fles = بوتل۔"),
+      meaning("zon", ["سورج", "جراب", "جیکٹ"], "سورج", "zon = سورج۔"),
+      meaning("sok", ["جراب", "سورج", "جیکٹ"], "جراب", "sok = جراب۔"),
+      meaning("jas", ["کوٹ / جیکٹ", "جراب", "سورج"], "کوٹ / جیکٹ", "jas = کوٹ / جیکٹ۔")
     ]
   },
   {
@@ -4219,11 +4222,14 @@ a0DailyLessons.push(
     id: "a0-letters-4",
     unit: "A0: حروف v سے z",
     title: "Letters v tot z",
-    description: "v، w، x، y، اور z کی شکل، نام، اور آواز پہچاننا۔",
+    description: "حروف v سے z اور ڈچ لمبی ij: ہر حرف کی شکل، ڈچ نام، اور آواز۔",
     concepts: [
       dailyConcept("letter-v", "v", "حرف v", "", "sound"),
       dailyConcept("letter-w", "w", "حرف w", "", "sound"),
-      dailyConcept("letter-z", "z", "حرف z", "", "sound")
+      dailyConcept("letter-x", "x", "حرف x", "", "sound"),
+      dailyConcept("letter-y", "y", "حرف y", "", "sound"),
+      dailyConcept("letter-z", "z", "حرف z", "", "sound"),
+      dailyConcept("letter-ij", "ij", "حرف ij", "", "sound")
     ],
     fills: [],
     situations: [],
@@ -4232,11 +4238,15 @@ a0DailyLessons.push(
   makeA0DailyLesson({
     id: "a0-sounds-short-long",
     unit: "A0: چھوٹی اور لمبی آواز",
-    title: "Kort en lang: a en aa",
-    description: "چھوٹی اور لمبی آواز کا فرق سننا اور پڑھنا۔",
+    title: "Kort en lang: pen en peen",
+    description: "ایک مصوتہ چھوٹی آواز، دو مصوتے لمبی آواز: pen اور peen، bot اور boot، ram اور raam۔",
     concepts: [
-      dailyConcept("sound-maan", "maan", "چاند"),
-      dailyConcept("sound-boom", "boom", "درخت")
+      dailyConcept("sound-pen", "pen", "قلم"),
+      dailyConcept("sound-peen", "peen", "گاجر"),
+      dailyConcept("sound-bot", "bot", "ہڈی"),
+      dailyConcept("sound-boot", "boot", "کشتی"),
+      dailyConcept("sound-ram", "ram", "مینڈھا"),
+      dailyConcept("sound-raam", "raam", "کھڑکی")
     ],
     fills: [],
     situations: [],
@@ -5564,18 +5574,36 @@ if (a0LettersUnitV4) {
   });
 }
 
+// The alphabet and sounds unit (U2): letter shape, Dutch letter name, and
+// sound first; then short and long vowels; then the Dutch letter groups.
 const a0LetterLessonTitlesV4 = {
   "a0-letters-1": {
-    title: "Eerste klanken: a en b",
-    description: "a اور b کی ضروری آوازیں سننا، پھر appel، boek، deur، اور fiets کو تصویر اور آواز سے پہچاننا۔"
+    title: "a b c d e f g",
+    description: "حروف a سے g: ہر حرف کی بڑی اور چھوٹی شکل، ڈچ نام، اور لفظ میں اس کی آواز۔"
   },
   "a0-letters-2": {
-    title: "Eerste klanken: h en i",
-    description: "h اور i کی ضروری آوازیں سننا، پھر huis، ijs، jas، kat، اور lamp کو تصویر اور آواز سے پہچاننا۔"
+    title: "h i j k l m n",
+    description: "حروف h سے n: ہر حرف کی بڑی اور چھوٹی شکل، ڈچ نام، اور لفظ میں اس کی آواز۔"
   },
   "a0-letters-3": {
-    title: "Herkenbare woorden en klanken",
-    description: "oog، pen، rijst، stoel، tafel، اور water کو آواز اور تصویر سے پہچاننا؛ مکمل حروف تہجی الگ letters tool میں دستیاب ہے۔"
+    title: "o p q r s t u",
+    description: "حروف o سے u: ہر حرف کی بڑی اور چھوٹی شکل، ڈچ نام، اور لفظ میں اس کی آواز۔"
+  },
+  "a0-letters-4": {
+    title: "v w x y z ij",
+    description: "حروف v سے z اور ڈچ لمبی ij: ہر حرف کی بڑی اور چھوٹی شکل، ڈچ نام، اور آواز۔"
+  },
+  "a0-sounds-short-long": {
+    title: "Kort en lang: pen, peen",
+    description: "پہلے لفظ پڑھنے کا اصول: ایک مصوتہ چھوٹی آواز، دو مصوتے لمبی آواز، جیسے pen اور peen، bot اور boot۔"
+  },
+  "a0-sounds-vowels": {
+    title: "Klanken: ie, oe, eu, ui, ij, ei, ou, au",
+    description: "دو حروف سے لکھی جانے والی ڈچ آوازیں، جیسے fiets، voet، neus، muis، ijs، اور zout۔"
+  },
+  "a0-sounds-consonants": {
+    title: "Klanken: g, ch, sch, r, w, v, f, z, s, j",
+    description: "گلے کی ‘خ’ آواز، اور ملتی جلتی آوازوں کا فرق، جیسے geel، schoen، wit، vis، zon، اور jas۔"
   }
 };
 for (const lesson of a0Lessons) {
@@ -5739,7 +5767,7 @@ const a0LearningFirstUnitsV4 = [
 a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
 
 const a0LessonLabelsV4 = {
-  "a0-letters-4": "حروف: v سے z",
+  "a0-letters-4": "حروف: v سے z اور ij",
   "a0-sounds-short-long": "چھوٹی اور لمبی آواز",
   "a0-word-order": "سوال اور ترتیب",
   "a0-greetings-courtesy": "سلام اور ادب",
@@ -5759,11 +5787,11 @@ const a0LessonLabelsV4 = {
   "a0-object-pronouns": "مجھے، اسے، ہمیں",
   "a0-future-gaan": "کل کیا کریں گے",
   "a0-ja-nee-goed-niet": "چھوٹے جواب",
-  "a0-letters-1": "آواز: a اور b",
-  "a0-letters-2": "آواز: h اور i",
-  "a0-letters-3": "آسان پڑھے ہوئے لفظ",
-  "a0-sounds-vowels": "اردو سے مختلف آوازیں",
-  "a0-sounds-consonants": "گلے کی g اور دوسری آوازیں",
+  "a0-letters-1": "حروف: a سے g",
+  "a0-letters-2": "حروف: h سے n",
+  "a0-letters-3": "حروف: o سے u",
+  "a0-sounds-vowels": "دو حروف، ایک آواز",
+  "a0-sounds-consonants": "گلے کی خ اور ملتی آوازیں",
   "a0-ik-jij-u": "میں، تم، اور آپ",
   "a0-people-nouns": "لوگ اور قریبی خاندان",
   "a0-hij-zij-wij": "وہ اور ہم",
@@ -5812,52 +5840,60 @@ function replaceSeedConceptsV4(lessonId, concepts) {
   }));
 }
 
-replaceSeedConceptsV4("a0-letters-1", [
-  ["a", "حرف a", { role: "sound" }],
-  ["appel", "سیب"],
-  ["deur", "دروازہ"],
-  ["b", "حرف b", { role: "sound" }],
-  ["boek", "کتاب"],
-  ["fiets", "سائیکل"]
-]);
-replaceSeedConceptsV4("a0-letters-2", [
-  ["h", "حرف h", { role: "sound" }],
-  ["i", "حرف i", { role: "sound" }],
-  ["huis", "گھر"],
-  ["ijs", "آئس کریم"],
-  ["jas", "کوٹ / جیکٹ"],
-  ["kat", "بلی"],
-  ["lamp", "لیمپ"]
-]);
-replaceSeedConceptsV4("a0-letters-3", [
-  ["oog", "آنکھ"],
-  ["pen", "قلم"],
-  ["rijst", "چاول"],
-  ["stoel", "کرسی"],
-  ["tafel", "میز"],
-  ["water", "پانی"]
+// Letters: one concept per letter. The "letter" sense keeps the letter u apart
+// from the pronoun u, and ij apart from words spelled with ij.
+// pronunciationUrdu is the Dutch letter name in Urdu script.
+const a0LetterNamesUrduV4 = {
+  a: "آ", b: "بے", c: "سے", d: "دے", e: "اے", f: "ایف", g: "خے",
+  h: "ہا", i: "ای", j: "یے", k: "کا", l: "ایل", m: "ایم", n: "این",
+  o: "او", p: "پے", q: "کُو", r: "ایر", s: "ایس", t: "تے", u: "اُو",
+  v: "فے", w: "وے", x: "ایکس", y: "خریکسے اَے", z: "زیت", ij: "لانگے اَے"
+};
+const a0LetterSeedV4 = (letter) => [letter, `حرف ${letter}`, {
+  role: "sound",
+  senseId: "letter",
+  pronunciationUrdu: a0LetterNamesUrduV4[letter],
+  audioText: letter
+}];
+replaceSeedConceptsV4("a0-letters-1", ["a", "b", "c", "d", "e", "f", "g"].map(a0LetterSeedV4));
+replaceSeedConceptsV4("a0-letters-2", ["h", "i", "j", "k", "l", "m", "n"].map(a0LetterSeedV4));
+replaceSeedConceptsV4("a0-letters-3", ["o", "p", "q", "r", "s", "t", "u"].map(a0LetterSeedV4));
+replaceSeedConceptsV4("a0-letters-4", ["v", "w", "x", "y", "z", "ij"].map(a0LetterSeedV4));
+// First words: minimal pairs for the reading rule "one vowel short, two
+// vowels long". The third concept is the pattern model shown on the rule card.
+replaceSeedConceptsV4("a0-sounds-short-long", [
+  ["pen", "قلم", { visualId: "pen" }],
+  ["peen", "گاجر"],
+  ["pen — peen, bot — boot", "قلم — گاجر، ہڈی — کشتی", { role: "phrase" }],
+  ["bot", "ہڈی"],
+  ["boot", "کشتی"],
+  ["ram", "مینڈھا"],
+  ["raam", "کھڑکی"]
 ]);
 // Sound lessons: each word carries one Dutch sound that Urdu does not have,
-// and paired words in the same run differ by that sound.
+// and words in the same run contrast that sound with a near neighbour.
 replaceSeedConceptsV4("a0-sounds-vowels", [
-  ["boot", "کشتی"],
-  ["bot", "ہڈی"],
+  ["fiets", "سائیکل"],
   ["voet", "پاؤں"],
-  ["hoed", "ٹوپی"],
   ["neus", "ناک"],
   ["muis", "چوہا"],
-  ["duim", "انگوٹھا"],
-  ["ei", "انڈا"]
+  ["ijs", "آئس کریم"],
+  ["ei", "انڈا"],
+  ["zout", "نمک"],
+  ["pauw", "مور"],
+  ["duim", "انگوٹھا"]
 ]);
 replaceSeedConceptsV4("a0-sounds-consonants", [
   ["geel", "پیلا"],
   ["lachen", "ہنسنا"],
   ["schoen", "جوتا"],
-  ["vuur", "آگ"],
+  ["rijst", "چاول"],
   ["wit", "سفید"],
   ["vis", "مچھلی"],
+  ["fles", "بوتل"],
   ["zon", "سورج"],
-  ["zeep", "صابن"]
+  ["sok", "جراب"],
+  ["jas", "کوٹ / جیکٹ"]
 ]);
 replaceSeedConceptsV4("a0-people-nouns", [
   ["man", "آدمی"],
@@ -15534,42 +15570,47 @@ const a0MissionPlansV4 = {
   },
   "a0-letters-sounds-mission": {
     variantTitles: [
-      "گھر کے نشان اور لفظ پہچانیں",
+      "کاؤنٹر پر نام کے ہجے",
       "دکان کی مختصر فہرست پڑھیں",
-      "کمرے کی تصویری فہرست مکمل کریں"
+      "گھر کی تصویری فہرست مکمل کریں"
     ],
-    documentTitles: ["گھر کی لفظی فہرست", "خریداری کی چھوٹی فہرست", "کمرے کی تصویری فہرست"],
-    documentLabels: ["پہلا لفظ", "دوسرا لفظ"],
+    documentTitles: ["کاؤنٹر کا ہجے کارڈ", "خریداری کی چھوٹی فہرست", "گھر کی تصویری فہرست"],
+    documentLabels: ["پہلا خانہ", "دوسرا خانہ"],
     targets: [
-      a0MissionTargetV4("a0-letters-1", "a", [
-        "دروازے پر پہلا سکھایا ہوا بڑا حرف دکھائی دیتا ہے۔ سیکھی ہوئی آواز پہچانیں۔",
-        "لفظی کارڈ پر پہلا سکھایا ہوا حرف لکھا ہے۔ درست حرف پہچانیں۔",
-        "تصویری فہرست میں پہلے سکھائے ہوئے حرف کا خانہ مکمل کرنا ہے۔ درست حرف چنیں۔"
+      a0MissionTargetV4("a0-letters-1", "g", [
+        "کاؤنٹر پر ملازم آپ کے نام کے ہجے کرتا ہے اور گلے سے ‘خے’ کہتا ہے۔ فارم پر کون سا حرف لکھا جائے گا؟",
+        "دکاندار فہرست کی ایک چیز کے ہجے میں ‘خے’ کہتا ہے۔ درست حرف پہچانیں۔",
+        "گھر کی فہرست کے ایک خانے کا پہلا حرف ‘خے’ بولا گیا ہے۔ درست حرف چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-2", "j", [
+        "ملازم آپ کے نام کے ہجے میں ‘یے’ کہتا ہے۔ فارم پر کون سا حرف لکھا جائے گا؟",
+        "دکان کی فہرست کا ایک حرف ‘یے’ بولا جاتا ہے، ‘جے’ نہیں۔ درست حرف پہچانیں۔",
+        "گھر کی فہرست کے خانے میں ‘یے’ والا حرف لکھنا ہے۔ درست حرف چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-3", "u", [
+        "ملازم ہجے کرتے ہوئے گول ہونٹوں سے ‘اُو’ کہتا ہے۔ فارم پر کون سا حرف لکھا جائے گا؟",
+        "دکاندار ہجے میں گول ہونٹوں والی ‘اُو’ کہتا ہے۔ درست حرف پہچانیں۔",
+        "گھر کی فہرست کے خانے میں گول ہونٹوں والا ‘اُو’ حرف لکھنا ہے۔ درست حرف چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-letters-4", "ij", [
+        "ملازم آپ کے پتے کے ہجے میں ‘لانگے اَے’ کہتا ہے۔ فارم پر کون سا ڈچ حرف لکھا جائے گا؟",
+        "دکان کی فہرست میں ‘لانگے اَے’ والا ڈچ حرف ہے۔ درست حرف پہچانیں۔",
+        "گھر کی فہرست کے خانے میں ‘لانگے اَے’ لکھنا ہے۔ درست ڈچ حرف چنیں۔"
+      ]),
+      a0MissionTargetV4("a0-sounds-short-long", "raam", [
+        "کاؤنٹر کے پیچھے کھڑکی پر ایک ڈچ لفظ لکھا ہے۔ لمبی آواز والا کھڑکی کا لفظ پہچانیں۔",
+        "دکان کی فہرست میں کھڑکی کا سامان ہے۔ کھڑکی کا ڈچ لفظ چنیں؛ ایک مصوتے والا لفظ مینڈھا ہے۔",
+        "گھر کی تصویری فہرست میں کھڑکی کے نیچے صحیح لفظ لگائیں۔"
       ]),
       a0MissionTargetV4("a0-sounds-vowels", "muis", [
-        "دیوار کے پاس ایک چوہا دکھائی دیتا ہے۔ اس کا ڈچ لفظ پہچانیں۔",
+        "کاؤنٹر کے پاس ایک چوہا دکھائی دیتا ہے۔ اس کا ڈچ لفظ پہچانیں۔",
         "دکان کی فہرست میں چوہے کی تصویر ہے۔ گول ہونٹ والی آواز کا درست لفظ چنیں۔",
-        "کمرے کی تصویری فہرست میں چوہے کے لیے صحیح لفظ لگائیں۔"
-      ]),
-      a0MissionTargetV4("a0-letters-2", "huis", [
-        "گھر کی تصویر کے نیچے صحیح ڈچ لفظ لگانا ہے۔ درست لفظ چنیں۔",
-        "پتے کے تصویری کارڈ پر گھر کا لفظ سنائی دیتا ہے۔ اسے پہچانیں۔",
-        "کمرے کی فہرست میں گھر کی تصویر کے لیے صحیح لفظ چنیں۔"
-      ]),
-      a0MissionTargetV4("a0-letters-2", "i", [
-        "آواز کی مشق میں اس سبق کا چھوٹا مصوتہ سنائی دیتا ہے۔ درست حرف پہچانیں۔",
-        "فہرست کے ایک خانے میں سکھایا ہوا مصوتہ لکھنا ہے۔ صحیح حرف چنیں۔",
-        "تصویری لفظ کے شروع میں چھوٹا مصوتہ سنائی دیتا ہے۔ سیکھی ہوئی شکل پہچانیں۔"
-      ]),
-      a0MissionTargetV4("a0-letters-3", "rijst", [
-        "باورچی خانے کی فہرست میں چاول شامل کرنے ہیں۔ صحیح ڈچ لفظ چنیں۔",
-        "دکان میں چاول کے کارڈ پر لکھا لفظ پہچانیں۔",
-        "کھانے کی تصویری فہرست میں چاول کے لیے صحیح لفظ لگائیں۔"
+        "گھر کی تصویری فہرست میں چوہے کے لیے صحیح لفظ لگائیں۔"
       ]),
       a0MissionTargetV4("a0-sounds-consonants", "schoen", [
-        "دروازے کے پاس ایک جوتا رکھا ہے۔ اس کا ڈچ لفظ چنیں۔",
+        "کاؤنٹر کے پاس کسی کا جوتا رہ گیا ہے۔ اس کا ڈچ لفظ چنیں۔",
         "دکان کی فہرست میں جوتے کا لفظ پہچانیں۔",
-        "کمرے کی تصویری فہرست میں جوتے کے لیے صحیح لفظ لگائیں۔"
+        "گھر کی تصویری فہرست میں جوتے کے لیے صحیح لفظ لگائیں۔"
       ])
     ]
   },
@@ -15834,7 +15875,7 @@ const a0MissionPlansV4 = {
         "صبح کے پیغام کا آخری حصہ واضح نہیں۔ دوبارہ کہنے کو کہیں۔",
         "رخصتی کی ہدایت سنائی نہیں دی۔ مؤدبانہ طور پر دہرانے کو کہیں۔"
       ]),
-      a0MissionTargetV4("a0-letters-3", "water", [
+      a0MissionTargetV4("a0-food-drink", "water", [
         "بیمار بچے کے لیے فہرست میں پانی کا لفظ پہچانیں۔",
         "صبح کی ضروری چیزوں میں پانی کا ڈچ لفظ چنیں۔",
         "رخصتی سے پہلے پانی کی بوتل کے کارڈ پر لفظ پہچانیں۔"
