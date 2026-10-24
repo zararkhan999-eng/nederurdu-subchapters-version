@@ -8282,13 +8282,13 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-mission-school-day": {
       sourceKey:"work-school-message-mission",scenarioTitleUrdu:"پیغام سے اسکول اور کام کے بدلے دن تک",speakerUrdu:"اسکول یا کام کا ذمہ دار شخص",
-      prerequisiteLessonIds:["a1-short-messages","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
+      prerequisiteLessonIds:["a1-short-messages","a1-past-was-had","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
       variantTitles:["دیر کا مختصر پیغام اور کام کی تبدیلی","بچے کی غیر حاضری اور اسکول ایپ","بیماری، واپسی، اور بدلی ڈیوٹی"],
       variantContexts:["ساتھی کو آج کی دیر کا پیغام دیں، وجہ سنیں، اور کام کے بدلے rooster کا جواب دیں","اسکول کو بچے کی غیر حاضری لکھیں، گھر کے کام کی جگہ پوچھیں، اور ایپ کا نوٹس سمجھیں","کام کو بیماری اور واپسی بتائیں، واپسی فون مانگیں، اور بدلی dienst پر ذمہ دار سے بات کریں"],
       targets:[
         {lessonId:"a1-short-messages",dutch:"hoi Sara, ik kom vandaag later",patternLessonId:"a1-short-messages"},
         {lessonId:"a1-work-school-messages",dutch:"ik kom morgen weer"},
-        {lessonId:"a1-work-school-messages",dutch:"de bus heeft vertraging"},
+        {lessonId:"a1-past-was-had",dutch:"gisteren was ik ziek",patternLessonId:"a1-past-was-had"},
         {lessonId:"a1-school-contact",dutch:"mijn kind komt vandaag niet naar school",patternLessonId:"a1-school-contact"},
         {lessonId:"a1-school-contact",dutch:"waar staat het huiswerk?"},
         {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",patternLessonId:"a1-work-schedule"}
@@ -8299,12 +8299,12 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-mission-doctor": {
       sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"فیملی ڈاکٹر کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"فیملی ڈاکٹر، ڈاکٹر، یا فارمیسی کا ملازم",
-      prerequisiteLessonIds:["a1-health-appointments","a1-doctor-symptoms","a1-pharmacy-medicine"],
+      prerequisiteLessonIds:["a1-health-appointments","a1-feelings-reflexive","a1-doctor-symptoms","a1-pharmacy-medicine"],
       variantTitles:["huisarts کو فون اور ملاقات","ڈاکٹر کو علامت اور مدت بتانا","نسخہ، دوا، اور لیبل کی ہدایت"],
       variantContexts:["assistente کو ملاقات کا مقصد بتائیں، فوری ضرورت کا سوال سمجھیں، اور وقت طے کریں","ڈاکٹر کے سوال سنیں، درد کی جگہ اور بخار کی مدت واضح کریں، اور آرام کی ہدایت سمجھیں","دواخانے میں نسخہ دیں، حساسیت بتائیں، اور لیبل سے مقدار اور کھانے کا وقت سمجھیں"],
       targets:[
         {lessonId:"a1-health-appointments",dutch:"ik wil een afspraak bij de huisarts",patternLessonId:"a1-health-appointments"},
-        {lessonId:"a1-health-appointments",dutch:"is het dringend?"},
+        {lessonId:"a1-feelings-reflexive",dutch:"hoe voelt u zich?"},
         {lessonId:"a1-doctor-symptoms",dutch:"ik heb pijn in mijn buik",patternLessonId:"a1-doctor-symptoms"},
         {lessonId:"a1-doctor-symptoms",dutch:"ik heb sinds gisteren koorts"},
         {lessonId:"a1-pharmacy-medicine",dutch:"hoe vaak moet ik dit nemen?",patternLessonId:"a1-pharmacy-medicine"},
@@ -8335,14 +8335,14 @@ const a1AuthoredCurriculumV4 = {
       sourceKey: "food-shopping-returns-payment-mission",
       scenarioTitleUrdu: "فہرست سے خریداری، کیفے، واپسی، اور ادائیگی",
       speakerUrdu: "دکان کا ملازم، ویٹر، یا کاؤنٹر کا ملازم",
-      prerequisiteLessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"],
+      prerequisiteLessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-adjective-endings", "a1-shopping-clothes", "a1-comparatives", "a1-shopping-returns", "a1-money-bank"],
       variantTitles: ["فہرست کے ساتھ سپر مارکیٹ", "کیفے میں آرڈر اور کھانے کی ضرورت", "کپڑا خریدنا، واپس کرنا، اور ادائیگی"],
       variantContexts: ["فہرست پڑھیں، چیز کی جگہ یا قیمت پوچھیں، اور کاؤنٹر کی بات مکمل کریں", "مینو سے انتخاب کریں، اپنی کھانے کی ضرورت واضح کریں، اور مسئلہ مؤدبانہ طور پر حل کریں", "کپڑے کا سائز سمجھیں، رسید کے ساتھ واپسی کریں، اور ادائیگی کی خرابی واضح کریں"],
       targets: [
         { lessonId:"a1-supermarket", dutch:"hoeveel kost dit brood?" },
-        { lessonId:"a1-cafe-ordering", dutch:"voor mij een thee", patternLessonId:"a1-cafe-ordering" },
+        { lessonId:"a1-cafe-ordering", dutch:"voor mij een thee", patternLessonId:"a1-cafe-ordering", related:[{ lessonId:"a1-comparatives", dutch:"koffie is duurder dan thee" }], compoundDutch:"koffie is duurder dan thee. voor mij een thee.", compoundUrdu:"کافی چائے سے مہنگی ہے۔ میرے لیے ایک چائے۔", taskUrdu:"کیفے کی قیمتوں کی فہرست دیکھ کر بتائیں کہ کافی چائے سے مہنگی ہے، پھر اپنے لیے چائے مانگیں۔" },
         { lessonId:"a1-cafe-food-needs", dutch:"ik ben allergisch voor noten", patternLessonId:"a1-cafe-food-needs" },
-        { lessonId:"a1-shopping-clothes", dutch:"deze jas is te groot", patternLessonId:"a1-shopping-clothes" },
+        { lessonId:"a1-shopping-clothes", dutch:"deze jas is te groot", patternLessonId:"a1-shopping-clothes", related:[{ lessonId:"a1-adjective-endings", dutch:"ik wil de groene jas" }], compoundDutch:"ik wil de groene jas. deze jas is te groot.", compoundUrdu:"مجھے سبز جیکٹ چاہیے۔ یہ جیکٹ بہت بڑی ہے۔", taskUrdu:"دکان میں سبز جیکٹ مانگیں، پھر پہن کر بتائیں کہ یہ جیکٹ بہت بڑی ہے۔" },
         { lessonId:"a1-shopping-returns", dutch:"ik wil dit terugbrengen", patternLessonId:"a1-shopping-returns" },
         { lessonId:"a1-money-bank", dutch:"mijn pinpas werkt niet", patternLessonId:"a1-money-bank" }
       ],
@@ -8543,7 +8543,9 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteLessonIds: [
         "a1-questions",
         "a1-polite-chunks",
+        "a1-future-gaan",
         "a1-plans-invitations",
+        "a1-object-pronouns",
         "a1-phone-calls",
         "a1-appointments"
       ],
@@ -8560,9 +8562,16 @@ const a1AuthoredCurriculumV4 = {
       targets: [
         { lessonId: "a1-questions", dutch: "wanneer komt u?", patternLessonId: "a1-questions" },
         { lessonId: "a1-polite-chunks", dutch: "kunt u mij helpen alstublieft?", patternLessonId: "a1-polite-chunks" },
-        { lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?", patternLessonId: "a1-plans-invitations" },
+        {
+          lessonId: "a1-future-gaan",
+          dutch: "wat ga je morgen doen?",
+          related: [{ lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?" }],
+          compoundDutch: "wat ga je morgen doen? zullen we om drie uur afspreken?",
+          compoundUrdu: "تم کل کیا کرو گے؟ کیا ہم تین بجے ملیں؟",
+          taskUrdu: "دوست سے پوچھیں کہ وہ کل کیا کرے گا، پھر تین بجے ملنے کی تجویز دیں۔"
+        },
         { lessonId: "a1-phone-calls", dutch: "kunt u later terugbellen?" },
-        { lessonId: "a1-appointments", dutch: "ik wil een afspraak maken", patternLessonId: "a1-appointments" },
+        { lessonId: "a1-object-pronouns", dutch: "kunt u ons helpen?", patternLessonId: "a1-object-pronouns" },
         { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
       ],
       prerequisiteRefs: [
@@ -8665,6 +8674,8 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       ["a0-shopping-payment", "duur"],
       ["a0-shopping-payment", "goedkoop"],
       ["a0-shopping-payment", "hoeveel kost dit"],
+      ["a0-ja-nee-goed-niet", "goed"],
+      ["a0-greetings-courtesy", "goed, dank u"],
       ["a0-home-needs", "koud"],
       ["a0-food-drink", "koffie"],
       ["a0-food-drink", "thee"],
@@ -8847,6 +8858,7 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       ["a0-health-emergency", "ik heb pijn"],
       ["a0-health-emergency", "hoofdpijn"],
       ["a0-health-emergency", "dokter"],
+      ["a0-child-school", "mijn kind is ziek"],
       ["a0-time-days", "gisteren"],
       ["a0-date-appointment", "te laat"],
       ["a0-date-appointment", "ik heb een afspraak"],
