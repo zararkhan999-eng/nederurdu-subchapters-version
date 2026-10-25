@@ -12489,8 +12489,8 @@ const a0AuthoredPatternSpecsV4 = {
     commonMistakeUrdu: "دو مصوتوں والی آواز کو جلدی پڑھنا عام غلطی ہے: boot کو جلدی پڑھیں تو bot (ہڈی) سنائی دیتا ہے۔ لمبی آواز کو پورا کھینچیں۔",
     drills: [
       pickDrillV4("peen", ["pen", "boot"], "گاجر", { pen: "pen میں ایک e ہے، اس لیے آواز چھوٹی ہے: قلم۔", boot: "boot کشتی ہے؛ گاجر کے لیے لمبی ee والا peen۔" }),
-      pickDrillV4("bot", ["boot", "peen"], "ہڈی", { boot: "boot میں دو o ہیں، آواز لمبی ہے: کشتی۔", peen: "peen گاجر ہے؛ ہڈی کے لیے چھوٹی o والا bot۔" }),
-      pickDrillV4("boot", ["bot", "pen"], "کشتی", { bot: "bot میں ایک o ہے، آواز چھوٹی ہے: ہڈی۔", pen: "pen قلم ہے؛ کشتی کے لیے لمبی oo والا boot۔" }),
+      pickDrillV4("bot", ["boot", "pen"], "ہڈی", { boot: "boot میں دو o ہیں، آواز لمبی ہے: کشتی۔", pen: "pen قلم ہے؛ ہڈی کے لیے چھوٹی o والا bot۔" }),
+      pickDrillV4("boot", ["bot", "ram"], "کشتی", { bot: "bot میں ایک o ہے، آواز چھوٹی ہے: ہڈی۔", ram: "ram مینڈھا ہے؛ کشتی کے لیے لمبی oo والا boot۔" }),
       pickDrillV4("raam", ["ram", "boot"], "کھڑکی", { ram: "ram میں ایک a ہے، آواز چھوٹی ہے: مینڈھا۔", boot: "boot کشتی ہے؛ کھڑکی کے لیے لمبی aa والا raam۔" }),
       pickDrillV4("ram", ["raam", "pen"], "مینڈھا", { raam: "raam میں دو a ہیں، آواز لمبی ہے: کھڑکی۔", pen: "pen قلم ہے؛ مینڈھے کے لیے چھوٹی a والا ram۔" })
     ]
@@ -12740,9 +12740,11 @@ function soundSimilarityV4(left, right) {
 // so the check does not repeat the guided item's option set.
 function makeSoundDiscriminationV4(concept, runConcepts, variant = 0) {
   const ranked = runConcepts
-    .filter((candidate) => candidate.id !== concept.id)
+    .filter((candidate) => candidate.id !== concept.id && !/\s—\s/.test(candidate.dutch))
     .sort((left, right) => soundSimilarityV4(concept.dutch, right.dutch) - soundSimilarityV4(concept.dutch, left.dutch));
-  const others = variant && ranked.length > 2 ? [ranked[0], ranked[2]] : ranked.slice(0, 2);
+  const others = variant && ranked.length > 2
+    ? [ranked[0], ranked[Math.min(3, ranked.length - 1)]]
+    : ranked.slice(0, 2);
   const question = {
     type: "listen-choice",
     label: "آواز سے لفظ پہچانیں",
@@ -14689,7 +14691,9 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
     }
 
     if (/^a0-sounds-/.test(lesson.id)) {
-      const runConcepts = run.conceptIds.map((conceptId) => conceptByIdV4.get(conceptId)).filter(Boolean);
+      const runConcepts = uniqueV4(runs.slice(0, runIndex + 1).flatMap((item) => item.conceptIds))
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .filter(Boolean);
       run.newConceptIds.forEach((conceptId) => {
         const concept = conceptByIdV4.get(conceptId);
         const skillId = skillIdByConceptIdV4.get(conceptId);
@@ -15020,8 +15024,11 @@ function buildLearningRunsV4(lesson, chapterId, pattern, prerequisiteSkillIds) {
     const desiredChecks = Math.min(6, Math.max(5, run.skillIds.length));
     const checks = [];
     if (/^a0-sounds-/.test(lesson.id) && run.newConceptIds.length) {
-      // Check a word heard against its closest-sounding neighbours.
-      const runConcepts = run.conceptIds.map((conceptId) => conceptByIdV4.get(conceptId)).filter(Boolean);
+      // Check a word heard against its closest-sounding neighbours, drawn
+      // from every word met so far in this lesson.
+      const runConcepts = uniqueV4(runs.slice(0, runIndex + 1).flatMap((item) => item.conceptIds))
+        .map((conceptId) => conceptByIdV4.get(conceptId))
+        .filter(Boolean);
       const checkConceptId = run.newConceptIds[run.newConceptIds.length - 1 - (runIndex % run.newConceptIds.length)];
       const checkConcept = conceptByIdV4.get(checkConceptId);
       if (checkConcept && runConcepts.length >= 3) {
@@ -16173,10 +16180,18 @@ function buildA0MissionQuestionV4({
   question.authoredHintUrdu = phase === "use"
     ? `مدد: “${primary.dutch}” کا مطلب “${primary.urdu}” ہے۔`
     : `جواب دینے کے بعد ضرورت ہو تو یاد کریں: “${primary.dutch}” = “${primary.urdu}”۔`;
-  question.authoredCorrectExplanation = multiTarget
+  // A spelled sequence of letters is explained with the letters' Dutch names.
+  const letterNames = concepts.every(isLetterConceptV4)
+    ? concepts.map((concept) => `${concept.urdu} (‘${concept.pronunciationUrdu}’)`).join("، پھر ")
+    : "";
+  question.authoredCorrectExplanation = letterNames
+    ? `درست۔ ہجے کی ترتیب یہی ہے: ${letterNames}۔`
+    : multiTarget
     ? `درست۔ یہ ترتیب پہلے سیکھی ہوئی باتوں کو حقیقی کام کے مطابق جوڑتی ہے: ${concepts.map((concept) => concept.dutch).join("، پھر ")}۔`
     : `درست۔ “${primary.dutch}” کا مطلب “${primary.urdu}” ہے اور یہی اس موقع کی مناسب بات ہے۔`;
-  question.authoredWrongExplanation = multiTarget
+  question.authoredWrongExplanation = letterNames
+    ? `ہجے دوبارہ سنیں اور حروف اسی ترتیب میں رکھیں: ${letterNames}۔`
+    : multiTarget
     ? `ترتیب دوبارہ دیکھیں: پہلے ${concepts[0].dutch}، پھر ${concepts.slice(1).map((concept) => concept.dutch).join("، پھر ")}۔`
     : `یہ جواب اس موقع کے ہدف سے مختلف ہے۔ یہاں “${primary.dutch}” کہنا یا پہچاننا ہے؛ اس کا مطلب “${primary.urdu}” ہے۔`;
   return question;
@@ -17603,7 +17618,12 @@ function applyDistractorEngineV4() {
       for (const question of sequence.questions) {
         const target = distractorEligibleV4(question) ? distractorTargetV4(question) : null;
         if (!target || processed.has(question)) {
-          if (Array.isArray(question.options) && question.options.length) previousSetKey = distractorSetKeyV4(question.options);
+          if (Array.isArray(question.options) && question.options.length) {
+            previousSetKey = distractorSetKeyV4(question.options);
+            // Sound lessons have few words, so their fixed sets (pattern
+            // drills) count towards the same repeat limit.
+            if (phonics) setUses.set(previousSetKey, (setUses.get(previousSetKey) || 0) + 1);
+          }
           continue;
         }
         processed.add(question);

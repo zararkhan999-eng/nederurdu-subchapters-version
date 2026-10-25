@@ -2467,13 +2467,13 @@ test("beginner settings persist and pronunciation hints render for core words", 
 
   await page.evaluate(() => {
     startLesson("a0-letters-1");
-    activeQuestionIndex = sessionQuestions.findIndex((question) => question.concept?.dutch === "appel");
+    activeQuestionIndex = sessionQuestions.findIndex((question) => question.concept?.dutch === "g");
     render();
   });
-  const appleCard = page.locator(".learning-teaching-card").filter({ hasText: "appel" });
-  await expect(appleCard).toBeVisible();
-  await expect(appleCard.locator(".teaching-pronunciation")).toContainText(/[\u0600-\u06ff]/);
-  await expect(appleCard).toContainText("سیب");
+  // A letter card shows the letter's Dutch name in Urdu script.
+  const letterCard = page.locator(".learning-teaching-card").filter({ hasText: "حرف g" });
+  await expect(letterCard).toBeVisible();
+  await expect(letterCard.locator(".teaching-pronunciation")).toContainText("خے");
 
   const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   expect(stored.settings.largeText).toBe(true);
@@ -2550,13 +2550,13 @@ test("speech plays the recorded pim clip at the learner's speed", async ({ page 
   await stubSpeechPlayback(page);
 
   const result = await page.evaluate(() => {
-    const [id, regularMs, slowMs] = window.NEDERURDU_AUDIO.clips.appel;
+    const [id, regularMs, slowMs] = window.NEDERURDU_AUDIO.clips.a;
     return {
       id,
       regularMs,
       slowMs,
-      slowDuration: window.speakDutch("appel"),
-      regularDuration: window.speakDutch("appel", false, true),
+      slowDuration: window.speakDutch("a"),
+      regularDuration: window.speakDutch("a", false, true),
       plays: window.__clipPlays,
       device: window.__deviceSpeech
     };
@@ -2590,9 +2590,9 @@ test("a clip that cannot play falls back to the device voice", async ({ page }) 
   await openCleanApp(page);
   await stubSpeechPlayback(page, "fail");
 
-  await page.evaluate(() => window.speakDutch("appel"));
+  await page.evaluate(() => window.speakDutch("a"));
 
-  await expect.poll(() => page.evaluate(() => window.__deviceSpeech)).toEqual(["appel"]);
+  await expect.poll(() => page.evaluate(() => window.__deviceSpeech)).toEqual(["a"]);
 });
 
 test("recorded clips are served as Opus audio", async ({ page }) => {
