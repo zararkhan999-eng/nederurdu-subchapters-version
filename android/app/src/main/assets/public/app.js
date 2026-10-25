@@ -103,33 +103,36 @@ const courseSkills = new Map(
     .filter((skill) => skill?.id)
     .map((skill) => [skill.id, skill])
 );
+// The letters tool: the full Dutch alphabet plus the Dutch "lange ij", with
+// each letter's Dutch name in Urdu script (the speak button says the name).
 const dutchLetters = [
-  { letter: "a", speak: "a", sound: "آ", word: "appel", meaning: "سیب" },
-  { letter: "b", speak: "b", sound: "بے", word: "boek", meaning: "کتاب" },
-  { letter: "c", speak: "c", sound: "سے", word: "cadeau", meaning: "تحفہ" },
-  { letter: "d", speak: "d", sound: "دے", word: "deur", meaning: "دروازہ" },
-  { letter: "e", speak: "e", sound: "اے", word: "een", meaning: "ایک" },
-  { letter: "f", speak: "f", sound: "اِف", word: "fiets", meaning: "سائیکل" },
-  { letter: "g", speak: "g", sound: "خے / گلے سے", word: "goed", meaning: "اچھا" },
-  { letter: "h", speak: "h", sound: "ہا", word: "huis", meaning: "گھر" },
-  { letter: "i", speak: "i", sound: "ای", word: "ik", meaning: "میں" },
-  { letter: "j", speak: "j", sound: "یے", word: "ja", meaning: "ہاں" },
-  { letter: "k", speak: "k", sound: "کا", word: "kat", meaning: "بلی" },
-  { letter: "l", speak: "l", sound: "ایل", word: "lamp", meaning: "بتی" },
-  { letter: "m", speak: "m", sound: "ایم", word: "man", meaning: "آدمی" },
-  { letter: "n", speak: "n", sound: "این", word: "nee", meaning: "نہیں" },
-  { letter: "o", speak: "o", sound: "او", word: "oog", meaning: "آنکھ" },
-  { letter: "p", speak: "p", sound: "پے", word: "pen", meaning: "قلم" },
-  { letter: "q", speak: "q", sound: "کو", word: "quiz", meaning: "کوئز" },
-  { letter: "r", speak: "r", sound: "ایر", word: "rijst", meaning: "چاول" },
-  { letter: "s", speak: "s", sound: "ایس", word: "stoel", meaning: "کرسی" },
-  { letter: "t", speak: "t", sound: "تے", word: "tafel", meaning: "میز" },
-  { letter: "u", speak: "u", sound: "او / اُ", word: "uur", meaning: "گھنٹہ" },
-  { letter: "v", speak: "v", sound: "وے", word: "vrouw", meaning: "عورت" },
-  { letter: "w", speak: "w", sound: "وے", word: "water", meaning: "پانی" },
-  { letter: "x", speak: "x", sound: "اِکس", word: "taxi", meaning: "ٹیکسی" },
-  { letter: "y", speak: "y", sound: "خریکسے ای", word: "yoga", meaning: "یوگا" },
-  { letter: "z", speak: "z", sound: "زیت", word: "zus", meaning: "بہن" }
+  { letter: "a", upper: "A", speak: "a", sound: "آ", word: "raam", meaning: "کھڑکی" },
+  { letter: "b", upper: "B", speak: "b", sound: "بے", word: "boot", meaning: "کشتی" },
+  { letter: "c", upper: "C", speak: "c", sound: "سے", word: "cadeau", meaning: "تحفہ" },
+  { letter: "d", upper: "D", speak: "d", sound: "دے", word: "duim", meaning: "انگوٹھا" },
+  { letter: "e", upper: "E", speak: "e", sound: "اے", word: "peen", meaning: "گاجر" },
+  { letter: "f", upper: "F", speak: "f", sound: "ایف", word: "fiets", meaning: "سائیکل" },
+  { letter: "g", upper: "G", speak: "g", sound: "خے", word: "geel", meaning: "پیلا" },
+  { letter: "h", upper: "H", speak: "h", sound: "ہا", word: "hallo", meaning: "ہیلو" },
+  { letter: "i", upper: "I", speak: "i", sound: "ای", word: "vis", meaning: "مچھلی" },
+  { letter: "j", upper: "J", speak: "j", sound: "یے", word: "jas", meaning: "کوٹ / جیکٹ" },
+  { letter: "k", upper: "K", speak: "k", sound: "کا", word: "kat", meaning: "بلی" },
+  { letter: "l", upper: "L", speak: "l", sound: "ایل", word: "lachen", meaning: "ہنسنا" },
+  { letter: "m", upper: "M", speak: "m", sound: "ایم", word: "muis", meaning: "چوہا" },
+  { letter: "n", upper: "N", speak: "n", sound: "این", word: "neus", meaning: "ناک" },
+  { letter: "o", upper: "O", speak: "o", sound: "او", word: "zon", meaning: "سورج" },
+  { letter: "p", upper: "P", speak: "p", sound: "پے", word: "pen", meaning: "قلم" },
+  { letter: "q", upper: "Q", speak: "q", sound: "کُو", word: "quiz", meaning: "کوئز" },
+  { letter: "r", upper: "R", speak: "r", sound: "ایر", word: "rijst", meaning: "چاول" },
+  { letter: "s", upper: "S", speak: "s", sound: "ایس", word: "sok", meaning: "جراب" },
+  { letter: "t", upper: "T", speak: "t", sound: "تے", word: "taxi", meaning: "ٹیکسی" },
+  { letter: "u", upper: "U", speak: "u", sound: "اُو", word: "vuur", meaning: "آگ" },
+  { letter: "v", upper: "V", speak: "v", sound: "فے", word: "voet", meaning: "پاؤں" },
+  { letter: "w", upper: "W", speak: "w", sound: "وے", word: "wit", meaning: "سفید" },
+  { letter: "x", upper: "X", speak: "x", sound: "ایکس", word: "taxi", meaning: "ٹیکسی" },
+  { letter: "y", upper: "Y", speak: "y", sound: "خریکسے اَے", word: "yoga", meaning: "یوگا" },
+  { letter: "z", upper: "Z", speak: "z", sound: "زیت", word: "zout", meaning: "نمک" },
+  { letter: "ij", upper: "IJ", speak: "ij", sound: "لانگے اَے", word: "ijs", meaning: "آئس کریم" }
 ];
 
 const beginnerSupport = {
@@ -138,7 +141,7 @@ const beginnerSupport = {
   c: { soundHint: "سے", meaning: "حرف c" },
   d: { soundHint: "دے", meaning: "حرف d" },
   e: { soundHint: "اے", meaning: "حرف e" },
-  f: { soundHint: "اِف", meaning: "حرف f" },
+  f: { soundHint: "ایف", meaning: "حرف f" },
   g: { soundHint: "خے", meaning: "حرف g" },
   h: { soundHint: "ہا", meaning: "حرف h" },
   i: { soundHint: "ای", meaning: "حرف i" },
@@ -149,16 +152,17 @@ const beginnerSupport = {
   n: { soundHint: "این", meaning: "حرف n" },
   o: { soundHint: "او", meaning: "حرف o" },
   p: { soundHint: "پے", meaning: "حرف p" },
-  q: { soundHint: "کو", meaning: "حرف q" },
+  q: { soundHint: "کُو", meaning: "حرف q" },
   r: { soundHint: "ایر", meaning: "حرف r" },
   s: { soundHint: "ایس", meaning: "حرف s" },
   t: { soundHint: "تے", meaning: "حرف t" },
-  u: { soundHint: "او", meaning: "حرف u" },
-  v: { soundHint: "وے", meaning: "حرف v" },
+  u: { soundHint: "اُو", meaning: "حرف u" },
+  v: { soundHint: "فے", meaning: "حرف v" },
   w: { soundHint: "وے", meaning: "حرف w" },
-  x: { soundHint: "اِکس", meaning: "حرف x" },
-  y: { soundHint: "خریکسے ای", meaning: "حرف y" },
+  x: { soundHint: "ایکس", meaning: "حرف x" },
+  y: { soundHint: "خریکسے اَے", meaning: "حرف y" },
   z: { soundHint: "زیت", meaning: "حرف z" },
+  ij: { soundHint: "لانگے اَے", meaning: "حرف ij" },
   appel: { soundHint: "آ پَل", meaning: "سیب" },
   boek: { soundHint: "بوک", meaning: "کتاب" },
   deur: { soundHint: "دُر", meaning: "دروازہ" },
@@ -509,12 +513,103 @@ function loadProgress() {
         slowAudio: needsSpeechMigration ? true : storedSettings.slowAudio !== false
       }
     };
+    const renamedLessons = migrateRenamedLessonIds(loaded);
     backfillCompletedMastery(loaded);
-    if (!currentRaw && legacyRaw) localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+    if ((!currentRaw && legacyRaw) || renamedLessons) localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
     return loaded;
   } catch {
     return { ...defaultProgress };
   }
+}
+
+// Lessons that moved to another chapter get a new id (the id prefix names the
+// chapter). Saved progress under the old id is carried over on load. Skills
+// are keyed by Dutch and need no change. Running it again changes nothing.
+// A function, not a const: loadProgress() runs before this point in the file.
+function renamedLessonIds() {
+  return {
+    "a0-adjective-endings": "a1-adjective-endings",
+    "a0-comparatives": "a1-comparatives",
+    "a0-past-was-had": "a1-past-was-had",
+    "a0-feelings-reflexive": "a1-feelings-reflexive",
+    "a0-object-pronouns": "a1-object-pronouns",
+    "a0-future-gaan": "a1-future-gaan"
+  };
+}
+
+function renameLessonIdPrefix(value) {
+  if (typeof value !== "string") return value;
+  const renamed = renamedLessonIds();
+  if (renamed[value]) return renamed[value];
+  const separator = value.indexOf(":");
+  const head = separator < 0 ? "" : value.slice(0, separator);
+  return renamed[head] ? `${renamed[head]}${value.slice(separator)}` : value;
+}
+
+function migrateRenamedLessonIds(target) {
+  const renamed = renamedLessonIds();
+  const oldIds = Object.keys(renamed);
+  const mentionsOldId = (value) => typeof value === "string" && oldIds.some((id) => value === id || value.startsWith(`${id}:`));
+  const hasOldData = (target.completedLessons || []).some(mentionsOldId)
+    || oldIds.some((id) => (target.scores || {})[id] != null
+      || (target.lessonMastery || {})[id]
+      || (target.lessonRunProgress || {})[id])
+    || mentionsOldId(target.lastLessonId)
+    || (target.mistakes || []).some((mistake) => mentionsOldId(mistake?.lessonId) || mentionsOldId(mistake?.questionId))
+    || (target.seenQuestionIds || []).some(mentionsOldId)
+    || Object.values(target.skillMastery || {}).some((record) => mentionsOldId(record?.lessonId));
+  if (!hasOldData) return false;
+
+  target.completedLessons = [...new Set((target.completedLessons || []).map(renameLessonIdPrefix))];
+  const scores = { ...(target.scores || {}) };
+  const lessonMastery = { ...(target.lessonMastery || {}) };
+  const lessonRunProgress = { ...(target.lessonRunProgress || {}) };
+  for (const [oldId, newId] of Object.entries(renamed)) {
+    if (scores[oldId] != null) {
+      scores[newId] = Math.max(scores[newId] || 0, scores[oldId] || 0);
+      delete scores[oldId];
+    }
+    if (lessonMastery[oldId]) {
+      const keepNew = statusAtLeast(getMasteryStatus(lessonMastery[newId]), getMasteryStatus(lessonMastery[oldId]));
+      lessonMastery[newId] = keepNew ? lessonMastery[newId] : { ...lessonMastery[oldId], migratedFromLessonId: oldId };
+      delete lessonMastery[oldId];
+    }
+    if (lessonRunProgress[oldId]) {
+      // Run ids are `${lessonId}:run:${semanticKey}`. The A1 lesson groups its
+      // targets differently, so only runs that still exist are kept.
+      const newLesson = getAllLessons().find((lesson) => lesson.id === newId);
+      const validRunIds = new Set((newLesson?.learning?.runs || []).map((run) => run.id));
+      const carry = (ids) => (ids || []).map(renameLessonIdPrefix).filter((id) => validRunIds.has(id));
+      const previous = lessonRunProgress[oldId];
+      const current = lessonRunProgress[newId] || {};
+      const lastRunId = renameLessonIdPrefix(current.lastRunId || previous.lastRunId);
+      lessonRunProgress[newId] = {
+        ...previous,
+        ...current,
+        completedRunIds: [...new Set([...(current.completedRunIds || []), ...carry(previous.completedRunIds)])],
+        practicedRunIds: [...new Set([...(current.practicedRunIds || []), ...carry(previous.practicedRunIds)])],
+        secureRunIds: [...new Set([...(current.secureRunIds || []), ...carry(previous.secureRunIds)])],
+        lastRunId: validRunIds.has(lastRunId) ? lastRunId : undefined
+      };
+      if (!lessonRunProgress[newId].lastRunId) delete lessonRunProgress[newId].lastRunId;
+      delete lessonRunProgress[oldId];
+    }
+  }
+  target.scores = scores;
+  target.lessonMastery = lessonMastery;
+  target.lessonRunProgress = lessonRunProgress;
+  target.lastLessonId = renameLessonIdPrefix(target.lastLessonId);
+  target.seenQuestionIds = [...new Set((target.seenQuestionIds || []).map(renameLessonIdPrefix))];
+  target.mistakes = (target.mistakes || []).map((mistake) => (
+    mistake && typeof mistake === "object"
+      ? { ...mistake, lessonId: renameLessonIdPrefix(mistake.lessonId), questionId: renameLessonIdPrefix(mistake.questionId) }
+      : mistake
+  ));
+  target.skillMastery = Object.fromEntries(Object.entries(target.skillMastery || {}).map(([skillId, record]) => [
+    skillId,
+    record && typeof record === "object" && record.lessonId ? { ...record, lessonId: renameLessonIdPrefix(record.lessonId) } : record
+  ]));
+  return true;
 }
 
 function backfillCompletedMastery(target) {
@@ -3201,7 +3296,7 @@ function renderLetterCard(item) {
   const support = getBeginnerSupport(item.word);
   return `
     <article class="letter-card" style="--tone:${["#ff7a1a", "#2b6bff", "#3dc25d", "#8a5cff", "#ff5ca8", "#e09b00"][dutchLetters.indexOf(item) % 6]}">
-      <div class="letter-dot latin">${item.letter}</div>
+      <div class="letter-dot latin" aria-label="${escapeAttr(`${item.upper} ${item.letter}`)}">${item.upper}${item.letter === "ij" ? " " : ""}${item.letter}</div>
       <div class="letter-info">
         <strong>${item.sound}</strong>
         <span>مثال: <b class="latin">${item.word}</b> — ${item.meaning}</span>
@@ -4871,9 +4966,10 @@ function getLessonIntroQuestion(lesson, sourceQuestions = []) {
   const pairs = getLessonIntroPairs(lesson, sourceQuestions);
   if (pairs.length < 2) return null;
   const supportWordsByLesson = {
-    "a0-letters-1": ["a", "b", "appel", "boek"],
-    "a0-letters-2": ["h", "i", "huis", "ik", "ja"],
-    "a0-letters-3": ["oog", "pen", "stoel", "tafel", "water"]
+    "a0-letters-1": ["a", "b", "c", "d", "e", "f", "g"],
+    "a0-letters-2": ["h", "i", "j", "k", "l", "m", "n"],
+    "a0-letters-3": ["o", "p", "q", "r", "s", "t", "u"],
+    "a0-letters-4": ["v", "w", "x", "y", "z", "ij"]
   };
   const supportWords = supportWordsByLesson[lesson.id] || pairs
     .map((pair) => pair.dutch)
