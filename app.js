@@ -525,25 +525,30 @@ function loadProgress() {
 // Lessons that moved to another chapter get a new id (the id prefix names the
 // chapter). Saved progress under the old id is carried over on load. Skills
 // are keyed by Dutch and need no change. Running it again changes nothing.
-const RENAMED_LESSON_IDS = {
-  "a0-adjective-endings": "a1-adjective-endings",
-  "a0-comparatives": "a1-comparatives",
-  "a0-past-was-had": "a1-past-was-had",
-  "a0-feelings-reflexive": "a1-feelings-reflexive",
-  "a0-object-pronouns": "a1-object-pronouns",
-  "a0-future-gaan": "a1-future-gaan"
-};
+// A function, not a const: loadProgress() runs before this point in the file.
+function renamedLessonIds() {
+  return {
+    "a0-adjective-endings": "a1-adjective-endings",
+    "a0-comparatives": "a1-comparatives",
+    "a0-past-was-had": "a1-past-was-had",
+    "a0-feelings-reflexive": "a1-feelings-reflexive",
+    "a0-object-pronouns": "a1-object-pronouns",
+    "a0-future-gaan": "a1-future-gaan"
+  };
+}
 
 function renameLessonIdPrefix(value) {
   if (typeof value !== "string") return value;
-  if (RENAMED_LESSON_IDS[value]) return RENAMED_LESSON_IDS[value];
+  const renamed = renamedLessonIds();
+  if (renamed[value]) return renamed[value];
   const separator = value.indexOf(":");
   const head = separator < 0 ? "" : value.slice(0, separator);
-  return RENAMED_LESSON_IDS[head] ? `${RENAMED_LESSON_IDS[head]}${value.slice(separator)}` : value;
+  return renamed[head] ? `${renamed[head]}${value.slice(separator)}` : value;
 }
 
 function migrateRenamedLessonIds(target) {
-  const oldIds = Object.keys(RENAMED_LESSON_IDS);
+  const renamed = renamedLessonIds();
+  const oldIds = Object.keys(renamed);
   const mentionsOldId = (value) => typeof value === "string" && oldIds.some((id) => value === id || value.startsWith(`${id}:`));
   const hasOldData = (target.completedLessons || []).some(mentionsOldId)
     || oldIds.some((id) => (target.scores || {})[id] != null
@@ -559,7 +564,7 @@ function migrateRenamedLessonIds(target) {
   const scores = { ...(target.scores || {}) };
   const lessonMastery = { ...(target.lessonMastery || {}) };
   const lessonRunProgress = { ...(target.lessonRunProgress || {}) };
-  for (const [oldId, newId] of Object.entries(RENAMED_LESSON_IDS)) {
+  for (const [oldId, newId] of Object.entries(renamed)) {
     if (scores[oldId] != null) {
       scores[newId] = Math.max(scores[newId] || 0, scores[oldId] || 0);
       delete scores[oldId];

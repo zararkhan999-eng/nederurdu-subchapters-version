@@ -5956,31 +5956,97 @@ test("mission opens with a guided role-play that explains a wrong reply and unlo
 
 test("A0 grammar lessons sit after the lessons that teach their words", async ({ page }) => {
   await openCleanApp(page);
-  const order = await page.evaluate(() => {
-    const a0 = window.NEDERURDU_COURSE.chapters.find((chapter) => chapter.id === "a0");
-    const ids = a0.subchapters.flatMap((unit) => unit.lessonIds);
-    const lesson = (id) => window.NEDERURDU_COURSE.lessons.find((item) => item.id === id);
+  const audit = await page.evaluate(() => {
+    const course = window.NEDERURDU_COURSE;
+    const unitIds = (unitId) => course.units.find((unit) => unit.id === unitId)?.lessonIds || [];
+    const lesson = (id) => course.lessons.find((item) => item.id === id);
     return {
-      positions: Object.fromEntries([
-        "a0-home-needs", "a0-plurals-er-is", "a0-food-drink", "a0-verb-endings",
-        "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives",
-        "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had",
-        "a0-child-school", "a0-object-pronouns", "a0-work-basics", "a0-future-gaan"
-      ].map((id) => [id, ids.indexOf(id)])),
-      runs: ["a0-verb-endings", "a0-past-was-had", "a0-object-pronouns"].map((id) => lesson(id)?.learning?.runs?.length || 0)
+      firstSentences: unitIds("a0-first-sentences"),
+      placeMovement: unitIds("a0-place-movement"),
+      a1: Object.fromEntries([
+        "a1-food-shopping", "a1-questions-help", "a1-body-health", "a1-work-school-messages"
+      ].map((id) => [id, unitIds(id)])),
+      a0Ids: course.chapters.find((chapter) => chapter.id === "a0").lessonIds,
+      runs: ["a0-verb-endings", "a1-past-was-had", "a1-object-pronouns", "a1-comparatives"]
+        .map((id) => lesson(id)?.learning?.runs?.length || 0)
     };
   });
-  const pairs = [
-    ["a0-home-needs", "a0-plurals-er-is"], ["a0-food-drink", "a0-verb-endings"],
-    ["a0-colours-clothes", "a0-adjective-endings"], ["a0-shopping-payment", "a0-comparatives"],
-    ["a0-body-health", "a0-feelings-reflexive"], ["a0-emergency-police", "a0-past-was-had"],
-    ["a0-child-school", "a0-object-pronouns"], ["a0-work-basics", "a0-future-gaan"]
+  const after = (ids, before, later) => {
+    expect(ids.indexOf(before), before).toBeGreaterThanOrEqual(0);
+    expect(ids.indexOf(later), later).toBeGreaterThan(ids.indexOf(before));
+  };
+  after(audit.firstSentences, "a0-geen", "a0-verb-endings");
+  expect(audit.placeMovement.indexOf("a0-plurals-er-is")).toBe(audit.placeMovement.indexOf("a0-home-needs") + 1);
+  const moved = [
+    ["a1-food-shopping", ["a1-cafe-food-needs"], "a1-adjective-endings"],
+    ["a1-food-shopping", ["a1-adjective-endings", "a1-shopping-clothes"], "a1-comparatives"],
+    ["a1-questions-help", ["a1-polite-chunks"], "a1-future-gaan"],
+    ["a1-questions-help", ["a1-future-gaan", "a1-plans-invitations"], "a1-object-pronouns"],
+    ["a1-body-health", ["a1-health-appointments"], "a1-feelings-reflexive"],
+    ["a1-work-school-messages", ["a1-short-messages"], "a1-past-was-had"]
   ];
-  for (const [before, after] of pairs) {
-    expect(order.positions[before]).toBeGreaterThanOrEqual(0);
-    expect(order.positions[after]).toBe(order.positions[before] + 1);
+  for (const [unitId, befores, lessonId] of moved) {
+    for (const before of befores) after(audit.a1[unitId], before, lessonId);
   }
-  for (const runs of order.runs) expect(runs).toBeGreaterThan(0);
+  expect(audit.a1["a1-food-shopping"].indexOf("a1-comparatives")).toBeLessThan(audit.a1["a1-food-shopping"].indexOf("a1-shopping-returns"));
+  expect(audit.a1["a1-questions-help"].indexOf("a1-future-gaan")).toBeLessThan(audit.a1["a1-questions-help"].indexOf("a1-plans-invitations"));
+  expect(audit.a1["a1-questions-help"].indexOf("a1-object-pronouns")).toBeLessThan(audit.a1["a1-questions-help"].indexOf("a1-phone-calls"));
+  expect(audit.a1["a1-body-health"].indexOf("a1-feelings-reflexive")).toBeLessThan(audit.a1["a1-body-health"].indexOf("a1-doctor-symptoms"));
+  expect(audit.a1["a1-work-school-messages"].indexOf("a1-past-was-had")).toBeLessThan(audit.a1["a1-work-school-messages"].indexOf("a1-work-school-messages"));
+  for (const oldId of ["a0-adjective-endings", "a0-comparatives", "a0-past-was-had", "a0-feelings-reflexive", "a0-object-pronouns", "a0-future-gaan"]) {
+    expect(audit.a0Ids).not.toContain(oldId);
+  }
+  for (const runs of audit.runs) expect(runs).toBeGreaterThan(0);
+});
+
+test("saved progress on the old A0 grammar ids carries over to the A1 lessons", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded-renamed-progress")) return;
+    sessionStorage.setItem("seeded-renamed-progress", "1");
+    localStorage.setItem("nederurdu-progress-v4", JSON.stringify({
+      schemaVersion: 4,
+      completedLessons: ["a0-greetings-courtesy", "a0-comparatives", "a0-past-was-had"],
+      scores: { "a0-comparatives": 12 },
+      lessonMastery: { "a0-comparatives": { status: "practiced" }, "a0-past-was-had": { status: "secure" } },
+      lessonRunProgress: {
+        "a0-comparatives": {
+          completedRunIds: ["a0-comparatives:run:duurder--goedkoper--beter--kouder"],
+          lastRunId: "a0-comparatives:run:duurder--goedkoper--beter--kouder"
+        }
+      },
+      seenQuestionIds: ["a0-comparatives:exercise:old"],
+      mistakes: [{ lessonId: "a0-future-gaan", prompt: "x", answer: "y" }],
+      lastLessonId: "a0-object-pronouns",
+      selectedChapterId: "a0"
+    }));
+  });
+  await page.goto("/");
+  const readSaved = () => page.evaluate(() => ({
+    saved: JSON.parse(localStorage.getItem("nederurdu-progress-v4")),
+    comparativesStatus: getLessonStatus("a1-comparatives"),
+    pastStatus: getLessonStatus("a1-past-was-had")
+  }));
+  const first = await readSaved();
+  expect(first.saved.completedLessons).toEqual(expect.arrayContaining(["a0-greetings-courtesy", "a1-comparatives", "a1-past-was-had"]));
+  expect(first.saved.completedLessons.some((id) => /^a0-(comparatives|past-was-had)$/.test(id))).toBe(false);
+  expect(first.saved.scores).toEqual({ "a1-comparatives": 12 });
+  expect(first.saved.lessonMastery["a0-comparatives"]).toBeUndefined();
+  expect(first.comparativesStatus).toBe("practiced");
+  expect(first.pastStatus).toBe("secure");
+  expect(first.saved.lessonRunProgress["a0-comparatives"]).toBeUndefined();
+  expect(first.saved.lessonRunProgress["a1-comparatives"].completedRunIds).toEqual([]);
+  expect(first.saved.seenQuestionIds).toEqual(["a1-comparatives:exercise:old"]);
+  expect(first.saved.mistakes[0].lessonId).toBe("a1-future-gaan");
+  expect(first.saved.lastLessonId).toBe("a1-object-pronouns");
+
+  await page.reload();
+  const second = await readSaved();
+  expect(second.saved.completedLessons).toEqual(first.saved.completedLessons);
+  expect(second.saved.scores).toEqual(first.saved.scores);
+  expect(second.saved.lessonRunProgress).toEqual(first.saved.lessonRunProgress);
+
+  await page.evaluate(() => { selectedChapterId = "a1"; showLessonPreview("a1-comparatives"); });
+  await expect(page.locator(".learning-preview")).toBeVisible();
 });
 
 test("lesson preview shows the unit's how-it-works-here card", async ({ page }) => {
