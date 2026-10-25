@@ -17897,34 +17897,48 @@ const missionRolePlaysV4 = {
   "a0-start-speaking-mission": {
     sceneUrdu: "آپ پہلی بار ایک دکان میں ہیں۔ ملازم آپ سے بات کرتا ہے۔",
     turns: [
-      ["other", "goedemorgen! hoe gaat het?", "صبح بخیر! آپ کیسے ہیں؟"],
-      ["you", "goed, dank u", ["tot ziens", "ik heb een tolk nodig"]],
-      ["other", "spreekt u Nederlands?", "کیا آپ ڈچ بولتے ہیں؟"],
-      ["you", "ik spreek een beetje Nederlands", ["goedenavond", "dank u wel"]],
-      ["other", "begrijpt u mij?", "کیا آپ مجھے سمجھتے ہیں؟"],
-      ["you", "langzamer alstublieft", ["goedemorgen", "graag"], "بات پوری سمجھ نہیں آئی۔ آہستہ بولنے کو کہیں۔"]
+      ["other", "hallo!", "سلام!"],
+      ["you", "hallo", ["tot ziens", "nee"]],
+      ["other", "alstublieft.", "یہ لیجیے۔"],
+      ["you", "dank u wel", ["sorry", "goedemorgen"]],
+      ["you", "ik begrijp het niet", ["dank u wel", "hallo"], "ملازم ایک لمبی بات کہتا ہے جو آپ کو سمجھ نہیں آتی۔ صاف بتائیں۔"],
+      ["other", "sorry.", "معاف کیجیے۔"],
+      ["you", "tot ziens", ["goedemorgen", "ja"], "خریداری ختم ہو گئی۔ رخصت ہوں۔"]
+    ]
+  },
+  "a0-first-words-mission": {
+    sceneUrdu: "کلاس میں استاد آپ کے خاندان کی تصویر دیکھتی ہیں۔",
+    turns: [
+      ["other", "goedemorgen!", "صبح بخیر!"],
+      ["you", "goedemorgen", ["tot ziens", "sorry"]],
+      ["you", "moeder", ["broer", "kind"], "تصویر میں آپ کی والدہ ہیں۔ بتائیں۔"],
+      ["you", "zij", ["hij", "wij"], "استاد والدہ کی طرف اشارہ کرتی ہیں۔ ان کے لیے ‘وہ’ کہیں۔"],
+      ["you", "wij", ["zij", "jij"], "اب اپنے پورے خاندان کی طرف اشارہ کرکے ‘ہم’ کہیں۔"],
+      ["other", "dank u wel!", "آپ کا شکریہ!"]
     ]
   },
   "a0-first-sentences-mission": {
-    sceneUrdu: "نئی پڑوسن سیڑھیوں پر اپنا تعارف کراتی ہے۔",
+    sceneUrdu: "کلاس میں ایک نیا ساتھی آپ سے بات کرتا ہے۔",
     turns: [
-      ["other", "hallo! hoe gaat het?", "ہیلو! آپ کیسے ہیں؟"],
-      ["you", "goed, dank u", ["ik ben getrouwd", "tot ziens"]],
-      ["other", "ik kom uit Pakistan.", "میں پاکستان سے ہوں۔"],
-      ["you", "ik woon in Nederland", ["ik ben een man", "hij is een man"], "بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔"],
-      ["other", "ik ben getrouwd.", "میں شادی شدہ ہوں۔"],
-      ["you", "ik ben niet getrouwd", ["mijn vrouw", "wij zijn familie"], "بتائیں کہ آپ شادی شدہ نہیں ہیں۔"]
+      ["other", "hallo! ben jij Ali?", "ہیلو! کیا تم علی ہو؟"],
+      ["you", "ik ben Ali", ["hij is niet hier", "dank u wel"]],
+      ["other", "werk jij hier?", "کیا تم یہاں کام کرتے ہو؟"],
+      ["you", "ik werk hier", ["zij woont hier", "wat is dit?"]],
+      ["other", "heb jij een boek?", "کیا تمہارے پاس کتاب ہے؟"],
+      ["you", "ik heb geen boek", ["mijn huis", "hier woon ik"], "آپ کے پاس کتاب نہیں ہے۔"],
+      ["other", "het is goed.", "ٹھیک ہے۔"]
     ]
   },
   "a0-people-things-mission": {
-    sceneUrdu: "کلاس میں استاد چیزوں کے بارے میں پوچھتی ہیں۔",
+    sceneUrdu: "بلدیہ کے کاؤنٹر پر ملازمہ آپ سے بات کرتی ہے۔",
     turns: [
-      ["other", "wat is dit?", "یہ کیا ہے؟"],
-      ["you", "dit is een boek", ["ik ben een man", "waar is het toilet"]],
-      ["other", "heeft u een boek?", "کیا آپ کے پاس کتاب ہے؟"],
-      ["you", "ik heb geen boek", ["dit is een boek", "zijn huis"], "آپ کے پاس کتاب نہیں ہے۔"],
-      ["you", "waar is het toilet", ["wat is dit", "dat is mijn huis"], "اب پوچھیں کہ ٹوائلٹ کہاں ہے۔"],
-      ["other", "daar.", "وہاں۔"]
+      ["other", "goedemorgen! hoe gaat het?", "صبح بخیر! آپ کیسے ہیں؟"],
+      ["you", "goed, dank u", ["tot ziens", "ik kom uit Pakistan"]],
+      ["other", "mijn naam is Sara.", "میرا نام سارہ ہے۔"],
+      ["you", "mijn naam is Ali", ["ik ben getrouwd", "kunt u mij helpen?"], "اپنا نام بتائیں: علی۔"],
+      ["you", "langzamer alstublieft", ["mijn zoon", "tot ziens"], "ملازمہ بہت تیز بولتی ہے۔ آہستہ بولنے کو کہیں۔"],
+      ["other", "spreekt u Engels?", "کیا آپ انگریزی بولتے ہیں؟"],
+      ["you", "ik heb een tolk nodig", ["ik ben getrouwd", "mijn man"], "آپ انگریزی نہیں بولتے۔ ترجمان مانگیں۔"]
     ]
   },
   "a0-numbers-time-mission": {
@@ -18485,23 +18499,28 @@ const courseV4 = {
 const societyCardsV4 = {
   "a0-start-speaking": ["ملنے اور بات کرنے کا انداز", [
     "پہلی ملاقات میں ہاتھ ملانا اور نام بتانا عام ہے۔ مرد اور عورت دونوں سے ایک جیسا سلوک ہوتا ہے۔",
-    "اجنبی، دفتر کے ملازم، اور بزرگوں سے u کہیں؛ دوستوں اور اکثر ساتھیوں سے jij۔",
-    "بات سمجھ نہ آئے تو دوبارہ پوچھنا بالکل عام ہے۔ ہسپتال یا بلدیہ میں ترجمان مانگا جا سکتا ہے۔"
+    "دکان، بس، یا دفتر میں سلام، شکریہ، اور معذرت بہت کہی جاتی ہے، اجنبیوں سے بھی۔",
+    "بات سمجھ نہ آئے تو یہ کہنا بالکل عام ہے؛ لوگ اکثر آہستہ یا دوبارہ بول دیتے ہیں۔"
   ]],
   "a0-letters-sounds": ["ڈچ سیکھنے میں مفت مدد", [
     "بہت سی لائبریریوں میں Taalhuis ہوتا ہے جہاں زبان اور خط پڑھنے میں مفت مدد ملتی ہے۔",
     "لائبریری کا کارڈ 18 سال سے کم بچوں کے لیے اکثر مفت ہوتا ہے۔",
     "سرکاری خط ڈچ میں آتے ہیں۔ سمجھ نہ آئے تو خط پھینکیں نہیں؛ کسی سے پڑھوائیں۔"
   ]],
-  "a0-first-sentences": ["خاندان اور برابری", [
+  "a0-first-words": ["خاندان اور برابری", [
     "نیدرلینڈز میں مرد اور عورت کے حقوق برابر ہیں؛ دونوں تعلیم، کام، اور اپنے فیصلے کر سکتے ہیں۔",
     "بچوں کو مارنا قانون کے خلاف ہے۔ تربیت میں بات چیت اور حد بندی پر زور دیا جاتا ہے۔",
     "شادی، طلاق، اور پیدائش بلدیہ کے ریکارڈ میں درج ہوتی ہیں۔"
   ]],
-  "a0-people-things": ["سیدھی بات", [
+  "a0-first-sentences": ["سیدھی بات", [
     "ڈچ لوگ اکثر سیدھی اور مختصر بات کرتے ہیں۔ nee کہنا بدتمیزی نہیں سمجھا جاتا۔",
     "کسی کے گھر بغیر بتائے جانا کم ہوتا ہے؛ پہلے وقت طے کرنا عام ہے۔",
     "اپنی رائے دینا اور سوال پوچھنا اچھا سمجھا جاتا ہے، استاد یا ڈاکٹر سے بھی۔"
+  ]],
+  "a0-people-things": ["تعارف اور مدد", [
+    "پہلی ملاقات میں نام اور یہ بتانا عام ہے کہ آپ کہاں سے آئے ہیں؛ آمدنی یا مذہب کے بارے میں پوچھنا عام نہیں۔",
+    "ڈاکٹر، ہسپتال، یا بلدیہ میں بات سمجھ نہ آئے تو ترجمان (tolk) مانگ سکتے ہیں؛ اکثر ترجمان فون پر بات کرتا ہے۔",
+    "سرکاری فارم پر اپنا نام بالکل اسی طرح لکھیں جیسے پاسپورٹ میں لکھا ہے۔"
   ]],
   "a0-numbers-time": ["وقت کی پابندی اور ملاقات", [
     "تقریباً ہر کام کے لیے پہلے afspraak لی جاتی ہے: ڈاکٹر، بلدیہ، بینک، حجام۔",
