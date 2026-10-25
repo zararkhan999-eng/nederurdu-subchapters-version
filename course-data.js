@@ -11965,6 +11965,12 @@ for (const concept of conceptByIdV4.values()) {
     concept.exampleUrdu = "اپنی چیز کے لیے “mijn”، مرد کی چیز کے لیے “zijn”۔";
     concept.exampleSource = "a0-possessive-owned-contrast";
   }
+  // Nouns come in the next run, so the first run's cards contrast owners only.
+  if (normalizedTextV4(concept.dutch) === "haar" && lesson.id === "a0-possessive") {
+    concept.exampleDutch = "zijn — haar";
+    concept.exampleUrdu = "مرد کی چیز کے لیے “zijn”، عورت کی چیز کے لیے “haar”۔";
+    concept.exampleSource = "a0-possessive-owned-contrast";
+  }
   concept.examples = [{ dutch: concept.exampleDutch, urdu: concept.exampleUrdu }];
   if (concept.visual?.kind === "context") {
     concept.visual.descriptionUrdu = concept.usageUrdu;
@@ -12065,12 +12071,12 @@ const a0SurvivalTeachingV4 = {
     "heeft u dit in het zwart?": ["دکان میں کوئی چیز دوسرے رنگ میں چاہیے تو یہ سوال پوچھیں۔", "رنگ سے پہلے in het آتا ہے: in het zwart، in het blauw۔", "heeft u dit in het blauw?", "کیا یہ آپ کے پاس نیلے رنگ میں ہے؟", "ہیفٹ یو دِٹ اِن اَٹ زْوارٹ"]
   },
   "a0-language-help": {
-    "ik spreek Urdu": ["کوئی پوچھے کہ آپ کون سی زبان بولتے ہیں تو اپنی زبان بتائیں۔", "spreek کے بعد سیدھا زبان کا نام آتا ہے؛ درمیان میں کوئی اور لفظ نہیں۔", "spreekt u Engels? — ik spreek Urdu.", "کیا آپ انگریزی بولتے ہیں؟ — میں اردو بولتا ہوں۔", "اِک سپریک اُردو"],
+    "ik spreek Urdu": ["کوئی پوچھے کہ آپ کون سی زبان بولتے ہیں تو اپنی زبان بتائیں۔", "spreek کے بعد سیدھا زبان کا نام آتا ہے؛ درمیان میں کوئی اور لفظ نہیں۔", "ik spreek Urdu.", "میں اردو بولتا ہوں۔", "اِک سپریک اُردو"],
     "ik spreek Engels": ["اگر ڈچ مشکل ہو اور آپ انگریزی جانتے ہیں تو یہ بتائیں۔", "Engels کا مطلب انگریزی زبان ہے؛ زبان کا نام بڑے حرف سے لکھا جاتا ہے۔", "ik spreek Urdu — ik spreek Engels", "میں اردو بولتا ہوں — میں انگریزی بولتا ہوں۔", "اِک سپریک اینگلس"],
-    "ik spreek een beetje Nederlands": ["گفتگو کے شروع میں بتائیں کہ آپ تھوڑی ڈچ بولتے ہیں تاکہ سامنے والا آسان بات کرے۔", "een beetje کا مطلب تھوڑا ہے؛ ik spreek geen Nederlands کا مطلب ہے بالکل نہیں۔", "ik spreek een beetje Nederlands — ik spreek geen Nederlands", "میں تھوڑی ڈچ بولتا ہوں — میں ڈچ نہیں بولتا۔", "اِک سپریک اَن بے چَ نیدرلانڈس"],
+    "ik spreek een beetje Nederlands": ["گفتگو کے شروع میں بتائیں کہ آپ تھوڑی ڈچ بولتے ہیں تاکہ سامنے والا آسان بات کرے۔", "een beetje کا مطلب تھوڑا ہے، بالکل نہیں؛ ik spreek Urdu میں پوری زبان آتی ہے۔", "ik spreek Urdu — ik spreek een beetje Nederlands", "میں اردو بولتا ہوں — میں تھوڑی ڈچ بولتا ہوں۔", "اِک سپریک اَن بے چَ نیدرلانڈس"],
     "spreekt u Engels?": ["دکان، فارمیسی، یا دفتر میں ادب سے پوچھیں کہ کیا سامنے والا انگریزی بولتا ہے۔", "سوال میں فعل پہلے آتا ہے اور u کے ساتھ فعل کے آخر میں ٹ کی آواز لگتی ہے: spreekt u۔", "spreekt u Engels? — ik spreek Engels.", "کیا آپ انگریزی بولتے ہیں؟ — میں انگریزی بولتا ہوں۔", "سپریکٹ یو اینگلس"],
     "ik spreek geen Nederlands": ["جب کوئی تیزی سے ڈچ بولے اور آپ ابھی ڈچ نہیں جانتے تو یہ کہیں۔", "زبان کی نفی geen سے ہوتی ہے: ik spreek geen Nederlands۔", "ik spreek geen Nederlands — ik spreek Engels", "میں ڈچ نہیں بولتا — میں انگریزی بولتا ہوں۔", "اِک سپریک خین نیدرلانڈس"],
-    "tolk": ["ایسا شخص جو دو زبانوں میں بات سمجھا دے؛ ہسپتال یا بلدیہ میں مانگا جا سکتا ہے۔", "tolk بولی ہوئی بات کا ترجمان ہے؛ اسے کسی زبان کا نام نہ سمجھیں۔", "een tolk — ik heb een tolk nodig", "ترجمان — مجھے ترجمان چاہیے۔", "ٹولک"],
+    "tolk": ["ایسا شخص جو دو زبانوں میں بات سمجھا دے؛ ہسپتال یا بلدیہ میں مانگا جا سکتا ہے۔", "tolk بولی ہوئی بات کا ترجمان ہے؛ اسے کسی زبان کا نام نہ سمجھیں۔", "ik spreek geen Nederlands — een tolk", "میں ڈچ نہیں بولتا — ایک ترجمان۔", "ٹولک"],
     "ik heb een tolk nodig": ["جب ڈاکٹر یا ملازم کی بات بالکل سمجھ نہ آئے اور ترجمان چاہیے۔", "nodig جملے کے آخر میں آتا ہے: ik heb een tolk nodig۔", "ik spreek geen Nederlands. ik heb een tolk nodig.", "میں ڈچ نہیں بولتا۔ مجھے ترجمان چاہیے۔", "اِک ہیپ اَن ٹولک نودِخ"],
     "is er een tolk?": ["کسی کاؤنٹر پر پوچھنا ہو کہ کیا یہاں ترجمان موجود ہے۔", "سوال is سے شروع ہوتا ہے؛ er کا مطلب یہاں ‘موجود’ ہے۔", "is er een tolk? — ik spreek Urdu.", "کیا یہاں ترجمان ہے؟ — میں اردو بولتا ہوں۔", "اِس اَر اَن ٹولک"],
     "hoe zeg je dat in het Nederlands?": ["جب کوئی لفظ ڈچ میں نہ آتا ہو تو استاد یا ساتھی سے یہ پوچھیں۔", "hoe کا مطلب کیسے ہے؛ یہ سوال ڈچ میں کہنے کا طریقہ پوچھتا ہے۔", "hoe zeg je dat in het Nederlands? — tolk.", "اسے ڈچ میں کیسے کہتے ہیں؟ — tolk۔", "ہُو زَخ یَ دَٹ اِن اَٹ نیدرلانڈس"]
@@ -12268,8 +12274,8 @@ Object.assign(a0SurvivalTeachingV4, {
   "a0-word-order": {
     "jij werkt": ["دوست کے کام کے بارے میں بیان دینا ہو تو jij werkt کہیں؛ یہ سوال نہیں۔", "بیان میں jij پہلے اور werkt بعد میں؛ سوال میں ترتیب الٹ جاتی ہے۔", "jij werkt — werk jij hier?", "تم کام کرتے ہو — کیا تم یہاں کام کرتے ہو؟", "یَےای وَیرکٹ"],
     "werk jij hier?": ["دوست سے پوچھنا ہو کہ کیا وہ یہاں کام کرتا ہے تو فعل پہلے رکھیں۔", "سوال میں jij فعل کے بعد آئے تو ٹ ہٹ جاتی ہے: werk jij، نہ کہ werkt jij۔", "jij werkt — werk jij hier?", "تم کام کرتے ہو — کیا تم یہاں کام کرتے ہو؟", "وَیرک یَےای ہیر"],
-    "ben jij Ali?": ["کسی سے تصدیق کرنی ہو کہ کیا وہی شخص ہے تو ben jij …? پوچھیں۔", "سوال میں ben پہلے آتا ہے؛ jij bent Ali بیان ہے، سوال نہیں۔", "ben jij Ali? — heb jij een boek?", "کیا تم علی ہو؟ — کیا تمہارے پاس ایک کتاب ہے؟", "بَن یَےای عَلی"],
-    "heb jij een boek?": ["کلاس میں ساتھی سے پوچھیں کہ کیا اس کے پاس کتاب ہے۔", "سوال میں heb پہلے آتا ہے اور jij کے بعد ٹ نہیں: heb jij، نہ کہ hebt jij۔", "heb jij een boek? — ben jij Ali?", "کیا تمہارے پاس ایک کتاب ہے؟ — کیا تم علی ہو؟", "ہَیپ یَےای اَن بوک"],
+    "ben jij Ali?": ["کسی سے تصدیق کرنی ہو کہ کیا وہی شخص ہے تو ben jij …? پوچھیں۔", "سوال میں ben پہلے آتا ہے اور jij اس کے بعد؛ آخر میں نام۔", "werk jij hier? — ben jij Ali?", "کیا تم یہاں کام کرتے ہو؟ — کیا تم علی ہو؟", "بَن یَےای عَلی"],
+    "heb jij een boek?": ["کلاس میں ساتھی سے پوچھیں کہ کیا اس کے پاس کتاب ہے۔", "سوال میں heb پہلے آتا ہے، پھر jij، پھر چیز: heb jij een boek?", "heb jij een boek? — ben jij Ali?", "کیا تمہارے پاس ایک کتاب ہے؟ — کیا تم علی ہو؟", "ہَیپ یَےای اَن بوک"],
     "werkt hij hier?": ["کسی مرد کے بارے میں پوچھیں کہ کیا وہ یہاں کام کرتا ہے۔", "ٹ صرف jij کے ساتھ ہٹتی ہے؛ hij کے ساتھ werkt hij رہتا ہے۔", "werk jij hier? — werkt hij hier?", "کیا تم یہاں کام کرتے ہو؟ — کیا وہ یہاں کام کرتا ہے؟", "وَیرکٹ ہَےای ہیر"],
     "woont zij hier?": ["کسی عورت کے بارے میں پوچھیں کہ کیا وہ یہاں رہتی ہے۔", "سوال میں woont پہلے، پھر zij؛ zij کے ساتھ ٹ رہتی ہے۔", "werkt hij hier? — woont zij hier?", "کیا وہ یہاں کام کرتا ہے؟ — کیا وہ یہاں رہتی ہے؟", "وونٹ زَےای ہیر"],
     "hier werk ik": ["جگہ دکھا کر زور سے بتائیں کہ یہاں آپ کام کرتے ہیں۔", "جملہ hier سے شروع ہو تو فعل دوسرے نمبر پر: hier werk ik، نہ کہ hier ik werk۔", "hier werk ik — hier woon ik", "یہاں میں کام کرتا ہوں — یہاں میں رہتا ہوں۔", "ہیر وَیرک اِک"],
@@ -12279,7 +12285,7 @@ Object.assign(a0SurvivalTeachingV4, {
     "goed": ["حالت یا معیار اچھا ہو تو مختصر طور پر goed کہیں۔", "goed اچھی حالت ہے؛ یہ ہاں والا جواب یا شکریہ نہیں۔", "het is goed — het is niet goed", "یہ ٹھیک ہے — یہ ٹھیک نہیں ہے۔", "خُوت"],
     "het is goed": ["کوئی چیز یا بات ٹھیک ہو تو het is goed کہیں۔", "het یہاں ‘یہ’ ہے، کسی چیز کا نام نہیں۔", "het is goed — het is niet goed", "یہ ٹھیک ہے — یہ ٹھیک نہیں ہے۔", "اَت اِس خُوت"],
     "het is niet goed": ["کوئی چیز یا بات ٹھیک نہ ہو تو het is niet goed کہیں۔", "niet فعل is کے بعد آتا ہے؛ het niet is goed غلط ہے۔", "het is goed — het is niet goed", "یہ ٹھیک ہے — یہ ٹھیک نہیں ہے۔", "اَت اِس نیت خُوت"],
-    "niet": ["جملے کو منفی بنانے کے لیے فعل کے بعد niet رکھیں۔", "niet جملے کے اندر آتا ہے؛ اکیلا انکار nee ہے۔", "hij is hier — hij is niet hier", "وہ یہاں ہے — وہ یہاں نہیں ہے۔", "نیت"],
+    "niet": ["جملے کو منفی بنانے کے لیے فعل کے بعد niet رکھیں۔", "niet جملے کے اندر فعل کے بعد آتا ہے؛ اکیلا ‘نہیں’ والا جواب الگ لفظ ہے۔", "hij is hier — hij is niet hier", "وہ یہاں ہے — وہ یہاں نہیں ہے۔", "نیت"],
     "hij is niet hier": ["کوئی شخص موجود نہ ہو تو بتائیں: hij is niet hier۔", "niet فعل is کے بعد اور hier سے پہلے آتا ہے۔", "hij is niet hier — het boek is niet hier", "وہ یہاں نہیں ہے — کتاب یہاں نہیں ہے۔", "ہَےای اِس نیت ہیر"],
     "het boek is niet hier": ["کتاب ڈھونڈ رہے ہوں اور نہ ملے تو یہ کہیں۔", "het boek is hier مثبت ہے؛ منفی کے لیے is کے بعد niet۔", "het boek is hier — het boek is niet hier", "کتاب یہاں ہے — کتاب یہاں نہیں ہے۔", "اَت بوک اِس نیت ہیر"]
   },
