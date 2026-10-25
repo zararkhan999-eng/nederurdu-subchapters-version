@@ -1739,13 +1739,13 @@ const a0DailyLessons = [
     concepts: [
       dailyConcept("greet-hallo", "hallo", "سلام", "greeting"),
       dailyConcept("greet-morning", "goedemorgen", "صبح بخیر", "goedemorgen"),
-      dailyConcept("greet-day", "dag", "سلام / خدا حافظ", "greeting"),
       dailyConcept("greet-goodbye", "tot ziens", "پھر ملیں گے", "tot-ziens", "phrase"),
       dailyConcept("courtesy-thanks", "dank u wel", "آپ کا شکریہ", "thanks", "phrase"),
-      dailyConcept("courtesy-please", "alstublieft", "برائے مہربانی / لیجیے", "alstublieft"),
-      dailyConcept("courtesy-sorry", "sorry", "معاف کیجیے", "sorry"),
+      dailyConcept("greet-day", "dag", "سلام / خدا حافظ", "greeting"),
       dailyConcept("answer-yes", "ja", "ہاں"),
       dailyConcept("answer-no", "nee", "نہیں"),
+      dailyConcept("courtesy-please", "alstublieft", "برائے مہربانی / لیجیے", "alstublieft"),
+      dailyConcept("courtesy-sorry", "sorry", "معاف کیجیے", "sorry"),
       dailyConcept("help-not-understand", "ik begrijp het niet", "مجھے سمجھ نہیں آیا", "begrijpen", "phrase")
     ],
     fills: [
@@ -11487,22 +11487,22 @@ const a0StartSpeakingTeachingV4 = {
   },
   "tot ziens": {
     usage: "گفتگو ختم کرتے ہوئے اور دوبارہ ملنے کی امید کے ساتھ رخصت ہوں۔",
-    exampleDutch: "Dag. — Tot ziens!",
-    exampleUrdu: "رخصت ہوتے وقت کہیں: خدا حافظ، پھر ملیں گے!",
+    exampleDutch: "Dank u wel. Tot ziens!",
+    exampleUrdu: "رخصت ہوتے وقت کہیں: آپ کا شکریہ، پھر ملیں گے!",
     pronunciation: "توت زینس",
-    confusion: "“tot ziens” رخصت ہوتے وقت آتا ہے؛ ملاقات شروع کرنے کے لیے “dag” یا وقت والا سلام کہیں۔",
+    confusion: "“tot ziens” رخصت ہوتے وقت آتا ہے؛ ملاقات شروع کرنے کے لیے “hallo” یا وقت والا سلام کہیں۔",
     boundary: "یہ بات کے اختتام پر بولا جاتا ہے؛ گفتگو کے پہلے سلام کی جگہ نہیں آتا۔",
-    contrasts: ["dag"],
+    contrasts: ["hallo"],
     chunk: true
   },
   "dank u wel": {
     usage: "کسی کی مدد، چیز، یا خدمت ملنے کے بعد ادب سے شکریہ کہیں۔",
-    exampleDutch: "A: Alstublieft. — B: Dank u wel.",
-    exampleUrdu: "ایک شخص چیز دیتا ہے: لیجیے۔ دوسرا کہتا ہے: آپ کا شکریہ۔",
+    exampleDutch: "Dank u wel!",
+    exampleUrdu: "کسی نے راستہ بتایا؛ آپ کہتے ہیں: آپ کا شکریہ!",
     pronunciation: "ڈانک یو ویل",
-    confusion: "“dank u wel” شکریہ ہے؛ چیز پیش کرنے یا مؤدبانہ درخواست کے لیے “alstublieft” آتا ہے۔",
+    confusion: "“dank u wel” شکریہ ہے، سلام نہیں؛ ملاقات شروع کرنے کے لیے “hallo” کہیں۔",
     boundary: "یہ مدد یا چیز ملنے کے بعد جواب ہے؛ کسی سے کام کروانے کی درخواست نہیں۔",
-    contrasts: ["alstublieft"],
+    contrasts: ["hallo"],
     chunk: true
   },
   alstublieft: {
@@ -11511,7 +11511,8 @@ const a0StartSpeakingTeachingV4 = {
     exampleUrdu: "چیز دیتے وقت کہیں: لیجیے۔ جواب میں سنیں: آپ کا شکریہ۔",
     pronunciation: "اَلس تُ بلیفٹ",
     confusion: "“alstublieft” چیز پیش یا درخواست نرم کرتا ہے؛ شکریہ ادا کرنے کے لیے “dank u wel” کہیں۔",
-    boundary: "یہ دینے یا مانگنے کے موقع میں آتا ہے؛ صرف شکریہ کے معنی میں استعمال نہیں ہوتا۔"
+    boundary: "یہ دینے یا مانگنے کے موقع میں آتا ہے؛ صرف شکریہ کے معنی میں استعمال نہیں ہوتا۔",
+    contrasts: ["dank u wel"]
   },
   sorry: {
     usage: "غلطی، ٹکر، یا کسی کو روکنے پر مختصر معذرت کے طور پر کہیں۔",
@@ -17548,6 +17549,10 @@ function distractorImageGroupV4(concept) {
   return "";
 }
 
+function salutationConceptV4(concept) {
+  return /^(?:hallo|hoi|dag|doei|goede(?:morgen|middag|navond|nacht)|tot (?:ziens|straks|morgen))\b/i.test(String(concept?.dutch || "").trim());
+}
+
 function distractorTargetV4(question) {
   const concept = conceptByIdV4.get((question.conceptIds || [])[0]);
   if (!concept) return null;
@@ -17754,7 +17759,10 @@ function applyDistractorEngineV4() {
           if (candidate.id === concept.id || !usable[side]) continue;
           // When the answer is a greeting, another greeting from outside the
           // run may fit the same situation (dag / goedemorgen to a shopkeeper).
-          if (question.type === "situation" && !inRun && fact.domain === "greeting" && targetGreeting) continue;
+          // Thanks, sorry, ja and nee never fit a greeting situation, so only
+          // hello/goodbye words are held back.
+          if (question.type === "situation" && !inRun && fact.domain === "greeting" && targetGreeting
+            && salutationConceptV4(candidate) && salutationConceptV4(concept)) continue;
           // In the alphabet and sounds unit a letter never stands in for a
           // word (or a word for a letter), and the rule card's word chain
           // ("pen — peen, bot — boot") is never a wrong option.
