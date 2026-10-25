@@ -821,8 +821,8 @@ function exerciseTargetIsOwned(question, conceptMap, skillMap) {
 // Sound lessons name Dutch spelling units (oo, ui, sch) to explain how a word
 // is pronounced. These are letter groups, not untaught vocabulary.
 const phonicsGraphemeTokens = new Set([
-  "a", "aa", "e", "ee", "i", "o", "oo", "u", "uu", "oe", "eu", "ui", "ei", "ij",
-  "b", "d", "g", "ch", "sch", "h", "s", "t", "v", "w", "z"
+  "a", "aa", "e", "ee", "i", "ie", "o", "oo", "u", "uu", "oe", "eu", "ui", "ei", "ij",
+  "au", "ou", "b", "d", "f", "g", "ch", "sch", "h", "j", "r", "s", "t", "v", "w", "z"
 ]);
 
 function phonicsLessonV4(lesson) {
