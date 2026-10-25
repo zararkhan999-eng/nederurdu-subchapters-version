@@ -29,6 +29,7 @@ const order = chapter.unitIds
   .flatMap((unitId) => [...unitById.get(unitId).lessonIds, ...(unitById.get(unitId).missionIds || [])])
   .filter((id) => lessonById.has(id));
 const position = new Map(order.map((id, index) => [id, index]));
+const firstSoundLesson = order.findIndex((id) => /^a0-(?:letters|sounds)-/.test(id));
 
 // Names, places and labels the course uses as given words, not as Dutch to learn.
 const ignored = new Set([
@@ -70,7 +71,7 @@ function collect(value, bucket, kind, out) {
   }
   if (typeof value === "object") {
     for (const [key, child] of Object.entries(value)) {
-      if (/(?:id|ids|source|type|mode|visual|visualId|phase|stage|speaker|semanticKey|kind|role|key)$/i.test(key)) continue;
+      if (/(?:id|ids|source|type|mode|visual|visualId|phase|stage|speaker|semanticKey|kind|kinds|role|key)$/i.test(key)) continue;
       const childKind = optionKeys.test(key) ? "option" : feedbackKeys.test(key) ? "feedback" : kind;
       collect(child, `${bucket}.${key}`, childKind, out);
     }
@@ -102,9 +103,10 @@ for (const lessonId of order) {
   const early = new Map();
   for (const use of usesFor(lesson)) {
     if (ignored.has(use.token)) continue;
-    // Single letters are letter tiles; letter groups are named in sound lessons.
+    // Single letters are letter tiles; letter groups are taught by the sound
+    // lessons and may be named from then on.
     if (use.token.length === 1) continue;
-    if (graphemes.has(use.token) && /^a0-(?:letters|sounds)-/.test(lessonId)) continue;
+    if (graphemes.has(use.token) && here >= firstSoundLesson) continue;
     const taughtIn = owner.get(use.token);
     const taughtAt = taughtIn ? position.get(taughtIn) : Infinity;
     const isEarly = lesson.kind === "mission" ? taughtAt > here : taughtAt > here || (taughtAt === here && taughtIn !== lessonId);
