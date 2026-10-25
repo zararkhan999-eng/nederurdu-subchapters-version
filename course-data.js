@@ -6564,7 +6564,7 @@ const a1AuthoredCurriculumV4 = {
         ["a0-time-days", "om acht uur"],
         ["a0-numbers-0-10", "vijf"],
         ["a0-numbers-0-10", "acht"],
-        ["a0-ja-nee-goed-niet", "ja"],
+        ["a0-greetings-courtesy", "ja"],
         ["a0-spelling-personal-details", "leeftijd"],
         ["a0-daily-actions", "eten"],
         ["a0-food-drink", "water"],
@@ -7148,6 +7148,14 @@ const a1AuthoredCurriculumV4 = {
         ["nee dank u", "نہیں، شکریہ"]
       ],
       teaching: {
+        graag: {
+          usageUrdu: "کوئی چیز پیش کرے اور آپ لینا چاہیں تو خوشی سے قبول کرنے کے لیے یہ لفظ کہیں۔",
+          usageBoundaryUrdu: "یہ پیشکش قبول کرنے یا پسند بتانے کا لفظ ہے؛ شکریہ یا معذرت کی جگہ نہیں آتا۔",
+          commonConfusionUrdu: "graag خوشی سے ہاں کہنا ہے؛ چیز ملنے کے بعد شکریہ کے لیے dank u wel کہیں۔",
+          exampleDutch: "Alstublieft! — Graag, dank u wel.",
+          exampleUrdu: "ملازم پانی دیتے ہوئے: لیجیے! — آپ: جی خوشی سے، آپ کا شکریہ۔",
+          pronunciationUrdu: "خراخ"
+        },
         "kunt u mij helpen alstublieft": {
           usageUrdu: "کاؤنٹر، اسکول، یا دکان میں مؤدبانہ مدد مانگنے کے لیے مکمل سوال کہیں۔",
           usageBoundaryUrdu: "یہ مدد مانگتا ہے؛ mag ik iets vragen? صرف سوال کرنے کی اجازت مانگتا ہے۔",
@@ -7208,7 +7216,6 @@ const a1AuthoredCurriculumV4 = {
         ["a0-greetings-courtesy", "alstublieft"],
         ["a0-greetings-courtesy", "dank u wel"],
         ["a0-greetings-courtesy", "sorry"],
-        ["a0-greetings-courtesy", "graag"],
         ["a0-understanding-help", "ik begrijp het niet"],
         ["a1-questions", "waar woont u?"]
       ],
@@ -8497,7 +8504,7 @@ const a1AuthoredCurriculumV4 = {
         ["a0-child-school", "ophalen"],
         ["a0-numbers-0-10", "vijf"],
         ["a0-numbers-0-10", "acht"],
-        ["a0-ja-nee-goed-niet", "ja"],
+        ["a0-greetings-courtesy", "ja"],
         ["a0-spelling-personal-details", "leeftijd"],
         ["a1-child-care", "eten mee"]
       ],
@@ -18044,7 +18051,7 @@ const missionRolePlaysV4 = {
       ["you", "ik zoek een woning", ["de badkamer is vies", "ik heb last van lawaai"]],
       ["other", "de woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔"],
       ["you", "hoeveel is de huur?", ["het boek is in de kamer", "kunt u zachter zijn?"], "کرایہ پوچھیں۔"],
-      ["other", "kan ik u nog helpen?", "کیا میں آپ کی مزید مدد کر سکتا ہوں؟"],
+      ["other", "de woning heeft een keuken.", "مکان میں ایک باورچی خانہ ہے۔"],
       ["you", "kan ik de woning bekijken?", ["de keuken is schoon", "er ligt een pakket voor u"], "مکان دیکھنے کی اجازت مانگیں۔"]
     ]
   },
