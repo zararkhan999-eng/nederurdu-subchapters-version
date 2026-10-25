@@ -4245,7 +4245,7 @@ test("A1 Unit 4 manually teaches every new question call and appointment target"
     };
   });
 
-  expect(audit.concepts).toHaveLength(52);
+  expect(audit.concepts).toHaveLength(53);
   for (const concept of audit.concepts) {
     expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
@@ -4540,7 +4540,7 @@ test("A1 Unit 5 manually teaches every new home repair and housing target", asyn
     };
   });
 
-  expect(audit.concepts).toHaveLength(35);
+  expect(audit.concepts).toHaveLength(36);
   for (const concept of audit.concepts) {
     expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
