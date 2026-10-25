@@ -12629,10 +12629,10 @@ const a0AuthoredPatternSpecsV4 = {
       gapDrillV4("hij ___ hier", "werkt", ["werk", "werken"], "وہ یہاں کام کرتا ہے", { werk: "werk ik کے ساتھ آتا ہے؛ hij کے ساتھ آخر میں ٹ: werkt۔", werken: "werken wij کے ساتھ آتا ہے؛ hij کے ساتھ werkt۔" }),
       pickDrillV4("ik werk hier", ["ik werkt hier", "ik werken hier"], "میں یہاں کام کرتا ہوں", { "ik werkt hier": "ik کے ساتھ آخر میں ٹ نہیں لگتی: ik werk۔", "ik werken hier": "werken wij کے ساتھ آتا ہے؛ ik کے ساتھ werk۔" }),
       gapDrillV4("wij ___ hier", "werken", ["werkt", "werk"], "ہم یہاں کام کرتے ہیں", { werkt: "werkt jij یا hij کے ساتھ آتا ہے؛ wij کے ساتھ werken۔", werk: "werk صرف ik کے ساتھ آتا ہے؛ wij کے ساتھ werken۔" }),
-      pickDrillV4("zij woont hier", ["zij woon hier", "zij wonen hier"], "وہ یہاں رہتی ہے", { "zij woon hier": "zij کے ساتھ آخر میں ٹ لگتی ہے: woont۔", "zij wonen hier": "wonen wij کے ساتھ آتا ہے؛ ایک عورت کے لیے woont۔" }),
-      gapDrillV4("ik ___ hier", "woon", ["woont", "wonen"], "میں یہاں رہتا ہوں", { woont: "woont jij، hij، یا zij کے ساتھ ہے؛ اپنے لیے woon۔", wonen: "wonen wij کے ساتھ ہے؛ اپنے لیے woon۔" }),
-      gapDrillV4("hij ___ water", "drinkt", ["drink", "drinken"], "وہ پانی پیتا ہے", { drink: "drink ik کے ساتھ آتا ہے؛ hij کے ساتھ drinkt۔", drinken: "drinken wij کے ساتھ آتا ہے؛ hij کے ساتھ drinkt۔" }),
-      pickDrillV4("jij drinkt water", ["jij drink water", "jij drinken water"], "تم پانی پیتے ہو", { "jij drink water": "jij کے ساتھ آخر میں ٹ لگتی ہے: drinkt۔", "jij drinken water": "drinken wij کے ساتھ آتا ہے؛ jij کے ساتھ drinkt۔" })
+      pickDrillV4("zij woont hier", ["zij woon hier", "ik woont hier"], "وہ یہاں رہتی ہے", { "zij woon hier": "zij کے ساتھ آخر میں ٹ لگتی ہے: woont۔", "ik woont hier": "ik کے ساتھ آخر میں ٹ نہیں لگتی: ik woon؛ zij کے ساتھ woont۔" }),
+      pickDrillV4("ik woon hier", ["ik woont hier", "hij woon hier"], "میں یہاں رہتا ہوں", { "ik woont hier": "woont jij، hij، یا zij کے ساتھ ہے؛ اپنے لیے woon۔", "hij woon hier": "hij کے ساتھ آخر میں ٹ لگتی ہے: hij woont؛ یہاں جملہ اپنے بارے میں ہے۔" }),
+      pickDrillV4("hij drinkt water", ["hij drink water", "ik drinkt water"], "وہ پانی پیتا ہے", { "hij drink water": "hij کے ساتھ آخر میں ٹ لگتی ہے: drinkt۔", "ik drinkt water": "ik کے ساتھ ٹ نہیں لگتی: ik drink؛ یہاں hij ہے۔" }),
+      pickDrillV4("jij drinkt water", ["jij drink water", "hij drink water"], "تم پانی پیتے ہو", { "jij drink water": "jij کے ساتھ آخر میں ٹ لگتی ہے: drinkt۔", "hij drink water": "hij کے ساتھ بھی ٹ لگتی ہے، اور یہاں بات تم سے ہے: jij drinkt۔" })
     ]
   },
   "a0-word-order": {
