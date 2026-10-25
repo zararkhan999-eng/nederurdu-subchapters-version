@@ -513,12 +513,103 @@ function loadProgress() {
         slowAudio: needsSpeechMigration ? true : storedSettings.slowAudio !== false
       }
     };
+    const renamedLessons = migrateRenamedLessonIds(loaded);
     backfillCompletedMastery(loaded);
-    if (!currentRaw && legacyRaw) localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+    if ((!currentRaw && legacyRaw) || renamedLessons) localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
     return loaded;
   } catch {
     return { ...defaultProgress };
   }
+}
+
+// Lessons that moved to another chapter get a new id (the id prefix names the
+// chapter). Saved progress under the old id is carried over on load. Skills
+// are keyed by Dutch and need no change. Running it again changes nothing.
+// A function, not a const: loadProgress() runs before this point in the file.
+function renamedLessonIds() {
+  return {
+    "a0-adjective-endings": "a1-adjective-endings",
+    "a0-comparatives": "a1-comparatives",
+    "a0-past-was-had": "a1-past-was-had",
+    "a0-feelings-reflexive": "a1-feelings-reflexive",
+    "a0-object-pronouns": "a1-object-pronouns",
+    "a0-future-gaan": "a1-future-gaan"
+  };
+}
+
+function renameLessonIdPrefix(value) {
+  if (typeof value !== "string") return value;
+  const renamed = renamedLessonIds();
+  if (renamed[value]) return renamed[value];
+  const separator = value.indexOf(":");
+  const head = separator < 0 ? "" : value.slice(0, separator);
+  return renamed[head] ? `${renamed[head]}${value.slice(separator)}` : value;
+}
+
+function migrateRenamedLessonIds(target) {
+  const renamed = renamedLessonIds();
+  const oldIds = Object.keys(renamed);
+  const mentionsOldId = (value) => typeof value === "string" && oldIds.some((id) => value === id || value.startsWith(`${id}:`));
+  const hasOldData = (target.completedLessons || []).some(mentionsOldId)
+    || oldIds.some((id) => (target.scores || {})[id] != null
+      || (target.lessonMastery || {})[id]
+      || (target.lessonRunProgress || {})[id])
+    || mentionsOldId(target.lastLessonId)
+    || (target.mistakes || []).some((mistake) => mentionsOldId(mistake?.lessonId) || mentionsOldId(mistake?.questionId))
+    || (target.seenQuestionIds || []).some(mentionsOldId)
+    || Object.values(target.skillMastery || {}).some((record) => mentionsOldId(record?.lessonId));
+  if (!hasOldData) return false;
+
+  target.completedLessons = [...new Set((target.completedLessons || []).map(renameLessonIdPrefix))];
+  const scores = { ...(target.scores || {}) };
+  const lessonMastery = { ...(target.lessonMastery || {}) };
+  const lessonRunProgress = { ...(target.lessonRunProgress || {}) };
+  for (const [oldId, newId] of Object.entries(renamed)) {
+    if (scores[oldId] != null) {
+      scores[newId] = Math.max(scores[newId] || 0, scores[oldId] || 0);
+      delete scores[oldId];
+    }
+    if (lessonMastery[oldId]) {
+      const keepNew = statusAtLeast(getMasteryStatus(lessonMastery[newId]), getMasteryStatus(lessonMastery[oldId]));
+      lessonMastery[newId] = keepNew ? lessonMastery[newId] : { ...lessonMastery[oldId], migratedFromLessonId: oldId };
+      delete lessonMastery[oldId];
+    }
+    if (lessonRunProgress[oldId]) {
+      // Run ids are `${lessonId}:run:${semanticKey}`. The A1 lesson groups its
+      // targets differently, so only runs that still exist are kept.
+      const newLesson = getAllLessons().find((lesson) => lesson.id === newId);
+      const validRunIds = new Set((newLesson?.learning?.runs || []).map((run) => run.id));
+      const carry = (ids) => (ids || []).map(renameLessonIdPrefix).filter((id) => validRunIds.has(id));
+      const previous = lessonRunProgress[oldId];
+      const current = lessonRunProgress[newId] || {};
+      const lastRunId = renameLessonIdPrefix(current.lastRunId || previous.lastRunId);
+      lessonRunProgress[newId] = {
+        ...previous,
+        ...current,
+        completedRunIds: [...new Set([...(current.completedRunIds || []), ...carry(previous.completedRunIds)])],
+        practicedRunIds: [...new Set([...(current.practicedRunIds || []), ...carry(previous.practicedRunIds)])],
+        secureRunIds: [...new Set([...(current.secureRunIds || []), ...carry(previous.secureRunIds)])],
+        lastRunId: validRunIds.has(lastRunId) ? lastRunId : undefined
+      };
+      if (!lessonRunProgress[newId].lastRunId) delete lessonRunProgress[newId].lastRunId;
+      delete lessonRunProgress[oldId];
+    }
+  }
+  target.scores = scores;
+  target.lessonMastery = lessonMastery;
+  target.lessonRunProgress = lessonRunProgress;
+  target.lastLessonId = renameLessonIdPrefix(target.lastLessonId);
+  target.seenQuestionIds = [...new Set((target.seenQuestionIds || []).map(renameLessonIdPrefix))];
+  target.mistakes = (target.mistakes || []).map((mistake) => (
+    mistake && typeof mistake === "object"
+      ? { ...mistake, lessonId: renameLessonIdPrefix(mistake.lessonId), questionId: renameLessonIdPrefix(mistake.questionId) }
+      : mistake
+  ));
+  target.skillMastery = Object.fromEntries(Object.entries(target.skillMastery || {}).map(([skillId, record]) => [
+    skillId,
+    record && typeof record === "object" && record.lessonId ? { ...record, lessonId: renameLessonIdPrefix(record.lessonId) } : record
+  ]));
+  return true;
 }
 
 function backfillCompletedMastery(target) {

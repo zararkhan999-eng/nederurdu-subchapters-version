@@ -3474,6 +3474,115 @@ function makeA1ExpansionLessons(spec) {
 
 a1Lessons.push(...a1ExpansionTopics.flatMap(makeA1ExpansionLessons));
 
+// Grammar lessons that began in A0 and now sit in the A1 units that use them:
+// adjective endings and comparatives in shopping, gaan + infinitive and object
+// pronouns in questions and help, ik voel me in health, and the simple past in
+// work and school messages. The seed lists are shared with their authored
+// records in a1AuthoredCurriculumV4.lessons, which replace these shells.
+const a1GrammarSeedsV4 = {
+  "a1-adjective-endings": [
+    ["de blauwe jas", "نیلی جیکٹ"],
+    ["een warme jas", "ایک گرم جیکٹ"],
+    ["ik wil de groene jas", "مجھے سبز جیکٹ چاہیے"],
+    ["de rode deur", "سرخ دروازہ"],
+    ["het witte huis", "وہ سفید گھر"],
+    ["een wit huis", "ایک سفید گھر"],
+    ["het zwarte boek", "وہ کالی کتاب"],
+    ["een zwart boek", "ایک کالی کتاب"]
+  ],
+  "a1-comparatives": [
+    ["duurder", "زیادہ مہنگا"],
+    ["goedkoper", "زیادہ سستا"],
+    ["dit is goedkoper", "یہ زیادہ سستا ہے"],
+    ["koffie is duurder dan thee", "کافی چائے سے مہنگی ہے"],
+    ["beter", "بہتر"],
+    ["dit is beter", "یہ بہتر ہے"],
+    ["kouder", "زیادہ ٹھنڈا"],
+    ["vandaag is het kouder", "آج زیادہ ٹھنڈ ہے"]
+  ],
+  "a1-future-gaan": [
+    ["ik ga werken", "میں کام کرنے جا رہا / رہی ہوں"],
+    ["ik ga morgen werken", "میں کل کام کروں گا / گی"],
+    ["morgen ga ik werken", "کل میں کام کروں گا / گی"],
+    ["wij gaan eten", "ہم کھانا کھانے جا رہے ہیں"],
+    ["hij gaat slapen", "وہ سونے جا رہا ہے"],
+    ["ik ga de school bellen", "میں اسکول کو فون کروں گا / گی"],
+    ["zaterdag ga ik naar de winkel", "ہفتے کو میں دکان جاؤں گا / گی"],
+    ["wat ga je morgen doen?", "تم کل کیا کرو گے؟"]
+  ],
+  "a1-object-pronouns": [
+    ["hem", "اسے، کسی مرد یا لڑکے کو"],
+    ["ons", "ہمیں"],
+    ["kunt u hem helpen?", "کیا آپ اس کی مدد کر سکتے ہیں؟"],
+    ["kunt u ons helpen?", "کیا آپ ہماری مدد کر سکتے ہیں؟"],
+    ["ik bel haar", "میں اسے فون کرتا / کرتی ہوں"],
+    ["bel mij morgen", "مجھے کل فون کریں"],
+    ["ik breng hem naar school", "میں اسے اسکول لے جاتا / جاتی ہوں"],
+    ["ik haal haar om drie uur op", "میں اسے تین بجے لے آتا / آتی ہوں"]
+  ],
+  "a1-feelings-reflexive": [
+    ["ik voel me goed", "میں اچھا محسوس کرتا / کرتی ہوں"],
+    ["ik voel me ziek", "میں بیمار محسوس کرتا / کرتی ہوں"],
+    ["ik voel me niet goed", "میری طبیعت ٹھیک نہیں"],
+    ["ik voel me beter", "اب میں بہتر محسوس کرتا / کرتی ہوں"],
+    ["hoe voel je je?", "تم کیسا محسوس کرتے ہو؟"],
+    ["hoe voelt u zich?", "آپ کیسا محسوس کرتے ہیں؟"],
+    ["zij voelt zich ziek", "وہ بیمار محسوس کرتی ہے"],
+    ["ik ben moe", "میں تھکا / تھکی ہوں"]
+  ],
+  "a1-past-was-had": [
+    ["ik was ziek", "میں بیمار تھا / تھی"],
+    ["ik had pijn", "مجھے درد تھا"],
+    ["gisteren was ik ziek", "کل میں بیمار تھا / تھی"],
+    ["ik had gisteren hoofdpijn", "کل میرے سر میں درد تھا"],
+    ["hij was ziek", "وہ بیمار تھا"],
+    ["wij waren te laat", "ہمیں دیر ہو گئی تھی"],
+    ["ik ging naar huis", "میں گھر گیا / گئی"],
+    ["zij ging naar de dokter", "وہ ڈاکٹر کے پاس گئی"]
+  ]
+};
+
+function makeA1GrammarShellV4({ id, unit, title, visual }) {
+  const seeds = a1GrammarSeedsV4[id];
+  const concepts = [
+    dailyConcept(`${id}-visual`, visual[0], visual[1], visual[2]),
+    ...seeds.map(([dutch, urdu], index) => (
+      dutchWordsV4Shell(dutch) > 1
+        ? a1Phrase(`${id}-p${index + 1}`, dutch, urdu, `حال: ${urdu}`)
+        : dailyConcept(`${id}-w${index + 1}`, dutch, urdu)
+    ))
+  ];
+  const phrases = seeds.filter(([dutch]) => dutchWordsV4Shell(dutch) > 1);
+  return makeA1PracticalLesson({
+    id,
+    unit,
+    title,
+    description: "",
+    explanation: practicalExplanation(title, ["پہلے مثال سنیں۔", "پھر شکل پہچانیں۔", "آخر میں اسی شکل سے جملہ بنائیں۔"]),
+    concepts,
+    listenReplies: [],
+    builds: phrases.slice(0, 3).map(([dutch, urdu]) => [
+      urdu,
+      dutch.replace(/[?]/g, "").split(/\s+/),
+      dutch.replace(/[?]/g, ""),
+      `صحیح ترتیب: ${dutch}۔`
+    ])
+  });
+}
+
+function dutchWordsV4Shell(dutch) {
+  return String(dutch).trim().split(/\s+/).length;
+}
+
+a1Lessons.push(
+  makeA1GrammarShellV4({ id: "a1-adjective-endings", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "De blauwe jas", visual: ["jas", "جیکٹ", "jas"] }),
+  makeA1GrammarShellV4({ id: "a1-comparatives", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "Duurder en goedkoper", visual: ["winkel", "دکان", "winkel"] }),
+  makeA1GrammarShellV4({ id: "a1-future-gaan", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Morgen ga ik werken", visual: ["werk", "کام", "werk"] }),
+  makeA1GrammarShellV4({ id: "a1-object-pronouns", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Mij, hem, haar, ons", visual: ["telefoon", "فون", "telefoon"] }),
+  makeA1GrammarShellV4({ id: "a1-feelings-reflexive", unit: "A1: ڈاکٹر، علامات اور دوا", title: "Ik voel me ...", visual: ["ziek", "بیمار", "ziek"] }),
+  makeA1GrammarShellV4({ id: "a1-past-was-had", unit: "A1: پیغام، اسکول اور کام", title: "Gisteren: was, had, ging", visual: ["bericht", "پیغام", "bericht"] })
+);
+
 const a0DailyCheckpointConcepts = [
   dailyConcept("check-greeting", "goedemorgen", "صبح بخیر", "goedemorgen"),
   dailyConcept("check-thanks", "dank u wel", "آپ کا شکریہ", "thanks"),
@@ -3830,9 +3939,10 @@ a0DailyLessons.push(
   })
 );
 
-// Core grammar lessons (roadmap 3.1): verb endings, adjective endings,
-// comparatives, plurals with er is/er zijn, simple past, ik voel me, object
-// pronouns, and gaan + infinitive. Each uses only words taught before it.
+// Core grammar lessons (roadmap 3.1): verb endings and plurals with er is/er
+// zijn. Each uses only words taught before it. Adjective endings, comparatives,
+// the simple past, ik voel me, object pronouns, and gaan + infinitive are A1
+// lessons (a1AuthoredCurriculumV4).
 a0DailyLessons.push(
   makeA0DailyLesson({
     id: "a0-verb-endings",
@@ -3882,104 +3992,6 @@ a0DailyLessons.push(
     ]
   }),
   makeA0DailyLesson({
-    id: "a0-adjective-endings",
-    unit: "A0: رنگ اسم سے پہلے",
-    title: "De blauwe jas",
-    description: "رنگ یا صفت اسم سے پہلے آئے تو اکثر آخر میں اَ لگتی ہے: de blauwe jas۔ een کے ساتھ het والے اسم پر نہیں: een wit huis۔",
-    explanation: {
-      title: "is کے بعد blauw، اسم سے پہلے blauwe",
-      points: [
-        "de jas is blauw = جیکٹ نیلی ہے۔ de blauwe jas = نیلی جیکٹ۔",
-        "اسم سے پہلے صفت کے آخر میں اَ لگتی ہے: de rode deur، een warme jas۔",
-        "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een wit huis، مگر het witte huis۔"
-      ],
-      note: "لکھنے میں کبھی حرف دگنا یا کم ہوتا ہے: wit سے witte، rood سے rode۔"
-    },
-    concepts: [
-      dailyConcept("adj-de-blauwe-jas", "de blauwe jas", "نیلی جیکٹ", "", "phrase"),
-      dailyConcept("adj-een-warme-jas", "een warme jas", "ایک گرم جیکٹ", "", "phrase"),
-      dailyConcept("adj-de-rode-deur", "de rode deur", "سرخ دروازہ", "", "phrase"),
-      dailyConcept("adj-het-witte-huis", "het witte huis", "سفید گھر (وہ خاص گھر)", "", "phrase"),
-      dailyConcept("adj-een-wit-huis", "een wit huis", "ایک سفید گھر", "", "phrase"),
-      dailyConcept("adj-een-zwart-boek", "een zwart boek", "ایک کالی کتاب", "", "phrase"),
-      dailyConcept("adj-het-zwarte-boek", "het zwarte boek", "کالی کتاب (وہ خاص کتاب)", "", "phrase"),
-      dailyConcept("adj-groene-jas", "ik wil de groene jas", "مجھے سبز جیکٹ چاہیے", "", "phrase"),
-      dailyConcept("review-rood", "rood", "سرخ"),
-      dailyConcept("review-groen", "groen", "سبز"),
-      dailyConcept("review-warm", "warm", "گرم")
-    ],
-    listenReplies: [
-      ["welke jas wilt u?", ["ik wil de groene jas", "een wit huis", "het zwarte boek"], "ik wil de groene jas", "سوال جیکٹ کا ہے؛ جیکٹ کا رنگ بتائیں۔"]
-    ],
-    fills: [
-      ["de ___ jas", ["blauwe", "blauw", "kleur"], "blauwe", "اسم سے پہلے: blauwe۔"],
-      ["een ___ huis", ["wit", "witte", "kleur"], "wit", "een اور het والا اسم: کوئی تبدیلی نہیں۔"],
-      ["het ___ huis", ["witte", "wit", "kleur"], "witte", "het کے بعد آخر میں اَ، اور ٹ دگنی۔"],
-      ["een ___ jas", ["warme", "warm", "kleur"], "warme", "jas کے ساتھ de آتا ہے، اس لیے een کے بعد بھی warme۔"]
-    ],
-    situations: [
-      ["حال: دکان میں کئی رنگ کی جیکٹیں ہیں۔ آپ کو سبز والی چاہیے۔", ["ik wil de groene jas", "ik wil de groen jas", "de jas is groen"], "ik wil de groene jas", "اسم سے پہلے groene۔"],
-      ["حال: گلی میں صرف ایک سفید گھر ہے۔ اسی خاص گھر کی طرف اشارہ کریں۔", ["het witte huis", "een wit huis", "het wit huis"], "het witte huis", "het کے بعد witte۔"],
-      ["حال: دکان میں کوئی بھی ایک کالی کتاب چاہیے، کوئی خاص کتاب نہیں۔", ["een zwart boek", "een zwarte boek", "het zwart boek"], "een zwart boek", "een اور het والا اسم: zwart۔"],
-      ["حال: سردی ہے؛ آپ کو کوئی بھی ایک گرم جیکٹ چاہیے۔", ["een warme jas", "een warm jas", "de jas is warm"], "een warme jas", "jas کے ساتھ de آتا ہے: een warme jas۔"]
-    ],
-    builds: [
-      ["مجھے سبز جیکٹ چاہیے", ["ik", "wil", "de", "groene", "jas"], "ik wil de groene jas", "صفت اسم سے پہلے۔"],
-      ["ایک سفید گھر", ["een", "wit", "huis"], "een wit huis", "een اور het والا اسم۔"],
-      ["سرخ دروازہ", ["de", "rode", "deur"], "de rode deur", "rood سے rode۔"]
-    ]
-  }),
-  makeA0DailyLesson({
-    id: "a0-comparatives",
-    unit: "A0: موازنہ",
-    title: "Duurder en goedkoper",
-    description: "دو چیزوں کا موازنہ کرنا: زیادہ مہنگا، زیادہ سستا، بہتر، اور زیادہ ٹھنڈا۔",
-    explanation: {
-      title: "زیادہ کے لیے آخر میں اَر: duur سے duurder",
-      points: [
-        "goedkoop سے goedkoper، duur سے duurder، koud سے kouder۔",
-        "goed سے beter: یہ شکل الگ ہے۔",
-        "دو چیزوں کا موازنہ dan سے: koffie is duurder dan thee۔"
-      ],
-      note: "اردو میں ‘سے زیادہ’ کہتے ہیں؛ ڈچ میں صفت کے آخر میں اَر لگا کر پھر dan کہیں۔"
-    },
-    concepts: [
-      dailyConcept("compare-more-expensive", "duurder", "زیادہ مہنگا"),
-      dailyConcept("compare-cheaper", "goedkoper", "زیادہ سستا"),
-      dailyConcept("compare-better", "beter", "بہتر"),
-      dailyConcept("compare-colder", "kouder", "زیادہ ٹھنڈا"),
-      dailyConcept("compare-warmer", "warmer", "زیادہ گرم"),
-      dailyConcept("compare-this-cheaper", "dit is goedkoper", "یہ زیادہ سستا ہے", "", "phrase"),
-      dailyConcept("compare-coffee-tea", "koffie is duurder dan thee", "کافی چائے سے مہنگی ہے", "", "phrase"),
-      dailyConcept("compare-colder-today", "vandaag is het kouder", "آج زیادہ ٹھنڈ ہے", "", "phrase"),
-      dailyConcept("compare-this-better", "dit is beter", "یہ بہتر ہے", "", "phrase"),
-      dailyConcept("review-goedkoop", "goedkoop", "سستا"),
-      dailyConcept("review-duur", "duur", "مہنگا"),
-      dailyConcept("review-goed", "goed", "اچھا"),
-      dailyConcept("review-koud", "koud", "ٹھنڈا"),
-      dailyConcept("review-warm-2", "warm", "گرم")
-    ],
-    listenReplies: [
-      ["welke is goedkoper?", ["dit is goedkoper", "vandaag is het kouder", "koffie, alstublieft"], "dit is goedkoper", "سستی چیز کی طرف اشارہ کریں۔"]
-    ],
-    fills: [
-      ["koffie is duurder ___ thee", ["dan", "dat", "de"], "dan", "موازنے میں dan۔"],
-      ["koffie is ___ dan thee", ["duurder", "duur", "goedkoop"], "duurder", "dan سے پہلے اَر والی شکل۔"],
-      ["het is ___ dan gisteren", ["kouder", "koud", "warm"], "kouder", "dan سے پہلے kouder۔"],
-      ["dit is ___ dan dat", ["beter", "goed", "goedkoop"], "beter", "goed کی موازنے والی شکل beter ہے۔"]
-    ],
-    situations: [
-      ["حال: دکان میں دو قمیصیں ہیں۔ دوست کو بتائیں کہ یہ والی زیادہ سستی ہے۔", ["dit is goedkoper", "dit is goedkoop dan", "koffie is duurder dan thee"], "dit is goedkoper", "goedkoop سے goedkoper۔"],
-      ["حال: کیفے میں دوست پوچھتا ہے کہ کافی اور چائے میں کون سی زیادہ مہنگی ہے۔ بتائیں کہ کافی۔", ["koffie is duurder dan thee", "koffie is duur dan thee", "dit is goedkoper"], "koffie is duurder dan thee", "duurder dan۔"],
-      ["حال: کل ٹھنڈ تھی مگر آج اس سے بھی زیادہ ہے۔", ["vandaag is het kouder", "vandaag is het koud", "vandaag is het warmer"], "vandaag is het kouder", "زیادہ ٹھنڈ: kouder۔"]
-    ],
-    builds: [
-      ["کافی چائے سے مہنگی ہے", ["koffie", "is", "duurder", "dan", "thee"], "koffie is duurder dan thee", "duurder، پھر dan۔"],
-      ["یہ زیادہ سستا ہے", ["dit", "is", "goedkoper"], "dit is goedkoper", "goedkoper۔"],
-      ["آج زیادہ ٹھنڈ ہے", ["vandaag", "is", "het", "kouder"], "vandaag is het kouder", "وقت پہلے، پھر is۔"]
-    ]
-  }),
-  makeA0DailyLesson({
     id: "a0-plurals-er-is",
     unit: "A0: ایک یا زیادہ",
     title: "Meervoud: er is, er zijn",
@@ -3994,6 +4006,8 @@ a0DailyLessons.push(
       note: "جمع اسم کے ساتھ ہمیشہ de آتا ہے: het boek مگر de boeken۔"
     },
     concepts: [
+      dailyConcept("review-stoel", "stoel", "کرسی"),
+      dailyConcept("review-tafel", "tafel", "میز"),
       dailyConcept("plural-chairs", "stoelen", "کرسیاں"),
       dailyConcept("plural-tables", "tafels", "میزیں"),
       dailyConcept("plural-rooms", "kamers", "کمرے"),
@@ -4002,8 +4016,6 @@ a0DailyLessons.push(
       dailyConcept("plural-there-is-chair", "er is een stoel", "ایک کرسی ہے", "", "phrase"),
       dailyConcept("plural-there-are-chairs", "er zijn twee stoelen", "دو کرسیاں ہیں", "", "phrase"),
       dailyConcept("plural-three-rooms", "er zijn drie kamers", "تین کمرے ہیں", "", "phrase"),
-      dailyConcept("review-stoel", "stoel", "کرسی"),
-      dailyConcept("review-tafel", "tafel", "میز"),
       dailyConcept("review-kamer", "kamer", "کمرہ"),
       dailyConcept("review-het-boek", "het boek", "کتاب"),
       dailyConcept("review-twee-boeken", "twee boeken", "دو کتابیں", "", "phrase")
@@ -4026,191 +4038,6 @@ a0DailyLessons.push(
       ["دو کرسیاں ہیں", ["er", "zijn", "twee", "stoelen"], "er zijn twee stoelen", "کئی چیزیں: er zijn۔"],
       ["تین کمرے ہیں", ["er", "zijn", "drie", "kamers"], "er zijn drie kamers", "kamer سے kamers۔"],
       ["ایک کرسی ہے", ["er", "is", "een", "stoel"], "er is een stoel", "ایک چیز: er is۔"]
-    ]
-  }),
-  makeA0DailyLesson({
-    id: "a0-past-was-had",
-    unit: "A0: گزرا ہوا وقت",
-    title: "Gisteren: was, had, ging",
-    description: "کل یا پہلے کی بات بتانا: میں بیمار تھا، مجھے درد تھا، میں گھر گیا۔",
-    explanation: {
-      title: "گزری بات: ben سے was، heb سے had، ga سے ging",
-      points: [
-        "ik ben ziek = میں بیمار ہوں؛ ik was ziek = میں بیمار تھا / تھی۔",
-        "ik heb pijn = مجھے درد ہے؛ ik had pijn = مجھے درد تھا۔",
-        "ik ga naar huis = میں گھر جاتا ہوں؛ ik ging naar huis = میں گھر گیا / گئی۔ wij کے ساتھ: wij waren۔"
-      ],
-      note: "gisteren پہلے آئے تو فعل دوسرے نمبر پر آتا ہے: gisteren was ik ziek۔"
-    },
-    concepts: [
-      dailyConcept("past-i-was-ill", "ik was ziek", "میں بیمار تھا / تھی", "", "phrase"),
-      dailyConcept("past-i-had-pain", "ik had pijn", "مجھے درد تھا", "", "phrase"),
-      dailyConcept("past-i-went-home", "ik ging naar huis", "میں گھر گیا / گئی", "", "phrase"),
-      dailyConcept("past-he-was-ill", "hij was ziek", "وہ بیمار تھا", "", "phrase"),
-      dailyConcept("past-we-were-late", "wij waren te laat", "ہمیں دیر ہو گئی تھی", "", "phrase"),
-      dailyConcept("past-yesterday-ill", "gisteren was ik ziek", "کل میں بیمار تھا / تھی", "", "phrase"),
-      dailyConcept("past-headache", "ik had gisteren hoofdpijn", "کل میرے سر میں درد تھا", "", "phrase"),
-      dailyConcept("past-she-went-doctor", "zij ging naar de dokter", "وہ ڈاکٹر کے پاس گئی", "", "phrase"),
-      dailyConcept("review-ik-ben-ziek", "ik ben ziek", "میں بیمار ہوں", "", "phrase"),
-      dailyConcept("review-ik-heb-pijn", "ik heb pijn", "مجھے درد ہے", "", "phrase"),
-      dailyConcept("review-ik-ga-naar-huis", "ik ga naar huis", "میں گھر جاتا / جاتی ہوں", "", "phrase")
-    ],
-    listenReplies: [
-      ["wat had u gisteren?", ["ik had gisteren hoofdpijn", "ik ging naar huis", "wij waren te laat"], "ik had gisteren hoofdpijn", "کل کی تکلیف بتائیں۔"]
-    ],
-    fills: [
-      ["ik ___ gisteren ziek", ["was", "ben", "is"], "was", "gisteren = گزری بات: was۔"],
-      ["gisteren ___ ik pijn", ["had", "heb", "ben"], "had", "gisteren پہلے، پھر فعل، پھر ik۔"],
-      ["gisteren ___ wij te laat", ["waren", "was", "zijn"], "waren", "wij کے ساتھ: waren۔"],
-      ["zij ___ gisteren naar de dokter", ["ging", "gaat", "ga"], "ging", "gaan کی گزری شکل: ging۔"]
-    ],
-    situations: [
-      ["حال: کام پر مینیجر پوچھتا ہے کہ آپ کل کیوں نہیں آئے۔ بتائیں کہ کل آپ بیمار تھے۔", ["gisteren was ik ziek", "gisteren ik was ziek", "gisteren ben ik ziek"], "gisteren was ik ziek", "gisteren کے بعد پہلے فعل۔"],
-      ["حال: ڈاکٹر کو بتائیں کہ کل آپ کے سر میں درد تھا۔", ["ik had gisteren hoofdpijn", "ik heb gisteren hoofdpijn", "ik ging naar huis"], "ik had gisteren hoofdpijn", "گزری بات: had۔"],
-      ["حال: استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔", ["zij ging naar de dokter", "zij gaat naar de dokter", "hij was ziek"], "zij ging naar de dokter", "گزری بات: ging۔"]
-    ],
-    builds: [
-      ["کل میں بیمار تھا", ["gisteren", "was", "ik", "ziek"], "gisteren was ik ziek", "وقت، فعل، پھر ik۔"],
-      ["میں گھر گیا", ["ik", "ging", "naar", "huis"], "ik ging naar huis", "ga سے ging۔"],
-      ["ہمیں دیر ہو گئی تھی", ["wij", "waren", "te", "laat"], "wij waren te laat", "wij کے ساتھ waren۔"]
-    ]
-  }),
-  makeA0DailyLesson({
-    id: "a0-feelings-reflexive",
-    unit: "A0: طبیعت کیسی ہے",
-    title: "Ik voel me ...",
-    description: "اپنی طبیعت بتانا اور دوسروں سے پوچھنا: ik voel me goed، hoe voelt u zich?",
-    explanation: {
-      title: "محسوس کرنا: ik voel me",
-      points: [
-        "ik voel me goed = میں اچھا محسوس کرتا / کرتی ہوں۔",
-        "me کا مطلب ہے ‘خود کو’، اور یہ ضروری ہے: ik voel me ziek۔",
-        "سوال: hoe voel je je? (دوست سے)، hoe voelt u zich? (ادب سے)۔"
-      ],
-      note: "تھکاوٹ کے لیے یہ ڈھانچہ نہیں: ik ben moe۔"
-    },
-    concepts: [
-      dailyConcept("feel-good", "ik voel me goed", "میں اچھا محسوس کرتا / کرتی ہوں", "", "phrase"),
-      dailyConcept("feel-ill", "ik voel me ziek", "میں بیمار محسوس کرتا / کرتی ہوں", "", "phrase"),
-      dailyConcept("feel-not-well", "ik voel me niet goed", "میری طبیعت ٹھیک نہیں", "", "phrase"),
-      dailyConcept("feel-better", "ik voel me beter", "اب میں بہتر محسوس کرتا / کرتی ہوں", "", "phrase"),
-      dailyConcept("feel-how-you", "hoe voel je je?", "تم کیسا محسوس کرتے ہو؟", "", "phrase"),
-      dailyConcept("feel-how-polite", "hoe voelt u zich?", "آپ کیسا محسوس کرتے ہیں؟", "", "phrase"),
-      dailyConcept("feel-she-ill", "zij voelt zich ziek", "وہ بیمار محسوس کرتی ہے", "", "phrase"),
-      dailyConcept("feel-tired", "ik ben moe", "میں تھکا / تھکی ہوں", "", "phrase"),
-      dailyConcept("review-ik-ben-ziek-2", "ik ben ziek", "میں بیمار ہوں", "", "phrase")
-    ],
-    listenReplies: [
-      ["hoe voelt u zich?", ["ik voel me beter", "om acht uur", "ga rechtdoor"], "ik voel me beter", "حال کا سوال ہے؛ اپنی طبیعت بتائیں۔"]
-    ],
-    fills: [
-      ["ik voel ___ goed", ["me", "je", "zich"], "me", "ik کے ساتھ me۔"],
-      ["hoe voelt u ___?", ["zich", "me", "je"], "zich", "u کے ساتھ zich۔"],
-      ["hoe voel je ___?", ["je", "me", "zich"], "je", "دوست سے: hoe voel je je?"],
-      ["zij voelt ___ ziek", ["zich", "me", "je"], "zich", "zij کے ساتھ zich۔"]
-    ],
-    situations: [
-      ["حال: دوائی کے دو دن بعد ڈاکٹر حال پوچھتا ہے۔ اب آپ پہلے سے اچھا محسوس کرتے ہیں۔", ["ik voel me beter", "ik voel beter", "ik voel me goed dan"], "ik voel me beter", "me ضروری ہے۔"],
-      ["حال: کام پر صبح سے طبیعت خراب ہے۔ مینیجر کو بتائیں۔", ["ik voel me niet goed", "ik voel niet goed", "ik voel me goed"], "ik voel me niet goed", "ik voel me، پھر niet goed۔"],
-      ["حال: استقبالیہ پر آپ ایک بزرگ مریض سے ادب سے ان کا حال پوچھتے ہیں۔", ["hoe voelt u zich?", "hoe voel je je?", "hoe voelt u me?"], "hoe voelt u zich?", "ادب سے: u اور zich۔"]
-    ],
-    builds: [
-      ["میری طبیعت ٹھیک نہیں", ["ik", "voel", "me", "niet", "goed"], "ik voel me niet goed", "ik voel me + niet goed۔"],
-      ["آپ کیسا محسوس کرتے ہیں؟", ["hoe", "voelt", "u", "zich"], "hoe voelt u zich", "ادب کا سوال۔"],
-      ["اب میں بہتر محسوس کرتا ہوں", ["ik", "voel", "me", "beter"], "ik voel me beter", "beter آخر میں۔"]
-    ]
-  }),
-  makeA0DailyLesson({
-    id: "a0-object-pronouns",
-    unit: "A0: مجھے، اسے، ہمیں",
-    title: "Mij, hem, haar, ons",
-    description: "فعل کے بعد شخص کی شکل بدلنا: کیا آپ ہماری مدد کر سکتے ہیں؟ میں اسے فون کرتا ہوں۔",
-    explanation: {
-      title: "فعل کے بعد: mij، hem، haar، ons",
-      points: [
-        "ik سے mij، hij سے hem، zij سے haar، wij سے ons۔",
-        "kunt u ons helpen? = کیا آپ ہماری مدد کر سکتے ہیں؟ ik bel hem = میں اسے فون کرتا ہوں۔",
-        "haar کے دو کام ہیں: haar pen = اس کا قلم؛ ik bel haar = میں اسے فون کرتا ہوں۔"
-      ],
-      note: "فعل کے بعد ik، hij، یا wij نہیں آتا: kunt u hij helpen غلط ہے۔"
-    },
-    concepts: [
-      dailyConcept("object-him", "hem", "اسے (مرد کو)"),
-      dailyConcept("object-us", "ons", "ہمیں"),
-      dailyConcept("object-help-him", "kunt u hem helpen?", "کیا آپ اس کی مدد کر سکتے ہیں؟", "", "phrase"),
-      dailyConcept("object-help-us", "kunt u ons helpen?", "کیا آپ ہماری مدد کر سکتے ہیں؟", "", "phrase"),
-      dailyConcept("object-call-her", "ik bel haar", "میں اسے (عورت کو) فون کرتا / کرتی ہوں", "", "phrase"),
-      dailyConcept("object-call-me", "bel mij morgen", "مجھے کل فون کریں", "", "phrase"),
-      dailyConcept("object-bring-him", "ik breng hem naar school", "میں اسے اسکول لے جاتا / جاتی ہوں", "", "phrase"),
-      dailyConcept("object-pick-her-up", "ik haal haar om drie uur op", "میں اسے تین بجے لے آتا / آتی ہوں", "", "phrase"),
-      dailyConcept("review-hij", "hij", "وہ (مرد)"),
-      dailyConcept("review-wij", "wij", "ہم"),
-      dailyConcept("review-help-me", "kunt u mij helpen?", "کیا آپ میری مدد کر سکتے ہیں؟", "", "phrase"),
-      dailyConcept("review-haar-pen", "haar pen", "اس کا قلم", "", "phrase")
-    ],
-    listenReplies: [
-      ["wie brengt uw zoon naar school?", ["ik breng hem naar school", "bel mij morgen", "ik bel haar"], "ik breng hem naar school", "بیٹے کو اسکول کون لے جاتا ہے؟ اپنے بارے میں بتائیں۔"]
-    ],
-    fills: [
-      ["kunt u ___ helpen?", ["ons", "wij", "ik"], "ons", "فعل کے بعد wij نہیں، ons۔"],
-      ["ik breng ___ naar school", ["hem", "hij", "ik"], "hem", "فعل کے بعد hij نہیں، hem۔"],
-      ["bel ___ morgen", ["mij", "ik", "mijn"], "mij", "فعل کے بعد ik نہیں، mij۔"],
-      ["ik haal ___ om drie uur op", ["haar", "zij", "wij"], "haar", "فعل کے بعد zij نہیں، haar۔"]
-    ],
-    situations: [
-      ["حال: بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔", ["kunt u hem helpen?", "kunt u hij helpen?", "kunt u ons helpen?"], "kunt u hem helpen?", "مرد یا لڑکے کے لیے hem۔"],
-      ["حال: آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے مدد مانگیں۔", ["kunt u ons helpen?", "kunt u wij helpen?", "kunt u hem helpen?"], "kunt u ons helpen?", "ہمیں = ons۔"],
-      ["حال: استاد پوچھتی ہیں کہ بیٹی کو کون لے جائے گا۔ بتائیں کہ آپ اسے تین بجے لے جائیں گے۔", ["ik haal haar om drie uur op", "ik haal zij om drie uur op", "ik bel haar"], "ik haal haar om drie uur op", "فعل کے بعد haar۔"]
-    ],
-    builds: [
-      ["کیا آپ ہماری مدد کر سکتے ہیں؟", ["kunt", "u", "ons", "helpen"], "kunt u ons helpen", "ons فعل سے پہلے، آخر میں helpen۔"],
-      ["میں اسے اسکول لے جاتا ہوں", ["ik", "breng", "hem", "naar", "school"], "ik breng hem naar school", "breng کے بعد hem۔"],
-      ["مجھے کل فون کریں", ["bel", "mij", "morgen"], "bel mij morgen", "bel کے بعد mij۔"]
-    ]
-  }),
-  makeA0DailyLesson({
-    id: "a0-future-gaan",
-    unit: "A0: آنے والا وقت",
-    title: "Morgen ga ik werken",
-    description: "آنے والے کام اور منصوبے بتانا: ik ga morgen werken، wij gaan eten۔",
-    explanation: {
-      title: "آنے والا کام: gaan اور آخر میں پورا فعل",
-      points: [
-        "ik ga werken = میں کام کرنے جا رہا / رہی ہوں، یعنی کام کروں گا / گی۔",
-        "پورا فعل جملے کے آخر میں آتا ہے: ik ga morgen werken۔",
-        "وقت پہلے ہو تو فعل دوسرے نمبر پر: morgen ga ik werken۔"
-      ],
-      note: "گزری بات: gisteren was ik ziek؛ آنے والی بات: morgen ga ik werken۔"
-    },
-    concepts: [
-      dailyConcept("future-go-work", "ik ga werken", "میں کام کرنے جا رہا / رہی ہوں", "", "phrase"),
-      dailyConcept("future-work-tomorrow", "ik ga morgen werken", "میں کل کام کروں گا / گی", "", "phrase"),
-      dailyConcept("future-tomorrow-first", "morgen ga ik werken", "کل میں کام کروں گا / گی", "", "phrase"),
-      dailyConcept("future-we-eat", "wij gaan eten", "ہم کھانا کھانے جا رہے ہیں", "", "phrase"),
-      dailyConcept("future-he-sleeps", "hij gaat slapen", "وہ سونے جا رہا ہے", "", "phrase"),
-      dailyConcept("future-call-school", "ik ga de school bellen", "میں اسکول کو فون کروں گا / گی", "", "phrase"),
-      dailyConcept("future-saturday-shop", "zaterdag ga ik naar de winkel", "ہفتے کو میں دکان جاؤں گا / گی", "", "phrase"),
-      dailyConcept("future-what-do", "wat ga je morgen doen?", "تم کل کیا کرو گے؟", "", "phrase"),
-      dailyConcept("review-ik-werk-vandaag", "ik werk vandaag", "میں آج کام کرتا / کرتی ہوں", "", "phrase")
-    ],
-    listenReplies: [
-      ["wat ga je morgen doen?", ["ik ga morgen werken", "ik was ziek", "ik had pijn"], "ik ga morgen werken", "کل کا منصوبہ بتائیں، گزری بات نہیں۔"]
-    ],
-    fills: [
-      ["ik ga morgen ___", ["werken", "werk", "werkt"], "werken", "gaan کے بعد پورا فعل آخر میں۔"],
-      ["morgen ___ ik werken", ["ga", "gaat", "gaan"], "ga", "وقت پہلے، پھر ga، پھر ik۔"],
-      ["wij ___ eten", ["gaan", "ga", "gaat"], "gaan", "wij کے ساتھ gaan۔"],
-      ["hij gaat ___", ["slapen", "slaap", "gaat"], "slapen", "gaat کے بعد پورا فعل۔"]
-    ],
-    situations: [
-      ["حال: ساتھی پوچھتا ہے کہ آپ کل کیا کریں گے۔ وقت پہلے رکھ کر بتائیں کہ کام کریں گے۔", ["morgen ga ik werken", "morgen ik ga werken", "morgen ga ik werk"], "morgen ga ik werken", "وقت، ga، ik، پھر پورا فعل۔"],
-      ["حال: دوست کو بتائیں کہ آپ اسکول کو فون کریں گے۔", ["ik ga de school bellen", "ik ga bellen de school", "ik ga de school bel"], "ik ga de school bellen", "پورا فعل آخر میں۔"],
-      ["حال: شام کو بچوں کو بتانا ہے کہ اب سب کھانا کھانے جا رہے ہیں۔", ["wij gaan eten", "wij gaat eten", "wij eten gaan"], "wij gaan eten", "wij کے ساتھ gaan۔"]
-    ],
-    builds: [
-      ["کل میں کام کروں گا", ["morgen", "ga", "ik", "werken"], "morgen ga ik werken", "وقت، ga، ik، werken۔"],
-      ["ہم کھانا کھانے جا رہے ہیں", ["wij", "gaan", "eten"], "wij gaan eten", "gaan، پھر eten۔"],
-      ["تم کل کیا کرو گے؟", ["wat", "ga", "je", "morgen", "doen"], "wat ga je morgen doen", "سوال کا لفظ پہلے، doen آخر میں۔"]
     ]
   })
 );
@@ -4276,9 +4103,9 @@ const a0LessonOrder = [
   "a0-understanding-help", "a0-language-help", "a0-checkpoint", "a0-numbers-0-10", "a0-numbers-11-100", "a0-time-days",
   "a0-telling-time", "a0-spelling-personal-details", "a0-address-phone", "a0-date-appointment", "a0-months-dates", "a0-place-1",
   "a0-place-2", "a0-gaan-komen", "a0-naar-met", "a0-home-needs", "a0-plurals-er-is", "a0-daily-actions",
-  "a0-food-drink", "a0-colours-clothes", "a0-adjective-endings", "a0-shopping-payment", "a0-comparatives", "a0-transport-directions",
-  "a0-health-emergency", "a0-body-health", "a0-feelings-reflexive", "a0-emergency-police", "a0-past-was-had", "a0-child-school",
-  "a0-object-pronouns", "a0-work-basics", "a0-future-gaan", "a0-weather-clothing-safety", "a0-daily-checkpoint"
+  "a0-food-drink", "a0-colours-clothes", "a0-shopping-payment", "a0-transport-directions",
+  "a0-health-emergency", "a0-body-health", "a0-emergency-police", "a0-child-school",
+  "a0-work-basics", "a0-weather-clothing-safety", "a0-daily-checkpoint"
 ];
 
 const a0OrderIndex = new Map(a0LessonOrder.map((id, index) => [id, index]));
@@ -4293,7 +4120,8 @@ const a1LessonOrder = [
   "a1-questions", "a1-plans-invitations", "a1-house-food-plurals", "a1-home-neighbours",
   "a1-cafe-ordering", "a1-shopping-clothes", "a1-shopping-transport", "a1-public-transport",
   "a1-health-appointments", "a1-health-pharmacy", "a1-work-school-messages",
-  ...a1ExpansionTopics.flatMap((topic) => [topic.id, `${topic.id}-review`])
+  ...a1ExpansionTopics.flatMap((topic) => [topic.id, `${topic.id}-review`]),
+  ...Object.keys(a1GrammarSeedsV4)
 ];
 const a1OrderIndex = new Map(a1LessonOrder.map((id, index) => [id, index]));
 a1Lessons.sort((left, right) => a1OrderIndex.get(left.id) - a1OrderIndex.get(right.id));
@@ -4987,7 +4815,7 @@ const a1Subchapters = [
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-plans-invitations", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
+    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-future-gaan", "a1-plans-invitations", "a1-object-pronouns", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
   },
   {
     id: "a1-home-objects",
@@ -5001,7 +4829,7 @@ const a1Subchapters = [
     title: "کھانا اور خریداری",
     goal: "بنیادی کھانا، قیمتیں، خریدنا، اور قیمت پوچھنا۔",
     practice: "ik wil..., hoeveel kost...? جیسے روزمرہ فقرے۔",
-    lessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"]
+    lessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-adjective-endings", "a1-shopping-clothes", "a1-comparatives", "a1-shopping-returns", "a1-money-bank"]
   },
   {
     id: "a1-going-out-transport",
@@ -5015,14 +4843,14 @@ const a1Subchapters = [
     title: "جسم اور صحت",
     goal: "جسم/صحت کے الفاظ، درد، بیماری، ڈاکٹر سے ملاقات کا وقت۔",
     practice: "ik ben ziek، ik wil een afspraak maken، mijn hoofd doet pijn۔",
-    lessonIds: ["a1-health-appointments", "a1-doctor-symptoms", "a1-pharmacy-medicine", "a1-mission-doctor"]
+    lessonIds: ["a1-health-appointments", "a1-feelings-reflexive", "a1-doctor-symptoms", "a1-pharmacy-medicine", "a1-mission-doctor"]
   },
   {
     id: "a1-work-school-messages",
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-short-messages", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
+    lessonIds: ["a1-short-messages", "a1-past-was-had", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
   }
 ];
 
@@ -5728,9 +5556,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-daily-actions",
       "a0-food-drink",
       "a0-colours-clothes",
-      "a0-adjective-endings",
       "a0-shopping-payment",
-      "a0-comparatives",
       "a0-mission-neighbourhood"
     ]
   },
@@ -5743,9 +5569,7 @@ const a0LearningFirstUnitsV4 = [
       "a0-transport-directions",
       "a0-health-emergency",
       "a0-body-health",
-      "a0-feelings-reflexive",
       "a0-emergency-police",
-      "a0-past-was-had",
       "a0-mission-help"
     ]
   },
@@ -5756,9 +5580,7 @@ const a0LearningFirstUnitsV4 = [
     practice: "اسکول، کام، موسم، اور حفاظت کی ایک مربوط عملی صورت مکمل کریں۔",
     lessonIds: [
       "a0-child-school",
-      "a0-object-pronouns",
       "a0-work-basics",
-      "a0-future-gaan",
       "a0-weather-clothing-safety",
       "a0-school-work-safety-mission"
     ]
@@ -5779,13 +5601,7 @@ const a0LessonLabelsV4 = {
   "a0-body-health": "جسم اور درد کی جگہ",
   "a0-emergency-police": "پولیس، آگ، اور حادثہ",
   "a0-verb-endings": "فعل کی شکلیں",
-  "a0-adjective-endings": "رنگ اسم سے پہلے",
-  "a0-comparatives": "مہنگا، سستا، بہتر",
   "a0-plurals-er-is": "ایک یا زیادہ",
-  "a0-past-was-had": "کل کیا ہوا",
-  "a0-feelings-reflexive": "طبیعت کیسی ہے",
-  "a0-object-pronouns": "مجھے، اسے، ہمیں",
-  "a0-future-gaan": "کل کیا کریں گے",
   "a0-ja-nee-goed-niet": "چھوٹے جواب",
   "a0-letters-1": "حروف: a سے g",
   "a0-letters-2": "حروف: h سے n",
@@ -8503,13 +8319,13 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-mission-school-day": {
       sourceKey:"work-school-message-mission",scenarioTitleUrdu:"پیغام سے اسکول اور کام کے بدلے دن تک",speakerUrdu:"اسکول یا کام کا ذمہ دار شخص",
-      prerequisiteLessonIds:["a1-short-messages","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
+      prerequisiteLessonIds:["a1-short-messages","a1-past-was-had","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
       variantTitles:["دیر کا مختصر پیغام اور کام کی تبدیلی","بچے کی غیر حاضری اور اسکول ایپ","بیماری، واپسی، اور بدلی ڈیوٹی"],
       variantContexts:["ساتھی کو آج کی دیر کا پیغام دیں، وجہ سنیں، اور کام کے بدلے rooster کا جواب دیں","اسکول کو بچے کی غیر حاضری لکھیں، گھر کے کام کی جگہ پوچھیں، اور ایپ کا نوٹس سمجھیں","کام کو بیماری اور واپسی بتائیں، واپسی فون مانگیں، اور بدلی dienst پر ذمہ دار سے بات کریں"],
       targets:[
         {lessonId:"a1-short-messages",dutch:"hoi Sara, ik kom vandaag later",patternLessonId:"a1-short-messages"},
         {lessonId:"a1-work-school-messages",dutch:"ik kom morgen weer"},
-        {lessonId:"a1-work-school-messages",dutch:"de bus heeft vertraging"},
+        {lessonId:"a1-past-was-had",dutch:"gisteren was ik ziek",patternLessonId:"a1-past-was-had"},
         {lessonId:"a1-school-contact",dutch:"mijn kind komt vandaag niet naar school",patternLessonId:"a1-school-contact"},
         {lessonId:"a1-school-contact",dutch:"waar staat het huiswerk?"},
         {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",patternLessonId:"a1-work-schedule"}
@@ -8520,12 +8336,12 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-mission-doctor": {
       sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"فیملی ڈاکٹر کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"فیملی ڈاکٹر، ڈاکٹر، یا فارمیسی کا ملازم",
-      prerequisiteLessonIds:["a1-health-appointments","a1-doctor-symptoms","a1-pharmacy-medicine"],
+      prerequisiteLessonIds:["a1-health-appointments","a1-feelings-reflexive","a1-doctor-symptoms","a1-pharmacy-medicine"],
       variantTitles:["huisarts کو فون اور ملاقات","ڈاکٹر کو علامت اور مدت بتانا","نسخہ، دوا، اور لیبل کی ہدایت"],
       variantContexts:["assistente کو ملاقات کا مقصد بتائیں، فوری ضرورت کا سوال سمجھیں، اور وقت طے کریں","ڈاکٹر کے سوال سنیں، درد کی جگہ اور بخار کی مدت واضح کریں، اور آرام کی ہدایت سمجھیں","دواخانے میں نسخہ دیں، حساسیت بتائیں، اور لیبل سے مقدار اور کھانے کا وقت سمجھیں"],
       targets:[
         {lessonId:"a1-health-appointments",dutch:"ik wil een afspraak bij de huisarts",patternLessonId:"a1-health-appointments"},
-        {lessonId:"a1-health-appointments",dutch:"is het dringend?"},
+        {lessonId:"a1-feelings-reflexive",dutch:"hoe voelt u zich?"},
         {lessonId:"a1-doctor-symptoms",dutch:"ik heb pijn in mijn buik",patternLessonId:"a1-doctor-symptoms"},
         {lessonId:"a1-doctor-symptoms",dutch:"ik heb sinds gisteren koorts"},
         {lessonId:"a1-pharmacy-medicine",dutch:"hoe vaak moet ik dit nemen?",patternLessonId:"a1-pharmacy-medicine"},
@@ -8556,14 +8372,14 @@ const a1AuthoredCurriculumV4 = {
       sourceKey: "food-shopping-returns-payment-mission",
       scenarioTitleUrdu: "فہرست سے خریداری، کیفے، واپسی، اور ادائیگی",
       speakerUrdu: "دکان کا ملازم، ویٹر، یا کاؤنٹر کا ملازم",
-      prerequisiteLessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-shopping-clothes", "a1-shopping-returns", "a1-money-bank"],
+      prerequisiteLessonIds: ["a1-supermarket", "a1-cafe-ordering", "a1-cafe-food-needs", "a1-adjective-endings", "a1-shopping-clothes", "a1-comparatives", "a1-shopping-returns", "a1-money-bank"],
       variantTitles: ["فہرست کے ساتھ سپر مارکیٹ", "کیفے میں آرڈر اور کھانے کی ضرورت", "کپڑا خریدنا، واپس کرنا، اور ادائیگی"],
       variantContexts: ["فہرست پڑھیں، چیز کی جگہ یا قیمت پوچھیں، اور کاؤنٹر کی بات مکمل کریں", "مینو سے انتخاب کریں، اپنی کھانے کی ضرورت واضح کریں، اور مسئلہ مؤدبانہ طور پر حل کریں", "کپڑے کا سائز سمجھیں، رسید کے ساتھ واپسی کریں، اور ادائیگی کی خرابی واضح کریں"],
       targets: [
         { lessonId:"a1-supermarket", dutch:"hoeveel kost dit brood?" },
-        { lessonId:"a1-cafe-ordering", dutch:"voor mij een thee", patternLessonId:"a1-cafe-ordering" },
+        { lessonId:"a1-cafe-ordering", dutch:"voor mij een thee", patternLessonId:"a1-cafe-ordering", related:[{ lessonId:"a1-comparatives", dutch:"koffie is duurder dan thee" }], compoundDutch:"koffie is duurder dan thee. voor mij een thee.", compoundUrdu:"کافی چائے سے مہنگی ہے۔ میرے لیے ایک چائے۔", taskUrdu:"کیفے کی قیمتوں کی فہرست دیکھ کر بتائیں کہ کافی چائے سے مہنگی ہے، پھر اپنے لیے چائے مانگیں۔" },
         { lessonId:"a1-cafe-food-needs", dutch:"ik ben allergisch voor noten", patternLessonId:"a1-cafe-food-needs" },
-        { lessonId:"a1-shopping-clothes", dutch:"deze jas is te groot", patternLessonId:"a1-shopping-clothes" },
+        { lessonId:"a1-shopping-clothes", dutch:"deze jas is te groot", patternLessonId:"a1-shopping-clothes", related:[{ lessonId:"a1-adjective-endings", dutch:"ik wil de groene jas" }], compoundDutch:"ik wil de groene jas. deze jas is te groot.", compoundUrdu:"مجھے سبز جیکٹ چاہیے۔ یہ جیکٹ بہت بڑی ہے۔", taskUrdu:"دکان میں سبز جیکٹ مانگیں، پھر پہن کر بتائیں کہ یہ جیکٹ بہت بڑی ہے۔" },
         { lessonId:"a1-shopping-returns", dutch:"ik wil dit terugbrengen", patternLessonId:"a1-shopping-returns" },
         { lessonId:"a1-money-bank", dutch:"mijn pinpas werkt niet", patternLessonId:"a1-money-bank" }
       ],
@@ -8764,7 +8580,9 @@ const a1AuthoredCurriculumV4 = {
       prerequisiteLessonIds: [
         "a1-questions",
         "a1-polite-chunks",
+        "a1-future-gaan",
         "a1-plans-invitations",
+        "a1-object-pronouns",
         "a1-phone-calls",
         "a1-appointments"
       ],
@@ -8781,9 +8599,16 @@ const a1AuthoredCurriculumV4 = {
       targets: [
         { lessonId: "a1-questions", dutch: "wanneer komt u?", patternLessonId: "a1-questions" },
         { lessonId: "a1-polite-chunks", dutch: "kunt u mij helpen alstublieft?", patternLessonId: "a1-polite-chunks" },
-        { lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?", patternLessonId: "a1-plans-invitations" },
+        {
+          lessonId: "a1-future-gaan",
+          dutch: "wat ga je morgen doen?",
+          related: [{ lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?" }],
+          compoundDutch: "wat ga je morgen doen? zullen we om drie uur afspreken?",
+          compoundUrdu: "تم کل کیا کرو گے؟ کیا ہم تین بجے ملیں؟",
+          taskUrdu: "دوست سے پوچھیں کہ وہ کل کیا کرے گا، پھر تین بجے ملنے کی تجویز دیں۔"
+        },
         { lessonId: "a1-phone-calls", dutch: "kunt u later terugbellen?" },
-        { lessonId: "a1-appointments", dutch: "ik wil een afspraak maken", patternLessonId: "a1-appointments" },
+        { lessonId: "a1-object-pronouns", dutch: "kunt u ons helpen?", patternLessonId: "a1-object-pronouns" },
         { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
       ],
       prerequisiteRefs: [
@@ -8813,6 +8638,282 @@ const a1AuthoredCurriculumV4 = {
     }
   }
 };
+
+// Authored records for the grammar lessons that moved up from A0. Each one
+// uses only Dutch taught in A0 or in an earlier A1 lesson.
+Object.assign(a1AuthoredCurriculumV4.lessons, {
+  "a1-adjective-endings": {
+    title: "De blauwe jas", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+    outcomeUrdu: "کپڑے یا چیز کا رنگ اسم سے پہلے بتانا، کسی خاص اور کسی بھی چیز میں فرق کرنا، اور دکان میں رنگ کے ساتھ اپنی پسند کی چیز مانگنا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-adjective-endings"],
+    teaching: authoredA1TeachingV4([
+      ["de blauwe jas", "کسی خاص جیکٹ کا رنگ اسم سے پہلے بتانا ہو تو de blauwe jas کہیں۔", "یہ رنگ کے ساتھ چیز کا نام ہے؛ پورا جملہ کہ جیکٹ نیلی ہے de jas is blauw ہے۔", "is کے بعد blauw آتا ہے، مگر اسم سے پہلے blauwe: de jas is blauw — de blauwe jas۔", "de jas is blauw — de blauwe jas", "جیکٹ نیلی ہے — نیلی جیکٹ۔", "دَ بلاؤ اَ یاس"],
+      ["een warme jas", "سردی میں کوئی بھی ایک گرم جیکٹ مانگنی ہو تو een warme jas کہیں۔", "یہ کوئی بھی ایک جیکٹ ہے؛ دکان میں لٹکی کسی خاص جیکٹ کے لیے de سے بات شروع کریں۔", "jas کے ساتھ de آتا ہے، اس لیے een کے بعد بھی warme؛ een warm jas غلط ہے۔", "warm — een warme jas", "گرم — ایک گرم جیکٹ۔", "اَن وار مَ یاس"],
+      ["ik wil de groene jas", "دکان میں کئی رنگوں میں سے ایک خاص جیکٹ چننی ہو تو یہ کہیں۔", "یہ اپنی پسند بتاتا ہے؛ قیمت یا سائز نہیں پوچھتا۔", "اسم سے پہلے groene؛ ik wil de groen jas غلط ہے۔", "groen — ik wil de groene jas", "سبز — مجھے سبز جیکٹ چاہیے۔", "اِک وِل دَ خرو نَ یاس"],
+      ["de rode deur", "مہمان کو اپنا گھر پہچاننے کا نشان بتاتے ہوئے de rode deur کہیں۔", "یہ دروازے کا نشان ہے؛ یہ کہنا کہ دروازہ سرخ ہے de deur is rood ہے۔", "rood اسم سے پہلے rode بنتا ہے؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "rood — de rode deur", "سرخ — سرخ دروازہ۔", "دَ رو دَ دُور"],
+      ["het witte huis", "گلی کے کسی خاص، جانے پہچانے سفید گھر کی بات میں het witte huis کہیں۔", "یہ ایک خاص گھر ہے؛ کوئی بھی سفید گھر een wit huis ہے۔", "het کے بعد آخر میں اَ لگتی ہے اور ٹ دگنی ہوتی ہے: witte۔", "een wit huis — het witte huis", "ایک سفید گھر — وہ سفید گھر۔", "اَت وِت تَ ہاؤس"],
+      ["een wit huis", "نئے گھر کے بارے میں بتانا ہو کہ وہ کوئی سفید گھر ہے تو een wit huis کہیں۔", "یہ عام ایک گھر ہے؛ گلی کا وہ خاص گھر het witte huis ہے۔", "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een witte huis غلط ہے۔", "het huis — een wit huis", "گھر — ایک سفید گھر۔", "اَن وِت ہاؤس"],
+      ["het zwarte boek", "میز پر کئی کتابوں میں سے کسی خاص کالی کتاب کی طرف اشارہ ہو تو het zwarte boek کہیں۔", "یہ وہ خاص کتاب ہے؛ کوئی بھی کالی کتاب een zwart boek ہے۔", "het کے بعد صفت کے آخر میں اَ: zwarte؛ het zwart boek غلط ہے۔", "het boek is zwart — het zwarte boek", "کتاب کالی ہے — وہ کالی کتاب۔", "اَت زوار تَ بوک"],
+      ["een zwart boek", "دکان میں کوئی بھی ایک کالی کاپی یا کتاب مانگنی ہو تو een zwart boek کہیں۔", "یہ کوئی بھی ایک کتاب ہے؛ خاص کتاب کے لیے het zwarte boek کہیں۔", "boek کے ساتھ het آتا ہے، اس لیے een کے بعد zwart بغیر تبدیلی؛ een zwarte boek غلط ہے۔", "zwart — een zwart boek", "کالا — ایک کالی کتاب۔", "اَن زوارت بوک"]
+    ]),
+    pattern: {
+      modelDutch: "de blauwe jas",
+      titleUrdu: "رنگ اسم سے پہلے",
+      highlight: "de blauwe jas",
+      explanationUrdu: "رنگ یا صفت اسم سے پہلے آئے تو اس کے آخر میں اَ لگتی ہے: de jas is blauw، مگر de blauwe jas۔",
+      contrastUrdu: "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een wit huis، مگر het witte huis۔",
+      commonMistakeUrdu: "is کے بعد رنگ نہ بدلیں؛ de jas is blauw درست ہے، اور اسم سے پہلے blauwe۔"
+    },
+    prerequisiteLessonIds: ["a0-colours-clothes", "a0-home-needs"],
+    prerequisiteRefs: [
+      ["a0-colours-clothes", "blauw"],
+      ["a0-colours-clothes", "rood"],
+      ["a0-colours-clothes", "groen"],
+      ["a0-colours-clothes", "zwart"],
+      ["a0-colours-clothes", "de jas is blauw"],
+      ["a0-home-needs", "warm"]
+    ],
+    scenarios: {
+      "de blauwe jas": ["adjective-point-blue-coat", "گم شدہ چیزوں کے کاؤنٹر پر کئی جیکٹیں ہیں۔ اپنی نیلی جیکٹ کی طرف اشارہ کریں۔"],
+      "een warme jas": ["adjective-ask-warm-coat", "سردیوں سے پہلے دکان میں ملازم پوچھتا ہے کہ کیا چاہیے۔ کوئی بھی ایک گرم جیکٹ مانگیں۔"],
+      "ik wil de groene jas": ["adjective-choose-green-coat", "دکان میں تین رنگ کی جیکٹیں لٹکی ہیں۔ آپ کو سبز والی چاہیے؛ ملازم کو بتائیں۔"],
+      "de rode deur": ["adjective-red-door-landmark", "مہمان کو فون پر بتانا ہے کہ آپ کا گھر کون سا ہے۔ اپنے سرخ دروازے کا نشان بتائیں۔"],
+      "het witte huis": ["adjective-the-white-house", "نقشے پر گلی میں صرف ایک سفید گھر ہے۔ دوست کو اسی خاص گھر کا بتائیں۔"],
+      "een wit huis": ["adjective-a-white-house", "دوست پوچھتا ہے کہ نیا گھر کیسا ہے۔ بتائیں کہ وہ ایک سفید گھر ہے۔"],
+      "het zwarte boek": ["adjective-the-black-book", "میز پر کئی کتابیں ہیں۔ استاد کو بتائیں کہ آپ کی کتاب وہ کالی کتاب ہے۔"],
+      "een zwart boek": ["adjective-a-black-book", "اسکول کی فہرست میں بچے کے لیے کوئی بھی ایک کالی کاپی چاہیے۔ دکان میں مانگیں۔"]
+    }
+  },
+  "a1-comparatives": {
+    title: "Duurder en goedkoper", unitLabel: "A1: کھانا، خریداری، واپسی اور ادائیگی",
+    outcomeUrdu: "دکان، کیفے، یا موسم کی بات میں دو چیزوں کا موازنہ کرنا: زیادہ مہنگا، زیادہ سستا، بہتر، اور زیادہ ٹھنڈا بتانا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-comparatives"],
+    teaching: authoredA1TeachingV4([
+      ["duurder", "دو چیزوں میں سے زیادہ قیمت والی کے لیے duurder کہیں۔", "یہ دو چیزوں کا فرق ہے؛ ایک چیز کی قیمت کے لیے duur کہیں۔", "duur کا مطلب مہنگا ہے؛ زیادہ مہنگا کے لیے آخر میں اَر: duurder۔", "duur — duurder", "مہنگا — زیادہ مہنگا۔", "دیور دَر"],
+      ["goedkoper", "دو چیزوں میں سے کم قیمت والی کے لیے goedkoper کہیں۔", "یہ موازنہ ہے؛ صرف سستی چیز کے لیے goedkoop کافی ہے۔", "goedkoop سے goedkoper بنتا ہے؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "goedkoop — goedkoper", "سستا — زیادہ سستا۔", "خوت کو پَر"],
+      ["dit is goedkoper", "دکان میں دو چیزوں میں سے سستی چیز کی طرف اشارہ کرکے یہ کہیں۔", "یہ سامنے والی چیز کا موازنہ ہے؛ قیمت پوچھنے کے لیے hoeveel kost dit کہیں۔", "dit is goedkoop کا مطلب ہے یہ سستا ہے؛ dit is goedkoper میں دوسری چیز سے موازنہ ہے۔", "dit is goedkoop — dit is goedkoper", "یہ سستا ہے — یہ زیادہ سستا ہے۔", "دِت اِس خوت کو پَر"],
+      ["koffie is duurder dan thee", "قیمتوں کی فہرست دیکھ کر دو چیزوں کا موازنہ کرنا ہو تو یہ کہیں۔", "dan کے بعد وہ چیز آتی ہے جس سے موازنہ ہو؛ یہاں thee۔", "dan نہ چھوڑیں؛ اس کے بغیر دوسری چیز سے موازنہ واضح نہیں ہوتا۔", "koffie is duurder dan thee", "کافی چائے سے مہنگی ہے۔", "کو فی اِس دیور دَر دان تے"],
+      ["beter", "دو چیزوں یا حالتوں میں سے اچھی کے لیے beter کہیں۔", "یہ موازنہ ہے؛ صرف اچھا کہنے کے لیے goed کہیں۔", "goed کی موازنے والی شکل الگ ہے: beter؛ اسے اَر لگا کر نہ بنائیں۔", "goed — beter", "اچھا — بہتر۔", "بے تَر"],
+      ["dit is beter", "دکان میں دو چیزوں میں سے مضبوط یا اچھی چیز چننی ہو تو یہ کہیں۔", "یہ اپنی رائے بتاتا ہے؛ خریدنے کا فیصلہ ik neem deze ہے۔", "dit is goed کا مطلب ہے یہ اچھا ہے؛ dit is beter میں دوسری چیز سے موازنہ ہے۔", "dit is goed — dit is beter", "یہ اچھا ہے — یہ بہتر ہے۔", "دِت اِس بے تَر"],
+      ["kouder", "موسم یا کمرے میں پہلے سے زیادہ ٹھنڈ ہو تو kouder کہیں۔", "یہ پہلے سے موازنہ ہے؛ صرف ٹھنڈا کے لیے koud کہیں۔", "koud سے kouder: آخر میں اَر لگائیں۔", "koud — kouder", "ٹھنڈا — زیادہ ٹھنڈا۔", "کاؤ دَر"],
+      ["vandaag is het kouder", "کل کے مقابلے میں آج زیادہ ٹھنڈ ہو تو یہ کہیں، مثلاً بچے کو گرم جیکٹ دیتے وقت۔", "یہ آج کا موازنہ ہے؛ صرف ٹھنڈ بتانے کے لیے het is koud کہیں۔", "vandaag پہلے آئے تو is دوسرے نمبر پر آتا ہے: vandaag is het kouder۔", "vandaag is het kouder", "آج زیادہ ٹھنڈ ہے۔", "فان داخ اِس اَت کاؤ دَر"]
+    ]),
+    pattern: {
+      modelDutch: "koffie is duurder dan thee",
+      titleUrdu: "دو چیزوں کا موازنہ",
+      highlight: "duurder dan",
+      explanationUrdu: "موازنے میں صفت کے آخر میں اَر لگائیں اور دوسری چیز سے پہلے dan کہیں: koffie is duurder dan thee۔",
+      contrastUrdu: "duur ایک چیز کی قیمت بتاتا ہے؛ duurder dan دو چیزوں کا فرق بتاتا ہے۔",
+      commonMistakeUrdu: "goed کی موازنے والی شکل الگ ہے: beter؛ اسے دوسری صفتوں کی طرح نہ بنائیں۔"
+    },
+    prerequisiteLessonIds: ["a0-shopping-payment", "a0-home-needs", "a0-food-drink", "a0-time-days", "a1-shopping-clothes"],
+    prerequisiteRefs: [
+      ["a0-shopping-payment", "duur"],
+      ["a0-shopping-payment", "goedkoop"],
+      ["a0-shopping-payment", "hoeveel kost dit"],
+      ["a0-ja-nee-goed-niet", "goed"],
+      ["a0-greetings-courtesy", "goed, dank u"],
+      ["a0-home-needs", "koud"],
+      ["a0-food-drink", "koffie"],
+      ["a0-food-drink", "thee"],
+      ["a0-time-days", "vandaag"],
+      ["a1-shopping-clothes", "ik neem deze"]
+    ],
+    scenarios: {
+      duurder: ["compare-more-expensive-word", "دکان میں دو جوتوں کی قیمت دیکھیں۔ ایک کی قیمت زیادہ ہے؛ اس کے لیے لفظ چنیں۔"],
+      goedkoper: ["compare-cheaper-word", "سپر مارکیٹ میں دودھ کے دو ڈبے ہیں۔ ایک کی قیمت کم ہے؛ اس کے لیے لفظ چنیں۔"],
+      "dit is goedkoper": ["compare-this-shirt-cheaper", "دکان میں دو قمیصیں ہیں۔ دوست کو بتائیں کہ یہ والی زیادہ سستی ہے۔"],
+      "koffie is duurder dan thee": ["compare-cafe-prices", "کیفے کی قیمتوں کی فہرست دیکھ کر دوست کو بتائیں کہ کافی چائے سے مہنگی ہے۔"],
+      beter: ["compare-better-word", "دوست پوچھتا ہے کہ دو جیکٹوں میں سے کون سی اچھی ہے۔ ایک دوسری سے اچھی ہے؛ اس کے لیے ایک لفظ چنیں۔"],
+      "dit is beter": ["compare-stronger-umbrella", "دکان کا ملازم دو چھتریاں دکھاتا ہے۔ ایک مضبوط ہے؛ بتائیں کہ یہ والی بہتر ہے۔"],
+      kouder: ["compare-colder-word", "صبح باہر نکل کر محسوس ہوتا ہے کہ کل سے زیادہ ٹھنڈ ہے۔ اس کے لیے لفظ چنیں۔"],
+      "vandaag is het kouder": ["compare-colder-today", "بچہ اسکول جاتے ہوئے پتلی جیکٹ لے رہا ہے۔ اسے بتائیں کہ آج کل سے زیادہ ٹھنڈ ہے۔"]
+    }
+  },
+  "a1-future-gaan": {
+    title: "Morgen ga ik werken", unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+    outcomeUrdu: "آنے والے کام اور منصوبے بتانا، وقت جملے کے شروع میں رکھنا، اور دوست سے اس کا کل کا منصوبہ پوچھنا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-future-gaan"],
+    teaching: authoredA1TeachingV4([
+      ["ik ga werken", "صبح گھر سے نکلتے ہوئے بتانا ہو کہ آپ کام کرنے جا رہے ہیں تو ik ga werken کہیں۔", "یہ آنے والا یا ابھی شروع ہونے والا کام ہے؛ آج کی عادت کے لیے ik werk vandaag کہیں۔", "ga کے بعد پورا فعل آتا ہے: werken، نہ کہ werk۔", "ik werk vandaag — ik ga werken", "میں آج کام کرتا ہوں — میں کام کرنے جا رہا ہوں۔", "اِک خا وَیر کَن"],
+      ["ik ga morgen werken", "کل کے کام کی بات میں وقت درمیان میں اور فعل آخر میں رکھیں۔", "یہ کل کا منصوبہ ہے؛ گزرے ہوئے دن کی بات نہیں۔", "پورا فعل جملے کے آخر میں: ik ga morgen werken؛ werken کو morgen سے پہلے نہ رکھیں۔", "ik ga werken — ik ga morgen werken", "میں کام کرنے جا رہا ہوں — میں کل کام کروں گا۔", "اِک خا مور خَن وَیر کَن"],
+      ["morgen ga ik werken", "ساتھی پوچھے کہ کل کیا کریں گے تو وقت پہلے رکھ کر جواب دیں۔", "مطلب وہی ہے؛ صرف وقت جملے کے شروع میں ہے۔", "morgen پہلے ہو تو ga پھر ik: morgen ga ik، نہ کہ morgen ik ga۔", "ik ga morgen werken — morgen ga ik werken", "میں کل کام کروں گا — کل میں کام کروں گا۔", "مور خَن خا اِک وَیر کَن"],
+      ["wij gaan eten", "گھر والوں کو بلانا ہو کہ اب سب کھانا کھانے جا رہے ہیں تو یہ کہیں۔", "یہ ابھی کا منصوبہ ہے؛ روز کی عادت کے لیے wij eten کافی ہے۔", "wij کے ساتھ gaan آتا ہے، ga نہیں؛ پھر پورا فعل eten۔", "wij eten — wij gaan eten", "ہم کھاتے ہیں — ہم کھانا کھانے جا رہے ہیں۔", "وَے خان اے تَن"],
+      ["hij gaat slapen", "فون پر بتانا ہو کہ بیٹا یا کوئی مرد سونے جا رہا ہے تو یہ کہیں۔", "یہ سونے جانے کی بات ہے؛ وہ ابھی سو نہیں رہا۔", "hij کے ساتھ gaat، مگر slapen بغیر تبدیلی کے آخر میں رہتا ہے۔", "hij gaat — hij gaat slapen", "وہ جاتا ہے — وہ سونے جا رہا ہے۔", "ہَے خات سلا پَن"],
+      ["ik ga de school bellen", "بچہ بیمار ہو اور آپ اسکول کو فون کرنے والے ہوں تو یہ کہیں۔", "یہ آنے والا فون ہے؛ کسی سے فون کرنے کو کہنا bel سے ہوتا ہے، جیسے bel 112۔", "bellen آخر میں: ik ga de school bellen؛ bellen کو school سے پہلے نہ رکھیں۔", "bel 112 — ik ga de school bellen", "112 پر فون کریں — میں اسکول کو فون کروں گا۔", "اِک خا دَ سخول بَے لَن"],
+      ["zaterdag ga ik naar de winkel", "ہفتے کے منصوبے میں دن پہلے رکھ کر یہ کہیں۔", "یہ کہیں جانے کا منصوبہ ہے؛ یہاں آخر میں کوئی دوسرا فعل نہیں آتا۔", "دن پہلے ہو تو ga دوسرے نمبر پر: zaterdag ga ik، نہ کہ zaterdag ik ga۔", "ik ga naar huis — zaterdag ga ik naar de winkel", "میں گھر جاتا ہوں — ہفتے کو میں دکان جاؤں گا۔", "زا تَر داخ خا اِک نار دَ وِن کَل"],
+      ["wat ga je morgen doen", "دوست سے اس کا کل کا منصوبہ پوچھنا ہو تو یہ سوال کہیں۔", "یہ دوست سے بے تکلف سوال ہے؛ ادب سے بات میں je کی جگہ u آتا ہے۔", "سوال میں ga کے بعد je، اور doen آخر میں رہتا ہے۔", "wat ga je morgen doen? — ik ga morgen werken.", "تم کل کیا کرو گے؟ — میں کل کام کروں گا۔", "وات خا یَ مور خَن دون"]
+    ]),
+    pattern: {
+      modelDutch: "ik ga morgen werken",
+      titleUrdu: "آنے والا کام: ga اور آخر میں پورا فعل",
+      highlight: "ik ga morgen werken",
+      explanationUrdu: "آنے والا کام بتانے کے لیے ga کے بعد وقت، اور جملے کے آخر میں پورا فعل رکھیں: ik ga morgen werken۔",
+      contrastUrdu: "ik werk vandaag آج کا کام ہے؛ ik ga morgen werken آنے والا کام ہے۔",
+      commonMistakeUrdu: "پورا فعل آخر میں رکھیں اور ga کے بعد werk نہ کہیں؛ ik ga morgen werken درست ہے۔"
+    },
+    prerequisiteLessonIds: ["a0-gaan-komen", "a0-daily-actions", "a0-time-days", "a0-shopping-payment", "a0-health-emergency", "a1-polite-chunks"],
+    prerequisiteRefs: [
+      ["a0-gaan-komen", "ik ga"],
+      ["a0-gaan-komen", "hij gaat"],
+      ["a0-gaan-komen", "ik ga naar huis"],
+      ["a0-daily-actions", "werken"],
+      ["a0-daily-actions", "eten"],
+      ["a0-daily-actions", "slapen"],
+      ["a0-time-days", "morgen"],
+      ["a0-time-days", "zaterdag"],
+      ["a0-time-days", "ik werk vandaag"],
+      ["a0-shopping-payment", "winkel"],
+      ["a0-health-emergency", "bel 112"]
+    ],
+    scenarios: {
+      "ik ga werken": ["future-leaving-for-work", "صبح بچہ پوچھتا ہے کہ آپ کہاں جا رہے ہیں۔ بتائیں کہ آپ کام کرنے جا رہے ہیں۔"],
+      "ik ga morgen werken": ["future-busy-tomorrow", "دوست کل ملنا چاہتا ہے۔ بتائیں کہ آپ کل کام کریں گے۔"],
+      "morgen ga ik werken": ["future-time-first", "ساتھی پوچھتا ہے کہ آپ کل کیا کریں گے۔ وقت پہلے رکھ کر بتائیں کہ کام کریں گے۔"],
+      "wij gaan eten": ["future-call-family-dinner", "شام کو بچوں کو بلانا ہے کہ اب سب کھانا کھانے جا رہے ہیں۔"],
+      "hij gaat slapen": ["future-son-going-to-sleep", "فون پر دادی پوچھتی ہیں کہ کیا بیٹا جاگ رہا ہے۔ بتائیں کہ وہ سونے جا رہا ہے۔"],
+      "ik ga de school bellen": ["future-call-school", "بچے کو بخار ہے۔ گھر والوں کو بتائیں کہ آپ اسکول کو فون کریں گے۔"],
+      "zaterdag ga ik naar de winkel": ["future-saturday-shop", "پڑوسن ہفتے کو ملنا چاہتی ہے۔ بتائیں کہ ہفتے کو آپ دکان جائیں گے۔"],
+      "wat ga je morgen doen": ["future-ask-friend-plan", "جمعہ کی شام دوست سے بات ہو رہی ہے۔ اس سے پوچھیں کہ وہ کل کیا کرے گا۔"]
+    }
+  },
+  "a1-object-pronouns": {
+    title: "Mij, hem, haar, ons", unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+    outcomeUrdu: "مدد مانگتے، فون کی بات کرتے، یا بچے کو اسکول لے جانے کی بات میں فعل کے بعد مجھے، اسے، اور ہمیں کی درست شکل استعمال کرنا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-object-pronouns"],
+    teaching: authoredA1TeachingV4([
+      ["hem", "فعل کے بعد کسی مرد یا لڑکے کے لیے hem کہیں، یعنی اسے۔", "hem مرد یا لڑکے کے لیے ہے؛ عورت یا لڑکی کے لیے haar کہیں۔", "فعل کے بعد hij نہیں، hem آتا ہے۔", "hij — hem", "وہ — اسے۔", "ہَیم"],
+      ["ons", "فعل کے بعد اپنے اور ساتھ والوں کے لیے ons کہیں، یعنی ہمیں۔", "ons میں آپ خود بھی شامل ہیں؛ صرف اپنے لیے mij کہیں۔", "فعل کے بعد wij نہیں، ons آتا ہے۔", "wij — ons", "ہم — ہمیں۔", "اونس"],
+      ["kunt u hem helpen", "بیٹے یا کسی مرد کے لیے مدد مانگنی ہو تو یہ کہیں۔", "یہ کسی دوسرے کے لیے مدد ہے؛ اپنے لیے kunt u mij helpen کہیں۔", "kunt u hij helpen غلط ہے؛ فعل کے بعد hem۔", "kunt u mij helpen? — kunt u hem helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ اس کی مدد کر سکتے ہیں؟", "کُنت یو ہَیم ہَیل پَن"],
+      ["kunt u ons helpen", "خاندان یا ساتھ آئے لوگوں سب کے لیے مدد مانگنی ہو تو یہ کہیں۔", "یہ سب کے لیے مدد ہے؛ صرف بیٹے کے لیے kunt u hem helpen کہیں۔", "kunt u wij helpen غلط ہے؛ فعل کے بعد ons۔", "wij — kunt u ons helpen?", "ہم — کیا آپ ہماری مدد کر سکتے ہیں؟", "کُنت یو اونس ہَیل پَن"],
+      ["ik bel haar", "کسی عورت کو فون کرنے کی بات میں ik bel haar کہیں۔", "یہاں haar کا مطلب اسے ہے؛ haar pen میں اس کا مطلب اس کا ہے۔", "فعل کے بعد zij نہیں، haar آتا ہے۔", "haar pen — ik bel haar", "اس کا قلم — میں اسے فون کرتا ہوں۔", "اِک بَیل ہار"],
+      ["bel mij morgen", "فون پر بات مکمل نہ ہو تو سامنے والے سے کہیں کہ آپ کو کل فون کرے۔", "یہ درخواست ہے کہ وہ آپ کو فون کرے؛ خود فون کرنے کے لیے ik bel u کہیں۔", "حکم میں فعل پہلے، پھر mij: bel mij، نہ کہ bel ik۔", "bel 112 — bel mij morgen", "112 پر فون کریں — مجھے کل فون کریں۔", "بَیل مَے مور خَن"],
+      ["ik breng hem naar school", "بیٹے کو اسکول لے جانے کی بات میں، اس کا نام دوبارہ لیے بغیر یہ کہیں۔", "hem بیٹے کی جگہ آتا ہے؛ بیٹی کے لیے haar کہیں۔", "breng کے بعد hem، پھر جگہ: ik breng hem naar school۔", "ik breng mijn kind naar school — ik breng hem naar school", "میں اپنے بچے کو اسکول لے جاتا ہوں — میں اسے اسکول لے جاتا ہوں۔", "اِک برَینگ ہَیم نار سخول"],
+      ["ik haal haar om drie uur op", "بیٹی کو اسکول سے لینے کا وقت بتانا ہو تو یہ کہیں۔", "یہ لینے آنا ہے؛ صبح چھوڑنے کے لیے breng کہیں۔", "haal کے بعد haar، پھر وقت، اور op آخر میں۔", "ik haal mijn kind om drie uur op — ik haal haar om drie uur op", "میں اپنے بچے کو تین بجے لے آتا ہوں — میں اسے تین بجے لے آتا ہوں۔", "اِک ہال ہار اوم دری یور اوپ"]
+    ]),
+    pattern: {
+      modelDutch: "kunt u ons helpen?",
+      titleUrdu: "فعل کے بعد mij، hem، haar، ons",
+      highlight: "kunt u ons helpen",
+      explanationUrdu: "فعل کے بعد شخص کی شکل بدلتی ہے: ik سے mij، hij سے hem، zij سے haar، اور wij سے ons۔",
+      contrastUrdu: "wij جملہ شروع کرتا ہے؛ ons فعل کے بعد آتا ہے: kunt u ons helpen؟",
+      commonMistakeUrdu: "فعل کے بعد wij یا hij نہ کہیں؛ kunt u wij helpen غلط ہے۔"
+    },
+    prerequisiteLessonIds: ["a0-understanding-help", "a0-hij-zij-wij", "a0-possessive", "a0-child-school", "a0-health-emergency", "a1-polite-chunks"],
+    prerequisiteRefs: [
+      ["a0-understanding-help", "kunt u mij helpen"],
+      ["a0-hij-zij-wij", "hij"],
+      ["a0-hij-zij-wij", "zij"],
+      ["a0-hij-zij-wij", "wij"],
+      ["a0-possessive", "haar pen"],
+      ["a0-child-school", "ik breng mijn kind naar school"],
+      ["a0-child-school", "ik haal mijn kind om drie uur op"],
+      ["a0-health-emergency", "bel 112"],
+      ["a1-polite-chunks", "kunt u mij helpen alstublieft?"]
+    ],
+    scenarios: {
+      hem: ["object-him-word", "استاد پوچھتی ہیں کہ آپ کس کو فون کریں گے: بیٹے کو۔ فعل کے بعد بیٹے کے لیے کون سا لفظ آئے گا؟"],
+      ons: ["object-us-word", "اسٹیشن پر آپ کا پورا خاندان مدد کا منتظر ہے۔ فعل کے بعد ہمیں کے لیے کون سا لفظ آئے گا؟"],
+      "kunt u hem helpen": ["object-help-son", "بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔"],
+      "kunt u ons helpen": ["object-help-family", "آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے سب کے لیے مدد مانگیں۔"],
+      "ik bel haar": ["object-call-colleague", "ساتھی پوچھتا ہے کہ کیا آپ نئی ساتھی کو اطلاع دیں گے۔ بتائیں کہ آپ اسے فون کرتے ہیں۔"],
+      "bel mij morgen": ["object-call-me-tomorrow", "فون پر بات مکمل نہیں ہوئی۔ سامنے والے سے کہیں کہ آپ کو کل فون کرے۔"],
+      "ik breng hem naar school": ["object-bring-son", "پڑوسن آپ کے بیٹے کا نام لے کر پوچھتی ہے کہ صبح اسے کون لے جاتا ہے۔ بتائیں کہ آپ اسے اسکول لے جاتے ہیں۔"],
+      "ik haal haar om drie uur op": ["object-pick-up-daughter", "استاد پوچھتی ہیں کہ بیٹی کو کون لینے آئے گا۔ بتائیں کہ آپ اسے تین بجے لے آتے ہیں۔"]
+    }
+  },
+  "a1-feelings-reflexive": {
+    title: "Ik voel me ...", unitLabel: "A1: ڈاکٹر، علامات اور دوا",
+    outcomeUrdu: "ڈاکٹر، کام، یا گھر والوں کو اپنی طبیعت بتانا، دوسروں سے ادب یا بے تکلفی سے حال پوچھنا، اور تھکاوٹ کو بیماری سے الگ بتانا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-feelings-reflexive"],
+    teaching: authoredA1TeachingV4([
+      ["ik voel me goed", "کوئی حال پوچھے اور طبیعت اچھی ہو تو ik voel me goed کہیں۔", "یہ اپنی طبیعت ہے؛ کسی چیز کے اچھا ہونے کے لیے dit is goed کہیں۔", "me ضروری ہے: ik voel goed ادھورا ہے۔", "ik voel me goed", "میں اچھا محسوس کرتا ہوں۔", "اِک فول مَے خوت"],
+      ["ik voel me ziek", "کام یا ڈاکٹر کو بتانا ہو کہ آپ کو بیماری جیسا محسوس ہو رہا ہے تو یہ کہیں۔", "یہ اپنا احساس ہے؛ پکی بیماری سیدھی بتانے کے لیے ik ben ziek کہیں۔", "voel کے بعد me نہ چھوڑیں: ik voel me ziek۔", "ik ben ziek — ik voel me ziek", "میں بیمار ہوں — میں بیمار محسوس کرتا ہوں۔", "اِک فول مَے زیک"],
+      ["ik voel me niet goed", "طبیعت خراب ہو تو نرمی سے یہ کہیں؛ یہ بہت عام جملہ ہے۔", "یہ عام خرابی ہے؛ درد کی جگہ بتانے کے لیے mijn rug doet pijn جیسا جملہ کہیں۔", "niet کو goed سے پہلے رکھیں: ik voel me niet goed۔", "ik voel me goed — ik voel me niet goed", "میں اچھا محسوس کرتا ہوں — میری طبیعت ٹھیک نہیں۔", "اِک فول مَے نیت خوت"],
+      ["ik voel me beter", "دوا یا آرام کے بعد طبیعت سنبھل جائے تو یہ کہیں۔", "یہ پہلے کے مقابلے میں بہتری ہے؛ پوری طرح ٹھیک ہونے کے لیے ik voel me goed کہیں۔", "beter کا مطلب بہتر ہے؛ me پھر بھی ضروری ہے۔", "ik voel me ziek — ik voel me beter", "میں بیمار محسوس کرتا ہوں — اب بہتر محسوس کرتا ہوں۔", "اِک فول مَے بے تَر"],
+      ["hoe voel je je", "دوست یا گھر والوں سے ان کی طبیعت پوچھنی ہو تو یہ کہیں۔", "یہ بے تکلف سوال ہے؛ ڈاکٹر یا بزرگ سے hoe voelt u zich کہیں۔", "دوسرا je نہ چھوڑیں: hoe voel je je؟", "hoe voel je je? — ik voel me goed.", "تم کیسا محسوس کرتے ہو؟ — میں اچھا محسوس کرتا ہوں۔", "ہو فول یَ یَ"],
+      ["hoe voelt u zich", "استقبالیہ یا گھر میں کسی بزرگ سے ادب سے ان کی طبیعت پوچھیں۔", "یہ ادب کا سوال ہے؛ دوست سے hoe voel je je کہیں۔", "u کے ساتھ voelt اور zich آتے ہیں؛ hoe voelt u me غلط ہے۔", "hoe voelt u zich? — ik voel me beter.", "آپ کیسا محسوس کرتے ہیں؟ — میں بہتر محسوس کرتا ہوں۔", "ہو فولت یو زِخ"],
+      ["zij voelt zich ziek", "استاد کو بتانا ہو کہ بیٹی یا کسی عورت کی طبیعت خراب ہے تو یہ کہیں۔", "یہ کسی اور کی طبیعت ہے؛ اپنے لیے ik voel me ziek کہیں۔", "zij کے ساتھ voelt اور zich آتے ہیں، me نہیں۔", "ik voel me ziek — zij voelt zich ziek", "میں بیمار محسوس کرتا ہوں — وہ بیمار محسوس کرتی ہے۔", "زَے فولت زِخ زیک"],
+      ["ik ben moe", "کام یا رات کی شفٹ کے بعد تھکاوٹ ہو تو ik ben moe کہیں۔", "یہ تھکاوٹ ہے، بیماری نہیں؛ بیماری کے احساس کے لیے ik voel me ziek کہیں۔", "تھکاوٹ کا عام جملہ ben کے ساتھ ہے: ik ben moe۔", "mijn kind is moe — ik ben moe", "میرا بچہ تھکا ہوا ہے — میں تھکا ہوں۔", "اِک بَین مو"]
+    ]),
+    pattern: {
+      modelDutch: "ik voel me niet goed",
+      titleUrdu: "طبیعت بتانا: ik voel me",
+      highlight: "ik voel me",
+      explanationUrdu: "اپنی طبیعت بتانے کے لیے ik voel me کے بعد حالت رکھیں: goed، ziek، beter، یا niet goed۔",
+      contrastUrdu: "ik ben ziek سیدھی حالت بتاتا ہے؛ ik voel me ziek اپنا احساس بتاتا ہے۔",
+      commonMistakeUrdu: "me نہ چھوڑیں؛ ik voel goed ادھورا ہے۔"
+    },
+    prerequisiteLessonIds: ["a0-health-emergency", "a0-ja-nee-goed-niet", "a0-body-health", "a1-child-care", "a1-comparatives", "a1-health-appointments"],
+    prerequisiteRefs: [
+      ["a0-health-emergency", "ik ben ziek"],
+      ["a0-health-emergency", "ziek"],
+      ["a0-ja-nee-goed-niet", "goed"],
+      ["a0-ja-nee-goed-niet", "niet goed"],
+      ["a0-body-health", "mijn rug doet pijn"],
+      ["a1-child-care", "moe"],
+      ["a1-child-care", "mijn kind is moe"],
+      ["a1-comparatives", "beter"],
+      ["a1-comparatives", "dit is beter"]
+    ],
+    scenarios: {
+      "ik voel me goed": ["feel-good-after-illness", "پڑوسن کل کی بیماری کے بعد حال پوچھتی ہے۔ اب آپ کی طبیعت اچھی ہے؛ بتائیں۔"],
+      "ik voel me ziek": ["feel-ill-at-work", "کام پر دوپہر کو بخار جیسا محسوس ہو رہا ہے۔ مینیجر کو بتائیں کہ آپ بیمار محسوس کرتے ہیں۔"],
+      "ik voel me niet goed": ["feel-unwell-on-bus", "بس میں سفر کے دوران ہلکے چکر آ رہے ہیں؛ آپ بیمار نہیں، بس طبیعت ٹھیک نہیں۔ ڈرائیور کو یہی بتائیں۔"],
+      "ik voel me beter": ["feel-better-after-medicine", "دوا کے دو دن بعد ڈاکٹر حال پوچھتا ہے۔ اب آپ پہلے سے اچھا محسوس کرتے ہیں۔"],
+      "hoe voel je je": ["feel-ask-friend", "دوست کل بیمار تھا۔ آج اس سے اس کی طبیعت پوچھیں۔"],
+      "hoe voelt u zich": ["feel-ask-elder-politely", "انتظار گاہ میں آپ ایک بزرگ مریض سے ادب سے ان کا حال پوچھتے ہیں۔"],
+      "zij voelt zich ziek": ["feel-daughter-ill", "استاد کو فون پر بتانا ہے کہ آج آپ کی بیٹی بیمار محسوس کر رہی ہے۔"],
+      "ik ben moe": ["feel-tired-after-shift", "رات کی شفٹ کے بعد دوست شام کو باہر چلنے کو کہتا ہے۔ بتائیں کہ آپ تھکے ہوئے ہیں۔"]
+    }
+  },
+  "a1-past-was-had": {
+    title: "Gisteren: was, had, ging", unitLabel: "A1: پیغام، اسکول اور کام",
+    outcomeUrdu: "کام، اسکول، یا ڈاکٹر کو کل یا پہلے کی بات بتانا: بیماری، درد، دیر، اور کہاں گئے۔",
+    seedConcepts: a1GrammarSeedsV4["a1-past-was-had"],
+    teaching: authoredA1TeachingV4([
+      ["ik was ziek", "استاد یا کام پر پہلے کی بیماری بتانی ہو تو ik was ziek کہیں۔", "یہ گزری بیماری ہے؛ ابھی بیمار ہوں تو ik ben ziek کہیں۔", "ben کی گزری شکل was ہے؛ ik ben ziek آج کی حالت ہے۔", "ik ben ziek — ik was ziek", "میں بیمار ہوں — میں بیمار تھا۔", "اِک واس زیک"],
+      ["ik had pijn", "ڈاکٹر پوچھے کہ کیا پہلے بھی تکلیف تھی تو ik had pijn کہیں۔", "یہ پہلے کا درد ہے؛ ابھی درد ہو تو ik heb pijn کہیں۔", "heb کی گزری شکل had ہے؛ ik heb pijn آج کا درد ہے۔", "ik heb pijn — ik had pijn", "مجھے درد ہے — مجھے درد تھا۔", "اِک ہات پَین"],
+      ["gisteren was ik ziek", "مینیجر پوچھے کہ آپ کل کیوں نہیں آئے تو gisteren پہلے رکھ کر یہ کہیں۔", "یہ کل کی بات ہے؛ آج کی غیر حاضری کے لیے ik ben vandaag ziek کہیں۔", "gisteren پہلے ہو تو فعل دوسرے نمبر پر: gisteren was ik، نہ کہ gisteren ik was۔", "ik was ziek — gisteren was ik ziek", "میں بیمار تھا — کل میں بیمار تھا۔", "خِس تَ رَن واس اِک زیک"],
+      ["ik had gisteren hoofdpijn", "ڈاکٹر کو کل کا سر درد بتانا ہو تو یہ کہیں۔", "یہ کل کا سر درد ہے؛ اگر ابھی بھی ہو تو ik heb hoofdpijn کہیں۔", "had کے بعد وقت، پھر تکلیف: ik had gisteren hoofdpijn۔", "ik had pijn — ik had gisteren hoofdpijn", "مجھے درد تھا — کل میرے سر میں درد تھا۔", "اِک ہات خِس تَ رَن ہوفت پَین"],
+      ["hij was ziek", "اسکول کو بتانا ہو کہ بیٹا پچھلے ہفتے بیمار تھا تو hij was ziek کہیں۔", "یہ کسی مرد یا لڑکے کی گزری بیماری ہے؛ اپنے لیے ik was ziek کہیں۔", "hij is ziek کا مطلب ہے اب بیمار ہے؛ hij was ziek پہلے کی بات ہے۔", "hij is ziek — hij was ziek", "وہ بیمار ہے — وہ بیمار تھا۔", "ہَے واس زیک"],
+      ["wij waren te laat", "ملاقات کے بعد بتانا ہو کہ آپ سب دیر سے پہنچے تھے تو یہ کہیں۔", "یہ پہلے کی دیر ہے؛ ابھی دیر ہو تو sorry ik ben te laat کہیں۔", "ik کے ساتھ was، مگر wij کے ساتھ waren آتا ہے۔", "ik was ziek — wij waren te laat", "میں بیمار تھا — ہمیں دیر ہو گئی تھی۔", "وَے وا رَن تَ لات"],
+      ["ik ging naar huis", "ساتھی پوچھے کہ کل کام کے بعد آپ نے کیا کیا تو ik ging naar huis کہیں۔", "یہ گزری بات ہے؛ ابھی گھر جانے کے لیے ik ga naar huis کہیں۔", "ga کی گزری شکل ging ہے؛ یہ شکل یاد کرنی ہے۔", "ik ga naar huis — ik ging naar huis", "میں گھر جاتا ہوں — میں گھر گیا۔", "اِک خِنگ نار ہاؤس"],
+      ["zij ging naar de dokter", "استاد کو بتانا ہو کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی تو یہ کہیں۔", "یہ ڈاکٹر کے پاس جانے کی گزری بات ہے؛ آنے والی ملاقات کے لیے ik heb een afspraak کہیں۔", "ging کی شکل ik، hij، اور zij کے ساتھ ایک جیسی ہے: ik ging، zij ging۔", "ik ging naar huis — zij ging naar de dokter", "میں گھر گیا — وہ ڈاکٹر کے پاس گئی۔", "زَے خِنگ نار دَ دوک تَر"]
+    ]),
+    pattern: {
+      modelDutch: "gisteren was ik ziek",
+      titleUrdu: "گزری بات: was، had، ging",
+      highlight: "gisteren was ik ziek",
+      explanationUrdu: "گزری بات میں ben کی جگہ was، heb کی جگہ had، اور ga کی جگہ ging آتا ہے۔ gisteren پہلے ہو تو فعل دوسرے نمبر پر رہتا ہے۔",
+      contrastUrdu: "ik ben ziek آج کی حالت ہے؛ gisteren was ik ziek کل کی حالت ہے۔",
+      commonMistakeUrdu: "gisteren کے بعد ik پہلے نہ رکھیں؛ gisteren ik was ziek غلط ہے۔"
+    },
+    prerequisiteLessonIds: ["a0-health-emergency", "a0-time-days", "a0-date-appointment", "a0-gaan-komen", "a1-calendar-time", "a1-short-messages"],
+    prerequisiteRefs: [
+      ["a0-health-emergency", "ik ben ziek"],
+      ["a0-health-emergency", "ik heb pijn"],
+      ["a0-health-emergency", "hoofdpijn"],
+      ["a0-health-emergency", "dokter"],
+      ["a0-child-school", "mijn kind is ziek"],
+      ["a0-time-days", "gisteren"],
+      ["a0-date-appointment", "te laat"],
+      ["a0-date-appointment", "ik heb een afspraak"],
+      ["a0-gaan-komen", "ik ga naar huis"],
+      ["a1-calendar-time", "sorry ik ben te laat"]
+    ],
+    scenarios: {
+      "ik was ziek": ["past-explain-missed-class", "استاد پوچھتی ہیں کہ آپ پچھلے ہفتے کلاس میں کیوں نہیں آئے۔ بتائیں کہ آپ بیمار تھے۔"],
+      "ik had pijn": ["past-earlier-pain", "ڈاکٹر پوچھتا ہے کہ کیا پچھلی بار بھی تکلیف تھی۔ بتائیں کہ تب درد تھا۔"],
+      "gisteren was ik ziek": ["past-yesterday-ill-work", "کام پر مینیجر پوچھتا ہے کہ آپ کل کیوں نہیں آئے۔ کل سے شروع کرکے بتائیں کہ آپ بیمار تھے۔"],
+      "ik had gisteren hoofdpijn": ["past-yesterday-headache", "ڈاکٹر کو بتانا ہے کہ کل آپ کے سر میں درد تھا۔"],
+      "hij was ziek": ["past-son-was-ill", "اسکول کو بتانا ہے کہ پچھلے ہفتے آپ کا بیٹا بیمار تھا۔"],
+      "wij waren te laat": ["past-family-was-late", "ملاقات کے بعد گھر والوں سے بات ہو رہی ہے۔ بتائیں کہ آپ سب دیر سے پہنچے تھے۔"],
+      "ik ging naar huis": ["past-went-home", "ساتھی پوچھتا ہے کہ کل کام کے بعد آپ نے کیا کیا۔ بتائیں کہ آپ گھر گئے۔"],
+      "zij ging naar de dokter": ["past-wife-went-to-doctor", "استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔"]
+    }
+  }
+});
 
 /*
  * A2 is authored one accepted unit at a time. Only records listed here may
@@ -12319,27 +12420,6 @@ Object.assign(a0SurvivalTeachingV4, {
     "hij drinkt koffie": ["کسی ایک شخص کی عادت یا پسند بتانی ہو: hij drinkt koffie۔", "ik drink مگر hij drinkt؛ hij کے ساتھ ٹ نہ بھولیں۔", "ik drink water — hij drinkt koffie", "میں پانی پیتا ہوں — وہ کافی پیتا ہے۔", "ہَےای ڈرِنکٹ کوفی"],
     "wij eten brood": ["خاندان یا گروپ کے کھانے کی بات میں wij eten کہیں۔", "ik eet مگر wij eten؛ wij کے ساتھ پورا فعل۔", "ik eet brood — wij eten brood", "میں روٹی کھاتا ہوں — ہم روٹی کھاتے ہیں۔", "وَےای ایٹَن بروٹ"]
   },
-  "a0-adjective-endings": {
-    "de blauwe jas": ["کسی خاص جیکٹ کا رنگ اسم سے پہلے بتانا ہو: de blauwe jas۔", "is کے بعد blauw، مگر اسم سے پہلے blauwe: de jas is blauw — de blauwe jas۔", "de jas is blauw — de blauwe jas", "جیکٹ نیلی ہے — نیلی جیکٹ۔", "دَ بلاؤ اَ یاس"],
-    "een warme jas": ["سردی میں کوئی بھی ایک گرم جیکٹ مانگنی ہو تو een warme jas کہیں۔", "jas کے ساتھ de آتا ہے، اس لیے een کے بعد بھی warme: een warm jas غلط ہے۔", "warm — een warme jas", "گرم — ایک گرم جیکٹ۔", "اَن وارمَ یاس"],
-    "de rode deur": ["کسی جگہ کا نشان بتاتے ہوئے: de rode deur۔", "rood اسم سے پہلے rode بنتا ہے؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "rood — de rode deur", "سرخ — سرخ دروازہ۔", "دَ روڈَ دُور"],
-    "het witte huis": ["کسی خاص، جانے پہچانے سفید گھر کی بات میں het witte huis کہیں۔", "het کے بعد آخر میں اَ لگتی ہے اور ٹ دگنی ہوتی ہے: witte۔", "het huis is wit — het witte huis", "گھر سفید ہے — سفید گھر۔", "اَٹ وِٹّے ہاؤس"],
-    "een wit huis": ["کوئی بھی ایک سفید گھر، کوئی خاص نہیں: een wit huis۔", "صرف een کے ساتھ het والے اسم پر کوئی تبدیلی نہیں: een witte huis غلط ہے۔", "een wit huis — het witte huis", "ایک سفید گھر — وہ سفید گھر۔", "اَن وِٹ ہاؤس"],
-    "een zwart boek": ["کوئی بھی ایک کالی کتاب مانگنی ہو تو een zwart boek کہیں۔", "boek کے ساتھ het آتا ہے، اس لیے een کے بعد zwart بغیر تبدیلی: een zwart boek۔", "een zwart boek — het zwarte boek", "ایک کالی کتاب — وہ کالی کتاب۔", "اَن زْوارٹ بوک"],
-    "het zwarte boek": ["کسی خاص کالی کتاب کی طرف اشارہ ہو: het zwarte boek۔", "het کے بعد صفت کے آخر میں اَ: zwarte۔", "het boek is zwart — het zwarte boek", "کتاب کالی ہے — کالی کتاب۔", "اَٹ زْوارٹَ بوک"],
-    "ik wil de groene jas": ["دکان میں کئی رنگوں میں سے ایک خاص چیز چننی ہو تو یہ کہیں۔", "اسم سے پہلے groene؛ ik wil de groen jas غلط ہے۔", "groen — ik wil de groene jas", "سبز — مجھے سبز جیکٹ چاہیے۔", "اِک وِل دَ خرونَ یاس"]
-  },
-  "a0-comparatives": {
-    "duurder": ["دو چیزوں میں سے زیادہ قیمت والی کے لیے duurder کہیں۔", "duur = مہنگا، duurder = زیادہ مہنگا۔", "duur — duurder", "مہنگا — زیادہ مہنگا۔", "ڈیوردَر"],
-    "goedkoper": ["دو چیزوں میں سے کم قیمت والی کے لیے goedkoper کہیں۔", "goedkoop = سستا، goedkoper = زیادہ سستا؛ لکھنے میں ایک حرف کم ہو جاتا ہے۔", "goedkoop — goedkoper", "سستا — زیادہ سستا۔", "خُوت کوپَر"],
-    "beter": ["دو چیزوں یا حالتوں میں سے اچھی کے لیے beter کہیں۔", "goed کی شکل بالکل الگ ہے: beter۔ اسے یاد کریں۔", "goed — beter", "اچھا — بہتر۔", "بیٹَر"],
-    "kouder": ["موسم یا کمرے میں پہلے سے زیادہ ٹھنڈ ہو تو kouder کہیں۔", "koud سے kouder: آخر میں اَر لگائیں۔", "koud — kouder", "ٹھنڈا — زیادہ ٹھنڈا۔", "کاؤدَر"],
-    "warmer": ["موسم یا کمرے میں پہلے سے زیادہ گرمی ہو تو warmer کہیں۔", "warm سے warmer؛ kouder اس کا الٹ ہے۔", "warm — warmer", "گرم — زیادہ گرم۔", "وارمَر"],
-    "dit is goedkoper": ["دکان میں سستی چیز کی طرف اشارہ کرکے یہ کہیں۔", "dit is goedkoop = یہ سستا ہے؛ dit is goedkoper = یہ زیادہ سستا ہے۔", "dit is goedkoop — dit is goedkoper", "یہ سستا ہے — یہ زیادہ سستا ہے۔", "دِٹ اِس خُوت کوپَر"],
-    "koffie is duurder dan thee": ["دو چیزوں کا موازنہ: پہلی چیز، is، اَر والی صفت، dan، دوسری چیز۔", "dan موازنے کا لفظ ہے: duurder dan = سے زیادہ مہنگا۔", "koffie is duurder dan thee", "کافی چائے سے مہنگی ہے۔", "کوفی اِس ڈیوردَر دان تے"],
-    "vandaag is het kouder": ["کل کے مقابلے میں آج زیادہ ٹھنڈ ہو تو یہ کہیں۔", "vandaag پہلے آئے تو is دوسرے نمبر پر: vandaag is het kouder۔", "vandaag is het kouder", "آج زیادہ ٹھنڈ ہے۔", "فان داخ اِس اَٹ کاؤدَر"],
-    "dit is beter": ["دو چیزوں میں سے اچھی چننی ہو تو یہ کہیں۔", "dit is goed = یہ اچھا ہے؛ dit is beter = یہ بہتر ہے۔", "dit is goed — dit is beter", "یہ اچھا ہے — یہ بہتر ہے۔", "دِٹ اِس بیٹَر"]
-  },
   "a0-plurals-er-is": {
     "stoelen": ["ایک سے زیادہ کرسیوں کی بات میں stoelen کہیں۔", "stoel کے آخر میں اَن لگا کر stoelen؛ ایک کرسی stoel ہے۔", "stoel — stoelen", "کرسی — کرسیاں۔", "ستولَن"],
     "tafels": ["ایک سے زیادہ میزوں کی بات میں tafels کہیں۔", "آخر میں اَل ہو تو س لگتی ہے: tafel سے tafels، اَن نہیں۔", "tafel — tafels", "میز — میزیں۔", "تافَلس"],
@@ -12349,46 +12429,6 @@ Object.assign(a0SurvivalTeachingV4, {
     "er is een stoel": ["بتانا ہو کہ کسی جگہ ایک چیز موجود ہے تو er is کہیں۔", "ایک چیز کے ساتھ er is؛ er zijn een stoel غلط ہے۔", "er is een stoel", "ایک کرسی ہے۔", "اَیر اِس اَن ستول"],
     "er zijn twee stoelen": ["کئی چیزیں موجود ہوں تو er zijn اور جمع اسم کہیں۔", "er zijn کے بعد جمع: twee stoelen، نہ کہ twee stoel۔", "er is een stoel — er zijn twee stoelen", "ایک کرسی ہے — دو کرسیاں ہیں۔", "اَیر زَین تْوے ستولَن"],
     "er zijn drie kamers": ["مکان کی بات میں کمروں کی تعداد بتانی ہو تو یہ کہیں۔", "kamer سے kamers، اور کئی چیزوں کے ساتھ er zijn۔", "er zijn drie kamers", "تین کمرے ہیں۔", "اَیر زَین دْری کامَرس"]
-  },
-  "a0-past-was-had": {
-    "ik was ziek": ["پہلے کی بیماری بتانی ہو، مثلاً کام یا اسکول پر، تو ik was ziek کہیں۔", "ik ben ziek = اب بیمار ہوں؛ ik was ziek = پہلے بیمار تھا۔", "ik ben ziek — ik was ziek", "میں بیمار ہوں — میں بیمار تھا۔", "اِک واس زیک"],
-    "ik had pijn": ["پہلے کا درد بتانا ہو تو ik had pijn کہیں۔", "ik heb pijn = اب درد ہے؛ ik had pijn = پہلے درد تھا۔", "ik heb pijn — ik had pijn", "مجھے درد ہے — مجھے درد تھا۔", "اِک ہاٹ پَین"],
-    "ik ging naar huis": ["گزرے وقت میں گھر جانے کی بات میں ik ging naar huis کہیں۔", "ik ga = جاتا ہوں؛ ik ging = گیا۔ یہ شکل یاد کرنی ہے۔", "ik ga naar huis — ik ging naar huis", "میں گھر جاتا ہوں — میں گھر گیا۔", "اِک خِنگ نار ہاؤس"],
-    "hij was ziek": ["کسی ایک مرد کی پہلے کی بیماری بتانی ہو تو hij was ziek کہیں۔", "hij is ziek = اب بیمار ہے؛ hij was ziek = بیمار تھا۔", "hij is ziek — hij was ziek", "وہ بیمار ہے — وہ بیمار تھا۔", "ہَےای واس زیک"],
-    "wij waren te laat": ["اپنے اور خاندان کے دیر سے پہنچنے کی بات میں یہ کہیں۔", "ik was مگر wij waren؛ wij کے ساتھ was نہیں۔", "ik was te laat — wij waren te laat", "مجھے دیر ہو گئی تھی — ہمیں دیر ہو گئی تھی۔", "وَےای وارَن تے لات"],
-    "gisteren was ik ziek": ["کل کی بیماری بتاتے ہوئے gisteren پہلے رکھیں۔", "gisteren پہلے ہو تو فعل دوسرے نمبر پر: gisteren was ik، نہ کہ gisteren ik was۔", "ik was gisteren ziek — gisteren was ik ziek", "میں کل بیمار تھا — کل میں بیمار تھا۔", "خِستَرَن واس اِک زیک"],
-    "ik had gisteren hoofdpijn": ["ڈاکٹر کو کل کا سر درد بتانا ہو تو یہ کہیں۔", "had کے بعد وقت، پھر تکلیف: ik had gisteren hoofdpijn۔", "ik heb hoofdpijn — ik had gisteren hoofdpijn", "میرے سر میں درد ہے — کل میرے سر میں درد تھا۔", "اِک ہاٹ خِستَرَن ہوفت پَین"],
-    "zij ging naar de dokter": ["کسی ایک عورت کے ڈاکٹر کے پاس جانے کی گزری بات میں یہ کہیں۔", "ging کی شکل ik، hij، اور zij کے ساتھ ایک جیسی ہے: ik ging، zij ging۔", "ik ging naar huis — zij ging naar de dokter", "میں گھر گیا — وہ ڈاکٹر کے پاس گئی۔", "زَےای خِنگ نار دَ ڈوکتَر"]
-  },
-  "a0-feelings-reflexive": {
-    "ik voel me goed": ["کوئی حال پوچھے اور طبیعت اچھی ہو تو ik voel me goed کہیں۔", "me ضروری ہے: ik voel goed ادھورا ہے۔", "ik voel me goed", "میں اچھا محسوس کرتا ہوں۔", "اِک فُول مَے خُوت"],
-    "ik voel me ziek": ["بیماری کا احساس ہو، مثلاً کام یا ڈاکٹر کو بتانا ہو، تو یہ کہیں۔", "ik ben ziek = میں بیمار ہوں؛ ik voel me ziek = میں بیمار محسوس کرتا ہوں۔", "ik ben ziek — ik voel me ziek", "میں بیمار ہوں — میں بیمار محسوس کرتا ہوں۔", "اِک فُول مَے زیک"],
-    "ik voel me niet goed": ["طبیعت خراب ہو تو نرمی سے یہ کہیں؛ یہ بہت عام جملہ ہے۔", "niet آخر میں goed سے پہلے: ik voel me niet goed۔", "ik voel me goed — ik voel me niet goed", "میں اچھا محسوس کرتا ہوں — میری طبیعت ٹھیک نہیں۔", "اِک فُول مَے نیت خُوت"],
-    "ik voel me beter": ["دوا یا آرام کے بعد طبیعت سنبھل جائے تو یہ کہیں۔", "beter = بہتر؛ me پھر بھی ضروری ہے۔", "ik voel me ziek — ik voel me beter", "میں بیمار محسوس کرتا ہوں — اب بہتر محسوس کرتا ہوں۔", "اِک فُول مَے بیٹَر"],
-    "hoe voel je je?": ["دوست یا گھر والوں سے ان کی طبیعت پوچھیں۔", "دوست سے بات میں دوسرا je بھی آتا ہے: hoe voel je je؟", "hoe voel je je? — ik voel me goed.", "تم کیسا محسوس کرتے ہو؟ — میں اچھا محسوس کرتا ہوں۔", "ہُو فُول یَے یَے"],
-    "hoe voelt u zich?": ["ڈاکٹر، استقبالیہ، یا بزرگ سے ادب سے ان کی طبیعت پوچھیں۔", "u کے ساتھ voelt اور zich: hoe voelt u zich؟", "hoe voelt u zich? — ik voel me beter.", "آپ کیسا محسوس کرتے ہیں؟ — میں بہتر محسوس کرتا ہوں۔", "ہُو فُولٹ یُو زِخ"],
-    "zij voelt zich ziek": ["کسی ایک عورت کی طبیعت خراب ہونے کی بات میں یہ کہیں۔", "zij کے ساتھ voelt اور zich، me نہیں۔", "ik voel me ziek — zij voelt zich ziek", "میں بیمار محسوس کرتا ہوں — وہ بیمار محسوس کرتی ہے۔", "زَےای فُولٹ زِخ زیک"],
-    "ik ben moe": ["کام یا رات کے بعد تھکاوٹ ہو تو ik ben moe کہیں۔", "moe کے ساتھ ben آتا ہے: ik voel me moe بھی ممکن ہے مگر ik ben moe سب سے عام ہے۔", "ik ben moe — ik ben ziek", "میں تھکا ہوں — میں بیمار ہوں۔", "اِک بَین مُو"]
-  },
-  "a0-object-pronouns": {
-    "hem": ["فعل کے بعد کسی مرد یا لڑکے کے لیے hem کہیں: اسے۔", "فعل کے بعد hij نہیں، hem آتا ہے۔", "hij — hem", "وہ — اسے۔", "ہَیم"],
-    "ons": ["فعل کے بعد اپنے اور ساتھ والوں کے لیے ons کہیں: ہمیں۔", "فعل کے بعد wij نہیں، ons آتا ہے۔", "wij — ons", "ہم — ہمیں۔", "اونس"],
-    "kunt u hem helpen?": ["کسی مرد یا لڑکے کے لیے مدد مانگنی ہو تو یہ کہیں۔", "kunt u hij helpen غلط ہے؛ فعل کے بعد hem۔", "kunt u mij helpen? — kunt u hem helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ اس کی مدد کر سکتے ہیں؟", "کُنٹ یُو ہَیم ہَیلپَن"],
-    "kunt u ons helpen?": ["خاندان یا گروپ کے لیے مدد مانگنی ہو تو یہ کہیں۔", "kunt u wij helpen غلط ہے؛ فعل کے بعد ons۔", "kunt u mij helpen? — kunt u ons helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ ہماری مدد کر سکتے ہیں؟", "کُنٹ یُو اونس ہَیلپَن"],
-    "ik bel haar": ["کسی عورت کو فون کرنے کی بات میں ik bel haar کہیں۔", "haar کے دو کام: haar pen = اس کا قلم؛ ik bel haar = میں اسے فون کرتا ہوں۔", "haar pen — ik bel haar", "اس کا قلم — میں اسے فون کرتا ہوں۔", "اِک بَیل ہار"],
-    "bel mij morgen": ["کسی سے کہنا ہو کہ آپ کو کل فون کرے تو یہ کہیں۔", "حکم میں فعل پہلے، پھر mij: bel mij، نہ کہ bel ik۔", "bel 112 — bel mij morgen", "112 پر فون کریں — مجھے کل فون کریں۔", "بَیل مَےای مورخَن"],
-    "ik breng hem naar school": ["بیٹے کو اسکول لے جانے کی بات میں یہ کہیں۔", "breng کے بعد hem، پھر جگہ: ik breng hem naar school۔", "ik breng mijn kind naar school — ik breng hem naar school", "میں اپنے بچے کو اسکول لے جاتا ہوں — میں اسے اسکول لے جاتا ہوں۔", "اِک بْرَینگ ہَیم نار سخُول"],
-    "ik haal haar om drie uur op": ["بیٹی کو اسکول سے لینے کا وقت بتانا ہو تو یہ کہیں۔", "haal کے بعد haar، وقت، اور آخر میں op۔", "ik haal mijn kind om drie uur op — ik haal haar om drie uur op", "میں اپنے بچے کو تین بجے لاتا ہوں — میں اسے تین بجے لاتا ہوں۔", "اِک ہال ہار اوم دْری یُور اوپ"]
-  },
-  "a0-future-gaan": {
-    "ik ga werken": ["آنے والے کام کی بات میں ik ga werken کہیں۔", "ga کے بعد پورا فعل: werken، نہ کہ werk۔", "ik werk vandaag — ik ga werken", "میں آج کام کرتا ہوں — میں کام کرنے جا رہا ہوں۔", "اِک خا وَیرکَن"],
-    "ik ga morgen werken": ["کل کے کام کی بات میں وقت درمیان میں اور فعل آخر میں رکھیں۔", "پورا فعل جملے کے آخر میں: ik ga morgen werken۔", "ik ga werken — ik ga morgen werken", "میں کام کرنے جا رہا ہوں — میں کل کام کروں گا۔", "اِک خا مورخَن وَیرکَن"],
-    "morgen ga ik werken": ["کل کی بات شروع میں رکھنی ہو تو فعل دوسرے نمبر پر آئے۔", "morgen پہلے ہو تو ga پھر ik: morgen ga ik، نہ کہ morgen ik ga۔", "ik ga morgen werken — morgen ga ik werken", "میں کل کام کروں گا — کل میں کام کروں گا۔", "مورخَن خا اِک وَیرکَن"],
-    "wij gaan eten": ["گھر والوں کو بتانا ہو کہ اب کھانے کا وقت ہے تو یہ کہیں۔", "wij کے ساتھ gaan، پھر پورا فعل eten۔", "wij eten — wij gaan eten", "ہم کھاتے ہیں — ہم کھانا کھانے جا رہے ہیں۔", "وَےای خان ایٹَن"],
-    "hij gaat slapen": ["کسی ایک شخص کے سونے جانے کی بات میں یہ کہیں۔", "hij کے ساتھ gaat، مگر slapen بغیر تبدیلی۔", "hij gaat slapen", "وہ سونے جا رہا ہے۔", "ہَےای خات سلاپَن"],
-    "ik ga de school bellen": ["بتانا ہو کہ آپ اسکول کو فون کریں گے تو یہ کہیں۔", "bellen آخر میں: ik ga de school bellen، نہ کہ ik ga bellen de school۔", "ik ga werken — ik ga de school bellen", "میں کام کرنے جا رہا ہوں — میں اسکول کو فون کروں گا۔", "اِک خا دَ سخُول بَیلَن"],
-    "zaterdag ga ik naar de winkel": ["ہفتے کے منصوبے میں دن پہلے رکھ کر یہ کہیں۔", "دن پہلے ہو تو ga دوسرے نمبر پر: zaterdag ga ik۔", "ik ga naar de winkel — zaterdag ga ik naar de winkel", "میں دکان جاتا ہوں — ہفتے کو میں دکان جاؤں گا۔", "زاتَرداخ خا اِک نار دَ وِنکَل"],
-    "wat ga je morgen doen?": ["دوست سے اس کا کل کا منصوبہ پوچھیں۔", "doen آخر میں: wat ga je morgen doen؟", "wat ga je morgen doen? — ik ga morgen werken.", "تم کل کیا کرو گے؟ — میں کل کام کروں گا۔", "وات خا یَے مورخَن ڈُون"]
   },
   "a0-work-basics": {
     "ik kan vandaag niet komen": ["کام یا ملاقات پر آج نہ آ سکیں تو فون پر یہی پوری بات کہیں۔", "kan کے بعد vandaag niet، اور آخر میں komen۔", "ik kan vandaag niet komen — morgen", "میں آج نہیں آ سکتا — کل۔", "اِک کان فان داخ نیت کومَن"],
@@ -13498,23 +13538,6 @@ function a0PracticalUsePromptV4(concept, lesson) {
     "a0-verb-endings|zij woont in nederland": "استاد آپ کی بہن کی تصویر دیکھ کر پوچھتی ہیں کہ وہ کہاں رہتی ہے۔ بتائیں کہ نیدرلینڈز میں۔",
     "a0-verb-endings|hij drinkt koffie": "کیفے میں دوست پوچھتا ہے کہ آپ کا بھائی کیا لے گا۔ بتائیں کہ وہ کافی پیتا ہے۔",
     "a0-verb-endings|wij eten brood": "اسکول کے فارم پر صبح کے ناشتے کا پوچھا گیا ہے۔ بتائیں کہ آپ کا خاندان روٹی کھاتا ہے۔",
-    "a0-adjective-endings|de blauwe jas": "گم شدہ چیزوں کے کاؤنٹر پر کئی جیکٹیں ہیں۔ اپنی نیلی جیکٹ کی طرف اشارہ کریں۔",
-    "a0-adjective-endings|een warme jas": "سردیوں سے پہلے دکان میں ملازم پوچھتا ہے کہ کیا چاہیے۔ کوئی بھی ایک گرم جیکٹ مانگیں۔",
-    "a0-adjective-endings|de rode deur": "مہمان کو فون پر بتانا ہے کہ آپ کا گھر کون سا ہے۔ اپنے سرخ دروازے کا نشان بتائیں۔",
-    "a0-adjective-endings|het witte huis": "نقشے پر گلی میں صرف ایک سفید گھر ہے۔ دوست کو اسی خاص گھر کا بتائیں۔",
-    "a0-adjective-endings|een wit huis": "دوست پوچھتا ہے کہ نیا گھر کیسا ہے۔ بتائیں کہ وہ ایک سفید گھر ہے۔",
-    "a0-adjective-endings|een zwart boek": "اسکول کی فہرست میں بچے کے لیے کوئی بھی ایک کالی کاپی چاہیے۔ دکان میں مانگیں۔",
-    "a0-adjective-endings|het zwarte boek": "میز پر کئی کتابیں ہیں۔ استاد کو بتائیں کہ آپ کی وہ کالی کتاب ہے۔",
-    "a0-adjective-endings|ik wil de groene jas": "دکان میں تین رنگ کی جیکٹیں لٹکی ہیں۔ آپ کو سبز والی چاہیے؛ ملازم کو بتائیں۔",
-    "a0-comparatives|duurder": "دکان میں دو جوتوں کی قیمت دیکھیں۔ ایک کی قیمت زیادہ ہے؛ اس کے لیے لفظ چنیں۔",
-    "a0-comparatives|goedkoper": "سپر مارکیٹ میں دو دودھ کے ڈبے ہیں۔ ایک کی قیمت کم ہے؛ اس کے لیے لفظ چنیں۔",
-    "a0-comparatives|beter": "ڈاکٹر پوچھتا ہے کہ دوا کے بعد حالت کیسی ہے۔ پہلے سے اچھی ہے؛ ایک لفظ میں بتائیں۔",
-    "a0-comparatives|kouder": "صبح باہر نکل کر محسوس ہوتا ہے کہ کل سے زیادہ ٹھنڈ ہے۔ اس کے لیے لفظ چنیں۔",
-    "a0-comparatives|warmer": "ہیٹنگ ٹھیک ہونے کے بعد کمرہ پہلے سے زیادہ گرم ہے۔ اس کے لیے لفظ چنیں۔",
-    "a0-comparatives|dit is goedkoper": "دکان میں دو قمیصیں ہیں۔ دوست کو بتائیں کہ یہ والی زیادہ سستی ہے۔",
-    "a0-comparatives|koffie is duurder dan thee": "کیفے کی قیمتوں کی فہرست دیکھ کر دوست کو بتائیں کہ کافی چائے سے مہنگی ہے۔",
-    "a0-comparatives|vandaag is het kouder": "بچہ اسکول جاتے ہوئے پتلی جیکٹ لے رہا ہے۔ اسے بتائیں کہ آج کل سے زیادہ ٹھنڈ ہے۔",
-    "a0-comparatives|dit is beter": "دکان کا ملازم دو چھتریاں دکھاتا ہے۔ ایک مضبوط ہے؛ بتائیں کہ یہ والی بہتر ہے۔",
     "a0-plurals-er-is|stoelen": "مہمان آنے والے ہیں اور آپ کو ایک سے زیادہ کرسیاں چاہییں۔ جمع کا لفظ چنیں۔",
     "a0-plurals-er-is|tafels": "کمیونٹی مرکز میں تقریب کے لیے کئی میزیں لگانی ہیں۔ جمع کا لفظ چنیں۔",
     "a0-plurals-er-is|kamers": "مکان کے اشتہار میں ایک سے زیادہ کمروں کا ذکر ہے۔ جمع کا لفظ چنیں۔",
@@ -13523,63 +13546,14 @@ function a0PracticalUsePromptV4(concept, lesson) {
     "a0-plurals-er-is|er is een stoel": "کلاس میں مہمان کے لیے صرف ایک خالی کرسی ہے۔ مہمان کو بتائیں۔",
     "a0-plurals-er-is|er zijn twee stoelen": "انتظار گاہ میں دو کرسیاں خالی ہیں۔ ساتھ آئے شخص کو بتائیں۔",
     "a0-plurals-er-is|er zijn drie kamers": "مکان دیکھنے آئے شخص کو بتائیں کہ گھر میں تین کمرے ہیں۔",
-    "a0-past-was-had|ik was ziek": "استاد پوچھتی ہیں کہ آپ پچھلے ہفتے کلاس میں کیوں نہیں آئے۔ بتائیں کہ آپ بیمار تھے۔",
-    "a0-past-was-had|ik had pijn": "ڈاکٹر پوچھتا ہے کہ کیا پچھلی بار بھی تکلیف تھی۔ بتائیں کہ تب درد تھا۔",
-    "a0-past-was-had|ik ging naar huis": "ساتھی پوچھتا ہے کہ کل کام کے بعد آپ نے کیا کیا۔ بتائیں کہ آپ گھر گئے۔",
-    "a0-past-was-had|hij was ziek": "اسکول کو بتانا ہے کہ پچھلے ہفتے آپ کا بیٹا بیمار تھا۔",
-    "a0-past-was-had|wij waren te laat": "ملاقات کے بعد گھر والوں سے بات ہو رہی ہے۔ بتائیں کہ آپ سب دیر سے پہنچے تھے۔",
-    "a0-past-was-had|gisteren was ik ziek": "کام پر مینیجر پوچھتا ہے کہ آپ کل کیوں نہیں آئے۔ کل سے شروع کرکے بتائیں کہ آپ بیمار تھے۔",
-    "a0-past-was-had|ik had gisteren hoofdpijn": "ڈاکٹر کو بتانا ہے کہ کل آپ کے سر میں درد تھا۔",
-    "a0-past-was-had|zij ging naar de dokter": "استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔",
-    "a0-feelings-reflexive|ik voel me goed": "پڑوسی کل کی بیماری کے بعد حال پوچھتی ہے۔ اب آپ کی طبیعت اچھی ہے؛ بتائیں۔",
-    "a0-feelings-reflexive|ik voel me ziek": "کام پر دوپہر کو بخار جیسا محسوس ہو رہا ہے۔ مینیجر کو بتائیں کہ آپ بیمار محسوس کرتے ہیں۔",
-    "a0-feelings-reflexive|ik voel me niet goed": "بس میں سفر کے دوران ہلکے چکر آ رہے ہیں؛ آپ بیمار نہیں، بس طبیعت ٹھیک نہیں۔ ڈرائیور کو یہی بتائیں۔",
-    "a0-feelings-reflexive|ik voel me beter": "دوا کے دو دن بعد ڈاکٹر حال پوچھتا ہے۔ اب آپ پہلے سے اچھا محسوس کرتے ہیں۔",
-    "a0-feelings-reflexive|hoe voel je je": "دوست کل بیمار تھا۔ آج اس سے اس کی طبیعت پوچھیں۔",
-    "a0-feelings-reflexive|hoe voelt u zich": "استقبالیہ پر آپ ایک بزرگ مریض سے ادب سے ان کا حال پوچھتے ہیں۔",
-    "a0-feelings-reflexive|zij voelt zich ziek": "استاد کو فون پر بتانا ہے کہ آج آپ کی بیٹی بیمار محسوس کر رہی ہے۔",
-    "a0-feelings-reflexive|ik ben moe": "رات کی شفٹ کے بعد دوست شام کو باہر چلنے کو کہتا ہے۔ بتائیں کہ آپ تھکے ہوئے ہیں۔",
-    "a0-object-pronouns|hem": "استاد پوچھتی ہیں کہ آپ کس کو فون کریں گے: بیٹے کو۔ فعل کے بعد کون سا لفظ آئے گا؟",
-    "a0-object-pronouns|ons": "اسٹیشن پر آپ کا پورا خاندان مدد کا منتظر ہے۔ فعل کے بعد ‘ہمیں’ کے لیے کون سا لفظ آئے گا؟",
-    "a0-object-pronouns|kunt u hem helpen": "بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔",
-    "a0-object-pronouns|kunt u ons helpen": "آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے مدد مانگیں۔",
-    "a0-object-pronouns|ik bel haar": "ساتھی پوچھتا ہے کہ کیا آپ نئی ساتھی کو اطلاع دیں گے۔ بتائیں کہ آپ اسے فون کرتے ہیں۔",
-    "a0-object-pronouns|bel mij morgen": "فون پر بات مکمل نہیں ہوئی۔ سامنے والے سے کہیں کہ آپ کو کل فون کرے۔",
-    "a0-object-pronouns|ik breng hem naar school": "پڑوسی ابھی آپ کے بیٹے کا نام لے کر پوچھتی ہے کہ صبح اسے کون لے جاتا ہے۔ بیٹے کا دوبارہ ذکر کیے بغیر ‘اسے’ کہہ کر بتائیں کہ آپ اسے اسکول لے جاتے ہیں۔",
-    "a0-object-pronouns|ik haal haar om drie uur op": "استاد پوچھتی ہیں کہ بیٹی کو کون لے جائے گا۔ بتائیں کہ آپ اسے تین بجے لے جائیں گے۔",
-    "a0-future-gaan|ik ga werken": "صبح بچہ پوچھتا ہے کہ آپ کہاں جا رہے ہیں۔ بتائیں کہ آپ کام کرنے جا رہے ہیں۔",
-    "a0-future-gaan|ik ga morgen werken": "دوست کل ملنا چاہتا ہے۔ بتائیں کہ آپ کل کام کریں گے۔",
-    "a0-future-gaan|morgen ga ik werken": "ساتھی پوچھتا ہے کہ آپ کل کیا کریں گے۔ وقت پہلے رکھ کر بتائیں کہ کام کریں گے۔",
-    "a0-future-gaan|wij gaan eten": "شام کو بچوں کو بلانا ہے کہ اب سب کھانا کھانے جا رہے ہیں۔",
-    "a0-future-gaan|hij gaat slapen": "فون پر دادی پوچھتی ہیں کہ کیا بیٹا جاگ رہا ہے۔ بتائیں کہ وہ سونے جا رہا ہے۔",
-    "a0-future-gaan|ik ga de school bellen": "بچے کو بخار ہے۔ اپنے شوہر کو بتائیں کہ آپ اسکول کو فون کریں گی۔",
-    "a0-future-gaan|zaterdag ga ik naar de winkel": "پڑوسی ہفتے کو ملنا چاہتی ہے۔ بتائیں کہ ہفتے کو آپ دکان جائیں گے۔",
     "a0-plurals-er-is|kamer": "مکان کے نقشے پر صرف ایک کمرہ دکھایا گیا ہے۔ ایک کمرے کا لفظ چنیں۔",
     "a0-plurals-er-is|stoel": "کلاس میں صرف ایک کرسی خالی ہے۔ ایک کرسی کا لفظ چنیں۔",
     "a0-plurals-er-is|tafel": "کمرے میں کھانے کے لیے ایک ہی میز ہے۔ ایک میز کا لفظ چنیں۔",
     "a0-plurals-er-is|het boek": "استاد ایک خاص کتاب مانگتی ہیں جو میز پر رکھی ہے۔ اس کتاب کا ذکر کریں۔",
     "a0-plurals-er-is|twee boeken": "لائبریری میں آپ کے بچے کے پاس دو کتابیں ہیں۔ ملازم کو بتائیں۔",
-    "a0-adjective-endings|rood": "دوست پوچھتا ہے کہ آپ کا دروازہ کس رنگ کا ہے۔ صرف رنگ بتائیں: سرخ۔",
-    "a0-adjective-endings|groen": "دوست پوچھتا ہے کہ آپ کو جیکٹ کس رنگ میں چاہیے۔ صرف رنگ بتائیں: سبز۔",
-    "a0-adjective-endings|warm": "دکان کا ملازم پوچھتا ہے کہ جیکٹ کیسی چاہیے، پتلی یا سردی والی۔ ایک لفظ میں بتائیں: گرم۔",
-    "a0-comparatives|goedkoop": "بازار میں ایک چیز کی قیمت کم ہے۔ دوست کو ایک لفظ میں بتائیں: سستی۔",
-    "a0-comparatives|duur": "دکان میں جوتوں کی قیمت بہت زیادہ ہے۔ ایک لفظ میں بتائیں: مہنگے۔",
-    "a0-comparatives|goed": "دوست پوچھتا ہے کہ نیا کیفے کیسا ہے۔ ایک لفظ میں بتائیں: اچھا۔",
-    "a0-comparatives|koud": "صبح باہر نکل کر بچہ پوچھتا ہے کہ موسم کیسا ہے۔ ایک لفظ میں بتائیں: ٹھنڈا۔",
-    "a0-comparatives|warm": "دوپہر کو دھوپ تیز ہے۔ دوست کو ایک لفظ میں بتائیں: گرم۔",
-    "a0-object-pronouns|hij": "اسکول کی تصویر میں اپنے بیٹے کی طرف اشارہ کرکے ‘وہ’ کہنا ہے۔ جملے کے شروع والا لفظ چنیں۔",
-    "a0-object-pronouns|wij": "استاد پوچھتی ہیں کہ کون آئے گا: آپ اور آپ کا شوہر۔ جملے کے شروع والا لفظ چنیں۔",
-    "a0-object-pronouns|kunt u mij helpen": "اسٹیشن پر آپ اکیلے ہیں اور راستہ نہیں جانتے۔ اپنے لیے مدد مانگیں۔",
-    "a0-object-pronouns|haar pen": "کلاس میں ایک عورت کا قلم گر گیا ہے۔ استاد کو بتائیں کہ یہ اس کا قلم ہے۔",
     "a0-verb-endings|ik woon in nederland": "نیا پڑوسی پوچھتا ہے کہ آپ کہاں رہتے ہیں۔ اپنے بارے میں بتائیں کہ آپ نیدرلینڈز میں رہتے ہیں۔",
     "a0-verb-endings|ik drink water": "کیفے میں دوست پوچھتا ہے کہ آپ کیا لیں گے۔ اپنے بارے میں بتائیں کہ آپ پانی پیتے ہیں۔",
     "a0-verb-endings|ik eet brood": "ڈاکٹر پوچھتا ہے کہ آپ ناشتے میں کیا کھاتے ہیں۔ اپنے بارے میں بتائیں کہ آپ روٹی کھاتے ہیں۔",
-    "a0-past-was-had|ik ben ziek": "آج صبح سے بخار ہے۔ فارمیسی میں بتائیں کہ آپ ابھی بیمار ہیں۔",
-    "a0-past-was-had|ik heb pijn": "ڈاکٹر پوچھتا ہے کہ کیا ابھی تکلیف ہے۔ بتائیں کہ اس وقت درد ہے۔",
-    "a0-past-was-had|ik ga naar huis": "کام ختم ہو گیا ہے اور ساتھی پوچھتا ہے کہ اب کہاں جا رہے ہیں۔ بتائیں کہ آپ گھر جاتے ہیں۔",
-    "a0-feelings-reflexive|ik ben ziek": "ڈاکٹر نے بخار کی تصدیق کر دی ہے۔ استاد کو احساس نہیں، سیدھی حالت بتائیں: میں بیمار ہوں۔",
-    "a0-future-gaan|ik werk vandaag": "دوست آج دوپہر ملنا چاہتا ہے۔ بتائیں کہ آپ آج کام کرتے ہیں۔",
-    "a0-future-gaan|wat ga je morgen doen": "جمعہ کی شام دوست سے بات ہو رہی ہے۔ اس سے پوچھیں کہ وہ کل کیا کرے گا۔"
   });
   const monthOrdinalsUrdu = ["پہلا", "دوسرا", "تیسرا", "چوتھا", "پانچواں", "چھٹا", "ساتواں", "آٹھواں", "نواں", "دسواں", "گیارہواں", "بارہواں"];
   survivalMonthsV4.forEach(([month], index) => {
@@ -15618,6 +15592,12 @@ function a0MissionTargetV4(lessonId, dutch, situations, related = []) {
   };
 }
 
+// Lets a target follow its Dutch to whichever A0 lesson introduces it, for
+// refs into units that are being rebuilt elsewhere.
+function a0FlexibleOwnerTargetV4(target) {
+  return { ...target, refs: target.refs.map((ref) => ({ ...ref, anyA0Owner: true })) };
+}
+
 /*
  * A0 missions are deliberately authored instead of being assembled from a
  * rotating question template.  Each target represents a preceding lesson
@@ -15870,15 +15850,15 @@ const a0MissionPlansV4 = {
     documentTitles: ["خریداری کی رسید", "کاؤنٹر کا آرڈر", "ادائیگی کی رسید"],
     documentLabels: ["چیز یا مشروب", "ادائیگی"],
     targets: [
-      a0MissionTargetV4("a0-verb-endings", "ik drink water", [
-        "خریداری کے بعد بتانا ہے کہ آپ پانی پیتے ہیں۔ مکمل جملہ کہیں۔",
-        "کیفے میں اپنی روزمرہ عادت بتائیں کہ آپ پانی پیتے ہیں۔",
-        "سپر مارکیٹ میں ساتھی کو بتائیں کہ آپ پانی پیتے ہیں۔"
+      a0MissionTargetV4("a0-daily-actions", "ik wacht hier", [
+        "دکان میں ملازم پوچھتا ہے کہ کیا آپ قطار میں ہیں۔ بتائیں کہ آپ یہاں انتظار کرتے ہیں۔",
+        "کیفے کے کاؤنٹر پر آپ کا آرڈر تیار ہو رہا ہے۔ ملازم کو بتائیں کہ آپ یہیں انتظار کرتے ہیں۔",
+        "سپر مارکیٹ کے کاؤنٹر پر دوسرا گاہک پوچھتا ہے کہ کیا آپ قطار میں ہیں۔ بتائیں کہ آپ یہاں انتظار کرتے ہیں۔"
       ]),
-      a0MissionTargetV4("a0-verb-endings", "hij drinkt koffie", [
-        "دکان میں ساتھی پوچھتا ہے کہ آپ کا بھائی کیا پیتا ہے۔ بتائیں کہ وہ کافی پیتا ہے۔",
-        "کیفے کے کاؤنٹر پر بتائیں کہ آپ کے ساتھ آیا شخص کافی پیتا ہے۔",
-        "سپر مارکیٹ میں دوست کو بتائیں کہ آپ کا شوہر کافی پیتا ہے، اس لیے کافی لینی ہے۔"
+      a0MissionTargetV4("a0-food-drink", "ik heb dorst", [
+        "دکان میں بہت گرمی ہے۔ ملازم کو بتائیں کہ آپ کو پیاس لگی ہے۔",
+        "کیفے میں دوست پوچھتا ہے کہ کیا آپ کچھ پئیں گے۔ بتائیں کہ آپ کو پیاس لگی ہے۔",
+        "سپر مارکیٹ کی لمبی قطار کے بعد ساتھی کو بتائیں کہ آپ کو پیاس لگی ہے۔"
       ]),
       a0MissionTargetV4("a0-food-drink", "ik wil graag water", [
         "دکان میں پانی مؤدبانہ طور پر مانگیں۔",
@@ -15890,16 +15870,16 @@ const a0MissionPlansV4 = {
         "کیفے کے ساتھ والی دکان میں ٹوپی دوسرے رنگ میں چاہیے۔ کالے رنگ کا پوچھیں۔",
         "سپر مارکیٹ میں تھیلا پسند ہے؛ پوچھیں کہ کیا یہ کالے رنگ میں بھی ہے۔"
       ]),
-      a0MissionTargetV4("a0-adjective-endings", "ik wil de groene jas", [
-        "دکان میں تین رنگ کی جیکٹیں ہیں۔ ملازم کو بتائیں کہ آپ کو سبز جیکٹ چاہیے۔",
-        "کیفے کے ساتھ والی دکان میں کئی جیکٹیں لٹکی ہیں۔ سبز والی مانگیں۔",
-        "سپر مارکیٹ کے کپڑوں والے حصے میں سبز جیکٹ چننی ہے۔ ملازم کو بتائیں۔"
+      a0MissionTargetV4("a0-colours-clothes", "de jas is blauw", [
+        "آپ کی جیکٹ دکان کے کاؤنٹر پر رہ گئی ہے۔ ملازم کو بتائیں کہ جیکٹ نیلی ہے۔",
+        "کیفے میں آپ کی جیکٹ کرسی پر رہ گئی تھی۔ ملازم کو بتائیں کہ جیکٹ نیلی ہے۔",
+        "سپر مارکیٹ کے گم شدہ سامان والے کاؤنٹر پر بتائیں کہ آپ کی جیکٹ نیلی ہے۔"
       ]),
       a0MissionTargetV4("a0-shopping-payment", "hoeveel kost dit", [
-        "دکان میں دو چیزیں ہیں۔ پہلے ایک کی قیمت پوچھیں، پھر بتائیں کہ یہ والی زیادہ سستی ہے۔",
-        "کاؤنٹر پر پہلے قیمت پوچھیں، پھر دوست کو بتائیں کہ یہ والا زیادہ سستا ہے۔",
-        "سپر مارکیٹ میں پہلے قیمت پوچھیں، پھر بتائیں کہ یہ والی چیز زیادہ سستی ہے۔"
-      ], [{ lessonId: "a0-comparatives", dutch: "dit is goedkoper" }])
+        "دکان میں پہلے ایک چیز کی قیمت پوچھیں، پھر بتائیں کہ آپ پن سے ادائیگی کرتے ہیں۔",
+        "کاؤنٹر پر پہلے قیمت پوچھیں، پھر بتائیں کہ آپ پن سے ادائیگی کرتے ہیں۔",
+        "سپر مارکیٹ میں پہلے قیمت پوچھیں، پھر بتائیں کہ آپ پن سے ادائیگی کرتے ہیں۔"
+      ], [{ lessonId: "a0-shopping-payment", dutch: "ik betaal met pin" }])
     ]
   },
   "a0-mission-help": {
@@ -15916,20 +15896,20 @@ const a0MissionPlansV4 = {
         "بس کے سامنے حادثہ ہو گیا ہے۔ ڈرائیور کے ساتھ 112 کو اطلاع دیں۔",
         "رات کو گلی میں حادثہ ہوا ہے۔ 112 پر سب سے پہلی بات کہیں۔"
       ]),
-      a0MissionTargetV4("a0-feelings-reflexive", "ik voel me niet goed", [
-        "اسٹیشن کے بعد فارمیسی میں پہلے بتائیں کہ طبیعت ٹھیک نہیں، پھر کہ کمر میں درد ہے۔",
-        "بس کے لمبے سفر کے بعد ڈرائیور کو پہلے بتائیں کہ طبیعت ٹھیک نہیں، پھر کمر کا درد۔",
-        "رات کو فوری مدد کے فون پر پہلے طبیعت کی خرابی، پھر کمر کا درد بتائیں۔"
-      ], [{ lessonId: "a0-body-health", dutch: "mijn rug doet pijn" }]),
+      a0MissionTargetV4("a0-body-health", "mijn rug doet pijn", [
+        "اسٹیشن کے بعد فارمیسی میں بتائیں کہ آپ کی کمر میں درد ہے۔",
+        "بس کے لمبے سفر کے بعد ڈرائیور کو بتائیں کہ آپ کی کمر میں درد ہے۔",
+        "رات کو فوری مدد کے فون پر بتائیں کہ آپ کی کمر میں درد ہے۔"
+      ]),
       a0MissionTargetV4("a0-transport-directions", "waar is het station", [
         "سفر شروع کرنے کے لیے اسٹیشن کا راستہ پوچھیں۔",
         "بس سے اترنے کے بعد اسٹیشن معلوم کرنا ہے۔ درست سوال کہیں۔",
         "رات کے وقت مددگار سے اسٹیشن کی جگہ پوچھیں۔"
       ]),
-      a0MissionTargetV4("a0-past-was-had", "gisteren was ik ziek", [
-        "دواخانے کا ملازم پوچھتا ہے کہ تکلیف کب سے ہے۔ کل سے شروع کرکے بتائیں کہ آپ کل بیمار تھے۔",
-        "بس میں ساتھی پوچھتا ہے کہ آپ کل کام پر کیوں نہیں تھے۔ بتائیں کہ کل آپ بیمار تھے۔",
-        "رات کو فون پر ڈاکٹر کو بتائیں کہ کل بھی آپ بیمار تھے۔"
+      a0MissionTargetV4("a0-health-emergency", "waar is de apotheek", [
+        "اسٹیشن سے نکل کر دوا لینی ہے۔ راہ گیر سے فارمیسی کی جگہ پوچھیں۔",
+        "بس سے اترنے کے بعد دوا لینی ہے۔ ڈرائیور سے پوچھیں کہ فارمیسی کہاں ہے۔",
+        "رات کو دوا چاہیے۔ مددگار سے پوچھیں کہ فارمیسی کہاں ہے۔"
       ]),
       a0MissionTargetV4("a0-health-emergency", "ik ben ziek", [
         "دواخانے پہنچ کر بتائیں کہ آپ بیمار ہیں۔",
@@ -15962,42 +15942,44 @@ const a0MissionPlansV4 = {
       ["listen-choice", "document-choice", "sequence", "sequence", "sequence", "sequence"],
       ["document-choice", "meaning", "sequence", "sequence", "sequence", "sequence"]
     ],
+    // The completion check samples every A0 unit. Targets owned by units other
+    // agents are rebuilding resolve to whichever A0 lesson introduces the same
+    // Dutch, so a moved word keeps the mission loadable.
     targets: [
-      a0MissionTargetV4("a0-understanding-help", "kunt u herhalen", [
-        "فون پر پہلی بات سنائی نہیں دی۔ مؤدبانہ طور پر دوبارہ مانگیں۔",
-        "صبح کے پیغام کا آخری حصہ واضح نہیں۔ دوبارہ کہنے کو کہیں۔",
-        "رخصتی کی ہدایت سنائی نہیں دی۔ مؤدبانہ طور پر دہرانے کو کہیں۔"
-      ]),
-      a0MissionTargetV4("a0-food-drink", "water", [
-        "بیمار بچے کے لیے فہرست میں پانی کا لفظ پہچانیں۔",
-        "صبح کی ضروری چیزوں میں پانی کا ڈچ لفظ چنیں۔",
-        "رخصتی سے پہلے پانی کی بوتل کے کارڈ پر لفظ پہچانیں۔"
-      ]),
-      a0MissionTargetV4("a0-name-land-city", "mijn naam is Ali", [
-        "فون پر پہلے اپنا نام علی بتائیں، پھر اپنا صفر چھ والا نمبر دیں، اور آخر میں کہیں کہ آپ کو کل فون کریں۔",
-        "صبح کے پیغام میں اپنا نام علی، صفر چھ سے شروع فون نمبر، اور کل فون کرنے کی درخواست درست ترتیب سے دیں۔",
-        "عمارت کے کاؤنٹر پر اپنا نام علی، صفر چھ سے شروع نمبر، اور کل فون کرنے کی بات درست ترتیب سے بتائیں۔"
+      a0FlexibleOwnerTargetV4(a0MissionTargetV4("a0-ik-jij-u", "u", [
+        "اسکول کے ملازم سے ادب سے بات کرنی ہے۔ ‘آپ’ کے لیے درست ڈچ لفظ چنیں۔",
+        "صبح کے پیغام میں استاد کو ادب سے مخاطب کرنا ہے۔ ‘آپ’ کے لیے درست ڈچ لفظ چنیں۔",
+        "عمارت کے ملازم سے ادب سے بات کرتے ہوئے ‘آپ’ کا ڈچ لفظ پہچانیں۔"
+      ])),
+      a0FlexibleOwnerTargetV4(a0MissionTargetV4("a0-sounds-consonants", "jas", [
+        "بیمار بچے کو باہر لے جانے سے پہلے فہرست میں جیکٹ کا لفظ پہچانیں۔",
+        "صبح کی ضروری چیزوں میں جیکٹ کا ڈچ لفظ چنیں۔",
+        "رخصتی سے پہلے کھونٹی پر لگے کارڈ پر جیکٹ کا لفظ پہچانیں۔"
+      ])),
+      a0FlexibleOwnerTargetV4(a0MissionTargetV4("a0-greetings-courtesy", "goedemorgen", [
+        "بیمار بچے کے بارے میں فون پر پہلے صبح کا سلام کریں، پھر اپنا نام علی بتائیں، اور آخر میں صفر چھ سے شروع اپنا نمبر دیں۔",
+        "صبح کے پیغام میں سلام، اپنا نام علی، اور صفر چھ سے شروع فون نمبر درست ترتیب سے دیں۔",
+        "عمارت کے کاؤنٹر پر صبح کا سلام کریں، اپنا نام علی بتائیں، اور صفر چھ سے شروع نمبر دیں۔"
       ], [
-        { lessonId: "a0-address-phone", dutch: "mijn nummer is nul zes" },
-        { lessonId: "a0-object-pronouns", dutch: "bel mij morgen" }
-      ]),
-      a0MissionTargetV4("a0-possessive", "mijn huis", [
+        { lessonId: "a0-name-land-city", dutch: "mijn naam is Ali" },
+        { lessonId: "a0-address-phone", dutch: "mijn nummer is nul zes" }
+      ])),
+      a0FlexibleOwnerTargetV4(a0MissionTargetV4("a0-possessive", "mijn huis", [
         "اپنے گھر کا ذکر کریں، پھر بتائیں کہ وہاں ہیٹنگ کام نہیں کر رہی۔",
         "مرمت کے پیغام میں پہلے میرا گھر کہیں، پھر ہیٹنگ کی خرابی بتائیں۔",
         "رخصت ہونے سے پہلے اپنے گھر اور ہیٹنگ کی خرابی کی دو باتیں درست ترتیب سے کہیں۔"
-      ], [{ lessonId: "a0-home-needs", dutch: "de verwarming doet het niet" }]),
+      ], [{ lessonId: "a0-home-needs", dutch: "de verwarming doet het niet" }])),
       a0MissionTargetV4("a0-transport-directions", "ik wil een kaartje", [
         "فارمیسی جانے کے سفر میں پہلے ٹکٹ مانگیں، پھر پن سے ادائیگی بتائیں۔",
         "صبح کے سفر میں ٹکٹ کی درخواست اور پن سے ادائیگی کی بات درست ترتیب سے کہیں۔",
         "محفوظ روانگی سے پہلے ٹکٹ مانگنے اور پن سے ادا کرنے کی بات ترتیب دیں۔"
       ], [{ lessonId: "a0-shopping-payment", dutch: "ik betaal met pin" }]),
       a0MissionTargetV4("a0-child-school", "mijn kind komt vandaag niet", [
-        "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری اور کل کا منصوبہ بتائیں، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
-        "صبح پہلے اسکول، پھر کام کو آج کی غیر حاضری اور کل کام کا بتائیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
-        "محفوظ رخصتی میں بچے، آج کا کام، کل کا کام، اور باہر جانے کی چار سیکھی ہوئی باتیں درست ترتیب سے کہیں۔"
+        "پہلے اسکول کو بچے کی غیر حاضری، پھر کام کو اپنی غیر حاضری بتائیں، اور آخر میں عمارت سے نکلنے کا راستہ پوچھیں۔",
+        "صبح پہلے اسکول، پھر کام کو آج کی غیر حاضری بتائیں، اور آخر میں باہر جانے کی جگہ پوچھیں۔",
+        "محفوظ رخصتی میں بچے کی غیر حاضری، اپنا آج کا کام، اور باہر جانے کی جگہ کی تین سیکھی ہوئی باتیں درست ترتیب سے کہیں۔"
       ], [
         { lessonId: "a0-work-basics", dutch: "ik kan vandaag niet komen" },
-        { lessonId: "a0-future-gaan", dutch: "morgen ga ik werken" },
         { lessonId: "a0-weather-clothing-safety", dutch: "waar is de uitgang" }
       ])
     ]
@@ -16017,16 +15999,20 @@ const a0DefaultMissionCheckTypesV4 = [
 
 function resolveA0MissionTargetV4(target) {
   const resolved = target.refs.map((ref) => {
+    const sameDutch = (candidate) => normalizedTextV4(candidate.dutch) === normalizedTextV4(ref.dutch);
     const concept = [...conceptByIdV4.values()].find((candidate) => (
-      candidate.introducedInLessonId === ref.lessonId
-      && normalizedTextV4(candidate.dutch) === normalizedTextV4(ref.dutch)
-    ));
+      candidate.introducedInLessonId === ref.lessonId && sameDutch(candidate)
+    )) || (ref.anyA0Owner
+      ? [...conceptByIdV4.values()].find((candidate) => (
+        String(candidate.introducedInLessonId || "").startsWith("a0-") && sameDutch(candidate)
+      ))
+      : null);
     if (!concept) {
       throw new Error(`Missing A0 mission concept: ${ref.lessonId} / ${ref.dutch}`);
     }
     const skillId = skillIdByConceptIdV4.get(concept.id);
     if (!skillId) throw new Error(`Missing A0 mission skill: ${concept.id}`);
-    return { concept, skillId, lessonId: ref.lessonId };
+    return { concept, skillId, lessonId: concept.introducedInLessonId };
   });
   return { ...target, resolved };
 }
@@ -17869,9 +17855,9 @@ const missionRolePlaysV4 = {
       ["other", "goedemiddag! wat wil je drinken?", "دوپہر بخیر! کیا پینا چاہیں گے؟"],
       ["you", "ik wil graag koffie", ["de jas is blauw", "ik betaal met pin"]],
       ["other", "dat is drie euro.", "یہ تین یورو ہیں۔"],
-      ["you", "ik betaal met pin", ["ik drink water", "welke kleur"]],
+      ["you", "ik betaal met pin", ["ik heb dorst", "welke kleur"]],
       ["other", "alstublieft.", "یہ لیجیے۔"],
-      ["you", "mag ik de bon", ["ik eet brood", "rood"], "رسید مانگیں۔"]
+      ["you", "mag ik de bon", ["ik wacht hier", "rood"], "رسید مانگیں۔"]
     ]
   },
   "a0-mission-help": {
