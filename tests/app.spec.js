@@ -2467,13 +2467,13 @@ test("beginner settings persist and pronunciation hints render for core words", 
 
   await page.evaluate(() => {
     startLesson("a0-letters-1");
-    activeQuestionIndex = sessionQuestions.findIndex((question) => question.concept?.dutch === "g");
+    activeQuestionIndex = sessionQuestions.findIndex((question) => question.concept?.dutch === "c");
     render();
   });
   // A letter card shows the letter's Dutch name in Urdu script.
-  const letterCard = page.locator(".learning-teaching-card").filter({ hasText: "حرف g" });
+  const letterCard = page.locator(".learning-teaching-card").filter({ hasText: "حرف c" });
   await expect(letterCard).toBeVisible();
-  await expect(letterCard.locator(".teaching-pronunciation")).toContainText("خے");
+  await expect(letterCard.locator(".teaching-pronunciation")).toContainText("سے");
 
   const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   expect(stored.settings.largeText).toBe(true);
