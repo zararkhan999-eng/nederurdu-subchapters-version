@@ -3494,8 +3494,10 @@ const a1GrammarSeedsV4 = {
     ["ons", "ہمیں"],
     ["kunt u hem helpen?", "کیا آپ اس کی مدد کر سکتے ہیں؟"],
     ["kunt u ons helpen?", "کیا آپ ہماری مدد کر سکتے ہیں؟"],
+    ["kunt u mij helpen alstublieft?", "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟"],
     ["ik bel haar", "میں اسے فون کرتا / کرتی ہوں"],
     ["bel mij morgen", "مجھے کل فون کریں"],
+    ["sorry ik begrijp het niet", "معاف کیجیے، مجھے یہ سمجھ نہیں آیا"],
     ["ik breng hem naar school", "میں اسے اسکول لے جاتا / جاتی ہوں"],
     ["ik haal haar om drie uur op", "میں اسے تین بجے لے آتا / آتی ہوں"]
   ],
@@ -3518,6 +3520,32 @@ const a1GrammarSeedsV4 = {
     ["wij waren te laat", "ہمیں دیر ہو گئی تھی"],
     ["ik ging naar huis", "میں گھر گیا / گئی"],
     ["zij ging naar de dokter", "وہ ڈاکٹر کے پاس گئی"]
+  ],
+  "a1-modal-verbs": [
+    ["ik kan morgen komen", "میں کل آ سکتا / سکتی ہوں"],
+    ["u kunt morgen komen", "آپ کل آ سکتے ہیں"],
+    ["hij kan vandaag niet werken", "وہ آج کام نہیں کر سکتا"],
+    ["ik kan niet komen", "میں نہیں آ سکتا / سکتی"],
+    ["kunt u mij helpen alstublieft?", "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟"],
+    ["ik wil koffie drinken", "میں کافی پینا چاہتا / چاہتی ہوں"],
+    ["wilt u thee drinken?", "کیا آپ چائے پینا چاہتے ہیں؟"],
+    ["ik moet morgen werken", "مجھے کل کام کرنا ہے"],
+    ["mag ik iets vragen?", "کیا میں کچھ پوچھ سکتا / سکتی ہوں؟"],
+    ["ik kan vandaag niet komen", "میں آج نہیں آ سکتا / سکتی"]
+  ],
+  "a1-perfect-intro": [
+    ["ik heb gisteren gewerkt", "میں نے کل کام کیا"],
+    ["ik heb de school gebeld", "میں نے اسکول کو فون کیا"],
+    ["ik heb de rekening betaald", "میں نے بل ادا کر دیا"],
+    ["zij heeft de dokter gebeld", "اس نے ڈاکٹر کو فون کیا"],
+    ["ik heb het medicijn genomen", "میں نے دوا لے لی"],
+    ["wij hebben gegeten", "ہم نے کھانا کھا لیا"],
+    ["wat heb je gedaan?", "تم نے کیا کیا؟"],
+    ["ik heb het gezien", "میں نے اسے دیکھ لیا"],
+    ["ik heb het geld gekregen", "مجھے پیسے مل گئے"],
+    ["ik heb het gelezen", "میں نے اسے پڑھ لیا"],
+    ["het pakket is gekomen", "پارسل آ گیا ہے"],
+    ["de afspraak is veranderd", "ملاقات بدل گئی ہے"]
   ]
 };
 
@@ -3556,10 +3584,12 @@ function dutchWordsV4Shell(dutch) {
 a1Lessons.push(
   makeA1GrammarShellV4({ id: "a1-adjective-endings", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "De blauwe jas", visual: ["jas", "جیکٹ", "jas"] }),
   makeA1GrammarShellV4({ id: "a1-comparatives", unit: "A1: کھانا، خریداری، واپسی اور ادائیگی", title: "Duurder en goedkoper", visual: ["winkel", "دکان", "winkel"] }),
-  makeA1GrammarShellV4({ id: "a1-future-gaan", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Morgen ga ik werken", visual: ["werk", "کام", "werk"] }),
-  makeA1GrammarShellV4({ id: "a1-object-pronouns", unit: "A1: سوال، مدد، فون اور ملاقات", title: "Mij, hem, haar, ons", visual: ["telefoon", "فون", "telefoon"] }),
+  makeA1GrammarShellV4({ id: "a1-future-gaan", unit: "A1: منصوبے، دعوت اور ملاقات", title: "Morgen ga ik werken", visual: ["werk", "کام", "werk"] }),
+  makeA1GrammarShellV4({ id: "a1-object-pronouns", unit: "A1: سوال، مدد اور فون", title: "Mij, hem, haar, ons", visual: ["telefoon", "فون", "telefoon"] }),
   makeA1GrammarShellV4({ id: "a1-feelings-reflexive", unit: "A1: ڈاکٹر، علامات اور دوا", title: "Ik voel me ...", visual: ["ziek", "بیمار", "ziek"] }),
-  makeA1GrammarShellV4({ id: "a1-past-was-had", unit: "A1: پیغام، اسکول اور کام", title: "Gisteren: was, had, ging", visual: ["bericht", "پیغام", "bericht"] })
+  makeA1GrammarShellV4({ id: "a1-past-was-had", unit: "A1: پیغام، اسکول اور کام", title: "Gisteren: was, had, ging", visual: ["bericht", "پیغام", "bericht"] }),
+  makeA1GrammarShellV4({ id: "a1-modal-verbs", unit: "A1: سوال، مدد اور فون", title: "Ik kan, ik wil, ik moet", visual: ["helpen", "مدد", "helpen"] }),
+  makeA1GrammarShellV4({ id: "a1-perfect-intro", unit: "A1: پیغام، اسکول اور کام", title: "Ik heb gewerkt", visual: ["werk", "کام", "werk"] })
 );
 
 const a0DailyCheckpointConcepts = [
@@ -4813,7 +4843,14 @@ const a1Subchapters = [
     title: "سوال اور مدد",
     goal: "آسان سوالات پوچھنا اور مدد/دہرانا مانگنا۔",
     practice: "waar, wat, wie, hoeveel اور ہاں/نہیں سوالات۔",
-    lessonIds: ["a1-questions", "a1-polite-chunks", "a1-future-gaan", "a1-plans-invitations", "a1-object-pronouns", "a1-phone-calls", "a1-appointments", "a1-mission-phone-internet"]
+    lessonIds: ["a1-questions", "a1-object-pronouns", "a1-modal-verbs", "a1-phone-calls", "a1-mission-phone-internet"]
+  },
+  {
+    id: "a1-plans-appointments",
+    title: "منصوبے اور ملاقاتیں",
+    goal: "آنے والے کام بتانا، دعوت دینا یا رد کرنا، اور ملاقات بنانا یا بدلنا۔",
+    practice: "ga + پورا فعل، zullen we، اور afspraak والے جملے۔",
+    lessonIds: ["a1-future-gaan", "a1-plans-invitations", "a1-appointments"]
   },
   {
     id: "a1-home-objects",
@@ -4848,7 +4885,7 @@ const a1Subchapters = [
     title: "کام اور اسکول کے پیغام",
     goal: "غیر حاضری، بیماری، تاخیر، اور وقت کے بارے میں مختصر واضح پیغام دینا۔",
     practice: "فون کا تعارف، وجہ، واپسی کا دن، اور واپس فون کرنے کی درخواست۔",
-    lessonIds: ["a1-short-messages", "a1-past-was-had", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
+    lessonIds: ["a1-past-was-had", "a1-perfect-intro", "a1-short-messages", "a1-work-school-messages", ...a1Expanded("a1-school-contact", "a1-work-schedule", "a1-daily-review-two"), "a1-mission-school-day"]
   }
 ];
 
@@ -5344,6 +5381,8 @@ retirePathLessonV4(a1Lessons, "a1-home-neighbours");
 retirePathLessonV4(a1Lessons, "a1-shopping-transport");
 retirePathLessonV4(a1Lessons, "a1-bus-train-extra");
 retirePathLessonV4(a1Lessons, "a1-health-pharmacy");
+// Merged into a1-object-pronouns (grammar spine §5); saved progress maps there.
+retirePathLessonV4(a1Lessons, "a1-polite-chunks");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -5359,7 +5398,8 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-home-neighbours",
       "a1-shopping-transport",
       "a1-bus-train-extra",
-      "a1-health-pharmacy"
+      "a1-health-pharmacy",
+      "a1-polite-chunks"
     ].includes(lessonId)
   ));
 }
@@ -5903,8 +5943,12 @@ const a1AuthoredCurriculumV4 = {
       practiceUrdu: "پہلے آج کے مکمل جملے اور روزمرہ ترتیب سمجھیں، پھر شیڈول، تاخیر کے پیغام، اور موسم والے منصوبے میں وہی سیکھی ہوئی باتیں استعمال کریں۔"
     },
     "a1-questions-help": {
-      outcomeUrdu: "روزمرہ جگہ پر واضح سوال پوچھنا، ادب سے مدد مانگنا، دعوت قبول یا رد کرنا، فون سنبھالنا، اور ملاقات بنانا یا بدلنا۔",
-      practiceUrdu: "پہلے سوال کی ترتیب اور مؤدبانہ مکمل باتیں سمجھیں، پھر دعوت، فون نوٹ، اور ملاقات کی تصدیق میں وہی سیکھی ہوئی زبان استعمال کریں۔"
+      outcomeUrdu: "روزمرہ جگہ پر واضح سوال پوچھنا، ادب سے اپنے یا دوسروں کے لیے مدد مانگنا، سکتا، چاہتا، اور ضروری ہے والی بات کہنا، اور فون سنبھالنا۔",
+      practiceUrdu: "پہلے سوال کی ترتیب، فعل کے بعد مجھے یا اسے، اور معاون فعل کے ساتھ آخر میں پورا فعل سمجھیں، پھر فون کال اور واپسی کال کے نوٹ میں وہی سیکھی ہوئی زبان استعمال کریں۔"
+    },
+    "a1-plans-appointments": {
+      outcomeUrdu: "آنے والے کام اور منصوبے بتانا، دوست کو دعوت دینا یا معذرت سے رد کرنا، اور ملاقات بنانا، بدلنا، یا اس کا وقت پوچھنا۔",
+      practiceUrdu: "پہلے ga کے ساتھ آنے والا کام اور دعوت کی مکمل باتیں سمجھیں، پھر ملاقات کے فون اور تصدیقی کارڈ میں وہی سیکھی ہوئی زبان استعمال کریں۔"
     },
     "a1-home-objects": {
       outcomeUrdu: "گھر کے کمرے اور چیزیں پہچاننا، پڑوسی سے مؤدبانہ بات کرنا، خرابی بتانا، گھر کے کام بیان کرنا، اور مکان کا اشتہار سمجھ کر دیکھنے کا وقت مانگنا۔",
@@ -7006,7 +7050,7 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-questions": {
       title: "Duidelijke vragen stellen",
-      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      unitLabel: "A1: سوال، مدد اور فون",
       outcomeUrdu: "کون، کیا، کہاں، کب، کتنا، کیوں، اور کون سا دن والے سوال سمجھنا اور سوال لفظ کے بعد فعل اور شخص درست ترتیب میں رکھنا۔",
       seedConcepts: [
         ["waar woont u?", "آپ کہاں رہتے ہیں؟"],
@@ -7132,108 +7176,9 @@ const a1AuthoredCurriculumV4 = {
         "komt u morgen": ["questions-confirm-tomorrow", "صرف کل آنے کی ہاں یا نہیں میں تصدیق کرنی ہے۔ مکمل سوال چنیں۔"]
       }
     },
-    "a1-polite-chunks": {
-      title: "Beleefd om hulp vragen",
-      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
-      outcomeUrdu: "مدد یا سوال مؤدبانہ طور پر مانگنا، نہ سمجھ آنے کی بات کہنا، اور مدد کے بعد مناسب شکریہ یا انکار دینا۔",
-      seedConcepts: [
-        ["alstublieft", "براہ مہربانی / لیجیے"],
-        ["dank u wel", "آپ کا شکریہ"],
-        ["sorry", "معاف کیجیے"],
-        ["graag", "خوشی سے / پسند سے"],
-        ["kunt u mij helpen alstublieft?", "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟"],
-        ["mag ik iets vragen?", "کیا میں کچھ پوچھ سکتا / سکتی ہوں؟"],
-        ["sorry ik begrijp het niet", "معاف کیجیے، مجھے یہ سمجھ نہیں آیا"],
-        ["dank u wel voor uw hulp", "آپ کی مدد کا شکریہ"],
-        ["nee dank u", "نہیں، شکریہ"]
-      ],
-      teaching: {
-        graag: {
-          usageUrdu: "کوئی چیز پیش کرے اور آپ لینا چاہیں تو خوشی سے قبول کرنے کے لیے یہ لفظ کہیں۔",
-          usageBoundaryUrdu: "یہ پیشکش قبول کرنے یا پسند بتانے کا لفظ ہے؛ شکریہ یا معذرت کی جگہ نہیں آتا۔",
-          commonConfusionUrdu: "graag خوشی سے ہاں کہنا ہے؛ چیز ملنے کے بعد شکریہ کے لیے dank u wel کہیں۔",
-          exampleDutch: "Alstublieft! — Graag, dank u wel.",
-          exampleUrdu: "ملازم پانی دیتے ہوئے: لیجیے! — آپ: جی خوشی سے، آپ کا شکریہ۔",
-          pronunciationUrdu: "خراخ"
-        },
-        "kunt u mij helpen alstublieft": {
-          usageUrdu: "کاؤنٹر، اسکول، یا دکان میں مؤدبانہ مدد مانگنے کے لیے مکمل سوال کہیں۔",
-          usageBoundaryUrdu: "یہ مدد مانگتا ہے؛ mag ik iets vragen? صرف سوال کرنے کی اجازت مانگتا ہے۔",
-          commonConfusionUrdu: "رسمی شخص کے لیے kunt u رکھیں اور alstublieft آخر میں رکھ سکتے ہیں۔",
-          exampleDutch: "Kunt u mij helpen alstublieft?",
-          exampleUrdu: "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟",
-          pronunciationUrdu: "کُنت یو مَے ہَیل پَن آل سٹو بلیفٹ"
-        },
-        "mag ik iets vragen": {
-          usageUrdu: "کسی کی گفتگو روکنے سے پہلے ادب سے سوال کرنے کی اجازت مانگیں۔",
-          usageBoundaryUrdu: "یہ سوال شروع کرنے کی اجازت ہے؛ خود مدد کی درخواست نہیں۔",
-          commonConfusionUrdu: "اجازت میں mag ik آتا ہے؛ kunt u سامنے والے سے کام کرنے کی درخواست ہے۔",
-          exampleDutch: "Mag ik iets vragen?",
-          exampleUrdu: "کیا میں کچھ پوچھ سکتا یا سکتی ہوں؟",
-          pronunciationUrdu: "ماخ اِک اِٹس فرا خَن"
-        },
-        "sorry ik begrijp het niet": {
-          usageUrdu: "سامنے والے کی بات سمجھ نہ آئے تو معذرت کے ساتھ اپنی مشکل صاف کہیں۔",
-          usageBoundaryUrdu: "یہ نہ سمجھ آنے کی اطلاع ہے؛ دوبارہ کہنے کی درخواست الگ جملہ ہے۔",
-          commonConfusionUrdu: "اپنی حالت بتائیں؛ اسے دوسرے شخص کی سمجھ کے بارے میں سوال نہ بنائیں۔",
-          exampleDutch: "Sorry, ik begrijp het niet.",
-          exampleUrdu: "معاف کیجیے، مجھے یہ سمجھ نہیں آیا۔",
-          pronunciationUrdu: "سو ری اِک بَخرَیپ ہَت نیت"
-        },
-        "dank u wel voor uw hulp": {
-          usageUrdu: "کسی نے واقعی مدد کی ہو تو مدد کو نام لے کر مکمل شکریہ دیں۔",
-          usageBoundaryUrdu: "یہ مدد کے بعد کہا جاتا ہے؛ مدد مانگنے سے پہلے درخواست درکار ہے۔",
-          commonConfusionUrdu: "voor uw hulp حصہ مدد کی وجہ بتاتا ہے؛ اسے درخواست نہ سمجھیں۔",
-          exampleDutch: "Dank u wel voor uw hulp.",
-          exampleUrdu: "آپ کی مدد کا شکریہ۔",
-          pronunciationUrdu: "دانک یو وَل فور او ہُلپ"
-        },
-        "nee dank u": {
-          usageUrdu: "پیشکش قبول نہ کرنی ہو تو سخت انکار کے بجائے “nee, dank u” کہیں۔",
-          usageBoundaryUrdu: "یہ مؤدبانہ انکار ہے؛ قبول کرنے کے لیے ja graag کہیں۔",
-          commonConfusionUrdu: "nee کے بعد dank u رکھنے سے جواب مؤدبانہ رہتا ہے؛ اسے رضامندی نہ سمجھیں۔",
-          exampleDutch: "Nee, dank u.",
-          exampleUrdu: "نہیں، شکریہ۔",
-          pronunciationUrdu: "نے دانک یو"
-        }
-      },
-      pattern: {
-        modelDutch: "kunt u mij helpen alstublieft?",
-        titleUrdu: "مؤدبانہ درخواست کا مکمل نمونہ",
-        highlight: "kunt u mij helpen",
-        explanationUrdu: "رسمی مدد مانگتے وقت kunt u سے شروع کریں، پھر mij helpen اور آخر میں alstublieft رکھیں۔",
-        contrastUrdu: "mag ik … اپنی اجازت پوچھتا ہے؛ kunt u … سامنے والے سے مؤدبانہ کام مانگتا ہے۔",
-        commonMistakeUrdu: "صرف helpen نہ کہیں؛ kunt u mij helpen والا مکمل سوال استعمال کریں۔",
-        drills: [
-          pickDrillV4("kunt u mij helpen?", ["kunt u helpen mij?", "kunt helpen u mij?"], "کیا آپ میری مدد کر سکتے ہیں؟", {"kunt u helpen mij?": "mij فعل سے پہلے آتا ہے؛ helpen سب سے آخر میں۔", "kunt helpen u mij?": "kunt کے فوراً بعد u آتا ہے۔"}),
-          pickDrillV4("mag ik iets vragen?", ["mag ik vragen iets?", "mag iets ik vragen?"], "کیا میں کچھ پوچھ سکتا ہوں؟", {"mag ik vragen iets?": "mag کے ساتھ vragen آخر میں آتا ہے۔", "mag iets ik vragen?": "mag کے فوراً بعد ik آتا ہے۔"}),
-          pickDrillV4("dank u wel voor uw hulp", ["dank u wel uw hulp voor", "dank u voor wel uw hulp"], "آپ کی مدد کا بہت شکریہ", {"dank u wel uw hulp voor": "voor چیز سے پہلے آتا ہے: voor uw hulp۔", "dank u voor wel uw hulp": "dank u wel ایک ساتھ رہتا ہے۔"})
-        ]
-      },
-      independentCheckLeadUrdu: "پہلی مدد والی صورت کے بعد دوسری عوامی جگہ پر",
-      prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-questions"],
-      prerequisiteRefs: [
-        ["a0-greetings-courtesy", "alstublieft"],
-        ["a0-greetings-courtesy", "dank u wel"],
-        ["a0-greetings-courtesy", "sorry"],
-        ["a0-understanding-help", "ik begrijp het niet"],
-        ["a1-questions", "waar woont u?"]
-      ],
-      scenarios: {
-        alstublieft: ["polite-please", "ملازم سے مؤدبانہ درخواست کے آخر میں براہ مہربانی کہنا ہے۔ درست لفظ چنیں۔"],
-        "dank u wel": ["polite-thanks", "ملازم نے راستہ سمجھا دیا ہے۔ مناسب شکریہ چنیں۔"],
-        sorry: ["polite-sorry", "آپ کو گفتگو روکنی ہے۔ پہلے مناسب معذرت کہیں۔"],
-        graag: ["polite-gladly", "پیشکش قبول کرتے ہوئے خوشی سے کہنا ہے۔ درست لفظ چنیں۔"],
-        "kunt u mij helpen alstublieft": ["polite-ask-help", "بلدیہ کے کاؤنٹر پر فارم سمجھ نہیں آیا۔ مکمل مؤدبانہ مدد مانگیں۔"],
-        "mag ik iets vragen": ["polite-ask-permission", "استقبالی ملازم مصروف ہے۔ اپنا سوال شروع کرنے سے پہلے اجازت مانگیں۔"],
-        "sorry ik begrijp het niet": ["polite-not-understand", "ملازم کی بات سمجھ نہیں آئی۔ معذرت کے ساتھ اپنی مشکل بتائیں۔"],
-        "dank u wel voor uw hulp": ["polite-thank-help", "ملازم نے فارم مکمل کروا دیا۔ مدد کے لیے پورا شکریہ دیں۔"],
-        "nee dank u": ["polite-decline", "دکاندار اضافی چیز پیش کرتا ہے مگر آپ نہیں چاہتے۔ مؤدبانہ انکار کریں۔"]
-      }
-    },
     "a1-plans-invitations": {
       title: "Uitnodigen en afspreken",
-      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      unitLabel: "A1: منصوبے، دعوت اور ملاقات",
       outcomeUrdu: "کسی کو کافی کی دعوت دینا، قبول یا معذرت کے ساتھ انکار کرنا، وقت تجویز کرنا، اور ملنے کی جگہ پوچھنا۔",
       seedConcepts: [
         ["zullen we om drie uur afspreken?", "کیا ہم تین بجے ملیں؟"],
@@ -7309,13 +7254,13 @@ const a1AuthoredCurriculumV4 = {
         ]
       },
       independentCheckLeadUrdu: "پہلی دعوت کے بعد دوسرے جان پہچان والے شخص کے ساتھ",
-      prerequisiteLessonIds: ["a0-food-drink", "a0-time-days", "a0-numbers-0-10", "a1-polite-chunks"],
+      prerequisiteLessonIds: ["a0-food-drink", "a0-time-days", "a0-numbers-0-10", "a1-object-pronouns"],
       prerequisiteRefs: [
         ["a0-food-drink", "koffie"],
         ["a0-time-days", "morgen"],
         ["a0-time-days", "avond"],
         ["a0-numbers-0-10", "drie"],
-        ["a1-polite-chunks", "sorry ik begrijp het niet"]
+        ["a1-object-pronouns", "sorry ik begrijp het niet"]
       ],
       scenarios: {
         koffie: ["invite-coffee", "دعوت میں پینے کے لیے کافی کا درست ڈچ لفظ چنیں۔"],
@@ -7331,7 +7276,7 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-phone-calls": {
       title: "Een telefoongesprek voeren",
-      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      unitLabel: "A1: سوال، مدد اور فون",
       outcomeUrdu: "فون پر اپنا نام بتانا، بولنے والے کی شناخت پوچھنا، واپس فون کا وقت دینا، غلط نمبر واضح کرنا، نمبر دہرانا، اور voicemail پر پیغام چھوڑنا۔",
       seedConcepts: [
         ["ik bel u vanavond terug", "میں آپ کو آج شام واپس فون کروں گا / گی"],
@@ -7442,13 +7387,13 @@ const a1AuthoredCurriculumV4 = {
         ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی فون کال کے بعد دوسری کال میں",
-      prerequisiteLessonIds: ["a0-understanding-help", "a0-address-phone", "a0-time-days", "a1-polite-chunks", "a1-plans-invitations"],
+      prerequisiteLessonIds: ["a0-understanding-help", "a0-address-phone", "a0-time-days", "a1-object-pronouns", "a1-modal-verbs"],
       prerequisiteRefs: [
         ["a0-understanding-help", "kunt u herhalen"],
         ["a0-address-phone", "telefoonnummer"],
         ["a0-time-days", "avond"],
-        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
-        ["a1-plans-invitations", "sorry ik kan niet"]
+        ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
+        ["a1-modal-verbs", "ik kan niet komen"]
       ],
       scenarios: {
         telefoon: ["phone-device", "رابطے کے آلے کا ڈچ لفظ پہچانیں۔"],
@@ -7578,14 +7523,14 @@ const a1AuthoredCurriculumV4 = {
         contrastUrdu: "kunt u mij helpen? عمومی مدد مانگتا ہے؛ kunt u zachter zijn? شور کے بارے میں خاص درخواست ہے۔",
         commonMistakeUrdu: "سیدھے جملے جیسی ترتیب u kunt سے سوال شروع نہ کریں؛ یہاں kunt u کہیں۔"
       },
-      prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-polite-chunks"],
+      prerequisiteLessonIds: ["a0-greetings-courtesy", "a0-understanding-help", "a1-object-pronouns"],
       prerequisiteRefs: [
         ["a0-greetings-courtesy", "goedemorgen"],
         ["a0-greetings-courtesy", "dank u wel"],
         ["a0-geen", "geen boek"],
         ["a0-understanding-help", "kunt u mij helpen"],
         ["a0-dit-dat-questions", "dit is een boek"],
-        ["a1-polite-chunks", "alstublieft"]
+        ["a0-greetings-courtesy", "alstublieft"]
       ],
       scenarios: {
         buurvrouw: ["neighbour-recognise-woman", "ساتھ والے گھر میں رہنے والی عورت کا درست لفظ چنیں۔"],
@@ -7850,8 +7795,8 @@ const a1AuthoredCurriculumV4 = {
         ["de rekening alstublieft", "کھانا مکمل ہونے پر مؤدبانہ طور پر بل مانگیں۔", "یہ ادائیگی شروع کرتا ہے؛ مینو مانگنے کے لیے de kaart کہیں۔", "rekening اور menu کو الٹ نہ کریں۔", "De rekening alstublieft.", "بل، برائے مہربانی۔", "دَ رے کَ نِنگ آلس تو بلیفٹ"]
       ]),
       pattern: { modelDutch: "voor mij een thee", titleUrdu: "کیفے میں اپنا انتخاب کہنا", highlight: "voor mij een thee", explanationUrdu: "اپنا مختصر آرڈر دینے کے لیے voor mij کے بعد مطلوبہ چیز رکھیں۔", contrastUrdu: "wat wilt u drinken? ویٹر کا سوال ہے؛ voor mij een thee گاہک کا جواب ہے۔", commonMistakeUrdu: "سوال کو جواب کے طور پر نہ دہرائیں؛ voor mij کے بعد اپنا انتخاب کہیں۔" },
-      prerequisiteLessonIds: ["a0-food-drink", "a0-greetings-courtesy", "a1-polite-chunks"],
-      prerequisiteRefs: [["a0-food-drink", "thee"], ["a0-food-drink", "ik wil graag koffie"], ["a0-greetings-courtesy", "dank u wel"], ["a1-polite-chunks", "alstublieft"]],
+      prerequisiteLessonIds: ["a0-food-drink", "a0-greetings-courtesy", "a1-object-pronouns"],
+      prerequisiteRefs: [["a0-food-drink", "thee"], ["a0-food-drink", "ik wil graag koffie"], ["a0-greetings-courtesy", "dank u wel"], ["a0-greetings-courtesy", "alstublieft"]],
       scenarios: { menu:["cafe-recognise-menu","میز پر کھانے کی فہرست پہچانیں۔"], rekening:["cafe-recognise-bill","کھانے کے آخر کا بل پہچانیں۔"], "mag ik de kaart alstublieft":["cafe-request-menu","ویٹر سے مینو مؤدبانہ طور پر مانگیں۔"], "wat wilt u drinken":["cafe-hear-drink-question","ویٹر پوچھتا ہے آپ کیا پینا چاہتے ہیں۔"], "voor mij een thee":["cafe-order-tea","اپنے لیے ایک چائے آرڈر کریں۔"], "ik neem de soep":["cafe-choose-soup","مینو سے سوپ چن کر مکمل بات کہیں۔"], "de rekening alstublieft":["cafe-request-bill","کھانا مکمل ہے۔ بل مانگیں۔"] }
     },
     "a1-cafe-food-needs": {
@@ -7868,7 +7813,7 @@ const a1AuthoredCurriculumV4 = {
         ["kunt u dit controleren", "غلطی یا الرجی کے بعد ویٹر سے معاملہ چیک کرنے کی درخواست کریں۔", "یہ جانچ کی درخواست ہے؛ نیا آرڈر خود نہیں بناتا۔", "kunt u کے بعد چیک ہونے والی چیز dit اور آخر میں عمل controleren رکھیں۔", "Kunt u dit controleren?", "کیا آپ اسے چیک کر سکتے ہیں؟", "کُنت یو دِت کون ترو لے رَن"]
       ]),
       pattern: { modelDutch:"ik ben allergisch voor noten", titleUrdu:"الرجی واضح کرنے والا محفوظ جملہ", highlight:"ik ben allergisch voor noten", explanationUrdu:"الرجی بتانے کے لیے ik ben allergisch voor کے بعد متعلقہ کھانا رکھیں۔", contrastUrdu:"zonder vlees ایک کھانے کی شرط ہے؛ allergisch voor صحت کی ضروری اطلاع ہے۔", commonMistakeUrdu:"صرف کھانا پسند نہ ہونے کے لیے allergisch نہ کہیں؛ اسے حقیقی الرجی کے لیے محفوظ رکھیں۔" },
-      prerequisiteLessonIds:["a0-food-drink","a1-cafe-ordering","a1-polite-chunks"], prerequisiteRefs:[["a0-food-drink","eten"],["a1-cafe-ordering","menu"],["a1-cafe-ordering","de rekening alstublieft"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
+      prerequisiteLessonIds:["a0-food-drink","a1-cafe-ordering","a1-object-pronouns"], prerequisiteRefs:[["a0-food-drink","eten"],["a1-cafe-ordering","menu"],["a1-cafe-ordering","de rekening alstublieft"],["a1-object-pronouns","kunt u mij helpen alstublieft?"]],
       scenarios:{ vlees:["food-needs-recognise-meat","مینو میں گوشت والی چیز پہچانیں۔"], bestelling:["food-needs-recognise-order","اپنے پورے آرڈر کا لفظ پہچانیں۔"], "zonder vlees alstublieft":["food-needs-no-meat","گوشت کے بغیر کھانا مؤدبانہ طور پر مانگیں۔"], "ik ben allergisch voor noten":["food-needs-allergy","کھانا آنے سے پہلے اپنی الرجی واضح کریں۔"], "dit is niet mijn bestelling":["food-needs-wrong-order","غلط پلیٹ آئی ہے۔ مسئلہ بتائیں۔"], "ik heb nog niets gekregen":["food-needs-missing-order","انتظار کے بعد بھی کچھ نہیں ملا۔ شکایت کہیں۔"], "kunt u dit controleren":["food-needs-request-check","ویٹر سے غلطی چیک کرنے کی درخواست کریں۔"] }
     },
     "a1-shopping-clothes": {
@@ -8017,7 +7962,7 @@ const a1AuthoredCurriculumV4 = {
         gapDrillV4("___ ik hier wachten?", "mag", ["moet", "is"], "کیا میں یہاں انتظار کر سکتا ہوں؟", {"moet": "moet ik پوچھتا ہے کہ کیا انتظار ضروری ہے؛ اجازت کے لیے mag ik۔", "is": "is کے ساتھ wachten نہیں آتا؛ اجازت کے لیے mag ik۔"}),
         pickDrillV4("ik heb hulp nodig", ["ik heb nodig hulp", "ik nodig heb hulp"], "مجھے مدد چاہیے", {"ik heb nodig hulp": "nodig جملے کے آخر میں آتا ہے: ik heb hulp nodig۔", "ik nodig heb hulp": "heb دوسرے نمبر پر اور nodig آخر میں۔"})
       ]},
-      prerequisiteLessonIds:["a0-weather-clothing-safety","a0-transport-directions","a0-daily-actions","a1-polite-chunks"],prerequisiteRefs:[["a0-weather-clothing-safety","verboden"],["a0-weather-clothing-safety","waar is de uitgang"],["a0-transport-directions","ingang"],["a0-daily-actions","wachten"],["a1-polite-chunks","kunt u mij helpen alstublieft?"]],
+      prerequisiteLessonIds:["a0-weather-clothing-safety","a0-transport-directions","a0-daily-actions","a1-object-pronouns"],prerequisiteRefs:[["a0-weather-clothing-safety","verboden"],["a0-weather-clothing-safety","waar is de uitgang"],["a0-transport-directions","ingang"],["a0-daily-actions","wachten"],["a1-object-pronouns","kunt u mij helpen alstublieft?"]],
       scenarios:{toegestaan:["safety-recognise-allowed","اجازت والا نشان پہچانیں۔"],"mag ik hier wachten":["safety-ask-wait","یہاں انتظار کی اجازت پوچھیں۔"],gevaarlijk:["safety-recognise-danger","خطرے والا نشان پہچانیں۔"],veilig:["safety-recognise-safe","محفوظ جگہ کا لفظ پہچانیں۔"],"het is hier verboden":["safety-read-forbidden","یہاں منع ہونے کی اطلاع سمجھیں۔"],"u moet hier wachten":["safety-follow-wait","یہاں انتظار کی ہدایت سمجھیں۔"],"de ingang is daar":["safety-locate-entrance","داخلے کی جگہ وہاں بتائیں۔"],"ik heb hulp nodig":["safety-request-help","فوری مدد کی ضرورت واضح کریں۔"]},
       document:{stableId:"safety-signs-card",sourceKey:"safety-signs-card",documentKind:"public-safety-signs",targetDutch:"het is hier verboden",title:"verboden",labelUrdu:"عوامی جگہ کے حفاظتی نشان پڑھیں",promptUrdu:"نشان میں verboden دیکھیں، پھر یہاں منع ہونے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نشانوں میں toegestaan، gevaarlijk، veilig، اور verboden الگ پہچانیں، پھر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ het is hier verboden یہاں ممانعت بتاتا ہے۔",wrongUrdu:"یہ دوسری حفاظتی بات ہے۔ verboden کا مطلب منع ہے۔",rows:[{label:"toegestaan",value:"toegestaan"},{label:"gevaarlijk",value:"gevaarlijk"},{label:"verboden",value:"het is hier verboden"}]}
     },
@@ -8163,7 +8108,7 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-appointments": {
       title: "Een afspraak maken of veranderen",
-      unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+      unitLabel: "A1: منصوبے، دعوت اور ملاقات",
       outcomeUrdu: "ملاقات بنانا، دستیابی پوچھنا، دوسرا وقت تجویز کرنا، نہ آ سکنے کی اطلاع دینا، ملاقات بدلنا یا منسوخ کرنا، اور تصدیقی کارڈ پڑھنا۔",
       seedConcepts: [
         ["ik wil een afspraak maken", "میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں"],
@@ -8254,7 +8199,7 @@ const a1AuthoredCurriculumV4 = {
         ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی ملاقات کے بعد دوسرے ادارے سے بات کرتے وقت",
-      prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-questions", "a1-polite-chunks", "a1-phone-calls"],
+      prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-questions", "a1-object-pronouns", "a1-phone-calls"],
       prerequisiteRefs: [
         ["a0-date-appointment", "afspraak"],
         ["a0-date-appointment", "datum"],
@@ -8263,7 +8208,7 @@ const a1AuthoredCurriculumV4 = {
         ["a0-time-days", "ochtend"],
         ["a0-time-days", "middag"],
         ["a1-questions", "wanneer komt u?"],
-        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+        ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
         ["a1-phone-calls", "kunt u later terugbellen?"]
       ],
       scenarios: {
@@ -8302,26 +8247,26 @@ const a1AuthoredCurriculumV4 = {
   },
   missions: {
     "a1-chapter-completion-mission": {
-      sourceKey:"chapter-completion-mission",scenarioTitleUrdu:"A1 کے نو روزمرہ حصوں کی آخری عملی جانچ",speakerUrdu:"استقبالی ملازم، فون پر ذمہ دار شخص، یا روزمرہ خدمت کا ملازم",
-      prerequisiteLessonIds:["a1-greetings-personal-info","a1-hebben-family","a1-daily-routine","a1-appointments","a1-house-search-extra","a1-shopping-returns","a1-directions-town","a1-pharmacy-medicine","a1-work-schedule"],
-      prerequisiteMissionIds:["a1-personal-info-mission","a1-family-people-mission","a1-daily-routine-mission","a1-mission-phone-internet","a1-mission-house-search","a1-food-shopping-mission","a1-mission-post-parcel","a1-mission-doctor","a1-mission-school-day"],
+      sourceKey:"chapter-completion-mission",scenarioTitleUrdu:"A1 کے دس روزمرہ حصوں کی آخری عملی جانچ",speakerUrdu:"استقبالی ملازم، فون پر ذمہ دار شخص، یا روزمرہ خدمت کا ملازم",
+      prerequisiteLessonIds:["a1-greetings-personal-info","a1-hebben-family","a1-daily-routine","a1-modal-verbs","a1-appointments","a1-house-search-extra","a1-shopping-returns","a1-directions-town","a1-pharmacy-medicine","a1-work-schedule"],
+      prerequisiteMissionIds:["a1-personal-info-mission","a1-family-people-mission","a1-daily-routine-mission","a1-mission-phone-internet","a1-plans-appointments-mission","a1-mission-house-search","a1-food-shopping-mission","a1-mission-post-parcel","a1-mission-doctor","a1-mission-school-day"],
       variantTitles:["نئے ہفتے کے روزمرہ کام","بدلے ہوئے دن میں رابطہ اور سفر","خاندان، گھر، صحت، اور کام کی عملی ترتیب"],
       variantContexts:["ایک ہی دن میں تعارف، خاندان، وقت، ملاقات، گھر، واپسی، راستہ، صحت، اور کام کی اطلاع مکمل کریں","منصوبہ بدل گیا ہے؛ ضروری معلومات سنیں، دستاویز پڑھیں، اور مناسب سیکھی ہوئی باتیں استعمال کریں","اپنی اور خاندان کی معلومات سے شروع کریں، پھر گھر، خریداری، صحت، سفر، اور کام کے کام مکمل کریں"],
       targets:[
         {lessonId:"a1-greetings-personal-info",dutch:"mijn naam is Zarar",related:[{lessonId:"a1-hebben-family",dutch:"ik heb een broer"}],compoundDutch:"mijn naam is Zarar. ik heb een broer.",compoundUrdu:"میرا نام Zarar ہے۔ میرا ایک بھائی ہے۔",taskUrdu:"اپنا نام اور خاندان کی ایک معلومات دونوں واضح کریں۔"},
         {lessonId:"a1-daily-routine",dutch:"ik heb om twaalf uur pauze",related:[{lessonId:"a1-appointments",dutch:"hoe laat is de afspraak?"}],compoundDutch:"ik heb om twaalf uur pauze. hoe laat is de afspraak?",compoundUrdu:"میری بارہ بجے چھٹی ہے۔ ملاقات کتنے بجے ہے؟",taskUrdu:"اپنا روزمرہ وقت بتائیں اور ملاقات کا وقت پوچھیں۔"},
         {lessonId:"a1-house-search-extra",dutch:"wanneer is de woning beschikbaar?",taskUrdu:"مکان کے اشتہار سے دستیابی سمجھ کر مناسب سوال پوچھیں۔"},
-        {lessonId:"a1-shopping-returns",dutch:"kan ik mijn geld terugkrijgen?",taskUrdu:"رسید کے ساتھ رقم واپس لینے کی مناسب بات استعمال کریں۔"},
+        {lessonId:"a1-shopping-returns",dutch:"kan ik mijn geld terugkrijgen?",related:[{lessonId:"a1-modal-verbs",dutch:"mag ik iets vragen?"}],compoundDutch:"mag ik iets vragen? kan ik mijn geld terugkrijgen?",compoundUrdu:"کیا میں کچھ پوچھ سکتا ہوں؟ کیا مجھے اپنے پیسے واپس مل سکتے ہیں؟",taskUrdu:"پہلے ادب سے سوال کی اجازت لیں، پھر رسید کے ساتھ رقم واپس لینے کا پوچھیں۔"},
         {lessonId:"a1-directions-town",dutch:"hoe kom ik bij de apotheek?",related:[{lessonId:"a1-pharmacy-medicine",dutch:"heeft u iets tegen de pijn?"}],compoundDutch:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?",compoundUrdu:"میں دواخانے کیسے پہنچوں؟ کیا آپ کے پاس درد کے لیے کچھ ہے؟",taskUrdu:"پہلے دواخانے کا راستہ پوچھیں، پھر وہاں درد کی دوا مانگیں۔"},
         {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",taskUrdu:"کام کے بدلے ہوئے وقت کی مختصر واضح اطلاع دیں۔"}
       ],
-      prerequisiteRefs:[["a1-greetings-personal-info","mijn naam is Zarar"],["a1-hebben-family","ik heb een broer"],["a1-daily-routine","ik heb om twaalf uur pauze"],["a1-appointments","hoe laat is de afspraak?"],["a1-house-search-extra","wanneer is de woning beschikbaar?"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"],["a1-directions-town","hoe kom ik bij de apotheek?"],["a1-pharmacy-medicine","heeft u iets tegen de pijn?"],["a1-work-schedule","mijn dienst is veranderd"]],
+      prerequisiteRefs:[["a1-greetings-personal-info","mijn naam is Zarar"],["a1-hebben-family","ik heb een broer"],["a1-daily-routine","ik heb om twaalf uur pauze"],["a1-appointments","hoe laat is de afspraak?"],["a1-house-search-extra","wanneer is de woning beschikbaar?"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"],["a1-modal-verbs","mag ik iets vragen?"],["a1-directions-town","hoe kom ik bij de apotheek?"],["a1-pharmacy-medicine","heeft u iets tegen de pijn?"],["a1-work-schedule","mijn dienst is veranderd"]],
       useTypes:["situation","listen-choice","document-choice","build","speak-repeat","situation"],checkTypes:["meaning","listen-choice","document-choice","reverse","build","situation"],
       document:{documentKind:"a1-daily-life-completion-card",title:"woning",labelUrdu:"روزمرہ کاموں کا مکمل کارڈ پڑھیں",promptUrdu:"کارڈ میں wanneer is de woning beschikbaar، kan ik mijn geld terugkrijgen، apotheek، اور mijn dienst is veranderd الگ دیکھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"دن کے کارڈ میں تعارف، وقت، مکان، واپسی، صحت، اور کام کی قطاریں الگ پڑھیں، پھر نشان زدہ کام کی سیکھی ہوئی بات چنیں۔",rows:[{label:"mijn naam is Zarar",value:"mijn naam is Zarar. ik heb een broer."},{label:"hoe laat is de afspraak?",value:"ik heb om twaalf uur pauze. hoe laat is de afspraak?"},{label:"wanneer is de woning beschikbaar?",value:"wanneer is de woning beschikbaar?"},{label:"kan ik mijn geld terugkrijgen?",value:"kan ik mijn geld terugkrijgen?"},{label:"hoe kom ik bij de apotheek?",value:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?"},{label:"mijn dienst is veranderd",value:"mijn dienst is veranderd"}]}
     },
     "a1-mission-school-day": {
       sourceKey:"work-school-message-mission",scenarioTitleUrdu:"پیغام سے اسکول اور کام کے بدلے دن تک",speakerUrdu:"اسکول یا کام کا ذمہ دار شخص",
-      prerequisiteLessonIds:["a1-short-messages","a1-past-was-had","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
+      prerequisiteLessonIds:["a1-past-was-had","a1-perfect-intro","a1-short-messages","a1-work-school-messages","a1-school-contact","a1-work-schedule"],
       variantTitles:["دیر کا مختصر پیغام اور کام کی تبدیلی","بچے کی غیر حاضری اور اسکول ایپ","بیماری، واپسی، اور بدلی ڈیوٹی"],
       variantContexts:["ساتھی کو آج کی دیر کا پیغام دیں، وجہ سنیں، اور کام کے بدلے rooster کا جواب دیں","اسکول کو بچے کی غیر حاضری لکھیں، گھر کے کام کی جگہ پوچھیں، اور ایپ کا نوٹس سمجھیں","کام کو بیماری اور واپسی بتائیں، واپسی فون مانگیں، اور بدلی dienst پر ذمہ دار سے بات کریں"],
       targets:[
@@ -8329,12 +8274,12 @@ const a1AuthoredCurriculumV4 = {
         {lessonId:"a1-work-school-messages",dutch:"ik kom morgen weer"},
         {lessonId:"a1-past-was-had",dutch:"gisteren was ik ziek",patternLessonId:"a1-past-was-had"},
         {lessonId:"a1-school-contact",dutch:"mijn kind komt vandaag niet naar school",patternLessonId:"a1-school-contact"},
-        {lessonId:"a1-school-contact",dutch:"waar staat het huiswerk?"},
+        {lessonId:"a1-perfect-intro",dutch:"ik heb de school gebeld",patternLessonId:"a1-perfect-intro"},
         {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",patternLessonId:"a1-work-schedule"}
       ],
       prerequisiteRefs:[["a0-time-days","vandaag"],["a0-time-days","morgen"],["a0-child-school","school"],["a0-work-basics","werk"],["a1-short-messages","bericht"],["a1-short-messages","app"],["a1-work-school-messages","ik ben ziek"],["a1-work-school-messages","ik kom morgen weer"],["a1-school-contact","huiswerk"],["a1-school-contact","rooster"],["a1-work-schedule","dienst"],["a1-work-schedule","kan ik met mijn baas spreken?"]],
       useTypes:["situation","listen-choice","build","situation","document-choice","document-choice"],checkTypes:["meaning","listen-choice","reverse","build","document-choice","document-choice"],
-      document:{documentKind:"school-work-message-card",title:"Bericht",labelUrdu:"اسکول اور کام کے پیغام پڑھیں",promptUrdu:"کارڈ میں huiswerk اور dienst veranderd الگ دیکھیں، پھر موجود صورت کے لیے مناسب سیکھی ہوئی بات کا درست مطلب منتخب کریں۔",instructionUrdu:"کارڈ میں غیر حاضری، huiswerk، اور بدلی dienst الگ پڑھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات چنیں۔",rows:[{label:"school",value:"mijn kind komt vandaag niet naar school"},{label:"huiswerk",value:"waar staat het huiswerk?"},{label:"dienst",value:"mijn dienst is veranderd"}]}
+      document:{documentKind:"school-work-message-card",title:"Bericht",labelUrdu:"اسکول اور کام کے پیغام پڑھیں",promptUrdu:"کارڈ میں school gebeld اور dienst veranderd الگ دیکھیں، پھر موجود صورت کے لیے مناسب سیکھی ہوئی بات کا درست مطلب منتخب کریں۔",instructionUrdu:"کارڈ میں غیر حاضری، اسکول کو فون، اور بدلی dienst الگ پڑھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات چنیں۔",rows:[{label:"school",value:"mijn kind komt vandaag niet naar school"},{label:"bericht",value:"ik heb de school gebeld"},{label:"dienst",value:"mijn dienst is veranderd"}]}
     },
     "a1-mission-doctor": {
       sourceKey:"doctor-symptoms-medicine-mission",scenarioTitleUrdu:"فیملی ڈاکٹر کی ملاقات سے دوا کی ہدایت تک",speakerUrdu:"فیملی ڈاکٹر، ڈاکٹر، یا فارمیسی کا ملازم",
@@ -8577,64 +8522,101 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-mission-phone-internet": {
       sourceKey: "questions-calls-appointments-mission",
-      scenarioTitleUrdu: "سوال، مدد، فون کال، اور ملاقات کی عملی گفتگو",
+      scenarioTitleUrdu: "سوال، مدد، اجازت، اور فون کال کی عملی گفتگو",
       speakerUrdu: "استقبالی ملازم یا فون کرنے والا شخص",
       prerequisiteLessonIds: [
         "a1-questions",
-        "a1-polite-chunks",
-        "a1-future-gaan",
-        "a1-plans-invitations",
         "a1-object-pronouns",
-        "a1-phone-calls",
-        "a1-appointments"
+        "a1-modal-verbs",
+        "a1-phone-calls"
       ],
       variantTitles: [
-        "کمیونٹی مرکز کو فون اور ملاقات",
-        "huisarts سے وقت کی تصدیق",
-        "کورس کے لیے سوال اور نئی afspraak"
+        "کمیونٹی مرکز کو فون اور مدد",
+        "کاؤنٹر پر سوال اور اجازت",
+        "خاندان کے لیے مدد اور واپسی کال"
       ],
       variantContexts: [
-        "کمیونٹی مرکز سے صحیح معلومات پوچھیں، مدد مانگیں، واپسی کال کا نوٹ سمجھیں، اور ملاقات کا وقت طے کریں",
-        "ڈاکٹر کے استقبالی ملازم سے مؤدبانہ فون گفتگو کریں اور تصدیقی کارڈ کا دن اور وقت سمجھیں",
-        "کورس کے ملازم سے سوال کریں، ایک دعوت کا جواب دیں، اور نئی ملاقات کی تصدیق مکمل کریں"
+        "کمیونٹی مرکز سے صحیح معلومات پوچھیں، مدد مانگیں، اور واپسی کال کا نوٹ سمجھیں",
+        "مصروف ملازم سے ادب سے سوال کی اجازت لیں، اپنی مشکل بتائیں، اور آنے کا دن واضح کریں",
+        "خاندان کے لیے مدد مانگیں، بتائیں کہ آپ کب آ سکتے ہیں، اور فون پر واپسی کال طے کریں"
       ],
       targets: [
         { lessonId: "a1-questions", dutch: "wanneer komt u?", patternLessonId: "a1-questions" },
-        { lessonId: "a1-polite-chunks", dutch: "kunt u mij helpen alstublieft?", patternLessonId: "a1-polite-chunks" },
-        {
-          lessonId: "a1-future-gaan",
-          dutch: "wat ga je morgen doen?",
-          related: [{ lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?" }],
-          compoundDutch: "wat ga je morgen doen? zullen we om drie uur afspreken?",
-          compoundUrdu: "تم کل کیا کرو گے؟ کیا ہم تین بجے ملیں؟",
-          taskUrdu: "دوست سے پوچھیں کہ وہ کل کیا کرے گا، پھر تین بجے ملنے کی تجویز دیں۔"
-        },
-        { lessonId: "a1-phone-calls", dutch: "kunt u later terugbellen?" },
         { lessonId: "a1-object-pronouns", dutch: "kunt u ons helpen?", patternLessonId: "a1-object-pronouns" },
-        { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
+        { lessonId: "a1-object-pronouns", dutch: "sorry ik begrijp het niet" },
+        { lessonId: "a1-modal-verbs", dutch: "ik kan morgen komen", patternLessonId: "a1-modal-verbs" },
+        { lessonId: "a1-modal-verbs", dutch: "mag ik iets vragen?" },
+        { lessonId: "a1-phone-calls", dutch: "kunt u later terugbellen?" }
       ],
       prerequisiteRefs: [
         ["a0-greetings-courtesy", "sorry"],
         ["a0-understanding-help", "kunt u herhalen"],
-        ["a0-date-appointment", "afspraak"],
         ["a0-time-days", "maandag"],
         ["a0-time-days", "avond"],
+        ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
+        ["a1-modal-verbs", "ik kan niet komen"],
         ["a1-phone-calls", "met Sara"],
+        ["a1-phone-calls", "telefoon"]
+      ],
+      useTypes: ["situation", "situation", "listen-choice", "build", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "reverse", "build", "listen-choice", "document-choice"],
+      document: {
+        documentKind: "help-callback-card",
+        title: "Telefoon",
+        labelUrdu: "فون نوٹ اور مدد کی پرچی پڑھیں",
+        promptUrdu: "پرچی میں met Sara اور avond دیکھیں، پھر بعد میں واپس فون مانگنے والی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
+        instructionUrdu: "فون نوٹ میں مدد، آنے کا دن، اور واپسی کال کے حصے الگ پڑھیں، پھر نشان زدہ سیکھی ہوئی بات کا درست مطلب منتخب کریں۔",
+        rows: [
+          { label: "met Sara", value: "kunt u ons helpen?" },
+          { label: "maandag", value: "ik kan morgen komen" },
+          { label: "avond", value: "kunt u later terugbellen?" }
+        ]
+      }
+    },
+    "a1-plans-appointments-mission": {
+      sourceKey: "plans-appointments-mission",
+      scenarioTitleUrdu: "منصوبہ، دعوت، اور ملاقات کا وقت",
+      speakerUrdu: "دوست، پڑوسی، یا استقبالی ملازم",
+      prerequisiteLessonIds: ["a1-future-gaan", "a1-plans-invitations", "a1-appointments"],
+      variantTitles: [
+        "ہفتے کا منصوبہ اور دوست کی دعوت",
+        "دعوت سے معذرت اور نئی ملاقات",
+        "huisarts کی ملاقات اور تصدیقی کارڈ"
+      ],
+      variantContexts: [
+        "دوست کو کل کا منصوبہ بتائیں، اس کا منصوبہ پوچھیں، اور ملنے کا وقت تجویز کریں",
+        "دعوت کا معذرت سے جواب دیں، پھر استقبالی ملازم سے ملاقات کا وقت طے کریں",
+        "ملاقات بنائیں، تصدیقی کارڈ میں وقت پڑھیں، اور ہفتے کا منصوبہ واضح کریں"
+      ],
+      targets: [
+        { lessonId: "a1-future-gaan", dutch: "ik ga morgen werken", patternLessonId: "a1-future-gaan" },
+        { lessonId: "a1-future-gaan", dutch: "wat ga je morgen doen?" },
+        { lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?", patternLessonId: "a1-plans-invitations" },
+        { lessonId: "a1-plans-invitations", dutch: "sorry ik kan niet" },
+        { lessonId: "a1-appointments", dutch: "ik wil een afspraak maken", patternLessonId: "a1-appointments" },
+        { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
+      ],
+      prerequisiteRefs: [
+        ["a0-date-appointment", "afspraak"],
+        ["a0-time-days", "maandag"],
+        ["a0-time-days", "morgen"],
+        ["a1-future-gaan", "morgen ga ik werken"],
+        ["a1-plans-invitations", "ja graag"],
+        ["a1-plans-invitations", "waar spreken we af?"],
         ["a1-appointments", "kunt u de afspraak bevestigen?"]
       ],
-      useTypes: ["situation", "situation", "build", "listen-choice", "situation", "document-choice"],
-      checkTypes: ["meaning", "listen-choice", "build", "listen-choice", "reverse", "document-choice"],
+      useTypes: ["situation", "listen-choice", "build", "situation", "situation", "document-choice"],
+      checkTypes: ["meaning", "listen-choice", "build", "reverse", "listen-choice", "document-choice"],
       document: {
-        documentKind: "appointment-callback-card",
+        documentKind: "plans-appointment-card",
         title: "Afspraak",
-        labelUrdu: "فون نوٹ اور ملاقات کی تصدیق پڑھیں",
+        labelUrdu: "ہفتے کا منصوبہ اور ملاقات کا کارڈ پڑھیں",
         promptUrdu: "کارڈ میں maandag اور 09:00 دیکھیں، پھر ملاقات کا گھڑی والا وقت پوچھنے والی مکمل ڈچ بات کا درست اردو مطلب منتخب کریں۔",
-        instructionUrdu: "واپسی کال اور ملاقات کے حصے الگ پڑھیں، پھر 09:00 کے بارے میں پوچھنے والے سیکھی ہوئی سوال کا درست مطلب منتخب کریں۔",
+        instructionUrdu: "منصوبے اور ملاقات کے حصے الگ پڑھیں، پھر 09:00 کے بارے میں پوچھنے والے سیکھی ہوئی سوال کا درست مطلب منتخب کریں۔",
         rows: [
-          { label: "met Sara", value: "hoe laat is de afspraak?" },
-          { label: "kunt u later terugbellen?", value: "avond" },
+          { label: "morgen", value: "ik ga morgen werken" },
           { label: "maandag", value: "09:00" },
-          { label: "afspraak", value: "09:00" }
+          { label: "afspraak", value: "hoe laat is de afspraak?" }
         ]
       }
     }
@@ -8733,7 +8715,7 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
     }
   },
   "a1-future-gaan": {
-    title: "Morgen ga ik werken", unitLabel: "A1: سوال، مدد، فون اور ملاقات",
+    title: "Morgen ga ik werken", unitLabel: "A1: منصوبے، دعوت اور ملاقات",
     outcomeUrdu: "آنے والے کام اور منصوبے بتانا، وقت جملے کے شروع میں رکھنا، اور دوست سے اس کا کل کا منصوبہ پوچھنا۔",
     seedConcepts: a1GrammarSeedsV4["a1-future-gaan"],
     teaching: authoredA1TeachingV4([
@@ -8754,7 +8736,7 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       contrastUrdu: "ik werk vandaag آج کا کام ہے؛ ik ga morgen werken آنے والا کام ہے۔",
       commonMistakeUrdu: "پورا فعل آخر میں رکھیں اور ga کے بعد werk نہ کہیں؛ ik ga morgen werken درست ہے۔"
     },
-    prerequisiteLessonIds: ["a0-gaan-komen", "a0-daily-actions", "a0-time-days", "a0-shopping-payment", "a0-health-emergency", "a1-polite-chunks"],
+    prerequisiteLessonIds: ["a0-gaan-komen", "a0-daily-actions", "a0-time-days", "a0-shopping-payment", "a0-health-emergency", "a1-modal-verbs"],
     prerequisiteRefs: [
       ["a0-gaan-komen", "ik ga"],
       ["a0-gaan-komen", "hij gaat"],
@@ -8780,14 +8762,16 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
     }
   },
   "a1-object-pronouns": {
-    title: "Mij, hem, haar, ons", unitLabel: "A1: سوال، مدد، فون اور ملاقات",
-    outcomeUrdu: "مدد مانگتے، فون کی بات کرتے، یا بچے کو اسکول لے جانے کی بات میں فعل کے بعد مجھے، اسے، اور ہمیں کی درست شکل استعمال کرنا۔",
+    title: "Mij, hem, haar, ons", unitLabel: "A1: سوال، مدد اور فون",
+    outcomeUrdu: "اپنے یا دوسروں کے لیے مؤدبانہ مدد مانگتے، سمجھ نہ آنے کی بات کرتے، فون کی بات کرتے، یا بچے کو اسکول لے جانے کی بات میں فعل کے بعد مجھے، اسے، اور ہمیں کی درست شکل استعمال کرنا۔",
     seedConcepts: a1GrammarSeedsV4["a1-object-pronouns"],
     teaching: authoredA1TeachingV4([
       ["hem", "فعل کے بعد کسی مرد یا لڑکے کے لیے hem کہیں، یعنی اسے۔", "hem مرد یا لڑکے کے لیے ہے؛ عورت یا لڑکی کے لیے haar کہیں۔", "فعل کے بعد hij نہیں، hem آتا ہے۔", "hij — hem", "وہ — اسے۔", "ہَیم"],
       ["ons", "فعل کے بعد اپنے اور ساتھ والوں کے لیے ons کہیں، یعنی ہمیں۔", "ons میں آپ خود بھی شامل ہیں؛ صرف اپنے لیے mij کہیں۔", "فعل کے بعد wij نہیں، ons آتا ہے۔", "wij — ons", "ہم — ہمیں۔", "اونس"],
       ["kunt u hem helpen", "بیٹے یا کسی مرد کے لیے مدد مانگنی ہو تو یہ کہیں۔", "یہ کسی دوسرے کے لیے مدد ہے؛ اپنے لیے kunt u mij helpen کہیں۔", "kunt u hij helpen غلط ہے؛ فعل کے بعد hem۔", "kunt u mij helpen? — kunt u hem helpen?", "کیا آپ میری مدد کر سکتے ہیں؟ — کیا آپ اس کی مدد کر سکتے ہیں؟", "کُنت یو ہَیم ہَیل پَن"],
       ["kunt u ons helpen", "خاندان یا ساتھ آئے لوگوں سب کے لیے مدد مانگنی ہو تو یہ کہیں۔", "یہ سب کے لیے مدد ہے؛ صرف بیٹے کے لیے kunt u hem helpen کہیں۔", "kunt u wij helpen غلط ہے؛ فعل کے بعد ons۔", "wij — kunt u ons helpen?", "ہم — کیا آپ ہماری مدد کر سکتے ہیں؟", "کُنت یو اونس ہَیل پَن"],
+      ["kunt u mij helpen alstublieft", "کاؤنٹر، اسکول، یا دکان میں اپنے لیے مؤدبانہ مدد مانگنی ہو تو یہ مکمل سوال کہیں۔", "یہ صرف اپنے لیے مدد ہے؛ پورے خاندان کے لیے kunt u ons helpen کہیں۔", "فعل کے بعد ik نہیں، mij آتا ہے؛ alstublieft آخر میں رہتا ہے۔", "kunt u mij helpen alstublieft? — kunt u ons helpen?", "کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟ — کیا آپ ہماری مدد کر سکتے ہیں؟", "کُنت یو مَے ہَیل پَن آل سٹو بلیفٹ"],
+      ["sorry ik begrijp het niet", "ملازم کی بات یا فارم کی ہدایت سمجھ نہ آئے تو معذرت کے ساتھ یہ کہیں۔", "یہ صرف سمجھ نہ آنے کی اطلاع ہے؛ اس میں مدد کی درخواست شامل نہیں۔", "یہاں het کا مطلب یہ بات ہے؛ het فعل کے بعد اور niet سب سے آخر میں آتا ہے۔", "sorry, ik begrijp het niet.", "معاف کیجیے، مجھے یہ بات سمجھ نہیں آئی۔", "سو ری اِک بَخرَیپ ہَت نیت"],
       ["ik bel haar", "کسی عورت کو فون کرنے کی بات میں ik bel haar کہیں۔", "یہاں haar کا مطلب اسے ہے؛ haar pen میں اس کا مطلب اس کا ہے۔", "فعل کے بعد zij نہیں، haar آتا ہے۔", "haar pen — ik bel haar", "اس کا قلم — میں اسے فون کرتا ہوں۔", "اِک بَیل ہار"],
       ["bel mij morgen", "فون پر بات مکمل نہ ہو تو سامنے والے سے کہیں کہ آپ کو کل فون کرے۔", "یہ درخواست ہے کہ وہ آپ کو فون کرے؛ خود فون کرنے کے لیے ik bel u کہیں۔", "حکم میں فعل پہلے، پھر mij: bel mij، نہ کہ bel ik۔", "bel 112 — bel mij morgen", "112 پر فون کریں — مجھے کل فون کریں۔", "بَیل مَے مور خَن"],
       ["ik breng hem naar school", "بیٹے کو اسکول لے جانے کی بات میں، اس کا نام دوبارہ لیے بغیر یہ کہیں۔", "hem بیٹے کی جگہ آتا ہے؛ بیٹی کے لیے haar کہیں۔", "breng کے بعد hem، پھر جگہ: ik breng hem naar school۔", "ik breng mijn kind naar school — ik breng hem naar school", "میں اپنے بچے کو اسکول لے جاتا ہوں — میں اسے اسکول لے جاتا ہوں۔", "اِک برَینگ ہَیم نار سخول"],
@@ -8797,11 +8781,11 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       modelDutch: "kunt u ons helpen?",
       titleUrdu: "فعل کے بعد mij، hem، haar، ons",
       highlight: "kunt u ons helpen",
-      explanationUrdu: "فعل کے بعد شخص کی شکل بدلتی ہے: ik سے mij، hij سے hem، zij سے haar، اور wij سے ons۔",
+      explanationUrdu: "فعل کے بعد شخص کی شکل بدلتی ہے: ik سے mij، hij سے hem، zij سے haar، اور wij سے ons۔ کسی بات یا چیز کے لیے فعل کے بعد het آتا ہے۔",
       contrastUrdu: "wij جملہ شروع کرتا ہے؛ ons فعل کے بعد آتا ہے: kunt u ons helpen؟",
       commonMistakeUrdu: "فعل کے بعد wij یا hij نہ کہیں؛ kunt u wij helpen غلط ہے۔"
     },
-    prerequisiteLessonIds: ["a0-understanding-help", "a0-hij-zij-wij", "a0-possessive", "a0-child-school", "a0-health-emergency", "a1-polite-chunks"],
+    prerequisiteLessonIds: ["a0-understanding-help", "a0-greetings-courtesy", "a0-hij-zij-wij", "a0-possessive", "a0-child-school", "a0-health-emergency", "a1-questions"],
     prerequisiteRefs: [
       ["a0-understanding-help", "kunt u mij helpen"],
       ["a0-hij-zij-wij", "hij"],
@@ -8811,13 +8795,18 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       ["a0-child-school", "ik breng mijn kind naar school"],
       ["a0-child-school", "ik haal mijn kind om drie uur op"],
       ["a0-health-emergency", "bel 112"],
-      ["a1-polite-chunks", "kunt u mij helpen alstublieft?"]
+      ["a0-greetings-courtesy", "sorry"],
+      ["a0-greetings-courtesy", "alstublieft"],
+      ["a0-greetings-courtesy", "ik begrijp het niet"],
+      ["a1-questions", "wanneer komt u?"]
     ],
     scenarios: {
       hem: ["object-him-word", "استاد پوچھتی ہیں کہ آپ کس کو فون کریں گے: بیٹے کو۔ فعل کے بعد بیٹے کے لیے کون سا لفظ آئے گا؟"],
       ons: ["object-us-word", "اسٹیشن پر آپ کا پورا خاندان مدد کا منتظر ہے۔ فعل کے بعد ہمیں کے لیے کون سا لفظ آئے گا؟"],
       "kunt u hem helpen": ["object-help-son", "بیٹا راستہ بھول گیا ہے۔ پولیس والے سے کہیں کہ وہ اس کی مدد کرے۔"],
       "kunt u ons helpen": ["object-help-family", "آپ اور آپ کا خاندان اسٹیشن پر راستہ نہیں جانتے۔ کسی سے سب کے لیے مدد مانگیں۔"],
+      "kunt u mij helpen alstublieft": ["object-help-me-polite", "بلدیہ کے کاؤنٹر پر فارم سمجھ نہیں آیا۔ ملازم سے اپنے لیے مؤدبانہ مدد مانگیں۔"],
+      "sorry ik begrijp het niet": ["object-not-understand-it", "ملازم تیزی سے ایک ہدایت بتاتا ہے جو آپ کو سمجھ نہیں آئی۔ معذرت کے ساتھ بتائیں کہ آپ کو سمجھ نہیں آیا۔"],
       "ik bel haar": ["object-call-colleague", "ساتھی پوچھتا ہے کہ کیا آپ نئی ساتھی کو اطلاع دیں گے۔ بتائیں کہ آپ اسے فون کرتے ہیں۔"],
       "bel mij morgen": ["object-call-me-tomorrow", "فون پر بات مکمل نہیں ہوئی۔ سامنے والے سے کہیں کہ آپ کو کل فون کرے۔"],
       "ik breng hem naar school": ["object-bring-son", "پڑوسن آپ کے بیٹے کا نام لے کر پوچھتی ہے کہ صبح اسے کون لے جاتا ہے۔ بتائیں کہ آپ اسے اسکول لے جاتے ہیں۔"],
@@ -8891,7 +8880,7 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       contrastUrdu: "ik ben ziek آج کی حالت ہے؛ gisteren was ik ziek کل کی حالت ہے۔",
       commonMistakeUrdu: "gisteren کے بعد ik پہلے نہ رکھیں؛ gisteren ik was ziek غلط ہے۔"
     },
-    prerequisiteLessonIds: ["a0-health-emergency", "a0-time-days", "a0-date-appointment", "a0-gaan-komen", "a1-calendar-time", "a1-short-messages"],
+    prerequisiteLessonIds: ["a0-health-emergency", "a0-time-days", "a0-date-appointment", "a0-gaan-komen", "a1-calendar-time"],
     prerequisiteRefs: [
       ["a0-health-emergency", "ik ben ziek"],
       ["a0-health-emergency", "ik heb pijn"],
@@ -8914,6 +8903,128 @@ Object.assign(a1AuthoredCurriculumV4.lessons, {
       "ik ging naar huis": ["past-went-home", "ساتھی پوچھتا ہے کہ کل کام کے بعد آپ نے کیا کیا۔ بتائیں کہ آپ گھر گئے۔"],
       "zij ging naar de dokter": ["past-wife-went-to-doctor", "استاد کو بتائیں کہ کل آپ کی بیوی ڈاکٹر کے پاس گئی تھی۔"]
     }
+  },
+  "a1-modal-verbs": {
+    title: "Ik kan, ik wil, ik moet", unitLabel: "A1: سوال، مدد اور فون",
+    outcomeUrdu: "یہ بتانا کہ آپ کیا کر سکتے ہیں، کیا چاہتے ہیں، اور کیا ضروری ہے؛ ادب سے اجازت یا مدد مانگنا؛ اور معاون فعل دوسرے نمبر پر اور پورا فعل آخر میں رکھنا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-modal-verbs"],
+    teaching: authoredA1TeachingV4([
+      ["ik kan morgen komen", "استقبالی ملازم پوچھے کہ کیا آپ کل آ سکتے ہیں تو ہاں میں یہ مکمل جملہ کہیں۔", "یہ آنے کا امکان بتاتا ہے؛ آج نہ آ سکنے کی بات ik kan vandaag niet komen سے ہوتی ہے۔", "kan دوسرے نمبر پر اور پورا فعل komen سب سے آخر میں: ik kan morgen komen۔", "ik kan vandaag niet komen — ik kan morgen komen", "میں آج نہیں آ سکتا — میں کل آ سکتا ہوں۔", "اِک کان مور خَن کو مَن"],
+      ["u kunt morgen komen", "کاؤنٹر پر کسی کو ادب سے بتانا ہو کہ وہ کل آ سکتے ہیں تو یہ کہیں۔", "یہ سامنے والے کے بارے میں ہے؛ اپنے لیے ik kan morgen komen کہیں۔", "u کے ساتھ kunt آتا ہے اور ik کے ساتھ kan؛ ik kunt غلط ہے۔", "ik kan morgen komen — u kunt morgen komen", "میں کل آ سکتا ہوں — آپ کل آ سکتے ہیں۔", "اُو کُنت مور خَن کو مَن"],
+      ["hij kan vandaag niet werken", "شوہر یا بیٹا بیمار ہو تو اس کے کام پر بتائیں کہ وہ آج کام نہیں کر سکتا۔", "یہ کسی مرد کے بارے میں ہے؛ اپنے بارے میں ik kan vandaag niet komen جیسا جملہ کہیں۔", "hij کے ساتھ بھی kan آتا ہے، kunt نہیں؛ niet پورے فعل werken سے پہلے رہتا ہے۔", "u kunt morgen komen — hij kan vandaag niet werken", "آپ کل آ سکتے ہیں — وہ آج کام نہیں کر سکتا۔", "ہَے کان فان داخ نیت وَیر کَن"],
+      ["ik kan niet komen", "دعوت یا ملاقات پر آنا ممکن نہ ہو تو مختصر انکار میں یہ کہیں۔", "یہ عام انکار ہے؛ خاص دن بتانا ہو تو دن بھی ساتھ کہیں، جیسے ik kan vandaag niet komen۔", "niet پورے فعل سے پہلے آتا ہے: ik kan niet komen؛ komen کے بعد niet نہ رکھیں۔", "ik kan morgen komen — ik kan niet komen", "میں کل آ سکتا ہوں — میں نہیں آ سکتا۔", "اِک کان نیت کو مَن"],
+      ["ik wil koffie drinken", "کیفے میں دوست پوچھے کہ آپ کیا پینا چاہتے ہیں تو یہ کہیں۔", "یہ اپنی خواہش ہے؛ دوسرے سے پوچھنے کے لیے wilt u thee drinken کہیں۔", "ik کے ساتھ wil، اور پورا فعل drinken آخر میں؛ ik wilt غلط ہے۔", "ik wil koffie drinken — wilt u thee drinken?", "میں کافی پینا چاہتا ہوں — کیا آپ چائے پینا چاہتے ہیں؟", "اِک وِل کو فی دْرِن کَن"],
+      ["wilt u thee drinken", "مہمان یا پڑوسی کو ادب سے چائے پیش کرنی ہو تو یہ سوال کہیں۔", "یہ دوسرے سے پوچھنا ہے؛ اپنی خواہش کے لیے ik wil koffie drinken کہیں۔", "u کے ساتھ wilt آتا ہے، wil نہیں؛ سوال میں wilt پہلے اور drinken آخر میں۔", "wilt u thee drinken? — ik wil koffie drinken.", "کیا آپ چائے پینا چاہتے ہیں؟ — میں کافی پینا چاہتا ہوں۔", "وِلت اُو تے دْرِن کَن"],
+      ["ik moet morgen werken", "دوست کل ملنا چاہے مگر آپ کو کام پر جانا لازمی ہو تو یہ کہیں۔", "یہ مجبوری یا ذمہ داری ہے؛ اپنی خوشی کی بات کے لیے ik wil کہیں۔", "moet دوسرے نمبر پر اور werken آخر میں؛ morgen درمیان میں رہتا ہے۔", "ik wil koffie drinken — ik moet morgen werken", "میں کافی پینا چاہتا ہوں — مجھے کل کام کرنا ہے۔", "اِک موت مور خَن وَیر کَن"],
+      ["mag ik iets vragen", "مصروف ملازم سے بات شروع کرنے سے پہلے ادب سے سوال کی اجازت مانگیں۔", "یہ اپنی اجازت مانگتا ہے؛ سامنے والے سے کام کرانے کے لیے kunt u mij helpen alstublieft کہیں۔", "اجازت کے سوال میں mag پہلے، پھر ik، اور vragen سب سے آخر میں۔", "mag ik iets vragen? — kunt u mij helpen alstublieft?", "کیا میں کچھ پوچھ سکتا ہوں؟ — کیا آپ میری مدد کر سکتے ہیں، براہ مہربانی؟", "ماخ اِک اِیٹس فرا خَن"]
+    ]),
+    pattern: {
+      modelDutch: "ik kan morgen komen",
+      titleUrdu: "معاون فعل دوسرے نمبر پر، پورا فعل آخر میں",
+      highlight: "kan … komen",
+      explanationUrdu: "kan، wil، moet، اور mag جملے میں دوسرے نمبر پر آتے ہیں اور دوسرا فعل پورا ہو کر سب سے آخر میں جاتا ہے: ik kan morgen komen۔ سوال میں معاون فعل پہلے آتا ہے: kunt u mij helpen alstublieft؟",
+      contrastUrdu: "ik kan، u kunt، hij kan؛ ik wil، u wilt۔ نفی میں niet پورے فعل سے پہلے آتا ہے: ik kan niet komen۔",
+      commonMistakeUrdu: "ik کے ساتھ kunt یا wilt نہ کہیں؛ اور پورا فعل درمیان میں نہ رکھیں، وہ ہمیشہ آخر میں آتا ہے۔",
+      drills: [
+        pickDrillV4("ik kan morgen komen", ["ik kan komen morgen", "ik morgen kan komen"], "میں کل آ سکتا ہوں", { "ik kan komen morgen": "پورا فعل komen سب سے آخر میں آتا ہے، morgen سے پہلے نہیں۔", "ik morgen kan komen": "kan دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("u kunt morgen komen", ["u kunt komen morgen", "u morgen kunt komen"], "آپ کل آ سکتے ہیں", { "u kunt komen morgen": "پورا فعل komen آخر میں آتا ہے۔", "u morgen kunt komen": "kunt دوسرے نمبر پر، u کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik kan niet komen", ["ik kan komen niet", "ik niet kan komen"], "میں نہیں آ سکتا", { "ik kan komen niet": "niet پورے فعل سے پہلے آتا ہے۔", "ik niet kan komen": "kan دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik moet morgen werken", ["ik moet werken morgen", "ik morgen moet werken"], "مجھے کل کام کرنا ہے", { "ik moet werken morgen": "پورا فعل werken سب سے آخر میں آتا ہے۔", "ik morgen moet werken": "moet دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik wil koffie drinken", ["ik wil drinken koffie", "ik koffie wil drinken"], "میں کافی پینا چاہتا ہوں", { "ik wil drinken koffie": "پورا فعل drinken آخر میں آتا ہے، koffie اس سے پہلے۔", "ik koffie wil drinken": "wil دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" })
+      ]
+    },
+    prerequisiteLessonIds: ["a0-understanding-help", "a0-time-days", "a0-daily-actions", "a0-food-drink", "a0-work-basics", "a0-hij-zij-wij", "a1-questions", "a1-object-pronouns"],
+    prerequisiteRefs: [
+      ["a0-work-basics", "ik kan vandaag niet komen"],
+      ["a0-understanding-help", "kunt u mij helpen"],
+      ["a0-time-days", "morgen"],
+      ["a0-time-days", "vandaag"],
+      ["a0-daily-actions", "werken"],
+      ["a0-daily-actions", "drinken"],
+      ["a0-food-drink", "koffie"],
+      ["a0-food-drink", "thee"],
+      ["a0-hij-zij-wij", "hij"],
+      ["a1-object-pronouns", "kunt u mij helpen alstublieft?"]
+    ],
+    scenarios: {
+      "ik kan morgen komen": ["modal-can-come-tomorrow", "استقبالی ملازم پوچھتی ہے کہ کیا آپ کل ملاقات کے لیے آ سکتے ہیں۔ ہاں میں بتائیں کہ آپ کل آ سکتے ہیں۔"],
+      "u kunt morgen komen": ["modal-tell-visitor-can-come", "آپ کمیونٹی مرکز کے کاؤنٹر پر مدد کر رہے ہیں۔ ایک خاتون پوچھتی ہیں کہ وہ کب آئیں۔ ادب سے بتائیں کہ وہ کل آ سکتی ہیں۔"],
+      "hij kan vandaag niet werken": ["modal-husband-cannot-work", "شوہر کو تیز بخار ہے۔ اس کے کام پر فون کرکے بتائیں کہ وہ آج کام نہیں کر سکتا۔"],
+      "ik kan niet komen": ["modal-cannot-come", "پڑوسن شام کو چائے پر بلاتی ہے مگر آپ مصروف ہیں۔ مختصر بتائیں کہ آپ نہیں آ سکتے۔"],
+      "kunt u mij helpen alstublieft": ["modal-review-ask-help", "لائبریری کے کاؤنٹر پر کمپیوٹر سمجھ نہیں آ رہا۔ ملازم سے ادب سے مدد مانگیں۔"],
+      "ik wil koffie drinken": ["modal-want-coffee", "کیفے میں دوست پوچھتا ہے کہ آپ کیا پینا چاہتے ہیں۔ بتائیں کہ آپ کافی پینا چاہتے ہیں۔"],
+      "wilt u thee drinken": ["modal-offer-tea", "پڑوسی پہلی بار آپ کے گھر آئے ہیں۔ ادب سے پوچھیں کہ کیا وہ چائے پینا چاہتے ہیں۔"],
+      "ik moet morgen werken": ["modal-must-work-tomorrow", "دوست کل پارک جانا چاہتا ہے۔ بتائیں کہ آپ کو کل کام کرنا ہے۔"],
+      "mag ik iets vragen": ["modal-ask-permission-question", "استقبالی ملازم کسی اور سے بات کر رہا ہے۔ بات شروع کرنے سے پہلے ادب سے سوال کی اجازت مانگیں۔"],
+      "ik kan vandaag niet komen": ["modal-review-cannot-come-today", "صبح بخار ہے۔ کام پر فون کرکے بتائیں کہ آپ آج نہیں آ سکتے۔"]
+    }
+  },
+  "a1-perfect-intro": {
+    title: "Ik heb gewerkt", unitLabel: "A1: پیغام، اسکول اور کام",
+    outcomeUrdu: "کام، اسکول، یا ڈاکٹر کو بتانا کہ کوئی کام ہو چکا ہے، جیسے فون کر دیا، بل ادا کر دیا، یا دوا لے لی؛ اور پہنچ جانے یا بدل جانے کی خبر پہچاننا۔",
+    seedConcepts: a1GrammarSeedsV4["a1-perfect-intro"],
+    teaching: authoredA1TeachingV4([
+      ["ik heb gisteren gewerkt", "ساتھی پوچھے کہ کل آپ نے کیا کیا تو بتائیں کہ آپ نے کام کیا۔", "یہ ہو چکا کام ہے؛ آج کے کام کے لیے ik werk vandaag کہیں۔", "werken سے gewerkt بنتا ہے: شروع میں گے اور آخر میں ٹی؛ heb دوسرے نمبر پر اور gewerkt آخر میں۔", "ik werk vandaag — ik heb gisteren gewerkt", "میں آج کام کرتا ہوں — میں نے کل کام کیا۔", "اِک ہَیپ خِس تَرَن خَے وَیرکت"],
+      ["ik heb de school gebeld", "بچہ بیمار ہو تو گھر والوں کو بتائیں کہ آپ اسکول کو فون کر چکے ہیں۔", "یہ ہو چکا فون ہے؛ آنے والے فون کے لیے ik ga de school bellen کہیں۔", "bellen سے gebeld بنتا ہے، آخر میں ڈی؛ gebeld جملے کے آخر میں رہتا ہے۔", "ik ga de school bellen — ik heb de school gebeld", "میں اسکول کو فون کروں گا — میں نے اسکول کو فون کر دیا۔", "اِک ہَیپ دَ سْخول خَے بَیلت"],
+      ["ik heb de rekening betaald", "کیفے یا دکان میں ملازم پوچھے تو بتائیں کہ آپ بل ادا کر چکے ہیں۔", "یہ ادائیگی ہو چکی ہے؛ ابھی ادا کرنے کی بات betalen سے ہوتی ہے۔", "betalen کے شروع میں پہلے سے بے ہے، اس لیے اس کی شکل میں گے نہیں لگتا؛ صرف آخر میں ڈی آتا ہے: betaald۔", "de rekening alstublieft — ik heb de rekening betaald", "بل لائیں، براہ مہربانی — میں نے بل ادا کر دیا۔", "اِک ہَیپ دَ رے کَ نِنگ بَ تالت"],
+      ["zij heeft de dokter gebeld", "استاد کو بتانا ہو کہ بچے کی ماں ڈاکٹر کو فون کر چکی ہے تو یہ کہیں۔", "یہ کسی عورت کا ہو چکا کام ہے؛ اپنے لیے ik heb de school gebeld جیسا جملہ کہیں۔", "zij کے ساتھ heb نہیں، heeft آتا ہے؛ gebeld پھر بھی آخر میں رہتا ہے۔", "ik heb de school gebeld — zij heeft de dokter gebeld", "میں نے اسکول کو فون کیا — اس نے ڈاکٹر کو فون کیا۔", "زَے ہےفت دَ دوک تَر خَے بَیلت"],
+      ["ik heb het medicijn genomen", "ڈاکٹر یا فارمیسی والا پوچھے تو بتائیں کہ آپ دوا لے چکے ہیں۔", "یہ دوا لے لینے کی خبر ہے؛ کتنی بار لینی ہے یہ الگ سوال ہے۔", "nemen کی شکل genomen ہے، عام قاعدے والی نہیں؛ اسے الگ یاد رکھیں۔", "u moet rust nemen — ik heb het medicijn genomen", "آپ کو آرام کرنا چاہیے — میں نے دوا لے لی۔", "اِک ہَیپ ہَت مے دی سَین خَے نو مَن"],
+      ["wij hebben gegeten", "پڑوسن کھانے کا پوچھے تو بتائیں کہ آپ سب کھانا کھا چکے ہیں۔", "یہ ہو چکا کھانا ہے؛ کھانے کے منصوبے کے لیے wij gaan eten کہیں۔", "wij کے ساتھ hebben آتا ہے؛ eten کی شکل gegeten ہے اور آخر میں رہتی ہے۔", "wij gaan eten — wij hebben gegeten", "ہم کھانا کھانے جا رہے ہیں — ہم نے کھانا کھا لیا۔", "وَے ہَے بَن خَے خے تَن"],
+      ["wat heb je gedaan", "پیر کو دوست سے پوچھنا ہو کہ اس نے ہفتے کے آخر میں کیا کیا تو یہ سوال کہیں۔", "یہ ہو چکی بات کا بے تکلف سوال ہے؛ آنے والے منصوبے کے لیے wat ga je morgen doen کہیں۔", "سوال میں heb پہلے آتا ہے پھر je؛ doen کی شکل gedaan سب سے آخر میں۔", "wat ga je morgen doen? — wat heb je gedaan?", "تم کل کیا کرو گے؟ — تم نے کیا کیا؟", "وات ہَیپ یَے خَے دان"],
+      ["ik heb het geld gekregen", "دکان سے واپسی کے بعد بتائیں کہ پیسے آپ کو مل گئے ہیں۔", "یہ مل جانے کی خبر ہے؛ اس میں دینا یا ادا کرنا شامل نہیں۔", "gekregen ایک الگ شکل ہے؛ heb دوسرے نمبر پر اور gekregen آخر میں۔", "kan ik mijn geld terugkrijgen? — ik heb het geld gekregen", "کیا مجھے اپنے پیسے واپس مل سکتے ہیں؟ — مجھے پیسے مل گئے۔", "اِک ہَیپ ہَت خَیلت خَے کرے خَن"],
+      ["ik heb het gezien", "استاد پوچھیں کہ کیا آپ نے دروازے پر لگا نوٹس دیکھا تو یہ کہیں۔", "یہ دیکھ لینے کی خبر ہے؛ پڑھ لینے کے لیے ik heb het gelezen کہیں۔", "het فعل کے بعد اور gezien سب سے آخر میں؛ gezien الگ شکل ہے۔", "ik heb het gezien — wat heb je gedaan?", "میں نے اسے دیکھ لیا — تم نے کیا کیا؟", "اِک ہَیپ ہَت خَے زین"],
+      ["ik heb het gelezen", "ساتھی پوچھے کہ کیا آپ نے اس کا پیغام پڑھا تو مختصر جواب میں یہ کہیں۔", "یہ پڑھ لینے کی خبر ہے؛ صرف دیکھ لینے کے لیے ik heb het gezien کہیں۔", "lezen کی شکل gelezen ہے؛ het فعل کے بعد اور gelezen آخر میں۔", "ik heb het gezien — ik heb het gelezen", "میں نے اسے دیکھ لیا — میں نے اسے پڑھ لیا۔", "اِک ہَیپ ہَت خَے لے زَن"],
+      ["het pakket is gekomen", "گھر والوں کو بتائیں کہ انتظار والا پارسل آ گیا ہے؛ یہ شکل پہچان لیں۔", "یہ پہنچنے کی خبر ہے؛ پارسل لینے جانے کی درخواست نہیں۔", "آنے کی خبر میں heb نہیں بلکہ is آتا ہے، اور gekomen آخر میں۔", "het pakket is nog niet gekomen — het pakket is gekomen", "پارسل ابھی نہیں آیا — پارسل آ گیا ہے۔", "ہَت پا کَیت اِس خَے کو مَن"],
+      ["de afspraak is veranderd", "ڈاکٹر یا اسکول کے پیغام میں پڑھیں کہ ملاقات بدل گئی ہے؛ یہ شکل پہچان لیں۔", "یہ تبدیلی کی خبر ہے؛ خود ملاقات بدلوانے کے لیے ik wil de afspraak veranderen کہیں۔", "بدل جانے کی خبر میں بھی is آتا ہے، اور veranderd آخر میں ڈی کے ساتھ۔", "ik wil de afspraak veranderen — de afspraak is veranderd", "میں ملاقات بدلنا چاہتا ہوں — ملاقات بدل گئی ہے۔", "دَ اَف سپراک اِس فَر اَن دَرت"]
+    ]),
+    pattern: {
+      modelDutch: "ik heb gisteren gewerkt",
+      titleUrdu: "ہو چکا کام: heb اور آخر میں گے والی شکل",
+      highlight: "heb … gewerkt",
+      explanationUrdu: "ہو چکا کام بتانے کے لیے heb یا heeft دوسرے نمبر پر، اور کام کی گے والی شکل سب سے آخر میں رکھیں: ik heb gisteren gewerkt۔ عام فعل میں شروع میں گے اور آخر میں ٹی یا ڈی آتا ہے: werken سے gewerkt، bellen سے gebeld۔",
+      contrastUrdu: "ik was ziek پہلے کی حالت ہے؛ ik heb gisteren gewerkt ہو چکا کام ہے۔ کچھ فعل الگ شکل بناتے ہیں، جیسے gegeten، gedaan، genomen۔ آنے یا بدلنے کی خبر میں heb کی جگہ is آتا ہے: het pakket is gekomen۔",
+      commonMistakeUrdu: "گے والی شکل درمیان میں نہ رکھیں، وہ ہمیشہ آخر میں آتی ہے؛ اور gewerkt کے آخر کا ٹی نہ چھوڑیں۔",
+      drills: [
+        pickDrillV4("ik heb gisteren gewerkt", ["ik heb gewerkt gisteren", "ik gisteren heb gewerkt"], "میں نے کل کام کیا", { "ik heb gewerkt gisteren": "gewerkt سب سے آخر میں آتا ہے، gisteren سے پہلے نہیں۔", "ik gisteren heb gewerkt": "heb دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik heb de school gebeld", ["ik heb gebeld de school", "ik de school heb gebeld"], "میں نے اسکول کو فون کیا", { "ik heb gebeld de school": "gebeld آخر میں آتا ہے، de school اس سے پہلے۔", "ik de school heb gebeld": "heb دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik heb het medicijn genomen", ["ik heb genomen het medicijn", "ik het medicijn heb genomen"], "میں نے دوا لے لی", { "ik heb genomen het medicijn": "genomen آخر میں آتا ہے، het medicijn اس سے پہلے۔", "ik het medicijn heb genomen": "heb دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" }),
+        pickDrillV4("ik heb het geld gekregen", ["ik heb gekregen het geld", "ik het geld heb gekregen"], "مجھے پیسے مل گئے", { "ik heb gekregen het geld": "gekregen آخر میں آتا ہے، het geld اس سے پہلے۔", "ik het geld heb gekregen": "heb دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔" })
+      ]
+    },
+    prerequisiteLessonIds: ["a0-time-days", "a0-daily-actions", "a0-health-emergency", "a0-date-appointment", "a1-future-gaan", "a1-cafe-ordering", "a1-shopping-returns", "a1-post-parcel-extra", "a1-doctor-symptoms", "a1-past-was-had"],
+    prerequisiteRefs: [
+      ["a0-time-days", "gisteren"],
+      ["a0-time-days", "ik werk vandaag"],
+      ["a0-daily-actions", "werken"],
+      ["a0-daily-actions", "eten"],
+      ["a0-daily-actions", "lezen"],
+      ["a0-shopping-payment", "betalen"],
+      ["a0-health-emergency", "dokter"],
+      ["a0-health-emergency", "medicijn"],
+      ["a0-date-appointment", "ik wil de afspraak veranderen"],
+      ["a1-future-gaan", "ik ga de school bellen"],
+      ["a1-future-gaan", "wij gaan eten"],
+      ["a1-future-gaan", "wat ga je morgen doen?"],
+      ["a1-cafe-ordering", "de rekening alstublieft"],
+      ["a1-shopping-returns", "kan ik mijn geld terugkrijgen?"],
+      ["a1-post-parcel-extra", "het pakket is nog niet gekomen"],
+      ["a1-doctor-symptoms", "u moet rust nemen"],
+      ["a1-past-was-had", "ik was ziek"]
+    ],
+    scenarios: {
+      "ik heb gisteren gewerkt": ["perfect-worked-yesterday", "پیر کی صبح ساتھی پوچھتا ہے کہ گزرے کل آپ نے کیا کیا۔ بتائیں کہ آپ نے کام کیا۔"],
+      "ik heb de school gebeld": ["perfect-called-school", "بچہ بیمار ہے۔ شوہر پوچھتا ہے کہ اسکول کو اطلاع دی یا نہیں۔ بتائیں کہ آپ اسکول کو فون کر چکے ہیں۔"],
+      "ik heb de rekening betaald": ["perfect-paid-bill", "کیفے سے نکلتے ہوئے ویٹر بل کا پوچھتا ہے۔ بتائیں کہ آپ بل ادا کر چکے ہیں۔"],
+      "zij heeft de dokter gebeld": ["perfect-mother-called-doctor", "استاد پوچھتی ہیں کہ بچے کی ماں نے ڈاکٹر سے بات کی یا نہیں۔ بتائیں کہ اس نے ڈاکٹر کو فون کیا۔"],
+      "ik heb het medicijn genomen": ["perfect-took-medicine", "فارمیسی والا پوچھتا ہے کہ آج کی دوا لی یا نہیں۔ بتائیں کہ آپ دوا لے چکے ہیں۔"],
+      "wij hebben gegeten": ["perfect-family-has-eaten", "پڑوسن شام کو کھانے پر بلاتی ہے مگر آپ سب کھا چکے ہیں۔ یہ بتائیں۔"],
+      "wat heb je gedaan": ["perfect-ask-weekend", "پیر کو دوست سے ملتے ہیں۔ پوچھیں کہ اس نے ہفتے کے آخر میں کیا کیا۔"],
+      "ik heb het geld gekregen": ["perfect-got-refund", "دکان پر واپسی کے بعد بیوی پوچھتی ہے کہ پیسے واپس ملے یا نہیں۔ بتائیں کہ مل گئے۔"],
+      "ik heb het gezien": ["perfect-saw-notice", "استاد پوچھتی ہیں کہ کیا آپ نے دروازے پر لگا نوٹس دیکھا۔ بتائیں کہ آپ نے اسے دیکھ لیا۔"],
+      "ik heb het gelezen": ["perfect-read-message", "ساتھی پوچھتا ہے کہ کیا آپ نے اس کا پیغام پڑھا۔ مختصر بتائیں کہ آپ نے اسے پڑھ لیا۔"],
+      "het pakket is gekomen": ["perfect-parcel-arrived", "بیوی فون پر پوچھتی ہے کہ انتظار والا پارسل آیا یا نہیں۔ بتائیں کہ پارسل آ گیا ہے۔"],
+      "de afspraak is veranderd": ["perfect-appointment-changed", "ڈاکٹر کے پیغام میں نیا وقت لکھا ہے۔ شوہر کو بتائیں کہ ملاقات بدل گئی ہے۔"]
+    }
   }
 });
 
@@ -8928,7 +9039,7 @@ const a2AuthoredCurriculumV4 = {
     ["a1-details-forms", "adres"],
     ["a1-details-forms", "geboortedatum"],
     ["a1-appointments", "ik wil een afspraak maken"],
-    ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+    ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
     ["a1-post-parcel-extra", "identiteitsbewijs"]
   ],
   units: {
@@ -9028,7 +9139,7 @@ const a2AuthoredCurriculumV4 = {
       ]),
       pattern: false,
       prerequisiteLessonIds: ["a2-separable-verbs-routine"],
-      prerequisiteRefs: [["a1-appointments", "ik wil een afspraak maken"], ["a1-polite-chunks", "kunt u mij helpen alstublieft?"]],
+      prerequisiteRefs: [["a1-appointments", "ik wil een afspraak maken"], ["a1-object-pronouns", "kunt u mij helpen alstublieft?"]],
       independentCheckLeadUrdu: "دوسرے سرکاری دفتر کے استقبالی کاؤنٹر پر",
       scenarios: {
         "de gemeente": ["municipality-name", "پتے کی تبدیلی کے لیے جس شہری سرکاری دفتر جانا ہے اس کا درست ڈچ نام منتخب کریں۔"],
@@ -9139,7 +9250,7 @@ const a2AuthoredCurriculumV4 = {
       ],
       prerequisiteRefs: [
         ["a1-appointments", "ik wil een afspraak maken"],
-        ["a1-polite-chunks", "kunt u mij helpen alstublieft?"],
+        ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
         ["a1-post-parcel-extra", "identiteitsbewijs"]
       ],
       useTypes: ["situation", "listen-choice", "situation", "build", "situation", "document-choice"],
@@ -12482,6 +12593,37 @@ for (const concept of conceptByIdV4.values()) {
   concept.learningMode = "practical chunk";
 }
 
+// Grammar spine (docs/a1-a2-grammar-spine-followup.md §3.1, §3.3): phrases
+// that use a modal verb or the perfect before the lesson that teaches it are
+// taught whole. a1-modal-verbs and a1-perfect-intro own the grammar; their
+// own concepts stay unmarked.
+const grammarSpineChunksV4 = {
+  "a1-modal-verbs": new Set([
+    "kunt u herhalen", "kunt u mij helpen", "kunt u dat herhalen",
+    "ik wil de afspraak veranderen", "ik wil graag water", "ik wil graag koffie",
+    "ik wil dit", "mag ik de bon", "ik wil een kaartje",
+    "ik moet naar de tandarts", "ik kan vandaag niet komen",
+    "kunt u hem helpen", "kunt u ons helpen", "kunt u mij helpen alstublieft"
+  ]),
+  "a1-perfect-intro": new Set([
+    "het probleem is opgelost", "ik heb nog niets gekregen",
+    "het pakket is nog niet gekomen", "op welk adres is het bezorgd"
+  ])
+};
+const grammarSpineLessonOrderV4 = new Map(chaptersV4
+  .flatMap((chapter) => chapter.lessons)
+  .map((lesson, index) => [lesson.id, index]));
+for (const concept of conceptByIdV4.values()) {
+  const at = grammarSpineLessonOrderV4.get(concept.introducedInLessonId);
+  if (at === undefined) continue;
+  for (const [ownerId, chunks] of Object.entries(grammarSpineChunksV4)) {
+    if (at >= (grammarSpineLessonOrderV4.get(ownerId) ?? Infinity)) continue;
+    if (!chunks.has(normalizedTextV4(concept.dutch))) continue;
+    concept.atomicChunk = true;
+    concept.learningMode = "practical chunk";
+  }
+}
+
 function registerConceptSkillV4(concept) {
   if (skillIdByConceptIdV4.has(concept.id)) return skillIdByConceptIdV4.get(concept.id);
   const id = `skill:${concept.id.slice("concept:".length)}`;
@@ -14146,9 +14288,6 @@ const listenReplyCuesV4 = {
   ],
   "a1-weather-clothes": [
     ["regent het?", "کیا بارش ہو رہی ہے؟", "het regent vandaag", "ik heb een jas nodig", "ik ga niet naar buiten"]
-  ],
-  "a1-polite-chunks": [
-    ["wil je koffie?", "کیا تم کافی لو گے؟", "nee dank u", "dank u wel voor uw hulp", "mag ik iets vragen?"]
   ],
   "a1-plans-invitations": [
     ["wanneer heb je tijd?", "تمہارے پاس کب وقت ہے؟", "zullen we om drie uur afspreken?", "wil je koffie drinken?", "tot ziens"],
@@ -16954,7 +17093,7 @@ const a1CompletionMissionV4 = {
   kind: "mission",
   unit: "A1: آخری عملی جانچ",
   title: "A1 laatste praktische missie",
-  description: "A1 کے نو حصوں کی پہلے سیکھی ہوئی باتوں سے معنی، سننا، پڑھنا، بولنے کی مدد، اور عملی استعمال مکمل کرنا۔",
+  description: "A1 کے دس حصوں کی پہلے سیکھی ہوئی باتوں سے معنی، سننا، پڑھنا، بولنے کی مدد، اور عملی استعمال مکمل کرنا۔",
   xp: 0,
   variants: [],
   questions: [],
@@ -18034,6 +18173,17 @@ const missionRolePlaysV4 = {
     ]
   },
   "a1-mission-phone-internet": {
+    sceneUrdu: "آپ کمیونٹی مرکز کو فون کرتے ہیں۔ آپ کو اور آپ کے خاندان کو مدد چاہیے۔",
+    turns: [
+      ["other", "goedemorgen, met Sara.", "صبح بخیر، سارہ بول رہی ہوں۔"],
+      ["you", "mag ik iets vragen?", ["ik bel haar", "u heeft het verkeerde nummer"], "بات شروع کرنے سے پہلے ادب سے اجازت مانگیں۔"],
+      ["other", "ja, kan ik u helpen?", "جی، کیا میں آپ کی مدد کر سکتی ہوں؟"],
+      ["you", "kunt u ons helpen?", ["ik breng hem naar school", "wie spreekt er?"], "اپنے پورے خاندان کے لیے مدد مانگیں۔"],
+      ["other", "wanneer komt u?", "آپ کب آئیں گے؟"],
+      ["you", "ik kan morgen komen", ["kunt u het nummer herhalen?", "bel mij morgen"], "بتائیں کہ آپ کل آ سکتے ہیں۔"]
+    ]
+  },
+  "a1-plans-appointments-mission": {
     sceneUrdu: "آپ ملاقات کا وقت لینے کے لیے فون کرتے ہیں۔",
     turns: [
       ["other", "goedemorgen, met Sara.", "صبح بخیر، سارہ بول رہی ہوں۔"],
@@ -18568,6 +18718,11 @@ const societyCardsV4 = {
     "دوپہر کا کھانا اکثر ہلکا ہوتا ہے، جیسے روٹی؛ گرم کھانا شام کو تقریباً چھ بجے کھایا جاتا ہے۔",
     "بہت سے لوگ کام یا اسکول سائیکل پر جاتے ہیں، بارش میں بھی۔",
     "دکانوں کے اوقات شہر کے حساب سے بدلتے ہیں؛ اتوار کو بعض دکانیں بند ہوتی ہیں۔"
+  ]],
+  "a1-plans-appointments": ["وقت اور ملاقات کی پابندی", [
+    "یہاں ڈاکٹر، اسکول، اور دفتر سے ملاقات پہلے سے طے کی جاتی ہے؛ بغیر ملاقات کے جانا عموماً کام نہیں کرتا۔",
+    "وقت پر پہنچنا ادب سمجھا جاتا ہے؛ دیر ہو تو پہلے فون یا پیغام سے اطلاع دیں۔",
+    "ملاقات منسوخ کرنی ہو تو کم از کم ایک دن پہلے بتائیں؛ ورنہ بعض جگہوں پر فیس لگ سکتی ہے۔"
   ]],
   "a1-questions-help": ["مدد کہاں ملتی ہے", [
     "بلدیہ (gemeente) رہائش، رجسٹریشن، اور بہت سے سماجی سوالوں میں رہنمائی کرتی ہے۔",
