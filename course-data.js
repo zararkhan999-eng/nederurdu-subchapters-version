@@ -6138,106 +6138,89 @@ const a1AuthoredCurriculumV4 = {
       }
     },
     "a1-people-family-articles": {
-      title: "Familie herkennen: de, het en mijn",
+      title: "Ons gezin: jullie, ons en hun",
       unitLabel: "A1: خاندان اور لوگ",
-      outcomeUrdu: "خاندان کی تصویر میں والد، والدہ، بھائی، بہن، اور بچے کو درست de یا het کے ساتھ پہچاننا اور dit is mijn … سے تعارف کرانا۔",
+      outcomeUrdu: "اپنے اور دوسروں کے خاندان کی بات کرنا: we، jullie، اور ze سے لوگوں کو بتانا، اور ons، onze، uw، اور hun سے بتانا کہ چیز یا رشتہ کس کا ہے۔",
       seedConcepts: [
-        ["de vader", "والد / باپ"],
-        ["de moeder", "والدہ / ماں"],
-        ["dit is mijn vader", "یہ میرے والد ہیں"],
-        ["het kind", "بچہ"],
-        ["de broer", "بھائی"],
-        ["de zus", "بہن"]
+        ["dit zijn mijn ouders", "یہ میرے والدین ہیں"],
+        ["mijn huis", "میرا گھر"],
+        ["dit is ons huis", "یہ ہمارا گھر ہے"],
+        ["onze kinderen gaan naar school", "ہمارے بچے اسکول جاتے ہیں"],
+        ["is dit uw kind?", "کیا یہ آپ کا بچہ ہے؟"],
+        ["hun huis is groot", "ان کا گھر بڑا ہے"],
+        ["waar wonen jullie?", "تم لوگ کہاں رہتے ہو؟"],
+        ["we wonen in Utrecht", "ہم یوٹریکٹ میں رہتے ہیں"],
+        ["waar woon je?", "تم کہاں رہتے ہو؟"],
+        ["ze wonen in Pakistan", "وہ لوگ پاکستان میں رہتے ہیں"]
       ],
-      teaching: {
-        "de vader": {
-          usageUrdu: "خاندان کی تصویر، فارم، یا گفتگو میں والد کا ذکر ہو تو اسم کو اس کے چھوٹے لفظ کے ساتھ “de vader” کی صورت میں پہچانیں۔",
-          usageBoundaryUrdu: "de vader معلوم یا زیرِ گفتگو والد کو نام دیتا ہے؛ کسی ایک غیر متعین والد کے لیے een vader آ سکتا ہے۔",
-          commonConfusionUrdu: "vader کے ساتھ de یاد رکھیں؛ اسے het vader نہ کہیں۔",
-          exampleDutch: "Dit is mijn vader.",
-          exampleUrdu: "یہ میرے والد ہیں۔",
-          pronunciationUrdu: "دَ فا دَر"
-        },
-        "de moeder": {
-          usageUrdu: "والدہ کو تصویر یا خاندان کی معلومات میں پہچانتے وقت مکمل لفظی جوڑی “de moeder” دیکھیں اور سنیں۔",
-          usageBoundaryUrdu: "de moeder والدہ کا نام ہے؛ اپنی والدہ کہتے وقت چھوٹا لفظ ہٹ جاتا ہے اور mijn moeder آتا ہے۔",
-          commonConfusionUrdu: "de moeder درست ہے، لیکن mijn کے ساتھ de نہ ملائیں: de mijn moeder غلط ہے۔",
-          exampleDutch: "De moeder.",
-          exampleUrdu: "والدہ۔",
-          pronunciationUrdu: "دَ مو دَر"
-        },
-        "dit is mijn vader": {
-          usageUrdu: "کسی کو خاندان کی تصویر دکھاتے ہوئے اپنے والد کا تعارف مکمل جملے “dit is mijn vader” سے کرائیں۔",
-          usageBoundaryUrdu: "یہ اپنے والد کا تعارف ہے؛ صرف de vader رشتہ نام کرتا ہے مگر یہ مکمل تعارف نہیں۔",
-          commonConfusionUrdu: "mijn سے پہلے de نہ لگائیں اور is نہ چھوڑیں؛ درست ترتیب dit is mijn vader ہے۔",
-          exampleDutch: "Dit is mijn vader, Ahmed.",
-          exampleUrdu: "یہ میرے والد احمد ہیں۔",
-          pronunciationUrdu: "دِت اِس مَین فا دَر"
-        },
-        "het kind": {
-          usageUrdu: "بچے کا ذکر کسی فہرست، تصویر، یا اطلاع میں ہو تو kind کو اس کے مقرر چھوٹے لفظ کے ساتھ “het kind” یاد کریں۔",
-          usageBoundaryUrdu: "het kind ایک بچے کے لیے ہے؛ جمع بچوں کے ساتھ دوسرا چھوٹا لفظ آتا ہے۔",
-          commonConfusionUrdu: "kind ان عام الفاظ میں ہے جن کے ساتھ het آتا ہے؛ de kind نہ کہیں۔",
-          exampleDutch: "Het kind.",
-          exampleUrdu: "بچہ۔",
-          pronunciationUrdu: "ہَت کِنٹ"
-        },
-        "de broer": {
-          usageUrdu: "بھائی کا رشتہ پہچاننے یا خاندان کی فہرست پڑھنے میں “de broer” استعمال ہوتا ہے۔",
-          usageBoundaryUrdu: "de broer بھائی ہے؛ zus بہن کے لیے الگ لفظ ہے۔",
-          commonConfusionUrdu: "broer کے ساتھ de آتا ہے؛ اسے het broer نہ کہیں۔",
-          exampleDutch: "De broer.",
-          exampleUrdu: "بھائی۔",
-          pronunciationUrdu: "دَ برور"
-        },
-        "de zus": {
-          usageUrdu: "خاندان کی معلومات میں بہن کو چھوٹے لفظ سمیت “de zus” کی صورت میں پہچانیں۔",
-          usageBoundaryUrdu: "de zus بہن ہے؛ broer بھائی کے لیے ہے۔",
-          commonConfusionUrdu: "zus کے ساتھ de یاد رکھیں؛ het zus درست نہیں۔",
-          exampleDutch: "De zus.",
-          exampleUrdu: "بہن۔",
-          pronunciationUrdu: "دَ زُس"
-        }
-      },
+      teaching: authoredA1TeachingV4([
+        ["dit zijn mijn ouders", "خاندان کی تصویر دکھاتے ہوئے ماں اور باپ دونوں کا ایک ساتھ تعارف کرانا ہو تو یہ کہیں۔", "ایک شخص کے تعارف میں dit is آتا ہے؛ دو یا زیادہ لوگوں کے لیے dit zijn آتا ہے۔", "ouders جمع ہے، اس لیے dit is نہیں بلکہ dit zijn کہیں۔", "Dit zijn mijn ouders.", "یہ میرے والدین ہیں۔", "دِت زَین مَین آو دَرس"],
+        ["waar wonen jullie", "دو یا زیادہ لوگوں، جیسے نئے پڑوسی جوڑے، سے ان کا رہنے کا شہر پوچھنا ہو تو یہ کہیں۔", "jullie تم لوگ ہے، یعنی ایک سے زیادہ لوگ؛ ایک شخص سے waar woon je? پوچھیں۔", "jullie کے ساتھ فعل جمع شکل wonen میں آتا ہے۔", "Waar wonen jullie? — We wonen in Utrecht.", "تم لوگ کہاں رہتے ہو؟ — ہم یوٹریکٹ میں رہتے ہیں۔", "وار وو نَن یُو لی"],
+        ["we wonen in utrecht", "اپنے اور گھر والوں کے رہنے کی جگہ بتانی ہو تو عام بول چال میں we کہیں۔", "we اور wij دونوں کا مطلب ہم ہے؛ we عام نرم شکل ہے اور wij زور دے کر کہنے کے لیے۔", "we کے ساتھ فعل جمع wonen آتا ہے؛ ik woon کی طرح ایک شخص والی شکل نہ لگائیں۔", "Waar wonen jullie? — We wonen in Utrecht.", "تم لوگ کہاں رہتے ہو؟ — ہم یوٹریکٹ میں رہتے ہیں۔", "وَ وو نَن اِن یُو ترَخت"],
+        ["waar woon je", "کلاس کے کسی ایک ساتھی یا دوست سے غیر رسمی طور پر اس کا شہر پوچھنا ہو تو یہ کہیں۔", "je ایک شخص کے لیے غیر رسمی ہے؛ ملازم یا بڑے سے waar wonen jullie نہیں، اور ادب کے لیے u استعمال ہوتا ہے۔", "je فعل کے بعد آئے تو فعل کی چھوٹی شکل woon آتی ہے، جیسے ik کے ساتھ: waar woon je؟", "Waar woon je? — We wonen in Utrecht.", "تم کہاں رہتے ہو؟ — ہم یوٹریکٹ میں رہتے ہیں۔", "وار وون یَہ"],
+        ["ze wonen in pakistan", "اپنے والدین یا رشتہ داروں کے بارے میں بتانا ہو کہ وہ کہاں رہتے ہیں تو یہ کہیں۔", "یہاں ze وہ لوگ ہے اور فعل wonen جمع ہے؛ ایک عورت کے لیے فعل woont ہوتا۔", "فعل سے پہچانیں کہ ze ایک ہے یا کئی: ze wonen میں کئی لوگ ہیں۔", "Dit zijn mijn ouders. Ze wonen in Pakistan.", "یہ میرے والدین ہیں۔ وہ پاکستان میں رہتے ہیں۔", "زَہ وو نَن اِن پا کِس تان"],
+        ["dit is ons huis", "مہمان کو اپنا اور گھر والوں کا مشترکہ گھر دکھاتے ہوئے یہ کہیں۔", "ons صرف het والے ایک اسم سے پہلے آتا ہے، جیسے huis؛ اکیلے اپنے گھر کے لیے mijn huis کہیں۔", "huis کے ساتھ het آتا ہے، اس لیے ons huis؛ onze huis نہ کہیں۔", "Dit is ons huis.", "یہ ہمارا گھر ہے۔", "دِت اِس اونس ہاؤس"],
+        ["onze kinderen gaan naar school", "اسکول یا پڑوسی کو بتانا ہو کہ آپ کے بچے اسکول جاتے ہیں تو یہ کہیں۔", "onze de والے اسم یا جمع سے پہلے آتا ہے؛ ایک het والے اسم کے لیے ons huis جیسا ons آتا ہے۔", "kinderen جمع ہے، اس لیے ons نہیں بلکہ onze، اور فعل gaan جمع ہے۔", "Onze kinderen gaan naar school.", "ہمارے بچے اسکول جاتے ہیں۔", "اون زَہ کِن دَ رَن خان نار سْخول"],
+        ["is dit uw kind", "اسکول کے دروازے یا ڈاکٹر کے پاس ادب سے پوچھنا ہو کہ بچہ آپ کا ہے تو یہ کہیں۔", "uw ادب والا آپ کا ہے؛ ہمارے بچے کے لیے onze یا ons آتا ہے۔", "u شخص ہے اور uw اس کی ملکیت؛ is dit u kind نہ کہیں۔", "Is dit uw kind?", "کیا یہ آپ کا بچہ ہے؟", "اِس دِت اُو کِنت"],
+        ["hun huis is groot", "پڑوسی خاندان کے گھر کے بارے میں بتانا ہو کہ ان کا گھر بڑا ہے تو یہ کہیں۔", "hun ان لوگوں کا ہے؛ ہمارے گھر کے لیے ons huis آتا ہے۔", "ملکیت کے لیے zij huis نہ کہیں؛ hun huis کہیں۔", "Hun huis is groot.", "وہ یوٹریکٹ میں رہتے ہیں۔ ان کا گھر بڑا ہے۔", "ہُن ہاؤس اِس خروت"]
+      ]),
       pattern: {
-        modelDutch: "dit is mijn vader",
-        titleUrdu: "خاندان کے فرد کا تعارف کرانا",
-        highlight: "dit is mijn …",
-        explanationUrdu: "تصویر میں اپنے خاندان کے فرد کا تعارف دیتے وقت dit is mijn کے بعد رشتہ رکھیں: dit is mijn vader۔",
-        contrastUrdu: "een vader کسی ایک والد، de vader معلوم والد، اور mijn vader اپنے والد کو بتاتا ہے؛ mijn کے ساتھ de یا het نہیں آتا۔",
-        commonMistakeUrdu: "dit mijn vader یا dit is de mijn vader نہ کہیں؛ مکمل ترتیب dit is mijn vader رکھیں۔",
+        modelDutch: "onze kinderen gaan naar school",
+        titleUrdu: "ہمارا، آپ کا، ان کا: ons، onze، uw، hun",
+        highlight: "onze kinderen",
+        explanationUrdu: "ملکیت بتانے کے لیے: mijn میرا، uw آپ کا، ons یا onze ہمارا، hun ان کا۔ het والے ایک اسم سے پہلے ons آتا ہے: dit is ons huis۔ de والے اسم اور ہر جمع سے پہلے onze آتا ہے: onze kinderen gaan naar school۔",
+        contrastUrdu: "mijn huis صرف میرا گھر ہے، dit is ons huis ہم سب کا۔ is dit uw kind? سامنے والے سے ادب سے پوچھتا ہے؛ hun huis is groot دوسرے لوگوں کا گھر بتاتا ہے۔ ایک کے لیے dit is، کئی کے لیے dit zijn mijn ouders۔",
+        commonMistakeUrdu: "جمع یا de والے اسم سے پہلے ons نہ رکھیں، اور huis سے پہلے onze نہ رکھیں۔ ملکیت میں u یا zij نہیں بلکہ uw اور hun کہیں۔",
         drills: [
-          pickDrillV4("dit is mijn moeder", ["dit mijn moeder", "dit is de mijn moeder"], "یہ میری والدہ ہیں", {"dit mijn moeder": "is ضروری ہے: dit is mijn moeder۔", "dit is de mijn moeder": "mijn کے ساتھ de نہیں آتا۔"}),
-          pickDrillV4("dit is mijn broer", ["dit mijn broer is", "dit is de mijn broer"], "یہ میرا بھائی ہے", {"dit mijn broer is": "is دوسرے نمبر پر آتا ہے، آخر میں نہیں۔", "dit is de mijn broer": "mijn کے ساتھ de نہیں آتا۔"}),
-          pickDrillV4("het kind", ["de kind", "kind het"], "وہ بچہ", {"de kind": "kind کے ساتھ het آتا ہے۔", "kind het": "چھوٹا لفظ اسم سے پہلے آتا ہے۔"}),
-          pickDrillV4("de zus", ["het zus", "zus de"], "وہ بہن", {"het zus": "zus کے ساتھ de آتا ہے۔", "zus de": "چھوٹا لفظ اسم سے پہلے آتا ہے۔"})
+          pickDrillV4("onze kinderen gaan naar school", ["ons kinderen gaan naar school", "onze kinderen gaat naar school"], "ہمارے بچے اسکول جاتے ہیں", {"ons kinderen gaan naar school": "جمع سے پہلے onze آتا ہے، ons نہیں۔", "onze kinderen gaat naar school": "kinderen جمع ہے، اس لیے فعل gaan۔"}),
+          pickDrillV4("dit is ons huis", ["dit is onze huis", "dit zijn ons huis"], "یہ ہمارا گھر ہے", {"dit is onze huis": "huis کے ساتھ het آتا ہے، اس لیے ons huis۔", "dit zijn ons huis": "ایک گھر ہے، اس لیے dit is۔"}),
+          gapDrillV4("waar ___ jullie?", "wonen", ["woont", "woon"], "تم لوگ کہاں رہتے ہو؟", {"woont": "jullie کئی لوگ ہیں؛ فعل جمع wonen آتا ہے۔", "woon": "woon ik یا je کے ساتھ آتا ہے؛ jullie کے ساتھ wonen۔"}),
+          gapDrillV4("___ huis is groot", "hun", ["zij", "wij"], "ان کا گھر بڑا ہے", {"zij": "zij خود لوگ ہیں؛ ان کا گھر hun huis ہے۔", "wij": "wij خود ہم ہیں؛ اور ہمارا گھر ons huis ہوتا ہے۔"}),
+          gapDrillV4("is dit ___ kind?", "uw", ["u", "ons"], "کیا یہ آپ کا بچہ ہے؟", {"u": "u خود آپ ہیں؛ آپ کا کے لیے uw۔", "ons": "ons ہمارا ہے؛ یہاں سامنے والے سے آپ کا پوچھنا ہے۔"}),
+          pickDrillV4("dit zijn mijn ouders", ["dit is mijn ouders", "dit zijn de mijn ouders"], "یہ میرے والدین ہیں", {"dit is mijn ouders": "ouders کئی لوگ ہیں؛ dit zijn آتا ہے۔", "dit zijn de mijn ouders": "mijn کے ساتھ de نہیں آتا۔"})
         ]
       },
-      independentCheckLeadUrdu: "خاندان کی پہلی مدد والی تصویر کے بعد دوسری تصویر میں",
+      independentCheckLeadUrdu: "خاندان کی پہلی مدد والی تصویر کے بعد پڑوسی خاندان کی گفتگو میں",
       prerequisiteLessonIds: [
         "a0-people-nouns",
         "a0-een-de-het",
+        "a0-ik-jij-u",
+        "a0-hij-zij-wij",
+        "a0-verb-endings",
+        "a0-possessive",
         "a0-dit-dat-questions",
-        "a0-possessive"
+        "a0-name-land-city",
+        "a0-naar-met",
+        "a1-details-forms"
       ],
       prerequisiteRefs: [
         ["a0-people-nouns", "vader"],
         ["a0-people-nouns", "moeder"],
-        ["a0-people-nouns", "broer"],
-        ["a0-people-nouns", "zus"],
         ["a0-people-nouns", "kind"],
-        ["a0-een-de-het", "de man"],
-        ["a0-een-de-het", "het boek"],
+        ["a0-een-de-het", "het huis"],
+        ["a0-ik-jij-u", "jij"],
+        ["a0-ik-jij-u", "u"],
+        ["a0-hij-zij-wij", "wij"],
+        ["a0-hij-zij-wij", "zij"],
+        ["a0-verb-endings", "wij werken"],
+        ["a0-possessive", "mijn"],
+        ["a0-possessive", "mijn huis"],
         ["a0-dit-dat-questions", "dit"],
-        ["a0-possessive", "mijn"]
+        ["a0-name-land-city", "ik kom uit Pakistan"],
+        ["a0-naar-met", "zij gaat naar school"],
+        ["a1-details-forms", "mijn woonplaats is Utrecht"]
       ],
       scenarios: {
-        "de vader": ["family-photo-father-label", "خاندان کی تصویری فہرست میں والد کے لیے چھوٹے لفظ سمیت درست ڈچ نام منتخب کریں۔"],
-        "de moeder": ["family-photo-mother-label", "خاندان کی تصویری فہرست میں والدہ کے لیے چھوٹے لفظ سمیت درست ڈچ نام منتخب کریں۔"],
-        "dit is mijn vader": ["family-introduce-father", "ایک نئے پڑوسی کو تصویر دکھا کر اپنے والد کا مکمل تعارف کرائیں۔"],
-        "het kind": ["family-form-child-label", "خاندان کے فارم میں ایک بچے والے خانے کے لیے درست چھوٹا لفظ اور اسم منتخب کریں۔"],
-        "de broer": ["family-list-brother-label", "خاندان کی فہرست میں بھائی کے رشتے کو چھوٹے لفظ سمیت نشان زد کریں۔"],
-        "de zus": ["family-list-sister-label", "خاندان کی فہرست میں بہن کے رشتے کو چھوٹے لفظ سمیت نشان زد کریں۔"]
+        "dit zijn mijn ouders": ["family-introduce-parents", "نئے پڑوسی کو تصویر دکھا کر اپنے ماں اور باپ کا ایک ساتھ تعارف کرائیں۔"],
+        "waar wonen jullie": ["family-ask-couple-city", "پارک میں ایک نیا جوڑا ملتا ہے۔ ان دونوں سے پوچھیں کہ وہ کہاں رہتے ہیں۔"],
+        "we wonen in utrecht": ["family-tell-our-city", "نئے لوگ پوچھتے ہیں کہ آپ اور آپ کے گھر والے کہاں رہتے ہیں۔ یوٹریکٹ بتائیں۔"],
+        "waar woon je": ["family-ask-classmate-city", "زبان کی کلاس میں ایک ساتھی سے غیر رسمی طور پر پوچھیں کہ وہ کہاں رہتا ہے۔"],
+        "ze wonen in pakistan": ["family-parents-live-abroad", "ہمسائی آپ کے والدین کے بارے میں پوچھتی ہے۔ بتائیں کہ وہ پاکستان میں رہتے ہیں۔"],
+        "mijn huis": ["family-review-my-house", "آپ اکیلے رہتے ہیں اور دوست کو اپنا گھر دکھاتے ہیں۔ میرا گھر کہیں۔"],
+        "dit is ons huis": ["family-show-our-house", "مہمان پہلی بار آتے ہیں۔ دروازے پر انہیں بتائیں کہ یہ آپ سب کا گھر ہے۔"],
+        "onze kinderen gaan naar school": ["family-children-at-school", "نئی ہمسائی پوچھتی ہے کہ صبح بچے کہاں جاتے ہیں۔ بتائیں کہ آپ کے بچے اسکول جاتے ہیں۔"],
+        "is dit uw kind": ["family-ask-whose-child", "اسکول کے دروازے پر ایک بچہ اکیلا کھڑا ہے۔ پاس کھڑی خاتون سے ادب سے پوچھیں کہ کیا یہ ان کا بچہ ہے۔"],
+        "hun huis is groot": ["family-neighbours-big-house", "دوست پڑوسی خاندان کے بارے میں پوچھتا ہے۔ بتائیں کہ ان کا گھر بڑا ہے۔"]
       }
     },
     "a1-hebben-family": {
@@ -6245,33 +6228,17 @@ const a1AuthoredCurriculumV4 = {
       unitLabel: "A1: خاندان اور لوگ",
       outcomeUrdu: "heeft u kinderen? سمجھنا اور مکمل جملے میں بتانا کہ بچے یا بہن بھائی ہیں، کتنے ہیں، یا نہیں ہیں۔",
       seedConcepts: [
-        ["zoon", "بیٹا"],
-        ["dochter", "بیٹی"],
+        ["mijn zoon", "میرا بیٹا"],
+        ["mijn dochter", "میری بیٹی"],
         ["kinderen", "بچے"],
         ["ik heb twee kinderen", "میرے دو بچے ہیں"],
         ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟"],
         ["ouders", "والدین"],
-        ["geen", "کوئی نہیں / کوئی … نہیں"],
+        ["ik heb geen boek", "میرے پاس کتاب نہیں ہے"],
         ["ik heb geen kinderen", "میرے بچے نہیں ہیں"],
         ["ik heb een broer", "میرا ایک بھائی ہے"]
       ],
       teaching: {
-        zoon: {
-          usageUrdu: "اپنے یا کسی دوسرے شخص کے بیٹے کا رشتہ بتانے کے لیے zoon استعمال کریں۔",
-          usageBoundaryUrdu: "zoon بیٹا ہے؛ dochter بیٹی کے لیے الگ لفظ ہے۔",
-          commonConfusionUrdu: "اس لفظ کی درمیانی آواز لمبی ہے؛ اسے مختصر آواز کے ساتھ نہ پڑھیں۔",
-          exampleDutch: "Heeft u een zoon?",
-          exampleUrdu: "کیا آپ کا ایک بیٹا ہے؟",
-          pronunciationUrdu: "زون"
-        },
-        dochter: {
-          usageUrdu: "خاندان کی گفتگو یا فارم میں بیٹی کے لیے dochter کہیں۔",
-          usageBoundaryUrdu: "dochter بیٹی ہے؛ zus بہن اور zoon بیٹا ہیں۔",
-          commonConfusionUrdu: "اس لفظ کا مطلب بیٹی ہے؛ اسے بہن یا بیٹے کے رشتے سے نہ ملائیں۔",
-          exampleDutch: "Heeft u een dochter?",
-          exampleUrdu: "کیا آپ کی ایک بیٹی ہے؟",
-          pronunciationUrdu: "دوخ تَر"
-        },
         kinderen: {
           usageUrdu: "ایک سے زیادہ بچوں کی عمومی بات میں جمع لفظ kinderen استعمال ہوتا ہے۔",
           usageBoundaryUrdu: "kind ایک بچہ ہے اور kinderen کئی بچے ہیں۔",
@@ -6303,14 +6270,6 @@ const a1AuthoredCurriculumV4 = {
           exampleDutch: "mijn ouders",
           exampleUrdu: "میرے والدین۔",
           pronunciationUrdu: "آو دَرس"
-        },
-        geen: {
-          usageUrdu: "جب کوئی شخص یا چیز موجود نہ ہو تو اسم سے پہلے geen رکھیں، جیسے geen kinderen۔",
-          usageBoundaryUrdu: "geen اسم یا مقدار کی نفی کرتا ہے؛ کیفیت یا پوری بات کی نفی میں niet آتا ہے۔",
-          commonConfusionUrdu: "ik heb niet kinderen نہ کہیں؛ kinderen جیسے اسم سے پہلے geen رکھیں۔",
-          exampleDutch: "geen kinderen",
-          exampleUrdu: "کوئی بچے نہیں۔",
-          pronunciationUrdu: "خین"
         },
         "ik heb geen kinderen": {
           usageUrdu: "بچوں کے سوال کا منفی مگر صاف جواب دینے کے لیے “ik heb geen kinderen” کہیں۔",
@@ -6349,6 +6308,7 @@ const a1AuthoredCurriculumV4 = {
         "a0-numbers-0-10",
         "a0-een-de-het",
         "a0-geen",
+        "a0-family-status",
         "a0-ja-nee-goed-niet",
         "a0-people-nouns",
         "a1-people-family-articles"
@@ -6359,18 +6319,20 @@ const a1AuthoredCurriculumV4 = {
         ["a0-een-de-het", "een"],
         ["a0-numbers-0-10", "twee"],
         ["a0-geen", "ik heb geen boek"],
+        ["a0-family-status", "mijn zoon"],
+        ["a0-family-status", "mijn dochter"],
         ["a0-ja-nee-goed-niet", "niet"],
         ["a0-people-nouns", "broer"],
-        ["a1-people-family-articles", "dit is mijn vader"]
+        ["a1-people-family-articles", "dit zijn mijn ouders"]
       ],
       scenarios: {
-        zoon: ["family-intake-son", "خاندان کے فارم میں بیٹے کا رشتہ درج کرنا ہے۔ درست ڈچ لفظ منتخب کریں۔"],
-        dochter: ["family-intake-daughter", "بچوں کی نگہداشت کے تعارف میں اپنی بیٹی کا رشتہ بتانا ہے۔ درست ڈچ لفظ منتخب کریں۔"],
+        "mijn zoon": ["family-review-my-son", "خاندان کے فارم کے بعد ملازم آپ کے بیٹے کے بارے میں پوچھتا ہے۔ اپنے بیٹے کا رشتہ بتائیں۔"],
+        "mijn dochter": ["family-review-my-daughter", "بچوں کی نگہداشت کے تعارف میں اپنی بیٹی کا رشتہ بتانا ہے۔ درست بات منتخب کریں۔"],
         kinderen: ["family-intake-children", "رجسٹریشن فارم میں ایک سے زیادہ بچوں کے لیے درست جمع لفظ منتخب کریں۔"],
         "ik heb twee kinderen": ["family-answer-two-children", "ملازم بچوں کی تعداد پوچھتا ہے۔ اپنے دو بچوں کا مکمل جواب دیں۔"],
         "heeft u kinderen": ["family-understand-children-question", "آپ بچوں کی نگہداشت کے مرکز میں نئے والد یا والدہ سے رسمی طور پر پوچھتے ہیں کہ کیا ان کے بچے ہیں۔ مکمل سوال منتخب کریں۔"],
         ouders: ["family-school-parents", "اسکول کی اطلاع میں بچے کے والدین کے لیے درست جمع لفظ پہچانیں۔"],
-        geen: ["family-no-children-word", "فارم میں بچے نہ ہونے کی بات اسم سے پہلے ایک ڈچ نفی لفظ سے کرنی ہے۔ درست لفظ منتخب کریں۔"],
+        "ik heb geen boek": ["family-review-no-book", "کلاس میں استاد کتاب مانگتا ہے مگر آپ کے پاس نہیں۔ اسم کی نفی والا جواب دیں۔"],
         "ik heb geen kinderen": ["family-answer-no-children", "ملازم پوچھتا ہے کہ کیا آپ کے بچے ہیں، مگر آپ کے بچے نہیں ہیں۔ مکمل جواب دیں۔"],
         "ik heb een broer": ["family-answer-one-brother", "ایک نئے ہم جماعت کو بتانا ہے کہ آپ کا ایک بھائی ہے۔ مکمل جملہ منتخب کریں۔"]
       }
@@ -6435,6 +6397,7 @@ const a1AuthoredCurriculumV4 = {
         "a0-name-land-city",
         "a0-possessive",
         "a0-people-nouns",
+        "a0-family-status",
         "a1-hebben-family"
       ],
       prerequisiteRefs: [
@@ -6444,8 +6407,8 @@ const a1AuthoredCurriculumV4 = {
         ["a0-name-land-city", "ik woon in Nederland"],
         ["a0-possessive", "mijn"],
         ["a0-people-nouns", "familie"],
-        ["a1-hebben-family", "zoon"],
-        ["a1-hebben-family", "dochter"]
+        ["a0-family-status", "mijn zoon"],
+        ["a0-family-status", "mijn dochter"]
       ],
       scenarios: {
         leeftijd: ["family-profile-age-label", "خاندان کے مختصر پروفائل میں عمر والا خانہ ڈھونڈنا ہے۔ درست ڈچ label منتخب کریں۔"],
@@ -8390,7 +8353,7 @@ const a1AuthoredCurriculumV4 = {
         "شام بچے کو لیتے وقت حوالگی نوٹ پڑھیں اور مکمل جواب دیں"
       ],
       targets: [
-        { lessonId: "a1-people-family-articles", dutch: "dit is mijn vader", patternLessonId: "a1-people-family-articles" },
+        { lessonId: "a1-people-family-articles", dutch: "onze kinderen gaan naar school", patternLessonId: "a1-people-family-articles" },
         { lessonId: "a1-hebben-family", dutch: "heeft u kinderen?" },
         { lessonId: "a1-hebben-family", dutch: "ik heb twee kinderen", patternLessonId: "a1-hebben-family" },
         { lessonId: "a1-family-routine-extra", dutch: "mijn dochter is vijf jaar", patternLessonId: "a1-family-routine-extra" },
@@ -14210,11 +14173,11 @@ const listenReplyCuesV4 = {
     ["wat is uw e-mailadres?", "آپ کا ای میل پتہ کیا ہے؟", "ik heb geen e-mailadres", "mijn telefoonnummer is nul zes", "mijn voornaam is Sara"]
   ],
   "a1-people-family-articles": [
-    ["wie is dat?", "وہ کون ہے؟", "dit is mijn vader", "ik heb een boek", "op de tafel"]
+    ["waar wonen jullie?", "تم لوگ کہاں رہتے ہو؟", "we wonen in Utrecht", "dit zijn mijn ouders", "op de tafel"]
   ],
   "a1-hebben-family": [
     ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb twee kinderen", "mijn naam is Sara", "ik woon in Nederland"],
-    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb geen kinderen", "dit is mijn vader", "ik woon in Nederland"]
+    ["heeft u kinderen?", "کیا آپ کے بچے ہیں؟", "ik heb geen kinderen", "dit zijn mijn ouders", "ik woon in Nederland"]
   ],
   "a1-family-routine-extra": [
     ["waar woont uw familie?", "آپ کا خاندان کہاں رہتا ہے؟", "mijn familie woont in Nederland", "mijn dochter is vijf jaar", "mijn zoon gaat naar school"]
@@ -18105,7 +18068,7 @@ const missionRolePlaysV4 = {
     sceneUrdu: "اسکول کے دفتر میں ملازم آپ کے خاندان کے بارے میں پوچھتا ہے۔",
     turns: [
       ["other", "heeft u kinderen?", "کیا آپ کے بچے ہیں؟"],
-      ["you", "ik heb twee kinderen", ["dit is mijn vader", "de kinderopvang"]],
+      ["you", "ik heb twee kinderen", ["dit zijn mijn ouders", "de kinderopvang"]],
       ["other", "wat doet uw zoon?", "آپ کا بیٹا کیا کرتا ہے؟"],
       ["you", "mijn zoon gaat naar school", ["mijn kind is moe", "ik heb een broer"]],
       ["other", "wanneer haal je je kind op?", "تم اپنے بچے کو کب لینے آتے ہو؟"],

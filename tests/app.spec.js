@@ -3501,7 +3501,7 @@ test("A1 Unit 2 Use exercises and mission variants use family authored scenarios
   }
 });
 
-test("A1 Unit 2 teaches complete patterns and explicit article and negation contrasts", async ({ page }) => {
+test("A1 Unit 2 teaches complete patterns and explicit possessive and negation contrasts", async ({ page }) => {
   await openCleanApp(page);
   const audit = await page.evaluate(() => {
     const course = window.NEDERURDU_COURSE;
@@ -3553,9 +3553,10 @@ test("A1 Unit 2 teaches complete patterns and explicit article and negation cont
     expect(pattern.completeUrduTeaching, pattern.lessonId).toBe(true);
   }
   const articlePattern = audit.find((item) => item.lessonId === "a1-people-family-articles");
-  expect(articlePattern.contrast).toContain("een");
-  expect(articlePattern.contrast).toContain("de vader");
-  expect(articlePattern.contrast).toContain("mijn vader");
+  // Repurposed (grammar spine §6.1): possessives ons/onze/uw/hun, not A0 articles.
+  expect(articlePattern.contrast).toContain("ons huis");
+  expect(articlePattern.contrast).toContain("uw kind");
+  expect(articlePattern.contrast).toContain("hun huis");
   const hebbenPattern = audit.find((item) => item.lessonId === "a1-hebben-family");
   expect(hebbenPattern.contrast).toContain("geen");
   expect(hebbenPattern.contrast).toContain("niet");
