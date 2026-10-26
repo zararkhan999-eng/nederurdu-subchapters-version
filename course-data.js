@@ -6992,22 +6992,27 @@ const a1AuthoredCurriculumV4 = {
     "a1-questions": {
       title: "Duidelijke vragen stellen",
       unitLabel: "A1: سوال، مدد اور فون",
-      outcomeUrdu: "کون، کیا، کہاں، کب، کتنا، کیوں، اور کون سا دن والے سوال سمجھنا اور سوال لفظ کے بعد فعل اور شخص درست ترتیب میں رکھنا۔",
+      outcomeUrdu: "کب، کتنا، کیوں، اور کون سا والے نئے سوال پوچھنا اور سمجھنا، اور استقبالی کاؤنٹر یا فون پر u کے ساتھ مؤدبانہ سوال بنانا۔",
       seedConcepts: [
-        ["waar woont u?", "آپ کہاں رہتے ہیں؟"],
-        ["wie", "کون"],
-        ["wat", "کیا"],
-        ["waar", "کہاں"],
-        ["hoe", "کیسے"],
         ["wanneer", "کب"],
+        ["wanneer komt u?", "آپ کب آئیں گے؟"],
         ["hoeveel", "کتنا / کتنے"],
+        ["hoeveel kinderen heeft u?", "آپ کے کتنے بچے ہیں؟"],
         ["waarom komt u niet?", "آپ کیوں نہیں آ رہے؟"],
         ["welke dag?", "کون سا دن؟"],
+        ["waar woont u?", "آپ کہاں رہتے ہیں؟"],
         ["wat is uw naam?", "آپ کا نام کیا ہے؟"],
-        ["wanneer komt u?", "آپ کب آئیں گے؟"],
         ["komt u morgen?", "کیا آپ کل آئیں گے؟"]
       ],
       teaching: {
+        "hoeveel kinderen heeft u": {
+          usageUrdu: "اسکول، ڈاکٹر، یا رجسٹریشن کا ملازم خاندان کی معلومات لیتے وقت یہ سوال پوچھتا ہے۔",
+          usageBoundaryUrdu: "یہ تعداد پوچھتا ہے؛ صرف بچے ہیں یا نہیں جاننے کے لیے heeft u kinderen? کافی ہے۔",
+          commonConfusionUrdu: "hoeveel کے فوراً بعد جو گنا جا رہا ہے وہ آتا ہے، پھر فعل heeft اور آخر میں u۔",
+          exampleDutch: "Hoeveel kinderen heeft u?",
+          exampleUrdu: "آپ کے کتنے بچے ہیں؟",
+          pronunciationUrdu: "ہو فیل کِن دَ رَن ہیفت اُو"
+        },
         wanneer: {
           usageUrdu: "کسی کے آنے، کھلنے، یا ملاقات کے وقت کے بارے میں کب پوچھنا ہو تو سوال کے شروع میں wanneer رکھیں۔",
           usageBoundaryUrdu: "wanneer دن یا وقت پوچھتا ہے؛ جگہ پوچھنے کے لیے waar استعمال ہوتا ہے۔",
@@ -7074,14 +7079,15 @@ const a1AuthoredCurriculumV4 = {
         }
       },
       pattern: {
-        modelDutch: "waar woont u?",
-        titleUrdu: "سوال لفظ کے بعد فعل اور پھر شخص",
-        highlight: "waar + woont + u",
-        explanationUrdu: "waar، wat، یا wanneer کے بعد بدلا ہوا فعل اور پھر شخص رکھیں: waar woont u?۔",
-        contrastUrdu: "سوال لفظ نہ ہو تو فعل پہلے آتا ہے: komt u morgen?؛ سوال لفظ ہو تو وہ سب سے پہلے رہتا ہے۔",
-        commonMistakeUrdu: "waar u woont یا u komt morgen? کو سوال نہ بنائیں؛ سوال میں فعل کی جگہ واضح رکھیں۔",
+        modelDutch: "wanneer komt u?",
+        titleUrdu: "نئے سوال لفظ اور u کے ساتھ مؤدبانہ سوال",
+        highlight: "wanneer komt u",
+        explanationUrdu: "wanneer کب، hoeveel کتنا یا کتنے، waarom کیوں، اور welke کون سا یا کون سی۔ سوال لفظ سب سے پہلے آتا ہے، پھر فعل، پھر u: wanneer komt u?۔ u کے ساتھ فعل کے آخر میں ت کی آواز آتی ہے: komt u، woont u۔",
+        contrastUrdu: "wanneer وقت پوچھتا ہے؛ hoeveel kinderen heeft u? تعداد؛ waarom komt u niet? وجہ؛ welke dag? کئی میں سے ایک دن۔ سوال لفظ نہ ہو تو فعل سب سے پہلے آتا ہے: komt u morgen?",
+        commonMistakeUrdu: "سوال لفظ کے بعد u کو فعل سے پہلے نہ رکھیں، اور hoeveel کے بعد گنی جانے والی چیز فعل سے پہلے رکھیں: hoeveel kinderen heeft u?",
         drills: [
           pickDrillV4("waar woont u?", ["waar u woont?", "u woont waar?"], "آپ کہاں رہتے ہیں؟", {"waar u woont?": "سوال میں فعل woont فوراً waar کے بعد آتا ہے۔", "u woont waar?": "سوالی لفظ waar سب سے پہلے آتا ہے۔"}),
+          pickDrillV4("hoeveel kinderen heeft u?", ["hoeveel heeft u kinderen?", "u heeft hoeveel kinderen?"], "آپ کے کتنے بچے ہیں؟", {"hoeveel heeft u kinderen?": "hoeveel کے فوراً بعد kinderen آتا ہے، پھر heeft u۔", "u heeft hoeveel kinderen?": "سوالی لفظ سب سے پہلے آتا ہے۔"}),
           pickDrillV4("hoeveel kost dit?", ["hoeveel dit kost?", "dit kost hoeveel?"], "یہ کتنے کا ہے؟", {"hoeveel dit kost?": "سوال میں فعل kost فوراً hoeveel کے بعد آتا ہے۔", "dit kost hoeveel?": "سوالی لفظ hoeveel سب سے پہلے آتا ہے۔"}),
           gapDrillV4("waarom ___ u niet?", "komt", ["kom", "woont"], "آپ کیوں نہیں آتے؟", {"kom": "u کے ساتھ فعل کے آخر میں t لگتا ہے: komt۔", "woont": "woont کا مطلب رہنا ہے؛ یہاں آنا ہے۔"}),
           pickDrillV4("wanneer komt u?", ["wanneer u komt?", "u komt wanneer?"], "آپ کب آئیں گے؟", {"wanneer u komt?": "سوال میں فعل komt فوراً wanneer کے بعد آتا ہے۔", "u komt wanneer?": "سوالی لفظ wanneer سب سے پہلے آتا ہے۔"}),
@@ -7090,7 +7096,7 @@ const a1AuthoredCurriculumV4 = {
         ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی گفتگو کے بعد دوسرے استقبالی کاؤنٹر پر",
-      prerequisiteLessonIds: ["a0-dit-dat-questions", "a0-time-days", "a0-shopping-payment", "a1-details-forms", "a1-calendar-time"],
+      prerequisiteLessonIds: ["a0-dit-dat-questions", "a0-time-days", "a0-shopping-payment", "a1-details-forms", "a1-hebben-family", "a1-calendar-time"],
       prerequisiteRefs: [
         ["a0-dit-dat-questions", "wie"],
         ["a0-dit-dat-questions", "wat"],
@@ -7100,14 +7106,12 @@ const a1AuthoredCurriculumV4 = {
         ["a0-date-appointment", "afspraak"],
         ["a0-shopping-payment", "hoeveel kost dit"],
         ["a1-details-forms", "mijn naam is Zarar"],
+        ["a1-hebben-family", "heeft u kinderen?"],
         ["a1-calendar-time", "ik kom op maandag"]
       ],
       scenarios: {
-        wie: ["questions-ask-person", "انتظار گاہ میں نام سنائی دیا مگر شخص معلوم نہیں۔ کون پوچھنے کے لیے درست سوال لفظ چنیں۔"],
-        wat: ["questions-ask-thing", "فارم پر ایک خانہ سمجھ نہیں آیا۔ کیا پوچھنے کے لیے درست سوال لفظ چنیں۔"],
-        waar: ["questions-ask-place", "ملاقات کی جگہ معلوم نہیں۔ کہاں پوچھنے کے لیے درست سوال لفظ چنیں۔"],
-        hoe: ["questions-ask-how", "ملازم سے طریقہ پوچھنا ہے۔ کیسے کے لیے درست سوال لفظ چنیں۔"],
         wanneer: ["questions-ask-when", "کلاس شروع ہونے کا وقت معلوم نہیں۔ کب پوچھنے کے لیے درست لفظ چنیں۔"],
+        "hoeveel kinderen heeft u": ["questions-ask-number-children", "اسکول کا ملازم فارم کے لیے والدین سے بچوں کی تعداد پوچھتا ہے۔ وہ مکمل سوال چنیں۔"],
         hoeveel: ["questions-ask-amount", "ٹکٹ کی قیمت معلوم کرنی ہے۔ کتنے یا کتنا پوچھنے کا درست لفظ چنیں۔"],
         "waarom komt u niet": ["questions-ask-reason", "شخص ملاقات پر نہیں آ رہا۔ مؤدبانہ طور پر وجہ پوچھیں۔"],
         "welke dag": ["questions-choose-day", "ملازم دو ممکنہ دن بتاتا ہے۔ کون سا دن پوچھنے کا مختصر سوال چنیں۔"],

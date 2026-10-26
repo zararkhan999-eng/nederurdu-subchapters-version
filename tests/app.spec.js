@@ -4139,7 +4139,7 @@ test("A1 Unit 4 has four ordered lessons and retires, merges, or moves the old p
     "a1-modal-verbs",
     "a1-phone-calls"
   ]);
-  expect(audit.conceptCounts).toEqual([12, 10, 10, 10]);
+  expect(audit.conceptCounts).toEqual([9, 10, 10, 10]);
   expect(audit.retiredReviewPresent).toBe(false);
   expect(audit.mergedPolitePresent).toBe(false);
   expect(audit.shortMessagesInUnit4).toBe(false);
@@ -4246,7 +4246,7 @@ test("A1 Unit 4 manually teaches every new question help modal and call target",
     };
   });
 
-  expect(audit.concepts).toHaveLength(36);
+  expect(audit.concepts).toHaveLength(37);
   for (const concept of audit.concepts) {
     expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
