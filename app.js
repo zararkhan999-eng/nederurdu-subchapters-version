@@ -535,7 +535,8 @@ function renamedLessonIds() {
     "a0-feelings-reflexive": "a1-feelings-reflexive",
     "a0-object-pronouns": "a1-object-pronouns",
     "a0-future-gaan": "a1-future-gaan",
-    "a1-polite-chunks": "a1-object-pronouns"
+    "a1-polite-chunks": "a1-object-pronouns",
+    "a1-greetings-personal-info": "a1-details-forms"
   };
 }
 

@@ -5383,6 +5383,9 @@ retirePathLessonV4(a1Lessons, "a1-bus-train-extra");
 retirePathLessonV4(a1Lessons, "a1-health-pharmacy");
 // Merged into a1-object-pronouns (grammar spine §5); saved progress maps there.
 retirePathLessonV4(a1Lessons, "a1-polite-chunks");
+// Merged into a1-details-forms (grammar spine §4): a review lesson as a path
+// node. Its one new target moved there; saved progress maps there.
+retirePathLessonV4(a1Lessons, "a1-greetings-personal-info");
 
 for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
   subchapter.lessonIds = subchapter.lessonIds.filter((lessonId) => (
@@ -5399,7 +5402,8 @@ for (const subchapter of [...a0Subchapters, ...a1Subchapters]) {
       "a1-shopping-transport",
       "a1-bus-train-extra",
       "a1-health-pharmacy",
-      "a1-polite-chunks"
+      "a1-polite-chunks",
+      "a1-greetings-personal-info"
     ].includes(lessonId)
   ));
 }
@@ -5972,77 +5976,11 @@ const a1AuthoredCurriculumV4 = {
     }
   },
   lessons: {
-    "a1-greetings-personal-info": {
-      outcomeUrdu: "سلام کے بعد اپنا نام مکمل جملے میں بتانا اور بنیادی رابطے کی معلومات پہچاننا۔",
-      seedConcepts: [
-        ["hallo", "سلام"],
-        ["goedemorgen", "صبح بخیر"],
-        ["mijn naam is Zarar", "میرا نام ضرار ہے"],
-        ["mijn naam is Ali", "میرا نام علی ہے"],
-        ["dank u wel", "آپ کا شکریہ"],
-        ["tot ziens", "خدا حافظ / پھر ملیں گے"],
-        ["naam", "نام"],
-        ["mijn", "میرا / میری"],
-        ["adres", "پتہ"],
-        ["telefoonnummer", "فون نمبر"],
-        ["land", "ملک"]
-      ],
-      teaching: {
-        "mijn naam is zarar": {
-          usageUrdu: "پہلی ملاقات، استقبالی کاؤنٹر، یا رجسٹریشن میں اپنا نام بتانے کے لیے پورا جملہ “mijn naam is Zarar” کہیں۔",
-          usageBoundaryUrdu: "یہ اپنے نام کا مکمل تعارف ہے؛ صرف “mijn naam” کہنا نام ہے والا ضروری فعل چھوڑ دیتا ہے۔",
-          commonConfusionUrdu: "“mijn naam is Zarar” میں mijn نام سے پہلے اور is نام کے بعد رہتا ہے؛ “ik naam Zarar” درست تعارف نہیں۔",
-          exampleDutch: "Mijn naam is Zarar.",
-          exampleUrdu: "میرا نام ضرار ہے۔",
-          pronunciationUrdu: "مَین نام اِس زَرار"
-        }
-      },
-      pattern: {
-        modelDutch: "mijn naam is Zarar",
-        titleUrdu: "اپنا نام مکمل تعارف میں بتانا",
-        highlight: "mijn naam is …",
-        explanationUrdu: "اپنا نام بتاتے وقت پہلے mijn naam is کہیں اور آخر میں اپنا نام رکھیں: mijn naam is Zarar۔",
-        contrastUrdu: "سوال hoe heet u? نام پوچھتا ہے؛ جواب mijn naam is … اپنے نام کی مکمل بات دیتا ہے۔",
-        commonMistakeUrdu: "صرف mijn naam پر نہ رکیں اور ik naam نہ کہیں؛ مکمل نمونہ mijn naam is … استعمال کریں۔"
-      },
-      prerequisiteLessonIds: [
-        "a0-greetings-courtesy",
-        "a0-understanding-help",
-        "a0-ik-jij-u",
-        "a0-name-land-city",
-        "a0-spelling-personal-details",
-        "a0-address-phone"
-      ],
-      prerequisiteRefs: [
-        ["a0-greetings-courtesy", "hallo"],
-        ["a0-greetings-courtesy", "goedemorgen"],
-        ["a0-greetings-courtesy", "dank u wel"],
-        ["a0-greetings-courtesy", "tot ziens"],
-        ["a0-understanding-help", "kunt u herhalen"],
-        ["a0-ik-jij-u", "ik"],
-        ["a0-name-land-city", "mijn naam is Ali"],
-        ["a0-name-land-city", "land"],
-        ["a0-spelling-personal-details", "hoe heet u?"],
-        ["a0-address-phone", "adres"],
-        ["a0-address-phone", "telefoonnummer"]
-      ],
-      scenarios: {
-        hallo: ["intro-meeting-hallo", "کمیونٹی مرکز میں ایک نئے شخص سے پہلی بار ملتے ہیں۔ بات شروع کرنے کے لیے مناسب سلام کہیں۔"],
-        goedemorgen: ["intro-morning-reception", "صبح استقبالی کاؤنٹر پر پہنچتے ہیں۔ وقت کے مطابق سلام کہیں۔"],
-        "mijn naam is zarar": ["intro-give-name-zarar", "ملازم آپ سے نام پوچھتا ہے۔ اپنا نام ضرار مکمل جملے میں بتائیں۔"],
-        "mijn naam is ali": ["intro-give-name-ali", "نئے پڑوسی کو اپنا نام علی بتانا ہے۔ مکمل تعارف چنیں۔"],
-        "dank u wel": ["intro-thank-clerk", "ملازم نے آپ کی معلومات لکھ دی ہیں۔ ادب سے شکریہ کہیں۔"],
-        "tot ziens": ["intro-leave-reception", "تعارف مکمل ہو گیا ہے اور آپ رخصت ہو رہے ہیں۔ مناسب بات کہیں۔"],
-        naam: ["intro-recognise-name-field", "تعارف کارڈ پر نام والا خانہ ڈھونڈنا ہے۔ نام کے لیے درست ڈچ لفظ چنیں۔"],
-        mijn: ["intro-own-detail", "اپنی معلومات بتاتے وقت میرا یا میری کہنا ہے۔ درست ڈچ لفظ چنیں۔"],
-        adres: ["intro-recognise-address", "رابطہ کارڈ پر پتہ والا خانہ نشان زد کرنا ہے۔ درست ڈچ لفظ چنیں۔"],
-        telefoonnummer: ["intro-recognise-phone", "رابطہ کارڈ پر فون نمبر والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
-        land: ["intro-recognise-country", "تعارف میں اپنے ملک کی معلومات دینی ہیں۔ ملک کے لیے درست ڈچ لفظ چنیں۔"]
-      }
-    },
     "a1-details-forms": {
-      outcomeUrdu: "ایک حقیقی ذاتی معلومات کا فارم پڑھنا اور نام، تاریخ پیدائش، پتہ، پوسٹ کوڈ، شہر، فون، اور ای میل صحیح خانے میں دینا۔",
+      outcomeUrdu: "استقبالی کاؤنٹر پر اپنا نام مکمل جملے میں بتانا، اور ایک حقیقی ذاتی معلومات کا فارم پڑھ کر نام، تاریخ پیدائش، پتہ، پوسٹ کوڈ، شہر، فون، اور ای میل صحیح خانے میں دینا۔",
       seedConcepts: [
+        ["hoe heet u?", "آپ کا نام کیا ہے؟"],
+        ["mijn naam is Zarar", "میرا نام ضرار ہے"],
         ["voornaam", "پہلا نام"],
         ["achternaam", "خاندانی نام"],
         ["mijn voornaam is Sara", "میرا پہلا نام سارہ ہے"],
@@ -6061,6 +5999,14 @@ const a1AuthoredCurriculumV4 = {
         ["ik heb geen e-mailadres", "میرے پاس ای میل پتہ نہیں ہے"]
       ],
       teaching: {
+        "mijn naam is zarar": {
+          usageUrdu: "پہلی ملاقات، استقبالی کاؤنٹر، یا رجسٹریشن میں اپنا نام بتانے کے لیے پورا جملہ “mijn naam is Zarar” کہیں۔",
+          usageBoundaryUrdu: "یہ پورا نام بتاتا ہے؛ فارم کے الگ خانے کے لیے mijn voornaam is Sara جیسا جملہ آتا ہے۔",
+          commonConfusionUrdu: "“mijn naam is Zarar” میں mijn نام سے پہلے اور is نام کے بعد رہتا ہے؛ صرف mijn naam پر نہ رکیں۔",
+          exampleDutch: "Hoe heet u? — Mijn naam is Zarar.",
+          exampleUrdu: "آپ کا نام کیا ہے؟ — میرا نام ضرار ہے۔",
+          pronunciationUrdu: "مَین نام اِس زَرار"
+        },
         geboortedatum: {
           usageUrdu: "فارم میں geboortedatum والے خانے میں وہ تاریخ لکھیں جس دن آپ پیدا ہوئے تھے۔",
           usageBoundaryUrdu: "geboortedatum پیدائش کی تاریخ ہے؛ آج کی datum یا ملاقات کی تاریخ اس خانے میں نہیں آتی۔",
@@ -6131,10 +6077,12 @@ const a1AuthoredCurriculumV4 = {
         titleUrdu: "فارم کا خانہ مکمل جملے میں بتانا",
         highlight: "mijn … is …",
         explanationUrdu: "mijn کے بعد مطلوبہ خانے کا لفظ رکھیں، پھر is اور اپنی معلومات کہیں: mijn voornaam is Sara۔",
-        contrastUrdu: "voornaam پہلا نام ہے اور achternaam خاندانی نام؛ جملے کا ڈھانچا ایک رہتا ہے مگر خانے کا لفظ بدلتا ہے۔",
+        contrastUrdu: "mijn naam is Zarar پورا نام دیتا ہے؛ voornaam پہلا نام ہے اور achternaam خاندانی نام۔ جملے کا ڈھانچا ایک رہتا ہے مگر خانے کا لفظ بدلتا ہے۔",
         commonMistakeUrdu: "خانے کا لفظ چھوڑ کر صرف mijn is Sara نہ کہیں؛ mijn + خانہ + is + معلومات پورا رکھیں۔"
       },
       prerequisiteLessonIds: [
+        "a0-greetings-courtesy",
+        "a0-ik-jij-u",
         "a0-name-land-city",
         "a0-spelling-personal-details",
         "a0-address-phone",
@@ -6142,6 +6090,10 @@ const a1AuthoredCurriculumV4 = {
         "a0-ja-nee-goed-niet"
       ],
       prerequisiteRefs: [
+        ["a0-greetings-courtesy", "hallo"],
+        ["a0-ik-jij-u", "u"],
+        ["a0-name-land-city", "mijn naam is Ali"],
+        ["a0-spelling-personal-details", "hoe heet u?"],
         ["a0-name-land-city", "naam"],
         ["a0-spelling-personal-details", "voornaam"],
         ["a0-spelling-personal-details", "achternaam"],
@@ -6155,6 +6107,8 @@ const a1AuthoredCurriculumV4 = {
         ["a0-ja-nee-goed-niet", "niet"]
       ],
       scenarios: {
+        "hoe heet u": ["details-review-hear-name-question", "استقبالی کاؤنٹر پر ملازم سلام کے بعد آپ کا نام پوچھتا ہے۔ سنا ہوا سوال پہچانیں۔"],
+        "mijn naam is zarar": ["details-give-name-zarar", "ملازم آپ سے نام پوچھتا ہے۔ اپنا نام ضرار مکمل جملے میں بتائیں۔"],
         voornaam: ["details-find-first-name", "کمیونٹی مرکز کے فارم میں پہلا نام والا خانہ ڈھونڈنا ہے۔ درست ڈچ لفظ چنیں۔"],
         achternaam: ["details-find-family-name", "فارم میں خاندانی نام والا خانہ نشان زد کرنا ہے۔ درست ڈچ لفظ چنیں۔"],
         "mijn voornaam is sara": ["details-give-first-name", "ملازم voornaam پوچھتا ہے۔ اپنا پہلا نام Sara مکمل جملے میں بتائیں۔"],
@@ -8248,19 +8202,19 @@ const a1AuthoredCurriculumV4 = {
   missions: {
     "a1-chapter-completion-mission": {
       sourceKey:"chapter-completion-mission",scenarioTitleUrdu:"A1 کے دس روزمرہ حصوں کی آخری عملی جانچ",speakerUrdu:"استقبالی ملازم، فون پر ذمہ دار شخص، یا روزمرہ خدمت کا ملازم",
-      prerequisiteLessonIds:["a1-greetings-personal-info","a1-hebben-family","a1-daily-routine","a1-modal-verbs","a1-appointments","a1-house-search-extra","a1-shopping-returns","a1-directions-town","a1-pharmacy-medicine","a1-work-schedule"],
+      prerequisiteLessonIds:["a1-details-forms","a1-hebben-family","a1-daily-routine","a1-modal-verbs","a1-appointments","a1-house-search-extra","a1-shopping-returns","a1-directions-town","a1-pharmacy-medicine","a1-work-schedule"],
       prerequisiteMissionIds:["a1-personal-info-mission","a1-family-people-mission","a1-daily-routine-mission","a1-mission-phone-internet","a1-plans-appointments-mission","a1-mission-house-search","a1-food-shopping-mission","a1-mission-post-parcel","a1-mission-doctor","a1-mission-school-day"],
       variantTitles:["نئے ہفتے کے روزمرہ کام","بدلے ہوئے دن میں رابطہ اور سفر","خاندان، گھر، صحت، اور کام کی عملی ترتیب"],
       variantContexts:["ایک ہی دن میں تعارف، خاندان، وقت، ملاقات، گھر، واپسی، راستہ، صحت، اور کام کی اطلاع مکمل کریں","منصوبہ بدل گیا ہے؛ ضروری معلومات سنیں، دستاویز پڑھیں، اور مناسب سیکھی ہوئی باتیں استعمال کریں","اپنی اور خاندان کی معلومات سے شروع کریں، پھر گھر، خریداری، صحت، سفر، اور کام کے کام مکمل کریں"],
       targets:[
-        {lessonId:"a1-greetings-personal-info",dutch:"mijn naam is Zarar",related:[{lessonId:"a1-hebben-family",dutch:"ik heb een broer"}],compoundDutch:"mijn naam is Zarar. ik heb een broer.",compoundUrdu:"میرا نام Zarar ہے۔ میرا ایک بھائی ہے۔",taskUrdu:"اپنا نام اور خاندان کی ایک معلومات دونوں واضح کریں۔"},
+        {lessonId:"a1-details-forms",dutch:"mijn naam is Zarar",related:[{lessonId:"a1-hebben-family",dutch:"ik heb een broer"}],compoundDutch:"mijn naam is Zarar. ik heb een broer.",compoundUrdu:"میرا نام Zarar ہے۔ میرا ایک بھائی ہے۔",taskUrdu:"اپنا نام اور خاندان کی ایک معلومات دونوں واضح کریں۔"},
         {lessonId:"a1-daily-routine",dutch:"ik heb om twaalf uur pauze",related:[{lessonId:"a1-appointments",dutch:"hoe laat is de afspraak?"}],compoundDutch:"ik heb om twaalf uur pauze. hoe laat is de afspraak?",compoundUrdu:"میری بارہ بجے چھٹی ہے۔ ملاقات کتنے بجے ہے؟",taskUrdu:"اپنا روزمرہ وقت بتائیں اور ملاقات کا وقت پوچھیں۔"},
         {lessonId:"a1-house-search-extra",dutch:"wanneer is de woning beschikbaar?",taskUrdu:"مکان کے اشتہار سے دستیابی سمجھ کر مناسب سوال پوچھیں۔"},
         {lessonId:"a1-shopping-returns",dutch:"kan ik mijn geld terugkrijgen?",related:[{lessonId:"a1-modal-verbs",dutch:"mag ik iets vragen?"}],compoundDutch:"mag ik iets vragen? kan ik mijn geld terugkrijgen?",compoundUrdu:"کیا میں کچھ پوچھ سکتا ہوں؟ کیا مجھے اپنے پیسے واپس مل سکتے ہیں؟",taskUrdu:"پہلے ادب سے سوال کی اجازت لیں، پھر رسید کے ساتھ رقم واپس لینے کا پوچھیں۔"},
         {lessonId:"a1-directions-town",dutch:"hoe kom ik bij de apotheek?",related:[{lessonId:"a1-pharmacy-medicine",dutch:"heeft u iets tegen de pijn?"}],compoundDutch:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?",compoundUrdu:"میں دواخانے کیسے پہنچوں؟ کیا آپ کے پاس درد کے لیے کچھ ہے؟",taskUrdu:"پہلے دواخانے کا راستہ پوچھیں، پھر وہاں درد کی دوا مانگیں۔"},
         {lessonId:"a1-work-schedule",dutch:"mijn dienst is veranderd",taskUrdu:"کام کے بدلے ہوئے وقت کی مختصر واضح اطلاع دیں۔"}
       ],
-      prerequisiteRefs:[["a1-greetings-personal-info","mijn naam is Zarar"],["a1-hebben-family","ik heb een broer"],["a1-daily-routine","ik heb om twaalf uur pauze"],["a1-appointments","hoe laat is de afspraak?"],["a1-house-search-extra","wanneer is de woning beschikbaar?"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"],["a1-modal-verbs","mag ik iets vragen?"],["a1-directions-town","hoe kom ik bij de apotheek?"],["a1-pharmacy-medicine","heeft u iets tegen de pijn?"],["a1-work-schedule","mijn dienst is veranderd"]],
+      prerequisiteRefs:[["a1-details-forms","mijn naam is Zarar"],["a1-hebben-family","ik heb een broer"],["a1-daily-routine","ik heb om twaalf uur pauze"],["a1-appointments","hoe laat is de afspraak?"],["a1-house-search-extra","wanneer is de woning beschikbaar?"],["a1-shopping-returns","kan ik mijn geld terugkrijgen?"],["a1-modal-verbs","mag ik iets vragen?"],["a1-directions-town","hoe kom ik bij de apotheek?"],["a1-pharmacy-medicine","heeft u iets tegen de pijn?"],["a1-work-schedule","mijn dienst is veranderd"]],
       useTypes:["situation","listen-choice","document-choice","build","speak-repeat","situation"],checkTypes:["meaning","listen-choice","document-choice","reverse","build","situation"],
       document:{documentKind:"a1-daily-life-completion-card",title:"woning",labelUrdu:"روزمرہ کاموں کا مکمل کارڈ پڑھیں",promptUrdu:"کارڈ میں wanneer is de woning beschikbaar، kan ik mijn geld terugkrijgen، apotheek، اور mijn dienst is veranderd الگ دیکھیں، پھر موجود کام کے لیے سیکھی ہوئی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"دن کے کارڈ میں تعارف، وقت، مکان، واپسی، صحت، اور کام کی قطاریں الگ پڑھیں، پھر نشان زدہ کام کی سیکھی ہوئی بات چنیں۔",rows:[{label:"mijn naam is Zarar",value:"mijn naam is Zarar. ik heb een broer."},{label:"hoe laat is de afspraak?",value:"ik heb om twaalf uur pauze. hoe laat is de afspraak?"},{label:"wanneer is de woning beschikbaar?",value:"wanneer is de woning beschikbaar?"},{label:"kan ik mijn geld terugkrijgen?",value:"kan ik mijn geld terugkrijgen?"},{label:"hoe kom ik bij de apotheek?",value:"hoe kom ik bij de apotheek? heeft u iets tegen de pijn?"},{label:"mijn dienst is veranderd",value:"mijn dienst is veranderd"}]}
     },
@@ -8392,7 +8346,7 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-personal-info-mission": {
       scenarioTitleUrdu: "استقبالی کاؤنٹر پر تعارف اور فارم",
-      prerequisiteLessonIds: ["a1-greetings-personal-info", "a1-details-forms"],
+      prerequisiteLessonIds: ["a1-details-forms"],
       variantTitles: [
         "کمیونٹی مرکز میں پہلی رجسٹریشن",
         "لائبریری کارڈ کے لیے ذاتی معلومات",
@@ -8406,9 +8360,8 @@ const a1AuthoredCurriculumV4 = {
       targets: [
         { lessonId: "a1-details-forms", dutch: "mijn achternaam is Khan" },
         {
-          lessonId: "a1-greetings-personal-info",
+          lessonId: "a1-details-forms",
           dutch: "mijn naam is Zarar",
-          patternLessonId: "a1-greetings-personal-info",
           includeConceptSkill: true
         },
         { lessonId: "a1-details-forms", dutch: "mijn voornaam is Sara", patternLessonId: "a1-details-forms" },
@@ -14246,10 +14199,8 @@ const listenReplyCuesV4 = {
   "a0-weather-clothing-safety": [
     ["mag ik hier staan?", "کیا میں یہاں کھڑا ہو سکتا ہوں؟", "nee, het is verboden", "het regent", "ik heb een jas nodig"]
   ],
-  "a1-greetings-personal-info": [
-    ["wat is uw naam?", "آپ کا نام کیا ہے؟", "mijn naam is Zarar", "ik kom uit Pakistan", "ik woon in Nederland"]
-  ],
   "a1-details-forms": [
+    ["hoe heet u?", "آپ کا نام کیا ہے؟", "mijn naam is Zarar", "ik kom uit Pakistan", "ik woon in Nederland"],
     ["wat is uw voornaam?", "آپ کا پہلا نام کیا ہے؟", "mijn voornaam is Sara", "mijn achternaam is Khan", "ik woon aan de Marktstraat 12"],
     ["wat is uw achternaam?", "آپ کا خاندانی نام کیا ہے؟", "mijn achternaam is Khan", "mijn voornaam is Sara", "mijn nummer is nul zes"],
     ["wat is uw geboortedatum?", "آپ کی تاریخ پیدائش کیا ہے؟", "mijn geboortedatum is 12 mei", "ik woon aan de Marktstraat 12", "mijn naam is Sara"],

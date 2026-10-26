@@ -3026,7 +3026,7 @@ test("A1 practical lessons use capped learning runs with complete phases", async
   const audit = await page.evaluate(() => {
     const a1 = window.NEDERURDU_CHAPTERS.find((chapter) => chapter.id === "a1");
     const ids = [
-      "a1-greetings-personal-info", "a1-people-family-articles", "a1-daily-routine",
+      "a1-details-forms", "a1-people-family-articles", "a1-daily-routine",
       "a1-plans-invitations", "a1-house-food-plurals", "a1-cafe-ordering",
       "a1-public-transport", "a1-health-appointments", "a1-work-school-messages"
     ];
@@ -3100,7 +3100,7 @@ test("A1 Unit 1 selected Use exercises carry authored scenario provenance", asyn
   });
 
   expect(audit.unitId).toBe("a1-personal-info");
-  expect(audit.lessonIds).toEqual(["a1-greetings-personal-info", "a1-details-forms"]);
+  expect(audit.lessonIds).toEqual(["a1-details-forms"]);
   for (const lesson of audit.lessons) {
     expect(lesson.selectedUseCount, lesson.id).toBeGreaterThan(0);
     expect(lesson.invalidSources, lesson.id).toEqual([]);
@@ -3161,9 +3161,7 @@ test("A1 Unit 1 patterns teach complete reusable sentences instead of fragments"
     });
   });
 
-  expect(audit.map((item) => item.lessonId)).toEqual([
-    "a1-greetings-personal-info", "a1-details-forms"
-  ]);
+  expect(audit.map((item) => item.lessonId)).toEqual(["a1-details-forms"]);
   for (const pattern of audit) {
     expect(pattern.patternId, pattern.lessonId).not.toBe("");
     expect(pattern.ownedModel, pattern.lessonId).toBe(true);
@@ -3339,7 +3337,7 @@ test("A1 Unit 1 uses genuine A0 prerequisites and fully covered mission skills",
     numberOrTime: true
   });
   expect(audit.normalLessonPrerequisiteFailures).toEqual([]);
-  expect(audit.unitLessonIds).toEqual(["a1-greetings-personal-info", "a1-details-forms"]);
+  expect(audit.unitLessonIds).toEqual(["a1-details-forms"]);
   expect(audit.missionId).toBe("a1-personal-info-mission");
   expect(audit.missingPrerequisiteLessonIds).toEqual([]);
   expect(audit.missingRepresentativeLessonIds).toEqual([]);
@@ -5296,7 +5294,7 @@ test("A1 Unit 10 message teaching and mission fit all target widths", async ({ p
 
 test("A1 completion mission is separate and follows all ten unit capstones", async ({ page }) => {
   await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,chapter=course.chapters.find((item)=>item.id==="a1"),mission=course.missions.find((item)=>item.id==="a1-chapter-completion-mission"),unitMissionIds=course.units.filter((unit)=>unit.chapterId==="a1").flatMap((unit)=>unit.capstoneMissionIds);return{last:chapter.lessons.at(-1)?.id,normal:chapter.lessonIds.length,missions:chapter.missionIds.length,completionId:chapter.contract.completionMissionId,completionCheck:mission.completionCheck,unitId:mission.unitId,unitMissionIds,prerequisites:mission.prerequisiteMissionIds,inUnit:course.units.some((unit)=>unit.missionIds.includes(mission.id))};});
-  expect(audit.last).toBe("a1-chapter-completion-mission");expect(audit.normal).toBe(45);expect(audit.missions).toBe(11);expect(audit.completionId).toBe(audit.last);expect(audit.completionCheck).toBe(true);expect(audit.unitId).toBe("a1-chapter-completion");expect(audit.unitMissionIds).toHaveLength(10);expect(audit.prerequisites).toEqual(audit.unitMissionIds);expect(audit.inUnit).toBe(false);
+  expect(audit.last).toBe("a1-chapter-completion-mission");expect(audit.normal).toBe(44);expect(audit.missions).toBe(11);expect(audit.completionId).toBe(audit.last);expect(audit.completionCheck).toBe(true);expect(audit.unitId).toBe("a1-chapter-completion");expect(audit.unitMissionIds).toHaveLength(10);expect(audit.prerequisites).toEqual(audit.unitMissionIds);expect(audit.inUnit).toBe(false);
 });
 
 test("A1 completion mission covers ten units and all five required skill areas", async ({ page }) => {
@@ -6360,6 +6358,42 @@ test("saved progress on the old A0 grammar ids and the merged polite lesson carr
 
   await page.evaluate(() => { selectedChapterId = "a1"; showLessonPreview("a1-comparatives"); });
   await expect(page.locator(".learning-preview")).toBeVisible();
+});
+
+test("lesson-id migration maps the merged greetings lesson to a1-details-forms", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded-greetings-merge")) return;
+    sessionStorage.setItem("seeded-greetings-merge", "1");
+    localStorage.setItem("nederurdu-progress-v4", JSON.stringify({
+      schemaVersion: 4,
+      completedLessons: ["a0-greetings-courtesy", "a1-greetings-personal-info"],
+      scores: { "a1-greetings-personal-info": 8 },
+      lessonMastery: { "a1-greetings-personal-info": { status: "practiced" } },
+      mistakes: [{ lessonId: "a1-greetings-personal-info", prompt: "x", answer: "y" }],
+      lastLessonId: "a1-greetings-personal-info",
+      selectedChapterId: "a1"
+    }));
+  });
+  await page.goto("/");
+  const readSaved = () => page.evaluate(() => ({
+    saved: JSON.parse(localStorage.getItem("nederurdu-progress-v4")),
+    pathIds: window.NEDERURDU_COURSE.units.flatMap((unit) => unit.lessonIds),
+    detailsStatus: getLessonStatus("a1-details-forms")
+  }));
+  const first = await readSaved();
+  expect(first.pathIds).not.toContain("a1-greetings-personal-info");
+  expect(first.saved.completedLessons).toEqual(expect.arrayContaining(["a0-greetings-courtesy", "a1-details-forms"]));
+  expect(first.saved.completedLessons).not.toContain("a1-greetings-personal-info");
+  expect(first.saved.scores).toEqual({ "a1-details-forms": 8 });
+  expect(first.saved.lessonMastery["a1-greetings-personal-info"]).toBeUndefined();
+  expect(first.detailsStatus).toBe("practiced");
+  expect(first.saved.mistakes[0].lessonId).toBe("a1-details-forms");
+  expect(first.saved.lastLessonId).toBe("a1-details-forms");
+
+  await page.reload();
+  const second = await readSaved();
+  expect(second.saved.completedLessons).toEqual(first.saved.completedLessons);
+  expect(second.saved.scores).toEqual(first.saved.scores);
 });
 
 test("lesson preview shows the unit's how-it-works-here card", async ({ page }) => {
