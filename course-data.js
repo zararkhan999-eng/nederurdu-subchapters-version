@@ -7834,21 +7834,29 @@ const a1AuthoredCurriculumV4 = {
       document:{stableId:"transport-departure-board",sourceKey:"transport-departure-board",documentKind:"departure-board",targetDutch:"van welk spoor vertrekt de trein?",title:"spoor",labelUrdu:"ٹرین کا روانگی بورڈ پڑھیں",promptUrdu:"بورڈ میں trein اور spoor دیکھیں، پھر پلیٹ فارم پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"روانگی بورڈ میں وقت، spoor، اور vertraging الگ دیکھیں، پھر ٹرین کے پلیٹ فارم والا سیکھی ہوئی سوال چنیں۔",correctUrdu:"درست۔ van welk spoor ٹرین کا پلیٹ فارم پوچھتا ہے۔",wrongUrdu:"یہ دوسری سفر کی بات ہے۔ welk spoor پلیٹ فارم کے بارے میں ہے۔",rows:[{label:"trein",value:"de trein heeft vertraging"},{label:"spoor",value:"van welk spoor vertrekt de trein?"},{label:"vertraging",value:"vertraging"}]}
     },
     "a1-directions-town": {
-      title:"De weg vragen met een kaart",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"نقشے پر جگہ پہچاننا، دواخانے کا راستہ پوچھنا، سیدھا یا دائیں مڑنے کی ہدایت سمجھنا، اور قریب یا دور بتانا۔",
-      seedConcepts:[["kaart","نقشہ"],["hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟"],["het is dichtbij","یہ قریب ہے"],["dichtbij","قریب"],["plein","چوک"],["sla rechts af","دائیں مڑیں"],["het is ver weg","یہ دور ہے"],["kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟"]],
+      title:"De weg vragen met een kaart",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"نقشے پر جگہ پہچاننا، دواخانے کا راستہ پوچھنا، سیدھا جانے یا مڑنے کی ہدایت سمجھنا اور دینا، u کے ساتھ مؤدبانہ ہدایت پہچاننا، اور قریب یا دور بتانا۔",
+      seedConcepts:[["kaart","نقشہ"],["hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟"],["sla rechts af","دائیں مڑو"],["ga rechtdoor","سیدھے جاؤ"],["gaat u rechtdoor","آپ سیدھے جائیے"],["slaat u links af","آپ بائیں مڑیے"],["het is dichtbij","یہ قریب ہے"],["dichtbij","قریب"],["plein","چوک"],["het is ver weg","یہ دور ہے"],["kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟"]],
       teaching:authoredA1TeachingV4([
         ["kaart","شہر میں راستہ دیکھنے والے نقشے کو kaart کہیں۔","یہ نقشہ ہے؛ ٹکٹ کے لیے kaartje الگ ہے۔","kaart اور kaartje کی ملتی آواز سے معنی نہ بدلیں۔","kaart — kaartje","نقشہ — ٹکٹ۔","کارت"],
         ["hoe kom ik bij de apotheek","دواخانے تک پہنچنے کا راستہ مکمل سوال میں پوچھیں۔","hoe kom ik bij راستہ پوچھتا ہے؛ waar صرف جگہ پوچھ سکتا ہے۔","hoe سے شروع کریں اور منزل آخر میں رکھیں۔","Hoe kom ik bij de apotheek?","میں دواخانے تک کیسے جاؤں؟","ہو کوم اِک بَے دَ آ پو تیک"],
         ["plein","شہر کے کھلے چوک یا نقشے کی جگہ کو plein کہیں۔","یہ چوک ہے؛ straat سڑک ہے۔","plein کو پارک یا اسٹیشن کے معنی میں نہ لیں۔","plein — kaart","چوک — نقشہ۔","پلَین"],
         ["dichtbij","کوئی جگہ قریب ہو تو dichtbij کہیں۔","یہ قریب فاصلے کی کیفیت ہے؛ het is dichtbij مکمل جواب ہے۔","dichtbij کو دائیں یا بائیں سمت نہ سمجھیں۔","dichtbij — het is dichtbij","قریب — یہ قریب ہے۔","دِخت بَے"],
-        ["sla rechts af","راستہ بتاتے وقت دائیں مڑنے کی ہدایت دیں یا سمجھیں۔","rechts دائیں ہے؛ links بائیں ہے۔","sla اور af دونوں رکھیں؛ یہ الگ ہونے والا فعل ہے۔","Sla rechts af.","دائیں مڑیں۔","سلا رَختس آف"],
+        ["sla rechts af","دوست یا جاننے والے کو راستہ بتاتے وقت دائیں مڑنے کی ہدایت دیں۔","یہ عام حکم ہے؛ اجنبی یا بڑے کو ادب سے بتانا ہو تو slaat u links af جیسی شکل آتی ہے۔","حکم میں فعل sla سب سے پہلے، شخص نہیں، اور af سب سے آخر میں جاتا ہے۔","Sla rechts af.","دائیں مڑو۔","سلا رَختس آف"],
+        ["gaat u rechtdoor","کسی اجنبی یا بزرگ کو ادب سے بتانا ہو کہ وہ سیدھے جائیں تو یہ کہیں۔","یہ مؤدبانہ ہدایت ہے؛ دوست کو مختصر ga rechtdoor کہہ سکتے ہیں۔","یہ سوال نہیں: لہجہ نیچے رکھیں۔ u کے ساتھ فعل gaat آتا ہے اور u فعل کے بعد۔","Ga rechtdoor. — Gaat u rechtdoor.","سیدھے جاؤ۔ — آپ سیدھے جائیے۔","خات اُو رَخت دور"],
+        ["slaat u links af","کسی اجنبی کو ادب سے بائیں مڑنے کو کہنا ہو تو یہ کہیں۔","links بائیں ہے اور rechts دائیں؛ دوست کو مختصر sla rechts af جیسا حکم کافی ہے۔","مؤدبانہ حکم میں بھی af آخر میں جاتا ہے؛ u فعل slaat کے فوراً بعد۔","Sla rechts af. — Slaat u links af.","دائیں مڑو۔ — آپ بائیں مڑیے۔","سلات اُو لِنکس آف"],
         ["het is dichtbij","جگہ قریب ہو تو مکمل جواب دیں۔","یہ فاصلے کا جواب ہے؛ سمت کی ہدایت نہیں۔","is کو نہ چھوڑیں؛ het is dichtbij مکمل جملہ ہے۔","Het is dichtbij.","یہ قریب ہے۔","ہَت اِس دِخت بَے"],
         ["het is ver weg","جگہ کافی دور ہو تو مکمل جواب دیں۔","ver weg دور ہے؛ dichtbij قریب ہے۔","ver weg کو دو الگ جواب نہ سمجھیں؛ دونوں مل کر دور کہتے ہیں۔","Het is ver weg.","یہ دور ہے۔","ہَت اِس فَیر وِخ"],
         ["kunt u het op de kaart laten zien","زبانی ہدایت مشکل ہو تو نقشے پر دکھانے کی مؤدبانہ درخواست کریں۔","یہ نقشے پر دکھانے کو کہتا ہے؛ نیا نقشہ خریدنے کی درخواست نہیں۔","kunt u سے شروع کریں اور laten zien آخر میں رکھیں۔","Kunt u het op de kaart laten zien?","کیا آپ نقشے پر دکھا سکتے ہیں؟","کُنت یو ہَت اوپ دَ کارت لا تَن زین"]
       ]),
-      pattern:{modelDutch:"hoe kom ik bij de apotheek?",titleUrdu:"کسی جگہ تک راستہ پوچھنا",highlight:"hoe kom ik bij de apotheek",explanationUrdu:"راستہ پوچھنے کے لیے hoe kom ik bij کے بعد منزل رکھیں۔",contrastUrdu:"hoe kom ik bij راستہ پوچھتا ہے؛ het is dichtbij فاصلے کا جواب دیتا ہے۔",commonMistakeUrdu:"bij کو منزل کے بعد نہ رکھیں؛ bij کے بعد جگہ کا نام کہیں۔"},
+      pattern:{modelDutch:"sla rechts af",titleUrdu:"حکم اور مؤدبانہ ہدایت",highlight:"sla … af",explanationUrdu:"حکم میں فعل کی جڑ سب سے پہلے آتی ہے اور شخص نہیں آتا: ga rechtdoor، sla rechts af۔ الگ ہونے والے فعل کا چھوٹا حصہ af آخر میں جاتا ہے۔ ادب سے ہدایت دینی ہو تو فعل کے آخر میں ت کی آواز لگا کر اس کے بعد u رکھیں: gaat u rechtdoor، slaat u links af۔",contrastUrdu:"اردو میں بھی جاؤ اور جائیے کا فرق ہے: ga rechtdoor دوست کے لیے، gaat u rechtdoor اجنبی یا بزرگ کے لیے۔ gaat u rechtdoor سوال جیسا لگتا ہے مگر لہجہ نیچے ہو تو ہدایت ہے۔",commonMistakeUrdu:"حکم کو u یا jij سے شروع نہ کریں، اور af کو فعل کے ساتھ آگے نہ لائیں: sla rechts af، slaat u links af۔",drills:[
+          pickDrillV4("sla links af", ["af sla links", "jij sla links af"], "بائیں مڑو", {"af sla links": "حکم فعل sla سے شروع ہوتا ہے اور af آخر میں جاتا ہے۔", "jij sla links af": "حکم میں شخص نہیں آتا۔"}),
+          pickDrillV4("gaat u rechtdoor", ["u gaat rechtdoor", "ga u rechtdoor"], "آپ سیدھے جائیے", {"u gaat rechtdoor": "یہ بیان ہے؛ مؤدبانہ ہدایت میں فعل gaat پہلے اور u اس کے بعد۔", "ga u rechtdoor": "u کے ساتھ فعل gaat آتا ہے۔"}),
+          pickDrillV4("slaat u links af", ["slaat u af links", "sla u links af"], "آپ بائیں مڑیے", {"slaat u af links": "af سب سے آخر میں آتا ہے۔", "sla u links af": "u کے ساتھ فعل slaat آتا ہے۔"}),
+          gapDrillV4("___ rechtdoor", "ga", ["gaat", "gaan"], "سیدھے جاؤ", {"gaat": "اکیلے حکم میں فعل کی جڑ ga آتی ہے؛ gaat کے ساتھ u چاہیے۔", "gaan": "gaan پورا فعل ہے؛ حکم میں جڑ ga آتی ہے۔"}),
+          pickDrillV4("hoe kom ik bij de apotheek?", ["hoe ik kom bij de apotheek?", "hoe kom ik de apotheek bij?"], "میں دواخانے تک کیسے جاؤں؟", {"hoe ik kom bij de apotheek?": "سوال لفظ hoe کے فوراً بعد فعل kom آتا ہے۔", "hoe kom ik de apotheek bij?": "bij جگہ کے نام سے پہلے آتا ہے۔"})
+        ]},
       prerequisiteLessonIds:["a0-transport-directions","a0-address-phone","a0-health-emergency","a1-public-transport"],prerequisiteRefs:[["a0-transport-directions","links"],["a0-transport-directions","rechts"],["a0-transport-directions","rechtdoor"],["a0-transport-directions","ga rechtdoor"],["a0-transport-directions","kaartje"],["a0-address-phone","straat"],["a0-health-emergency","apotheek"],["a1-public-transport","station"]],
-      scenarios:{kaart:["directions-recognise-map","شہر کا نقشہ پہچانیں۔"],"hoe kom ik bij de apotheek":["directions-ask-pharmacy","دواخانے تک راستہ پوچھیں۔"],plein:["directions-recognise-square","نقشے پر چوک پہچانیں۔"],dichtbij:["directions-recognise-near","قریب فاصلے کا لفظ پہچانیں۔"],"sla rechts af":["directions-turn-right","دائیں مڑنے کی ہدایت دیں۔"],"het is dichtbij":["directions-answer-near","جگہ قریب ہے۔ مکمل جواب دیں۔"],"het is ver weg":["directions-answer-far","جگہ دور ہے۔ مکمل جواب دیں۔"],"kunt u het op de kaart laten zien":["directions-request-map","راستہ نقشے پر دکھانے کی درخواست کریں۔"]}
+      scenarios:{kaart:["directions-recognise-map","شہر کا نقشہ پہچانیں۔"],"hoe kom ik bij de apotheek":["directions-ask-pharmacy","دواخانے تک راستہ پوچھیں۔"],plein:["directions-recognise-square","نقشے پر چوک پہچانیں۔"],dichtbij:["directions-recognise-near","قریب فاصلے کا لفظ پہچانیں۔"],"sla rechts af":["directions-turn-right","دوست کو راستہ بتاتے ہوئے دائیں مڑنے کی ہدایت دیں۔"],"ga rechtdoor":["directions-review-straight-on","دوست کو بتائیں کہ چوک تک سیدھا جائے۔"],"gaat u rechtdoor":["directions-polite-straight-on","ایک بزرگ خاتون اسٹیشن کا راستہ پوچھتی ہیں۔ انہیں ادب سے سیدھے جانے کو کہیں۔"],"slaat u links af":["directions-polite-turn-left","ایک اجنبی دواخانے کا راستہ پوچھتا ہے۔ اسے ادب سے بائیں مڑنے کو کہیں۔"],"het is dichtbij":["directions-answer-near","جگہ قریب ہے۔ مکمل جواب دیں۔"],"het is ver weg":["directions-answer-far","جگہ دور ہے۔ مکمل جواب دیں۔"],"kunt u het op de kaart laten zien":["directions-request-map","راستہ نقشے پر دکھانے کی درخواست کریں۔"]}
     },
     "a1-post-parcel-extra": {
       title:"Een pakket ophalen",unitLabel:"A1: سفر، شہر کی جگہیں اور حفاظت",outcomeUrdu:"پارسل نوٹس پڑھنا، وصولی کی جگہ پہچاننا، شناخت دکھانا، نہ پہنچا پارسل بتانا، اور دستخط کرنا۔",
@@ -7909,9 +7917,13 @@ const a1AuthoredCurriculumV4 = {
       document:{stableId:"safety-signs-card",sourceKey:"safety-signs-card",documentKind:"public-safety-signs",targetDutch:"het is hier verboden",title:"verboden",labelUrdu:"عوامی جگہ کے حفاظتی نشان پڑھیں",promptUrdu:"نشان میں verboden دیکھیں، پھر یہاں منع ہونے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"نشانوں میں toegestaan، gevaarlijk، veilig، اور verboden الگ پہچانیں، پھر مناسب سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ het is hier verboden یہاں ممانعت بتاتا ہے۔",wrongUrdu:"یہ دوسری حفاظتی بات ہے۔ verboden کا مطلب منع ہے۔",rows:[{label:"toegestaan",value:"toegestaan"},{label:"gevaarlijk",value:"gevaarlijk"},{label:"verboden",value:"het is hier verboden"}]}
     },
     "a1-short-messages": {
-      title:"Een duidelijk kort bericht",unitLabel:"A1: پیغام، اسکول اور کام",outcomeUrdu:"سلام کے ساتھ مختصر پیغام شروع کرنا، دیر، بیماری یا ملاقات بتانا، جواب مانگنا، اور مؤدبانہ اختتام لکھنا۔",
-      seedConcepts:[["hoi Sara, ik kom vandaag later","ہیلو Sara، میں آج دیر سے آؤں گا یا گی"],["bericht","پیغام"],["app","ایپ"],["ik ben vandaag ziek","میں آج بیمار ہوں"],["ik heb morgen een afspraak","میری کل ملاقات ہے"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟"],["ik heb uw bericht gelezen","میں نے آپ کا پیغام پڑھ لیا ہے"],["sorry voor mijn late antwoord","میرے دیر سے جواب کے لیے معذرت"],["dank u voor uw bericht","آپ کے پیغام کا شکریہ"]],
+      title:"Een duidelijk kort bericht",unitLabel:"A1: پیغام، اسکول اور کام",outcomeUrdu:"سلام کے ساتھ مختصر پیغام شروع کرنا، دیر، بیماری یا ملاقات بتانا، en، maar، want، اور of سے دو باتیں جوڑ کر وجہ یا دوسرا امکان دینا، جواب مانگنا، اور مؤدبانہ اختتام لکھنا۔",
+      seedConcepts:[["hoi Sara, ik kom vandaag later","ہیلو Sara، میں آج دیر سے آؤں گا یا گی"],["ik ben vandaag ziek","میں آج بیمار ہوں"],["ik ben ziek, want ik heb koorts","میں بیمار ہوں، کیونکہ مجھے بخار ہے"],["ik ben ziek en ik blijf thuis","میں بیمار ہوں اور گھر پر رہوں گا / گی"],["ik werk vandaag niet, maar morgen kom ik","آج میں کام نہیں کر رہا / رہی، لیکن کل آؤں گا / گی"],["komt u vandaag of morgen?","آپ آج آئیں گے یا کل؟"],["bericht","پیغام"],["app","ایپ"],["ik heb morgen een afspraak","میری کل ملاقات ہے"],["kunt u mij terugbellen?","کیا آپ مجھے واپس فون کر سکتے ہیں؟"],["ik heb uw bericht gelezen","میں نے آپ کا پیغام پڑھ لیا ہے"],["sorry voor mijn late antwoord","میرے دیر سے جواب کے لیے معذرت"],["dank u voor uw bericht","آپ کے پیغام کا شکریہ"]],
       teaching:authoredA1TeachingV4([
+        ["ik ben ziek, want ik heb koorts","کام یا اسکول کو غیر حاضری کا پیغام لکھتے ہوئے بیماری کے ساتھ اس کی وجہ بھی دیں۔","want وجہ جوڑتا ہے؛ صرف بیماری بتانی ہو تو ik ben vandaag ziek کافی ہے۔","want کے بعد عام ترتیب رہتی ہے: ik heb koorts؛ فعل آخر میں نہیں جاتا۔","Ik ben ziek, want ik heb koorts.","میں بیمار ہوں، کیونکہ مجھے بخار ہے۔","اِک بَین زیک، وَنت اِک ہَپ کورتس"],
+        ["ik ben ziek en ik blijf thuis","بیماری کے پیغام میں ساتھ یہ بھی بتائیں کہ آج آپ گھر پر رہیں گے۔","en دو باتیں ساتھ جوڑتا ہے؛ وجہ دینی ہو تو want آتا ہے۔","en کے بعد بھی عام ترتیب: ik blijf thuis، فعل دوسرے نمبر پر۔","Ik ben ziek en ik blijf thuis.","میں بیمار ہوں اور گھر پر رہوں گا۔","اِک بَین زیک اَن اِک بلَیف تاؤس"],
+        ["ik werk vandaag niet, maar morgen kom ik","کام کے ساتھی کو بتائیں کہ آج آپ نہیں آ رہے مگر کل آئیں گے۔","maar مخالف بات جوڑتا ہے؛ وجہ کے لیے want آتا ہے۔","maar خود جگہ نہیں لیتا؛ اس کے بعد morgen پہلے ہو تو فعل kom فوراً آتا ہے، پھر ik۔","Ik werk vandaag niet, maar morgen kom ik.","آج میں کام نہیں کر رہا، لیکن کل آؤں گا۔","اِک وَیرک فان داخ نیت، مار مور خَن کوم اِک"],
+        ["komt u vandaag of morgen","پیغام میں کسی سے پوچھنا ہو کہ وہ آج آئیں گے یا کل تو یہ لکھیں۔","of دو امکان دیتا ہے؛ دونوں ساتھ ہوں تو en آتا ہے۔","سوال کا فعل komt پہلے، پھر u؛ of صرف دو دن جوڑتا ہے۔","Komt u vandaag of morgen?","آپ آج آئیں گے یا کل؟","کومت اُو فان داخ اوف مور خَن"],
         ["hoi Sara, ik kom vandaag later","واقف شخص کو سلام کے بعد آج کی تاخیر ایک ہی مختصر پیغام میں بتائیں۔","یہ غیر رسمی آغاز ہے؛ رسمی فون کے لیے goedemorgen، u spreekt met … الگ ہے۔","hoi Sara کے بعد اصل اطلاع ضرور دیں؛ صرف سلام بھیج کر نہ رکیں۔","Hoi Sara, ik kom vandaag later.","ہیلو Sara، میں آج دیر سے آؤں گا یا گی۔","ہوئی سا را، اِک کوم فان داخ لا تَر"],
         ["bericht","فون یا ایپ میں بھیجی گئی مختصر تحریر کو bericht کہیں۔","یہ پیغام ہے؛ antwoord اس کا جواب ہے۔","bericht کو فون کال کے معنی میں نہ لیں۔","bericht — app","پیغام — ایپ۔","بَ رِخت"],
         ["app","فون پر پیغام یا اطلاع دیکھنے والی ایپ کو app کہیں۔","یہ ذریعہ ہے؛ bericht اس کے اندر پیغام ہے۔","app کو خود پیغام کے معنی میں نہ لیں۔","app — bericht","ایپ — پیغام۔","ایپ"],
@@ -7922,9 +7934,15 @@ const a1AuthoredCurriculumV4 = {
         ["sorry voor mijn late antwoord","دیر سے جواب دینے پر واضح اور مختصر معذرت کریں۔","یہ جواب کی تاخیر ہے؛ خود ملاقات میں دیر الگ بات ہے۔","voor mijn late antwoord پورا رکھیں۔","Sorry voor mijn late antwoord.","میرے دیر سے جواب کے لیے معذرت۔","سو ری فور مَین لا تَ آنٹ وورت"],
         ["dank u voor uw bericht","رسمی یا مؤدبانہ پیغام کا جواب شکریے سے مکمل کریں۔","یہ پیغام کا شکریہ ہے؛ مدد کا شکریہ الگ ہے۔","voor uw bericht کو نہ چھوڑیں؛ شکریے کی وجہ واضح کریں۔","Dank u voor uw bericht.","آپ کے پیغام کا شکریہ۔","دانک یو فور یو بَ رِخت"]
       ]),
-      pattern:{modelDutch:"hoi Sara, ik kom vandaag later",titleUrdu:"سلام کے بعد اصل اطلاع لکھنا",highlight:"hoi Sara, ik kom vandaag later",explanationUrdu:"واقف شخص کو مختصر پیغام میں پہلے hoi اور نام لکھیں، پھر comma کے بعد اصل اطلاع دیں۔",contrastUrdu:"hoi Sara غیر رسمی آغاز ہے؛ goedemorgen، u spreekt met Ali رسمی فون کا آغاز ہے۔",commonMistakeUrdu:"صرف hoi Sara نہ بھیجیں؛ اس کے بعد وجہ یا وقت کی مکمل بات لکھیں۔"},
-      prerequisiteLessonIds:["a0-time-days","a0-health-emergency","a1-phone-calls","a1-appointments"],prerequisiteRefs:[["a0-time-days","vandaag"],["a0-time-days","morgen"],["a0-health-emergency","ziek"],["a1-phone-calls","kunt u later terugbellen?"],["a1-appointments","afspraak"]],
-      scenarios:{"hoi sara ik kom vandaag later":["message-late-greeting","واقف ساتھی Sara کو آج دیر سے آنے کی مکمل مختصر اطلاع لکھیں۔"],bericht:["message-recognise-message","فون کی ایپ میں پیغام کا لفظ پہچانیں۔"],app:["message-recognise-app","پیغام دیکھنے والی فون ایپ پہچانیں۔"],"ik ben vandaag ziek":["message-sick-today","آج بیماری کی وجہ سے نہیں آ سکتے۔ مختصر وجہ لکھیں۔"],"ik heb morgen een afspraak":["message-appointment-tomorrow","کل پہلے سے طے ملاقات کی اطلاع دیں۔"],"kunt u mij terugbellen":["message-request-callback","تحریری جواب کافی نہیں۔ واپسی فون مانگیں۔"],"ik heb uw bericht gelezen":["message-confirm-read","ملازم کو بتائیں کہ اس کا پیغام پڑھ لیا ہے۔"],"sorry voor mijn late antwoord":["message-apologise-reply","جواب دیر سے بھیجا جا رہا ہے۔ مختصر معذرت کریں۔"],"dank u voor uw bericht":["message-thank-message","مؤدبانہ جواب کو پیغام کے شکریے سے مکمل کریں۔"]},
+      pattern:{modelDutch:"ik ben ziek, want ik heb koorts",titleUrdu:"en، maar، want، of: دو باتیں جوڑنا",highlight:"want ik heb",explanationUrdu:"en یعنی اور، maar یعنی لیکن، want یعنی کیونکہ، اور of یعنی یا۔ یہ لفظ دو باتوں کے بیچ آتے ہیں مگر جملے میں کوئی جگہ نہیں لیتے، اس لیے ان کے بعد عام ترتیب رہتی ہے اور فعل دوسرے نمبر پر: ik ben ziek, want ik heb koorts؛ ik ben ziek en ik blijf thuis۔",contrastUrdu:"maar کے بعد وقت پہلے آئے تو بھی فعل دوسرے نمبر پر ہی رہتا ہے: ik werk vandaag niet, maar morgen kom ik۔ of دو امکان دیتا ہے: komt u vandaag of morgen?",commonMistakeUrdu:"want کے بعد فعل کو آخر میں نہ بھیجیں: want ik heb koorts۔ اور maar morgen کے بعد ik سے پہلے فعل kom رکھیں۔",drills:[
+          pickDrillV4("ik ben ziek, want ik heb koorts", ["ik ben ziek, want ik koorts heb", "ik ben ziek, want heb ik koorts"], "میں بیمار ہوں، کیونکہ مجھے بخار ہے", {"ik ben ziek, want ik koorts heb": "want کے بعد عام ترتیب رہتی ہے: ik heb koorts۔", "ik ben ziek, want heb ik koorts": "want جگہ نہیں لیتا؛ اس کے بعد پہلے ik اور پھر heb۔"}),
+          pickDrillV4("ik werk vandaag niet, maar morgen kom ik", ["ik werk vandaag niet, maar morgen ik kom", "ik werk vandaag niet, maar ik morgen kom"], "آج میں کام نہیں کر رہا، لیکن کل آؤں گا", {"ik werk vandaag niet, maar morgen ik kom": "morgen پہلے ہو تو فعل kom فوراً اس کے بعد آتا ہے۔", "ik werk vandaag niet, maar ik morgen kom": "ik کے بعد فعل دوسرے نمبر پر آتا ہے: ik kom morgen۔"}),
+          gapDrillV4("ik kom vandaag niet, ___ ik ben ziek", "want", ["maar", "of"], "میں آج نہیں آ رہا، کیونکہ میں بیمار ہوں", {"maar": "maar مخالف بات جوڑتا ہے؛ یہاں وجہ ہے، اس لیے want۔", "of": "of دو امکان دیتا ہے؛ یہاں وجہ ہے۔"}),
+          gapDrillV4("ik ben ziek ___ ik blijf thuis", "en", ["maar", "of"], "میں بیمار ہوں اور گھر پر رہوں گا", {"maar": "دونوں باتیں ایک ہی سمت میں ہیں؛ مخالف بات نہیں، اس لیے en۔", "of": "یہاں دو امکان نہیں، دو ساتھ والی باتیں ہیں: en۔"}),
+          gapDrillV4("komt u vandaag ___ morgen?", "of", ["en", "want"], "آپ آج آئیں گے یا کل؟", {"en": "en دونوں دن ایک ساتھ بتاتا ہے؛ یہاں انتخاب ہے: of۔", "want": "want وجہ دیتا ہے؛ یہاں دو امکان ہیں۔"})
+        ]},
+      prerequisiteLessonIds:["a0-time-days","a0-health-emergency","a1-calendar-time","a1-phone-calls","a1-appointments","a1-doctor-symptoms"],prerequisiteRefs:[["a1-doctor-symptoms","koorts"],["a1-calendar-time","in het weekend ben ik thuis"],["a0-time-days","vandaag"],["a0-time-days","morgen"],["a0-health-emergency","ziek"],["a1-phone-calls","kunt u later terugbellen?"],["a1-appointments","afspraak"]],
+      scenarios:{"hoi sara ik kom vandaag later":["message-late-greeting","واقف ساتھی Sara کو آج دیر سے آنے کی مکمل مختصر اطلاع لکھیں۔"],"ik ben ziek want ik heb koorts":["message-sick-with-reason","صبح بخار ہے۔ مینیجر کو پیغام میں لکھیں کہ آپ بیمار ہیں اور اس کی وجہ بخار ہے۔"],"ik ben ziek en ik blijf thuis":["message-sick-stay-home","استاد کو پیغام لکھیں کہ آپ بیمار ہیں اور آج گھر پر رہیں گے۔"],"ik werk vandaag niet maar morgen kom ik":["message-not-today-but-tomorrow","ساتھی کو پیغام لکھیں کہ آج آپ کام پر نہیں، لیکن کل آئیں گے۔"],"komt u vandaag of morgen":["message-ask-today-or-tomorrow","مرمت والے نے پیغام بھیجا ہے کہ وہ آئے گا۔ پوچھیں کہ وہ آج آئے گا یا کل۔"],bericht:["message-recognise-message","فون کی ایپ میں پیغام کا لفظ پہچانیں۔"],app:["message-recognise-app","پیغام دیکھنے والی فون ایپ پہچانیں۔"],"ik ben vandaag ziek":["message-sick-today","آج بیماری کی وجہ سے نہیں آ سکتے۔ مختصر وجہ لکھیں۔"],"ik heb morgen een afspraak":["message-appointment-tomorrow","کل پہلے سے طے ملاقات کی اطلاع دیں۔"],"kunt u mij terugbellen":["message-request-callback","تحریری جواب کافی نہیں۔ واپسی فون مانگیں۔"],"ik heb uw bericht gelezen":["message-confirm-read","ملازم کو بتائیں کہ اس کا پیغام پڑھ لیا ہے۔"],"sorry voor mijn late antwoord":["message-apologise-reply","جواب دیر سے بھیجا جا رہا ہے۔ مختصر معذرت کریں۔"],"dank u voor uw bericht":["message-thank-message","مؤدبانہ جواب کو پیغام کے شکریے سے مکمل کریں۔"]},
       document:{stableId:"short-message-thread",sourceKey:"short-message-thread",documentKind:"short-message-card",targetDutch:"ik heb uw bericht gelezen",title:"Bericht",labelUrdu:"مختصر پیغام کی گفتگو پڑھیں",promptUrdu:"گفتگو میں bericht gelezen دیکھیں، پھر پیغام پڑھ لینے والی مکمل بات کا درست مطلب منتخب کریں۔",instructionUrdu:"پیغام کارڈ میں سلام، اطلاع، اور جواب الگ پڑھیں، پھر پڑھنے کی تصدیق والی سیکھی ہوئی بات چنیں۔",correctUrdu:"درست۔ ik heb uw bericht gelezen پیغام پڑھ لینے کی تصدیق ہے۔",wrongUrdu:"یہ دوسری پیغام والی بات ہے۔ gelezen پڑھ لینے کو بتاتا ہے۔",rows:[{label:"hoi Sara",value:"ik kom vandaag later"},{label:"bericht",value:"ik heb uw bericht gelezen"},{label:"antwoord",value:"dank u voor uw bericht"}]}
     },
     "a1-work-school-messages": {
@@ -8007,8 +8025,9 @@ const a1AuthoredCurriculumV4 = {
     },
     "a1-doctor-symptoms": {
       title:"Klachten vertellen aan de huisarts",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"درد، بخار، کھانسی اور مدت واضح کرنا، ڈاکٹر کے بنیادی سوال سمجھنا، اور آرام کی ہدایت سننا۔",
-      seedConcepts:[["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے"],["hoofd","سر"],["buik","پیٹ"],["hoofdpijn","سر درد"],["buikpijn","پیٹ درد"],["koorts","بخار"],["hoesten","کھانسی کرنا"],["ik heb sinds gisteren koorts","مجھے کل سے بخار ہے"],["waar doet het pijn?","کہاں درد ہے؟"],["hoe lang bent u ziek?","آپ کب سے بیمار ہیں؟"],["u moet rust nemen","آپ کو آرام کرنا چاہیے"]],
+      seedConcepts:[["koorts","بخار"],["ik heb sinds gisteren koorts","مجھے کل سے بخار ہے"],["hoe lang bent u ziek?","آپ کب سے بیمار ہیں؟"],["ik ben sinds maandag ziek","میں پیر سے بیمار ہوں"],["hoofd","سر"],["buik","پیٹ"],["hoofdpijn","سر درد"],["buikpijn","پیٹ درد"],["ik heb pijn in mijn buik","میرے پیٹ میں درد ہے"],["waar doet het pijn?","کہاں درد ہے؟"],["hoesten","کھانسی کرنا"],["u moet rust nemen","آپ کو آرام کرنا چاہیے"]],
       teaching:authoredA1TeachingV4([
+        ["ik ben sinds maandag ziek","huisarts یا کام پر بتانا ہو کہ بیماری پیر کو شروع ہوئی اور ابھی تک جاری ہے تو یہ کہیں۔","sinds شروع ہونے کا وقت بتاتا ہے اور بیماری ابھی جاری ہے؛ صرف پیر کے دن کی بات ہو تو op maandag آتا ہے۔","فعل حال میں ben رہتا ہے، بالکل اردو کی طرح: میں پیر سے بیمار ہوں۔","Hoe lang bent u ziek? — Ik ben sinds maandag ziek.","آپ کب سے بیمار ہیں؟ — میں پیر سے بیمار ہوں۔","اِک بَین سِنتس مان داخ زیک"],
         ["hoofd","جسم کے سر والے حصے کو hoofd کہیں۔","یہ سر ہے؛ buik پیٹ ہے۔","hoofd کو سر درد کی پوری علامت hoofdpijn نہ سمجھیں۔","hoofd — buik","سر — پیٹ۔","ہوفٹ"],
         ["buik","جسم کے پیٹ والے حصے کو buik کہیں۔","یہ پیٹ ہے؛ hoofd سر ہے۔","buik کو پیٹ درد کی پوری علامت buikpijn نہ سمجھیں۔","buik — hoofd","پیٹ — سر۔","باؤک"],
         ["hoofdpijn","سر میں درد ہو تو علامت کے نام کے طور پر hoofdpijn کہیں۔","یہ سر درد ہے؛ buikpijn پیٹ درد ہے۔","hoofdpijn کو عام تمام درد کے معنی میں نہ لیں۔","Ik heb hoofdpijn.","میرے سر میں درد ہے۔","ہوفٹ پَین"],
@@ -8021,9 +8040,15 @@ const a1AuthoredCurriculumV4 = {
         ["hoe lang bent u ziek","ڈاکٹر بیماری کی مدت پوچھنے کے لیے یہ سوال کہتا ہے۔","hoe lang مدت ہے؛ waar درد کی جگہ ہے۔","جواب میں sinds gisteren جیسی مدت دیں۔","Hoe lang bent u ziek?","آپ کب سے بیمار ہیں؟","ہو لانخ بَنت یو زیک"],
         ["u moet rust nemen","ڈاکٹر آرام کرنے کی ضروری ہدایت اس مکمل جملے میں دیتا ہے۔","یہ مشورہ ہے؛ دوا کی مقدار نہیں۔","rust nemen کو آخر میں ساتھ رکھیں۔","U moet rust nemen.","آپ کو آرام کرنا چاہیے۔","یو موت رُست نے مَن"]
       ]),
-      pattern:{modelDutch:"ik heb pijn in mijn buik",titleUrdu:"درد کی جگہ واضح کرنا",highlight:"ik heb pijn in mijn buik",explanationUrdu:"درد بتانے کے لیے ik heb pijn in mijn کے بعد جسم کی جگہ رکھیں۔",contrastUrdu:"pijn in mijn buik جگہ بتاتا ہے؛ sinds gisteren koorts مدت بتاتا ہے۔",commonMistakeUrdu:"جسم کی جگہ سے پہلے in mijn نہ چھوڑیں۔"},
-      prerequisiteLessonIds:["a0-health-emergency","a0-time-days","a1-health-appointments"],prerequisiteRefs:[["a0-health-emergency","ik ben ziek"],["a0-health-emergency","ik heb pijn"],["a0-time-days","gisteren"],["a1-health-appointments","huisarts"]],
-      scenarios:{hoofd:["symptom-recognise-head","جسم میں سر والا حصہ پہچانیں۔"],buik:["symptom-recognise-belly","جسم میں پیٹ والا حصہ پہچانیں۔"],hoofdpijn:["symptom-recognise-headache","علامت کی فہرست میں سر درد پہچانیں۔"],buikpijn:["symptom-recognise-stomachache","علامت کی فہرست میں پیٹ درد پہچانیں۔"],koorts:["symptom-recognise-fever","درجہ حرارت زیادہ ہے۔ بخار کا لفظ پہچانیں۔"],hoesten:["symptom-recognise-cough","بار بار کھانسی آنے کا عمل پہچانیں۔"],"ik heb pijn in mijn buik":["symptom-report-location","huisarts کو پیٹ میں درد کی جگہ واضح کریں۔"],"ik heb sinds gisteren koorts":["symptom-report-duration","huisarts کو کل سے بخار ہونے کی مدت بتائیں۔"],"waar doet het pijn":["symptom-hear-location-question","ڈاکٹر درد کی جگہ پوچھتا ہے۔ سوال سمجھیں۔"],"hoe lang bent u ziek":["symptom-hear-duration-question","ڈاکٹر بیماری کی مدت پوچھتا ہے۔ سوال سمجھیں۔"],"u moet rust nemen":["symptom-follow-rest","ڈاکٹر آرام کرنے کی ہدایت دیتا ہے۔ اسے سمجھیں۔"]}
+      pattern:{modelDutch:"ik heb sinds gisteren koorts",titleUrdu:"sinds کے ساتھ حال: کب سے",highlight:"sinds gisteren",explanationUrdu:"کوئی تکلیف پہلے شروع ہوئی اور ابھی تک جاری ہے تو ڈچ میں sinds کے ساتھ حال کا فعل آتا ہے: ik heb sinds gisteren koorts، ik ben sinds maandag ziek۔ sinds کے بعد وہ وقت رکھیں جب بات شروع ہوئی۔",contrastUrdu:"اردو میں بھی یہی ہوتا ہے: مجھے کل سے بخار ہے، یعنی حال کا فعل۔ اس لیے اردو کی طرح سوچیں اور ماضی کا فعل نہ ڈھونڈیں۔ ڈاکٹر یہی مدت hoe lang bent u ziek? سے پوچھتا ہے۔",commonMistakeUrdu:"مدت کے جواب میں heb یا ben ہی رکھیں، اور sinds کے بعد شروع ہونے کا وقت رکھیں؛ sinds پہلے آئے تو فعل فوراً اس وقت کے بعد آتا ہے۔",drills:[
+          gapDrillV4("ik ___ sinds gisteren koorts", "heb", ["ben", "hebben"], "مجھے کل سے بخار ہے", {"ben": "koorts کے ساتھ heb آتا ہے: ik heb koorts۔", "hebben": "ik کے ساتھ heb آتا ہے، hebben نہیں۔"}),
+          gapDrillV4("ik ben ___ maandag ziek", "sinds", ["op", "om"], "میں پیر سے بیمار ہوں", {"op": "op maandag صرف پیر کا دن ہے؛ پیر سے اب تک کے لیے sinds۔", "om": "om گھڑی کے وقت کے ساتھ آتا ہے، دن کے ساتھ نہیں۔"}),
+          pickDrillV4("sinds gisteren heb ik koorts", ["sinds gisteren ik heb koorts", "sinds gisteren koorts ik heb"], "کل سے مجھے بخار ہے", {"sinds gisteren ik heb koorts": "sinds gisteren پہلے ہو تو فعل heb فوراً اس کے بعد آتا ہے۔", "sinds gisteren koorts ik heb": "فعل دوسرے نمبر پر آتا ہے، آخر میں نہیں۔"}),
+          pickDrillV4("ik ben sinds maandag ziek", ["ik sinds maandag ben ziek", "ik ben ziek maandag sinds"], "میں پیر سے بیمار ہوں", {"ik sinds maandag ben ziek": "ben دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔", "ik ben ziek maandag sinds": "sinds وقت سے پہلے آتا ہے: sinds maandag۔"}),
+          pickDrillV4("ik heb pijn in mijn buik", ["ik heb pijn mijn buik", "ik pijn heb in mijn buik"], "میرے پیٹ میں درد ہے", {"ik heb pijn mijn buik": "جسم کی جگہ سے پہلے in رکھیں: in mijn buik۔", "ik pijn heb in mijn buik": "heb دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔"})
+        ]},
+      prerequisiteLessonIds:["a0-health-emergency","a0-time-days","a1-health-appointments"],prerequisiteRefs:[["a0-health-emergency","ik ben ziek"],["a0-health-emergency","ik heb pijn"],["a0-time-days","gisteren"],["a0-time-days","maandag"],["a1-health-appointments","huisarts"]],
+      scenarios:{hoofd:["symptom-recognise-head","جسم میں سر والا حصہ پہچانیں۔"],buik:["symptom-recognise-belly","جسم میں پیٹ والا حصہ پہچانیں۔"],hoofdpijn:["symptom-recognise-headache","علامت کی فہرست میں سر درد پہچانیں۔"],buikpijn:["symptom-recognise-stomachache","علامت کی فہرست میں پیٹ درد پہچانیں۔"],koorts:["symptom-recognise-fever","درجہ حرارت زیادہ ہے۔ بخار کا لفظ پہچانیں۔"],hoesten:["symptom-recognise-cough","بار بار کھانسی آنے کا عمل پہچانیں۔"],"ik heb pijn in mijn buik":["symptom-report-location","huisarts کو پیٹ میں درد کی جگہ واضح کریں۔"],"ik heb sinds gisteren koorts":["symptom-report-duration","huisarts کو کل سے بخار ہونے کی مدت بتائیں۔"],"ik ben sinds maandag ziek":["symptom-sick-since-monday","huisarts پوچھتا ہے کہ آپ کب سے بیمار ہیں۔ بتائیں کہ آپ پیر سے بیمار ہیں۔"],"waar doet het pijn":["symptom-hear-location-question","ڈاکٹر درد کی جگہ پوچھتا ہے۔ سوال سمجھیں۔"],"hoe lang bent u ziek":["symptom-hear-duration-question","ڈاکٹر بیماری کی مدت پوچھتا ہے۔ سوال سمجھیں۔"],"u moet rust nemen":["symptom-follow-rest","ڈاکٹر آرام کرنے کی ہدایت دیتا ہے۔ اسے سمجھیں۔"]}
     },
     "a1-pharmacy-medicine": {
       title:"Medicijnen bij de apotheek",unitLabel:"A1: ڈاکٹر، علامات اور دوا",outcomeUrdu:"دواخانے میں دوا یا درد کی چیز مانگنا، نسخہ اور حساسیت بتانا، اور لیبل سے مقدار، وقت اور حفاظتی ہدایت سمجھنا۔",
@@ -8054,20 +8079,31 @@ const a1AuthoredCurriculumV4 = {
       outcomeUrdu: "ملاقات بنانا، دستیابی پوچھنا، دوسرا وقت تجویز کرنا، نہ آ سکنے کی اطلاع دینا، ملاقات بدلنا یا منسوخ کرنا، اور تصدیقی کارڈ پڑھنا۔",
       seedConcepts: [
         ["ik wil een afspraak maken", "میں ملاقات کا وقت لینا چاہتا / چاہتی ہوں"],
+        ["ik kan maandag niet komen", "میں پیر کو نہیں آ سکتا / سکتی"],
+        ["ik kom morgen niet", "میں کل نہیں آؤں گا / گی"],
+        ["ik ga niet naar buiten", "میں باہر نہیں جاتا / جاتی"],
+        ["vandaag werk ik niet", "آج میں کام نہیں کرتا / کرتی"],
+        ["heeft u vandaag tijd?", "کیا آج آپ کے پاس وقت ہے؟"],
         ["afspraak", "ملاقات کا وقت"],
+        ["kan het morgen in de ochtend?", "کیا کل صبح ہو سکتا ہے؟"],
         ["datum", "تاریخ"],
+        ["ik wil de afspraak veranderen", "میں ملاقات کا وقت بدلنا چاہتا / چاہتی ہوں"],
+        ["ik moet de afspraak annuleren", "مجھے ملاقات منسوخ کرنی ہے"],
         ["maandag", "پیر"],
         ["ochtend", "صبح"],
         ["middag", "دوپہر"],
-        ["ik wil de afspraak veranderen", "میں ملاقات کا وقت بدلنا چاہتا / چاہتی ہوں"],
-        ["heeft u vandaag tijd?", "کیا آج آپ کے پاس وقت ہے؟"],
-        ["kan het morgen in de ochtend?", "کیا کل صبح ہو سکتا ہے؟"],
-        ["ik kan maandag niet komen", "میں پیر کو نہیں آ سکتا / سکتی"],
-        ["ik moet de afspraak annuleren", "مجھے ملاقات منسوخ کرنی ہے"],
         ["hoe laat is de afspraak?", "ملاقات کتنے بجے ہے؟"],
         ["kunt u de afspraak bevestigen?", "کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟"]
       ],
       teaching: {
+        "ik kom morgen niet": {
+          usageUrdu: "کلاس، کام، یا ملاقات والے شخص کو مختصر بتانا ہو کہ آپ کل نہیں آئیں گے تو یہ کہیں۔",
+          usageBoundaryUrdu: "یہ صرف نہ آنے کی اطلاع ہے؛ کسی خاص دن کی مجبوری بتانے کے لیے ik kan maandag niet komen کہیں۔",
+          commonConfusionUrdu: "اس سادہ جملے میں niet سب سے آخر میں آتا ہے؛ وقت والا لفظ morgen اس سے پہلے رہتا ہے۔",
+          exampleDutch: "Ik kom morgen niet.",
+          exampleUrdu: "میں کل نہیں آؤں گا۔",
+          pronunciationUrdu: "اِک کوم مور خَن نیت"
+        },
         "ik wil een afspraak maken": {
           usageUrdu: "ڈاکٹر، بلدیہ، یا اسکول سے نئی ملاقات لینے کی بات شروع کرنے کے لیے یہ مکمل جملہ کہیں۔",
           usageBoundaryUrdu: "یہ نئی ملاقات بناتا ہے؛ bestaande ملاقات بدلنے کے لیے veranderen والا جملہ ہے۔",
@@ -8126,22 +8162,22 @@ const a1AuthoredCurriculumV4 = {
         }
       },
       pattern: {
-        modelDutch: "ik wil een afspraak maken",
-        titleUrdu: "ملاقات کے مقصد کو مکمل جملے میں کہنا",
-        highlight: "ik wil + een afspraak + maken",
-        explanationUrdu: "نئی ملاقات لینے کے لیے ik wil کے بعد een afspraak اور آخر میں maken رکھیں۔",
-        contrastUrdu: "maken نئی ملاقات بناتا ہے، veranderen موجود ملاقات بدلتا ہے، اور annuleren اسے ختم کرتا ہے۔",
-        commonMistakeUrdu: "نئی ملاقات کے لیے de afspraak نہ کہیں؛ اس نمونے میں een afspraak maken رکھیں۔",
+        modelDutch: "ik kan maandag niet komen",
+        titleUrdu: "niet کی جگہ: آخر میں، پورے فعل سے پہلے، یا جگہ سے پہلے",
+        highlight: "niet komen",
+        explanationUrdu: "niet کی تین عام جگہیں ہیں۔ سادہ جملے میں niet سب سے آخر میں آتا ہے: ik kom morgen niet، vandaag werk ik niet۔ آخر میں پورا فعل ہو تو niet اس سے بالکل پہلے آتا ہے: ik kan maandag niet komen۔ naar جیسی جگہ والی بات ہو تو niet اس سے پہلے آتا ہے: ik ga niet naar buiten۔",
+        contrastUrdu: "اردو میں نہیں فعل سے پہلے آتا ہے؛ ڈچ میں وقت والا لفظ پہلے رہتا ہے اور niet اس کے بعد: ik kom morgen niet، ik kan maandag niet komen۔",
+        commonMistakeUrdu: "niet کو بدلے ہوئے فعل سے پہلے نہ رکھیں، اور پورے فعل کے بعد بھی نہ رکھیں: ik kan maandag niet komen۔",
         drills: [
-          pickDrillV4("ik wil de afspraak veranderen", ["ik wil veranderen de afspraak", "ik veranderen wil de afspraak"], "میں ملاقات کا وقت بدلنا چاہتا ہوں", {"ik wil veranderen de afspraak": "wil کے ساتھ دوسرا فعل جملے کے آخر میں جاتا ہے۔", "ik veranderen wil de afspraak": "wil دوسرے نمبر پر اور veranderen آخر میں آتا ہے۔"}),
-          pickDrillV4("kunt u mij later terugbellen?", ["kunt u terugbellen mij later?", "kunt u mij terugbellen later?"], "کیا آپ مجھے بعد میں واپس فون کر سکتے ہیں؟", {"kunt u terugbellen mij later?": "kunt کے ساتھ دوسرا فعل آخر میں آتا ہے۔", "kunt u mij terugbellen later?": "later فعل سے پہلے آتا ہے؛ terugbellen سب سے آخر میں۔"}),
-          pickDrillV4("ik moet de afspraak annuleren", ["ik moet annuleren de afspraak", "ik annuleren moet de afspraak"], "مجھے ملاقات منسوخ کرنی ہے", {"ik moet annuleren de afspraak": "moet کے ساتھ دوسرا فعل جملے کے آخر میں جاتا ہے۔", "ik annuleren moet de afspraak": "moet دوسرے نمبر پر اور annuleren آخر میں آتا ہے۔"}),
-          gapDrillV4("kunt u de afspraak ___?", "bevestigen", ["annuleren", "maken"], "کیا آپ ملاقات کی تصدیق کر سکتے ہیں؟", {"annuleren": "annuleren کا مطلب منسوخ کرنا ہے؛ یہاں تصدیق ہے۔", "maken": "maken نئی ملاقات بنانا ہے؛ یہاں تصدیق ہے۔"}),
-          pickDrillV4("ik kan maandag niet komen", ["ik kan komen maandag niet", "ik komen kan maandag niet"], "میں پیر کو نہیں آ سکتا", {"ik kan komen maandag niet": "kan کے ساتھ komen سب سے آخر میں آتا ہے۔", "ik komen kan maandag niet": "kan دوسرے نمبر پر اور komen آخر میں آتا ہے۔"})
+          pickDrillV4("ik kom morgen niet", ["ik niet kom morgen", "niet ik kom morgen"], "میں کل نہیں آؤں گا", {"ik niet kom morgen": "kom دوسرے نمبر پر رہتا ہے؛ سادہ جملے میں niet آخر میں آتا ہے۔", "niet ik kom morgen": "جملہ niet سے شروع نہیں ہوتا؛ niet آخر میں جاتا ہے۔"}),
+          pickDrillV4("ik kan maandag niet komen", ["ik kan maandag komen niet", "ik niet kan maandag komen"], "میں پیر کو نہیں آ سکتا", {"ik kan maandag komen niet": "آخر میں پورا فعل ہو تو niet اس سے پہلے آتا ہے۔", "ik niet kan maandag komen": "kan دوسرے نمبر پر، ik کے فوراً بعد آتا ہے۔"}),
+          pickDrillV4("ik ga niet naar buiten", ["ik ga naar buiten niet", "ik niet ga naar buiten"], "میں باہر نہیں جاتا", {"ik ga naar buiten niet": "جگہ والی بات naar buiten سے پہلے niet آتا ہے۔", "ik niet ga naar buiten": "ga دوسرے نمبر پر رہتا ہے؛ niet اس کے بعد۔"}),
+          pickDrillV4("vandaag werk ik niet", ["vandaag werk niet ik", "vandaag niet werk ik"], "آج میں کام نہیں کرتا", {"vandaag werk niet ik": "پہلے فعل اور شخص، پھر آخر میں niet۔", "vandaag niet werk ik": "vandaag کے فوراً بعد فعل werk آتا ہے۔"}),
+          gapDrillV4("ik kan vandaag ___ komen", "niet", ["geen", "nee"], "میں آج نہیں آ سکتا", {"geen": "geen اسم سے پہلے آتا ہے؛ فعل کی نفی niet سے ہوتی ہے۔", "nee": "nee اکیلا جواب ہے؛ جملے کے اندر niet آتا ہے۔"})
         ]
       },
       independentCheckLeadUrdu: "پہلی مدد والی ملاقات کے بعد دوسرے ادارے سے بات کرتے وقت",
-      prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-questions", "a1-object-pronouns", "a1-phone-calls"],
+      prerequisiteLessonIds: ["a0-date-appointment", "a0-time-days", "a1-daily-routine", "a1-weather-clothes", "a1-questions", "a1-object-pronouns", "a1-phone-calls"],
       prerequisiteRefs: [
         ["a0-date-appointment", "afspraak"],
         ["a0-date-appointment", "datum"],
@@ -8149,6 +8185,8 @@ const a1AuthoredCurriculumV4 = {
         ["a0-time-days", "maandag"],
         ["a0-time-days", "ochtend"],
         ["a0-time-days", "middag"],
+        ["a1-daily-routine", "vandaag werk ik niet"],
+        ["a1-weather-clothes", "ik ga niet naar buiten"],
         ["a1-questions", "wanneer komt u?"],
         ["a1-object-pronouns", "kunt u mij helpen alstublieft?"],
         ["a1-phone-calls", "kunt u later terugbellen?"]
@@ -8160,6 +8198,9 @@ const a1AuthoredCurriculumV4 = {
         ochtend: ["appointment-morning", "صبح کے دستیاب وقت کو درست ڈچ لفظ سے پہچانیں۔"],
         middag: ["appointment-afternoon", "دوپہر کے دستیاب وقت کو درست ڈچ لفظ سے پہچانیں۔"],
         "ik wil de afspraak veranderen": ["appointment-change", "موجود ملاقات کا وقت مناسب نہیں۔ اسے بدلنے کی سیکھی ہوئی مکمل بات کہیں۔"],
+        "ik kom morgen niet": ["appointment-not-coming-tomorrow", "کل زبان کی کلاس ہے مگر آپ بیمار ہیں۔ استاد کو مختصر بتائیں کہ آپ کل نہیں آئیں گے۔"],
+        "ik ga niet naar buiten": ["appointment-review-not-going-out", "باہر تیز بارش ہے۔ دوست کو بتائیں کہ آپ باہر نہیں جا رہے۔"],
+        "vandaag werk ik niet": ["appointment-review-day-off", "دوست آج ملنا چاہتا ہے۔ بتائیں کہ آج آپ کام نہیں کرتے۔"],
         "ik wil een afspraak maken": ["appointment-make", "ڈاکٹر کے استقبالی کاؤنٹر سے نئی ملاقات لینی ہے۔ مکمل آغاز کریں۔"],
         "heeft u vandaag tijd": ["appointment-today", "ملازم سے آج کی دستیابی مؤدبانہ طور پر پوچھیں۔"],
         "kan het morgen in de ochtend": ["appointment-alternative", "آج کا وقت مناسب نہیں۔ کل صبح کا متبادل پوچھیں۔"],
@@ -8212,7 +8253,7 @@ const a1AuthoredCurriculumV4 = {
       variantTitles:["دیر کا مختصر پیغام اور کام کی تبدیلی","بچے کی غیر حاضری اور اسکول ایپ","بیماری، واپسی، اور بدلی ڈیوٹی"],
       variantContexts:["ساتھی کو آج کی دیر کا پیغام دیں، وجہ سنیں، اور کام کے بدلے rooster کا جواب دیں","اسکول کو بچے کی غیر حاضری لکھیں، گھر کے کام کی جگہ پوچھیں، اور ایپ کا نوٹس سمجھیں","کام کو بیماری اور واپسی بتائیں، واپسی فون مانگیں، اور بدلی dienst پر ذمہ دار سے بات کریں"],
       targets:[
-        {lessonId:"a1-short-messages",dutch:"hoi Sara, ik kom vandaag later",patternLessonId:"a1-short-messages"},
+        {lessonId:"a1-short-messages",dutch:"ik ben ziek, want ik heb koorts",patternLessonId:"a1-short-messages"},
         {lessonId:"a1-work-school-messages",dutch:"ik kom morgen weer"},
         {lessonId:"a1-past-was-had",dutch:"gisteren was ik ziek",patternLessonId:"a1-past-was-had"},
         {lessonId:"a1-school-contact",dutch:"mijn kind komt vandaag niet naar school",patternLessonId:"a1-school-contact"},
@@ -8231,7 +8272,7 @@ const a1AuthoredCurriculumV4 = {
       targets:[
         {lessonId:"a1-health-appointments",dutch:"ik wil een afspraak bij de huisarts",patternLessonId:"a1-health-appointments"},
         {lessonId:"a1-feelings-reflexive",dutch:"hoe voelt u zich?"},
-        {lessonId:"a1-doctor-symptoms",dutch:"ik heb pijn in mijn buik",patternLessonId:"a1-doctor-symptoms"},
+        {lessonId:"a1-doctor-symptoms",dutch:"ik ben sinds maandag ziek",patternLessonId:"a1-doctor-symptoms"},
         {lessonId:"a1-doctor-symptoms",dutch:"ik heb sinds gisteren koorts"},
         {lessonId:"a1-pharmacy-medicine",dutch:"hoe vaak moet ik dit nemen?",patternLessonId:"a1-pharmacy-medicine"},
         {lessonId:"a1-pharmacy-medicine",dutch:"twee keer per dag"}
@@ -8248,7 +8289,7 @@ const a1AuthoredCurriculumV4 = {
       targets:[
         {lessonId:"a1-public-transport",dutch:"ik wil een kaartje naar Utrecht",patternLessonId:"a1-public-transport"},
         {lessonId:"a1-public-transport",dutch:"van welk spoor vertrekt de trein?"},
-        {lessonId:"a1-directions-town",dutch:"hoe kom ik bij de apotheek?",patternLessonId:"a1-directions-town"},
+        {lessonId:"a1-directions-town",dutch:"sla rechts af",patternLessonId:"a1-directions-town"},
         {lessonId:"a1-post-parcel-extra",dutch:"ik wil mijn pakket ophalen",patternLessonId:"a1-post-parcel-extra"},
         {lessonId:"a1-library-community",dutch:"hoe laat is het open?"},
         {lessonId:"a1-safety-rules",dutch:"mag ik hier wachten?",patternLessonId:"a1-safety-rules"}
@@ -8534,7 +8575,7 @@ const a1AuthoredCurriculumV4 = {
         { lessonId: "a1-future-gaan", dutch: "wat ga je morgen doen?" },
         { lessonId: "a1-plans-invitations", dutch: "zullen we om drie uur afspreken?", patternLessonId: "a1-plans-invitations" },
         { lessonId: "a1-plans-invitations", dutch: "sorry ik kan niet" },
-        { lessonId: "a1-appointments", dutch: "ik wil een afspraak maken", patternLessonId: "a1-appointments" },
+        { lessonId: "a1-appointments", dutch: "ik kan maandag niet komen", patternLessonId: "a1-appointments" },
         { lessonId: "a1-appointments", dutch: "hoe laat is de afspraak?" }
       ],
       prerequisiteRefs: [

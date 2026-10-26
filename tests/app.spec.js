@@ -4441,7 +4441,7 @@ test("A1 Unit 5 has three ordered plan and appointment lessons with capped compl
     "a1-plans-invitations",
     "a1-appointments"
   ]);
-  expect(audit.conceptCounts).toEqual([8, 9, 13]);
+  expect(audit.conceptCounts).toEqual([8, 9, 16]);
   expect(audit.chapterUnitIds.indexOf("a1-plans-appointments")).toBe(audit.chapterUnitIds.indexOf("a1-questions-help") + 1);
   for (const lessonId of audit.lessonIds) expect(audit.questionsUnitIds).not.toContain(lessonId);
   for (const lesson of audit.lessons) {
@@ -4546,7 +4546,7 @@ test("A1 Unit 5 manually teaches every new plan invitation and appointment targe
     };
   });
 
-  expect(audit.concepts).toHaveLength(21);
+  expect(audit.concepts).toHaveLength(22);
   for (const concept of audit.concepts) {
     expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
@@ -5176,7 +5176,7 @@ test("A1 Unit 8 has five focused town lessons and retires duplicate transport no
           phases:[...new Set(generated.map(getQuestionPhase))], checks:generated.filter((question)=>getQuestionPhase(question)==="check").length }; }) })) };
   });
   expect(audit.lessonIds).toEqual(["a1-public-transport","a1-directions-town","a1-post-parcel-extra","a1-library-community","a1-safety-rules"]);
-  expect(audit.conceptCounts).toEqual([10,8,8,8,8]); expect(audit.retired).toEqual([]);
+  expect(audit.conceptCounts).toEqual([10,11,8,8,8]); expect(audit.retired).toEqual([]);
   for (const lesson of audit.lessons) { expect(lesson.unitLabel,lesson.id).toBe("A1: سفر، شہر کی جگہیں اور حفاظت"); expect(lesson.outcomeUrdu).toMatch(/[\u0600-\u06ff]/u);
     for (const run of lesson.runs) { expect(run.count).toBeGreaterThan(0); expect(run.count).toBeLessThanOrEqual(5);
       expect(run.phases).toEqual(["learn","understand","guided","use","check"]); expect(run.checks).toBeGreaterThanOrEqual(4); expect(run.checks).toBeLessThanOrEqual(6); } }
@@ -5204,7 +5204,7 @@ test("A1 Unit 8 manually teaches every new travel town and safety target", async
       complete:[concept?.usageUrdu,concept?.usageBoundaryUrdu,concept?.commonConfusionUrdu,concept?.exampleDutch,concept?.exampleUrdu,concept?.pronunciationUrdu].every((value)=>String(value||"").trim())};})),
       patterns:lessons.map((lesson)=>{const pattern=course.patterns.find((candidate)=>candidate.id===lesson.pattern?.id),model=new Set(words(pattern?.modelDutch));return{id:pattern?.id||"",lessonId:lesson.id,
         owned:words(pattern?.highlight).every((word)=>model.has(word)),complete:[pattern?.titleUrdu,pattern?.modelUrdu,pattern?.explanationUrdu,pattern?.contrastUrdu,pattern?.commonMistakeUrdu].every((value)=>/[\u0600-\u06ff]/u.test(String(value||"")))};})};});
-  expect(audit.concepts).toHaveLength(42);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBeTruthy();}
+  expect(audit.concepts).toHaveLength(44);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBeTruthy();}
   expect(audit.patterns).toHaveLength(5);for(const pattern of audit.patterns){expect(pattern.id).not.toBe("");expect(pattern.owned).toBe(true);expect(pattern.complete).toBe(true);}
 });
 
@@ -5250,7 +5250,7 @@ test("A1 Unit 9 Use tasks and doctor mission keep authored provenance", async ({
 
 test("A1 Unit 9 manually teaches every new appointment symptom and medicine target", async ({ page }) => {
   await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((item)=>item.id==="a1-body-health"),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept])),lessons=unit.lessonIds.map((id)=>course.lessons.find((item)=>item.id===id)).filter(Boolean);return{concepts:lessons.flatMap((lesson)=>lesson.newConceptIds.map((id)=>{const concept=conceptById.get(id);return{lessonId:lesson.id,dutch:concept?.dutch,manual:String(concept?.guidanceSource||"").startsWith("a1-authored:"),pronunciation:concept?.pronunciationReview==="a1-authored-manual-v1",complete:[concept?.usageUrdu,concept?.usageBoundaryUrdu,concept?.commonConfusionUrdu,concept?.exampleDutch,concept?.exampleUrdu,concept?.pronunciationUrdu].every((value)=>String(value||"").trim())};})),patterns:lessons.map((lesson)=>course.patterns.find((pattern)=>pattern.id===lesson.pattern?.id)).map((pattern)=>({id:pattern?.id,complete:[pattern?.titleUrdu,pattern?.modelUrdu,pattern?.explanationUrdu,pattern?.contrastUrdu,pattern?.commonMistakeUrdu].every((value)=>/[\u0600-\u06ff]/u.test(String(value||"")))}))};});
-  expect(audit.concepts).toHaveLength(32);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBe(true);}expect(audit.patterns).toHaveLength(4);for(const pattern of audit.patterns){expect(pattern.id).toBeTruthy();expect(pattern.complete).toBe(true);}
+  expect(audit.concepts).toHaveLength(33);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBe(true);}expect(audit.patterns).toHaveLength(4);for(const pattern of audit.patterns){expect(pattern.id).toBeTruthy();expect(pattern.complete).toBe(true);}
 });
 
 test("A1 Unit 9 teaches appointment and medicine documents before checks", async ({ page }) => {
@@ -5279,7 +5279,7 @@ test("A1 Unit 10 Use tasks and school work mission keep authored provenance", as
 
 test("A1 Unit 10 manually teaches every new past message school and work target", async ({ page }) => {
   await openCleanApp(page);const audit=await page.evaluate(()=>{const course=window.NEDERURDU_COURSE,unit=course.units.find((item)=>item.id==="a1-work-school-messages"),conceptById=new Map(course.concepts.map((concept)=>[concept.id,concept])),lessons=unit.lessonIds.map((id)=>course.lessons.find((item)=>item.id===id)).filter(Boolean);return{concepts:lessons.flatMap((lesson)=>lesson.newConceptIds.map((id)=>{const concept=conceptById.get(id);return{lessonId:lesson.id,dutch:concept?.dutch,manual:String(concept?.guidanceSource||"").startsWith("a1-authored:"),pronunciation:concept?.pronunciationReview==="a1-authored-manual-v1",complete:[concept?.usageUrdu,concept?.usageBoundaryUrdu,concept?.commonConfusionUrdu,concept?.exampleDutch,concept?.exampleUrdu,concept?.pronunciationUrdu].every((value)=>String(value||"").trim())};})),patterns:lessons.map((lesson)=>course.patterns.find((pattern)=>pattern.id===lesson.pattern?.id)).map((pattern)=>({id:pattern?.id,complete:[pattern?.titleUrdu,pattern?.modelUrdu,pattern?.explanationUrdu,pattern?.contrastUrdu,pattern?.commonMistakeUrdu].every((value)=>/[\u0600-\u06ff]/u.test(String(value||"")))}))};});
-  expect(audit.concepts).toHaveLength(49);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBe(true);}expect(audit.patterns).toHaveLength(6);for(const pattern of audit.patterns){expect(pattern.id).toBeTruthy();expect(pattern.complete).toBe(true);}
+  expect(audit.concepts).toHaveLength(53);for(const concept of audit.concepts){expect(concept.manual,`${concept.lessonId}: ${concept.dutch}`).toBe(true);expect(concept.pronunciation).toBe(true);expect(concept.complete).toBe(true);}expect(audit.patterns).toHaveLength(6);for(const pattern of audit.patterns){expect(pattern.id).toBeTruthy();expect(pattern.complete).toBe(true);}
 });
 
 test("A1 Unit 10 teaches message notice and roster documents before checks", async ({ page }) => {
