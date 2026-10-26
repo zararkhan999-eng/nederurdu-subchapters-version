@@ -4743,7 +4743,7 @@ test("A1 Unit 6 has five focused lessons and retires the duplicated home path no
     "a1-cleaning-house",
     "a1-house-search-extra"
   ]);
-  expect(audit.conceptCounts).toEqual([10, 8, 9, 7, 10]);
+  expect(audit.conceptCounts).toEqual([9, 8, 9, 7, 10]);
   expect(audit.retiredDuplicatePresent).toBe(false);
   expect(audit.foodStillHidden).toBe(false);
   for (const lesson of audit.lessons) {
@@ -5090,7 +5090,7 @@ test("A1 Unit 7 manually teaches every new shopping and payment target", async (
       })
     };
   });
-  expect(audit.concepts).toHaveLength(57);
+  expect(audit.concepts).toHaveLength(56);
   for (const concept of audit.concepts) { expect(concept.manual, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciation, `${concept.lessonId}: ${concept.dutch}`).toBe(true); expect(concept.complete).toBe(true); }
   expect(audit.patterns).toHaveLength(8);

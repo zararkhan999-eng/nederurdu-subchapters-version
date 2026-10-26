@@ -7370,70 +7370,67 @@ const a1AuthoredCurriculumV4 = {
       }
     },
     "a1-house-food-plurals": {
-      title: "Kamers en dingen in huis",
+      title: "Waar ligt het? Liggen en staan",
       unitLabel: "A1: گھر، پڑوسی، مرمت اور مکان",
-      outcomeUrdu: "گھر کے بنیادی کمرے اور چیزیں پہچاننا، ایک اور کئی چیزوں میں فرق سمجھنا، اور کسی چیز کی جگہ پوچھنا یا بتانا۔",
+      outcomeUrdu: "گھر میں کسی چیز کی جگہ بتانا اور پوچھنا: لیٹی ہوئی چیز کے لیے ligt، کھڑی چیز کے لیے staat، اور er ligt سے بتانا کہ کوئی نئی چیز کہیں موجود ہے۔",
       seedConcepts: [
-        ["het huis", "گھر"],
+        ["het boek ligt op de tafel", "کتاب میز پر پڑی ہے"],
+        ["op de tafel", "میز پر"],
+        ["de boeken liggen in de kamer", "کتابیں کمرے میں پڑی ہیں"],
         ["kamer", "کمرہ"],
-        ["het boek is in de kamer", "کتاب کمرے میں ہے"],
-        ["keuken", "کچن"],
         ["badkamer", "باتھ روم"],
-        ["tafel", "میز"],
-        ["stoel", "کرسی"],
-        ["boek", "کتاب"],
-        ["boeken", "کتابیں"],
-        ["waar is de tas?", "بیگ کہاں ہے؟"]
+        ["keuken", "کچن"],
+        ["de fles staat in de keuken", "بوتل کچن میں رکھی ہے"],
+        ["waar ligt de rijst?", "چاول کہاں رکھے ہیں؟"],
+        ["er ligt een pakket voor u", "آپ کے لیے ایک پارسل رکھا ہے"]
       ],
       teaching: authoredA1TeachingV4([
-        ["het huis", "اپنے یا کسی معلوم گھر کی بات میں het huis استعمال کریں۔", "یہ پورا گھر ہے؛ kamer گھر کے اندر ایک کمرہ ہے۔", "huis کے ساتھ het آتا ہے، de نہیں۔", "Dit is het huis.", "یہ گھر ہے۔", "ہَت ہاؤس"],
-        ["kamer", "گھر کے اندر ایک کمرہ پہچاننے یا بتانے کے لیے kamer کہیں۔", "kamer ایک حصہ ہے؛ پورے گھر کے لیے huis کہیں۔", "اس سبق میں ایک کمرے کے لیے kamer ہے؛ کئی کمروں کی شکل ابھی جواب میں نہ بنائیں۔", "Dit is een kamer.", "یہ ایک کمرہ ہے۔", "کا مَر"],
-        ["het boek is in de kamer", "کتاب کی جگہ ایک مکمل جملے میں بتائیں۔", "in de kamer اندر کی جگہ بتاتا ہے؛ کمرے کی طرف حرکت نہیں۔", "is کو چھوڑ کر صرف het boek in de kamer نہ کہیں؛ مکمل جملے میں is ضروری ہے۔", "Het boek is in de kamer.", "کتاب کمرے میں ہے۔", "ہَت بوک اِس اِن دَ کامَر"],
-        ["keuken", "کھانا بنانے والی جگہ پہچاننے کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "Dit is de keuken.", "یہ کچن ہے۔", "کو کَن"],
-        ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "اسے صرف بیت الخلا کے معنی تک محدود نہ کریں؛ یہ پورا باتھ روم ہے۔", "Dit is de badkamer.", "یہ باتھ روم ہے۔", "بات کا مَر"],
-        ["tafel", "گھر میں میز کی چیز پہچاننے کے لیے tafel کہیں۔", "یہ فرنیچر ہے؛ stoel بیٹھنے کی کرسی ہے۔", "tafel اور stoel کو نہ ملائیں: tafel میز، stoel کرسی ہے۔", "Het boek ligt op de tafel.", "کتاب میز پر ہے۔", "تا فَل"],
-        ["stoel", "بیٹھنے والی کرسی پہچاننے کے لیے stoel کہیں۔", "یہ ایک کرسی ہے؛ میز کے لیے tafel کہیں۔", "stoel کی آواز کے شروع کو سٹول جیسا پڑھیں، سٹیل نہیں۔", "De stoel staat in de kamer.", "کرسی کمرے میں ہے۔", "ستول"],
-        ["boek", "ایک کتاب کی بات میں boek کہیں۔", "یہ ایک چیز ہے؛ boeken ایک سے زیادہ کتابیں ہیں۔", "ایک کتاب کے جواب میں boeken نہ کہیں۔", "Dit is een boek.", "یہ ایک کتاب ہے۔", "بوک"],
-        ["boeken", "ایک سے زیادہ کتابوں کی بات میں boeken کہیں۔", "یہ جمع ہے؛ ایک کتاب کے لیے boek کہیں۔", "آخر کے دو حروف جمع کا حصہ ہیں؛ انہیں چھوڑنے سے معنی ایک کتاب ہو جاتا ہے۔", "Twee boeken.", "دو کتابیں۔", "بو کَن"],
-        ["waar is de tas", "بیگ نہ ملے تو اس کی جگہ پوچھنے کے لیے مکمل سوال کہیں۔", "یہ جگہ پوچھتا ہے؛ بیگ کی ملکیت یا تعداد نہیں۔", "سوال میں waar پہلے اور is اس کے بعد رکھیں۔", "Waar is de tas?", "بیگ کہاں ہے؟", "وار اِس دَ تاس"]
+        ["het boek ligt op de tafel", "گھر میں کوئی چیز ڈھونڈ رہا ہو اور کتاب میز پر لیٹی پڑی ہو تو اس کی جگہ یوں بتائیں۔", "ligt لیٹی یا چپٹی پڑی چیز کے لیے ہے؛ سیدھی کھڑی چیز کے لیے staat آتا ہے۔", "اردو میں ہم بس ہے کہتے ہیں، مگر ڈچ میں کتاب کی جگہ کے لیے ligt زیادہ قدرتی ہے۔", "Het boek ligt op de tafel.", "کتاب میز پر پڑی ہے۔", "ہَت بوک لِخت اوپ دَ تا فَل"],
+        ["de boeken liggen in de kamer", "کئی کتابیں یا کاغذ کسی کمرے میں پڑے ہوں تو یہ کہیں۔", "ایک چیز کے لیے ligt، کئی چیزوں کے لیے liggen۔", "de boeken جمع ہے، اس لیے فعل بھی جمع liggen ہوتا ہے۔", "De boeken liggen in de kamer.", "کتابیں کمرے میں پڑی ہیں۔", "دَ بو کَن لِخ خَن اِن دَ کا مَر"],
+        ["badkamer", "نہانے یا غسل خانے والی جگہ کے لیے badkamer کہیں۔", "یہ مخصوص کمرہ ہے؛ عام kamer سے زیادہ واضح ہے۔", "اسے صرف بیت الخلا کے معنی تک محدود نہ کریں؛ یہ پورا باتھ روم ہے۔", "badkamer — kamer", "باتھ روم — کمرہ۔", "بات کا مَر"],
+        ["keuken", "کھانا بنانے والی جگہ کے لیے keuken کہیں۔", "یہ گھر کی جگہ ہے؛ کھانے کی چیز کا نام نہیں۔", "keuken کو kamer کے عمومی معنی کے بدلے ہر کمرے کے لیے استعمال نہ کریں۔", "keuken — badkamer", "کچن — باتھ روم۔", "کو کَن"],
+        ["de fles staat in de keuken", "بوتل، گلاس، یا ڈبہ جیسی سیدھی کھڑی چیز کی جگہ بتانی ہو تو staat کہیں۔", "staat کھڑی چیز کے لیے ہے؛ لیٹی ہوئی کتاب کے لیے ligt۔", "بوتل لیٹی نہ ہو تو اس کے لیے ligt نہ کہیں؛ کھڑی بوتل staat۔", "De fles staat in de keuken.", "بوتل کچن میں رکھی ہے۔", "دَ فلَس ستات اِن دَ کو کَن"],
+        ["waar ligt de rijst", "دکان یا کسی کے کچن میں چاول نہ ملیں تو ان کی جگہ پوچھنے کے لیے یہ کہیں۔", "یہ جگہ پوچھتا ہے؛ قیمت پوچھنے کے لیے hoeveel آتا ہے۔", "سوال میں ligt فوراً waar کے بعد آتا ہے: waar ligt de rijst?", "Waar ligt de rijst?", "چاول کہاں رکھے ہیں؟", "وار لِخت دَ رَیسٹ"],
+        ["er ligt een pakket voor u", "پڑوسی یا دفتر بتائے کہ آپ کا ایک پارسل آیا ہوا ہے تو یہ جملہ سنائی دیتا ہے۔", "er ligt کسی نئی چیز کی موجودگی بتاتا ہے؛ معلوم چیز کی جگہ کے لیے het boek ligt op de tafel جیسا جملہ آتا ہے۔", "er سے شروع ہو تو فعل ligt دوسرے نمبر پر اور چیز اس کے بعد آتی ہے۔", "Er ligt een pakket voor u.", "آپ کے لیے ایک پارسل رکھا ہے۔", "اَیر لِخت اَن پا کَت فور اُو"]
       ]),
       pattern: {
-        modelDutch: "het boek is in de kamer",
-        titleUrdu: "چیز کی جگہ بتانے والا مکمل جملہ",
-        highlight: "het boek is in de kamer",
-        explanationUrdu: "پہلے چیز، پھر is، اور آخر میں جگہ رکھیں: het boek is in de kamer۔",
-        contrastUrdu: "waar is de tas? جگہ پوچھتا ہے؛ het boek is in de kamer جگہ کا جواب دیتا ہے۔",
-        commonMistakeUrdu: "is کو نہ چھوڑیں؛ صرف het boek in de kamer مکمل ڈچ جملہ نہیں۔",
+        modelDutch: "het boek ligt op de tafel",
+        titleUrdu: "چیز کہاں ہے: ligt یا staat",
+        highlight: "ligt op de tafel",
+        explanationUrdu: "ڈچ میں کسی چیز کی جگہ بتاتے وقت اکثر is کی جگہ ligt یا staat آتا ہے۔ جو چیز لیٹی یا چپٹی پڑی ہو، جیسے کتاب یا پارسل، اس کے لیے ligt: het boek ligt op de tafel۔ جو چیز سیدھی کھڑی ہو، جیسے بوتل، اس کے لیے staat: de fles staat in de keuken۔ کئی چیزوں کے لیے جمع liggen: de boeken liggen in de kamer۔",
+        contrastUrdu: "اردو میں دونوں کے لیے بس ہے کہتے ہیں؛ ڈچ میں چیز کی شکل سے فعل چنا جاتا ہے۔ سوال میں بھی یہی: waar ligt de rijst? کوئی نئی چیز پہلی بار بتانی ہو تو er سے شروع کریں: er ligt een pakket voor u۔",
+        commonMistakeUrdu: "بوتل کے لیے ligt یا کتاب کے لیے staat نہ کہیں، اور کئی چیزوں کے ساتھ ligt نہیں بلکہ liggen رکھیں۔",
         drills: [
-          pickDrillV4("de tafel is in de keuken", ["de tafel in de keuken", "de tafel in de keuken is"], "میز کچن میں ہے", {"de tafel in de keuken": "مکمل جملے میں is ضروری ہے۔", "de tafel in de keuken is": "is دوسرے نمبر پر آتا ہے، آخر میں نہیں۔"}),
-          pickDrillV4("waar is de stoel?", ["waar de stoel is?", "de stoel waar is?"], "کرسی کہاں ہے؟", {"waar de stoel is?": "سوال میں is فوراً waar کے بعد آتا ہے۔", "de stoel waar is?": "سوال waar سے شروع ہوتا ہے۔"}),
-          pickDrillV4("het boek is in de badkamer", ["het boek in de badkamer is", "het boek is de badkamer in"], "کتاب باتھ روم میں ہے", {"het boek in de badkamer is": "is دوسرے نمبر پر آتا ہے۔", "het boek is de badkamer in": "جگہ کا لفظ in جگہ سے پہلے آتا ہے: in de badkamer۔"}),
-          gapDrillV4("twee ___", "boeken", ["boek", "tafel"], "دو کتابیں", {"boek": "ایک سے زیادہ کے لیے جمع شکل boeken آتی ہے۔", "tafel": "tafel کا مطلب میز ہے؛ یہاں کتابیں ہیں۔"}),
-          pickDrillV4("waar is de tas?", ["waar de tas is?", "de tas is waar?"], "بیگ کہاں ہے؟", {"waar de tas is?": "سوال میں is فوراً waar کے بعد آتا ہے۔", "de tas is waar?": "سوال waar سے شروع ہوتا ہے۔"})
+          gapDrillV4("het boek ___ op de tafel", "ligt", ["staat", "liggen"], "کتاب میز پر پڑی ہے", {"staat": "کتاب لیٹی پڑی ہے؛ اس کے لیے ligt۔", "liggen": "ایک کتاب ہے؛ جمع liggen کئی چیزوں کے لیے ہے۔"}),
+          gapDrillV4("de fles ___ in de keuken", "staat", ["ligt", "liggen"], "بوتل کچن میں رکھی ہے", {"ligt": "بوتل سیدھی کھڑی ہے؛ اس کے لیے staat۔", "liggen": "liggen کئی لیٹی چیزوں کے لیے ہے؛ یہاں ایک کھڑی بوتل ہے۔"}),
+          pickDrillV4("de boeken liggen in de kamer", ["de boeken ligt in de kamer", "de boeken staat in de kamer"], "کتابیں کمرے میں پڑی ہیں", {"de boeken ligt in de kamer": "کئی کتابیں ہیں؛ فعل جمع liggen۔", "de boeken staat in de kamer": "کتابیں لیٹی پڑی ہیں، اور جمع ہیں: liggen۔"}),
+          pickDrillV4("waar ligt de rijst?", ["waar de rijst ligt?", "de rijst ligt waar?"], "چاول کہاں رکھے ہیں؟", {"waar de rijst ligt?": "سوال میں ligt فوراً waar کے بعد آتا ہے۔", "de rijst ligt waar?": "سوال waar سے شروع ہوتا ہے۔"}),
+          pickDrillV4("er ligt een pakket voor u", ["er een pakket ligt voor u", "een pakket er ligt voor u"], "آپ کے لیے ایک پارسل رکھا ہے", {"er een pakket ligt voor u": "er کے فوراً بعد فعل ligt آتا ہے۔", "een pakket er ligt voor u": "جملہ er سے شروع ہوتا ہے، پھر ligt۔"})
         ]
       },
-      prerequisiteLessonIds: ["a0-een-de-het", "a0-numbers-0-10", "a0-dit-dat-questions", "a0-place-1", "a0-home-needs"],
+      prerequisiteLessonIds: ["a0-sounds-consonants", "a0-een-de-het", "a0-dit-dat-questions", "a0-place-1", "a0-plurals-er-is", "a0-daily-actions", "a0-home-needs"],
       prerequisiteRefs: [
-        ["a0-een-de-het", "het huis"],
-        ["a0-een-de-het", "de man"],
-        ["a0-numbers-0-10", "twee boeken"],
-        ["a0-numbers-0-10", "twee"],
+        ["a0-sounds-consonants", "fles"],
+        ["a0-sounds-consonants", "rijst"],
+        ["a0-een-de-het", "het boek"],
         ["a0-dit-dat-questions", "waar"],
-        ["a0-dit-dat-questions", "dit is een boek"],
+        ["a0-place-1", "op de tafel"],
         ["a0-place-1", "in het huis"],
+        ["a0-plurals-er-is", "de boeken"],
+        ["a0-plurals-er-is", "er is een stoel"],
+        ["a0-daily-actions", "staan"],
         ["a0-home-needs", "kamer"]
       ],
       scenarios: {
-        "het huis": ["home-recognise-house", "تصویر میں پورا گھر پہچانیں، اندر کا ایک کمرہ نہیں۔"],
-        kamer: ["home-recognise-room", "گھر کے نقشے میں ایک کمرہ نشان زد ہے۔ درست لفظ چنیں۔"],
-        "het boek is in de kamer": ["home-locate-book", "کتاب سونے والے کمرے میں رکھی ہے۔ مکمل جگہ والا جملہ کہیں۔"],
-        keuken: ["home-recognise-kitchen", "گھر کے نقشے میں کھانا بنانے والی جگہ پہچانیں۔"],
+        "het boek ligt op de tafel": ["home-book-on-table", "آپ کا بیٹا اپنی کتاب ڈھونڈ رہا ہے اور وہ میز پر پڑی ہے۔ اسے کتاب کی جگہ بتائیں۔"],
+        "op de tafel": ["home-review-on-table", "گھر والا پوچھتا ہے کہ چابی کہاں رکھی ہے۔ میز پر بتائیں۔"],
+        "de boeken liggen in de kamer": ["home-books-in-room", "مہمان پوچھتا ہے کہ بچوں کی کتابیں کہاں ہیں۔ بتائیں کہ وہ کمرے میں پڑی ہیں۔"],
+        kamer: ["home-review-room", "گھر کے نقشے میں ایک کمرہ نشان زد ہے۔ درست لفظ چنیں۔"],
         badkamer: ["home-recognise-bathroom", "گھر کے نقشے میں نہانے والی جگہ پہچانیں۔"],
-        tafel: ["home-recognise-table", "کتاب جس میز پر ہے اس چیز کا درست لفظ چنیں۔"],
-        stoel: ["home-recognise-chair", "بیٹھنے والی چیز کا درست ڈچ لفظ چنیں۔"],
-        boek: ["home-one-book", "تصویر میں ایک کتاب ہے۔ ایک والی شکل چنیں۔"],
-        boeken: ["home-many-books", "تصویر میں دو کتابیں ہیں۔ جمع والی شکل چنیں۔"],
-        "waar is de tas": ["home-ask-bag-location", "بیگ نظر نہیں آ رہا۔ اس کی جگہ مکمل سوال میں پوچھیں۔"]
+        keuken: ["home-recognise-kitchen", "گھر کے نقشے میں کھانا بنانے والی جگہ پہچانیں۔"],
+        "de fles staat in de keuken": ["home-bottle-in-kitchen", "گھر والا پانی کی بوتل ڈھونڈ رہا ہے۔ بتائیں کہ وہ کچن میں رکھی ہے۔"],
+        "waar ligt de rijst": ["home-ask-rice-location", "دوست کے کچن میں کھانا بنانے میں مدد کر رہے ہیں۔ پوچھیں کہ چاول کہاں رکھے ہیں۔"],
+        "er ligt een pakket voor u": ["home-parcel-waiting", "پڑوسی دروازے پر آ کر بتاتا ہے کہ اس کے گھر آپ کا پارسل رکھا ہے۔ اس کی بات سمجھیں۔"]
       }
     },
     "a1-neighbour-talk": {
@@ -7559,7 +7556,7 @@ const a1AuthoredCurriculumV4 = {
       ],
       teaching: authoredA1TeachingV4([
         ["schoonmaken", "کمرہ، کچن، یا گھر صاف کرنے کے عمل کے لیے schoonmaken کہیں۔", "یہ کام کا نام ہے؛ صاف ہونا ایک حالت ہے۔", "صفائی کے عمل اور صاف حالت کو ایک ہی جگہ استعمال نہ کریں۔", "Vandaag schoonmaken.", "آج صفائی کرنا۔", "سخون ما کَن"],
-        ["was", "دھونے والے کپڑوں یا کپڑے دھونے کے کام کے لیے de was کہیں۔", "یہ کپڑوں کی دھلائی ہے؛ گھر کی عمومی صفائی نہیں۔", "was کو ماضی والے فعل کے طور پر نہ پڑھیں؛ اس صورت حال میں دھلائی مراد ہے۔", "De was.", "کپڑوں کی دھلائی۔", "واس"],
+        ["was", "دھونے والے کپڑوں یا کپڑے دھونے کے کام کے لیے de was کہیں۔", "یہ کپڑوں کی دھلائی ہے؛ گھر کی عمومی صفائی نہیں۔", "یہاں de was اسم ہے: دھونے والے کپڑے۔ آگے پیغام والے حصے میں یہی لفظ was فعل بن کر آئے گا، جس کا مطلب تھا یا تھی ہے۔ پہچان: de کے ساتھ was ہمیشہ کپڑوں کی دھلائی ہے۔", "De was.", "کپڑوں کی دھلائی۔", "واس"],
         ["ik moet de kamer schoonmaken", "کمرہ صاف کرنا ضروری ہو تو اپنی ذمہ داری مکمل جملے میں کہیں۔", "moet ضرورت بتاتا ہے؛ کام مکمل ہو چکا ہو یہ نہیں کہتا۔", "schoonmaken کو آخر میں رکھیں؛ ik moet schoonmaken de kamer نہ کہیں۔", "Ik moet de kamer schoonmaken.", "مجھے کمرہ صاف کرنا ہے۔", "اِک موت دَ کا مَر سخون ما کَن"],
         ["stofzuiger", "فرش صاف کرنے والی ویکیوم مشین کے لیے stofzuiger کہیں۔", "یہ صفائی کا آلہ ہے؛ schoonmaken پورا کام ہے۔", "stofzuiger کو جھاڑو یا کپڑے دھونے کے آلے کے معنی میں نہ لیں۔", "De stofzuiger.", "ویکیوم مشین۔", "ستوف زاؤ خَر"],
         ["ik doe vandaag de was", "آج کپڑے دھونے کا منصوبہ یا کام بتانے کے لیے یہ مکمل جملہ کہیں۔", "یہ آج کا دھلائی کام ہے؛ کمرہ صاف کرنے کی بات الگ ہے۔", "vandaag کو doe اور de was کے درمیان رکھیں۔", "Ik doe vandaag de was.", "میں آج کپڑے دھوتا یا دھوتی ہوں۔", "اِک دو فان داخ دَ واس"],
@@ -7644,7 +7641,7 @@ const a1AuthoredCurriculumV4 = {
         ["a0-time-days", "maandag"],
         ["a0-numbers-0-10", "vier euro"],
         ["a1-house-food-plurals", "kamer"],
-        ["a1-house-food-plurals", "het huis"],
+        ["a0-een-de-het", "het huis"],
         ["a1-appointments", "heeft u vandaag tijd?"]
       ],
       scenarios: {
@@ -7885,7 +7882,7 @@ const a1AuthoredCurriculumV4 = {
         ["vandaag is het gesloten","آج جگہ بند ہو تو مکمل اطلاع سمجھیں یا دیں۔","gesloten بند ہے؛ open کھلا ہے۔","vandaag کے بعد is het رکھیں۔","Vandaag is het gesloten.","آج یہ بند ہے۔","فان داخ اِس ہَت خَ سلو تَن"]
       ]),
       pattern:{modelDutch:"ik wil Nederlands leren",titleUrdu:"سیکھنے کا مقصد بتانا",highlight:"ik wil Nederlands leren",explanationUrdu:"زبان سیکھنے کا مقصد بتانے کے لیے ik wil کے بعد زبان اور آخر میں leren رکھیں۔",contrastUrdu:"ik wil Nederlands leren مقصد ہے؛ heeft u taalles? کلاس کی دستیابی پوچھتا ہے۔",commonMistakeUrdu:"leren کو زبان سے پہلے نہ رکھیں؛ اس سیدھے جملے میں یہ آخر میں آتا ہے۔"},
-      prerequisiteLessonIds:["a1-house-food-plurals","a0-time-days","a1-questions","a1-directions-town"],prerequisiteRefs:[["a1-house-food-plurals","boek"],["a0-time-days","vandaag"],["a1-questions","waar is het toilet?"],["a1-directions-town","dichtbij"]],
+      prerequisiteLessonIds:["a1-house-food-plurals","a0-een-de-het","a0-time-days","a1-questions","a1-directions-town"],prerequisiteRefs:[["a1-house-food-plurals","het boek ligt op de tafel"],["a0-een-de-het","het boek"],["a0-time-days","vandaag"],["a1-questions","waar is het toilet?"],["a1-directions-town","dichtbij"]],
       scenarios:{bibliotheek:["library-recognise-place","کتابوں کی عوامی جگہ پہچانیں۔"],"ik wil nederlands leren":["library-state-goal","زبان سیکھنے کا مقصد بتائیں۔"],buurthuis:["library-recognise-centre","محلے کا مرکز پہچانیں۔"],taalles:["library-recognise-class","زبان کی کلاس پہچانیں۔"],"heeft u taalles":["library-ask-class","زبان کی کلاس کی دستیابی پوچھیں۔"],"ik wil lid worden":["library-request-membership","رکن بننے کا مقصد کہیں۔"],"hoe laat is het open":["library-ask-hours","کھلنے کا وقت پوچھیں۔"],"vandaag is het gesloten":["library-read-closed","آج بند ہونے کی اطلاع سمجھیں۔"]},
       document:{stableId:"library-hours-card",sourceKey:"library-hours-card",documentKind:"opening-hours-card",targetDutch:"hoe laat is het open?",title:"bibliotheek",labelUrdu:"لائبریری کے اوقات پڑھیں",promptUrdu:"کارڈ میں bibliotheek اور open دیکھیں، پھر کھلنے کا وقت پوچھنے والے مکمل سوال کا درست مطلب منتخب کریں۔",instructionUrdu:"اوقات کارڈ میں vandaag، open، اور gesloten الگ دیکھیں، پھر مناسب سیکھی ہوئی سوال چنیں۔",correctUrdu:"درست۔ hoe laat is het open? کھلنے کا وقت پوچھتا ہے۔",wrongUrdu:"یہ دوسری ادارے کی بات ہے۔ hoe laat گھڑی کا وقت پوچھتا ہے۔",rows:[{label:"bibliotheek",value:"bibliotheek"},{label:"open",value:"hoe laat is het open?"},{label:"gesloten",value:"vandaag is het gesloten"}]}
     },
@@ -8302,7 +8299,7 @@ const a1AuthoredCurriculumV4 = {
         "مکان کا اشتہار پڑھیں، کرایہ اور دستیابی سمجھیں، اور گھر دیکھنے کی گفتگو مکمل کریں"
       ],
       targets: [
-        { lessonId: "a1-house-food-plurals", dutch: "het boek is in de kamer", patternLessonId: "a1-house-food-plurals" },
+        { lessonId: "a1-house-food-plurals", dutch: "het boek ligt op de tafel", patternLessonId: "a1-house-food-plurals" },
         { lessonId: "a1-neighbour-talk", dutch: "kunt u zachter zijn?", patternLessonId: "a1-neighbour-talk" },
         { lessonId: "a1-home-repairs", dutch: "kunt u iemand sturen?", patternLessonId: "a1-home-repairs" },
         { lessonId: "a1-cleaning-house", dutch: "ik moet de kamer schoonmaken", patternLessonId: "a1-cleaning-house" },
@@ -14246,10 +14243,10 @@ const listenReplyCuesV4 = {
     ["kunt u maandag komen?", "کیا آپ پیر کو آ سکتے ہیں؟", "ik kan maandag niet komen", "hoe laat is de afspraak?", "ik wil een afspraak maken"]
   ],
   "a1-house-food-plurals": [
-    ["waar is het boek?", "کتاب کہاں ہے؟", "het boek is in de kamer", "ik heb twee kinderen", "om acht uur"]
+    ["waar ligt het boek?", "کتاب کہاں ہے؟", "het boek ligt op de tafel", "ik heb twee kinderen", "om acht uur"]
   ],
   "a1-neighbour-talk": [
-    ["wat is er?", "کیا بات ہے؟", "ik heb last van lawaai", "het boek is in de kamer", "om acht uur"]
+    ["wat is er?", "کیا بات ہے؟", "ik heb last van lawaai", "het boek ligt op de tafel", "om acht uur"]
   ],
   "a1-home-repairs": [
     ["wat is er kapot?", "کیا خراب ہے؟", "de verwarming doet het niet", "warm water", "monteur"],
@@ -18143,7 +18140,7 @@ const missionRolePlaysV4 = {
       ["other", "goedemiddag, kan ik u helpen?", "دوپہر بخیر، کیا میں آپ کی مدد کر سکتا ہوں؟"],
       ["you", "ik zoek een woning", ["de badkamer is vies", "ik heb last van lawaai"]],
       ["other", "de woning heeft twee kamers.", "مکان میں دو کمرے ہیں۔"],
-      ["you", "hoeveel is de huur?", ["het boek is in de kamer", "kunt u zachter zijn?"], "کرایہ پوچھیں۔"],
+      ["you", "hoeveel is de huur?", ["het boek ligt op de tafel", "kunt u zachter zijn?"], "کرایہ پوچھیں۔"],
       ["other", "de woning heeft een keuken.", "مکان میں ایک باورچی خانہ ہے۔"],
       ["you", "kan ik de woning bekijken?", ["de keuken is schoon", "er ligt een pakket voor u"], "مکان دیکھنے کی اجازت مانگیں۔"]
     ]
