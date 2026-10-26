@@ -3781,7 +3781,7 @@ test("A1 Unit 3 has four focused lessons with capped complete learning runs", as
     "a1-calendar-time",
     "a1-weather-clothes"
   ]);
-  expect(audit.conceptCounts).toEqual([5, 10, 6, 5]);
+  expect(audit.conceptCounts).toEqual([11, 13, 6, 5]);
   for (const lesson of audit.lessons) {
     expect(lesson.unitLabel, lesson.id).toBe("A1: روزمرہ معمول");
     expect(lesson.outcomeUrdu, lesson.id).toMatch(/[\u0600-\u06ff]/u);
@@ -3900,7 +3900,7 @@ test("A1 Unit 3 teaching and patterns explain time order routine and weather", a
     };
   });
 
-  expect(audit.concepts.length).toBe(22);
+  expect(audit.concepts.length).toBe(27);
   for (const concept of audit.concepts) {
     expect(concept.manualSource, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
     expect(concept.pronunciationReviewed, `${concept.lessonId}: ${concept.dutch}`).toBe(true);
@@ -3911,8 +3911,11 @@ test("A1 Unit 3 teaching and patterns explain time order routine and weather", a
     expect(pattern.highlightOwned, pattern.lessonId).toBe(true);
     expect(pattern.completeUrduTeaching, pattern.lessonId).toBe(true);
   }
+  // Repurposed (grammar spine §6.2): stem spelling builds on the A0 pen/peen lesson.
   expect(audit.patterns.find((item) => item.lessonId === "a1-present-time")?.contrast)
-    .toContain("ik werk vandaag");
+    .toContain("pen");
+  expect(audit.patterns.find((item) => item.lessonId === "a1-daily-routine")?.contrast)
+    .toContain("sta op");
   expect(audit.patterns.find((item) => item.lessonId === "a1-daily-routine")?.contrast)
     .toContain("opstaan");
   expect(audit.patterns.find((item) => item.lessonId === "a1-calendar-time")?.contrast)
@@ -3987,8 +3990,8 @@ test("A1 Unit 3 teaches the schedule message before checking document reading", 
   });
   expect(audit.selectedDocuments[0].rows).toEqual([
     { label: "ik kom op maandag", value: "09:00" },
-    { label: "ik ben op tijd", value: "09:00" },
-    { label: "sorry ik ben te laat", value: "09:15" }
+    { label: "op tijd", value: "09:00" },
+    { label: "ik ben te laat", value: "09:15" }
   ]);
   expect(audit.runFormatFailures).toEqual([]);
   expect(audit.missionFormatFailures).toEqual([]);
