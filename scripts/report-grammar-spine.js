@@ -45,7 +45,8 @@ const features = [
   { id: "perfect", label: "perfect tense (heb/ben + participle)", owner: "a1-perfect-intro",
     test: (text) => /\b(?:heb|hebt|heeft|hebben|ben|bent|is|zijn)\b/.test(text) && participles.test(text) && !adjectivalParticiples.test(text) },
   { id: "simple-past", label: "simple past was/had/ging", owner: "a1-past-was-had",
-    test: (text) => /\b(?:was|waren|had|hadden|ging|gingen)\b/.test(text) && !/\bde was\b/.test(text) },
+    // "de was" and a bare "was" are the noun laundry, not the past of zijn.
+    test: (text) => /\b(?:was|waren|had|hadden|ging|gingen)\b/.test(text) && !/\bde was\b/.test(text) && text !== "was" },
   { id: "omdat-dat", label: "subordinate omdat / dat (verb last)", owner: "a2-reasons-omdat-dat",
     test: (text) => /\bomdat\b/.test(text) || /\b(?:denk|denkt|zegt|zeggen|weet|wil|wilt|hoop|vind|vindt|gezegd)\b.*\bdat\b/.test(text) },
   { id: "als", label: "subordinate als (if/when)", owner: "a2-strong-combined",
