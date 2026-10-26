@@ -12575,10 +12575,10 @@ for (const concept of conceptByIdV4.values()) {
   concept.learningMode = "practical chunk";
 }
 
-// Grammar spine (docs/a1-a2-grammar-spine-followup.md §3.1, §3.3): phrases
-// that use a modal verb or the perfect before the lesson that teaches it are
-// taught whole. a1-modal-verbs and a1-perfect-intro own the grammar; their
-// own concepts stay unmarked.
+// Grammar spine (docs/a1-a2-grammar-spine-followup.md §3.1–§3.5): phrases
+// that use a modal verb, the perfect, a separable verb, the imperative or a
+// comparative before the lesson that teaches it are taught whole. The owner
+// lessons teach the rule; their own concepts stay unmarked.
 const grammarSpineChunksV4 = {
   "a1-modal-verbs": new Set([
     "kunt u herhalen", "kunt u mij helpen", "kunt u dat herhalen",
@@ -12591,6 +12591,20 @@ const grammarSpineChunksV4 = {
   "a1-perfect-intro": new Set([
     "het probleem is opgelost", "ik heb nog niets gekregen",
     "het pakket is nog niet gekomen", "op welk adres is het bezorgd"
+  ]),
+  // §3.2: a1-daily-routine teaches the general separable rule.
+  "a1-daily-routine": new Set([
+    "schrijf het op", "ophalen", "ik haal mijn kind om drie uur op",
+    "ik haal mijn kind om vijf uur op", "eten mee", "mijn kind heeft eten mee"
+  ]),
+  // §3.5: a1-directions-town teaches the imperative and its polite u form.
+  "a1-directions-town": new Set([
+    "schrijf het op", "doe de deur dicht", "bel de politie", "stop",
+    "sta op", "neem een paraplu mee", "bel mij morgen", "spreek een bericht in"
+  ]),
+  // §5: a1-comparatives teaches -er; earlier requests are fixed phrases.
+  "a1-comparatives": new Set([
+    "langzamer alstublieft", "kunt u later terugbellen", "kunt u zachter zijn"
   ])
 };
 const grammarSpineLessonOrderV4 = new Map(chaptersV4

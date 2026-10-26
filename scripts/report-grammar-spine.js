@@ -41,7 +41,8 @@ const features = [
   { id: "modal-past", label: "past of modals (moest, kon, wilde)", owner: "a2-school-absence-notice",
     test: (text) => /\b(?:moest|moesten|kon|konden|wilde|wilden|mocht|mochten)\b/.test(text) },
   { id: "separable", label: "separable verbs", owner: "a1-daily-routine",
-    test: (text) => separableVerb.test(text) || /\b(?:op|mee|terug|af|uit|aan)$/.test(text) || /\bvul\b.*\bin$/.test(text) },
+    // A particle at the end of a sentence, not a lone preposition ("op" = on).
+    test: (text) => separableVerb.test(text) || /\s(?:op|mee|terug|af|uit|aan)$/.test(text) || /\bvul\b.*\bin$/.test(text) },
   { id: "perfect", label: "perfect tense (heb/ben + participle)", owner: "a1-perfect-intro",
     test: (text) => /\b(?:heb|hebt|heeft|hebben|ben|bent|is|zijn)\b/.test(text) && participles.test(text) && !adjectivalParticiples.test(text) },
   { id: "simple-past", label: "simple past was/had/ging", owner: "a1-past-was-had",
