@@ -45,7 +45,7 @@ LETTER_NAMES = {
     "a": "aa", "b": "bee", "c": "cee", "d": "dee", "e": "ee", "f": "ef", "g": "gee", "h": "haa",
     "i": "ie", "j": "jee", "k": "kaa", "l": "el", "m": "em", "n": "en", "o": "oo", "p": "pee",
     "q": "kuu", "r": "er", "s": "es", "t": "tee", "u": "uu", "v": "vee", "w": "wee", "x": "iks",
-    "y": "griekse ij", "z": "zet",
+    "y": "griekse ij", "z": "zet", "ij": "lange ij",
 }
 HOURS = ["twaalf", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien", "elf",
          "twaalf", "dertien", "veertien", "vijftien", "zestien", "zeventien", "achttien", "negentien",
@@ -71,7 +71,8 @@ def prepare(text, overrides):
     """Turn the text the app shows into the text the voice should read."""
     if text in overrides:
         return overrides[text]
-    if len(text) == 1 and text.lower() in LETTER_NAMES:
+    # A lone letter is read as its Dutch name; ij counts as one letter.
+    if (len(text) == 1 or text.lower() == "ij") and text.lower() in LETTER_NAMES:
         return LETTER_NAMES[text.lower()]
     spoken = re.sub(r"^letter ([a-z])$", lambda m: f"letter {LETTER_NAMES[m[1]]}", text)
     # Arrows become pauses: "a → appel" -> "aa, appel", "links ←, rechts →" -> "links, rechts".

@@ -167,12 +167,23 @@ variant's semantic IDs unchanged, and introduces no surprise format or phrase.
 
 ### A0 — Understand and survive
 
-Start with greetings, help phrases, yes/no, essential sounds, and immediately
-useful chunks. Continue through identity, pronouns, being and having, numbers,
-time, address, family, home, food, shopping, transport, health, school, work,
-and safety. Teach sound, meaning, and context before spelling or grammar labels.
-Keep sentences short and concrete, never require free typing, and end every unit
-with a small mission that uses taught material only.
+Assume the learner may not read Latin script. Start with one short survival
+lesson of immediately useful chunks: greetings, thanks, please, and sorry. Then
+teach the full Dutch alphabet, giving every letter its shape, its Dutch letter
+name, and its sound, followed by short and long vowels and the common letter
+groups (such as aa, oo, oe, eu, ui, ei/ij, uu, ch, and sch). Next come pronouns
+and first nouns with een, de, and het. Then build the sentence engine in this
+order: zijn, hebben, niet and geen, regular verb endings, and question word
+order. Use that engine for about me and help (name, country, family, “I do not
+understand,” “please repeat”), then numbers and time, and then the survival
+topics: address and appointments, home, food, shopping, transport, health and
+emergencies, school, work, weather, and safety. Teach sound, meaning, and context
+before spelling or grammar labels. Modal and separable verbs may appear only as
+fixed survival chunks (kunt u, ik wil, mag ik, ik haal … op). Adjective endings,
+comparatives, the past tense (was, had, ging), reflexive verbs (ik voel me),
+object pronouns, and gaan + infinitive belong to A1. Keep sentences short and
+concrete, never require free typing, and end every unit with a small mission
+that uses taught material only.
 
 ### A1 — Communicate in everyday life
 
