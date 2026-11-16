@@ -523,8 +523,9 @@ function loadProgress() {
 }
 
 // Lessons that moved to another chapter get a new id (the id prefix names the
-// chapter). Saved progress under the old id is carried over on load. Skills
-// are keyed by Dutch and need no change. Running it again changes nothing.
+// chapter). A lesson merged into another maps to the lesson it joins. Saved
+// progress under the old id is carried over on load. Skills are keyed by
+// Dutch and need no change. Running it again changes nothing.
 // A function, not a const: loadProgress() runs before this point in the file.
 function renamedLessonIds() {
   return {
@@ -533,7 +534,9 @@ function renamedLessonIds() {
     "a0-past-was-had": "a1-past-was-had",
     "a0-feelings-reflexive": "a1-feelings-reflexive",
     "a0-object-pronouns": "a1-object-pronouns",
-    "a0-future-gaan": "a1-future-gaan"
+    "a0-future-gaan": "a1-future-gaan",
+    "a1-polite-chunks": "a1-object-pronouns",
+    "a1-greetings-personal-info": "a1-details-forms"
   };
 }
 
@@ -1523,7 +1526,7 @@ function getSubchapterForLesson(chapter, lessonId) {
     return {
       id: `${chapter.id}-chapter-completion`,
       title: `${chapter.id.toUpperCase()} آخری عملی جانچ`,
-      goal: "نو حصوں کی پہلے سیکھی ہوئی باتیں ایک مسلسل روزمرہ مشن میں استعمال کریں۔",
+      goal: "تمام حصوں کی پہلے سیکھی ہوئی باتیں ایک مسلسل روزمرہ مشن میں استعمال کریں۔",
       practice: "تمام یونٹ مشن مکمل ہونے کے بعد معنی، سننا، پڑھنا، بولنے کی مدد، اور عملی استعمال جانچیں۔"
     };
   }
