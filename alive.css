@@ -1,0 +1,92 @@
+/* Alive: the drifting backdrop and tap ripples from flow.js, and the roaming Pim from buddy.js.
+   Endless loops run only when NU.motion's level is "full" (html[data-nu-live=full]); the lesson
+   screen hides the backdrop so the reading surface stays still. */
+
+/* ---- Backdrop -------------------------------------------------------------- */
+.nu-ambient{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#fffdf9;contain:strict;transition:opacity .45s,visibility 0s}
+body:not([data-screen=lesson]) #app.app-shell{background:transparent}
+body[data-screen=lesson] .nu-ambient{opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+body[data-screen=lesson] .nu-ambient *,html.effects-paused .nu-ambient *{animation-play-state:paused!important}
+
+.fl-blob{position:absolute;width:86vmax;height:86vmax;border-radius:50%;background:radial-gradient(circle,currentColor 0,transparent 66%);opacity:.75;transition:transform 1.5s cubic-bezier(.22,1,.36,1),color 1.2s ease}
+.fl-blob-1{left:-34vmax;top:-40vmax;color:#ffe2c4}
+.fl-blob-2{right:-44vmax;top:18%;color:#dce7ff}
+.fl-blob-3{left:-30vmax;bottom:-48vmax;color:#ddf5e2}
+body[data-screen=journey] .fl-blob-1{color:#d6e4ff;transform:translate(46vw,10vh) scale(1.1)}
+body[data-screen=journey] .fl-blob-2{color:#ffe7cc;transform:translate(-56vw,26vh)}
+body[data-screen=journey] .fl-blob-3{color:#d9f5df;transform:translate(34vw,-8vh) scale(1.15)}
+body[data-screen=practice] .fl-blob-1{color:#d9f5df;transform:translate(10vw,18vh) scale(1.2)}
+body[data-screen=practice] .fl-blob-2{color:#fff0c2;transform:translate(-20vw,-30vh)}
+body[data-screen=practice] .fl-blob-3{color:#dce7ff;transform:translate(52vw,-6vh)}
+body:is([data-screen=toolkit],[data-screen=letters]) .fl-blob-1{color:#e9defF;transform:translate(52vw,4vh)}
+body:is([data-screen=toolkit],[data-screen=letters]) .fl-blob-2{color:#ffd9ea;transform:translate(-62vw,34vh) scale(1.1)}
+body:is([data-screen=toolkit],[data-screen=letters]) .fl-blob-3{color:#dce7ff;transform:translate(8vw,-14vh)}
+body:is([data-screen=settings],[data-screen=passport]) .fl-blob-1{color:#fff0c2;transform:translate(20vw,30vh) scale(1.15)}
+body:is([data-screen=settings],[data-screen=passport]) .fl-blob-2{color:#ffe2c4;transform:translate(-30vw,-34vh)}
+body:is([data-screen=settings],[data-screen=passport]) .fl-blob-3{color:#e9deff;transform:translate(48vw,-20vh)}
+body:is([data-screen=complete],[data-screen=preview]) .fl-blob-1{color:#ffe9a8;transform:translate(30vw,22vh) scale(1.3)}
+body:is([data-screen=complete],[data-screen=preview]) .fl-blob-2{color:#ffd9c2;transform:translate(-40vw,-10vh) scale(1.2)}
+html[data-nu-live=full] .fl-blob{animation:fl-breathe 16s ease-in-out infinite}
+html[data-nu-live=full] .fl-blob-2{animation-duration:21s;animation-delay:-7s}
+html[data-nu-live=full] .fl-blob-3{animation-duration:26s;animation-delay:-12s}
+@keyframes fl-breathe{0%,100%{translate:0 0;scale:1}33%{translate:5vw -3vh;scale:1.08}66%{translate:-4vw 4vh;scale:.95}}
+
+.fl-shape{position:absolute;opacity:.17;transition:color 1.1s ease;
+  translate:calc(var(--tx,0)*var(--d)*16px) calc(var(--sy,0)*var(--d)*-.05px + var(--ty,0)*var(--d)*12px)}
+.fl-shape svg{display:block;width:100%;height:100%}
+.fl-tone-a{color:#ff8a2e}.fl-tone-b{color:#4d82ff}.fl-tone-c{color:#35b957}
+body[data-screen=practice] .fl-tone-a{color:#35b957}body[data-screen=practice] .fl-tone-c{color:#e0a400}
+body:is([data-screen=toolkit],[data-screen=letters]) .fl-tone-a{color:#8a5cff}body:is([data-screen=toolkit],[data-screen=letters]) .fl-tone-c{color:#ff5ca8}
+body:is([data-screen=settings],[data-screen=passport]) .fl-tone-b{color:#e0a400}
+html[data-nu-live=full] .fl-shape svg{animation:fl-float var(--t,14s) ease-in-out calc(var(--i,0)*-1.7s) infinite}
+html[data-nu-live=full] .fl-spin{transform-origin:20px 20px;animation:fl-spin 16s linear infinite}
+@keyframes fl-float{0%,100%{transform:translate(0,0) rotate(-5deg)}50%{transform:translate(7px,-18px) rotate(6deg)}}
+@keyframes fl-spin{to{transform:rotate(360deg)}}
+
+/* ---- Tap ripple ------------------------------------------------------------ */
+.nu-ripple{position:fixed;z-index:199;width:132px;height:132px;border-radius:50%;border:3px solid currentColor;pointer-events:none;will-change:transform,opacity}
+
+/* ---- Lesson: answer-driven moments only ------------------------------------ */
+#app .quiz-progress{position:relative}
+#app .quiz-progress.is-advancing::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffffc0 50%,transparent 70%);animation:fl-sheen .85s ease-out .15s both;pointer-events:none}
+@keyframes fl-sheen{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+body[data-heat="1"] #app .quiz-progress span{background:linear-gradient(90deg,var(--pl-green),#b6d63a 60%,var(--pl-yellow))}
+body[data-heat="2"] #app .quiz-progress span{background:linear-gradient(90deg,var(--pl-yellow),var(--pl-oranje) 60%,var(--pl-red))}
+html:not([data-nu-live=off]) #app .choice-button.correct,html:not([data-nu-live=off]) #app .match-pair-card.matched{animation:fl-ring .75s ease-out}
+@keyframes fl-ring{0%{outline:4px solid #3dc25db0;outline-offset:0}100%{outline:4px solid #3dc25d00;outline-offset:16px}}
+
+/* ---- Launch: rings radiate from Pim ---------------------------------------- */
+.launch-face{position:relative}
+html:not([data-nu-live=off]) .launch-screen.is-playing .launch-face::before,
+html:not([data-nu-live=off]) .launch-screen.is-playing .launch-face::after{content:"";position:absolute;inset:0;border-radius:50%;border:4px solid #ffffff90;animation:fl-launch-ring 1.5s ease-out .35s 2 both;pointer-events:none}
+html:not([data-nu-live=off]) .launch-screen.is-playing .launch-face::after{animation-delay:.8s}
+@keyframes fl-launch-ring{from{transform:scale(1);opacity:.9}to{transform:scale(2.3);opacity:0}}
+
+/* ---- Roaming Pim ------------------------------------------------------------ */
+.nu-buddy{position:fixed;left:0;top:0;z-index:86;pointer-events:none;will-change:transform}
+.nu-buddy.is-away{visibility:hidden}
+.nu-buddy-flip{transition:transform .3s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 3px 3px #1f243324)}
+.nu-buddy .nu-cat{display:block;transform-origin:50% 96%;transition:rotate .25s ease-out,translate .12s ease-out}
+.nu-buddy.is-riding .nu-cat{rotate:3deg}
+.nu-buddy.is-rolling .nu-cat{translate:0 -1.5px}
+.nu-buddy.is-riding .cat-scarf-tail,.nu-buddy.is-rolling .cat-scarf-tail{animation-duration:.32s!important}
+.nu-buddy[data-kind=lesson] .cat-shadow{display:none}
+.nu-buddy[data-kind=lesson] .nu-buddy-flip{filter:drop-shadow(0 2px 2px #1f24332e)}
+/* Scarf colours earned by finished lessons */
+.nu-buddy[data-tier="1"] .cat-scarf>path:nth-of-type(2){fill:#3dc25d;stroke:#3dc25d}
+.nu-buddy[data-tier="1"] .cat-scarf-tail{fill:#26963f}
+.nu-buddy[data-tier="2"] .cat-scarf>path:nth-of-type(2){fill:#8a5cff;stroke:#8a5cff}
+.nu-buddy[data-tier="2"] .cat-scarf-tail{fill:#6a3fe0}
+.nu-buddy[data-tier="3"] .cat-scarf>path:nth-of-type(2){fill:#ffc23d;stroke:#ffc23d}
+.nu-buddy[data-tier="3"] .cat-scarf-tail{fill:#e09b00}
+
+.nu-buddy-say{position:absolute;bottom:calc(100% + 8px);left:0;width:max-content;max-width:min(230px,calc(100vw - 16px));padding:6px 13px 7px;border-radius:16px;background:#fff;border:2px solid #ffd2ad;box-shadow:0 4px 0 #ffd2ad,0 10px 22px #1f24331f;text-align:center;opacity:0;visibility:hidden;transform-origin:var(--tail,50%) 100%}
+.nu-buddy-say.is-on{opacity:1;visibility:visible}
+.nu-buddy-say::after{content:"";position:absolute;top:100%;left:var(--tail,50%);width:11px;height:11px;margin:-5px 0 0 -6px;background:#fff;border:solid #ffd2ad;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.nu-buddy-say b{display:block;font:800 15px/1.3 var(--font-ui,system-ui);color:var(--pl-ink,#1f2433)}
+.nu-buddy-say small{display:block;font:500 13px/1.65 var(--font-urdu-reading,serif);color:var(--pl-muted,#6b7280)}
+
+@media (prefers-reduced-motion:reduce){
+  .fl-blob,.fl-shape svg,.fl-spin,.launch-face::before,.launch-face::after{animation:none!important}
+  .fl-blob,.fl-shape,.nu-buddy-flip,.nu-buddy .nu-cat{transition:none}
+}

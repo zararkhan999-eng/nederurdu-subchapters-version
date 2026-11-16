@@ -1302,6 +1302,9 @@ function render() {
   reserveLessonFooterSpace();
   NU.guide.afterRender({ questionKey: screen === "lesson" ? `${activeLessonId}:${activeQuestionIndex}:${String(getActiveQuestion()?.id || "")}` : "" });
   if (screen === "home") NU.guide.maybeTour();
+  const liveQuestionKey = screen === "lesson" ? `${activeLessonId}:${activeQuestionIndex}:${String(getActiveQuestion()?.id || "")}` : "";
+  NU.flow.afterRender({ screen, entered: screenChanged, questionKey: liveQuestionKey, combo: answerCombo });
+  NU.buddy.sync({ screen, entered: screenChanged, questionKey: liveQuestionKey, combo: answerCombo, completed: (progress.completedLessons || []).length });
   lastRenderedScreen = screen;
   if (sameQuestionScrollTop !== null
     && screen === "lesson"
@@ -3669,6 +3672,7 @@ function triggerAnswerMoment(correct, compact = false) {
   }
   const panel = document.querySelector(".quiz-feedback-panel");
   const icon = panel?.querySelector(".feedback-icon");
+  NU.buddy.react({ correct, combo: answerCombo });
   if (!correct) {
     NU.sound.play("wrong");
     NU.haptics.play("error");
