@@ -430,7 +430,7 @@ const defaultProgress = {
   },
   speechProfileVersion: SPEECH_PROFILE_VERSION,
   selectedChapterId: "a0",
-  lastLessonId: "a0-greetings-courtesy"
+  lastLessonId: "a0-letters-1"
 };
 
 let progress = loadProgress();

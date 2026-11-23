@@ -2969,7 +2969,7 @@ test("A0 learning runs respect the small-target cap and retain explicit media", 
     };
   });
 
-  expect(audit.order[0]).toBe("a0-greetings-courtesy");
+  expect(audit.order[0]).toBe("a0-letters-1");
   for (const lesson of audit.lessons) {
     expect(lesson.structuredConcepts, lesson.id).toBe(true);
     expect(lesson.missingImageIds, lesson.id).toEqual([]);
@@ -6060,7 +6060,7 @@ test("A2 full chapter has eight authored practical units and one separate comple
     "a2-bills-banking",
     "a2-messages-emails"
   ]);
-  expect(audit.lessonCount).toBe(19);
+  expect(audit.lessonCount).toBe(20);
   expect(audit.unitMissionIds).toHaveLength(8);
   expect(new Set(audit.unitMissionIds).size).toBe(8);
   expect(audit.completionMissionId).toBe("a2-chapter-completion-mission");

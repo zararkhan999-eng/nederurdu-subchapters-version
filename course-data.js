@@ -5566,11 +5566,11 @@ const a0LearningFirstUnitsV4 = [
       "a0-numbers-0-10",
       "a0-numbers-11-100",
       "a0-time-days",
+      "a0-months-dates",
       "a0-telling-time",
       "a0-spelling-personal-details",
       "a0-address-phone",
       "a0-date-appointment",
-      "a0-months-dates",
       "a0-numbers-time-mission"
     ]
   },
@@ -5628,6 +5628,22 @@ const a0LearningFirstUnitsV4 = [
     ]
   }
 ];
+// Learner order: letters and sounds first, then the simplest whole words
+// (hallo, ja, nee, dank u wel), then people and things, and only then
+// full sentences.
+const a0UnitOrderV4 = [
+  "a0-letters-sounds",
+  "a0-start-speaking",
+  "a0-first-words",
+  "a0-first-sentences"
+];
+a0LearningFirstUnitsV4.sort((left, right) => {
+  const rank = (unit) => {
+    const index = a0UnitOrderV4.indexOf(unit.id);
+    return index < 0 ? a0UnitOrderV4.length : index;
+  };
+  return rank(left) - rank(right);
+});
 a0Subchapters.splice(0, a0Subchapters.length, ...a0LearningFirstUnitsV4);
 
 const a0LessonLabelsV4 = {
@@ -9286,6 +9302,31 @@ const a2SchoolAbsenceLessonV4 = {
 };
 insertLessonAfter(a2Lessons, "a2-mission-job-start", a2SchoolAbsenceLessonV4);
 
+// Owner of omdat / dat (verb last). It opens the school-contact unit so the
+// health and housing lessons that use omdat, dat and als come after it.
+// A1 a1-short-messages already taught want (verb stays second); this lesson
+// contrasts the two.
+const a2ReasonsOmdatDatLessonV4 = {
+  id: "a2-reasons-omdat-dat",
+  unit: "A2: والدین اور اسکول",
+  title: "Waarom? Redenen geven met omdat en dat",
+  description: "omdat سے وجہ بتانا، ik denk dat / ik weet dat کہنا، اور want اور omdat کا فرق سمجھنا۔",
+  xp: 0,
+  questions: [],
+  concepts: [],
+  seedConcepts: [
+    { dutch: "ik bel omdat mijn kind ziek is", urdu: "میں فون کر رہا / رہی ہوں کیونکہ میرا بچہ بیمار ہے" },
+    { dutch: "mijn kind is thuis omdat hij koorts heeft", urdu: "میرا بچہ گھر پر ہے کیونکہ اسے بخار ہے" },
+    { dutch: "ik denk dat mijn kind koorts heeft", urdu: "میرا خیال ہے کہ میرے بچے کو بخار ہے" },
+    { dutch: "ik weet dat de docent vandaag ziek is", urdu: "مجھے معلوم ہے کہ آج استاد بیمار ہے" },
+    { dutch: "ik kom later omdat de bus vertraging heeft", urdu: "میں دیر سے آؤں گا / گی کیونکہ بس لیٹ ہے" },
+    { dutch: "ik bel omdat ik de docent wil spreken", urdu: "میں فون کر رہا / رہی ہوں کیونکہ میں استاد سے بات کرنا چاہتا / چاہتی ہوں" },
+    { dutch: "ik denk dat hij morgen weer beter is", urdu: "میرا خیال ہے کہ وہ کل پھر ٹھیک ہو جائے گا" },
+    { dutch: "ik weet dat mijn kind morgen huiswerk heeft", urdu: "مجھے معلوم ہے کہ کل میرے بچے کا ہوم ورک ہے" }
+  ]
+};
+insertLessonAfter(a2Lessons, "a2-mission-job-start", a2ReasonsOmdatDatLessonV4);
+
 const a2GuidanceMomentsV4 = [
   "صبح پہلی گفتگو شروع ہونے پر", "لکھی ہوئی اطلاع سامنے آنے کے بعد",
   "ذمہ دار شخص وضاحت مانگے تو", "مقررہ وقت بدلنے سے پہلے",
@@ -9362,6 +9403,23 @@ const a2PatternSpecsV4 = {
       pickDrillV4("ik kan maandag niet werken", ["ik kan maandag werken niet", "ik werken kan maandag niet"], "میں پیر کو کام نہیں کر سکتا", { "ik kan maandag werken niet": "niet اصل فعل سے پہلے آتا ہے؛ werken سب سے آخر میں۔", "ik werken kan maandag niet": "kan دوسرے نمبر پر اور werken آخر میں آتا ہے۔" })
     ]
   },
+  "a2-reasons-omdat-dat": {
+    modelDutch: "ik bel omdat mijn kind ziek is",
+    titleUrdu: "want یا omdat: دونوں کا مطلب کیونکہ، مگر ترتیب الگ",
+    highlight: "omdat mijn kind ziek is",
+    explanationUrdu: "omdat (کیونکہ) اور dat (کہ) کے بعد والے حصے میں فعل جملے کے بالکل آخر میں جاتا ہے: ik bel omdat mijn kind ziek is۔ ik denk dat … اور ik weet dat … کے بعد بھی یہی ترتیب: ik denk dat mijn kind koorts heeft۔ یہ ترتیب اردو جیسی ہے، جہاں فعل آخر میں آتا ہے۔",
+    contrastUrdu: "A1 میں want سیکھا تھا: ik ben ziek, want ik heb koorts (heb دوسرے نمبر پر)۔ omdat کے ساتھ: ik ben ziek omdat ik koorts heb (heb آخر میں)۔ دو فعل ہوں تو دونوں آخر میں: omdat ik de docent wil spreken۔",
+    commonMistakeUrdu: "omdat mijn kind is ziek نہ کہیں، اور want ik koorts heb بھی نہ کہیں۔ want کے بعد عام ترتیب، omdat اور dat کے بعد فعل آخر میں۔",
+    drills: [
+      pickDrillV4("ik bel omdat mijn kind ziek is", ["ik bel omdat mijn kind is ziek", "ik bel omdat is mijn kind ziek"], "میں فون کر رہا ہوں کیونکہ میرا بچہ بیمار ہے", { "ik bel omdat mijn kind is ziek": "omdat کے بعد فعل is آخر میں جاتا ہے۔", "ik bel omdat is mijn kind ziek": "omdat کے بعد پہلے mijn kind، اور آخر میں is۔" }),
+      pickDrillV4("ik ben ziek, want ik heb koorts", ["ik ben ziek, want ik koorts heb", "ik ben ziek, want heb ik koorts"], "میں بیمار ہوں، کیونکہ مجھے بخار ہے", { "ik ben ziek, want ik koorts heb": "want کے بعد فعل آخر میں نہیں جاتا؛ عام ترتیب: ik heb koorts۔", "ik ben ziek, want heb ik koorts": "want جگہ نہیں لیتا؛ اس کے بعد پہلے ik اور پھر heb۔" }),
+      pickDrillV4("mijn kind is thuis omdat hij koorts heeft", ["mijn kind is thuis omdat hij heeft koorts", "mijn kind is thuis want hij koorts heeft"], "میرا بچہ گھر پر ہے کیونکہ اسے بخار ہے", { "mijn kind is thuis omdat hij heeft koorts": "omdat کے بعد heeft آخر میں جاتا ہے۔", "mijn kind is thuis want hij koorts heeft": "want کے بعد عام ترتیب ہوتی ہے؛ فعل آخر میں صرف omdat کے بعد۔" }),
+      gapDrillV4("ik kom later omdat de bus vertraging ___", "heeft", ["is", "heb"], "میں دیر سے آؤں گا کیونکہ بس لیٹ ہے", { is: "vertraging کے ساتھ hebben آتا ہے: de bus heeft vertraging۔", heb: "heb صرف ik کے ساتھ ہے؛ de bus کے ساتھ heeft۔" }),
+      pickDrillV4("ik denk dat hij morgen weer beter is", ["ik denk dat hij is morgen weer beter", "ik denk dat is hij morgen weer beter"], "میرا خیال ہے کہ وہ کل پھر ٹھیک ہو جائے گا", { "ik denk dat hij is morgen weer beter": "dat کے بعد فعل is سب سے آخر میں جاتا ہے۔", "ik denk dat is hij morgen weer beter": "dat کے بعد پہلے hij، اور آخر میں is۔" }),
+      pickDrillV4("ik bel omdat ik de docent wil spreken", ["ik bel omdat ik wil de docent spreken", "ik bel omdat wil ik de docent spreken"], "میں فون کر رہا ہوں کیونکہ میں استاد سے بات کرنا چاہتا ہوں", { "ik bel omdat ik wil de docent spreken": "omdat کے بعد wil بھی آخر میں جاتا ہے: de docent wil spreken۔", "ik bel omdat wil ik de docent spreken": "omdat کے بعد پہلے ik، اور فعل آخر میں۔" }),
+      gapDrillV4("ik weet dat de docent vandaag ziek ___", "is", ["ben", "heeft"], "مجھے معلوم ہے کہ آج استاد بیمار ہے", { ben: "ben صرف ik کے ساتھ ہے؛ de docent کے ساتھ is۔", heeft: "ziek کے ساتھ zijn آتا ہے: de docent is ziek۔" })
+    ]
+  },
   "a2-word-order-connectors": {
     modelDutch: "ik bel omdat de verwarming kapot is",
     titleUrdu: "omdat، dat، als کے بعد فعل آخر میں",
@@ -9407,6 +9465,15 @@ const a2ScenarioByDutchV4 = {
   "wie neemt mijn dienst over": "آپ بیمار ہیں اور کل کام پر نہیں آ سکتے؛ نگران سے پوچھیں کہ آپ کی جگہ کون کام کرے گا۔",
   "kunnen we hierover praten": "نگران کا نیا فیصلہ آپ کے لیے مشکل ہے؛ اس موضوع پر گفتگو کی درخواست کریں۔",
   "ik stuur de bevestiging per e-mail": "فون پر نئی شفٹ طے ہو گئی اور نگران تحریری ثبوت چاہتا ہے۔ بتائیں کہ آپ یہ کیسے بھیجیں گے۔",
+  // a2-reasons-omdat-dat
+  "ik bel omdat mijn kind ziek is": "صبح آپ اسکول کے دفتر کو فون کرتے ہیں۔ ایک جملے میں بتائیں کہ آپ فون کیوں کر رہے ہیں: آپ کا بچہ بیمار ہے۔",
+  "mijn kind is thuis omdat hij koorts heeft": "استاد پوچھتا ہے کہ بیٹا گھر پر کیوں ہے۔ بتائیں کہ وہ گھر پر ہے اور وجہ اس کا بخار ہے۔",
+  "ik kom later omdat de bus vertraging heeft": "آپ والدین کی ملاقات کے راستے میں ہیں مگر بس وقت پر نہیں آئی۔ استاد کو بتائیں کہ آپ دیر سے پہنچیں گے اور کیوں۔",
+  "ik bel omdat ik de docent wil spreken": "اسکول کا دفتر پوچھتا ہے کہ آپ نے کیوں فون کیا۔ آپ بچے کے استاد سے خود بات کرنا چاہتے ہیں؛ وجہ بتائیں۔",
+  "ik denk dat mijn kind koorts heeft": "بچے کا ماتھا گرم ہے مگر آپ نے ابھی ناپا نہیں۔ استاد کو اپنا اندازہ بتائیں، یقینی بات نہیں۔",
+  "ik denk dat hij morgen weer beter is": "استاد پوچھتا ہے کہ بیٹا کب واپس آئے گا۔ آپ کو پکا معلوم نہیں مگر اندازہ ہے کہ اگلے دن وہ ٹھیک ہوگا؛ بتائیں۔",
+  "ik weet dat de docent vandaag ziek is": "دوسرا والد پوچھتا ہے کہ آج کلاس کیوں نہیں۔ ایپ میں آپ پڑھ چکے ہیں کہ استاد بیمار ہے؛ بتائیں کہ آپ کو یہ معلوم ہے۔",
+  "ik weet dat mijn kind morgen huiswerk heeft": "استاد یاد دلاتا ہے کہ اگلے دن کا کام ہے۔ بتائیں کہ آپ کو پہلے سے معلوم ہے کہ کل بچے کا ہوم ورک ہے۔",
   // a2-school-absence-notice
   "mijn kind komt vandaag niet naar school": "صبح اسکول کے دفتر کو فون کرتے ہیں۔ پورا جملہ کہیں کہ آج آپ کا بچہ کلاس میں نہیں ہوگا۔",
   "ik meld mijn kind af": "اسکول کا فون نمبر غیر حاضری درج کرنے کے لیے ہے۔ رسمی طور پر کہیں کہ آپ بچے کی غیر حاضری درج کروا رہے ہیں۔",
@@ -9655,6 +9722,14 @@ const a2RemainingLessonProfilesV4 = [
     guidanceOffset: 5, prerequisiteLessonIds: ["a2-work-school", "a2-future-modal-verbs"], prerequisiteRefs: [["a1-work-schedule", "mijn rooster is veranderd"]], independentCheckLeadUrdu: "دوسری کام کی شرطوں والی ملاقات میں"
   },
   {
+    lessonId: "a2-reasons-omdat-dat", title: "Waarom? Redenen geven met omdat en dat", unitLabel: "A2: والدین اور اسکول",
+    outcomeUrdu: "اسکول سے بات کرتے ہوئے omdat سے وجہ بتانا، ik denk dat اور ik weet dat سے اندازہ یا معلومات دینا، اور want اور omdat کی ترتیب میں فرق رکھنا۔",
+    settingUrdu: "اسکول کو وجہ بتاتے ہوئے", boundaryLeadUrdu: "وجہ اور اندازے میں", mistakeLeadUrdu: "omdat یا dat کے بعد",
+    scenarioStarts: ["صبح اسکول کا دفتر فون اٹھاتا ہے؛", "استاد غیر حاضری کی وجہ پوچھتا ہے؛", "ملاقات کے راستے میں دیر ہو رہی ہے؛", "دوسرا والد اسکول کی خبر پوچھتا ہے؛"],
+    scenarioActions: ["وجہ ایک جملے میں بتائیں", "اپنا اندازہ بتائیں", "جو آپ جانتے ہیں وہ بتائیں", "پوری بات فعل آخر میں رکھ کر کہیں"],
+    guidanceOffset: 6, seedConcepts: a2ReasonsOmdatDatLessonV4.seedConcepts, prerequisiteLessonIds: ["a2-future-modal-verbs"], prerequisiteRefs: [["a1-short-messages", "ik ben ziek, want ik heb koorts"]], independentCheckLeadUrdu: "دوسرے اسکول یا کام کے فون میں"
+  },
+  {
     lessonId: "a2-school-absence-notice", title: "Ziek melden en een schoolbericht lezen", unitLabel: "A2: والدین اور اسکول",
     outcomeUrdu: "بچے کی بیماری اور غیر حاضری کی اطلاع دینا، استاد سے اگلا قدم پوچھنا، اور سبق کے وقت یا منسوخی کا نوٹس سمجھنا۔",
     settingUrdu: "اسکول کو بچے کے بارے میں اطلاع دیتے ہوئے", boundaryLeadUrdu: "غیر حاضری اور اسکول نوٹس میں", mistakeLeadUrdu: "بچے کی صورت بتاتے وقت",
@@ -9845,7 +9920,7 @@ if (!a2Subchapters.some((unit) => unit.id === "a2-school-contact")) {
     title: "والدین اور اسکول",
     goal: a2AuthoredCurriculumV4.units["a2-school-contact"].outcomeUrdu,
     practice: a2AuthoredCurriculumV4.units["a2-school-contact"].practiceUrdu,
-    lessonIds: ["a2-school-absence-notice", "a2-parent-school"]
+    lessonIds: ["a2-reasons-omdat-dat", "a2-school-absence-notice", "a2-parent-school"]
   });
 }
 const a2HousingUnitV4 = a2Subchapters.find((unit) => unit.id === "a2-housing-problems");
@@ -9905,7 +9980,7 @@ function makeA2AuthoredMissionPlanV4({ missionId, sourceKey, lessonIds, titleUrd
 
 const a2MissionPlanProfilesV4 = [
   ["a2-mission-job-start", "employment-capstone", ["a2-work-school", "a2-future-modal-verbs", "a2-work-conditions"], "نئی نوکری، اوقات، اور کام کی شرطیں", "نگران"],
-  ["a2-school-contact-mission", "school-contact-capstone", ["a2-school-absence-notice", "a2-parent-school"], "بچے کی غیر حاضری اور والدین ملاقات", "استاد"],
+  ["a2-school-contact-mission", "school-contact-capstone", ["a2-reasons-omdat-dat", "a2-school-absence-notice", "a2-parent-school"], "بچے کی غیر حاضری اور والدین ملاقات", "استاد"],
   ["a2-health-doctor-mission", "health-capstone", ["a2-perfect-tense", "a2-strong-combined", "a2-doctor-advice"], "عام ڈاکٹر کی مکمل گفتگو اور فالو اپ", "ڈاکٹر"],
   ["a2-housing-problems-mission", "housing-capstone", ["a2-health-housing", "a2-word-order-connectors", "a2-landlord-repairs"], "گھر کی خرابی، مرمت، اور تحریری پیروی", "مالک مکان"],
   ["a2-shopping-complaints-mission", "complaints-capstone", ["a2-shopping-services", "a2-customer-complaints"], "واپسی، ضمانت، اور شکایت کا حل", "کسٹمر سروس ملازم"],
@@ -14413,6 +14488,10 @@ const listenReplyCuesV4 = {
   "a2-work-conditions": [
     ["wat is het probleem?", "مسئلہ کیا ہے؟", "mijn salaris klopt niet", "kan ik een vrije dag aanvragen", "dit is mijn contract"],
     ["wilt u dit per e-mail bevestigen?", "کیا آپ اس کی ای میل سے تصدیق کریں گے؟", "ik stuur de bevestiging per e-mail", "wie neemt mijn dienst over", "kunnen we hierover praten"]
+  ],
+  "a2-reasons-omdat-dat": [
+    ["waarom belt u?", "آپ کیوں فون کر رہے ہیں؟", "ik bel omdat mijn kind ziek is", "ik weet dat mijn kind morgen huiswerk heeft", "ik denk dat hij morgen weer beter is"],
+    ["waarom is uw kind thuis?", "آپ کا بچہ گھر پر کیوں ہے؟", "mijn kind is thuis omdat hij koorts heeft", "ik kom later omdat de bus vertraging heeft", "ik weet dat de docent vandaag ziek is"]
   ],
   "a2-school-absence-notice": [
     ["waarom was hij thuis?", "وہ گھر پر کیوں تھا؟", "hij had koorts en moest thuisblijven", "ik meld mijn kind af", "mijn kind komt vandaag niet naar school"],
