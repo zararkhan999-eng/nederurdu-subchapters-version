@@ -2116,6 +2116,7 @@ function getQuestionTitle(question) {
   }
   if (question.type === "pattern-teach") return teachingStep === 0 ? "جملے کا نمونہ" : "ایک آسان اصول";
   if (question.type === "correction-teach") return "دوبارہ کوشش کی تیاری";
+  if (question.type === "contrast-teach") return question.instructionUrdu;
   if (question.instructionUrdu || question.instruction || question.label) return question.instructionUrdu || question.instruction || question.label;
   if (progress.settings.beginnerMode) {
     if (isInfoQuestion(question)) return "دیکھیں اور سنیں";
@@ -2147,6 +2148,7 @@ function renderQuestionCard(question, visual) {
   if (question.type === "concept-teach") return renderConceptTeachingQuestion(question, visual);
   if (question.type === "pattern-teach") return renderPatternTeachingQuestion(question);
   if (question.type === "correction-teach") return renderCorrectionTeachingQuestion(question);
+  if (question.type === "contrast-teach") return renderContrastTeachingQuestion(question);
   if (question.type === "speak-repeat") return renderSpeakRepeatQuestion(question);
   if (isInfoQuestion(question)) {
     return `
@@ -2244,6 +2246,17 @@ function renderPatternTeachingQuestion(question) {
       ${teaching.hasOptionalDetail && activeStep === stepCount - 1 ? renderLessonDetailTrigger("pattern", "فرق یا عام غلطی دیکھیں") : ""}
     </article>
   `;
+}
+
+// Urdu ↔ Dutch contrast card (contrast.js): one per lesson, shown after the
+// lesson's own teaching so the learner meets the Dutch first, then the comparison.
+function renderContrastTeachingQuestion(question) {
+  NU.contrast.mixed = escapeMixedText;
+  return NU.contrast.render(question.contrast, { speak: (text) => renderSpeakButton(text, "teaching") });
+}
+
+function getContrastQuestion(lesson) {
+  return window.NU?.contrast ? NU.contrast.makeQuestion(lesson) : null;
 }
 
 function renderCorrectionTeachingQuestion(question) {
@@ -4598,7 +4611,8 @@ function buildSessionQuestions(lesson) {
       ? lesson.variants[(progress.missionVariantRuns?.[lesson.id] || 0) % lesson.variants.length].questions
       : (lesson?.questions || []);
   const lessonIntro = lesson?.kind === "mission" ? null : getLessonIntroQuestion(lesson, sourceQuestions);
-  const questions = lessonIntro ? [lessonIntro, ...sourceQuestions] : sourceQuestions;
+  const contrastQuestion = lesson?.reviewKind || lesson?.kind === "mission" ? null : getContrastQuestion(lesson);
+  const questions = [lessonIntro, contrastQuestion, ...sourceQuestions].filter(Boolean);
   return questions.map((question) => prepareSessionQuestion(question));
 }
 
@@ -4649,6 +4663,15 @@ function buildLearningFirstSession(lesson, run) {
   }
   if (run.patternId && lesson.pattern && !patternAdded) {
     questions.push(makePatternTeachingQuestion(lesson, run, lesson.pattern));
+  }
+  // The Urdu contrast card belongs to the lesson's first run only, so replays stay short.
+  const contrastQuestion = getLearningRuns(lesson)[0]?.id === run.id ? getContrastQuestion(lesson) : null;
+  if (contrastQuestion) {
+    questions.push({
+      ...contrastQuestion,
+      conceptIds: normalizeIdList(run.conceptIds),
+      skillIds: normalizeIdList(practiceConcepts.flatMap((concept) => getConceptSkillIds(concept, run)))
+    });
   }
 
   const understand = getRunPhaseExercises(phaseConfig.understand, exerciseById, run, "understand")
@@ -5049,7 +5072,7 @@ function getBuildAnswerText(question) {
 }
 
 function isInfoQuestion(question) {
-  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach", "role-play"].includes(question?.type);
+  return ["uitleg", "speak-repeat", "concept-teach", "pattern-teach", "correction-teach", "contrast-teach", "role-play"].includes(question?.type);
 }
 
 function canCheckQuestion(question) {
