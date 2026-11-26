@@ -1,53 +1,56 @@
 /* Urdu ↔ Dutch contrast cards (contrast.js). Word roles keep one colour on both
-   lines; green frame = works like Urdu, orange frame = differs from Urdu. */
-#app .contrast-card{position:relative;display:grid;gap:12px;text-align:right;direction:rtl}
+   lines; green frame = works like Urdu, orange frame = differs from Urdu.
+   Sizes go through --ct-s so the "large text" setting enlarges the card too. */
+#app .contrast-card{--ct-s:1;position:relative;display:grid;gap:12px;text-align:right;direction:rtl}
+body.large-text #app .contrast-card{--ct-s:1.12}
 #app .contrast-card.is-same{border-color:#bfe8c9;box-shadow:0 5px 0 #bfe8c9}
 #app .contrast-card.is-different{border-color:#ffd2b0;box-shadow:0 5px 0 #ffd2b0}
-#app .ct-verdict{justify-self:start;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:800}
+#app .ct-verdict{justify-self:start;padding:3px 12px;border-radius:99px;font-size:calc(12px * var(--ct-s));font-weight:800}
 #app .is-same .ct-verdict{background:var(--pl-green-soft);color:var(--pl-green-ink)}
 #app .is-different .ct-verdict{background:var(--pl-oranje-soft);color:var(--pl-oranje-dark)}
-#app .ct-title{margin:0;font-size:20px;line-height:1.5;color:var(--pl-ink)}
-#app .ct-intro,#app .ct-takeaway{margin:0;font-size:15px;line-height:1.9;color:var(--pl-ink)}
+#app .ct-title{margin:0;font-size:calc(20px * var(--ct-s));line-height:1.5;color:var(--pl-ink)}
+#app .ct-intro,#app .ct-takeaway{margin:0;font-size:calc(15px * var(--ct-s));line-height:1.9;color:var(--pl-ink)}
 #app .ct-takeaway{padding:10px 12px;border-radius:14px;background:var(--pl-yellow-soft);font-weight:700}
 
-#app .ct-example{display:grid;gap:8px;padding:10px;border:2px dashed var(--pl-line);border-radius:16px;animation:ct-in .35s ease both}
+/* Urdu line on top, Dutch line under it, full width each, so a short sentence
+   stays on one line and the word order can be compared chip by chip. */
+#app .ct-example{display:grid;gap:10px;padding:12px 10px 10px;border:2px dashed var(--pl-line);border-radius:16px;animation:ct-in .35s ease both}
 #app .ct-example:nth-of-type(2){animation-delay:.08s}
 #app .ct-example:nth-of-type(3){animation-delay:.16s}
-#app .ct-row{display:flex;align-items:center;gap:8px}
-#app .ct-flag{flex:0 0 38px;font-size:11px;font-weight:800;color:var(--pl-muted);text-align:center}
-#app .ct-line{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+#app .ct-line{display:flex;flex-wrap:wrap;gap:4px}
 #app .ct-line[dir="ltr"]{justify-content:flex-start}
-#app .ct-chip{position:relative;padding:5px 10px;border-radius:10px;font-size:16px;font-weight:700;border:2px solid transparent;line-height:1.5}
+@media (max-width:360px){#app .ct-example{padding-inline:6px}#app .ct-line{gap:3px}#app .ct-chip{padding:3px 5px;font-size:calc(14px * var(--ct-s))}}
+#app .ct-chip{position:relative;padding:4px 8px;border-radius:10px;font-size:calc(15px * var(--ct-s));font-weight:700;border:2px solid transparent;line-height:1.5}
 #app .ct-chip i{position:absolute;top:-9px;inset-inline-start:50%;transform:translateX(50%);padding:0 5px;border-radius:6px;background:var(--pl-oranje);color:#fff;font-size:9px;font-style:normal;line-height:1.5;white-space:nowrap}
 #app .ct-line[dir="ltr"] .ct-chip i{transform:translateX(-50%)}
-#app .contrast-card .speak-button{flex:0 0 auto;width:40px;height:40px;min-width:40px;min-height:40px;padding:0}
-#app .contrast-card .speak-button svg{width:20px;height:20px}
+#app .contrast-card .speak-button{flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0}
+#app .contrast-card .speak-button svg{width:22px;height:22px}
 
 #app .role-subj{background:var(--pl-blue-soft);color:var(--pl-blue-dark)}
 #app .role-verb{background:var(--pl-oranje-soft);color:var(--pl-oranje-dark);border-color:var(--pl-oranje)}
 #app .role-place{background:var(--pl-green-soft);color:var(--pl-green-ink)}
 #app .role-time{background:#f0eaff;color:#5b3bc4}
-#app .role-obj{background:#f2f3f6;color:var(--pl-ink)}
+#app .role-obj,#app .role-rest{background:#f2f3f6;color:var(--pl-ink)}
 #app .role-neg{background:var(--pl-red-soft);color:var(--pl-red-ink)}
 #app .role-q{background:#ffe8f3;color:#b0236a}
 #app .role-reason{background:var(--pl-yellow-soft);color:#8a5a00}
 
-#app .ct-legend{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;font-weight:700}
+#app .ct-legend{display:flex;flex-wrap:wrap;gap:6px;font-size:calc(11px * var(--ct-s));font-weight:700}
 #app .ct-legend span{padding:1px 8px;border-radius:99px}
 
 #app .ct-pairs{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-#app .ct-pairs li{display:grid;grid-template-columns:auto auto 1fr;grid-template-rows:auto auto;align-items:center;column-gap:8px;padding:8px 12px;border-radius:14px;background:#f7f8fa;animation:ct-in .35s ease both}
+#app .ct-pairs li{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;column-gap:8px;padding:8px 12px;border-radius:14px;background:#f7f8fa;animation:ct-in .35s ease both}
 #app .ct-pairs li:nth-child(2){animation-delay:.06s}
 #app .ct-pairs li:nth-child(3){animation-delay:.12s}
 #app .ct-pairs li:nth-child(4){animation-delay:.18s}
-#app .ct-pairs strong{font-size:19px;color:var(--pl-blue-dark)}
+#app .ct-pairs strong{font-size:calc(19px * var(--ct-s));color:var(--pl-blue-dark)}
 #app .ct-pairs .ct-eq{color:var(--pl-muted);font-weight:800}
-#app .ct-pairs b{font-size:17px}
-#app .ct-pairs small{grid-column:1 / -1;color:var(--pl-muted);font-size:13px;line-height:1.7}
-#app .ct-listen{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--pl-muted)}
+#app .ct-pairs b{font-size:calc(17px * var(--ct-s))}
+#app .ct-pairs small{grid-column:1 / -1;color:var(--pl-muted);font-size:calc(13px * var(--ct-s));line-height:1.7}
+#app .ct-listen{display:flex;align-items:center;gap:8px;font-size:calc(14px * var(--ct-s));color:var(--pl-muted)}
 
 #app .ct-mistake{display:flex;flex-wrap:wrap;gap:8px;direction:ltr;justify-content:flex-end}
-#app .ct-mistake span{padding:4px 10px;border-radius:10px;font-size:15px;font-weight:700}
+#app .ct-mistake span{padding:4px 10px;border-radius:10px;font-size:calc(15px * var(--ct-s));font-weight:700}
 #app .ct-wrong{background:var(--pl-red-soft);color:var(--pl-red-ink);text-decoration:line-through;text-decoration-thickness:2px}
 #app .ct-right{background:var(--pl-green-soft);color:var(--pl-green-ink)}
 

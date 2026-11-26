@@ -17,7 +17,8 @@ NU.contrast = (() => {
     obj: "کیا",
     neg: "نفی",
     q: "سوال",
-    reason: "وجہ"
+    reason: "وجہ",
+    rest: "باقی"
   };
 
   const cards = [
@@ -29,8 +30,8 @@ NU.contrast = (() => {
       introUrdu: "اردو میں “ہوں، ہے، ہیں” جملے کے آخر میں آتے ہیں۔ Nederlands میں یہ فعل شخص کے فوراً بعد آتا ہے۔",
       examples: [
         {
-          urdu: [["میں", "subj"], ["علی", "obj"], ["ہوں", "verb"]],
-          dutch: [["ik", "subj"], ["ben", "verb"], ["Ali", "obj"]],
+          urdu: [["میں", "subj"], ["علی", "rest"], ["ہوں", "verb"]],
+          dutch: [["ik", "subj"], ["ben", "verb"], ["Ali", "rest"]],
           audio: "ik ben Ali"
         }
       ],
@@ -44,9 +45,9 @@ NU.contrast = (() => {
       titleUrdu: "u = آپ، jij = تم",
       introUrdu: "اچھی خبر: Nederlands میں بھی اردو کی طرح عزت والا “آپ” اور دوستانہ “تم” الگ ہیں۔",
       pairs: [
-        { nl: "u", ur: "آپ", note: "ڈاکٹر، گیمینٹے، استاد، اجنبی" },
-        { nl: "jij", ur: "تم", note: "دوست، بچے، ساتھی" },
-        { nl: "ik", ur: "میں", note: "خود اپنے لیے" }
+        { nl: "u", ur: "آپ", note: "ڈاکٹر، گیمینٹے، استاد، اجنبی", audio: "u" },
+        { nl: "jij", ur: "تم", note: "دوست، بچے، ساتھی", audio: "jij" },
+        { nl: "ik", ur: "میں", note: "خود اپنے لیے", audio: "ik" }
       ],
       takeawayUrdu: "جہاں اردو میں “آپ” کہتے ہیں، وہاں u کہیں۔ شک ہو تو u محفوظ ہے۔"
     },
@@ -54,15 +55,14 @@ NU.contrast = (() => {
       id: "contrast-hij-zij",
       lessonIds: ["a0-hij-zij-wij"],
       verdict: "different",
-      titleUrdu: "ایک “وہ”، دو Nederlands لفظ",
-      introUrdu: "اردو میں “وہ” مرد اور عورت دونوں کے لیے ہے، فرق فعل میں آتا ہے (کرتا / کرتی)۔ Nederlands میں فرق شخص کے لفظ میں ہے، فعل نہیں بدلتا۔",
+      titleUrdu: "اردو کا ایک “وہ”، Nederlands کے دو لفظ",
+      introUrdu: "اردو میں “وہ” مرد، عورت اور کئی لوگوں سب کے لیے ہے۔ Nederlands میں ایک مرد کے لیے hij اور ایک عورت کے لیے zij ہے۔ کئی لوگوں کے لیے بھی zij آتا ہے۔",
       pairs: [
-        { nl: "hij", ur: "وہ (مرد)", note: "وہ کام کرتا ہے = hij werkt" },
-        { nl: "zij", ur: "وہ (عورت)", note: "وہ کام کرتی ہے = zij werkt" },
-        { nl: "wij", ur: "ہم", note: "ہم کام کرتے ہیں = wij werken" }
+        { nl: "hij", ur: "وہ (ایک مرد)", note: "صرف مرد یا لڑکے کے لیے", audio: "hij" },
+        { nl: "zij", ur: "وہ (ایک عورت) / وہ لوگ", note: "عورت کے لیے بھی، کئی لوگوں کے لیے بھی؛ جملے سے پتا چلتا ہے کون", audio: "zij" },
+        { nl: "wij", ur: "ہم", note: "میں اور کوئی اور", audio: "wij" }
       ],
-      audio: "hij werkt",
-      takeawayUrdu: "مرد ہو تو hij، عورت ہو تو zij۔ werkt دونوں کے لیے ایک جیسا ہے۔"
+      takeawayUrdu: "ایک مرد: hij۔ ایک عورت: zij۔ کئی لوگ: وہی zij۔"
     },
     {
       id: "contrast-de-het",
@@ -71,10 +71,10 @@ NU.contrast = (() => {
       titleUrdu: "اردو میں “the” نہیں ہوتا",
       introUrdu: "اردو میں صرف “آدمی” یا “گھر” کہتے ہیں۔ Nederlands میں اسم کے ساتھ اکثر de یا het لگتا ہے، اور کون سا لگے گا یہ اصول سے کم، یاد سے زیادہ آتا ہے۔",
       pairs: [
-        { nl: "de man", ur: "آدمی", note: "de" },
-        { nl: "de deur", ur: "دروازہ", note: "de" },
-        { nl: "het kind", ur: "بچہ", note: "het" },
-        { nl: "het huis", ur: "گھر", note: "het" }
+        { nl: "de man", ur: "آدمی", note: "de", audio: "de man" },
+        { nl: "de deur", ur: "دروازہ", note: "de", audio: "de deur" },
+        { nl: "het kind", ur: "بچہ", note: "het", audio: "het kind" },
+        { nl: "het huis", ur: "گھر", note: "het", audio: "het huis" }
       ],
       takeawayUrdu: "لفظ کو ہمیشہ de یا het کے ساتھ ایک ٹکڑے کی طرح یاد کریں: “het huis”، صرف “huis” نہیں۔",
       mistake: { wrong: "de huis", right: "het huis" }
@@ -83,8 +83,8 @@ NU.contrast = (() => {
       id: "contrast-niet-geen",
       lessonIds: ["a0-geen"],
       verdict: "different",
-      titleUrdu: "ایک “نہیں”، دو Nederlands لفظ",
-      introUrdu: "اردو میں ہر جگہ “نہیں” کافی ہے۔ Nederlands میں چیز (اسم) نہ ہو تو geen، کام (فعل) نہ ہو تو niet۔",
+      titleUrdu: "اردو کا ایک “نہیں”، Nederlands کے دو لفظ",
+      introUrdu: "اردو میں ہر جگہ “نہیں” کافی ہے۔ Nederlands میں کسی چیز (اسم) سے پہلے “کوئی ___ نہیں” ہو تو geen آتا ہے۔ باقی جگہ niet آتا ہے، جیسے “ٹھیک نہیں” یا “یہاں نہیں”۔",
       examples: [
         {
           urdu: [["اس کے پاس", "subj"], ["قلم", "obj"], ["نہیں", "neg"], ["ہے", "verb"]],
@@ -92,54 +92,54 @@ NU.contrast = (() => {
           audio: "zij heeft geen pen"
         },
         {
-          urdu: [["آج", "time"], ["میں", "subj"], ["کام", "obj"], ["نہیں", "neg"], ["کرتا", "verb"]],
-          dutch: [["Vandaag", "time"], ["werk", "verb"], ["ik", "subj"], ["niet.", "neg"]],
-          audio: "Vandaag werk ik niet."
+          urdu: [["یہ", "subj"], ["ٹھیک", "rest"], ["نہیں", "neg"], ["ہے", "verb"]],
+          dutch: [["het", "subj"], ["is", "verb"], ["niet", "neg"], ["goed", "rest"]],
+          audio: "het is niet goed"
         }
       ],
-      takeawayUrdu: "“کوئی ___ نہیں” سوچیں تو geen؛ “نہیں کرتا” سوچیں تو niet۔",
+      takeawayUrdu: "اسم سے پہلے geen (geen pen)۔ باقی ہر جگہ niet، فعل کے بعد (is niet goed)۔",
       mistake: { wrong: "ik heb niet pen", right: "ik heb geen pen" }
     },
     {
       id: "contrast-word-order",
       lessonIds: ["a0-word-order"],
       verdict: "different",
-      titleUrdu: "فعل دوسرے نمبر پر ہی رہتا ہے",
-      introUrdu: "اردو میں “یہاں” آگے کریں تو باقی جملہ ویسا ہی رہتا ہے۔ Nederlands میں جو بھی پہلے آئے، فعل دوسرے نمبر پر رہتا ہے اور ik اس کے بعد چلا جاتا ہے۔",
+      titleUrdu: "عام جملے میں فعل دوسرے نمبر پر",
+      introUrdu: "اردو میں “یہاں” آگے کریں تو باقی جملہ ویسا ہی رہتا ہے۔ Nederlands کے عام جملے میں جو بھی پہلے آئے، فعل دوسرے نمبر پر رہتا ہے اور ik اس کے بعد چلا جاتا ہے۔",
       examples: [
         {
-          urdu: [["میں", "subj"], ["یہاں", "place"], ["کام کرتا ہوں", "verb"]],
+          urdu: [["میں", "subj"], ["یہاں", "place"], ["کام کرتا/کرتی ہوں", "verb"]],
           dutch: [["ik", "subj"], ["werk", "verb"], ["hier", "place"]],
           audio: "ik werk hier"
         },
         {
-          urdu: [["یہاں", "place"], ["میں", "subj"], ["کام کرتا ہوں", "verb"]],
+          urdu: [["یہاں", "place"], ["میں", "subj"], ["کام کرتا/کرتی ہوں", "verb"]],
           dutch: [["hier", "place"], ["werk", "verb"], ["ik", "subj"]],
           audio: "hier werk ik"
         },
         {
-          urdu: [["کیا", "q"], ["تم", "subj"], ["یہاں", "place"], ["کام کرتے ہو؟", "verb"]],
+          urdu: [["کیا", "q"], ["تم", "subj"], ["یہاں", "place"], ["کام کرتے/کرتی ہو؟", "verb"]],
           dutch: [["werk", "verb"], ["jij", "subj"], ["hier?", "place"]],
           audio: "werk jij hier?"
         }
       ],
-      takeawayUrdu: "سوال کے لیے “کیا” جیسا لفظ نہیں لگتا؛ فعل کو سب سے آگے لے آئیں۔",
+      takeawayUrdu: "عام جملہ: فعل دوسرے نمبر پر۔ سوال: “کیا” جیسا لفظ نہیں لگتا، فعل سب سے آگے آ جاتا ہے۔",
       mistake: { wrong: "hier ik werk", right: "hier werk ik" }
     },
     {
       id: "contrast-future-gaan",
       lessonIds: ["a1-future-gaan"],
       verdict: "same",
-      titleUrdu: "اصل کام آخر میں، بالکل اردو کی طرح",
-      introUrdu: "ga کے ساتھ اصل کام والا لفظ (werken) جملے کے آخر میں جاتا ہے، جیسے اردو میں “کروں گا” آخر میں آتا ہے۔",
+      titleUrdu: "اصل کام آخر میں، جیسے اردو",
+      introUrdu: "ga عام جملے کی طرح دوسرے نمبر پر رہتا ہے۔ مگر اصل کام والا لفظ (werken) جملے کے آخر میں جاتا ہے، جیسے اردو میں “کام کروں گا” آخر میں آتا ہے۔",
       examples: [
         {
-          urdu: [["میں", "subj"], ["کل", "time"], ["کام کروں گا", "verb"]],
+          urdu: [["میں", "subj"], ["کل", "time"], ["کام کروں گا/گی", "verb"]],
           dutch: [["ik", "subj"], ["ga", "verb"], ["morgen", "time"], ["werken", "verb"]],
           audio: "ik ga morgen werken"
         }
       ],
-      takeawayUrdu: "ga دوسرے نمبر پر، اصل کام آخر میں۔ آخر والا حصہ اردو جیسا ہے۔",
+      takeawayUrdu: "ga دوسرے نمبر پر، اصل کام آخر میں۔ صرف آخر والا حصہ اردو جیسا ہے۔",
       mistake: { wrong: "ik ga werken morgen", right: "ik ga morgen werken" }
     },
     {
@@ -147,44 +147,41 @@ NU.contrast = (() => {
       lessonIds: ["a2-reasons-omdat-dat"],
       verdict: "same",
       titleUrdu: "omdat کے بعد فعل آخر میں، جیسے اردو",
-      introUrdu: "omdat (کیونکہ) کے بعد Nederlands فعل کو آخر میں بھیج دیتا ہے، یعنی یہاں جملہ بالکل اردو کی ترتیب میں چلتا ہے۔",
+      introUrdu: "omdat (کیونکہ) کے بعد Nederlands فعل کو آخر میں بھیج دیتا ہے، یعنی omdat والا حصہ اردو کی ترتیب میں چلتا ہے۔",
       examples: [
         {
-          urdu: [["کیونکہ", "reason"], ["ہیٹنگ", "subj"], ["خراب", "obj"], ["ہے", "verb"]],
-          dutch: [["omdat", "reason"], ["de verwarming", "subj"], ["kapot", "obj"], ["is", "verb"]],
-          audio: "ik bel omdat de verwarming kapot is"
+          urdu: [["کیونکہ", "reason"], ["میں", "subj"], ["بیمار", "rest"], ["ہوں", "verb"]],
+          dutch: [["omdat", "reason"], ["ik", "subj"], ["ziek", "rest"], ["ben", "verb"]],
+          audio: "omdat ik ziek ben"
         }
       ],
       takeawayUrdu: "omdat کے بعد اردو والی ترتیب سوچیں: فعل آخر میں۔",
-      mistake: { wrong: "omdat de verwarming is kapot", right: "omdat de verwarming kapot is" }
+      mistake: { wrong: "omdat ik ben ziek", right: "omdat ik ziek ben" }
     },
     {
       id: "contrast-g-ch",
       lessonIds: ["a0-sounds-consonants"],
       verdict: "same",
       titleUrdu: "g اور ch = خ",
-      introUrdu: "انگریزی والا “گ” نہیں! Nederlands کی g اور ch گلے سے نکلنے والی خ جیسی آواز ہیں۔ اردو بولنے والوں کے لیے یہ آسان ہے۔",
+      introUrdu: "انگریزی والا “گ” نہیں! Nederlands کی g اور ch گلے سے نکلنے والی خ جیسی آواز ہیں۔ اردو میں خ موجود ہے، اس لیے یہ آسان ہے۔",
       pairs: [
-        { nl: "goed", ur: "خُوت", note: "g = خ" },
-        { nl: "acht", ur: "اَخت", note: "ch = خ" },
-        { nl: "water", ur: "وَا تَر", note: "w = ہلکا و، ہونٹ قریب" },
-        { nl: "vijf", ur: "فَیف", note: "v = ف اور و کے بیچ" }
+        { nl: "geel", ur: "خیل", note: "g = خ، “گیل” نہیں", audio: "geel" },
+        { nl: "lachen", ur: "لاخَن", note: "ch = خ، “چ” نہیں", audio: "lachen" },
+        { nl: "schoen", ur: "سخُون", note: "sch = س + خ، “ش” نہیں", audio: "schoen" }
       ],
-      audio: "goed",
-      takeawayUrdu: "g دیکھیں تو خ بولیں۔ اردو کا “و” Nederlands میں w اور v دونوں بنتا ہے، اس لیے ان دونوں کو غور سے سنیں۔"
+      takeawayUrdu: "g اور ch کو خ بولیں۔ صرف جب n اور g ساتھ ہوں (ng) تو آواز الگ ہوتی ہے۔"
     },
     {
       id: "contrast-new-vowels",
       lessonIds: ["a0-sounds-vowels"],
       verdict: "different",
-      titleUrdu: "تین آوازیں جو اردو میں نہیں",
-      introUrdu: "ui، eu، اور ij کی کوئی پوری اردو آواز نہیں۔ اردو حروف صرف قریب لے جاتے ہیں، باقی کان سے سیکھیں۔",
+      titleUrdu: "گول ہونٹوں والی آوازیں",
+      introUrdu: "ui اور eu کی کوئی پوری اردو آواز نہیں، اور ij اردو کے “اَے” سے صرف قریب ہے۔ اردو حروف راستہ دکھاتے ہیں، باقی کان سے سیکھیں۔",
       pairs: [
-        { nl: "huis", ur: "ہاؤس جیسا", note: "ui: ہونٹ گول کر کے “اَو”" },
-        { nl: "neus", ur: "نُوس جیسا", note: "eu: “اے” کہیں اور ہونٹ گول کریں" },
-        { nl: "vijf", ur: "فَیف", note: "ij: “اَے” جیسا، “ای” نہیں" }
+        { nl: "muis", ur: "مَؤس", note: "ui: ہونٹ گول اور تنگ؛ کھلا “آؤ” نہیں", audio: "muis" },
+        { nl: "neus", ur: "نُوس", note: "eu: “اے” کہیں اور ساتھ ہونٹ گول کریں؛ “او” نہیں", audio: "neus" },
+        { nl: "ijs", ur: "اَیس", note: "ij: “اَے” جیسا؛ “ای” یا انگریزی “آئی” نہیں", audio: "ijs" }
       ],
-      audio: "huis",
       takeawayUrdu: "ان لفظوں کو آہستہ آواز میں سنیں اور ہونٹوں کی شکل کی نقل کریں۔"
     }
   ];
@@ -222,6 +219,13 @@ NU.contrast = (() => {
     return `<div class="ct-legend" aria-hidden="true">${used.map((role) => `<span class="role-${role}">${roles[role] || ""}</span>`).join("")}</div>`;
   }
 
+  // A speaker plus the Dutch line it plays. With pronunciation off speak()
+  // returns nothing, and then the "listen" label is left out too.
+  function listen(text, speak) {
+    const button = text ? speak(text) : "";
+    return button ? `<div class="ct-listen">${button}<span>سنیں</span></div>` : "";
+  }
+
   // speak(text) renders the app's own speaker button, so audio follows the
   // learner's pronunciation setting and plays the recorded clip.
   function render(card, { speak = () => "" } = {}) {
@@ -233,18 +237,18 @@ NU.contrast = (() => {
         <p class="ct-intro">${NU.contrast.mixed(card.introUrdu)}</p>
         ${(card.examples || []).map((ex) => `
           <div class="ct-example">
-            <div class="ct-row"><span class="ct-flag">اردو</span>${chips(ex.urdu, "rtl")}</div>
-            <div class="ct-row"><span class="ct-flag latin">NL</span>${chips(ex.dutch, "ltr")}${ex.audio ? speak(ex.audio) : ""}</div>
+            ${chips(ex.urdu, "rtl")}
+            ${chips(ex.dutch, "ltr")}
+            ${listen(ex.audio, speak)}
           </div>
         `).join("")}
         ${legend(card)}
         ${card.pairs ? `
           <ul class="ct-pairs">
             ${card.pairs.map((pair) => `
-              <li><strong class="latin" dir="ltr">${esc(pair.nl)}</strong><span class="ct-eq">=</span><b>${esc(pair.ur)}</b><small>${NU.contrast.mixed(pair.note)}</small></li>
+              <li><strong class="latin" dir="ltr">${esc(pair.nl)}</strong><span class="ct-eq">=</span><b>${esc(pair.ur)}</b>${pair.audio ? speak(pair.audio) : ""}<small>${NU.contrast.mixed(pair.note)}</small></li>
             `).join("")}
           </ul>
-          ${card.audio ? `<div class="ct-listen">${speak(card.audio)}<span>سنیں: <bdi class="latin" dir="ltr">${esc(card.audio)}</bdi></span></div>` : ""}
         ` : ""}
         ${card.mistake ? `
           <div class="ct-mistake">
