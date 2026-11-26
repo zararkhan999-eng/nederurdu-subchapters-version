@@ -5183,7 +5183,7 @@ function getDutchSpeechRate(text, forceSlow = false, forceRegular = false) {
 }
 
 // Recorded Dutch: every course text has a regular and a slow clip spoken by
-// the Piper "pim" voice (audio/nl, built by scripts/audio). Texts without a
+// Kyutai's Pocket TTS Dutch voice (audio/nl, built by scripts/audio). Texts without a
 // clip, and browsers that cannot play Opus, use the device voice instead.
 const speechClips = window.NEDERURDU_AUDIO?.clips || {};
 const canPlaySpeechClips = (() => {

@@ -1,0 +1,8 @@
+Dutch speech in these clips was generated with Pocket TTS by Kyutai
+(https://github.com/kyutai-labs/pocket-tts), model weights licensed CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/).
+
+The "daan" voice is based on a recording from the CML-TTS dataset
+(https://github.com/freds0/CML-TTS-Dataset), licensed CC BY 4.0.
+
+Slow versions were made with Rubber Band (https://breakfastquay.com/rubberband/).

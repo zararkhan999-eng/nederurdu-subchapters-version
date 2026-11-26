@@ -39,26 +39,41 @@ Before every release: `npm run audit:course`, `npm run audit:audio`, `npm test`,
 
 ## Recorded Dutch audio
 
-Dutch is spoken from recorded clips made with the open-source
-[Piper](https://github.com/OHF-Voice/piper1-gpl) voice `nl_NL-pim-medium`
-(trained on CC0 data, so it is free to use in the app). Every course text has a
-regular and a slow clip in `audio/nl/` (Opus, about 27 kbit/s), listed in
-`audio/nl/manifest.js`. Texts without a clip, and browsers that cannot play
-Opus, fall back to the phone's own Dutch voice as before.
+Dutch is spoken from recorded clips made with Kyutai's open-source
+[Pocket TTS](https://github.com/kyutai-labs/pocket-tts): its large Dutch model
+(`dutch_24l`) and built-in Dutch speaker "daan". It replaced the Piper
+`nl_NL-pim-medium` voice in November 2026 because it sounds far more natural,
+and in a Whisper test it was the only voice understood with no errors. Every
+course text has a regular and a slow clip in `audio/nl/` (Opus, about
+27 kbit/s), listed in `audio/nl/manifest.js`. The slow clip is the regular take
+stretched with [Rubber Band](https://breakfastquay.com/rubberband/), which keeps
+the pitch. Texts without a clip, and browsers that cannot play Opus, fall back
+to the phone's own Dutch voice as before.
 
-After adding or changing Dutch course text:
+Licences: Pocket TTS weights are CC BY 4.0 (Kyutai), and the "daan" voice comes
+from the CML-TTS dataset (CC BY 4.0). Both need a credit, which is in
+`audio/nl/CREDITS.txt`; keep it with the clips and add it to the store listing
+or an About screen.
+
+After adding or changing Dutch course text (needs [uv](https://docs.astral.sh/uv/)
+and Rubber Band: `brew install uv rubberband`):
 
 ```bash
-npm run audio:setup   # once: Python packages in scripts/audio/.venv
+npm run audio:setup   # once: Python 3.12 packages in scripts/audio/.venv
 npm run audio:build   # list every spoken text, render only new or changed ones
+npm run audio:check   # Whisper lists clips where the voice swallowed or added words
 npm run audit:audio   # fails if any spoken text has no clip
 ```
 
-`audio:build` downloads the voice (about 60 MB) to `~/.cache/nederurdu-tts` the
-first time. Fix a word the voice says wrongly by adding a respelling to
-`scripts/audio/pronunciations.json` (`{"shown text": "text to read"}`), then
-run `npm run audio:render` again. Times, prices, dates and letter names are
-rewritten for the voice in `prepare()` in `scripts/audio/render-speech.py`.
+The voice is generative, so a take can occasionally come out wrong.
+`npm run audio:check -- --reroll` gives every failing text a new seed in
+`scripts/audio/seeds.json`; run `npm run audio:render` again to record new
+takes. The first build downloads the model (about 650 MB) to the Hugging Face
+cache and takes about an hour for the whole course. Fix a word the voice says
+wrongly by adding a respelling to `scripts/audio/pronunciations.json`
+(`{"shown text": "text to read"}`), then run `npm run audio:render` again.
+Times, prices, dates and letter names are rewritten for the voice in
+`prepare()` in `scripts/audio/render-speech.py`.
 
 ## Learning design
 

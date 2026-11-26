@@ -1,10 +1,16 @@
-"""Render every Dutch speech text to an Opus clip with the Piper "pim" voice.
+"""Render every Dutch speech text to an Opus clip with Kyutai's Pocket TTS.
+
+The voice is Pocket TTS's large Dutch model (dutch_24l) with its built-in Dutch
+speaker "daan". It replaced the Piper "pim" voice in November 2026: it sounds
+far more natural and was the only voice tested that Whisper transcribed with no
+errors. Pocket TTS has no speed control, so the slow clip is the regular clip
+stretched with Rubber Band, which keeps the pitch and vowel colour.
 
 Reads scripts/audio/speech-texts.json (from collect-speech-texts.js) and writes
 audio/nl/<id>.ogg (regular speed), audio/nl/<id>-slow.ogg (slow speed) and
 audio/nl/manifest.js, which maps each text to its clip id and durations.
 
-Clip ids hash the voice, speeds and the exact text sent to the voice, so a
+Clip ids hash the voice, seed, speeds and the exact text sent to the voice, so a
 re-run only renders new or changed texts, and clips nothing refers to any more
 are deleted.
 
@@ -13,31 +19,36 @@ Setup once:  npm run audio:setup      Render:  npm run audio:render
 import hashlib
 import json
 import re
+import shutil
+import subprocess
 import sys
-import tarfile
-import urllib.request
+import tempfile
 from pathlib import Path
 
 try:
     import numpy as np
-    import sherpa_onnx
     import soundfile as sf
     import soxr
+    import torch
+    from num2words import num2words
+    from pocket_tts import TTSModel
 except ImportError as error:
     sys.exit(f"Missing Python package ({error.name}). Run: npm run audio:setup")
 
 ROOT = Path(__file__).resolve().parents[2]
 TEXTS = Path(__file__).with_name("speech-texts.json")
 PRONUNCIATIONS = Path(__file__).with_name("pronunciations.json")
+# {"shown text": seed}: a different take for a text the voice garbled (see check-speech.py).
+SEEDS = Path(__file__).with_name("seeds.json")
 OUT = ROOT / "audio" / "nl"
-CACHE = Path.home() / ".cache" / "nederurdu-tts"
 
-VOICE = "nl_NL-pim-medium"
-MODEL_URL = f"https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-{VOICE}.tar.bz2"
+LANGUAGE = "dutch_24l"
+SPEAKER = "daan"
+VOICE = f"pocket-{LANGUAGE}-{SPEAKER}"
 REGULAR_SPEED = 1.0
 # The app's slow rates are about 0.83 of its regular rates (see getDutchSpeechRate).
 SLOW_SPEED = 0.83
-SAMPLE_RATE = 24000  # an Opus-native rate; Piper renders at 22050
+SAMPLE_RATE = 24000  # an Opus-native rate, and Pocket TTS's own
 OPUS_LEVEL = 0.93  # about 27 kbit/s, as clear as AAC at 40 kbit/s for this voice
 RENDER_VERSION = 1  # bump to re-render everything after changing trimming or encoding
 
@@ -64,7 +75,16 @@ def clock(match):
         return f"{HOURS[hour]} uur"
     if minute == 30:
         return f"half {HOURS[(hour + 1) % 24 if hour + 1 < 13 else (hour + 1) % 12]}"
-    return f"{HOURS[hour]} uur {minute}"
+    return f"{HOURS[hour]} uur {number(minute)}"
+
+
+def number(value):
+    """A number in Dutch words; years are read in hundreds, as Dutch speakers do."""
+    value = int(value)
+    if 1100 <= value < 2000:
+        rest = value % 100
+        return num2words(value // 100, lang="nl") + "honderd" + (num2words(rest, lang="nl") if rest else "")
+    return num2words(value, lang="nl")
 
 
 def prepare(text, overrides):
@@ -85,30 +105,22 @@ def prepare(text, overrides):
     spoken = re.sub(r"(^|,\s*)[AB]:\s*", r"\1", spoken).replace("!,", "!").replace(".,", ".")
     spoken = re.sub(r"\b(\d{1,2}):(\d{2})\b", clock, spoken)
     spoken = re.sub(r"\b(\d{1,2})-(\d{1,2})-(\d{4})\b", lambda m: f"{int(m[1])} {MONTHS[int(m[2]) - 1]} {m[3]}", spoken)
-    spoken = re.sub(r"\bbel 112\b", "bel één één twee", spoken)
+    # The emergency number is said digit by digit; a bus or a price of 112 is not.
+    spoken = re.sub(r"(^|\bbel )112\b", r"\1één één twee", spoken)
     spoken = re.sub(r"€\s?(\d+)", r"\1 euro", spoken)
     spoken = re.sub(r"\b(\d{4}) ([A-Z]{2})\b", lambda m: f"{m[1][:2]} {m[1][2:]} {spell(m[2])}", spoken)
     spoken = re.sub(r"\b(BSN|bsn|AB)\b", lambda m: spell(m[1]), spoken)
+    # Pocket TTS cannot read digits, so every number left becomes words.
+    spoken = re.sub(r"\d+", lambda m: number(m[0]), spoken)
     return spoken
 
 
 def load_voice():
-    model_dir = CACHE / f"vits-piper-{VOICE}"
-    if not (model_dir / f"{VOICE}.onnx").exists():
-        CACHE.mkdir(parents=True, exist_ok=True)
-        archive = CACHE / f"{VOICE}.tar.bz2"
-        print(f"Downloading {VOICE} voice …")
-        urllib.request.urlretrieve(MODEL_URL, archive)
-        with tarfile.open(archive) as tar:
-            tar.extractall(CACHE, filter="data") if sys.version_info >= (3, 12) else tar.extractall(CACHE)
-        archive.unlink()
-    config = sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
-        vits=sherpa_onnx.OfflineTtsVitsModelConfig(
-            model=str(model_dir / f"{VOICE}.onnx"),
-            tokens=str(model_dir / "tokens.txt"),
-            data_dir=str(model_dir / "espeak-ng-data")),
-        num_threads=4))
-    return sherpa_onnx.OfflineTts(config)
+    if not shutil.which("rubberband"):
+        sys.exit("The slow clips need the rubberband tool. Run: brew install rubberband")
+    torch.set_num_threads(4)
+    model = TTSModel.load_model(language=LANGUAGE)
+    return model, model.get_state_for_audio_prompt(SPEAKER)
 
 
 def trim(samples, rate, lead_ms=30, tail_ms=120, threshold_db=-45):
@@ -122,10 +134,37 @@ def trim(samples, rate, lead_ms=30, tail_ms=120, threshold_db=-45):
     return samples[start:end]
 
 
-def render(tts, spoken, speed, path):
-    audio = tts.generate(spoken, sid=0, speed=speed)
-    samples = trim(np.asarray(audio.samples, dtype=np.float32), audio.sample_rate)
-    samples = soxr.resample(samples, audio.sample_rate, SAMPLE_RATE)
+def speak(voice, spoken, seed):
+    """One take of the text at regular speed, at SAMPLE_RATE."""
+    model, state = voice
+    torch.manual_seed(seed)
+    audio = model.generate_audio(state, spoken).numpy().astype(np.float32)
+    if model.sample_rate != SAMPLE_RATE:
+        audio = soxr.resample(audio, model.sample_rate, SAMPLE_RATE)
+    return level(trim(audio, SAMPLE_RATE))
+
+
+def level(samples, target_db=-20, peak=0.95):
+    """Give every clip the same loudness, so no word is quieter than the next."""
+    rms = float(np.sqrt(np.mean(samples ** 2))) or 1.0
+    samples = samples * (10 ** (target_db / 20) / rms)
+    top = float(np.abs(samples).max()) or 1.0
+    return samples * min(1.0, peak / top)
+
+
+def stretch(samples, speed):
+    """Slow speech down without changing its pitch."""
+    with tempfile.TemporaryDirectory() as folder:
+        source, target = Path(folder, "in.wav"), Path(folder, "out.wav")
+        sf.write(source, samples, SAMPLE_RATE)
+        subprocess.run(["rubberband", "-q", "--fine", "--formant", "-t", f"{1 / speed:.4f}",
+                        str(source), str(target)], check=True, capture_output=True)
+        stretched, _ = sf.read(target, dtype="float32")
+    return trim(stretched, SAMPLE_RATE)
+
+
+def write(samples, path):
+    samples = samples.copy()
     # A short fade keeps the cut edges from clicking.
     fade = min(len(samples) // 4, SAMPLE_RATE // 200)
     if fade:
@@ -135,8 +174,8 @@ def render(tts, spoken, speed, path):
     return round(len(samples) * 1000 / SAMPLE_RATE)
 
 
-def clip_id(spoken):
-    key = f"{RENDER_VERSION}|{VOICE}|{REGULAR_SPEED}|{SLOW_SPEED}|{OPUS_LEVEL}|{spoken}"
+def clip_id(spoken, seed):
+    key = f"{RENDER_VERSION}|{VOICE}|{seed}|{REGULAR_SPEED}|{SLOW_SPEED}|{OPUS_LEVEL}|{spoken}"
     return hashlib.sha1(key.encode("utf-8")).hexdigest()[:10]
 
 
@@ -151,22 +190,25 @@ def read_manifest():
 def main():
     texts = json.loads(TEXTS.read_text(encoding="utf-8"))
     overrides = json.loads(PRONUNCIATIONS.read_text(encoding="utf-8")) if PRONUNCIATIONS.exists() else {}
+    seeds = json.loads(SEEDS.read_text(encoding="utf-8")) if SEEDS.exists() else {}
     OUT.mkdir(parents=True, exist_ok=True)
     previous = {entry[0]: entry for entry in read_manifest().values()}
 
     clips, rendered, tts = {}, 0, None
     for index, text in enumerate(texts, 1):
         spoken = prepare(text, overrides)
-        cid = clip_id(spoken)
+        seed = seeds.get(text, 0)
+        cid = clip_id(spoken, seed)
         regular, slow = OUT / f"{cid}.ogg", OUT / f"{cid}-slow.ogg"
         known = previous.get(cid)
         if known and regular.exists() and slow.exists():
             clips[text] = known
             continue
         tts = tts or load_voice()
-        clips[text] = [cid, render(tts, spoken, REGULAR_SPEED, regular), render(tts, spoken, SLOW_SPEED, slow)]
+        take = speak(tts, spoken, seed)
+        clips[text] = [cid, write(take, regular), write(stretch(take, SLOW_SPEED), slow)]
         rendered += 1
-        if rendered % 100 == 0:
+        if rendered % 50 == 0:
             print(f"  {index}/{len(texts)} …", flush=True)
 
     keep = {f"{entry[0]}{suffix}.ogg" for entry in clips.values() for suffix in ("", "-slow")}

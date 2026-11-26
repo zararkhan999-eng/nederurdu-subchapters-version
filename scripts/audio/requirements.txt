@@ -1,4 +1,7 @@
-sherpa-onnx>=1.12
+pocket-tts>=4.0
+num2words
 numpy
 soundfile>=0.12
 soxr
+# only for npm run audio:check (Apple Silicon)
+mlx-whisper

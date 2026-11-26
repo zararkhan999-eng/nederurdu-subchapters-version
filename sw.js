@@ -1,4 +1,4 @@
-const CACHE_NAME = "nederurdu-v95-alive";
+const CACHE_NAME = "nederurdu-v95-alive-pocket-voice";
 const APP_SHELL = [
   "./",
   "./index.html",
